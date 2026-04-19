@@ -64,6 +64,16 @@ Grouped by phase (see [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md)). Each milestone ei
 - [x] **Int-to-ℝ forward embedding** (`Infra/ScaledLorentz.lean`): `lorentzIntEmbed` preserves `CausalPrecedes` and `Timelike` into their continuum counterparts. (Full scaled isometry-plus-density — the Lorentzian analog of `dTorus_gh_bound` — remains open; requires Lorentzian-GH machinery not in Mathlib.)
 - [x] **End-to-end bridge** (`Infra/FullBridge.lean`): `causallyPrecedes_gives_continuum` — under `LightConeCompatible τ φ`, the trajectory's causal order is faithful in continuum Minkowski. Strict-interior version via `causallyPrecedes_gives_continuum_timelike` under `StrictlyTimelikeCompatible`.
 
+### Discrete calculus (Rung 1 of the bridge ladder)
+- [x] Graph Laplacian, discrete inner product (`DiscreteCalculus.lean`).
+- [x] Laplacian linearity (`laplacian_add`, `laplacian_smul`, `laplacian_const`).
+- [x] Inner product symmetry, bilinearity.
+- [x] `nbhd_sum_swap` — edge-sum swap lemma under symmetric adjacency.
+- [x] **`laplacian_self_adjoint`** — `⟪Δ f, g⟫ = ⟪f, Δ g⟫` (`DiscreteCalculusSymm.lean`).
+- [ ] Positivity of `-Δ` (quadratic form `⟪f, -Δ f⟫ ≥ 0`).
+- [ ] Heat semigroup on a finite graph as a finite-dim ODE.
+- [ ] Scaled cycle Laplacian → 1D `d²/dx²` (Rung 2 entry).
+
 ### Discrete Lorentzian structure (first ingredient of GR bridge)
 - [x] Event type `Fin (d+1) → ℤ` on cubic lattice (`Infra/LorentzLattice.lean`)
 - [x] Spatial L∞ distance `spaceDist`; self, symm, triangle

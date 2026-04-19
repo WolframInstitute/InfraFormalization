@@ -35,6 +35,8 @@ import InfraFormalization.Infra.TrajectoryLorentzD
 import InfraFormalization.Infra.Minkowski
 import InfraFormalization.Infra.ScaledLorentz
 import InfraFormalization.Infra.FullBridge
+import InfraFormalization.DiscreteCalculus
+import InfraFormalization.DiscreteCalculusSymm
 import InfraFormalization.Refutations.F1NoMetric
 import InfraFormalization.Refutations.F2Orthonormality
 import InfraFormalization.Refutations.F3Tautology
@@ -132,6 +134,17 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.Infra.causallyPrecedes_gives_continuum_timelike
 #print axioms InfraFormalization.Infra.fullContinuumEmbed_time
 #print axioms InfraFormalization.Infra.same_level_continuum_same_time
+#print axioms InfraFormalization.laplacian_add
+#print axioms InfraFormalization.laplacian_smul
+#print axioms InfraFormalization.laplacian_const
+#print axioms InfraFormalization.discreteInner_symm
+#print axioms InfraFormalization.discreteInner_add_left
+#print axioms InfraFormalization.discreteInner_add_right
+#print axioms InfraFormalization.discreteInner_smul_left
+#print axioms InfraFormalization.discreteInner_laplacian_expand
+#print axioms InfraFormalization.discreteInner_laplacian_right
+#print axioms InfraFormalization.nbhd_sum_swap
+#print axioms InfraFormalization.laplacian_self_adjoint
 #print axioms InfraFormalization.Refutations.gorard_dim_preservation_is_euler_lagrange
 #print axioms InfraFormalization.Refutations.gorard_section_3_3_contentless
 #print axioms InfraFormalization.Refutations.gorard_causal_invariance_is_general_covariance
