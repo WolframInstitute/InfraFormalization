@@ -87,11 +87,50 @@ noncomputable def isCausalPred {sys : RewritingSystem P} {init : Hypergraph V}
   else false
 
 /-- **Causal level** of an event: length of the longest chain of
-causal-predecessor edges ending at it. Defined via `Nat.strongRecOn`. -/
+causal-predecessor edges ending at it. Defined via well-founded
+recursion on Nat; equivalently, `level τ i` is `1 + sup over causal
+predecessors of their level`, with the sup being 0 when there are no
+predecessors. -/
 noncomputable def level {sys : RewritingSystem P} {init : Hypergraph V}
-    (τ : Trajectory sys init) : Nat → Nat := fun i =>
-  Nat.strongRecOn (motive := fun _ => Nat) i fun n rec =>
-    (Finset.range n).attach.sup fun ⟨j, hj⟩ =>
-      if isCausalPred τ j n then 1 + rec j (Finset.mem_range.mp hj) else 0
+    (τ : Trajectory sys init) (i : Nat) : Nat :=
+  (Finset.range i).attach.sup fun ⟨j, hj⟩ =>
+    if isCausalPred τ j i then
+      1 + level τ j
+    else 0
+termination_by i
+decreasing_by
+  exact Finset.mem_range.mp hj
+
+/-- **Level unfolding equation.** -/
+theorem level_eq {sys : RewritingSystem P} {init : Hypergraph V}
+    (τ : Trajectory sys init) (i : Nat) :
+    level τ i = (Finset.range i).attach.sup fun ⟨j, hj⟩ =>
+      if isCausalPred τ j i then 1 + level τ j else 0 := by
+  rw [level]
+
+/-- **Level monotonicity.** If `j` causally precedes `i`
+(indicated by `isCausalPred τ j i = true` plus `j < i`), then
+`level τ j + 1 ≤ level τ i`. -/
+theorem level_add_one_le_of_isCausalPred {sys : RewritingSystem P} {init : Hypergraph V}
+    (τ : Trajectory sys init) (j i : Nat) (hlt : j < i)
+    (hcp : isCausalPred τ j i = true) :
+    level τ j + 1 ≤ level τ i := by
+  -- Name the sup-function to avoid naming issues in calc.
+  set f : {x // x ∈ Finset.range i} → Nat :=
+    fun ⟨j', _⟩ => if isCausalPred τ j' i then 1 + level τ j' else 0
+  with hf
+  -- Use the unfolding equation for `level τ i` (only at i).
+  have heq : level τ i = (Finset.range i).attach.sup f := by
+    rw [show level τ i = _ from level_eq τ i]
+  rw [heq]
+  have hjr : j ∈ Finset.range i := Finset.mem_range.mpr hlt
+  have hstep : f ⟨j, hjr⟩ = 1 + level τ j := by
+    simp [hf, hcp]
+  -- level τ j + 1 = f ⟨j, hjr⟩ ≤ sup of f.
+  calc level τ j + 1
+      = 1 + level τ j := by omega
+    _ = f ⟨j, hjr⟩ := hstep.symm
+    _ ≤ (Finset.range i).attach.sup f :=
+        Finset.le_sup (f := f) (Finset.mem_attach _ ⟨j, hjr⟩)
 
 end InfraFormalization
