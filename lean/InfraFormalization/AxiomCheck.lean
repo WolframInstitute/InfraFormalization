@@ -24,6 +24,7 @@ import InfraFormalization.Infra.GHBound
 import InfraFormalization.CausalLevel
 import InfraFormalization.Infra.OllivierStatement
 import InfraFormalization.Infra.ScaledPath
+import InfraFormalization.Infra.GrayTubeStatement
 
 #print axioms InfraFormalization.edge_conservation
 #print axioms InfraFormalization.trajectory_preserves_size
@@ -63,3 +64,5 @@ import InfraFormalization.Infra.ScaledPath
 #print axioms InfraFormalization.Infra.pathEmbed_isometry
 #print axioms InfraFormalization.Infra.pathEmbed_covers
 #print axioms InfraFormalization.Infra.path_interval_gh_bound
+#print axioms InfraFormalization.Infra.gray_vs_gorard_disagree_on_S2
+#print axioms InfraFormalization.Infra.gray_vs_gorard_disagree_on_S3
