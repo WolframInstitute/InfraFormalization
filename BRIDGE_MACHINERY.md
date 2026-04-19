@@ -167,7 +167,7 @@ This coordinate-chart approach is the pragmatic route: it gives us usable curvat
 | 2. Op. convergence | Infrastructure in place | **Started**: polynomial case exact (`SecondDifference.lean`); `C²` Taylor remainder pending. | **Yes** — Taylor case next. |
 | 3. Measure limits | Wasserstein present | Not started | Partial — bypass Prokhorov by using counting measures directly. |
 | 4. Connections | Missing | Not started | Needs design; 500+ lines minimum for local-coord form. |
-| 5. Curvature tensors | Missing | **Christoffel formalised** in local coords + Minkowski instance (`CurvatureLocalCoord.lean`); Riemann/Ricci/scalar pending second partials. | **Yes** — extending to second-derivative data is mechanical. |
+| 5. Curvature tensors | Missing | **Riemann + Ricci + scalar + Einstein formalised** in local coords (`CurvatureLocalCoord.lean`, `CurvatureRiemann.lean`); flat-space EFE check passes (`G_{μν} = 0` on Minkowski). | ✓ basic forms shipped; Schwarzschild instance next. |
 | 6. ODE/PDE | ODE partial, PDE missing | Not started | ODE for finite graphs: easy. PDE: hard. |
 | 7. Fields / gauge | Minimal | Not started | Long-term via HepLean. |
 | 8. Lorentzian | Minimal in Mathlib | Discrete version done (us) | Continuum Lorentzian in Lean: major gap. |

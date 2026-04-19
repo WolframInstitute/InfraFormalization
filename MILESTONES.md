@@ -81,11 +81,12 @@ Grouped by phase (see [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md)). Each milestone ei
 - [x] **Christoffel symbols** `Γ^ρ_{μν} = ½ g^{ρσ} (∂_μ g_{σν} + ∂_ν g_{σμ} − ∂_σ g_{μν})` as explicit formula.
 - [x] **`christoffel_symm`**: lower-index symmetry `Γ^ρ_{μν} = Γ^ρ_{νμ}`.
 - [x] **Minkowski instance** on ℝ⁴ with signature `(−, +, +, +)`; `minkowski4_christoffel_zero` confirms all Christoffel symbols vanish.
-- [ ] Riemann tensor (needs second partials of `g`, or first partials of `Γ` as data).
-- [ ] Ricci contraction.
-- [ ] Scalar curvature.
-- [ ] Einstein tensor `G_{μν} = R_{μν} − ½ R g_{μν}`.
-- [ ] Schwarzschild instance with non-trivial Christoffel symbols (sanity check).
+- [x] **Riemann tensor** `R^ρ_{σμν}` (`CurvatureRiemann.lean`) via `ConnectionData n` carrying `Γ + ∂Γ` as data; `riemann_antisymm` in last two indices.
+- [x] **Ricci tensor** `R_{σν} = Σ_ρ R^ρ_{σρν}` and **scalar curvature** `R = g^{σν} R_{σν}` and **Einstein tensor** `G_{μν} = R_{μν} − ½ R g_{μν}`.
+- [x] `flatConnection`: `Γ ≡ 0`, with `flatConnection_riemann_zero`, `_ricci_zero`, `_scalar_zero`, `_einstein_zero`.
+- [x] **`minkowski4_satisfies_vacuum_EFE`**: `G_{μν} = 0` on Minkowski with the flat connection — the trivial flat-space EFE sanity check.
+- [ ] Schwarzschild instance with non-trivial Christoffel symbols (next concrete sanity check; tests the formalism on a curved metric).
+- [ ] Bianchi identity `∇_μ G^{μν} = 0` (formal consequence; needs covariant derivative).
 - [ ] Heat semigroup on a finite graph as a finite-dim ODE.
 - [ ] Scaled cycle Laplacian → 1D `d²/dx²` (Rung 2 entry).
 
