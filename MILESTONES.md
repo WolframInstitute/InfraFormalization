@@ -72,7 +72,12 @@ Grouped by phase (see [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md)). Each milestone ei
 - [x] `forwardCone` definition + upward-closure + `self_mem_forwardCone`
 - [x] **Signed Minkowski interval** `minkowskiIntervalSq := (Δt)² − (spaceDist)²`
 - [x] `minkowskiIntervalSq_pos_of_timelike` / `_zero_of_null` / `_neg_of_spacelike`
-- [x] **Bridging theorem** (`Infra/TrajectoryLorentz.lean`): `trajectoryToEvent τ` maps causal-DAG events to `Event 0` via the level function; `i ≺_causal j → trajectoryToEvent τ i ≺ trajectoryToEvent τ j` in the Lorentz lattice — first wiring between rewriting-side and Minkowski-side formalisms
+- [x] **Bridging theorems** (`Infra/TrajectoryLorentz.lean`): `trajectoryToEvent τ` maps causal-DAG events to `Event 0` via the level function.
+  - `trajectoryToEvent_preserves_causal`: `isCausalPred τ j i → CausalPrecedes 0 …`
+  - `causallyPrecedes_iff_isCausalPred`: wiring Prop ↔ Bool causal relations (in `CausalLevel.lean`)
+  - `causallyPrecedes_implies_minkowski`: full chain `causallyPrecedes → CausalPrecedes`
+  - `causallyPrecedes_implies_timelike`: strengthened — gives `Timelike` (strict interior)
+  - `trajectoryToEvent_lossy`: same-level events collapse; lossiness is F1/F2-style
 - [ ] Conformal limit to continuum Minkowski (Phase 5 research)
 - [ ] Discrete light-cone growth rate → `c = 1` (Phase 5)
 
