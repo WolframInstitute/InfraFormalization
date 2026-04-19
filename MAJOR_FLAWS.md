@@ -38,7 +38,13 @@ None of these exists on a discrete hypergraph without extra choices. Gorard make
 - `notes/severity_taxonomy.md` S2 #3.
 - `FINDINGS.md` S2 table row 3.
 
-**Lean status.** Not yet formalised as a specific "no canonical construction exists" theorem. Planned.
+**Lean status.** Formalised in `lean/InfraFormalization/Refutations/F1NoMetric.lean`:
+- `MetricConstruction V := DHyp V → V → V → ℝ` — the weakest type inhabited by any procedure "hypergraph → bilinear form".
+- `hypergraph_does_not_determine_metric` — exhibits two distinct constructions (constant-zero and constant-one), showing `g^{ab}` is not pinned down by hypergraph data alone.
+- `metric_construction_is_never_unique (Φ)` — for *any* construction `Φ`, `Ψ := Φ + 1` is a distinct construction.
+- `no_canonical_metric_from_hypergraph_alone` — no unique canonical `Φ` exists.
+- `action_depends_on_construction_choice` — any injective `S : MetricConstruction → ℝ` gives different action values under different constructions. Corollary: `δS/δg^{ab}` in G1 Eq 87 is a function of the construction choice, not of the hypergraph.
+- All axiom-clean.
 
 ### F2 — Fiat orthonormality of non-parallel hyperedges
 
@@ -52,7 +58,12 @@ None of these exists on a discrete hypergraph without extra choices. Gorard make
 
 **Status.** Documented in `notes/severity_taxonomy.md` S2 #5, `notes/2004.14810_close_reading.md`.
 
-**Lean status.** Not yet formalised as an impossibility theorem.
+**Lean status.** Formalised in `lean/InfraFormalization/Refutations/F2Orthonormality.lean`:
+- `Form E := E → E → ℝ`; `Orthonormal g e₁ e₂ := g e₁ e₁ = 1 ∧ g e₂ e₂ = 1 ∧ g e₁ e₂ = 0`.
+- `orthonormality_depends_on_form` — orthonormality is a property of the form, not of the hyperedges: exhibits `g₁` (Kronecker) making `(true, false)` orthonormal, and `g₂ ≡ 0` for which it fails.
+- `orthonormalising_form_not_unique` — two distinct forms both render the same pair orthonormal.
+- `gorard_orthonormality_is_non_canonical` — Gorard's §3.2 fiat does not single out a unique form.
+- All axiom-clean.
 
 ### F3 — "Asymptotic dimensionality preservation" is tautological
 
@@ -68,13 +79,22 @@ and then concludes that conservative + asymptotically-dimensionality-preserving 
 
 **Status.** Documented in `notes/severity_taxonomy.md` S3 #9, `notes/claim_assessment.md`.
 
+**Lean status.** Formalised in `lean/InfraFormalization/Refutations/F3Tautology.lean`:
+- `gorard_dim_preservation_is_euler_lagrange : AsymptoticDimPreservation P g ↔ EulerLagrange P g := Iff.rfl` — the biconditional is definitional unfolding.
+- `gorard_section_3_3_contentless` — the Gorard chain (conservative ∧ causal-invariant ∧ asymp-dim-pres ⇒ vacuum EFE) reduces on its EFE leg to the identity function on `AsymptoticDimPreservation P g`.
+- Axiom-clean (`#print axioms` confirms `[propext, Classical.choice, Quot.sound]` only).
+
 ### F4 — "Causal invariance ⇒ discrete general covariance" tautology
 
 **Where.** G1 §2.3.
 
 **Statement.** Causal invariance is *defined* as update-order independence of the causal structure. "Discrete general covariance" is *defined* in G1 §2.3 as the same thing. The biconditional "causal invariance ⇔ general covariance" is thus two definitions of the same phenomenon.
 
-**Status.** Documented; Lean formalisation pending.
+**Status.** Documented.
+
+**Lean status.** Formalised in `lean/InfraFormalization/Refutations/F4Tautology.lean`:
+- `gorard_causal_invariance_is_general_covariance : CausalInvariance cg ↔ DiscreteGeneralCovariance cg := Iff.rfl`.
+- `#print axioms` reports "does not depend on any axioms" — the cleanest possible certificate; the biconditional is Lean-definitional, i.e., it is literally the same proposition twice.
 
 ### F5 — "Discrete sum → continuum integral under weak ergodicity"
 
@@ -86,7 +106,14 @@ and then concludes that conservative + asymptotically-dimensionality-preserving 
 
 **What refutation looks like.** Pin down the precise claim, then either (a) show that no existing convergence theorem delivers it under Wolfram-model-specific hypotheses, or (b) construct a rule whose discrete sum provably does not converge to the continuum integral in any reasonable topology.
 
-**Status.** Documented; Lean stub `ContinuumLimitClaim` in `Limit.lean`; precise-statement + counterexample pending.
+**Status.** Documented; Lean stub `ContinuumLimitClaim` in `Limit.lean`.
+
+**Lean status.** Formalised in `lean/InfraFormalization/Refutations/F5Illdefined.lean`:
+- `ConvergenceNotion := (ℕ → ℝ) → ℝ → Prop` — abstract parameter standing in for the unspecified "topology of convergence" in Gorard's "becomes".
+- `becomes_is_underdetermined` — exhibits a sequence (`n ↦ 1/(n+1)`) and a target (`0`) for which two natural notions disagree: `StandardLimit` affirms, `EventuallyEquals` denies.
+- `claim_is_vacuous_without_convergence_notion (s L) : ∃ C, C s L` — for any sequence and target, there is a convergence notion under which the claim holds.
+- `different_notions_give_different_limits (s L₁ L₂)` — for the same sequence, there are notions giving any two target values. "Becomes" is not a function of the sequence alone.
+- All axiom-clean.
 
 ### F6 — G3's circular "derivation" of EFE
 
@@ -128,13 +155,13 @@ as "provably satisfying the Einstein field equations in the continuum limit." Ed
 
 | # | Flaw | Type | Doc | Lean formalisation |
 |---|---|---|---|---|
-| F1 | Discrete $g^{ab}$ never constructed | structural | [severity_taxonomy §S2#3](notes/severity_taxonomy.md) | pending (impossibility theorem) |
-| F2 | Fiat orthonormality | structural | [severity_taxonomy §S2#5](notes/severity_taxonomy.md) | pending |
-| F3 | Dim-preservation tautology | logical | [severity_taxonomy §S3#9](notes/severity_taxonomy.md) | pending |
-| F4 | Causal-inv ⇒ GC tautology | logical | [severity_taxonomy §S3#7](notes/severity_taxonomy.md) | pending |
-| F5 | Discrete sum → integral ill-defined | bridge | [2004.14810_close_reading](notes/2004.14810_close_reading.md) | stubbed; counterexample planned |
+| F1 | Discrete $g^{ab}$ never constructed | structural | [severity_taxonomy §S2#3](notes/severity_taxonomy.md) | ✓ `Refutations/F1NoMetric.lean` |
+| F2 | Fiat orthonormality | structural | [severity_taxonomy §S2#5](notes/severity_taxonomy.md) | ✓ `Refutations/F2Orthonormality.lean` |
+| F3 | Dim-preservation tautology | logical | [severity_taxonomy §S3#9](notes/severity_taxonomy.md) | ✓ `Refutations/F3Tautology.lean` |
+| F4 | Causal-inv ⇒ GC tautology | logical | [severity_taxonomy §S3#7](notes/severity_taxonomy.md) | ✓ `Refutations/F4Tautology.lean` |
+| F5 | Discrete sum → integral ill-defined | bridge | [2004.14810_close_reading](notes/2004.14810_close_reading.md) | ✓ `Refutations/F5Illdefined.lean` |
 | F6 | G3 circular "derivation" | methodological | [2102.09363_close_reading](notes/2102.09363_close_reading.md) | structurally exposed |
 | F7 | Named rule is 1-D | empirical + structural | [empirical_refutation](notes/empirical_refutation.md), [phase1_selfaudit](results/phase1_selfaudit/) | T1 (proved) + empirical |
 | F8 | G4 title-body gap | overclaim | [2303.07282_close_reading](notes/2303.07282_close_reading.md) | n/a |
 
-F1–F5 remain as *targets* for further Lean formalisation. F6–F8 are exposed sufficiently for citation purposes.
+F1–F5 are now formalised in `lean/InfraFormalization/Refutations/`. F6–F8 are exposed sufficiently for citation purposes (F6 is methodological, F7 is empirical, F8 is an overclaim with no body content to formalise).

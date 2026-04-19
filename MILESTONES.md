@@ -48,11 +48,12 @@ Grouped by phase (see [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md)). Each milestone ei
 - [ ] Linear BFS-cone bound for specific rule + specific seed
 
 ### Structural impossibilities (refute the major flaws)
-- [ ] F1: no canonical discrete metric tensor on a hypergraph (impossibility theorem)
-- [ ] F2: no canonical bilinear form rendering non-parallel hyperedges orthonormal
-- [ ] F3: "asymptotic dim preservation ⇒ Einstein eqn" is definitionally unfolded
-- [ ] F4: "causal invariance ⇔ general covariance" is a definition-equality
-- [ ] F5: counterexample — a rule whose discrete sum demonstrably does not GH-converge to an EH-style integral
+- [x] F1: no canonical discrete metric tensor on a hypergraph (`Refutations/F1NoMetric.lean`)
+- [x] F2: fiat orthonormality of non-parallel hyperedges is non-canonical (`Refutations/F2Orthonormality.lean`)
+- [x] F3: "asymptotic dim preservation ⇒ Einstein eqn" is definitionally unfolded (`Refutations/F3Tautology.lean`)
+- [x] F4: "causal invariance ⇔ general covariance" is a definition-equality (`Refutations/F4Tautology.lean`; axiom-free)
+- [x] F5: "becomes" under-determined — two natural convergence notions disagree (`Refutations/F5Illdefined.lean`)
+- [ ] F5': concrete counterexample — a rule whose discrete sum demonstrably does not GH-converge to an EH-style integral (stretch goal)
 
 ## Phase 2 — Corrected continuum identities (Lean)
 
