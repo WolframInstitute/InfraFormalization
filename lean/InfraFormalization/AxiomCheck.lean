@@ -20,6 +20,7 @@ import InfraFormalization.ParallelSchedule
 import InfraFormalization.Infra.ScaledCycle
 import InfraFormalization.Infra.LatticeDensity
 import InfraFormalization.Infra.Circle
+import InfraFormalization.Infra.GHBound
 
 #print axioms InfraFormalization.edge_conservation
 #print axioms InfraFormalization.trajectory_preserves_size
@@ -45,3 +46,5 @@ import InfraFormalization.Infra.Circle
 #print axioms InfraFormalization.Infra.latticeEmbed_mem_unit_interval
 #print axioms InfraFormalization.Infra.latticeEmbed_covers
 #print axioms InfraFormalization.Infra.latticeEmbed_isometry
+#print axioms InfraFormalization.Infra.cycle_circle_gh_bound
+#print axioms InfraFormalization.Infra.cycle_circle_eventual_epsilon_dense
