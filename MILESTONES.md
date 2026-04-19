@@ -62,6 +62,7 @@ Grouped by phase (see [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md)). Each milestone ei
 - [x] (d+1)D lattice → (d+1)-torus GH bound, arbitrary `d ≥ 0` (`Infra/ScaledTorusD.lean`)
 - [x] **Continuum Minkowski `ℝ^{1,d}`** (`Infra/Minkowski.lean`): `continuumSpaceDist`, `ContinuumCausalPrecedes`, Timelike/Null/Spacelike, signed interval, trichotomy.
 - [x] **Int-to-ℝ forward embedding** (`Infra/ScaledLorentz.lean`): `lorentzIntEmbed` preserves `CausalPrecedes` and `Timelike` into their continuum counterparts. (Full scaled isometry-plus-density — the Lorentzian analog of `dTorus_gh_bound` — remains open; requires Lorentzian-GH machinery not in Mathlib.)
+- [x] **End-to-end bridge** (`Infra/FullBridge.lean`): `causallyPrecedes_gives_continuum` — under `LightConeCompatible τ φ`, the trajectory's causal order is faithful in continuum Minkowski. Strict-interior version via `causallyPrecedes_gives_continuum_timelike` under `StrictlyTimelikeCompatible`.
 
 ### Discrete Lorentzian structure (first ingredient of GR bridge)
 - [x] Event type `Fin (d+1) → ℤ` on cubic lattice (`Infra/LorentzLattice.lean`)
