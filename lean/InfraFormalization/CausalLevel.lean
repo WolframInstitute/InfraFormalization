@@ -133,4 +133,36 @@ theorem level_add_one_le_of_isCausalPred {sys : RewritingSystem P} {init : Hyper
     _ ≤ (Finset.range i).attach.sup f :=
         Finset.le_sup (f := f) (Finset.mem_attach _ ⟨j, hjr⟩)
 
+/-- **Antichain property.** Events at the same causal level form an
+antichain: no causal edge connects two events at the same level.
+
+This is a direct consequence of monotonicity: a causal edge `j → i`
+forces `level τ j + 1 ≤ level τ i`, so they cannot be equal. -/
+theorem no_causal_edge_within_level {sys : RewritingSystem P} {init : Hypergraph V}
+    (τ : Trajectory sys init) (j i : Nat) (hlt : j < i)
+    (h_same_level : level τ j = level τ i) :
+    isCausalPred τ j i = false := by
+  by_contra h
+  push_neg at h
+  -- h : ¬ (isCausalPred τ j i = false), so isCausalPred τ j i = true.
+  have hcp : isCausalPred τ j i = true := by
+    cases hcp : isCausalPred τ j i with
+    | false => exact absurd hcp h
+    | true => rfl
+  have h_mono : level τ j + 1 ≤ level τ i :=
+    level_add_one_le_of_isCausalPred τ j i hlt hcp
+  omega
+
+/-- Symmetric form of `no_causal_edge_within_level`: for *ordered* pairs
+`j < i`, same-level implies no forward causal edge. The fully symmetric
+version (covering both `isCausalPred τ j i` and `isCausalPred τ i j` for
+arbitrary `j ≠ i`) requires a trajectory-structure lemma stating that
+events can only consume expressions produced earlier in the trajectory,
+which we haven't yet formalised; deferred. -/
+theorem same_level_ordered_antichain {sys : RewritingSystem P} {init : Hypergraph V}
+    (τ : Trajectory sys init) (j i : Nat) (hlt : j < i)
+    (h_same_level : level τ j = level τ i) :
+    isCausalPred τ j i = false :=
+  no_causal_edge_within_level τ j i hlt h_same_level
+
 end InfraFormalization

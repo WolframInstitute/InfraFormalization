@@ -55,4 +55,6 @@ import InfraFormalization.Infra.OllivierStatement
 #print axioms InfraFormalization.total_in_eq_total_out
 #print axioms InfraFormalization.level_eq
 #print axioms InfraFormalization.level_add_one_le_of_isCausalPred
+#print axioms InfraFormalization.no_causal_edge_within_level
+#print axioms InfraFormalization.same_level_ordered_antichain
 #print axioms InfraFormalization.Infra.ollivier_vs_gorard_equivalence_requires_ric_eq_scalar
