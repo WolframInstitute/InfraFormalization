@@ -1,80 +1,87 @@
 # Status snapshot
 
-Live document of what's proved, what's in progress, and where we are on the infrageometry research programme roadmap ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md)).
+Live document: what's proved, what's in progress, where we are on the
+infrageometry research programme roadmap ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md)).
 
 ## Machine-verified theorems (axiom-clean)
 
-All proofs in Lean 4 + Mathlib 4.29.1, depending only on Lean's three standard axioms: `propext`, `Classical.choice`, `Quot.sound`. No `sorry`, no `native_decide`, no `decide`, no custom axioms. Verified by `#print axioms` (see [`lean/InfraFormalization/AxiomCheck.lean`](lean/InfraFormalization/AxiomCheck.lean)).
+**36 theorems**, all depending only on Lean's three standard axioms:
+`propext`, `Classical.choice`, `Quot.sound`. No `sorry`, no
+`native_decide`, no `decide`, no custom axioms. Verified by
+`#print axioms` in [`lean/InfraFormalization/AxiomCheck.lean`](lean/InfraFormalization/AxiomCheck.lean).
 
 ### Wolfram-model structural theorems (Phase 1)
 
 | # | Theorem | File | Meaning |
 |---|---|---|---|
-| T1 | `Application.size_result_of_conservative` | Conservation.lean | Edge Conservation: \|LHS\|=\|RHS\| rule preserves state size. |
-| T2 | `size_preserved_by_applications` | Conservation.lean | Trajectory-level extension of T1. |
+| T1 | `Application.size_result_of_conservative` | Conservation.lean | Edge conservation. |
+| T2 | `size_preserved_by_applications` | Conservation.lean | Trajectory-level edge conservation. |
 | T3 | `edge_conservation`, `trajectory_preserves_size` | Demo.lean | Re-exports. |
-| T4 | `growthExponentAtMost_of_linear` | Growth.lean | Auxiliary: f(n) ≤ Cn ⇒ growth exponent ≤ 1. |
-| T5 | `in_degree_eq_lhsSize` | ParallelSchedule.lean | Every event has exactly \|LHS\| incoming expressions. |
-| T6 | `out_degree_eq_rhsSize` | ParallelSchedule.lean | Every event has exactly \|RHS\| outgoing expressions. |
-| T7 | `balanced_of_conservative` | ParallelSchedule.lean | Conservative rule ⇒ each event's consumption = production. |
+| T4 | `growthExponentAtMost_of_linear` | Growth.lean | Linear ⇒ growth exponent ≤ 1. |
+| T5 | `in_degree_eq_lhsSize` | ParallelSchedule.lean | In-degree = |LHS|. |
+| T6 | `out_degree_eq_rhsSize` | ParallelSchedule.lean | Out-degree = |RHS|. |
+| T7 | `balanced_of_conservative` | ParallelSchedule.lean | Conservative ⇒ per-event balance. |
+| T8 | `total_in_degree_eq` | CausalLevel.lean | Sum of in-degrees = M·k. |
+| T9 | `total_out_degree_eq` | CausalLevel.lean | Sum of out-degrees = M·k. |
+| T10 | `total_in_eq_total_out` | CausalLevel.lean | Conservative ⇒ sums equal. |
+| T11 | `level` | CausalLevel.lean | Causal-DAG level function. |
+| T12 | `level_eq` | CausalLevel.lean | Level unfolding equation. |
+| **T13** | **`level_add_one_le_of_isCausalPred`** | CausalLevel.lean | **★ Level monotonicity**: causal edge ⇒ level grows by ≥ 1. |
+| T14 | `no_causal_edge_within_level` | CausalLevel.lean | Antichain property (forward direction). |
+| T15 | `same_level_ordered_antichain` | CausalLevel.lean | Antichain alias. |
 
-### Infrageometry continuum-limit theorems (Phase 3)
-
-Cycle-to-circle Gromov–Hausdorff: the two key theorems needed for GH convergence of the scaled n-cycle to the unit circle ℝ/ℤ.
+### Continuum-limit theorems (Phase 3)
 
 | # | Theorem | File | Meaning |
 |---|---|---|---|
-| T8 | `cycleDist_self` | ScaledCycle.lean | Cycle-graph metric: d(i,i)=0. |
-| T9 | `cycleDist_symm` | ScaledCycle.lean | Symmetric. |
-| T10 | `cycleDist_le_half` | ScaledCycle.lean | Diameter ≤ n/2. |
-| T11 | `cycleDist_zero_of_small` | ScaledCycle.lean | Degenerate for n ≤ 1. |
-| T12 | `cycleDist_triangle` | ScaledCycle.lean | Triangle inequality (8-case analysis closed by `omega`). |
-| T13 | `cycleDist_eq_zero_iff` | ScaledCycle.lean | d(i,j)=0 ⇔ i=j (for n ≥ 2). |
-| T14 | `exists_lattice_index` | LatticeDensity.lean | For x ∈ [0,1) there is i ∈ Fin n with i/n ≤ x < (i+1)/n. |
-| T15 | `lattice_one_over_n_dense` | LatticeDensity.lean | Lattice {i/n} is (1/n)-dense in [0,1). |
-| T16 | `lattice_half_n_cover` | LatticeDensity.lean | For x ∈ [0,1), either x is within 1/(2n) right of i/n, or within 1/(2n) left of (i+1)/n. |
-| T17 | `circleDist_{self,symm,nonneg,le_half}` | Circle.lean | Circle-distance on ℝ/ℤ: basic metric axioms. |
-| T18 | `latticeEmbed_mem_unit_interval` | Circle.lean | φ_n(i) = i/n ∈ [0,1). |
-| **T19** | **`latticeEmbed_covers`** | Circle.lean | **★** Every x ∈ [0,1) is within circle-distance 1/(2n) of some φ_n(i). |
-| **T20** | **`latticeEmbed_isometry`** | Circle.lean | **★** φ_n is an isometry: circleDist(i/n, j/n) = cycleDist(i,j)/n. |
+| T16 | `cycleDist_{self,symm,triangle,le_half,zero_of_small,eq_zero_iff}` | Infra/ScaledCycle.lean | Cycle metric axioms. |
+| T17 | `exists_lattice_index`, `lattice_one_over_n_dense`, `lattice_half_n_cover` | Infra/LatticeDensity.lean | Lattice density in [0,1). |
+| T18 | `circleDist_{self,symm,nonneg,le_half}`, `latticeEmbed_mem_unit_interval` | Infra/Circle.lean | Circle metric axioms. |
+| **T19** | **`latticeEmbed_covers`** | Infra/Circle.lean | **★ Cover bound** 1/(2n). |
+| **T20** | **`latticeEmbed_isometry`** | Infra/Circle.lean | **★ Isometry**. |
+| **T21** | **`cycle_circle_gh_bound`** | Infra/GHBound.lean | **★ Packaged cycle → circle GH convergence**. |
+| T22 | `cycle_circle_eventual_epsilon_dense` | Infra/GHBound.lean | ε-convergence corollary. |
+| T23 | `pathDist_{self,symm,triangle,le}` | Infra/ScaledPath.lean | Path metric axioms. |
+| T24 | `pathEmbed_{mem_unit_interval,isometry,covers}` | Infra/ScaledPath.lean | Path embedding properties. |
+| **T25** | **`path_interval_gh_bound`** | Infra/ScaledPath.lean | **★ Path → interval GH convergence**. |
+| T26 | `GHApproximation`, `ghApprox_of_half_scale` | Infra/GHApprox.lean | Abstract GH-approximation structure. |
 
-**T19 and T20 together are the two key ingredients for the Gromov–Hausdorff convergence of the scaled n-cycle to the unit circle.** T19 bounds the Hausdorff distance between the embedded image and the circle; T20 says the embedding preserves the scaled metric exactly. Together they give:
+### Corrected continuum identities (Phase 2)
 
-> **GH_dist( (Fin n, cycleDist/n), (ℝ/ℤ, circleDist) ) ≤ 1/(2n).**
-
-This is the first formally-verified continuum-limit theorem ingredients in the project — the signature Phase 3 target of the infrageometry program. Packaging into a single named theorem pending.
+| # | Theorem | File | Meaning |
+|---|---|---|---|
+| T27 | `OllivierIdentityLeading`, `GorardMisstatedForm` | Infra/OllivierStatement.lean | Correct and Gorard-incorrect Ollivier. |
+| T28 | `ollivier_vs_gorard_equivalence_requires_ric_eq_scalar` | Infra/OllivierStatement.lean | Coincidence condition. |
+| T29 | `GrayTubeLeading`, `GorardTubeForm` | Infra/GrayTubeStatement.lean | Correct and Gorard-incorrect Gray tube. |
+| T30 | `gray_vs_gorard_disagree_on_S2` | Infra/GrayTubeStatement.lean | Concrete disagreement: 1/6 ≠ 1/3. |
+| T31 | `gray_vs_gorard_disagree_on_S3` | Infra/GrayTubeStatement.lean | Concrete disagreement: 1/3 ≠ 2. |
 
 ## Audit deliverables (Phase 0)
 
-| Artifact | Purpose |
-|---|---|
-| [`notes/claims_catalog.md`](notes/claims_catalog.md) | 184-row audit of every equation in G1 |
-| [`notes/corpus_audit.md`](notes/corpus_audit.md) | Cross-paper map of repeated errors (G1–G4) |
-| [`notes/continuum_limit_claims.md`](notes/continuum_limit_claims.md) | Every continuum-limit claim in the corpus, per-claim verdict |
-| [`notes/severity_taxonomy.md`](notes/severity_taxonomy.md) | S1–S6 error classification |
-| [`notes/{2004,2102,2303}_close_reading.md`](notes/) | Per-paper close readings |
-| [`notes/singleway_vs_multiway.md`](notes/singleway_vs_multiway.md) | Why Gorard uses single-way; null tetrad explainer |
-| [`notes/empirical_refutation.md`](notes/empirical_refutation.md) | Named rule → 1D causal graph empirically |
-| [`results/phase1_selfaudit/`](results/phase1_selfaudit/) | Python rewriter ↔ SetReplace agreement |
-| [`results/phase2_continuum/`](results/phase2_continuum/) | Eq 342 and Eq 344 four-rail refutations |
+See [`INDEX.md`](INDEX.md) for the full document tree. Key artifacts:
 
-## Not-yet-done
-
-| Target | Notes |
-|---|---|
-| Package T19+T20 into a single named theorem | Mechanical. |
-| Parallel-layer bound (Theorem B) in Lean | Requires `level` function via well-founded recursion; earlier attempt got stuck. Try structural induction on the trajectory list. |
-| Correct Ollivier identity in Lean | Requires Riemannian + optimal-transport Mathlib infrastructure. Partial. |
-| Correct Gray tube formula in Lean | Requires Fermi normal coordinates (not yet in Mathlib). |
-| Discrete Ollivier–Ricci convergence on directed hypergraphs | Trillos–Slepčev-style. Substantial. |
-| First Wolfram-specific convergence theorem | Phase 5. Research-level. |
+- [`FINDINGS.md`](FINDINGS.md) — canonical one-line verdict summary
+- [`notes/severity_taxonomy.md`](notes/severity_taxonomy.md) — S1–S6 classification
+- [`notes/corpus_audit.md`](notes/corpus_audit.md) — cross-paper propagation
+- [`notes/continuum_limit_claims.md`](notes/continuum_limit_claims.md) — per-claim verdict
+- [`notes/claims_catalog.md`](notes/claims_catalog.md) — 184-row G1 audit
+- [`notes/{2004,2102,2303}_close_reading.md`](notes/) — per-paper close readings
+- [`results/phase1_selfaudit/`](results/phase1_selfaudit/) — SetReplace ↔ Python agreement
+- [`results/phase2_continuum/`](results/phase2_continuum/) — four-rail refutations of Eq 342 and Eq 344
 
 ## Path on the infrageometry roadmap
 
 - **Phase 0 (audit)**: ✅ done.
-- **Phase 1 (structural theorems)**: partial. T1–T7 done; parallel-layer bound pending.
-- **Phase 2 (correct identities)**: analytical corrections done (refutation files); Lean formalisation pending.
-- **Phase 3 (first continuum-limit theorem)**: **essentially done** at the proof-ingredient level — T19+T20. Packaging pending.
+- **Phase 1 (structural theorems)**: in flight. Edge conservation, in/out degrees, level monotonicity, same-level antichain property done. Full parallel-layer bound (|layer_s| ≤ N/k) requires state-at-each-level tracking.
+- **Phase 2 (correct continuum identities)**: analytical refutations done; Lean statement-level formalisation of correct Ollivier and Gray forms done, with proven disagreement from Gorard's forms on concrete cases (S², S³).
+- **Phase 3 (continuum-limit theorems)**: **two complete examples** — cycle → circle, path → interval — both packaged under the common `GHApproximation` abstraction.
 - **Phase 4 (discrete geometric structures library)**: not started.
 - **Phase 5 (Wolfram-specific convergence)**: not started.
 - **Phase 6 (causal-set infrageometry)**: not started.
+
+## Next concrete directions
+
+1. **2D continuum limit**: scaled 2D lattice → flat torus or unit square. Same template as cycle and path; the product structure adds some work.
+2. **Full parallel-layer bound**: requires an additional trajectory-structure lemma (events only consume earlier-produced expressions); then the state-size tracking argument.
+3. **Start Phase 4**: define `DirectedHypergraph` with a metric-measure-space instance; begin porting Eidi–Jost directed-Ollivier-Ricci.
+4. **A Wolfram-model rule with a proved continuum limit**: even a very simple one (e.g., a rule that builds up a cycle graph) would be a first Phase-5 exemplar.
