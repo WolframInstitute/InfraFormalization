@@ -131,9 +131,26 @@ theorem causal_antisymm_time {d : Nat} {p q : Event d}
   · have : (spaceDist d p q : ℤ) ≤ 0 := by linarith
     omega
 
-/-- A timelike separation: `p ≺ q` and time coordinates strictly differ. -/
+/-- A **timelike** (strict-interior) separation: `q` lies strictly
+inside `p`'s forward cone — the spatial gap is strictly less than the
+time gap. -/
 def Timelike (d : Nat) (p q : Event d) : Prop :=
-  CausalPrecedes d p q ∧ p 0 < q 0
+  (spaceDist d p q : ℤ) < q 0 - p 0
+
+/-- A **null** (light-cone edge) separation: the spatial gap equals
+the time gap and is nonzero. -/
+def Null (d : Nat) (p q : Event d) : Prop :=
+  (spaceDist d p q : ℤ) = q 0 - p 0 ∧ p 0 < q 0
+
+/-- Timelike implies `CausalPrecedes` (forward). -/
+theorem causalPrecedes_of_timelike {d : Nat} {p q : Event d}
+    (h : Timelike d p q) : CausalPrecedes d p q :=
+  le_of_lt h
+
+/-- Null implies `CausalPrecedes` (forward). -/
+theorem causalPrecedes_of_null {d : Nat} {p q : Event d}
+    (h : Null d p q) : CausalPrecedes d p q :=
+  le_of_eq h.1
 
 /-- A spacelike pair: neither causally precedes the other. -/
 def Spacelike (d : Nat) (p q : Event d) : Prop :=
@@ -192,8 +209,10 @@ theorem timelike_trans {d : Nat} {p q r : Event d}
     (hpq : Timelike d p q) (hqr : Timelike d q r) :
     Timelike d p r := by
   unfold Timelike at *
-  refine ⟨causal_trans hpq.1 hqr.1, ?_⟩
-  linarith [hpq.2, hqr.2]
+  have htri : (spaceDist d p r : ℤ)
+            ≤ (spaceDist d p q : ℤ) + (spaceDist d q r : ℤ) := by
+    exact_mod_cast spaceDist_triangle p q r
+  linarith
 
 /-- **Forward cone.** The set of events causally preceded by `p`. -/
 def forwardCone (d : Nat) (p : Event d) : Set (Event d) :=
@@ -209,6 +228,56 @@ theorem forwardCone_upward_closed {d : Nat} (p q r : Event d)
 /-- A point is in its own forward cone. -/
 theorem self_mem_forwardCone {d : Nat} (p : Event d) :
     p ∈ forwardCone d p := causal_refl d p
+
+/-- **Signed Minkowski interval squared** between two events, using L∞
+spatial metric: `τ² := (Δt)² − (Δx_∞)²`. Timelike: positive; null:
+zero; spacelike: negative. -/
+def minkowskiIntervalSq (d : Nat) (p q : Event d) : ℤ :=
+  (q 0 - p 0)^2 - (spaceDist d p q : ℤ)^2
+
+/-- A timelike pair has strictly positive Minkowski interval squared. -/
+theorem minkowskiIntervalSq_pos_of_timelike {d : Nat} {p q : Event d}
+    (h : Timelike d p q) :
+    0 < minkowskiIntervalSq d p q := by
+  unfold minkowskiIntervalSq Timelike at *
+  have hnn : (0 : ℤ) ≤ (spaceDist d p q : ℤ) := Int.natCast_nonneg _
+  have htime' : 0 < q 0 - p 0 := lt_of_le_of_lt hnn h
+  have factor : (q 0 - p 0)^2 - (spaceDist d p q : ℤ)^2
+              = ((q 0 - p 0) - (spaceDist d p q : ℤ))
+                * ((q 0 - p 0) + (spaceDist d p q : ℤ)) := by ring
+  rw [factor]
+  apply mul_pos
+  · linarith
+  · linarith
+
+/-- A null pair has zero Minkowski interval squared. -/
+theorem minkowskiIntervalSq_zero_of_null {d : Nat} {p q : Event d}
+    (h : Null d p q) :
+    minkowskiIntervalSq d p q = 0 := by
+  unfold minkowskiIntervalSq Null at *
+  rw [h.1]
+  ring
+
+/-- A spacelike pair has strictly negative Minkowski interval squared. -/
+theorem minkowskiIntervalSq_neg_of_spacelike {d : Nat} {p q : Event d}
+    (h : Spacelike d p q) :
+    minkowskiIntervalSq d p q < 0 := by
+  unfold minkowskiIntervalSq
+  rw [spacelike_iff] at h
+  obtain ⟨h1, h2⟩ := h
+  -- h1 : q 0 - p 0 < spaceDist d p q
+  -- h2 : p 0 - q 0 < spaceDist d q p
+  have hsymm : (spaceDist d q p : ℤ) = (spaceDist d p q : ℤ) := by
+    rw [spaceDist_symm q p]
+  rw [hsymm] at h2
+  -- Now both: (q 0 - p 0) < spaceDist p q, and -(q 0 - p 0) < spaceDist p q
+  -- So |q 0 - p 0| < spaceDist p q, hence (q 0 - p 0)^2 < (spaceDist p q)^2.
+  have habs : (q 0 - p 0)^2 < (spaceDist d p q : ℤ)^2 := by
+    have h1' : q 0 - p 0 < (spaceDist d p q : ℤ) := h1
+    have h2' : -(q 0 - p 0) < (spaceDist d p q : ℤ) := by linarith
+    have hnn : (0 : ℤ) ≤ (spaceDist d p q : ℤ) := Int.natCast_nonneg _
+    nlinarith
+  linarith
 
 end Infra
 end InfraFormalization

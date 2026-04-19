@@ -98,6 +98,11 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.Infra.spacelike_iff
 #print axioms InfraFormalization.Infra.spacelike_of_equal_time
 #print axioms InfraFormalization.Infra.timelike_trans
+#print axioms InfraFormalization.Infra.causalPrecedes_of_timelike
+#print axioms InfraFormalization.Infra.causalPrecedes_of_null
+#print axioms InfraFormalization.Infra.minkowskiIntervalSq_pos_of_timelike
+#print axioms InfraFormalization.Infra.minkowskiIntervalSq_zero_of_null
+#print axioms InfraFormalization.Infra.minkowskiIntervalSq_neg_of_spacelike
 #print axioms InfraFormalization.Infra.forwardCone_upward_closed
 #print axioms InfraFormalization.Infra.self_mem_forwardCone
 #print axioms InfraFormalization.Infra.trajectoryToEvent_preserves_causal
