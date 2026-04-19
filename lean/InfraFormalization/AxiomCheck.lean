@@ -17,6 +17,7 @@ Never acceptable:
 import InfraFormalization.Demo
 import InfraFormalization.Growth
 import InfraFormalization.ParallelSchedule
+import InfraFormalization.Infra.ScaledCycle
 
 #print axioms InfraFormalization.edge_conservation
 #print axioms InfraFormalization.trajectory_preserves_size
@@ -26,3 +27,7 @@ import InfraFormalization.ParallelSchedule
 #print axioms InfraFormalization.in_degree_eq_lhsSize
 #print axioms InfraFormalization.out_degree_eq_rhsSize
 #print axioms InfraFormalization.balanced_of_conservative
+#print axioms InfraFormalization.Infra.cycleDist_self
+#print axioms InfraFormalization.Infra.cycleDist_symm
+#print axioms InfraFormalization.Infra.cycleDist_le_half
+#print axioms InfraFormalization.Infra.cycleDist_zero_of_small
