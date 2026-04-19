@@ -18,6 +18,10 @@ The stated program: derive GR from hypergraph rewriting. The stated claim in G3:
 | 📘 Glossary | [`GLOSSARY.md`](GLOSSARY.md) — every technical term used |
 | 📋 Next steps | [`NEXT_STEPS.md`](NEXT_STEPS.md) — what's done, in flight, waiting |
 | 🔭 Research program | [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md) — the long-term infrageometry program (audit → correction → positive construction) |
+| 📄 Publications | [`publications/`](publications/) — each subfolder is one paper; incremental (I*) + major (M*) tiers building a tower toward P5–M04 scientific prize |
+| ✅ Milestones | [`MILESTONES.md`](MILESTONES.md) — checkbox tracker across all phases |
+| 🧨 Major flaws | [`MAJOR_FLAWS.md`](MAJOR_FLAWS.md) — the F1–F8 structural flaws (distinct from arithmetic ones) |
+| 🧬 Lean conventions | [`LEAN_PHYSICS.md`](LEAN_PHYSICS.md) — alignment with HepLean and Mathlib conventions |
 | 📊 Status | [`STATUS.md`](STATUS.md) — live snapshot: 20 machine-verified theorems, axiom-clean; where we are on the roadmap |
 | 🗺 Methodology | [`notes/plan.md`](notes/plan.md) — 7-phase verification plan |
 | 🧮 Severity | [`notes/severity_taxonomy.md`](notes/severity_taxonomy.md) — S1–S6 taxonomy; "is it a lie?" discussion |

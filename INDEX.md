@@ -11,6 +11,10 @@ Complete navigation for `infra_formalization`. This file is hand-maintained; eve
 | [`GLOSSARY.md`](GLOSSARY.md) | Definitions of every technical term used in this project (causal invariance, branchial graph, tetrad, Ollivier–Ricci, infrageometry, etc.). |
 | [`FINDINGS.md`](FINDINGS.md) | Canonical one-line summary of every refuted / verified / open claim, grouped by severity. |
 | [`NEXT_STEPS.md`](NEXT_STEPS.md) | What's done, what's in flight, what's waiting for a decision. |
+| [`MILESTONES.md`](MILESTONES.md) | Checkbox tracker across all 7 phases, with `[x]` / `[ ]` / `[~]` / `[!]`. |
+| [`MAJOR_FLAWS.md`](MAJOR_FLAWS.md) | F1–F8 structural flaws in the Gorard corpus, separated from arithmetic errors. |
+| [`LEAN_PHYSICS.md`](LEAN_PHYSICS.md) | Survey of existing Lean-physics conventions; how we align. |
+| [`publications/`](publications/) | Each subfolder = one paper (I = incremental, M = major). |
 
 ## Methodology and synthesis
 
