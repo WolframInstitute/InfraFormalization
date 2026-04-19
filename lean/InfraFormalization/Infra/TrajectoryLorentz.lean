@@ -66,5 +66,21 @@ theorem same_level_not_causal {sys : RewritingSystem P}
     isCausalPred τ j i = false :=
   no_causal_edge_within_level τ j i hlt h_same_level
 
+/-- **Master bridge theorem.** The full wiring from a trajectory's
+(Prop-level) causal-precedence relation to the Lorentz-lattice
+causal-precedence relation under the level-as-time embedding:
+
+  `causallyPrecedes τ i j`  (there is a hyperedge produced at i and
+                             consumed at j)
+  ⇒
+  `CausalPrecedes 0 (trajectoryToEvent τ i) (trajectoryToEvent τ j)`
+  (the Minkowski causal-order constraint holds in the embedding). -/
+theorem causallyPrecedes_implies_minkowski {sys : RewritingSystem P}
+    {init : Hypergraph V} (τ : Trajectory sys init) (i j : Nat)
+    (h : causallyPrecedes τ i j) :
+    CausalPrecedes 0 (trajectoryToEvent τ i) (trajectoryToEvent τ j) := by
+  obtain ⟨hlt, _, hcp⟩ := (causallyPrecedes_iff_isCausalPred τ i j).mp h
+  exact trajectoryToEvent_preserves_causal τ i j hlt hcp
+
 end Infra
 end InfraFormalization
