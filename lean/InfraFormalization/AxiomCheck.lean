@@ -149,6 +149,7 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.laplacian_self_adjoint
 #print axioms InfraFormalization.dirichlet_form
 #print axioms InfraFormalization.laplacian_neg_psd
+#print axioms InfraFormalization.laplacian_sum_zero
 #print axioms InfraFormalization.cycleLaplacian_add
 #print axioms InfraFormalization.cycleLaplacian_smul
 #print axioms InfraFormalization.cycleLaplacian_const

@@ -246,4 +246,39 @@ theorem laplacian_neg_psd (N : Neighbourhood V) (f : V → ℝ) :
     exact sq_nonneg _
   linarith
 
+/-- **Conservation of the integral.** The total of the Laplacian over
+all vertices is zero. This is the discrete analog of the divergence
+theorem `∫_M Δf dV = 0` on a closed manifold (no boundary), and it
+will give conservation of total mass under the discrete heat equation
+`u' = -Δ u`.
+
+Proof: for each edge `(v, w)` with `v ∼ w`, the term `f(w) - f(v)`
+appearing in `Δf(v)` cancels against `f(v) - f(w)` appearing in
+`Δf(w)`. The `nbhd_sum_swap` lemma is exactly what we need to make
+the cancellation precise. -/
+theorem laplacian_sum_zero (N : Neighbourhood V) (f : V → ℝ) :
+    ∑ v : V, laplacian N f v = 0 := by
+  unfold laplacian
+  -- ∑_v ∑_{w ∈ N(v)} (f w - f v) = -∑_v ∑_{w ∈ N(v)} (f v - f w).
+  have swap := nbhd_sum_swap N (fun v w => f w - f v)
+  -- swap : ∑_v ∑_{w ∈ N(v)} (f w - f v) = ∑_v ∑_{w ∈ N(v)} (f v - f w).
+  have key : (∑ v : V, ∑ w ∈ N.nbhd v, (f w - f v))
+           + (∑ v : V, ∑ w ∈ N.nbhd v, (f v - f w)) = 0 := by
+    rw [← Finset.sum_add_distrib]
+    have step : ∀ v : V,
+        (∑ w ∈ N.nbhd v, (f w - f v)) + (∑ w ∈ N.nbhd v, (f v - f w))
+        = 0 := by
+      intro v
+      rw [← Finset.sum_add_distrib]
+      apply Finset.sum_eq_zero
+      intros w _
+      ring
+    rw [show (fun v : V =>
+              (∑ w ∈ N.nbhd v, (f w - f v)) + (∑ w ∈ N.nbhd v, (f v - f w)))
+          = (fun _ : V => (0 : ℝ)) from funext step]
+    simp
+  -- key + swap give 2·∑ = 0, hence ∑ = 0.
+  have := swap
+  linarith
+
 end InfraFormalization
