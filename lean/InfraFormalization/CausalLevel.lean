@@ -165,4 +165,39 @@ theorem same_level_ordered_antichain {sys : RewritingSystem P} {init : Hypergrap
     isCausalPred τ j i = false :=
   no_causal_edge_within_level τ j i hlt h_same_level
 
+/-- **Bridge lemma.** The `Prop`-level `causallyPrecedes` from `Causal.lean`
+agrees with the `Bool`-level `isCausalPred` from this file. Specifically,
+for indices in range, `causallyPrecedes τ i j ↔ isCausalPred τ i j = true`.
+
+The argument-order convention matches: in both, the first index is the
+causal predecessor, the second is the successor. -/
+theorem causallyPrecedes_iff_isCausalPred
+    {sys : RewritingSystem P} {init : Hypergraph V}
+    (τ : Trajectory sys init) (i j : Nat) :
+    causallyPrecedes τ i j ↔
+      (i < j ∧ j < τ.applications.length ∧ isCausalPred τ i j = true) := by
+  unfold causallyPrecedes isCausalPred
+  constructor
+  · rintro ⟨hlt, hj, e, hprod, hcons⟩
+    refine ⟨hlt, hj, ?_⟩
+    have hi : i < τ.applications.length := by omega
+    have hband : i < τ.applications.length ∧ j < τ.applications.length :=
+      ⟨hi, hj⟩
+    rw [dif_pos hband]
+    letI := Classical.propDecidable (∃ e : Hyperedge V,
+      e ∈ (τ.applications.get ⟨i, hband.1⟩).2.2.produced ∧
+      e ∈ (τ.applications.get ⟨j, hband.2⟩).2.2.consumed)
+    exact decide_eq_true ⟨e, hprod, hcons⟩
+  · rintro ⟨hlt, hj, hcp⟩
+    have hi : i < τ.applications.length := by omega
+    have hband : i < τ.applications.length ∧ j < τ.applications.length :=
+      ⟨hi, hj⟩
+    rw [dif_pos hband] at hcp
+    letI := Classical.propDecidable (∃ e : Hyperedge V,
+      e ∈ (τ.applications.get ⟨i, hband.1⟩).2.2.produced ∧
+      e ∈ (τ.applications.get ⟨j, hband.2⟩).2.2.consumed)
+    have := of_decide_eq_true hcp
+    obtain ⟨e, hprod, hcons⟩ := this
+    exact ⟨hlt, hj, e, hprod, hcons⟩
+
 end InfraFormalization

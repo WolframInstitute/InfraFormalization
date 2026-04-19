@@ -70,6 +70,7 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.level_add_one_le_of_isCausalPred
 #print axioms InfraFormalization.no_causal_edge_within_level
 #print axioms InfraFormalization.same_level_ordered_antichain
+#print axioms InfraFormalization.causallyPrecedes_iff_isCausalPred
 #print axioms InfraFormalization.Infra.ollivier_vs_gorard_equivalence_requires_ric_eq_scalar
 #print axioms InfraFormalization.Infra.pathDist_triangle
 #print axioms InfraFormalization.Infra.pathEmbed_isometry
