@@ -70,6 +70,7 @@ Grouped by phase (see [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md)). Each milestone ei
 - [x] `spacelike_of_equal_time`: simultaneous distinct events are spacelike
 - [x] `timelike_trans`: timelike relations compose
 - [x] `forwardCone` definition + upward-closure + `self_mem_forwardCone`
+- [x] **Bridging theorem** (`Infra/TrajectoryLorentz.lean`): `trajectoryToEvent τ` maps causal-DAG events to `Event 0` via the level function; `i ≺_causal j → trajectoryToEvent τ i ≺ trajectoryToEvent τ j` in the Lorentz lattice — first wiring between rewriting-side and Minkowski-side formalisms
 - [ ] Conformal limit to continuum Minkowski (Phase 5 research)
 - [ ] Discrete light-cone growth rate → `c = 1` (Phase 5)
 

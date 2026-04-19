@@ -30,6 +30,7 @@ import InfraFormalization.Infra.GHApprox
 import InfraFormalization.Infra.ScaledTorus
 import InfraFormalization.Infra.ScaledTorusD
 import InfraFormalization.Infra.LorentzLattice
+import InfraFormalization.Infra.TrajectoryLorentz
 import InfraFormalization.Refutations.F1NoMetric
 import InfraFormalization.Refutations.F2Orthonormality
 import InfraFormalization.Refutations.F3Tautology
@@ -99,6 +100,8 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.Infra.timelike_trans
 #print axioms InfraFormalization.Infra.forwardCone_upward_closed
 #print axioms InfraFormalization.Infra.self_mem_forwardCone
+#print axioms InfraFormalization.Infra.trajectoryToEvent_preserves_causal
+#print axioms InfraFormalization.Infra.same_level_not_causal
 #print axioms InfraFormalization.Refutations.gorard_dim_preservation_is_euler_lagrange
 #print axioms InfraFormalization.Refutations.gorard_section_3_3_contentless
 #print axioms InfraFormalization.Refutations.gorard_causal_invariance_is_general_covariance
