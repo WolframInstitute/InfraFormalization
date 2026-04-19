@@ -145,6 +145,8 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.discreteInner_laplacian_right
 #print axioms InfraFormalization.nbhd_sum_swap
 #print axioms InfraFormalization.laplacian_self_adjoint
+#print axioms InfraFormalization.dirichlet_form
+#print axioms InfraFormalization.laplacian_neg_psd
 #print axioms InfraFormalization.Refutations.gorard_dim_preservation_is_euler_lagrange
 #print axioms InfraFormalization.Refutations.gorard_section_3_3_contentless
 #print axioms InfraFormalization.Refutations.gorard_causal_invariance_is_general_covariance

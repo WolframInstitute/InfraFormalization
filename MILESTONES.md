@@ -70,7 +70,7 @@ Grouped by phase (see [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md)). Each milestone ei
 - [x] Inner product symmetry, bilinearity.
 - [x] `nbhd_sum_swap` — edge-sum swap lemma under symmetric adjacency.
 - [x] **`laplacian_self_adjoint`** — `⟪Δ f, g⟫ = ⟪f, Δ g⟫` (`DiscreteCalculusSymm.lean`).
-- [ ] Positivity of `-Δ` (quadratic form `⟪f, -Δ f⟫ ≥ 0`).
+- [x] Positivity of `-Δ`: **`dirichlet_form`** + **`laplacian_neg_psd`** — `⟪f, -Δ f⟫ = ½ ∑ (f(w) - f(v))² ≥ 0`.
 - [ ] Heat semigroup on a finite graph as a finite-dim ODE.
 - [ ] Scaled cycle Laplacian → 1D `d²/dx²` (Rung 2 entry).
 

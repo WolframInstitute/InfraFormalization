@@ -16,6 +16,7 @@ Dirichlet form on a Riemannian manifold.
 
 import InfraFormalization.DiscreteCalculus
 import Mathlib.Algebra.BigOperators.Group.Finset.Sigma
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
 
 namespace InfraFormalization
 
@@ -166,6 +167,83 @@ theorem laplacian_self_adjoint (N : Neighbourhood V) (f g : V → ℝ) :
   -- A = A' and B = B' from swaps.
   have hAA' : A = A' := swap_lhs
   have hBB' : B = B' := swap_rhs
+  linarith
+
+/-- **Dirichlet form identity.** The quadratic form `⟪f, -Δ f⟫` equals
+half the sum of squared edge differences:
+
+  `⟪f, -Δ f⟫ = ½ ∑_v ∑_{w ∈ N(v)} (f(w) - f(v))²`.
+
+This is the discrete analog of the Dirichlet energy
+`½ ∫_M |∇f|²` on a Riemannian manifold, and makes the
+positive-semidefiniteness of `-Δ` manifest. -/
+theorem dirichlet_form (N : Neighbourhood V) (f : V → ℝ) :
+    ⟪f, fun v => -laplacian N f v⟫
+    = (1 / 2) * ∑ v : V, ∑ w ∈ N.nbhd v, (f w - f v)^2 := by
+  -- Expand ⟪f, -Δ f⟫ = -⟪f, Δ f⟫ = -∑_v ∑_{w ∈ N(v)} f(v) · (f(w) - f(v)).
+  have expand : ⟪f, fun v => -laplacian N f v⟫
+              = - ∑ v : V, ∑ w ∈ N.nbhd v, f v * (f w - f v) := by
+    unfold discreteInner laplacian
+    rw [← Finset.sum_neg_distrib]
+    refine Finset.sum_congr rfl (fun v _ => ?_)
+    rw [mul_neg, Finset.mul_sum]
+  rw [expand]
+  -- Target: - ∑_v ∑_{w ∈ N(v)} f v · (f w - f v) = (1/2) · ∑ (f w - f v)².
+  -- Use swap: ∑ f v · (f w - f v) = ∑ f w · (f v - f w) = -∑ f w · (f w - f v).
+  -- So 2 · ∑ f v · (f w - f v) = ∑ f v · (f w - f v) - ∑ f w · (f w - f v)
+  --                             = ∑ (f v - f w) · (f w - f v)
+  --                             = -∑ (f w - f v)².
+  have swap_val : ∑ v : V, ∑ w ∈ N.nbhd v, f v * (f w - f v)
+                = ∑ v : V, ∑ w ∈ N.nbhd v, f w * (f v - f w) :=
+    nbhd_sum_swap N (fun v w => f v * (f w - f v))
+  -- Combine.
+  have combine_double :
+      2 * (∑ v : V, ∑ w ∈ N.nbhd v, f v * (f w - f v))
+    = - ∑ v : V, ∑ w ∈ N.nbhd v, (f w - f v)^2 := by
+    have step : 2 * (∑ v : V, ∑ w ∈ N.nbhd v, f v * (f w - f v))
+              = (∑ v : V, ∑ w ∈ N.nbhd v, f v * (f w - f v))
+              + (∑ v : V, ∑ w ∈ N.nbhd v, f w * (f v - f w)) := by
+      rw [two_mul, swap_val]
+    rw [step]
+    -- Goal:
+    --   (∑_v ∑_{w ∈ N(v)} f v (f w - f v)) + (∑_v ∑_{w ∈ N(v)} f w (f v - f w))
+    --   = -∑_v ∑_{w ∈ N(v)} (f w - f v)^2.
+    -- Combine to a single double sum on each side.
+    have lhs_combine :
+        (∑ v : V, ∑ w ∈ N.nbhd v, f v * (f w - f v))
+        + (∑ v : V, ∑ w ∈ N.nbhd v, f w * (f v - f w))
+        = ∑ v : V, ∑ w ∈ N.nbhd v,
+            (f v * (f w - f v) + f w * (f v - f w)) := by
+      rw [← Finset.sum_add_distrib]
+      refine Finset.sum_congr rfl (fun v _ => ?_)
+      rw [Finset.sum_add_distrib]
+    have rhs_combine :
+        - ∑ v : V, ∑ w ∈ N.nbhd v, (f w - f v)^2
+        = ∑ v : V, ∑ w ∈ N.nbhd v, -((f w - f v)^2) := by
+      rw [← Finset.sum_neg_distrib]
+      refine Finset.sum_congr rfl (fun v _ => ?_)
+      rw [Finset.sum_neg_distrib]
+    rw [lhs_combine, rhs_combine]
+    apply Finset.sum_congr rfl
+    intros v _
+    apply Finset.sum_congr rfl
+    intros w _
+    ring
+  -- Now: - ∑ f v · (f w - f v) = (1/2) · ∑ (f w - f v)^2.
+  linarith
+
+/-- **Positive semidefiniteness of the (negative) Laplacian.**
+`⟪f, -Δ f⟫ ≥ 0` — the discrete Laplacian is a negative operator in the
+sense of the counting inner product. -/
+theorem laplacian_neg_psd (N : Neighbourhood V) (f : V → ℝ) :
+    0 ≤ ⟪f, fun v => -laplacian N f v⟫ := by
+  rw [dirichlet_form]
+  have hsum_nn : 0 ≤ ∑ v : V, ∑ w ∈ N.nbhd v, (f w - f v)^2 := by
+    apply Finset.sum_nonneg
+    intros v _
+    apply Finset.sum_nonneg
+    intros w _
+    exact sq_nonneg _
   linarith
 
 end InfraFormalization
