@@ -139,20 +139,63 @@ theorem latticeEmbed_covers {n : Nat} (hn : 0 < n)
         rw [step1, h_expand]; exact h_right_close
       exact le_trans (min_le_right _ _) h_close_to_1
 
-/-! **Isometry property (to-prove).** For the full cycle-to-circle
-Gromov–Hausdorff bound, we additionally need that the lattice
-embedding `φ_n` is an isometry from `(Fin n, cycleDist / n)` into
-`(ℝ, circleDist)`:
-
-  `circleDist (latticeEmbed n i) (latticeEmbed n j) = cycleDist n i j / n`.
-
-The proof is a straightforward computation (both sides evaluate to
-`min(|i-j|, n-|i-j|)/n` when `0 ≤ i, j < n`), but requires careful
-`Nat ↔ Real` coercion machinery. We state it as a target and leave
-its proof for the next iteration. -/
-def LatticeEmbedIsometry (n : Nat) : Prop :=
-  ∀ i j : Fin n,
-    circleDist (latticeEmbed n i) (latticeEmbed n j) = (cycleDist n i j : ℝ) / n
+/-- **Isometry property.** The lattice embedding is an isometry from
+the scaled cycle metric `cycleDist / n` into the circle metric. -/
+theorem latticeEmbed_isometry {n : Nat} (hn : 0 < n) (i j : Fin n) :
+    circleDist (latticeEmbed n i) (latticeEmbed n j) =
+      (cycleDist n i j : ℝ) / n := by
+  have hn_pos : (0 : ℝ) < n := by exact_mod_cast hn
+  have hn_inv_pos : (0 : ℝ) < 1 / n := by positivity
+  have hi : i.val < n := i.isLt
+  have hj : j.val < n := j.isLt
+  -- Symmetrise: WLOG i.val ≤ j.val.
+  suffices h : ∀ i j : Fin n, i.val ≤ j.val →
+      circleDist (latticeEmbed n i) (latticeEmbed n j) =
+        (cycleDist n i j : ℝ) / n by
+    by_cases hij : i.val ≤ j.val
+    · exact h i j hij
+    · push_neg at hij
+      have hji : j.val ≤ i.val := le_of_lt hij
+      have e1 : circleDist (latticeEmbed n i) (latticeEmbed n j) =
+                circleDist (latticeEmbed n j) (latticeEmbed n i) := circleDist_symm _ _
+      have e2 : cycleDist n i j = cycleDist n j i := cycleDist_symm i j
+      rw [e1, e2]; exact h j i hji
+  -- The i.val ≤ j.val case.
+  intro i j hij
+  have hi : i.val < n := i.isLt
+  have hj : j.val < n := j.isLt
+  -- Let d := j.val - i.val. Then 0 ≤ d ≤ n.
+  set d : ℕ := j.val - i.val with hd_def
+  have hd_le : d ≤ n := by
+    simp [hd_def]; omega
+  have hd_nn : (0 : ℝ) ≤ (d : ℝ) := Nat.cast_nonneg _
+  -- First: |i/n - j/n| = d/n.
+  have h_abs_eq : |(i.val : ℝ) / n - (j.val : ℝ) / n| = (d : ℝ) / n := by
+    have hji_real : (i.val : ℝ) / n ≤ (j.val : ℝ) / n := by
+      apply div_le_div_of_nonneg_right
+      · exact_mod_cast hij
+      · exact le_of_lt hn_pos
+    rw [abs_sub_comm, abs_of_nonneg (sub_nonneg.mpr hji_real)]
+    rw [hd_def]; rw [Nat.cast_sub hij]; ring
+  -- Second: 1 - d/n = (n - d)/n. [Real subtraction, using d ≤ n.]
+  have h_compl_eq : (1 : ℝ) - (d : ℝ) / n = ((n - d : ℕ) : ℝ) / n := by
+    rw [Nat.cast_sub hd_le]; field_simp
+  -- Expand the definition of cycleDist.
+  have h_cycle : cycleDist n i j = min d (n - d) := by
+    simp [cycleDist, hd_def, hij]
+  -- Now convert Nat min to Real.
+  have h_cycle_cast : ((cycleDist n i j : ℕ) : ℝ) = min ((d : ℝ)) ((n - d : ℕ) : ℝ) := by
+    rw [h_cycle, Nat.cast_min]
+  -- Putting it all together.
+  unfold circleDist latticeEmbed
+  rw [h_abs_eq, h_compl_eq, h_cycle_cast]
+  -- Goal: min (d/n) ((n-d)/n) = min d (n-d) / n
+  -- Apply: the function x ↦ x/n is monotone for n > 0, so it commutes with min.
+  have h_min_div : min ((d : ℝ) / n) (((n - d : ℕ) : ℝ) / n) =
+                   min ((d : ℝ)) (((n - d : ℕ) : ℝ)) / n := by
+    rw [div_eq_mul_inv, div_eq_mul_inv, div_eq_mul_inv]
+    rw [← min_mul_of_nonneg _ _ (by positivity : (0 : ℝ) ≤ (n : ℝ)⁻¹)]
+  exact h_min_div
 
 end Infra
 end InfraFormalization

@@ -44,3 +44,4 @@ import InfraFormalization.Infra.Circle
 #print axioms InfraFormalization.Infra.circleDist_le_half
 #print axioms InfraFormalization.Infra.latticeEmbed_mem_unit_interval
 #print axioms InfraFormalization.Infra.latticeEmbed_covers
+#print axioms InfraFormalization.Infra.latticeEmbed_isometry
