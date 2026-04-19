@@ -27,6 +27,7 @@ import InfraFormalization.Infra.ScaledPath
 import InfraFormalization.Infra.GrayTubeStatement
 import InfraFormalization.Infra.GHApprox
 import InfraFormalization.Infra.ScaledTorus
+import InfraFormalization.Refutations.F3Tautology
 
 #print axioms InfraFormalization.edge_conservation
 #print axioms InfraFormalization.trajectory_preserves_size
@@ -73,3 +74,5 @@ import InfraFormalization.Infra.ScaledTorus
 #print axioms InfraFormalization.Infra.torusEmbed_isometry
 #print axioms InfraFormalization.Infra.torusEmbed_covers
 #print axioms InfraFormalization.Infra.torus_gh_bound
+#print axioms InfraFormalization.Refutations.gorard_dim_preservation_is_euler_lagrange
+#print axioms InfraFormalization.Refutations.gorard_section_3_3_contentless
