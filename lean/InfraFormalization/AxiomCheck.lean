@@ -31,6 +31,7 @@ import InfraFormalization.Infra.ScaledTorus
 import InfraFormalization.Infra.ScaledTorusD
 import InfraFormalization.Infra.LorentzLattice
 import InfraFormalization.Infra.TrajectoryLorentz
+import InfraFormalization.Infra.TrajectoryLorentzD
 import InfraFormalization.Refutations.F1NoMetric
 import InfraFormalization.Refutations.F2Orthonormality
 import InfraFormalization.Refutations.F3Tautology
@@ -111,6 +112,10 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.Infra.causallyPrecedes_implies_minkowski
 #print axioms InfraFormalization.Infra.causallyPrecedes_implies_timelike
 #print axioms InfraFormalization.Infra.trajectoryToEvent_lossy
+#print axioms InfraFormalization.Infra.fullEmbed_preserves_causal
+#print axioms InfraFormalization.Infra.fullEmbed_forward_cone
+#print axioms InfraFormalization.Infra.fullEmbed_timelike
+#print axioms InfraFormalization.Infra.same_level_spacelike_of_spatial_distinct
 #print axioms InfraFormalization.Refutations.gorard_dim_preservation_is_euler_lagrange
 #print axioms InfraFormalization.Refutations.gorard_section_3_3_contentless
 #print axioms InfraFormalization.Refutations.gorard_causal_invariance_is_general_covariance

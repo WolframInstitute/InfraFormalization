@@ -78,6 +78,13 @@ Grouped by phase (see [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md)). Each milestone ei
   - `causallyPrecedes_implies_minkowski`: full chain `causallyPrecedes → CausalPrecedes`
   - `causallyPrecedes_implies_timelike`: strengthened — gives `Timelike` (strict interior)
   - `trajectoryToEvent_lossy`: same-level events collapse; lossiness is F1/F2-style
+- [x] **d-dim bridging, conditional on a chosen spatial embedding** (`Infra/TrajectoryLorentzD.lean`):
+  - `SpatialEmbedding d := ℕ → Fin d → ℤ` — the F1-missing data as an explicit parameter.
+  - `fullEmbed τ φ i`: full spacetime embedding (time = level, space = φ).
+  - `LightConeCompatible τ φ`: the per-rule, per-embedding compatibility hypothesis.
+  - `fullEmbed_preserves_causal`: conditional d-dim bridging — under compatibility, `causallyPrecedes → CausalPrecedes d`.
+  - `StrictlyTimelikeCompatible τ φ`, `fullEmbed_timelike`: strict-interior version.
+  - `same_level_spacelike_of_spatial_distinct`: same-level events that are spatially distinct under φ become `Spacelike` in the Lorentz lattice — overcoming the 1+0-dim lossiness.
 - [ ] Conformal limit to continuum Minkowski (Phase 5 research)
 - [ ] Discrete light-cone growth rate → `c = 1` (Phase 5)
 

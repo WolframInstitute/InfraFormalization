@@ -14,6 +14,7 @@ Complete navigation for `infra_formalization`. This file is hand-maintained; eve
 | [`MILESTONES.md`](MILESTONES.md) | Checkbox tracker across all 7 phases, with `[x]` / `[ ]` / `[~]` / `[!]`. |
 | [`MAJOR_FLAWS.md`](MAJOR_FLAWS.md) | F1–F8 structural flaws in the Gorard corpus, separated from arithmetic errors. |
 | [`LEAN_PHYSICS.md`](LEAN_PHYSICS.md) | Survey of existing Lean-physics conventions; how we align. |
+| [`RULE_SEARCH.md`](RULE_SEARCH.md) | How the Lean corpus serves as a verifier/screener in a rule-search pipeline — signatures, screening tests, certificate scaffolding. |
 | [`publications/`](publications/) | Each subfolder = one paper (I = incremental, M = major). |
 
 ## Methodology and synthesis
