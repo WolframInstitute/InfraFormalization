@@ -55,6 +55,12 @@ Grouped by phase (see [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md)). Each milestone ei
 - [x] F5: "becomes" under-determined — two natural convergence notions disagree (`Refutations/F5Illdefined.lean`)
 - [ ] F5': concrete counterexample — a rule whose discrete sum demonstrably does not GH-converge to an EH-style integral (stretch goal)
 
+### Higher-dim continuum limits
+- [x] 1D cycle → circle GH bound (`Infra/ScaledCycle.lean`, `Infra/GHBound.lean`)
+- [x] 1D path → interval GH bound (`Infra/ScaledPath.lean`)
+- [x] 2D lattice → 2-torus GH bound (`Infra/ScaledTorus.lean`)
+- [x] (d+1)D lattice → (d+1)-torus GH bound, arbitrary `d ≥ 0` (`Infra/ScaledTorusD.lean`)
+
 ### Branchial / multiway skeleton (QM bridge groundwork)
 - [x] `BranchialRelated sys s₁ s₂`: shared predecessor relation (`Branchial.lean`)
 - [x] Symmetry of `BranchialRelated`
