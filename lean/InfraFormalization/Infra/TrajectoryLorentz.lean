@@ -82,5 +82,24 @@ theorem causallyPrecedes_implies_minkowski {sys : RewritingSystem P}
   obtain ⟨hlt, _, hcp⟩ := (causallyPrecedes_iff_isCausalPred τ i j).mp h
   exact trajectoryToEvent_preserves_causal τ i j hlt hcp
 
+/-- **Strengthened master theorem.** In the 1+0-dim embedding,
+`causallyPrecedes` gives a strict *timelike* separation — the time
+coordinate strictly increases because the level function does. Since
+there are no spatial coordinates in dimension 0, the strict time
+increase alone suffices for the timelike classification. -/
+theorem causallyPrecedes_implies_timelike {sys : RewritingSystem P}
+    {init : Hypergraph V} (τ : Trajectory sys init) (i j : Nat)
+    (h : causallyPrecedes τ i j) :
+    Timelike 0 (trajectoryToEvent τ i) (trajectoryToEvent τ j) := by
+  unfold Timelike
+  rw [trajectoryToEvent_time, trajectoryToEvent_time, spaceDist_zero_dim]
+  obtain ⟨hlt, _, hcp⟩ := (causallyPrecedes_iff_isCausalPred τ i j).mp h
+  have hmono : level τ i + 1 ≤ level τ j :=
+    level_add_one_le_of_isCausalPred τ i j hlt hcp
+  have : level τ i < level τ j := by omega
+  have : (level τ i : ℤ) < (level τ j : ℤ) := by exact_mod_cast this
+  simp only [Nat.cast_zero]
+  linarith
+
 end Infra
 end InfraFormalization
