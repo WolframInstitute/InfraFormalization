@@ -139,5 +139,20 @@ theorem latticeEmbed_covers {n : Nat} (hn : 0 < n)
         rw [step1, h_expand]; exact h_right_close
       exact le_trans (min_le_right _ _) h_close_to_1
 
+/-! **Isometry property (to-prove).** For the full cycle-to-circle
+Gromov–Hausdorff bound, we additionally need that the lattice
+embedding `φ_n` is an isometry from `(Fin n, cycleDist / n)` into
+`(ℝ, circleDist)`:
+
+  `circleDist (latticeEmbed n i) (latticeEmbed n j) = cycleDist n i j / n`.
+
+The proof is a straightforward computation (both sides evaluate to
+`min(|i-j|, n-|i-j|)/n` when `0 ≤ i, j < n`), but requires careful
+`Nat ↔ Real` coercion machinery. We state it as a target and leave
+its proof for the next iteration. -/
+def LatticeEmbedIsometry (n : Nat) : Prop :=
+  ∀ i j : Fin n,
+    circleDist (latticeEmbed n i) (latticeEmbed n j) = (cycleDist n i j : ℝ) / n
+
 end Infra
 end InfraFormalization
