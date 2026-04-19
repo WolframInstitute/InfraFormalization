@@ -61,6 +61,15 @@ Grouped by phase (see [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md)). Each milestone ei
 - [x] 2D lattice → 2-torus GH bound (`Infra/ScaledTorus.lean`)
 - [x] (d+1)D lattice → (d+1)-torus GH bound, arbitrary `d ≥ 0` (`Infra/ScaledTorusD.lean`)
 
+### Discrete Lorentzian structure (first ingredient of GR bridge)
+- [x] Event type `Fin (d+1) → ℤ` on cubic lattice (`Infra/LorentzLattice.lean`)
+- [x] Spatial L∞ distance `spaceDist`; self, symm, triangle
+- [x] `CausalPrecedes p q`: forward-light-cone relation
+- [x] Reflexivity, transitivity, antisymmetry-in-time
+- [x] Timelike / spacelike classification; `causal_or_spacelike` trichotomy
+- [ ] Conformal limit to continuum Minkowski (Phase 5 research)
+- [ ] Discrete light-cone growth rate → `c = 1` (Phase 5)
+
 ### Branchial / multiway skeleton (QM bridge groundwork)
 - [x] `BranchialRelated sys s₁ s₂`: shared predecessor relation (`Branchial.lean`)
 - [x] Symmetry of `BranchialRelated`

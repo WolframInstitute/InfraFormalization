@@ -29,6 +29,7 @@ import InfraFormalization.Infra.GrayTubeStatement
 import InfraFormalization.Infra.GHApprox
 import InfraFormalization.Infra.ScaledTorus
 import InfraFormalization.Infra.ScaledTorusD
+import InfraFormalization.Infra.LorentzLattice
 import InfraFormalization.Refutations.F1NoMetric
 import InfraFormalization.Refutations.F2Orthonormality
 import InfraFormalization.Refutations.F3Tautology
@@ -86,6 +87,14 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.Infra.dTorusEmbed_isometry
 #print axioms InfraFormalization.Infra.dTorusEmbed_covers
 #print axioms InfraFormalization.Infra.dTorus_gh_bound
+#print axioms InfraFormalization.Infra.spaceDist_self
+#print axioms InfraFormalization.Infra.spaceDist_symm
+#print axioms InfraFormalization.Infra.spaceDist_triangle
+#print axioms InfraFormalization.Infra.causal_refl
+#print axioms InfraFormalization.Infra.causal_trans
+#print axioms InfraFormalization.Infra.causal_antisymm_time
+#print axioms InfraFormalization.Infra.causal_or_spacelike
+#print axioms InfraFormalization.Infra.spacelike_iff
 #print axioms InfraFormalization.Refutations.gorard_dim_preservation_is_euler_lagrange
 #print axioms InfraFormalization.Refutations.gorard_section_3_3_contentless
 #print axioms InfraFormalization.Refutations.gorard_causal_invariance_is_general_covariance
