@@ -1,0 +1,12 @@
+\contentsline {section}{\numberline {1}Introduction}{3}{section.1}%
+\contentsline {section}{\numberline {2}The Z4 Formulation with Constraint Damping}{6}{section.2}%
+\contentsline {section}{\numberline {3}The Conformal and Covariant Z4 Formulation with Gauge Conditions}{14}{section.3}%
+\contentsline {section}{\numberline {4}Numerical Integration and Refinement Algorithms}{26}{section.4}%
+\contentsline {section}{\numberline {5}Numerical Convergence Tests}{40}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Static Schwarzschild Black Hole}{40}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Rapidly Rotating Kerr Black Hole}{46}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Maximally Extended Schwarzschild Black Hole (Einstein-Rosen Bridge)}{56}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}Head-On Collision of Two Schwarzschild Black Holes (Convergence Test)}{63}{subsection.5.4}%
+\contentsline {subsection}{\numberline {5.5}Head-On Collision of Two Rapidly Rotating Kerr Black Holes (Angular Momentum Test)}{80}{subsection.5.5}%
+\contentsline {section}{\numberline {6}Comparison to Pure Wolfram Model Evolution}{86}{section.6}%
+\contentsline {section}{\numberline {7}Concluding Remarks}{119}{section.7}%

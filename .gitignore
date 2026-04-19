@@ -1,0 +1,17 @@
+# Lean build artifacts
+lean/.lake/
+lean/lake-manifest.json
+lean/build/
+
+# Paper binaries (large; reproducibly fetchable from arxiv)
+papers/*.pdf
+papers/*.txt
+papers/tex_*/NumericalRelativity*.png
+papers/tex_*/*.pdf
+papers/tex_*/src.tar.gz
+
+# Temporary / scratch
+data/
+reports/
+*.log
+*~
