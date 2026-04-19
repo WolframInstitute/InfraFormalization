@@ -33,6 +33,7 @@ import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Data.Real.Basic
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
+import Mathlib.Algebra.Module.LinearMap.Basic
 
 namespace InfraFormalization
 
@@ -158,5 +159,19 @@ theorem discreteInner_laplacian_right (N : Neighbourhood V) (f g : V → ℝ) :
   apply Finset.sum_congr rfl
   intros v _
   rw [Finset.mul_sum]
+
+/-- The graph Laplacian as a **linear map** on `V → ℝ`. This makes it
+a first-class object for Mathlib's linear-algebra / spectral theory. -/
+def laplacianLinear (N : Neighbourhood V) : (V → ℝ) →ₗ[ℝ] (V → ℝ) where
+  toFun f := laplacian N f
+  map_add' f g := by
+    funext v
+    exact laplacian_add N f g v
+  map_smul' c f := by
+    funext v
+    exact laplacian_smul N c f v
+
+@[simp] theorem laplacianLinear_apply (N : Neighbourhood V) (f : V → ℝ) :
+    laplacianLinear N f = laplacian N f := rfl
 
 end InfraFormalization

@@ -68,6 +68,7 @@ Grouped by phase (see [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md)). Each milestone ei
 - [x] Graph Laplacian, discrete inner product (`DiscreteCalculus.lean`).
 - [x] Laplacian linearity (`laplacian_add`, `laplacian_smul`, `laplacian_const`).
 - [x] Inner product symmetry, bilinearity.
+- [x] **`laplacianLinear`**: graph Laplacian as a `LinearMap`, opening Mathlib's linear-algebra / spectral API to discrete operators.
 - [x] `nbhd_sum_swap` — edge-sum swap lemma under symmetric adjacency.
 - [x] **`laplacian_self_adjoint`** — `⟪Δ f, g⟫ = ⟪f, Δ g⟫` (`DiscreteCalculusSymm.lean`).
 - [x] Positivity of `-Δ`: **`dirichlet_form`** + **`laplacian_neg_psd`** — `⟪f, -Δ f⟫ = ½ ∑ (f(w) - f(v))² ≥ 0`.

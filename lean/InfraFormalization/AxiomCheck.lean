@@ -145,6 +145,7 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.discreteInner_smul_left
 #print axioms InfraFormalization.discreteInner_laplacian_expand
 #print axioms InfraFormalization.discreteInner_laplacian_right
+#print axioms InfraFormalization.laplacianLinear_apply
 #print axioms InfraFormalization.nbhd_sum_swap
 #print axioms InfraFormalization.laplacian_self_adjoint
 #print axioms InfraFormalization.dirichlet_form
