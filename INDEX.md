@@ -30,6 +30,7 @@ Complete navigation for `infra_formalization`. This file is hand-maintained; eve
 | [`notes/2102.09363_close_reading.md`](notes/2102.09363_close_reading.md) | G3 — *Hypergraph Discretization of the Cauchy Problem* | The circularity chain: Poisson-sprinkle the known target manifold, apply Benincasa–Dowker, "recover" the manifold. |
 | [`notes/2303.07282_close_reading.md`](notes/2303.07282_close_reading.md) | G4 — *Non-Vacuum Solutions, Gravitational Collapse, Discrete Singularity Theorems* | Title promises discrete Raychaudhuri + singularity theorems; body delivers continuum collapse + mesh validation, no discrete theorem. |
 | [`notes/claims_catalog.md`](notes/claims_catalog.md) | G1 | 184-row audit of every equation, align, definition, with per-row status verdict. |
+| [`notes/continuum_limit_claims.md`](notes/continuum_limit_claims.md) | G1–G4 | Every claim in the corpus that asserts convergence to a continuum geometric/physical object, with verbatim quote and audit verdict. Load-bearing claims marked 🧨. |
 
 ## Topic notes
 
