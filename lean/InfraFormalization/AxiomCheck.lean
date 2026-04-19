@@ -23,6 +23,7 @@ import InfraFormalization.Infra.Circle
 import InfraFormalization.Infra.GHBound
 import InfraFormalization.CausalLevel
 import InfraFormalization.Infra.OllivierStatement
+import InfraFormalization.Infra.ScaledPath
 
 #print axioms InfraFormalization.edge_conservation
 #print axioms InfraFormalization.trajectory_preserves_size
@@ -58,3 +59,7 @@ import InfraFormalization.Infra.OllivierStatement
 #print axioms InfraFormalization.no_causal_edge_within_level
 #print axioms InfraFormalization.same_level_ordered_antichain
 #print axioms InfraFormalization.Infra.ollivier_vs_gorard_equivalence_requires_ric_eq_scalar
+#print axioms InfraFormalization.Infra.pathDist_triangle
+#print axioms InfraFormalization.Infra.pathEmbed_isometry
+#print axioms InfraFormalization.Infra.pathEmbed_covers
+#print axioms InfraFormalization.Infra.path_interval_gh_bound
