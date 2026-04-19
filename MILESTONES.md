@@ -75,6 +75,17 @@ Grouped by phase (see [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md)). Each milestone ei
 - [x] **`laplacian_sum_zero`**: ∑ Δf = 0 (discrete divergence theorem; conservation of total mass under heat equation).
 - [x] **Cycle graph concrete instance** (`CycleGraph.lean`): `cycleLaplacian` defined as `f(i+1) + f(i-1) - 2 f(i)`. Linearity, vanishing on constants, and the Dirichlet form `∑ f i · (-Δ f i) = ∑ (f(i+1) - f(i))²` plus its non-negativity, all axiom-clean. Sets up the Rung-2 Taylor-expansion convergence theorem.
 - [x] **Central second difference (Rung 2 entry)** (`SecondDifference.lean`): `secondDifference f x h := f(x+h) − 2 f(x) + f(x−h)`, linearity. Polynomial-case exact identity: for any quadratic `a x² + b x + c`, `secondDifference = 2 a h² = f''(x) · h²` (no error term). Identifies the cycle Laplacian with this operator. General `C²` Taylor-remainder convergence is the next step.
+
+### Rung 5 — Riemann/Ricci/scalar curvature (local-coordinate route)
+- [x] **`MetricData n`** (`CurvatureLocalCoord.lean`): metric components, inverse, first partial derivatives, symmetry + inverse axioms. Avoids bundle machinery.
+- [x] **Christoffel symbols** `Γ^ρ_{μν} = ½ g^{ρσ} (∂_μ g_{σν} + ∂_ν g_{σμ} − ∂_σ g_{μν})` as explicit formula.
+- [x] **`christoffel_symm`**: lower-index symmetry `Γ^ρ_{μν} = Γ^ρ_{νμ}`.
+- [x] **Minkowski instance** on ℝ⁴ with signature `(−, +, +, +)`; `minkowski4_christoffel_zero` confirms all Christoffel symbols vanish.
+- [ ] Riemann tensor (needs second partials of `g`, or first partials of `Γ` as data).
+- [ ] Ricci contraction.
+- [ ] Scalar curvature.
+- [ ] Einstein tensor `G_{μν} = R_{μν} − ½ R g_{μν}`.
+- [ ] Schwarzschild instance with non-trivial Christoffel symbols (sanity check).
 - [ ] Heat semigroup on a finite graph as a finite-dim ODE.
 - [ ] Scaled cycle Laplacian → 1D `d²/dx²` (Rung 2 entry).
 

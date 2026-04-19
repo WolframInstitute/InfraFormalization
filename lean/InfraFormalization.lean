@@ -74,3 +74,4 @@ import InfraFormalization.DiscreteCalculus
 import InfraFormalization.DiscreteCalculusSymm
 import InfraFormalization.CycleGraph
 import InfraFormalization.SecondDifference
+import InfraFormalization.CurvatureLocalCoord
