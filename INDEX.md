@@ -15,6 +15,7 @@ Complete navigation for `infra_formalization`. This file is hand-maintained; eve
 | [`MAJOR_FLAWS.md`](MAJOR_FLAWS.md) | F1–F8 structural flaws in the Gorard corpus, separated from arithmetic errors. |
 | [`LEAN_PHYSICS.md`](LEAN_PHYSICS.md) | Survey of existing Lean-physics conventions; how we align. |
 | [`RULE_SEARCH.md`](RULE_SEARCH.md) | How the Lean corpus serves as a verifier/screener in a rule-search pipeline — signatures, screening tests, certificate scaffolding. |
+| [`BRIDGE_MACHINERY.md`](BRIDGE_MACHINERY.md) | The 10-rung ladder from discrete calculus to Einstein equations. What Mathlib has, what we have, what each rung needs, priority order. |
 | [`publications/`](publications/) | Each subfolder = one paper (I = incremental, M = major). |
 
 ## Methodology and synthesis
@@ -105,6 +106,14 @@ Every Lean file has a doc comment describing its role. Built on Mathlib via Lake
 | [`lean/InfraFormalization/Infra/GrayTubeStatement.lean`](lean/InfraFormalization/Infra/GrayTubeStatement.lean) | Correct Gray tube formula (statement-only) + `gray_vs_gorard_disagree_on_S2/S3` disagreement proofs. |
 | [`lean/InfraFormalization/Infra/LorentzLattice.lean`](lean/InfraFormalization/Infra/LorentzLattice.lean) | **Discrete Lorentzian lattice**: `CausalPrecedes`, trichotomy (timelike/spacelike), forward cones. |
 | [`lean/InfraFormalization/Infra/TrajectoryLorentz.lean`](lean/InfraFormalization/Infra/TrajectoryLorentz.lean) | **Bridging theorem**: `trajectoryToEvent` embeds a trajectory's causal DAG into the 1+0-dim Lorentz lattice via the level function. |
+| [`lean/InfraFormalization/Infra/TrajectoryLorentzD.lean`](lean/InfraFormalization/Infra/TrajectoryLorentzD.lean) | **d-dim conditional bridging**: `SpatialEmbedding`, `LightConeCompatible`, `fullEmbed_preserves_causal`. The F1 spatial-data slot made an explicit parameter. |
+| [`lean/InfraFormalization/Infra/Minkowski.lean`](lean/InfraFormalization/Infra/Minkowski.lean) | Continuum Minkowski `ℝ^{1,d}` with L∞ spatial metric: `ContinuumCausalPrecedes`, Timelike/Null/Spacelike, signed interval, trichotomy. |
+| [`lean/InfraFormalization/Infra/ScaledLorentz.lean`](lean/InfraFormalization/Infra/ScaledLorentz.lean) | Int-to-ℝ embedding `lorentzIntEmbed` preserving `CausalPrecedes` and `Timelike` into their continuum counterparts (forward direction). |
+| [`lean/InfraFormalization/Infra/FullBridge.lean`](lean/InfraFormalization/Infra/FullBridge.lean) | **End-to-end bridge**: `causallyPrecedes_gives_continuum` chains trajectory → Lorentz lattice → continuum Minkowski under `LightConeCompatible`. |
+| [`lean/InfraFormalization/DiscreteCalculus.lean`](lean/InfraFormalization/DiscreteCalculus.lean) | **Rung 1 of the bridge ladder**: graph Laplacian, discrete inner product, linearity. |
+| [`lean/InfraFormalization/DiscreteCalculusSymm.lean`](lean/InfraFormalization/DiscreteCalculusSymm.lean) | **Self-adjointness** `⟪Δ f, g⟫ = ⟪f, Δ g⟫` + Dirichlet form `⟪f, -Δ f⟫ = ½ ∑ (f(w) - f(v))²` + positive semidefiniteness of `-Δ`. |
+| [`lean/InfraFormalization/CycleGraph.lean`](lean/InfraFormalization/CycleGraph.lean) | Concrete cycle Laplacian on `Fin n`: second-difference form, linearity, cycle Dirichlet form. Prototype for Rung-2 convergence to `d²/dx²`. |
+| [`lean/InfraFormalization/Rewriting.lean`](lean/InfraFormalization/Rewriting.lean) | Auxiliary rewriting machinery (older scaffold). |
 | [`lean/InfraFormalization/Refutations/`](lean/InfraFormalization/Refutations/) | Formal Lean refutations of the major structural flaws. |
 | [`lean/InfraFormalization/Refutations/F1NoMetric.lean`](lean/InfraFormalization/Refutations/F1NoMetric.lean) | **F1 refuted**: no canonical metric construction from hypergraph data alone. |
 | [`lean/InfraFormalization/Refutations/F2Orthonormality.lean`](lean/InfraFormalization/Refutations/F2Orthonormality.lean) | **F2 refuted**: fiat orthonormality is non-canonical; multiple forms render the same pair orthonormal. |

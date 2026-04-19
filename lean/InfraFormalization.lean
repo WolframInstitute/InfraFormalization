@@ -7,42 +7,69 @@ machinery to formally state, where possible, refutations of Gorard's
 2004.14810 / 2102.09363 / 2303.07282 claims that survive the
 project's multi-rail verification (see ../README.md).
 
-Layout:
-  * `Hypergraph.lean`  — directed multi-hypergraphs on an abstract
-                         vertex type.
-  * `Rule.lean`        — pattern-level rewriting rules; conservativity
-                         predicate.
-  * `Application.lean` — application of a rule at a binding; produced
-                         / consumed hyperedges.
-  * `Conservation.lean`— Theorem A: conservative rules preserve state
-                         size.
-  * `GraphMetric.lean` — graph metric and scaled hypergraphs (the
-                         latter makes hypergraphs live in a metric
-                         space compatible with Mathlib's GH API).
-  * `Growth.lean`      — ball / cone counting, growth-exponent
-                         predicate, and the linear-cone / no-higher-
-                         dim CLAIM theorems.
-  * `Limit.lean`       — type-level scaffolding for continuum limits
-                         (Gromov–Hausdorff, metric-measure convergence).
-  * `Causal.lean`      — causal graph construction from a trajectory.
-  * `Branchial.lean`   — placeholder for branchial structure.
-  * `Multiway.lean`    — abstract rewriting systems and confluence.
+Layout grouped by phase:
 
-Everything above `Conservation.lean` is a definition; the theorems in
-`Conservation.lean` and `Growth.lean` are the first formally-stated
-results of the project, with `Conservation.lean` containing an actually-
-proved result.
+  * **Core hypergraph rewriting:**
+    `Hypergraph`, `Rule`, `Application`, `Conservation`, `Multiway`,
+    `Causal`, `CausalLevel`, `Branchial`, `ParallelSchedule`, `Demo`.
+
+  * **Continuum-limit infrastructure:**
+    `GraphMetric`, `Growth`, `Limit`, and the `Infra/*` submodules
+    (cycle / path / torus GH bounds, Lorentz lattice, Minkowski,
+    bridging theorems).
+
+  * **Refutations of Gorard's structural flaws:**
+    `Refutations/F1NoMetric`, `F2Orthonormality`, `F3Tautology`,
+    `F4Tautology`, `F5Illdefined`.
+
+  * **Discrete calculus (Rung 1 of the bridge ladder):**
+    `DiscreteCalculus`, `DiscreteCalculusSymm`, `CycleGraph`.
+
+The `AxiomCheck` module imports everything and certifies the
+axiom-cleanliness of every proved theorem.
 -/
 
+-- Core hypergraph rewriting
 import InfraFormalization.Hypergraph
 import InfraFormalization.Rule
 import InfraFormalization.Application
 import InfraFormalization.Conservation
+import InfraFormalization.Multiway
+import InfraFormalization.Causal
+import InfraFormalization.CausalLevel
+import InfraFormalization.Branchial
+import InfraFormalization.ParallelSchedule
+import InfraFormalization.Demo
+
+-- Continuum-limit infrastructure
 import InfraFormalization.GraphMetric
 import InfraFormalization.Growth
 import InfraFormalization.Limit
-import InfraFormalization.Causal
-import InfraFormalization.Branchial
-import InfraFormalization.Multiway
-import InfraFormalization.ParallelSchedule
-import InfraFormalization.Demo
+import InfraFormalization.Infra.ScaledCycle
+import InfraFormalization.Infra.LatticeDensity
+import InfraFormalization.Infra.Circle
+import InfraFormalization.Infra.GHBound
+import InfraFormalization.Infra.GHApprox
+import InfraFormalization.Infra.ScaledPath
+import InfraFormalization.Infra.ScaledTorus
+import InfraFormalization.Infra.ScaledTorusD
+import InfraFormalization.Infra.OllivierStatement
+import InfraFormalization.Infra.GrayTubeStatement
+import InfraFormalization.Infra.LorentzLattice
+import InfraFormalization.Infra.TrajectoryLorentz
+import InfraFormalization.Infra.TrajectoryLorentzD
+import InfraFormalization.Infra.Minkowski
+import InfraFormalization.Infra.ScaledLorentz
+import InfraFormalization.Infra.FullBridge
+
+-- Refutations of Gorard structural flaws F1-F5
+import InfraFormalization.Refutations.F1NoMetric
+import InfraFormalization.Refutations.F2Orthonormality
+import InfraFormalization.Refutations.F3Tautology
+import InfraFormalization.Refutations.F4Tautology
+import InfraFormalization.Refutations.F5Illdefined
+
+-- Discrete calculus (Rung 1 of the bridge ladder)
+import InfraFormalization.DiscreteCalculus
+import InfraFormalization.DiscreteCalculusSymm
+import InfraFormalization.CycleGraph
