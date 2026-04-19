@@ -19,6 +19,7 @@ import InfraFormalization.Growth
 import InfraFormalization.ParallelSchedule
 import InfraFormalization.Infra.ScaledCycle
 import InfraFormalization.Infra.LatticeDensity
+import InfraFormalization.Infra.Circle
 
 #print axioms InfraFormalization.edge_conservation
 #print axioms InfraFormalization.trajectory_preserves_size
@@ -37,3 +38,9 @@ import InfraFormalization.Infra.LatticeDensity
 #print axioms InfraFormalization.Infra.exists_lattice_index
 #print axioms InfraFormalization.Infra.lattice_one_over_n_dense
 #print axioms InfraFormalization.Infra.lattice_half_n_cover
+#print axioms InfraFormalization.Infra.circleDist_self
+#print axioms InfraFormalization.Infra.circleDist_symm
+#print axioms InfraFormalization.Infra.circleDist_nonneg
+#print axioms InfraFormalization.Infra.circleDist_le_half
+#print axioms InfraFormalization.Infra.latticeEmbed_mem_unit_interval
+#print axioms InfraFormalization.Infra.latticeEmbed_covers
