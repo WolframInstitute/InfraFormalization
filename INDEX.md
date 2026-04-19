@@ -86,7 +86,30 @@ Every Lean file has a doc comment describing its role. Built on Mathlib via Lake
 | [`lean/InfraFormalization/Limit.lean`](lean/InfraFormalization/Limit.lean) | Scaffolding for GH / spectral / measure-space convergence. |
 | [`lean/InfraFormalization/Multiway.lean`](lean/InfraFormalization/Multiway.lean) | Abstract rewriting systems, confluence, local confluence. |
 | [`lean/InfraFormalization/Causal.lean`](lean/InfraFormalization/Causal.lean) | Trajectories and causal-precedence relation. |
-| [`lean/InfraFormalization/Branchial.lean`](lean/InfraFormalization/Branchial.lean) | Placeholder interface for branchial structure. |
+| [`lean/InfraFormalization/Branchial.lean`](lean/InfraFormalization/Branchial.lean) | Branchial relation + iterated reachability (`NStep`, `BranchialSlice`). First QM-bridge infrastructure. |
+| [`lean/InfraFormalization/CausalLevel.lean`](lean/InfraFormalization/CausalLevel.lean) | Causal-DAG level function via well-founded recursion; `level_add_one_le_of_isCausalPred`, `no_causal_edge_within_level`, `same_level_ordered_antichain`. |
+| [`lean/InfraFormalization/ParallelSchedule.lean`](lean/InfraFormalization/ParallelSchedule.lean) | Parallel-schedule scaffolding; `trajectory_preserves_size`, in/out-degree theorems. |
+| [`lean/InfraFormalization/Demo.lean`](lean/InfraFormalization/Demo.lean) | End-to-end `edge_conservation` demo theorem. |
+| [`lean/InfraFormalization/AxiomCheck.lean`](lean/InfraFormalization/AxiomCheck.lean) | `#print axioms` certification for every theorem in the repository. |
+| [`lean/InfraFormalization/Infra/`](lean/InfraFormalization/Infra/) | Infrageometry theorems (continuum limits + Lorentzian structure). |
+| [`lean/InfraFormalization/Infra/ScaledCycle.lean`](lean/InfraFormalization/Infra/ScaledCycle.lean) | Scaled n-cycle with `cycleDist` metric; triangle, symmetry, self-distance. |
+| [`lean/InfraFormalization/Infra/LatticeDensity.lean`](lean/InfraFormalization/Infra/LatticeDensity.lean) | `latticeEmbed`, density in `[0, 1)`, `latticeEmbed_isometry`. |
+| [`lean/InfraFormalization/Infra/Circle.lean`](lean/InfraFormalization/Infra/Circle.lean) | Circle-metric via fundamental-domain parameterisation. |
+| [`lean/InfraFormalization/Infra/GHBound.lean`](lean/InfraFormalization/Infra/GHBound.lean) | `cycle_circle_gh_bound`: cycle GH-converges to circle at rate `1/(2n)`. |
+| [`lean/InfraFormalization/Infra/ScaledPath.lean`](lean/InfraFormalization/Infra/ScaledPath.lean) | Path → interval GH bound. |
+| [`lean/InfraFormalization/Infra/ScaledTorus.lean`](lean/InfraFormalization/Infra/ScaledTorus.lean) | 2D lattice → 2-torus GH bound. |
+| [`lean/InfraFormalization/Infra/ScaledTorusD.lean`](lean/InfraFormalization/Infra/ScaledTorusD.lean) | **Generalised (d+1)D lattice → (d+1)-torus GH bound** for arbitrary `d ≥ 0`. |
+| [`lean/InfraFormalization/Infra/GHApprox.lean`](lean/InfraFormalization/Infra/GHApprox.lean) | Abstract `GHApproximation` structure. |
+| [`lean/InfraFormalization/Infra/OllivierStatement.lean`](lean/InfraFormalization/Infra/OllivierStatement.lean) | Correct Ollivier identity (statement-only) + Gorard mis-stated form + coincidence theorem. |
+| [`lean/InfraFormalization/Infra/GrayTubeStatement.lean`](lean/InfraFormalization/Infra/GrayTubeStatement.lean) | Correct Gray tube formula (statement-only) + `gray_vs_gorard_disagree_on_S2/S3` disagreement proofs. |
+| [`lean/InfraFormalization/Infra/LorentzLattice.lean`](lean/InfraFormalization/Infra/LorentzLattice.lean) | **Discrete Lorentzian lattice**: `CausalPrecedes`, trichotomy (timelike/spacelike), forward cones. |
+| [`lean/InfraFormalization/Infra/TrajectoryLorentz.lean`](lean/InfraFormalization/Infra/TrajectoryLorentz.lean) | **Bridging theorem**: `trajectoryToEvent` embeds a trajectory's causal DAG into the 1+0-dim Lorentz lattice via the level function. |
+| [`lean/InfraFormalization/Refutations/`](lean/InfraFormalization/Refutations/) | Formal Lean refutations of the major structural flaws. |
+| [`lean/InfraFormalization/Refutations/F1NoMetric.lean`](lean/InfraFormalization/Refutations/F1NoMetric.lean) | **F1 refuted**: no canonical metric construction from hypergraph data alone. |
+| [`lean/InfraFormalization/Refutations/F2Orthonormality.lean`](lean/InfraFormalization/Refutations/F2Orthonormality.lean) | **F2 refuted**: fiat orthonormality is non-canonical; multiple forms render the same pair orthonormal. |
+| [`lean/InfraFormalization/Refutations/F3Tautology.lean`](lean/InfraFormalization/Refutations/F3Tautology.lean) | **F3 refuted**: "asymptotic dim preservation ⇒ Einstein equations" is `Iff.rfl`. |
+| [`lean/InfraFormalization/Refutations/F4Tautology.lean`](lean/InfraFormalization/Refutations/F4Tautology.lean) | **F4 refuted**: "causal invariance ⇔ general covariance" is `Iff.rfl` (axiom-free). |
+| [`lean/InfraFormalization/Refutations/F5Illdefined.lean`](lean/InfraFormalization/Refutations/F5Illdefined.lean) | **F5 refuted**: "discrete sum becomes integral" is under-determined without a convergence notion. |
 
 ## Primary sources (read-only)
 
