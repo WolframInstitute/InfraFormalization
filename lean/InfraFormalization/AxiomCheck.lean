@@ -15,6 +15,7 @@ Never acceptable:
 -/
 
 import InfraFormalization.Demo
+import InfraFormalization.Branchial
 import InfraFormalization.Growth
 import InfraFormalization.ParallelSchedule
 import InfraFormalization.Infra.ScaledCycle
@@ -91,3 +92,10 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.Refutations.orthonormality_depends_on_form
 #print axioms InfraFormalization.Refutations.orthonormalising_form_not_unique
 #print axioms InfraFormalization.Refutations.gorard_orthonormality_is_non_canonical
+#print axioms InfraFormalization.branchial_symm
+#print axioms InfraFormalization.branchial_refl_of_has_predecessor
+#print axioms InfraFormalization.nStep_zero_iff
+#print axioms InfraFormalization.nStep_one_iff
+#print axioms InfraFormalization.nStep_implies_multiStep
+#print axioms InfraFormalization.branchialSlice_zero
+#print axioms InfraFormalization.branchialSlice_succ

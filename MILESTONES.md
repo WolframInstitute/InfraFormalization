@@ -55,6 +55,16 @@ Grouped by phase (see [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md)). Each milestone ei
 - [x] F5: "becomes" under-determined — two natural convergence notions disagree (`Refutations/F5Illdefined.lean`)
 - [ ] F5': concrete counterexample — a rule whose discrete sum demonstrably does not GH-converge to an EH-style integral (stretch goal)
 
+### Branchial / multiway skeleton (QM bridge groundwork)
+- [x] `BranchialRelated sys s₁ s₂`: shared predecessor relation (`Branchial.lean`)
+- [x] Symmetry of `BranchialRelated`
+- [x] `NStep sys n a b`: iterated single-step reachability
+- [x] `BranchialSlice sys s₀ n`: the depth-`n` slice
+- [x] Slice recursion: depth-0 = `{s₀}`, depth-(n+1) = successors of depth-n
+- [ ] Finite-slice cardinality bound when the rewriting system is finite and hypergraph is finite
+- [ ] Branchial measure: a probability assignment on each slice
+- [ ] Amplitudes / branchial weights toward a Hilbert-space limit
+
 ## Phase 2 — Corrected continuum identities (Lean)
 
 ### Stated correctly (statement-only, no Mathlib Ricci yet)
