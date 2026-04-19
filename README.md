@@ -18,6 +18,7 @@ The stated program: derive GR from hypergraph rewriting. The stated claim in G3:
 | 📘 Glossary | [`GLOSSARY.md`](GLOSSARY.md) — every technical term used |
 | 📋 Next steps | [`NEXT_STEPS.md`](NEXT_STEPS.md) — what's done, in flight, waiting |
 | 🔭 Research program | [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md) — the long-term infrageometry program (audit → correction → positive construction) |
+| 📊 Status | [`STATUS.md`](STATUS.md) — live snapshot: 20 machine-verified theorems, axiom-clean; where we are on the roadmap |
 | 🗺 Methodology | [`notes/plan.md`](notes/plan.md) — 7-phase verification plan |
 | 🧮 Severity | [`notes/severity_taxonomy.md`](notes/severity_taxonomy.md) — S1–S6 taxonomy; "is it a lie?" discussion |
 | 🧩 Corpus | [`notes/corpus_audit.md`](notes/corpus_audit.md) — cross-paper map of repeated errors |
