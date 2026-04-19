@@ -71,6 +71,7 @@ Grouped by phase (see [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md)). Each milestone ei
 - [x] `nbhd_sum_swap` — edge-sum swap lemma under symmetric adjacency.
 - [x] **`laplacian_self_adjoint`** — `⟪Δ f, g⟫ = ⟪f, Δ g⟫` (`DiscreteCalculusSymm.lean`).
 - [x] Positivity of `-Δ`: **`dirichlet_form`** + **`laplacian_neg_psd`** — `⟪f, -Δ f⟫ = ½ ∑ (f(w) - f(v))² ≥ 0`.
+- [x] **Cycle graph concrete instance** (`CycleGraph.lean`): `cycleLaplacian` defined as `f(i+1) + f(i-1) - 2 f(i)`. Linearity, vanishing on constants, and the Dirichlet form `∑ f i · (-Δ f i) = ∑ (f(i+1) - f(i))²` plus its non-negativity, all axiom-clean. Sets up the Rung-2 Taylor-expansion convergence theorem.
 - [ ] Heat semigroup on a finite graph as a finite-dim ODE.
 - [ ] Scaled cycle Laplacian → 1D `d²/dx²` (Rung 2 entry).
 

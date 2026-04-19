@@ -37,6 +37,7 @@ import InfraFormalization.Infra.ScaledLorentz
 import InfraFormalization.Infra.FullBridge
 import InfraFormalization.DiscreteCalculus
 import InfraFormalization.DiscreteCalculusSymm
+import InfraFormalization.CycleGraph
 import InfraFormalization.Refutations.F1NoMetric
 import InfraFormalization.Refutations.F2Orthonormality
 import InfraFormalization.Refutations.F3Tautology
@@ -147,6 +148,11 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.laplacian_self_adjoint
 #print axioms InfraFormalization.dirichlet_form
 #print axioms InfraFormalization.laplacian_neg_psd
+#print axioms InfraFormalization.cycleLaplacian_add
+#print axioms InfraFormalization.cycleLaplacian_smul
+#print axioms InfraFormalization.cycleLaplacian_const
+#print axioms InfraFormalization.cycle_dirichlet_form
+#print axioms InfraFormalization.cycle_dirichlet_nonneg
 #print axioms InfraFormalization.Refutations.gorard_dim_preservation_is_euler_lagrange
 #print axioms InfraFormalization.Refutations.gorard_section_3_3_contentless
 #print axioms InfraFormalization.Refutations.gorard_causal_invariance_is_general_covariance
