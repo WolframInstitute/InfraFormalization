@@ -21,6 +21,7 @@ import InfraFormalization.Infra.ScaledCycle
 import InfraFormalization.Infra.LatticeDensity
 import InfraFormalization.Infra.Circle
 import InfraFormalization.Infra.GHBound
+import InfraFormalization.CausalLevel
 
 #print axioms InfraFormalization.edge_conservation
 #print axioms InfraFormalization.trajectory_preserves_size
@@ -48,3 +49,4 @@ import InfraFormalization.Infra.GHBound
 #print axioms InfraFormalization.Infra.latticeEmbed_isometry
 #print axioms InfraFormalization.Infra.cycle_circle_gh_bound
 #print axioms InfraFormalization.Infra.cycle_circle_eventual_epsilon_dense
+#print axioms InfraFormalization.total_in_degree_eq
