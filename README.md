@@ -21,6 +21,7 @@ The stated program: derive GR from hypergraph rewriting. The stated claim in G3:
 | 🗺 Methodology | [`notes/plan.md`](notes/plan.md) — 7-phase verification plan |
 | 🧮 Severity | [`notes/severity_taxonomy.md`](notes/severity_taxonomy.md) — S1–S6 taxonomy; "is it a lie?" discussion |
 | 🧩 Corpus | [`notes/corpus_audit.md`](notes/corpus_audit.md) — cross-paper map of repeated errors |
+| 🌫️ Continuum limits | [`notes/continuum_limit_claims.md`](notes/continuum_limit_claims.md) — every continuum-limit claim in the corpus with audit verdict; load-bearing ones marked 🧨 |
 | 🧭 Framework | [`notes/singleway_vs_multiway.md`](notes/singleway_vs_multiway.md) — single-way vs multi-way + null-tetrad explainer |
 | 🧠 Synthesis | [`notes/claim_assessment.md`](notes/claim_assessment.md) — "overclaim or hunch?" verdict |
 
