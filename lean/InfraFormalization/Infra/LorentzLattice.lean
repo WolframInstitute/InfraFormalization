@@ -164,5 +164,51 @@ theorem spacelike_iff {d : Nat} (p q : Event d) :
   · rintro ⟨h1, h2⟩
     exact ⟨not_le.mpr h1, not_le.mpr h2⟩
 
+/-- **Simultaneous distinct events are spacelike.** If `p 0 = q 0`
+(they share a time coordinate) and they are spatially separated
+(`0 < spaceDist d p q`), then neither causally precedes the other. -/
+theorem spacelike_of_equal_time {d : Nat} (p q : Event d)
+    (ht : p 0 = q 0) (hsp : 0 < spaceDist d p q) :
+    Spacelike d p q := by
+  unfold Spacelike CausalPrecedes
+  have hsymm := spaceDist_symm p q
+  refine ⟨?_, ?_⟩
+  · intro h
+    have : (spaceDist d p q : ℤ) ≤ 0 := by rw [ht] at h; linarith
+    omega
+  · intro h
+    have : (spaceDist d q p : ℤ) ≤ 0 := by rw [ht] at h; linarith
+    omega
+
+/-- **Forward-cone characterization.** `p ≺ q` iff `q`'s time
+coordinate is at least `p`'s, and the spatial separation is no larger
+than the time increment. -/
+theorem causalPrecedes_iff_time_space {d : Nat} (p q : Event d) :
+    CausalPrecedes d p q ↔ (spaceDist d p q : ℤ) ≤ q 0 - p 0 := Iff.rfl
+
+/-- Timelike separations compose: `Timelike p q` and `Timelike q r`
+imply `Timelike p r`. -/
+theorem timelike_trans {d : Nat} {p q r : Event d}
+    (hpq : Timelike d p q) (hqr : Timelike d q r) :
+    Timelike d p r := by
+  unfold Timelike at *
+  refine ⟨causal_trans hpq.1 hqr.1, ?_⟩
+  linarith [hpq.2, hqr.2]
+
+/-- **Forward cone.** The set of events causally preceded by `p`. -/
+def forwardCone (d : Nat) (p : Event d) : Set (Event d) :=
+  { q | CausalPrecedes d p q }
+
+/-- Forward cones are upward-closed under `CausalPrecedes`: if `q` is
+in `p`'s forward cone and `q ≺ r`, then `r` is in `p`'s cone too. -/
+theorem forwardCone_upward_closed {d : Nat} (p q r : Event d)
+    (hq : q ∈ forwardCone d p) (hqr : CausalPrecedes d q r) :
+    r ∈ forwardCone d p :=
+  causal_trans hq hqr
+
+/-- A point is in its own forward cone. -/
+theorem self_mem_forwardCone {d : Nat} (p : Event d) :
+    p ∈ forwardCone d p := causal_refl d p
+
 end Infra
 end InfraFormalization

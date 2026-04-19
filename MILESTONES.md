@@ -67,6 +67,9 @@ Grouped by phase (see [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md)). Each milestone ei
 - [x] `CausalPrecedes p q`: forward-light-cone relation
 - [x] Reflexivity, transitivity, antisymmetry-in-time
 - [x] Timelike / spacelike classification; `causal_or_spacelike` trichotomy
+- [x] `spacelike_of_equal_time`: simultaneous distinct events are spacelike
+- [x] `timelike_trans`: timelike relations compose
+- [x] `forwardCone` definition + upward-closure + `self_mem_forwardCone`
 - [ ] Conformal limit to continuum Minkowski (Phase 5 research)
 - [ ] Discrete light-cone growth rate → `c = 1` (Phase 5)
 

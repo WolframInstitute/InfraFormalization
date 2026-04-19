@@ -95,6 +95,10 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.Infra.causal_antisymm_time
 #print axioms InfraFormalization.Infra.causal_or_spacelike
 #print axioms InfraFormalization.Infra.spacelike_iff
+#print axioms InfraFormalization.Infra.spacelike_of_equal_time
+#print axioms InfraFormalization.Infra.timelike_trans
+#print axioms InfraFormalization.Infra.forwardCone_upward_closed
+#print axioms InfraFormalization.Infra.self_mem_forwardCone
 #print axioms InfraFormalization.Refutations.gorard_dim_preservation_is_euler_lagrange
 #print axioms InfraFormalization.Refutations.gorard_section_3_3_contentless
 #print axioms InfraFormalization.Refutations.gorard_causal_invariance_is_general_covariance
