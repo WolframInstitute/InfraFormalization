@@ -73,3 +73,4 @@ import InfraFormalization.Refutations.F5Illdefined
 import InfraFormalization.DiscreteCalculus
 import InfraFormalization.DiscreteCalculusSymm
 import InfraFormalization.CycleGraph
+import InfraFormalization.SecondDifference

@@ -163,8 +163,8 @@ This coordinate-chart approach is the pragmatic route: it gives us usable curvat
 
 | Rung | Mathlib status | Our status | Actionable now? |
 |---|---|---|---|
-| 1. Discrete calculus | Partial | Just starting | **Yes** — ~200 lines for Laplacian + theorems. |
-| 2. Op. convergence | Infrastructure in place | Not started | **Yes** — for cycle case, ~300 lines. |
+| 1. Discrete calculus | Partial | **Done**: Laplacian + self-adjoint + Dirichlet form + PSD + cycle instance. | ✓ shipped. |
+| 2. Op. convergence | Infrastructure in place | **Started**: polynomial case exact (`SecondDifference.lean`); `C²` Taylor remainder pending. | **Yes** — Taylor case next. |
 | 3. Measure limits | Wasserstein present | Not started | Partial — bypass Prokhorov by using counting measures directly. |
 | 4. Connections | Missing | Not started | Needs design; 500+ lines minimum for local-coord form. |
 | 5. Curvature tensors | Missing | Statement-only | Start with local-coord (Christoffel) form — doable. |
