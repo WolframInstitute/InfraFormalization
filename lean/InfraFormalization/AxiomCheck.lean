@@ -22,6 +22,7 @@ import InfraFormalization.Infra.LatticeDensity
 import InfraFormalization.Infra.Circle
 import InfraFormalization.Infra.GHBound
 import InfraFormalization.CausalLevel
+import InfraFormalization.Infra.OllivierStatement
 
 #print axioms InfraFormalization.edge_conservation
 #print axioms InfraFormalization.trajectory_preserves_size
@@ -50,3 +51,4 @@ import InfraFormalization.CausalLevel
 #print axioms InfraFormalization.Infra.cycle_circle_gh_bound
 #print axioms InfraFormalization.Infra.cycle_circle_eventual_epsilon_dense
 #print axioms InfraFormalization.total_in_degree_eq
+#print axioms InfraFormalization.Infra.ollivier_vs_gorard_equivalence_requires_ric_eq_scalar
