@@ -51,4 +51,6 @@ import InfraFormalization.Infra.OllivierStatement
 #print axioms InfraFormalization.Infra.cycle_circle_gh_bound
 #print axioms InfraFormalization.Infra.cycle_circle_eventual_epsilon_dense
 #print axioms InfraFormalization.total_in_degree_eq
+#print axioms InfraFormalization.total_out_degree_eq
+#print axioms InfraFormalization.total_in_eq_total_out
 #print axioms InfraFormalization.Infra.ollivier_vs_gorard_equivalence_requires_ric_eq_scalar
