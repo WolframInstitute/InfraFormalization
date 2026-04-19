@@ -1,6 +1,17 @@
 # Publications
 
-Each subfolder is one paper. A paper here is defined by: (i) a clear single thesis, (ii) a demonstrable set of Lean-verified theorems or numerically-verified claims supporting it, (iii) a target venue.
+Each subfolder is, eventually, one paper — a LaTeX manuscript backed by Lean-verified theorems. **Right now we are upstream of that.** We are generating the *results* — theorems, corrections, continuum-limit bridges — and a paper will be written only when a subfolder has genuine significant content that is *ready*. The abstracts in place today are aspirational targets ("this is what this paper will claim when we draft it"); they are not manuscripts.
+
+**Principle.** No paper enters draft stage until:
+1. its Lean-side support is complete and axiom-clean (per `MILESTONES.md`);
+2. its distinct contribution over existing literature is clear (not "this classical result, but in Lean");
+3. at least one Wolfram Institute colleague agrees the result is worth writing up.
+
+Until then, this directory is a *planning artifact*. Paper-significant progress means Lean theorems landing on our side of the `MILESTONES.md` ledger, not paragraphs in `abstract.md`.
+
+---
+
+## Original framing (kept for reference)
 
 ## Architecture
 
