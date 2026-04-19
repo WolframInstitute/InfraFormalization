@@ -26,6 +26,7 @@ import InfraFormalization.Infra.OllivierStatement
 import InfraFormalization.Infra.ScaledPath
 import InfraFormalization.Infra.GrayTubeStatement
 import InfraFormalization.Infra.GHApprox
+import InfraFormalization.Infra.ScaledTorus
 
 #print axioms InfraFormalization.edge_conservation
 #print axioms InfraFormalization.trajectory_preserves_size
@@ -68,3 +69,7 @@ import InfraFormalization.Infra.GHApprox
 #print axioms InfraFormalization.Infra.gray_vs_gorard_disagree_on_S2
 #print axioms InfraFormalization.Infra.gray_vs_gorard_disagree_on_S3
 #print axioms InfraFormalization.Infra.ghApprox_of_half_scale
+#print axioms InfraFormalization.Infra.torusLatticeDist_triangle
+#print axioms InfraFormalization.Infra.torusEmbed_isometry
+#print axioms InfraFormalization.Infra.torusEmbed_covers
+#print axioms InfraFormalization.Infra.torus_gh_bound
