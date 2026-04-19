@@ -1,87 +1,119 @@
 # Status snapshot
 
 Live document: what's proved, what's in progress, where we are on the
-infrageometry research programme roadmap ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md)).
+research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
+[`BRIDGE_MACHINERY.md`](BRIDGE_MACHINERY.md),
+[`MILESTONES.md`](MILESTONES.md)).
 
 ## Machine-verified theorems (axiom-clean)
 
-**36 theorems**, all depending only on Lean's three standard axioms:
-`propext`, `Classical.choice`, `Quot.sound`. No `sorry`, no
-`native_decide`, no `decide`, no custom axioms. Verified by
-`#print axioms` in [`lean/InfraFormalization/AxiomCheck.lean`](lean/InfraFormalization/AxiomCheck.lean).
+**137 `#print axioms` certifications** in
+[`lean/InfraFormalization/AxiomCheck.lean`](lean/InfraFormalization/AxiomCheck.lean),
+all depending only on Lean's three standard axioms
+(`propext`, `Classical.choice`, `Quot.sound`) — with one theorem
+(`gorard_causal_invariance_is_general_covariance`) depending on *no*
+axioms at all (`Iff.rfl`). No `sorry`, no `native_decide`, no
+`decide`, no custom axioms.
 
-### Wolfram-model structural theorems (Phase 1)
+## Rungs of the bridge ladder (see `BRIDGE_MACHINERY.md`)
 
-| # | Theorem | File | Meaning |
-|---|---|---|---|
-| T1 | `Application.size_result_of_conservative` | Conservation.lean | Edge conservation. |
-| T2 | `size_preserved_by_applications` | Conservation.lean | Trajectory-level edge conservation. |
-| T3 | `edge_conservation`, `trajectory_preserves_size` | Demo.lean | Re-exports. |
-| T4 | `growthExponentAtMost_of_linear` | Growth.lean | Linear ⇒ growth exponent ≤ 1. |
-| T5 | `in_degree_eq_lhsSize` | ParallelSchedule.lean | In-degree = |LHS|. |
-| T6 | `out_degree_eq_rhsSize` | ParallelSchedule.lean | Out-degree = |RHS|. |
-| T7 | `balanced_of_conservative` | ParallelSchedule.lean | Conservative ⇒ per-event balance. |
-| T8 | `total_in_degree_eq` | CausalLevel.lean | Sum of in-degrees = M·k. |
-| T9 | `total_out_degree_eq` | CausalLevel.lean | Sum of out-degrees = M·k. |
-| T10 | `total_in_eq_total_out` | CausalLevel.lean | Conservative ⇒ sums equal. |
-| T11 | `level` | CausalLevel.lean | Causal-DAG level function. |
-| T12 | `level_eq` | CausalLevel.lean | Level unfolding equation. |
-| **T13** | **`level_add_one_le_of_isCausalPred`** | CausalLevel.lean | **★ Level monotonicity**: causal edge ⇒ level grows by ≥ 1. |
-| T14 | `no_causal_edge_within_level` | CausalLevel.lean | Antichain property (forward direction). |
-| T15 | `same_level_ordered_antichain` | CausalLevel.lean | Antichain alias. |
+| Rung | Topic | Status |
+|---|---|---|
+| 1 | Discrete calculus | ✅ graph Laplacian, inner product, self-adjointness, Dirichlet form, PSD, divergence theorem, Laplacian-as-LinearMap, cycle instance |
+| 2 | Op. convergence to continuum | ▣ polynomial case exact (`SecondDifference.lean`); `C²` Taylor remainder pending |
+| 3 | Measure limits | ⌛ Wasserstein in Mathlib; GH-Prokhorov not yet |
+| 4 | Connections / Levi-Civita | ⌛ Mathlib gap; local-coord route planned |
+| 5 | Riemann / Ricci / scalar | ⌛ blocked by Rung 4; statement-only for Ollivier / Gray |
+| 6 | ODE/PDE | ⌛ partial ODE in Mathlib; discrete heat equation as linear ODE planned next |
+| 7 | Fields / gauge | Far |
+| 8 | Lorentzian geometry | ✅ discrete (`LorentzLattice`, `Minkowski`); ⌛ continuum Lorentzian missing in Mathlib |
+| 9 | Einstein equations | Far |
+| 10 | Hypergraph → GR | ✅ flat targets done (cycle→circle, path→interval, torus, d-torus, discrete→continuum Minkowski); ⌛ curved targets blocked by Rungs 4–5 |
 
-### Continuum-limit theorems (Phase 3)
+## Key deliverables by phase
 
-| # | Theorem | File | Meaning |
-|---|---|---|---|
-| T16 | `cycleDist_{self,symm,triangle,le_half,zero_of_small,eq_zero_iff}` | Infra/ScaledCycle.lean | Cycle metric axioms. |
-| T17 | `exists_lattice_index`, `lattice_one_over_n_dense`, `lattice_half_n_cover` | Infra/LatticeDensity.lean | Lattice density in [0,1). |
-| T18 | `circleDist_{self,symm,nonneg,le_half}`, `latticeEmbed_mem_unit_interval` | Infra/Circle.lean | Circle metric axioms. |
-| **T19** | **`latticeEmbed_covers`** | Infra/Circle.lean | **★ Cover bound** 1/(2n). |
-| **T20** | **`latticeEmbed_isometry`** | Infra/Circle.lean | **★ Isometry**. |
-| **T21** | **`cycle_circle_gh_bound`** | Infra/GHBound.lean | **★ Packaged cycle → circle GH convergence**. |
-| T22 | `cycle_circle_eventual_epsilon_dense` | Infra/GHBound.lean | ε-convergence corollary. |
-| T23 | `pathDist_{self,symm,triangle,le}` | Infra/ScaledPath.lean | Path metric axioms. |
-| T24 | `pathEmbed_{mem_unit_interval,isometry,covers}` | Infra/ScaledPath.lean | Path embedding properties. |
-| **T25** | **`path_interval_gh_bound`** | Infra/ScaledPath.lean | **★ Path → interval GH convergence**. |
-| T26 | `GHApproximation`, `ghApprox_of_half_scale` | Infra/GHApprox.lean | Abstract GH-approximation structure. |
+### Phase 0 — Audit of the Gorard corpus
+- ✅ Close-readings of G1 (2004.14810), G2 (2011.12174), G3 (2102.09363), G4 (2303.07282).
+- ✅ 184-row claims catalog, severity taxonomy S1–S6, major-flaws index F1–F8, cross-paper audit.
+- ✅ Empirical refutation of the named EFE rule (SetReplace + independent Python rewriter on 9 seeds).
 
-### Corrected continuum identities (Phase 2)
+### Phase 1 — Wolfram-model structural theorems (Lean)
+- ✅ Edge conservation, trajectory-level conservation, in/out degrees, per-event balance.
+- ✅ Causal-DAG level function via well-founded recursion; level monotonicity; same-level antichain.
+- ✅ `causallyPrecedes_iff_isCausalPred` bridge between Prop- and Bool-level causal relations.
+- ⌛ Full parallel-layer bound `|layer_s| ≤ N/k` (needs trajectory-structure lemma).
+- ⌛ Trajectory-structure lemma (consumed hyperedges have earlier creators).
 
-| # | Theorem | File | Meaning |
-|---|---|---|---|
-| T27 | `OllivierIdentityLeading`, `GorardMisstatedForm` | Infra/OllivierStatement.lean | Correct and Gorard-incorrect Ollivier. |
-| T28 | `ollivier_vs_gorard_equivalence_requires_ric_eq_scalar` | Infra/OllivierStatement.lean | Coincidence condition. |
-| T29 | `GrayTubeLeading`, `GorardTubeForm` | Infra/GrayTubeStatement.lean | Correct and Gorard-incorrect Gray tube. |
-| T30 | `gray_vs_gorard_disagree_on_S2` | Infra/GrayTubeStatement.lean | Concrete disagreement: 1/6 ≠ 1/3. |
-| T31 | `gray_vs_gorard_disagree_on_S3` | Infra/GrayTubeStatement.lean | Concrete disagreement: 1/3 ≠ 2. |
+### Phase 1 — Refutations of major structural flaws (F1–F5)
+All formalized as Lean theorems, axiom-clean:
+- ✅ **F1** (`Refutations/F1NoMetric.lean`) — no canonical hypergraph-to-metric construction.
+- ✅ **F2** (`Refutations/F2Orthonormality.lean`) — fiat orthonormality is non-canonical.
+- ✅ **F3** (`Refutations/F3Tautology.lean`) — "asymptotic dim preservation ⇒ EFE" is `Iff.rfl`.
+- ✅ **F4** (`Refutations/F4Tautology.lean`) — "causal invariance ⇔ discrete general covariance" is `Iff.rfl` (axiom-free).
+- ✅ **F5** (`Refutations/F5Illdefined.lean`) — "becomes" is convergence-notion-dependent.
 
-## Audit deliverables (Phase 0)
+### Phase 2 — Corrected continuum identities
+- ✅ Statement-only forms of the correct Ollivier identity (directional Ric) and Gorard's wrong form (scalar R); coincidence-condition theorem.
+- ✅ Statement-only forms of the correct Gray tube formula and Gorard's wrong form; concrete disagreement proofs on S² (1/6 ≠ 1/3) and S³ (1/3 ≠ 2).
 
-See [`INDEX.md`](INDEX.md) for the full document tree. Key artifacts:
+### Phase 3 — Continuum-limit theorems
+- ✅ **Cycle → circle** GH bound at `1/(2n)` (`Infra/GHBound.lean`).
+- ✅ **Path → interval** GH bound (`Infra/ScaledPath.lean`).
+- ✅ **2D lattice → 2-torus** GH bound (`Infra/ScaledTorus.lean`).
+- ✅ **(d+1)D lattice → (d+1)-torus** GH bound for arbitrary `d ≥ 0` (`Infra/ScaledTorusD.lean`).
+- ✅ Abstract `GHApproximation` structure (`Infra/GHApprox.lean`).
 
-- [`FINDINGS.md`](FINDINGS.md) — canonical one-line verdict summary
-- [`notes/severity_taxonomy.md`](notes/severity_taxonomy.md) — S1–S6 classification
-- [`notes/corpus_audit.md`](notes/corpus_audit.md) — cross-paper propagation
-- [`notes/continuum_limit_claims.md`](notes/continuum_limit_claims.md) — per-claim verdict
-- [`notes/claims_catalog.md`](notes/claims_catalog.md) — 184-row G1 audit
-- [`notes/{2004,2102,2303}_close_reading.md`](notes/) — per-paper close readings
-- [`results/phase1_selfaudit/`](results/phase1_selfaudit/) — SetReplace ↔ Python agreement
-- [`results/phase2_continuum/`](results/phase2_continuum/) — four-rail refutations of Eq 342 and Eq 344
+### Phase 4 — Infrageometry of the Lorentzian side
+- ✅ **Discrete Lorentzian lattice** `LorentzLattice.lean`: `CausalPrecedes`, Timelike/Null/Spacelike trichotomy, signed Minkowski interval with three-way positivity classification, forward cones.
+- ✅ **Continuum Minkowski** `Minkowski.lean`: `ContinuumCausalPrecedes`, trichotomy, signed interval.
+- ✅ **Scaled int-to-ℝ embedding** `ScaledLorentz.lean`: `lorentzIntEmbed` preserves `CausalPrecedes` and `Timelike` into continuum Minkowski (forward direction).
+- ⌛ Full scaled isometry-plus-density (Lorentzian GH) — blocked by Mathlib gap.
 
-## Path on the infrageometry roadmap
+### Phase 4 — Bridging theorems (rewriting ↔ Minkowski)
+- ✅ **1+0-dim bridge** `TrajectoryLorentz.lean`: `trajectoryToEvent τ` via the level function. `causallyPrecedes_implies_timelike`. `trajectoryToEvent_lossy` (F1/F2 gap explicit).
+- ✅ **d-dim conditional bridge** `TrajectoryLorentzD.lean`: `SpatialEmbedding`, `LightConeCompatible`, `fullEmbed_preserves_causal`. The F1 missing-data slot made an explicit parameter.
+- ✅ **End-to-end bridge** `FullBridge.lean`: `causallyPrecedes_gives_continuum` chains trajectory → Lorentz → Minkowski under `LightConeCompatible τ φ`.
 
-- **Phase 0 (audit)**: ✅ done.
-- **Phase 1 (structural theorems)**: in flight. Edge conservation, in/out degrees, level monotonicity, same-level antichain property done. Full parallel-layer bound (|layer_s| ≤ N/k) requires state-at-each-level tracking.
-- **Phase 2 (correct continuum identities)**: analytical refutations done; Lean statement-level formalisation of correct Ollivier and Gray forms done, with proven disagreement from Gorard's forms on concrete cases (S², S³).
-- **Phase 3 (continuum-limit theorems)**: **two complete examples** — cycle → circle, path → interval — both packaged under the common `GHApproximation` abstraction.
-- **Phase 4 (discrete geometric structures library)**: not started.
-- **Phase 5 (Wolfram-specific convergence)**: not started.
-- **Phase 6 (causal-set infrageometry)**: not started.
+### Rung 1 — Discrete calculus (bridge ladder entry)
+- ✅ `Neighbourhood V` structure + graph Laplacian + counting inner product (`DiscreteCalculus.lean`).
+- ✅ Linearity of `Δ`, vanishes on constants.
+- ✅ `discreteInner` symmetry + bilinearity.
+- ✅ `laplacianLinear`: graph Laplacian as `LinearMap` — opens Mathlib spectral API.
+- ✅ **Self-adjointness** `⟪Δ f, g⟫ = ⟪f, Δ g⟫` (`DiscreteCalculusSymm.lean`).
+- ✅ **Dirichlet form** `⟪f, −Δ f⟫ = ½ ∑ (f(w) − f(v))²`.
+- ✅ **Positive semidefiniteness** of `−Δ`.
+- ✅ **Discrete divergence theorem** `∑ Δ f = 0`.
+- ✅ **Cycle graph** concrete instance + Dirichlet form (`CycleGraph.lean`).
+
+### Rung 2 — Operator convergence (entry)
+- ✅ Central second difference `Δ²_h f := f(x+h) − 2 f(x) + f(x−h)`, linearity, polynomial-case exact identity: for any quadratic, `Δ²_h f(x) = f''(x) · h²` (no error). Identifies cycle Laplacian with the second difference.
+- ⌛ `C²` Taylor-remainder version (pending Mathlib `iteratedDeriv` / `taylorWithinEval` integration).
+
+### Branchial skeleton (QM bridge groundwork)
+- ✅ `BranchialRelated`, `NStep`, `BranchialSlice` + slice recursion (`Branchial.lean`).
+- ⌛ Branchial measure → amplitudes → Hilbert-space limit.
+
+## Documentation
+- [`README.md`](README.md), [`INDEX.md`](INDEX.md) — navigation.
+- [`MAJOR_FLAWS.md`](MAJOR_FLAWS.md) — F1–F8 structural-flaw registry with Lean-formalization status for each.
+- [`MILESTONES.md`](MILESTONES.md) — checkbox tracker across all phases.
+- [`BRIDGE_MACHINERY.md`](BRIDGE_MACHINERY.md) — 10-rung ladder from discrete calculus to Einstein equations.
+- [`RULE_SEARCH.md`](RULE_SEARCH.md) — how the Lean corpus serves as verifier + screener in a rule-search pipeline.
+- [`PUBLISHABLE.md`](PUBLISHABLE.md) — paper targets P1–P7 with dependencies.
+- [`LEAN_PHYSICS.md`](LEAN_PHYSICS.md) — conventions and alignment with other Lean-physics efforts.
+
+## Path-on-GR summary (see `BRIDGE_MACHINERY.md`)
+
+**What we have:** full chain `causallyPrecedes (trajectory) → CausalPrecedes (discrete Lorentz) → ContinuumCausalPrecedes (Minkowski)` under `LightConeCompatible τ φ`. Flat-target GH bounds in all dimensions (cycle, path, d-torus). Graph Laplacian with full spectral-theory readiness. F1–F5 refuted.
+
+**What we're missing for GR:** curved-target bridges (blocked by Rungs 4–5, Mathlib Ricci). Full Lorentzian-GH (blocked by Mathlib gap). A specific rule whose causal graph has the right dimension (empirical + structural rejection of Gorard's named rule — F7). Discretization of the Einstein–Hilbert action converging to the continuum one (F5 blocks naïve form).
+
+**Rule search as the practical route:** our Lean corpus serves as verifier for any candidate rule + candidate spatial embedding (`RULE_SEARCH.md`). Screening signatures: level growth `~t^{d+1}`, antichain width `~k^d`, cone volume. Any candidate rule passing these + `LightConeCompatible` gets a machine-checked Minkowski-consistency certificate via the end-to-end bridge.
 
 ## Next concrete directions
 
-1. **2D continuum limit**: scaled 2D lattice → flat torus or unit square. Same template as cycle and path; the product structure adds some work.
-2. **Full parallel-layer bound**: requires an additional trajectory-structure lemma (events only consume earlier-produced expressions); then the state-size tracking argument.
-3. **Start Phase 4**: define `DirectedHypergraph` with a metric-measure-space instance; begin porting Eidi–Jost directed-Ollivier-Ricci.
-4. **A Wolfram-model rule with a proved continuum limit**: even a very simple one (e.g., a rule that builds up a cycle graph) would be a first Phase-5 exemplar.
+1. **Rung 2 C² case**: generalise `SecondDifference` from polynomials to arbitrary `C²` functions via Mathlib's Taylor infrastructure.
+2. **Discrete heat equation as linear ODE**: use `laplacianLinear` + finite-dimensional ODE existence-uniqueness; prove conservation of total mass via `laplacian_sum_zero` + `d/dt ∑ u = 0`.
+3. **Rung 5 local-coordinate Ricci**: define Christoffel symbols, Riemann tensor, Ricci, scalar curvature on explicit charts (ℝⁿ, Schwarzschild in Schwarzschild coords). Skip the bundle machinery for now; the coordinate form is what physics actually uses.
+4. **Branchial measure**: uniform probability on finite `BranchialSlice`, first step toward Hilbert-space amplitudes.
+5. **Trajectory-structure lemma** + **full parallel-layer bound** `|layer_s| ≤ N/k` (Phase 1 pending).
