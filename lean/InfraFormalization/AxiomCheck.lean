@@ -18,6 +18,7 @@ import InfraFormalization.Demo
 import InfraFormalization.Growth
 import InfraFormalization.ParallelSchedule
 import InfraFormalization.Infra.ScaledCycle
+import InfraFormalization.Infra.LatticeDensity
 
 #print axioms InfraFormalization.edge_conservation
 #print axioms InfraFormalization.trajectory_preserves_size
@@ -31,3 +32,8 @@ import InfraFormalization.Infra.ScaledCycle
 #print axioms InfraFormalization.Infra.cycleDist_symm
 #print axioms InfraFormalization.Infra.cycleDist_le_half
 #print axioms InfraFormalization.Infra.cycleDist_zero_of_small
+#print axioms InfraFormalization.Infra.cycleDist_triangle
+#print axioms InfraFormalization.Infra.cycleDist_eq_zero_iff
+#print axioms InfraFormalization.Infra.exists_lattice_index
+#print axioms InfraFormalization.Infra.lattice_one_over_n_dense
+#print axioms InfraFormalization.Infra.lattice_half_n_cover
