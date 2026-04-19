@@ -82,6 +82,25 @@ theorem causallyPrecedes_implies_minkowski {sys : RewritingSystem P}
   obtain ⟨hlt, _, hcp⟩ := (causallyPrecedes_iff_isCausalPred τ i j).mp h
   exact trajectoryToEvent_preserves_causal τ i j hlt hcp
 
+/-- **Lossiness of the 1+0-dim embedding.** All same-level events
+collapse to the same Minkowski event: there are no spatial coordinates
+to distinguish them. This captures the F1/F2 structural issue — the
+trajectory does not determine spatial coordinates, so an embedding
+carrying only causally-canonical data (the level function) must be
+lossy. Higher-dim embeddings would require non-canonical spatial
+choices. -/
+theorem trajectoryToEvent_lossy {sys : RewritingSystem P}
+    {init : Hypergraph V} (τ : Trajectory sys init) (i j : Nat) :
+    level τ i = level τ j ↔ trajectoryToEvent τ i = trajectoryToEvent τ j := by
+  unfold trajectoryToEvent
+  constructor
+  · intro h
+    funext _
+    exact_mod_cast h
+  · intro h
+    have := congrFun h 0
+    exact_mod_cast this
+
 /-- **Strengthened master theorem.** In the 1+0-dim embedding,
 `causallyPrecedes` gives a strict *timelike* separation — the time
 coordinate strictly increases because the level function does. Since

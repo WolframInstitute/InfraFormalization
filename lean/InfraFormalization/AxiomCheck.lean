@@ -110,6 +110,7 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.Infra.same_level_not_causal
 #print axioms InfraFormalization.Infra.causallyPrecedes_implies_minkowski
 #print axioms InfraFormalization.Infra.causallyPrecedes_implies_timelike
+#print axioms InfraFormalization.Infra.trajectoryToEvent_lossy
 #print axioms InfraFormalization.Refutations.gorard_dim_preservation_is_euler_lagrange
 #print axioms InfraFormalization.Refutations.gorard_section_3_3_contentless
 #print axioms InfraFormalization.Refutations.gorard_causal_invariance_is_general_covariance
