@@ -109,8 +109,9 @@ Grouped by phase (see [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md)). Each milestone ei
 - [x] `mem_layer_isCausalPred`: layer membership implies causal precedence.
 - [x] **`BenincasaDowkerConjecture`** structure: explicit `Prop`-level placeholder for the unproven `B_ρ → □ − ½R` continuum limit; `gorardF6_carries_BD_assumption` makes the F6 dependency machine-checkable.
 - [ ] General-dimension BD operator (coefficients indexed by `d`; 2D = `(1, -2, 1)`, 3D, etc.).
-- [ ] Connection to the discrete action `S[φ] := ∑_v φ(v) · B[φ](v)`.
-- [ ] Action expansion under perturbation: `S[g + h] − S[g]` to first order in `h`, recovering the discrete EL equation.
+- [x] **Discrete action** `S[φ] := ∑_{i < N} φ(i) · B[φ](i)` (`discreteAction`); homogeneous of degree 2 (`discreteAction_smul`).
+- [x] **Discrete EL equation** `discreteEL τ φ ↔ ∀ i, B[φ](i) = 0` — the discrete Euler-Lagrange (analog of Gorard's `δS/δg^{ab} = 0`).
+- [ ] Action expansion under perturbation: `S[φ + h] − S[φ]` to first order in `h`, recovering `discreteEL` from stationarity.
 
 ### Schwarzschild curved-metric sanity check (Rung 5)
 - [ ] `schwarzschildMetric (M : ℝ) : MetricData 4` with components, inverse, all partial derivatives.

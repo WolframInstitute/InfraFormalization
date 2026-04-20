@@ -200,6 +200,9 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.discreteDAlembertian4_zero
 #print axioms InfraFormalization.layer_disjoint
 #print axioms InfraFormalization.mem_layer_isCausalPred
+#print axioms InfraFormalization.discreteAction_smul
+#print axioms InfraFormalization.discreteAction_zero
+#print axioms InfraFormalization.discreteEL_zero
 #print axioms InfraFormalization.Refutations.gorard_dim_preservation_is_euler_lagrange
 #print axioms InfraFormalization.Refutations.gorard_section_3_3_contentless
 #print axioms InfraFormalization.Refutations.gorard_causal_invariance_is_general_covariance

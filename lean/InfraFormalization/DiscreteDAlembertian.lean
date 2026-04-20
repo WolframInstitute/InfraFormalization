@@ -198,4 +198,61 @@ hypothesis. -/
 def gorardF6_carries_BD_assumption : Prop :=
   ∀ (C : BenincasaDowkerConjecture), True
 
+/-- **Discrete action** `S[φ] := ∑_{i < N} φ(i) · B[φ](i)` on a
+trajectory of length `N`.
+
+This is the discrete analog of Gorard's `S[g^{ab}] = ∫ μ_g · R`
+(arXiv:2004.14810 Eq 86), with `B = discreteDAlembertian4` playing
+the role of the discrete `R`. The action is well-defined as a finite
+sum; the question of its continuum-limit (the Einstein-Hilbert action
+`∫ √(-g) R d⁴x`) is governed by the same `BenincasaDowkerConjecture`. -/
+noncomputable def discreteAction
+    {sys : RewritingSystem P} {init : Hypergraph V}
+    (τ : Trajectory sys init) (φ : Nat → ℝ) (N : Nat) : ℝ :=
+  ∑ i ∈ Finset.range N, φ i * discreteDAlembertian4 τ φ i
+
+/-- **Discrete action is bilinear in `φ`** in a specific sense: under
+`φ ↦ c · φ`, the action scales by `c²`. -/
+theorem discreteAction_smul
+    {sys : RewritingSystem P} {init : Hypergraph V}
+    (τ : Trajectory sys init) (c : ℝ) (φ : Nat → ℝ) (N : Nat) :
+    discreteAction τ (fun j => c * φ j) N = c^2 * discreteAction τ φ N := by
+  unfold discreteAction
+  rw [Finset.mul_sum]
+  apply Finset.sum_congr rfl
+  intros i _
+  rw [discreteDAlembertian4_smul]
+  ring
+
+/-- **Discrete action vanishes on the zero function.** -/
+theorem discreteAction_zero
+    {sys : RewritingSystem P} {init : Hypergraph V}
+    (τ : Trajectory sys init) (N : Nat) :
+    discreteAction τ (fun _ => 0) N = 0 := by
+  unfold discreteAction
+  apply Finset.sum_eq_zero
+  intros i _
+  simp
+
+/-- **Discrete EL equation (formal).** A function `φ` is a *discrete
+extremum* of the action if `B[φ](i) = 0` at every event `i`. This is
+the discrete analog of `δS/δφ = 0`, i.e., the Euler-Lagrange equation
+of the discrete action.
+
+For the Wolfram-model context, the analog of `δS[g^{ab}]/δg^{ab} = 0`
+(which Gorard equates with the vacuum Einstein equations in F3 via a
+tautology) is here machine-checkable: it is `discreteEL` on the
+metric perturbation. -/
+def discreteEL {sys : RewritingSystem P} {init : Hypergraph V}
+    (τ : Trajectory sys init) (φ : Nat → ℝ) : Prop :=
+  ∀ i : Nat, discreteDAlembertian4 τ φ i = 0
+
+/-- The zero function trivially satisfies the discrete EL equation. -/
+theorem discreteEL_zero
+    {sys : RewritingSystem P} {init : Hypergraph V}
+    (τ : Trajectory sys init) :
+    discreteEL τ (fun _ => 0) := by
+  intros i
+  exact discreteDAlembertian4_zero τ i
+
 end InfraFormalization
