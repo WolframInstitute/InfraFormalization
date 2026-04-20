@@ -196,6 +196,8 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.Curvature.sdg_symm
 #print axioms InfraFormalization.Curvature.sginv_mul_sgg_diagonal
 #print axioms InfraFormalization.Curvature.sginv_mul_sgg
+#print axioms InfraFormalization.Curvature.schwarzschildChristoffel_symm
+#print axioms InfraFormalization.Curvature.schwarzschildChristoffel_1_00
 #print axioms InfraFormalization.formanRicciEdge_symm
 #print axioms InfraFormalization.formanRicciEdge_zero_of_two_regular
 #print axioms InfraFormalization.formanRicciEdge_regular

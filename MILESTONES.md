@@ -126,7 +126,10 @@ Grouped by phase (see [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md)). Each milestone ei
 - [x] Symmetry axioms (`sgg_symm`, `sginv_symm`, `sdg_symm`).
 - [x] **`sginv_mul_sgg`**: `∑ g^{μα} g_{αν} = δ^μ_ν` conditional on `SchwarzschildValid` (the key axiom of `MetricData`, established on the exterior).
 - [ ] Domain-restricted `PartialMetricData` variant (pending; enables full `MetricData` packaging of Schwarzschild).
-- [ ] Compute Christoffel symbols; match textbook values.
+- [x] **`schwarzschildChristoffel M x ρ μ ν`** (`Schwarzschild.lean`): Christoffel formula specialised to Schwarzschild components.
+- [x] `schwarzschildChristoffel_symm`: lower-index symmetry.
+- [x] **`schwarzschildChristoffel_1_00`**: worked example `Γ^1_{00} = M(r − 2M)/r³` in the exterior — matches textbook value.
+- [ ] Other non-zero Christoffel entries (`Γ^0_{01}`, `Γ^1_{11}`, `Γ^1_{22}`, `Γ^1_{33}`, `Γ^2_{12}`, `Γ^2_{33}`, `Γ^3_{13}`, `Γ^3_{23}`) — analogous mechanical computations.
 - [ ] Compute Ricci; verify `Ric ≡ 0` (vacuum solution).
 - [ ] Cross-check via `vacuumEFE`.
 

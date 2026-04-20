@@ -182,5 +182,100 @@ theorem sginv_mul_sgg {M : ℝ} {x : Fin 4 → ℝ}
       have hne : μ ≠ α := fun heq => hαμ heq.symm
       simp [hne]
 
+/-! ## Schwarzschild Christoffel symbols
+
+Direct computation using the Christoffel formula with Schwarzschild's
+`sginv`, `sdg`. We define `schwarzschildChristoffel M x ρ μ ν` and
+prove specific non-zero entries.
+
+The textbook non-zero Schwarzschild Christoffel symbols (up to lower-
+index symmetry) are:
+
+  Γ^0_{01} = Γ^0_{10} = M / (r² (1 − 2M/r)) = M / (r(r−2M))
+  Γ^1_{00} = M (r − 2M) / r³
+  Γ^1_{11} = −M / (r² (1 − 2M/r)) = −M / (r(r−2M))
+  Γ^1_{22} = −(r − 2M)
+  Γ^1_{33} = −(r − 2M) sin²θ
+  Γ^2_{12} = Γ^2_{21} = 1/r
+  Γ^2_{33} = −sin θ cos θ
+  Γ^3_{13} = Γ^3_{31} = 1/r
+  Γ^3_{23} = Γ^3_{32} = cos θ / sin θ
+
+All others vanish.
+
+We prove `Γ^1_{00} = M (r − 2M) / r³` as the worked example,
+illustrating the formalism. The rest follow by analogous computations
+(tedious but mechanical).
+-/
+
+/-- **Schwarzschild Christoffel symbols** (via the standard formula). -/
+noncomputable def schwarzschildChristoffel (M : ℝ) (x : Fin 4 → ℝ)
+    (ρ μ ν : Fin 4) : ℝ :=
+  (1 / 2) * ∑ σ : Fin 4,
+    sginv M x ρ σ *
+      (sdg M μ x σ ν + sdg M ν x σ μ - sdg M σ x μ ν)
+
+/-- **Lower-index symmetry of Schwarzschild Christoffel**. -/
+theorem schwarzschildChristoffel_symm (M : ℝ) (x : Fin 4 → ℝ)
+    (ρ μ ν : Fin 4) :
+    schwarzschildChristoffel M x ρ μ ν = schwarzschildChristoffel M x ρ ν μ := by
+  unfold schwarzschildChristoffel
+  congr 1
+  apply Finset.sum_congr rfl
+  intros σ _
+  have h1 : sdg M μ x σ ν + sdg M ν x σ μ - sdg M σ x μ ν
+          = sdg M ν x σ μ + sdg M μ x σ ν - sdg M σ x ν μ := by
+    rw [sdg_symm M σ x μ ν]
+    ring
+  rw [h1]
+
+/-- **Worked example: `Γ^1_{00}` = M(r − 2M)/r³ in the exterior.**
+Demonstrates the Schwarzschild Christoffel computation on a specific
+non-zero entry. The proof uses the three component computations:
+`sginv M x 1 1 = 1 − 2M/r`, `sdg M 0 x 1 0 = 0` (time-derivative
+of off-diagonal), `sdg M 1 x 0 0 = −2M/r²`. -/
+theorem schwarzschildChristoffel_1_00 {M : ℝ} {x : Fin 4 → ℝ}
+    (hx : SchwarzschildValid M x) :
+    schwarzschildChristoffel M x (⟨1, by decide⟩ : Fin 4)
+                                 (⟨0, by decide⟩ : Fin 4)
+                                 (⟨0, by decide⟩ : Fin 4)
+    = M * (x 1 - 2 * M) / (x 1)^3 := by
+  unfold schwarzschildChristoffel
+  obtain ⟨hr_gt_2M, hr_pos, _⟩ := hx
+  have hr_ne : x 1 ≠ 0 := ne_of_gt hr_pos
+  have hr_sq_ne : x 1 ^ 2 ≠ 0 := pow_ne_zero _ hr_ne
+  have hr_cube_ne : x 1 ^ 3 ≠ 0 := pow_ne_zero _ hr_ne
+  -- Compute the three specific entries needed.
+  have h_sginv_11 : sginv M x (⟨1, by decide⟩ : Fin 4) (⟨1, by decide⟩ : Fin 4)
+                  = 1 - 2 * M / x 1 := by
+    unfold sginv
+    simp
+  have h_sdg_0_10 : sdg M (⟨0, by decide⟩ : Fin 4) x
+                         (⟨1, by decide⟩ : Fin 4) (⟨0, by decide⟩ : Fin 4) = 0 := by
+    unfold sdg
+    have h10ne : (⟨1, by decide⟩ : Fin 4) ≠ (⟨0, by decide⟩ : Fin 4) := by decide
+    simp [h10ne]
+  have h_sdg_1_00 : sdg M (⟨1, by decide⟩ : Fin 4) x
+                         (⟨0, by decide⟩ : Fin 4) (⟨0, by decide⟩ : Fin 4)
+                  = -(2 * M / x 1^2) := by
+    unfold sdg
+    simp
+  -- The sum over σ collapses to σ = 1.
+  rw [Finset.sum_eq_single (⟨1, by decide⟩ : Fin 4)]
+  · -- Only the σ = 1 summand. Compute directly.
+    rw [h_sginv_11, h_sdg_0_10, h_sdg_1_00]
+    field_simp
+    ring
+  · -- For α ≠ 1, sginv M x 1 α = 0.
+    intros α _ hα
+    have hne : (⟨1, by decide⟩ : Fin 4) ≠ α := fun heq => hα heq.symm
+    have h_sginv_1α : sginv M x (⟨1, by decide⟩ : Fin 4) α = 0 := by
+      unfold sginv
+      rw [if_pos hne]
+    rw [h_sginv_1α]
+    ring
+  · intro hne
+    exact absurd (Finset.mem_univ _) hne
+
 end Curvature
 end InfraFormalization
