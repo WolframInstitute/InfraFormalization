@@ -86,4 +86,5 @@ import InfraFormalization.HeatEquation
 import InfraFormalization.WaveEquation
 import InfraFormalization.SchrodingerEquation
 import InfraFormalization.KleinGordon
+import InfraFormalization.ScalarField
 import InfraFormalization.DiscreteDAlembertian

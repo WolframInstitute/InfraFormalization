@@ -51,6 +51,7 @@ import InfraFormalization.HeatEquation
 import InfraFormalization.WaveEquation
 import InfraFormalization.SchrodingerEquation
 import InfraFormalization.KleinGordon
+import InfraFormalization.ScalarField
 import InfraFormalization.DiscreteDAlembertian
 import InfraFormalization.Refutations.F1NoMetric
 import InfraFormalization.Refutations.F2Orthonormality
@@ -279,6 +280,16 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.hasDerivAt_KG_mass
 #print axioms InfraFormalization.hasDerivAt_kleinGordonEnergy
 #print axioms InfraFormalization.klein_gordon_energy_conservation
+#print axioms InfraFormalization.ScalarField.normSq_nonneg
+#print axioms InfraFormalization.ScalarField.norm₂_nonneg
+#print axioms InfraFormalization.ScalarField.innerProd_symm
+#print axioms InfraFormalization.ScalarField.innerProd_self
+#print axioms InfraFormalization.ScalarField.innerProd_add_left
+#print axioms InfraFormalization.ScalarField.innerProd_smul_left
+#print axioms InfraFormalization.innerProd_laplacianHyper
+#print axioms InfraFormalization.innerProd_laplacianHyper_symm
+#print axioms InfraFormalization.innerProd_laplacianHyper_nonpos
+#print axioms InfraFormalization.discreteHamiltonian_eq_legendre
 #print axioms InfraFormalization.discreteDAlembertian4_add
 #print axioms InfraFormalization.discreteDAlembertian4_smul
 #print axioms InfraFormalization.discreteDAlembertian4_zero
