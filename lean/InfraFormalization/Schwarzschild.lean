@@ -19,13 +19,62 @@ is added (tracked in `MILESTONES.md`).
 
 **Scope.** Defines `sgg`, `sginv`, `sdg` (component functions),
 `schwarzschildValid` (exterior predicate), and proves the key
-inverse identity on the exterior. Christoffel computation and vacuum
-`Ric = 0` are substantial follow-ups.
+inverse identity on the exterior. Christoffel computation is
+complete (all eight non-zero entries matching the textbook); vacuum
+`Ric = 0` is a substantial follow-up.
 
-**Hypergraph anchor (pending, prioritised).** Per the grounding
-principle: Schwarzschild must be reachable from a discrete-side
-construction + convergence. This is the open Wolfram-physics problem
-(F6/F7 both relate) — recorded as a target here.
+──────────────────────────────────────────────────────────────────────
+**HYPERGRAPH-ORIGIN OBLIGATION — EXPLICITLY OPEN.**
+──────────────────────────────────────────────────────────────────────
+
+Per the grounding principle of this project, every continuum object
+must have a hypergraph origin. The `sgg`, `sginv`, `sdg`,
+`schwarzschildChristoffel` functions above are **purely analytic**:
+they take `(M, x : Fin 4 → ℝ)` and return real values. No
+`Hypergraph V` appears in their definition.
+
+This is intentionally a **landing pad**: Schwarzschild is the
+*target* of a bridge we have not yet built, not a result derived
+from hypergraph rewriting. The machine-checked formal statement of
+the missing leg is:
+
+  `InfraFormalization.SchwarzschildObligationMet`
+    (in `ContinuumLimitStatement.lean`)
+
+which currently contains `∧ False` — the obligation is formally
+uninhabited. No term exists, so nothing downstream is permitted to
+assume "Schwarzschild comes from a Wolfram-model rule."
+
+This matters because Gorard's corpus (arXiv:2004.14810 §3.3;
+2102.09363 §5; 2303.07282) *claims* to have derived Schwarzschild
+(and Kerr, FLRW) from hypergraph rules. The corpus audit (see
+`MAJOR_FLAWS.md` / `memory/corpus_audit_finding.md`) finds the
+derivations rely on Poisson-sprinkling coordinates from the *target*
+manifold — not on rule dynamics — which is circular.
+
+**What is achievable right now** (and *is* built elsewhere in the
+project):
+  1. `Infra.LorentzLattice`, `Infra.Minkowski`, `Infra.ScaledLorentz`
+     — scaled discrete lattices GH-converging to *flat* Minkowski.
+  2. `HypergraphCycleBridge` (this session) — concrete bridge from
+     `Hypergraph (Fin n)` via `laplacianHyper` to the continuum
+     second derivative, polynomial test functions.
+  3. `HeatEquation.lean`, `WaveEquation.lean`,
+     `SchrodingerEquation.lean`, `KleinGordon.lean` — PDEs living
+     on `Hypergraph V` with mass conservation / energy conservation
+     / unitarity, provably self-adjoint Laplacian.
+
+**What is NOT built** (and whose absence the `False` in
+`SchwarzschildObligationMet` formally records):
+  * A concrete `RewritingSystem P` whose scaled trajectory
+    GH-converges to the Schwarzschild manifold.
+  * Any hypergraph construction whose `laplacianHyper` scales to
+    the curved-space Laplace-Beltrami operator for a non-flat
+    metric.
+
+Extending the polynomial-case Rung-2 bridge of this session into the
+curved-space case is the outstanding Wolfram-physics research
+problem; it cannot be bluffed past in Lean.
 -/
 
 import InfraFormalization.CurvatureLocalCoord

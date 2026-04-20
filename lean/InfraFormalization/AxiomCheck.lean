@@ -52,6 +52,8 @@ import InfraFormalization.WaveEquation
 import InfraFormalization.SchrodingerEquation
 import InfraFormalization.KleinGordon
 import InfraFormalization.ScalarField
+import InfraFormalization.HypergraphCycleBridge
+import InfraFormalization.ContinuumLimitStatement
 import InfraFormalization.DiscreteDAlembertian
 import InfraFormalization.Refutations.F1NoMetric
 import InfraFormalization.Refutations.F2Orthonormality
@@ -292,6 +294,12 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.discreteHamiltonian_eq_legendre
 #print axioms InfraFormalization.variational_dirichlet
 #print axioms InfraFormalization.KG_EulerLagrange_iff_KleinGordonSolution
+#print axioms InfraFormalization.cycle_succ_ne
+#print axioms InfraFormalization.cycleHyperedge_perEdge_contribution
+#print axioms InfraFormalization.laplacianHyper_cycleHypergraph
+#print axioms InfraFormalization.hypergraph_scaled_laplacian_eq_second_deriv
+#print axioms InfraFormalization.refutations_sound_given_obligations_open
+#print axioms InfraFormalization.cycle_laplacian_conv_polynomial
 #print axioms InfraFormalization.discreteDAlembertian4_add
 #print axioms InfraFormalization.discreteDAlembertian4_smul
 #print axioms InfraFormalization.discreteDAlembertian4_zero

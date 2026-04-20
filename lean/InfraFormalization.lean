@@ -87,4 +87,6 @@ import InfraFormalization.WaveEquation
 import InfraFormalization.SchrodingerEquation
 import InfraFormalization.KleinGordon
 import InfraFormalization.ScalarField
+import InfraFormalization.HypergraphCycleBridge
+import InfraFormalization.ContinuumLimitStatement
 import InfraFormalization.DiscreteDAlembertian
