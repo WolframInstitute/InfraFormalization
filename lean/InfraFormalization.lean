@@ -80,3 +80,4 @@ import InfraFormalization.DiscreteRicci
 import InfraFormalization.RicciBridge
 import InfraFormalization.LaplacianBridge
 import InfraFormalization.HypergraphLaplacian
+import InfraFormalization.DiscreteDAlembertian

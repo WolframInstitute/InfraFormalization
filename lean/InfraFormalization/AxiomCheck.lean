@@ -45,6 +45,7 @@ import InfraFormalization.DiscreteRicci
 import InfraFormalization.RicciBridge
 import InfraFormalization.LaplacianBridge
 import InfraFormalization.HypergraphLaplacian
+import InfraFormalization.DiscreteDAlembertian
 import InfraFormalization.Refutations.F1NoMetric
 import InfraFormalization.Refutations.F2Orthonormality
 import InfraFormalization.Refutations.F3Tautology
@@ -194,6 +195,11 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.Hypergraph.laplacianHyper_add
 #print axioms InfraFormalization.Hypergraph.laplacianHyper_smul
 #print axioms InfraFormalization.Hypergraph.laplacianHyper_const
+#print axioms InfraFormalization.discreteDAlembertian4_add
+#print axioms InfraFormalization.discreteDAlembertian4_smul
+#print axioms InfraFormalization.discreteDAlembertian4_zero
+#print axioms InfraFormalization.layer_disjoint
+#print axioms InfraFormalization.mem_layer_isCausalPred
 #print axioms InfraFormalization.Refutations.gorard_dim_preservation_is_euler_lagrange
 #print axioms InfraFormalization.Refutations.gorard_section_3_3_contentless
 #print axioms InfraFormalization.Refutations.gorard_causal_invariance_is_general_covariance

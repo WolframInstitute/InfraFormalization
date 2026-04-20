@@ -99,6 +99,31 @@ Grouped by phase (see [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md)). Each milestone ei
 - [x] **Hypergraph Laplacian** (`HypergraphLaplacian.lean`): `laplacianHyper H f v := ∑_{e ∈ H.edges} ∑_{w ∈ e.others v} (f(w) − f(v))`, defined directly on `Hypergraph V` (the actual Wolfram-model state type). Linearity + vanishes on constants.
 - [x] **First bridge** (`RicciBridge.lean`): `forman_ricci_matches_continuum_on_cycle` and `forman_ricci_real_matches_continuum_on_cycle` — Forman-Ricci on a 2-regular graph equals continuum Ricci on the circle (both ≡ 0); explicit `circleMetric : MetricData 1` instance.
 - [ ] **Convergence theorem (general)**: scaled Forman-Ricci on lattice graphs → continuum Ricci of the GH-limit manifold (extending beyond the trivial 0 = 0 case to non-flat targets).
+
+### Discrete d'Alembertian (Benincasa-Dowker-style) on the trajectory causal DAG
+- [x] `openInterval τ j i` and `intervalSize τ j i` (`DiscreteDAlembertian.lean`).
+- [x] `layer τ k i` — events `j ≺ i` whose interval has exactly `k` intermediates.
+- [x] **`discreteDAlembertian4`**: BD-4D operator `-φ(i) + ∑_{L_0} φ − 9 ∑_{L_1} φ + 16 ∑_{L_2} φ − 8 ∑_{L_3} φ`.
+- [x] Linearity (`discreteDAlembertian4_add`, `_smul`); vanishing on zero (`_zero`).
+- [x] `layer_disjoint`: layers are pairwise disjoint.
+- [x] `mem_layer_isCausalPred`: layer membership implies causal precedence.
+- [x] **`BenincasaDowkerConjecture`** structure: explicit `Prop`-level placeholder for the unproven `B_ρ → □ − ½R` continuum limit; `gorardF6_carries_BD_assumption` makes the F6 dependency machine-checkable.
+- [ ] General-dimension BD operator (coefficients indexed by `d`; 2D = `(1, -2, 1)`, 3D, etc.).
+- [ ] Connection to the discrete action `S[φ] := ∑_v φ(v) · B[φ](v)`.
+- [ ] Action expansion under perturbation: `S[g + h] − S[g]` to first order in `h`, recovering the discrete EL equation.
+
+### Schwarzschild curved-metric sanity check (Rung 5)
+- [ ] `schwarzschildMetric (M : ℝ) : MetricData 4` with components, inverse, all partial derivatives.
+- [ ] Compute Christoffel symbols; match textbook values.
+- [ ] Compute Ricci; verify `Ric ≡ 0` (vacuum solution).
+- [ ] Cross-check via `vacuumEFE`.
+
+### Discrete heat equation on a hypergraph (Rung 6 entry)
+- [ ] `DiscreteHeatODE (H : Hypergraph V) (u₀ : V → ℝ) (t : ℝ) : V → ℝ` via finite-dim linear ODE solver.
+- [ ] Existence + uniqueness (Cauchy-Lipschitz in finite dim).
+- [ ] Mass conservation `∑ u(t) = ∑ u(0)` via `laplacian_sum_zero`.
+- [ ] L² decay `‖u(t)‖² ≤ ‖u(0)‖²` via `laplacian_neg_psd`.
+- [ ] Long-time convergence to uniform (once spectral gap proved).
 - [ ] Ollivier-Ricci with full proof (currently statement-only in `Infra/OllivierStatement.lean`).
 - [ ] Heat semigroup on a finite graph as a finite-dim ODE.
 - [ ] Scaled cycle Laplacian → 1D `d²/dx²` (Rung 2 entry).

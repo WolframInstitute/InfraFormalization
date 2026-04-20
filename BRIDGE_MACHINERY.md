@@ -232,11 +232,17 @@ These complement the constructive bridge: they pin down which Gorard claims fail
 | QM | Branchial skeleton | native | measure → amplitudes → Hilbert |
 
 **Priority order** (what to grind next):
-1. Discrete connection on a hypergraph (Rung 4.4 — the missing hypergraph anchor for Levi-Civita).
-2. `C²` Taylor-remainder (Rung 2 completion).
-3. Schwarzschild as `MetricData` (Rung 5 sanity check).
-4. Discrete heat equation as ODE (Rung 6 entry).
+
+**Current focus: discrete d'Alembertian (Benincasa-Dowker-style) on the trajectory causal DAG.**
+This is the operator Gorard's 2102.09363 circular derivation hinged on. We have all the discrete-causal scaffolding already (`Trajectory`, `causallyPrecedes`, `isCausalPred`, `level`). Formalise: (a) `intervalSize τ j i` — cardinality of open causal interval; (b) `layer τ k i` — events with exactly `k` intermediates; (c) `discreteDAlembertian4 τ φ i := -φ i + ∑ L_0 φ - 9·∑ L_1 φ + 16·∑ L_2 φ - 8·∑ L_3 φ`; (d) linearity + structural theorems; (e) explicit statement of the Benincasa-Dowker convergence conjecture as an open `Prop`, connected to F6. Ships as `DiscreteDAlembertian.lean`.
+
+**Next after that:**
+1. **Schwarzschild as `MetricData 4`** (Rung 5 curved-metric sanity check): all components, all partial derivatives, Christoffel computation, vacuum-EFE verification. A concrete "Gorard tried and failed to formalise, we did" deliverable.
+2. **Discrete heat equation as linear ODE on `Hypergraph V`** (Rung 6 entry): uses `laplacianHyper` + `laplacian_sum_zero`; ties Rungs 1 + 6.
+3. Discrete connection on a hypergraph (Rung 4.4 — anchor for Levi-Civita).
+4. `C²` Taylor-remainder (Rung 2 completion).
 5. Branchial measure (QM entry).
-6. Forman-Ricci on a graph (Rung 5 hypergraph anchor; complementary to Ollivier).
+
+**All three (d'Alembertian, Schwarzschild, heat ODE) are in the plan** and decomposed by sub-tasks. The d'Alembertian is the immediate focus; Schwarzschild and heat-ODE are next.
 
 **Operating principle reminder.** No rung produces "isolated continuum mathematics". Every rung's continuum object is paired with a hypergraph-side object plus a convergence/approximation theorem.
