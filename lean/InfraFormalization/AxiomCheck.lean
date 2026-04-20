@@ -47,6 +47,7 @@ import InfraFormalization.RicciBridge
 import InfraFormalization.LaplacianBridge
 import InfraFormalization.HypergraphLaplacian
 import InfraFormalization.HypergraphCalculus
+import InfraFormalization.HeatEquation
 import InfraFormalization.DiscreteDAlembertian
 import InfraFormalization.Refutations.F1NoMetric
 import InfraFormalization.Refutations.F2Orthonormality
@@ -226,6 +227,8 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.Hypergraph.laplacianHyper_perEdge_zero_of_not_mem
 #print axioms InfraFormalization.Hypergraph.perEdge_sum_zero
 #print axioms InfraFormalization.Hypergraph.laplacianHyper_sum_zero
+#print axioms InfraFormalization.Hypergraph.perEdge_dirichlet_nonpos
+#print axioms InfraFormalization.Hypergraph.laplacianHyper_dirichlet_nonpos
 #print axioms InfraFormalization.hyperedgeGradient_add
 #print axioms InfraFormalization.hyperedgeGradient_smul
 #print axioms InfraFormalization.hyperedgeGradient_const
@@ -235,6 +238,16 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.perEdge_sum_fv_div
 #print axioms InfraFormalization.summation_by_parts_multiset
 #print axioms InfraFormalization.summation_by_parts
+#print axioms InfraFormalization.heatSolution_zero
+#print axioms InfraFormalization.heatSolution_add
+#print axioms InfraFormalization.heatSolution_smul
+#print axioms InfraFormalization.heat_mass_derivative
+#print axioms InfraFormalization.heat_mass_conservation
+#print axioms InfraFormalization.heat_mass_conservation'
+#print axioms InfraFormalization.heat_L2_derivative
+#print axioms InfraFormalization.heat_L2_derivative_nonpos
+#print axioms InfraFormalization.heat_L2_antitone
+#print axioms InfraFormalization.heat_L2_decay
 #print axioms InfraFormalization.discreteDAlembertian4_add
 #print axioms InfraFormalization.discreteDAlembertian4_smul
 #print axioms InfraFormalization.discreteDAlembertian4_zero

@@ -26,6 +26,7 @@ or the discrete Laplace-Beltrami (Rung 1 → Rung 2).
 import InfraFormalization.Hypergraph
 import InfraFormalization.DiscreteCalculus
 import Mathlib.Data.Multiset.Sum
+import Mathlib.Algebra.Order.Chebyshev
 
 namespace InfraFormalization
 
@@ -206,6 +207,128 @@ theorem laplacianHyper_sum_zero (H : Hypergraph V) (f : V → ℝ) :
       apply Finset.sum_congr rfl
       intros v _
       exact step v
+
+/-! ## Dirichlet form non-positivity
+
+The **Dirichlet form** `D_H(f) := ∑_v f(v) * Δ_H f(v)` is
+non-positive. This is the finite-dimensional incarnation of the
+statement that the Laplacian is negative semidefinite (in the
+`Δ = A − D` sign convention used here), and it is what makes the
+discrete heat equation `u' = Δ_H u` dissipative.
+
+Per-edge analysis: for an edge `e` with vertex-set `S = e.verts.toFinset`,
+
+  `∑_v f(v) · ∑_{w ∈ e.others v}(f(w) − f(v))
+   = (∑_{v ∈ S} f(v))² − |S| · ∑_{v ∈ S} f(v)²  ≤  0`
+
+by the Cauchy-Schwarz / Chebyshev inequality
+`sq_sum_le_card_mul_sum_sq`. Summing over edges preserves the
+inequality. -/
+
+/-- **Per-edge contribution to the Dirichlet form is ≤ 0.**
+For any hyperedge `e` and any `f : V → ℝ`,
+`∑_v f(v) · ∑_{w ∈ e.others v}(f(w) − f(v)) ≤ 0`. -/
+theorem perEdge_dirichlet_nonpos (e : Hyperedge V) (f : V → ℝ) :
+    (∑ v : V, f v * (∑ w ∈ e.others v, (f w - f v))) ≤ 0 := by
+  set S : Finset V := e.verts.toFinset with hS
+  -- Step 1: restrict to v ∈ S; outside contributions are zero.
+  have step1 :
+      (∑ v : V, f v * ∑ w ∈ e.others v, (f w - f v))
+      = ∑ v ∈ S, f v * ∑ w ∈ S.erase v, (f w - f v) := by
+    rw [show (Finset.univ : Finset V) = S ∪ (Finset.univ \ S) from
+          (Finset.union_sdiff_of_subset (Finset.subset_univ S)).symm]
+    rw [Finset.sum_union Finset.disjoint_sdiff]
+    have hzero :
+        (∑ v ∈ Finset.univ \ S, f v * ∑ w ∈ e.others v, (f w - f v)) = 0 := by
+      apply Finset.sum_eq_zero
+      intros v hv
+      rw [Finset.mem_sdiff] at hv
+      have := Hypergraph.laplacianHyper_perEdge_zero_of_not_mem e f v hv.2
+      rw [this, mul_zero]
+    rw [hzero, add_zero]
+    apply Finset.sum_congr rfl
+    intros v hv
+    unfold Hyperedge.others
+    rw [if_pos hv]
+  -- Step 2: on v ∈ S, inner sum = (∑ w ∈ S, f w) - |S| · f v.
+  have step2 : ∀ v ∈ S,
+      ∑ w ∈ S.erase v, (f w - f v) = (∑ w ∈ S, f w) - (S.card : ℝ) * f v := by
+    intros v hv
+    rw [Finset.sum_sub_distrib, Finset.sum_const]
+    have herase_sum : (∑ w ∈ S.erase v, f w) = (∑ w ∈ S, f w) - f v := by
+      have := Finset.sum_erase_add S f hv
+      linarith
+    rw [herase_sum]
+    have hcard_erase : ((S.erase v).card : ℝ) = (S.card : ℝ) - 1 := by
+      rw [Finset.card_erase_of_mem hv]
+      have hScard_pos : 1 ≤ S.card := Finset.Nonempty.card_pos ⟨v, hv⟩
+      have : ((S.card - 1 : ℕ) : ℝ) = (S.card : ℝ) - 1 := by
+        rw [Nat.cast_sub hScard_pos]
+        simp
+      exact this
+    rw [show ((S.erase v).card • f v) = ((S.erase v).card : ℝ) * f v from by
+          simp [nsmul_eq_mul]]
+    rw [hcard_erase]
+    ring
+  rw [step1, Finset.sum_congr rfl (fun v hv => by rw [step2 v hv])]
+  -- Step 3: the S-sum collapses to (∑ f)² - |S| · ∑ f².
+  have step3 :
+      (∑ v ∈ S, f v * ((∑ w ∈ S, f w) - (S.card : ℝ) * f v))
+      = (∑ v ∈ S, f v) ^ 2 - (S.card : ℝ) * ∑ v ∈ S, (f v) ^ 2 := by
+    have h1 :
+        (∑ v ∈ S, f v * ((∑ w ∈ S, f w) - (S.card : ℝ) * f v))
+        = (∑ v ∈ S, f v * (∑ w ∈ S, f w))
+          - ∑ v ∈ S, (S.card : ℝ) * (f v) ^ 2 := by
+      rw [← Finset.sum_sub_distrib]
+      apply Finset.sum_congr rfl
+      intros v _
+      ring
+    have h2 : (∑ v ∈ S, f v * (∑ w ∈ S, f w))
+            = (∑ v ∈ S, f v) * (∑ w ∈ S, f w) := by
+      rw [← Finset.sum_mul]
+    have h3 : (∑ v ∈ S, (S.card : ℝ) * (f v) ^ 2)
+            = (S.card : ℝ) * ∑ v ∈ S, (f v) ^ 2 := by
+      rw [← Finset.mul_sum]
+    rw [h1, h2, h3]
+    ring
+  rw [step3]
+  -- Step 4: Cauchy-Schwarz: (∑ f)² ≤ |S| · ∑ f².
+  have hcs : (∑ v ∈ S, f v) ^ 2 ≤ (S.card : ℝ) * ∑ v ∈ S, (f v) ^ 2 := by
+    have := sq_sum_le_card_mul_sum_sq (s := S) (f := f)
+    exact_mod_cast this
+  linarith
+
+/-- **Dirichlet form non-positivity** for the hypergraph Laplacian:
+`∑_v f(v) · Δ_H f(v) ≤ 0`. Equivalently, `Δ_H` is negative
+semidefinite in the `Δ = A − D` sign convention.
+
+Per-edge contribution is `(∑_{v ∈ S_e} f(v))² − |S_e| · ∑ f²`, which
+is ≤ 0 by Cauchy-Schwarz. Summing over edges preserves the
+inequality. -/
+theorem laplacianHyper_dirichlet_nonpos
+    (H : Hypergraph V) (f : V → ℝ) :
+    (∑ v : V, f v * Hypergraph.laplacianHyper H f v) ≤ 0 := by
+  unfold Hypergraph.laplacianHyper
+  -- Swap ∑_v and ∑_e via Multiset induction, reducing to per-edge.
+  induction H.edges using Multiset.induction_on with
+  | empty => simp
+  | cons e es ih =>
+    -- Distribute f(v) across (e-term + es-sum); split ∑_v via sum_add.
+    have swap :
+        (∑ v : V, f v *
+          ((e ::ₘ es).map (fun e' => ∑ w ∈ e'.others v, (f w - f v))).sum)
+        = (∑ v : V, f v * (∑ w ∈ e.others v, (f w - f v)))
+          + (∑ v : V, f v *
+             (es.map (fun e' => ∑ w ∈ e'.others v, (f w - f v))).sum) := by
+      rw [← Finset.sum_add_distrib]
+      apply Finset.sum_congr rfl
+      intros v _
+      simp only [Multiset.map_cons, Multiset.sum_cons]
+      ring
+    rw [swap]
+    have hper : (∑ v : V, f v * (∑ w ∈ e.others v, (f w - f v))) ≤ 0 :=
+      perEdge_dirichlet_nonpos e f
+    linarith
 
 end Hypergraph
 
