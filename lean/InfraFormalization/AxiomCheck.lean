@@ -201,6 +201,9 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.formanRicciEdge_regular
 #print axioms InfraFormalization.formanRicciVertex_regular
 #print axioms InfraFormalization.formanRicciTotalScalar_regular
+#print axioms InfraFormalization.formanRicciHyperedge_two_vertex
+#print axioms InfraFormalization.formanRicciHyperedge_neg_of_three_or_more
+#print axioms InfraFormalization.formanRicciHypergraph_zero_of_simple
 #print axioms InfraFormalization.circle_ricci_zero
 #print axioms InfraFormalization.circle_scalar_zero
 #print axioms InfraFormalization.cycleForman_zero

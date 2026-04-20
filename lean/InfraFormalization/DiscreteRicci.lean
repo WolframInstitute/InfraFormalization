@@ -45,10 +45,11 @@ GH-limit manifold) is the next deliverable — see Rung 5 in
 -/
 
 import InfraFormalization.DiscreteCalculus
+import InfraFormalization.Hypergraph
 
 namespace InfraFormalization
 
-variable {V : Type*} [Fintype V]
+variable {V : Type*} [Fintype V] [DecidableEq V]
 
 /-- **Unit-weight Forman-Ricci curvature on an edge** of a graph
 described by a `Neighbourhood V`. For a (simple, undirected, unit-
@@ -126,5 +127,67 @@ theorem formanRicciTotalScalar_regular (N : Neighbourhood V)
   rw [Finset.sum_const, Finset.card_univ]
   push_cast
   ring
+
+/-! ## Forman-Ricci on hypergraphs
+
+For a hyperedge `e = {v_1, …, v_k}` with `|e| ≥ 2`, define:
+
+  `Ric_F(e) := |V(e)| · (2 − |V(e)|)`.
+
+For `|e| = 2` (simple-graph edge): `2 · (2 − 2) = 0`.
+For `|e| = 3`: `3 · (−1) = −3`.
+
+This is the Saito–Kimura–Yamanoi variant. The hypergraph total is the
+sum over all edges.
+-/
+
+/-- **Forman-Ricci per hyperedge**. -/
+def formanRicciHyperedge (e : Hyperedge V) : ℤ :=
+  let k := e.verts.toFinset.card
+  (k : ℤ) * (2 - (k : ℤ))
+
+/-- **Hyperedge Forman-Ricci vanishes for 2-vertex edges** (simple graph
+case). -/
+theorem formanRicciHyperedge_two_vertex (e : Hyperedge V)
+    (h : e.verts.toFinset.card = 2) :
+    formanRicciHyperedge e = 0 := by
+  unfold formanRicciHyperedge
+  rw [h]
+  ring
+
+/-- **Hyperedge Forman-Ricci is negative for ≥ 3-vertex edges**. -/
+theorem formanRicciHyperedge_neg_of_three_or_more (e : Hyperedge V)
+    (h : 3 ≤ e.verts.toFinset.card) :
+    formanRicciHyperedge e < 0 := by
+  unfold formanRicciHyperedge
+  have hk : (3 : ℤ) ≤ (e.verts.toFinset.card : ℤ) := by exact_mod_cast h
+  nlinarith
+
+/-- **Hypergraph total Forman-Ricci scalar**: sum over all edges. -/
+noncomputable def formanRicciHypergraph (H : Hypergraph V) : ℤ :=
+  (H.edges.map formanRicciHyperedge).sum
+
+/-- **Hypergraph Forman-Ricci vanishes on simple graphs**. -/
+theorem formanRicciHypergraph_zero_of_simple (H : Hypergraph V)
+    (hall : ∀ e ∈ H.edges, e.verts.toFinset.card = 2) :
+    formanRicciHypergraph H = 0 := by
+  unfold formanRicciHypergraph
+  -- Prove for an arbitrary multiset satisfying the hypothesis.
+  have helper : ∀ (s : Multiset (Hyperedge V)),
+      (∀ e ∈ s, e.verts.toFinset.card = 2) →
+      (s.map formanRicciHyperedge).sum = 0 := by
+    intro s hs
+    induction s using Multiset.induction_on with
+    | empty => simp
+    | cons e es ih =>
+      rw [Multiset.map_cons, Multiset.sum_cons]
+      have he : e.verts.toFinset.card = 2 :=
+        hs e (Multiset.mem_cons_self e es)
+      rw [formanRicciHyperedge_two_vertex e he]
+      have hes : ∀ e' ∈ es, e'.verts.toFinset.card = 2 := fun e' he' =>
+        hs e' (Multiset.mem_cons_of_mem he')
+      rw [ih hes]
+      ring
+  exact helper H.edges hall
 
 end InfraFormalization
