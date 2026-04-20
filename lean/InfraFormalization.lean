@@ -79,3 +79,4 @@ import InfraFormalization.CurvatureRiemann
 import InfraFormalization.DiscreteRicci
 import InfraFormalization.RicciBridge
 import InfraFormalization.LaplacianBridge
+import InfraFormalization.HypergraphLaplacian

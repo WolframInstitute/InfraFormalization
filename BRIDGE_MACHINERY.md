@@ -29,7 +29,7 @@ This is what differentiates the present work from Gorard's: he wrote `g_{ab}, R,
 - ✓ Cycle graph instance with `cycleLaplacian = secondDifference`. (`CycleGraph.lean`)
 - [ ] Discrete gradient on directed hyperedges `(∇f)(e) := f(head e) − f(tail e)`.
 - [ ] Discrete divergence on a hyperedge multiset, compatible with `∇` via summation by parts.
-- [ ] Hypergraph Laplacian (replacing simple-graph adjacency with hyperedge incidence).
+- ✓ **Hypergraph Laplacian** (`HypergraphLaplacian.lean`): defined on `Hypergraph V` directly, linearity proven. The "Wolfram-model state IS a discrete-calculus domain" anchor.
 - [ ] Heat semigroup `e^{−tΔ}` on a finite graph (Rung 6 dependency).
 
 ## Rung 2 — Convergence of discrete operators to continuous ones
