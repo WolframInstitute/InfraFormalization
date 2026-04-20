@@ -204,6 +204,8 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.scaledSecondDiff_add
 #print axioms InfraFormalization.scaledSecondDiff_quadratic_independent
 #print axioms InfraFormalization.cycleLaplacian_in_terms_of_secondDifference
+#print axioms InfraFormalization.second_deriv_quadratic
+#print axioms InfraFormalization.polynomial_scaled_laplacian_eq_second_deriv
 #print axioms InfraFormalization.Hypergraph.laplacianHyper_add
 #print axioms InfraFormalization.Hypergraph.laplacianHyper_smul
 #print axioms InfraFormalization.Hypergraph.laplacianHyper_const

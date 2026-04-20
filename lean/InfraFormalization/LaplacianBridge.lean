@@ -27,6 +27,10 @@ identity.
 
 import InfraFormalization.SecondDifference
 import InfraFormalization.CycleGraph
+import Mathlib.Analysis.Calculus.Deriv.Basic
+import Mathlib.Analysis.Calculus.Deriv.Pow
+import Mathlib.Analysis.Calculus.Deriv.Mul
+import Mathlib.Analysis.Calculus.Deriv.Add
 
 namespace InfraFormalization
 
@@ -147,5 +151,57 @@ theorem cycleLaplacian_in_terms_of_secondDifference
     field_simp
   rw [div_add, div_sub]
   ring
+
+/-- **Second derivative of a quadratic polynomial.** For
+`f(y) = a y² + b y + c`, the second derivative at any point is `2a`
+(constant). Computed from first principles via `HasDerivAt`. -/
+theorem second_deriv_quadratic (a b c x : ℝ) :
+    deriv (deriv (fun y => a * y^2 + b * y + c)) x = 2 * a := by
+  -- First derivative at every y : (2 a y + b).
+  have h_inner : ∀ y : ℝ,
+      HasDerivAt (fun z => a * z^2 + b * z + c) (2 * a * y + b) y := by
+    intro y
+    have h_sq : HasDerivAt (fun z => z^2) (2 * y) y := by
+      simpa using hasDerivAt_pow 2 y
+    have h_a_sq : HasDerivAt (fun z => a * z^2) (a * (2 * y)) y :=
+      h_sq.const_mul a
+    have h_bz : HasDerivAt (fun z => b * z) b y := by
+      simpa using (hasDerivAt_id y).const_mul b
+    have h_sum : HasDerivAt (fun z => a * z^2 + b * z) (a * (2 * y) + b) y :=
+      h_a_sq.add h_bz
+    have h_full : HasDerivAt (fun z => a * z^2 + b * z + c) (a * (2 * y) + b) y :=
+      h_sum.add_const c
+    convert h_full using 1
+    ring
+  -- Identify `deriv (_)` pointwise with `fun y => 2 a y + b`.
+  have h_first_deriv_eq :
+      deriv (fun y => a * y^2 + b * y + c) = fun y => 2 * a * y + b := by
+    funext y
+    exact (h_inner y).deriv
+  rw [h_first_deriv_eq]
+  -- Second derivative: d/dx (2 a x + b) = 2 a.
+  have h_outer : HasDerivAt (fun y => 2 * a * y + b) (2 * a) x := by
+    have h_lin : HasDerivAt (fun y => 2 * a * y) (2 * a) x := by
+      simpa using (hasDerivAt_id x).const_mul (2 * a)
+    have := h_lin.add_const b
+    convert this using 1
+  exact h_outer.deriv
+
+/-- **The Rung-2 bridge theorem for the polynomial case.** For any
+quadratic `f`, the scaled discrete second difference equals the
+continuum second derivative, exactly (no limit, no error).
+
+  `scaledSecondDiff (fun y => a y² + b y + c) n x
+   = deriv (deriv (fun y => a y² + b y + c)) x`
+
+This makes the discrete-cycle / continuum-d²/dx² correspondence
+machine-checked for polynomial test functions. The general `C²` case
+is the Taylor-remainder theorem, pending. -/
+theorem polynomial_scaled_laplacian_eq_second_deriv
+    (a b c : ℝ) (n : Nat) (hn : 0 < n) (x : ℝ) :
+    scaledSecondDiff (fun y => a * y^2 + b * y + c) n x
+    = deriv (deriv (fun y => a * y^2 + b * y + c)) x := by
+  rw [scaledSecondDiff_quadratic a b c n hn x]
+  rw [second_deriv_quadratic a b c x]
 
 end InfraFormalization
