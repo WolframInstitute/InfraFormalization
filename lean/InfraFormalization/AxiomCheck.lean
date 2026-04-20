@@ -203,6 +203,15 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.Curvature.sginv_mul_sgg
 #print axioms InfraFormalization.Curvature.schwarzschildChristoffel_symm
 #print axioms InfraFormalization.Curvature.schwarzschildChristoffel_1_00
+#print axioms InfraFormalization.Curvature.schwarzschild_christoffel_collapse
+#print axioms InfraFormalization.Curvature.schwarzschildChristoffel_0_01
+#print axioms InfraFormalization.Curvature.schwarzschildChristoffel_1_11
+#print axioms InfraFormalization.Curvature.schwarzschildChristoffel_1_22
+#print axioms InfraFormalization.Curvature.schwarzschildChristoffel_1_33
+#print axioms InfraFormalization.Curvature.schwarzschildChristoffel_2_12
+#print axioms InfraFormalization.Curvature.schwarzschildChristoffel_2_33
+#print axioms InfraFormalization.Curvature.schwarzschildChristoffel_3_13
+#print axioms InfraFormalization.Curvature.schwarzschildChristoffel_3_23
 #print axioms InfraFormalization.formanRicciEdge_symm
 #print axioms InfraFormalization.formanRicciEdge_zero_of_two_regular
 #print axioms InfraFormalization.formanRicciEdge_regular

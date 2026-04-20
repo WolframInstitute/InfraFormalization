@@ -277,5 +277,295 @@ theorem schwarzschildChristoffel_1_00 {M : ℝ} {x : Fin 4 → ℝ}
   · intro hne
     exact absurd (Finset.mem_univ _) hne
 
+/-! ### Helper lemma: off-diagonal vanishing of `sginv`. -/
+
+theorem sginv_off_diag {M : ℝ} {x : Fin 4 → ℝ} {ρ σ : Fin 4} (h : ρ ≠ σ) :
+    sginv M x ρ σ = 0 := by
+  unfold sginv
+  rw [if_pos h]
+
+/-! ### Helper lemma: off-diagonal vanishing of `sdg`. -/
+
+theorem sdg_off_diag {M : ℝ} {l : Fin 4} {x : Fin 4 → ℝ} {μ ν : Fin 4}
+    (h : μ ≠ ν) : sdg M l x μ ν = 0 := by
+  unfold sdg
+  rw [if_pos h]
+
+/-! ### Specific partial-derivative values. -/
+
+/-- `∂_l g_{00}` is zero for `l ≠ 1`. -/
+theorem sdg_l_00_eq_zero {M : ℝ} {x : Fin 4 → ℝ} {l : Fin 4} (hl : l.val ≠ 1) :
+    sdg M l x (⟨0, by decide⟩ : Fin 4) (⟨0, by decide⟩ : Fin 4) = 0 := by
+  unfold sdg
+  by_cases hl2 : l.val = 2
+  · simp [hl, hl2]
+  · simp [hl, hl2]
+
+/-- `∂_1 g_{00} = -(2M/r²)`. -/
+theorem sdg_1_00 {M : ℝ} (x : Fin 4 → ℝ) :
+    sdg M (⟨1, by decide⟩ : Fin 4)
+         x (⟨0, by decide⟩ : Fin 4) (⟨0, by decide⟩ : Fin 4)
+    = -(2 * M / x 1^2) := by
+  unfold sdg
+  simp
+
+/-- `∂_1 g_{11} = -(2M/r²) / (1 - 2M/r)²`. -/
+theorem sdg_1_11 {M : ℝ} (x : Fin 4 → ℝ) :
+    sdg M (⟨1, by decide⟩ : Fin 4)
+         x (⟨1, by decide⟩ : Fin 4) (⟨1, by decide⟩ : Fin 4)
+    = -(2 * M / x 1^2) / (1 - 2 * M / x 1)^2 := by
+  unfold sdg
+  simp
+
+/-- `∂_1 g_{22} = 2r`. -/
+theorem sdg_1_22 {M : ℝ} (x : Fin 4 → ℝ) :
+    sdg M (⟨1, by decide⟩ : Fin 4)
+         x (⟨2, by decide⟩ : Fin 4) (⟨2, by decide⟩ : Fin 4)
+    = 2 * x 1 := by
+  unfold sdg
+  simp
+
+/-- `∂_1 g_{33} = 2r sin²θ`. -/
+theorem sdg_1_33 {M : ℝ} (x : Fin 4 → ℝ) :
+    sdg M (⟨1, by decide⟩ : Fin 4)
+         x (⟨3, by decide⟩ : Fin 4) (⟨3, by decide⟩ : Fin 4)
+    = 2 * x 1 * (Real.sin (x 2))^2 := by
+  unfold sdg
+  simp
+
+/-- `∂_2 g_{33} = 2 r² sin θ cos θ`. -/
+theorem sdg_2_33 {M : ℝ} (x : Fin 4 → ℝ) :
+    sdg M (⟨2, by decide⟩ : Fin 4)
+         x (⟨3, by decide⟩ : Fin 4) (⟨3, by decide⟩ : Fin 4)
+    = 2 * x 1^2 * Real.sin (x 2) * Real.cos (x 2) := by
+  unfold sdg
+  simp
+
+/-! ### Specific inverse-metric values on the exterior. -/
+
+theorem sginv_00 {M : ℝ} (x : Fin 4 → ℝ) :
+    sginv M x (⟨0, by decide⟩ : Fin 4) (⟨0, by decide⟩ : Fin 4)
+    = -1 / (1 - 2 * M / x 1) := by
+  unfold sginv
+  simp
+
+theorem sginv_11 {M : ℝ} (x : Fin 4 → ℝ) :
+    sginv M x (⟨1, by decide⟩ : Fin 4) (⟨1, by decide⟩ : Fin 4)
+    = 1 - 2 * M / x 1 := by
+  unfold sginv
+  simp
+
+theorem sginv_22 {M : ℝ} (x : Fin 4 → ℝ) :
+    sginv M x (⟨2, by decide⟩ : Fin 4) (⟨2, by decide⟩ : Fin 4)
+    = 1 / x 1^2 := by
+  unfold sginv
+  simp
+
+theorem sginv_33 {M : ℝ} (x : Fin 4 → ℝ) :
+    sginv M x (⟨3, by decide⟩ : Fin 4) (⟨3, by decide⟩ : Fin 4)
+    = 1 / (x 1^2 * (Real.sin (x 2))^2) := by
+  unfold sginv
+  simp
+
+/-! ### Generic sum-collapse helper.
+
+For computing `Γ^ρ_{μν}`, since `sginv` is diagonal, the sum over `σ`
+collapses to `σ = ρ`. This helper encapsulates that collapse. -/
+
+theorem schwarzschild_christoffel_collapse (M : ℝ) (x : Fin 4 → ℝ)
+    (ρ μ ν : Fin 4) :
+    schwarzschildChristoffel M x ρ μ ν
+    = (1 / 2) * sginv M x ρ ρ *
+      (sdg M μ x ρ ν + sdg M ν x ρ μ - sdg M ρ x μ ν) := by
+  unfold schwarzschildChristoffel
+  rw [Finset.sum_eq_single ρ]
+  · ring
+  · intros σ _ hσ
+    rw [sginv_off_diag (Ne.symm hσ), zero_mul]
+  · intro hne
+    exact absurd (Finset.mem_univ _) hne
+
+/-! ### Textbook Schwarzschild Christoffel entries.
+
+  Γ^0_{01} = M / (r(r−2M))
+  Γ^1_{11} = −M / (r(r−2M))
+  Γ^1_{22} = −(r − 2M)
+  Γ^1_{33} = −(r − 2M) sin²θ
+  Γ^2_{12} = 1/r
+  Γ^2_{33} = −sin θ cos θ
+  Γ^3_{13} = 1/r
+  Γ^3_{23} = cos θ / sin θ
+
+For each, we use `schwarzschild_christoffel_collapse` to reduce to a
+single `(1/2) g^{ρρ} (·)` expression, then compute the three partials
+(most are zero by `sdg_off_diag`), and finish with `field_simp; ring`. -/
+
+theorem schwarzschildChristoffel_0_01 {M : ℝ} {x : Fin 4 → ℝ}
+    (hx : SchwarzschildValid M x) :
+    schwarzschildChristoffel M x (⟨0, by decide⟩ : Fin 4)
+                                 (⟨0, by decide⟩ : Fin 4)
+                                 (⟨1, by decide⟩ : Fin 4)
+    = M / (x 1 * (x 1 - 2 * M)) := by
+  rw [schwarzschild_christoffel_collapse]
+  obtain ⟨hr_gt_2M, hr_pos, _⟩ := hx
+  have hr_ne : x 1 ≠ 0 := ne_of_gt hr_pos
+  have hr_sq_ne : x 1 ^ 2 ≠ 0 := pow_ne_zero _ hr_ne
+  have hrm2M_ne : x 1 - 2 * M ≠ 0 := by intro h; linarith
+  have h_one_minus : (1 - 2 * M / x 1) ≠ 0 := by
+    intro heq
+    have h1 : 1 = 2 * M / x 1 := by linarith
+    rw [eq_comm, div_eq_iff hr_ne] at h1
+    linarith
+  -- Three partials: sdg_0_01 = 0, sdg_1_00 = -(2M/r²), sdg_0_01 = 0.
+  have h_sdg_0_01 :
+      sdg M (⟨0, by decide⟩ : Fin 4) x
+        (⟨0, by decide⟩ : Fin 4) (⟨1, by decide⟩ : Fin 4) = 0 :=
+    sdg_off_diag (by decide)
+  rw [h_sdg_0_01, sdg_1_00, sginv_00]
+  field_simp
+  ring
+
+theorem schwarzschildChristoffel_1_11 {M : ℝ} {x : Fin 4 → ℝ}
+    (hx : SchwarzschildValid M x) :
+    schwarzschildChristoffel M x (⟨1, by decide⟩ : Fin 4)
+                                 (⟨1, by decide⟩ : Fin 4)
+                                 (⟨1, by decide⟩ : Fin 4)
+    = - M / (x 1 * (x 1 - 2 * M)) := by
+  rw [schwarzschild_christoffel_collapse]
+  obtain ⟨hr_gt_2M, hr_pos, _⟩ := hx
+  have hr_ne : x 1 ≠ 0 := ne_of_gt hr_pos
+  have hr_sq_ne : x 1 ^ 2 ≠ 0 := pow_ne_zero _ hr_ne
+  have hrm2M_ne : x 1 - 2 * M ≠ 0 := by intro h; linarith
+  have h_one_minus : (1 - 2 * M / x 1) ≠ 0 := by
+    intro heq
+    have h1 : 1 = 2 * M / x 1 := by linarith
+    rw [eq_comm, div_eq_iff hr_ne] at h1
+    linarith
+  have h_one_sq : (1 - 2 * M / x 1)^2 ≠ 0 := pow_ne_zero _ h_one_minus
+  rw [sdg_1_11, sginv_11]
+  field_simp
+  ring
+
+theorem schwarzschildChristoffel_1_22 {M : ℝ} {x : Fin 4 → ℝ}
+    (hx : SchwarzschildValid M x) :
+    schwarzschildChristoffel M x (⟨1, by decide⟩ : Fin 4)
+                                 (⟨2, by decide⟩ : Fin 4)
+                                 (⟨2, by decide⟩ : Fin 4)
+    = - (x 1 - 2 * M) := by
+  rw [schwarzschild_christoffel_collapse]
+  obtain ⟨hr_gt_2M, hr_pos, _⟩ := hx
+  have hr_ne : x 1 ≠ 0 := ne_of_gt hr_pos
+  -- sdg_2_12 = 0 (off-diag), sdg_2_12 = 0 (off-diag), sdg_1_22 = 2r.
+  have h_sdg_2_12 :
+      sdg M (⟨2, by decide⟩ : Fin 4) x
+        (⟨1, by decide⟩ : Fin 4) (⟨2, by decide⟩ : Fin 4) = 0 :=
+    sdg_off_diag (by decide)
+  rw [h_sdg_2_12, sdg_1_22, sginv_11]
+  field_simp
+  ring
+
+theorem schwarzschildChristoffel_1_33 {M : ℝ} {x : Fin 4 → ℝ}
+    (hx : SchwarzschildValid M x) :
+    schwarzschildChristoffel M x (⟨1, by decide⟩ : Fin 4)
+                                 (⟨3, by decide⟩ : Fin 4)
+                                 (⟨3, by decide⟩ : Fin 4)
+    = - (x 1 - 2 * M) * (Real.sin (x 2))^2 := by
+  rw [schwarzschild_christoffel_collapse]
+  obtain ⟨hr_gt_2M, hr_pos, _⟩ := hx
+  have hr_ne : x 1 ≠ 0 := ne_of_gt hr_pos
+  have h_sdg_3_13 :
+      sdg M (⟨3, by decide⟩ : Fin 4) x
+        (⟨1, by decide⟩ : Fin 4) (⟨3, by decide⟩ : Fin 4) = 0 :=
+    sdg_off_diag (by decide)
+  rw [h_sdg_3_13, sdg_1_33, sginv_11]
+  field_simp
+  ring
+
+theorem schwarzschildChristoffel_2_12 {M : ℝ} {x : Fin 4 → ℝ}
+    (hx : SchwarzschildValid M x) :
+    schwarzschildChristoffel M x (⟨2, by decide⟩ : Fin 4)
+                                 (⟨1, by decide⟩ : Fin 4)
+                                 (⟨2, by decide⟩ : Fin 4)
+    = 1 / x 1 := by
+  rw [schwarzschild_christoffel_collapse]
+  obtain ⟨hr_gt_2M, hr_pos, _⟩ := hx
+  have hr_ne : x 1 ≠ 0 := ne_of_gt hr_pos
+  have hr_sq_ne : x 1 ^ 2 ≠ 0 := pow_ne_zero _ hr_ne
+  have h_sdg_2_22 :
+      sdg M (⟨2, by decide⟩ : Fin 4) x
+        (⟨2, by decide⟩ : Fin 4) (⟨1, by decide⟩ : Fin 4) = 0 :=
+    sdg_off_diag (by decide)
+  have h_sdg_2_12 :
+      sdg M (⟨2, by decide⟩ : Fin 4) x
+        (⟨1, by decide⟩ : Fin 4) (⟨2, by decide⟩ : Fin 4) = 0 :=
+    sdg_off_diag (by decide)
+  rw [h_sdg_2_22, h_sdg_2_12, sdg_1_22, sginv_22]
+  field_simp
+  ring
+
+theorem schwarzschildChristoffel_2_33 {M : ℝ} {x : Fin 4 → ℝ}
+    (hx : SchwarzschildValid M x) :
+    schwarzschildChristoffel M x (⟨2, by decide⟩ : Fin 4)
+                                 (⟨3, by decide⟩ : Fin 4)
+                                 (⟨3, by decide⟩ : Fin 4)
+    = - Real.sin (x 2) * Real.cos (x 2) := by
+  rw [schwarzschild_christoffel_collapse]
+  obtain ⟨hr_gt_2M, hr_pos, _⟩ := hx
+  have hr_ne : x 1 ≠ 0 := ne_of_gt hr_pos
+  have hr_sq_ne : x 1 ^ 2 ≠ 0 := pow_ne_zero _ hr_ne
+  have h_sdg_3_23 :
+      sdg M (⟨3, by decide⟩ : Fin 4) x
+        (⟨2, by decide⟩ : Fin 4) (⟨3, by decide⟩ : Fin 4) = 0 :=
+    sdg_off_diag (by decide)
+  rw [h_sdg_3_23, sdg_2_33, sginv_22]
+  field_simp
+  ring
+
+theorem schwarzschildChristoffel_3_13 {M : ℝ} {x : Fin 4 → ℝ}
+    (hx : SchwarzschildValid M x) :
+    schwarzschildChristoffel M x (⟨3, by decide⟩ : Fin 4)
+                                 (⟨1, by decide⟩ : Fin 4)
+                                 (⟨3, by decide⟩ : Fin 4)
+    = 1 / x 1 := by
+  rw [schwarzschild_christoffel_collapse]
+  obtain ⟨hr_gt_2M, hr_pos, hsinθ⟩ := hx
+  have hr_ne : x 1 ≠ 0 := ne_of_gt hr_pos
+  have hr_sq_ne : x 1 ^ 2 ≠ 0 := pow_ne_zero _ hr_ne
+  have hsin_sq : (Real.sin (x 2))^2 ≠ 0 := pow_ne_zero _ hsinθ
+  have h_sdg_3_33_13 :
+      sdg M (⟨3, by decide⟩ : Fin 4) x
+        (⟨3, by decide⟩ : Fin 4) (⟨1, by decide⟩ : Fin 4) = 0 :=
+    sdg_off_diag (by decide)
+  have h_sdg_3_13 :
+      sdg M (⟨3, by decide⟩ : Fin 4) x
+        (⟨1, by decide⟩ : Fin 4) (⟨3, by decide⟩ : Fin 4) = 0 :=
+    sdg_off_diag (by decide)
+  rw [h_sdg_3_33_13, h_sdg_3_13, sdg_1_33, sginv_33]
+  field_simp
+  ring
+
+theorem schwarzschildChristoffel_3_23 {M : ℝ} {x : Fin 4 → ℝ}
+    (hx : SchwarzschildValid M x) :
+    schwarzschildChristoffel M x (⟨3, by decide⟩ : Fin 4)
+                                 (⟨2, by decide⟩ : Fin 4)
+                                 (⟨3, by decide⟩ : Fin 4)
+    = Real.cos (x 2) / Real.sin (x 2) := by
+  rw [schwarzschild_christoffel_collapse]
+  obtain ⟨hr_gt_2M, hr_pos, hsinθ⟩ := hx
+  have hr_ne : x 1 ≠ 0 := ne_of_gt hr_pos
+  have hr_sq_ne : x 1 ^ 2 ≠ 0 := pow_ne_zero _ hr_ne
+  have hsin_sq : (Real.sin (x 2))^2 ≠ 0 := pow_ne_zero _ hsinθ
+  have h_sdg_3_33_23 :
+      sdg M (⟨3, by decide⟩ : Fin 4) x
+        (⟨3, by decide⟩ : Fin 4) (⟨2, by decide⟩ : Fin 4) = 0 :=
+    sdg_off_diag (by decide)
+  have h_sdg_3_23 :
+      sdg M (⟨3, by decide⟩ : Fin 4) x
+        (⟨2, by decide⟩ : Fin 4) (⟨3, by decide⟩ : Fin 4) = 0 :=
+    sdg_off_diag (by decide)
+  rw [h_sdg_3_33_23, h_sdg_3_23, sdg_2_33, sginv_33]
+  field_simp
+  ring
+
 end Curvature
 end InfraFormalization
