@@ -237,5 +237,95 @@ theorem minkowski4_satisfies_vacuum_EFE
     ConnectionData.einsteinTensor minkowski4 (flatConnection 4) x μ ν = 0 :=
   flatConnection_einstein_zero minkowski4 x μ ν
 
+/-! ## Levi-Civita connection derivation from a metric with second partials
+
+Given a `MetricData n` extended with second partial derivatives
+`ddg : Fin n → Fin n → ...`, we can compute both `Γ` (the
+Christoffel symbols) and `∂Γ` (their derivatives) explicitly.
+
+The second partials are required because the Riemann tensor formula
+involves `∂μ Γ^ρ_{νσ}`, which reduces to second derivatives of the
+metric through the Christoffel formula.
+
+We also need `dginv` (partial derivatives of the inverse metric);
+from `g · g⁻¹ = I`, differentiating gives
+`∂_μ g^{ρσ} = −g^{ρα} g^{σβ} ∂_μ g_{αβ}`. We carry `dginv` as
+separate data with this compatibility axiom optional (we do not
+enforce it in the structure; it can be checked per-instance).
+-/
+
+/-- **Metric with second partial derivatives** — the data required to
+compute the full Riemann tensor from the metric via the Levi-Civita
+connection. Extends `MetricData n` with:
+  * `ddg λ μ x α β := ∂_λ ∂_μ g_{αβ}(x)` (second partials, symmetric
+    in the two derivative indices),
+  * `dginv λ x ρ σ := ∂_λ g^{ρσ}(x)` (partials of the inverse metric).
+-/
+structure MetricDataC2 (n : Nat) extends MetricData n where
+  /-- Second partial derivatives of the metric: `∂_λ ∂_μ g_{αβ}(x)`. -/
+  ddg : Fin n → Fin n → (Fin n → ℝ) → Fin n → Fin n → ℝ
+  /-- Partial derivatives of the inverse metric:
+      `∂_λ g^{ρσ}(x) = −g^{ρα}(x) g^{σβ}(x) ∂_λ g_{αβ}(x)`.
+      We supply this as data (with the compatibility implicit in
+      well-formed instances). -/
+  dginv : Fin n → (Fin n → ℝ) → Fin n → Fin n → ℝ
+  /-- `ddg` has lower-index symmetry inherited from `g`. -/
+  ddg_symm : ∀ l m x α β, ddg l m x α β = ddg l m x β α
+  /-- `ddg` is symmetric in the two derivative indices (Clairaut's
+  theorem / Schwarz's theorem: mixed partials commute for smooth `g`). -/
+  ddg_swap_deriv : ∀ l m x α β, ddg l m x α β = ddg m l x α β
+
+namespace MetricDataC2
+
+variable {n : Nat} (M : MetricDataC2 n)
+
+/-- **Partial derivative of the Christoffel symbol** (as explicit
+formula), computed from the metric data via:
+
+  `∂_λ Γ^ρ_{μν} = ½ (∂_λ g^{ρσ}) (∂_μ g_{σν} + ∂_ν g_{σμ} − ∂_σ g_{μν})
+                 + ½ g^{ρσ} (∂_λ ∂_μ g_{σν} + ∂_λ ∂_ν g_{σμ} − ∂_λ ∂_σ g_{μν})`.
+-/
+noncomputable def dchristoffel (l : Fin n) (x : Fin n → ℝ) (ρ μ ν : Fin n) : ℝ :=
+  (1 / 2) * ∑ σ : Fin n,
+    (M.dginv l x ρ σ *
+       (M.dg μ x σ ν + M.dg ν x σ μ - M.dg σ x μ ν)
+     + M.ginv x ρ σ *
+       (M.ddg l μ x σ ν + M.ddg l ν x σ μ - M.ddg l σ x μ ν))
+
+/-- **Lower-index symmetry of `dchristoffel`**. Follows from the
+lower-index symmetry of `Γ` being preserved under differentiation
+(via `ddg_symm`). -/
+theorem dchristoffel_symm (l : Fin n) (x : Fin n → ℝ) (ρ μ ν : Fin n) :
+    M.dchristoffel l x ρ μ ν = M.dchristoffel l x ρ ν μ := by
+  unfold dchristoffel
+  congr 1
+  apply Finset.sum_congr rfl
+  intros σ _
+  have h1 : M.dg μ x σ ν + M.dg ν x σ μ - M.dg σ x μ ν
+          = M.dg ν x σ μ + M.dg μ x σ ν - M.dg σ x ν μ := by
+    rw [M.dg_symm σ x μ ν]
+    ring
+  have h2 : M.ddg l μ x σ ν + M.ddg l ν x σ μ - M.ddg l σ x μ ν
+          = M.ddg l ν x σ μ + M.ddg l μ x σ ν - M.ddg l σ x ν μ := by
+    rw [M.ddg_symm l σ x μ ν]
+    ring
+  rw [h1, h2]
+
+/-- **Levi-Civita connection data** derived from a `MetricDataC2`.
+  * `Γ` = the Christoffel symbols (from the underlying `MetricData`).
+  * `dΓ` = computed via the differentiation of the Christoffel formula
+    using `dg`, `ddg`, `dginv`.
+  * `Γ_symm` = from `christoffel_symm`.
+  * `dΓ_symm` = from `dchristoffel_symm`. -/
+noncomputable def leviCivitaConnection : ConnectionData n where
+  Γ := fun x ρ μ ν => M.toMetricData.christoffel x ρ μ ν
+  dΓ := M.dchristoffel
+  Γ_symm := fun x ρ μ ν =>
+    M.toMetricData.christoffel_symm x ρ μ ν
+  dΓ_symm := fun l x ρ μ ν =>
+    M.dchristoffel_symm l x ρ μ ν
+
+end MetricDataC2
+
 end Curvature
 end InfraFormalization

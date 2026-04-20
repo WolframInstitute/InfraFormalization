@@ -93,7 +93,10 @@ Grouped by phase (see [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md)). Each milestone ei
 - [x] **First (algebraic) Bianchi identity** `R^ρ_{σμν} + R^ρ_{μνσ} + R^ρ_{νσμ} = 0` for torsion-free connections (`CurvatureRiemann.lean`).
 - [ ] Schwarzschild instance with non-trivial Christoffel symbols (next concrete sanity check; tests the formalism on a curved metric).
 - [ ] Differential Bianchi `∇_μ G^{μν} = 0` (formal consequence; needs covariant derivative).
-- [ ] Levi-Civita derivation `MetricDataC2 → ConnectionData` from Christoffel formula.
+- [x] **`MetricDataC2 n`** (`CurvatureRiemann.lean`): extends `MetricData` with second partial derivatives `ddg`, inverse-metric partials `dginv`, plus Clairaut/Schwarz symmetry axioms.
+- [x] **`dchristoffel`**: the partial derivative of the Christoffel symbol, explicit formula involving `ddg`, `dginv`, and the base metric data.
+- [x] **`dchristoffel_symm`**: `∂Γ^ρ_{μν} = ∂Γ^ρ_{νμ}` (lower-index symmetry preserved under differentiation).
+- [x] **`leviCivitaConnection : MetricDataC2 n → ConnectionData n`**: the canonical torsion-free connection derived from the metric. Combined with Riemann/Ricci machinery, this closes the MetricData → Riemann loop.
 
 ### Hypergraph anchors for Rung 5 (the "tie back to hypergraphs" obligation)
 - [x] **`formanRicciEdge`**, `formanRicciVertex`, `formanRicciTotalScalar` (`DiscreteRicci.lean`): purely combinatorial Ricci on a graph; `4 − deg(v) − deg(w)` per edge.

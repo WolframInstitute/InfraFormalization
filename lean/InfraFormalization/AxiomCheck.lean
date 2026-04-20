@@ -188,6 +188,8 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.Curvature.flatConnection_scalar_zero
 #print axioms InfraFormalization.Curvature.flatConnection_einstein_zero
 #print axioms InfraFormalization.Curvature.minkowski4_satisfies_vacuum_EFE
+#print axioms InfraFormalization.Curvature.MetricDataC2.dchristoffel_symm
+#print axioms InfraFormalization.Curvature.MetricDataC2.leviCivitaConnection
 #print axioms InfraFormalization.formanRicciEdge_symm
 #print axioms InfraFormalization.formanRicciEdge_zero_of_two_regular
 #print axioms InfraFormalization.formanRicciEdge_regular
