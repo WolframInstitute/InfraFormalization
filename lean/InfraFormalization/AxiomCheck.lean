@@ -195,6 +195,9 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.Hypergraph.laplacianHyper_add
 #print axioms InfraFormalization.Hypergraph.laplacianHyper_smul
 #print axioms InfraFormalization.Hypergraph.laplacianHyper_const
+#print axioms InfraFormalization.Hypergraph.laplacianHyper_perEdge_zero_of_not_mem
+#print axioms InfraFormalization.Hypergraph.perEdge_sum_zero
+#print axioms InfraFormalization.Hypergraph.laplacianHyper_sum_zero
 #print axioms InfraFormalization.discreteDAlembertian4_add
 #print axioms InfraFormalization.discreteDAlembertian4_smul
 #print axioms InfraFormalization.discreteDAlembertian4_zero
