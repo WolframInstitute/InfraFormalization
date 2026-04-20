@@ -49,6 +49,7 @@ import InfraFormalization.HypergraphLaplacian
 import InfraFormalization.HypergraphCalculus
 import InfraFormalization.HeatEquation
 import InfraFormalization.WaveEquation
+import InfraFormalization.SchrodingerEquation
 import InfraFormalization.DiscreteDAlembertian
 import InfraFormalization.Refutations.F1NoMetric
 import InfraFormalization.Refutations.F2Orthonormality
@@ -259,6 +260,10 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.hasDerivAt_waveEnergy
 #print axioms InfraFormalization.wave_energy_conservation
 #print axioms InfraFormalization.wave_energy_conservation'
+#print axioms InfraFormalization.hasDerivAt_schrodingerProbability
+#print axioms InfraFormalization.schrodinger_unitary_evolution
+#print axioms InfraFormalization.schrodinger_unitary_evolution'
+#print axioms InfraFormalization.schrodingerProbability_nonneg
 #print axioms InfraFormalization.discreteDAlembertian4_add
 #print axioms InfraFormalization.discreteDAlembertian4_smul
 #print axioms InfraFormalization.discreteDAlembertian4_zero
