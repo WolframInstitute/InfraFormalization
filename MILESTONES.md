@@ -85,8 +85,18 @@ Grouped by phase (see [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md)). Each milestone ei
 - [x] **Ricci tensor** `R_{σν} = Σ_ρ R^ρ_{σρν}` and **scalar curvature** `R = g^{σν} R_{σν}` and **Einstein tensor** `G_{μν} = R_{μν} − ½ R g_{μν}`.
 - [x] `flatConnection`: `Γ ≡ 0`, with `flatConnection_riemann_zero`, `_ricci_zero`, `_scalar_zero`, `_einstein_zero`.
 - [x] **`minkowski4_satisfies_vacuum_EFE`**: `G_{μν} = 0` on Minkowski with the flat connection — the trivial flat-space EFE sanity check.
+- [x] **First (algebraic) Bianchi identity** `R^ρ_{σμν} + R^ρ_{μνσ} + R^ρ_{νσμ} = 0` for torsion-free connections (`CurvatureRiemann.lean`).
 - [ ] Schwarzschild instance with non-trivial Christoffel symbols (next concrete sanity check; tests the formalism on a curved metric).
-- [ ] Bianchi identity `∇_μ G^{μν} = 0` (formal consequence; needs covariant derivative).
+- [ ] Differential Bianchi `∇_μ G^{μν} = 0` (formal consequence; needs covariant derivative).
+- [ ] Levi-Civita derivation `MetricDataC2 → ConnectionData` from Christoffel formula.
+
+### Hypergraph anchors for Rung 5 (the "tie back to hypergraphs" obligation)
+- [x] **`formanRicciEdge`**, `formanRicciVertex`, `formanRicciTotalScalar` (`DiscreteRicci.lean`): purely combinatorial Ricci on a graph; `4 − deg(v) − deg(w)` per edge.
+- [x] `formanRicciEdge_zero_of_two_regular`: 2-regular graphs (e.g., cycle `Fin n`) have zero Forman-Ricci — matches the continuum Ricci of the circle (which is zero).
+- [x] `formanRicciEdge_regular`, `formanRicciVertex_regular`, `formanRicciTotalScalar_regular` for arbitrary `k`-regular graphs.
+- [ ] Hypergraph (not just simple graph) Forman-Ricci.
+- [ ] **Convergence theorem**: scaled Forman-Ricci on lattice graphs → continuum Ricci of the GH-limit manifold (Rung 5 + Rung 10 fusion).
+- [ ] Ollivier-Ricci with full proof (currently statement-only in `Infra/OllivierStatement.lean`).
 - [ ] Heat semigroup on a finite graph as a finite-dim ODE.
 - [ ] Scaled cycle Laplacian → 1D `d²/dx²` (Rung 2 entry).
 

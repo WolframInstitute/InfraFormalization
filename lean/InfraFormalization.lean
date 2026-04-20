@@ -76,3 +76,4 @@ import InfraFormalization.CycleGraph
 import InfraFormalization.SecondDifference
 import InfraFormalization.CurvatureLocalCoord
 import InfraFormalization.CurvatureRiemann
+import InfraFormalization.DiscreteRicci
