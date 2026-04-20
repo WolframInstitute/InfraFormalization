@@ -121,7 +121,11 @@ Grouped by phase (see [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md)). Each milestone ei
 - [ ] Action expansion under perturbation: `S[φ + h] − S[φ]` to first order in `h`, recovering `discreteEL` from stationarity.
 
 ### Schwarzschild curved-metric sanity check (Rung 5)
-- [ ] `schwarzschildMetric (M : ℝ) : MetricData 4` with components, inverse, all partial derivatives.
+- [x] **Schwarzschild component functions** (`Schwarzschild.lean`): `sgg M`, `sginv M`, `sdg M` — metric, inverse, partial derivatives in Schwarzschild coordinates.
+- [x] **`SchwarzschildValid M x`** predicate: exterior region `r > 2M ∧ r > 0 ∧ sin θ ≠ 0`.
+- [x] Symmetry axioms (`sgg_symm`, `sginv_symm`, `sdg_symm`).
+- [x] **`sginv_mul_sgg`**: `∑ g^{μα} g_{αν} = δ^μ_ν` conditional on `SchwarzschildValid` (the key axiom of `MetricData`, established on the exterior).
+- [ ] Domain-restricted `PartialMetricData` variant (pending; enables full `MetricData` packaging of Schwarzschild).
 - [ ] Compute Christoffel symbols; match textbook values.
 - [ ] Compute Ricci; verify `Ric ≡ 0` (vacuum solution).
 - [ ] Cross-check via `vacuumEFE`.

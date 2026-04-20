@@ -41,6 +41,7 @@ import InfraFormalization.CycleGraph
 import InfraFormalization.SecondDifference
 import InfraFormalization.CurvatureLocalCoord
 import InfraFormalization.CurvatureRiemann
+import InfraFormalization.Schwarzschild
 import InfraFormalization.DiscreteRicci
 import InfraFormalization.RicciBridge
 import InfraFormalization.LaplacianBridge
@@ -190,6 +191,11 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.Curvature.minkowski4_satisfies_vacuum_EFE
 #print axioms InfraFormalization.Curvature.MetricDataC2.dchristoffel_symm
 #print axioms InfraFormalization.Curvature.MetricDataC2.leviCivitaConnection
+#print axioms InfraFormalization.Curvature.sgg_symm
+#print axioms InfraFormalization.Curvature.sginv_symm
+#print axioms InfraFormalization.Curvature.sdg_symm
+#print axioms InfraFormalization.Curvature.sginv_mul_sgg_diagonal
+#print axioms InfraFormalization.Curvature.sginv_mul_sgg
 #print axioms InfraFormalization.formanRicciEdge_symm
 #print axioms InfraFormalization.formanRicciEdge_zero_of_two_regular
 #print axioms InfraFormalization.formanRicciEdge_regular

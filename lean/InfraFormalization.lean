@@ -76,6 +76,7 @@ import InfraFormalization.CycleGraph
 import InfraFormalization.SecondDifference
 import InfraFormalization.CurvatureLocalCoord
 import InfraFormalization.CurvatureRiemann
+import InfraFormalization.Schwarzschild
 import InfraFormalization.DiscreteRicci
 import InfraFormalization.RicciBridge
 import InfraFormalization.LaplacianBridge
