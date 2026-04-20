@@ -50,6 +50,7 @@ import InfraFormalization.HypergraphCalculus
 import InfraFormalization.HeatEquation
 import InfraFormalization.WaveEquation
 import InfraFormalization.SchrodingerEquation
+import InfraFormalization.KleinGordon
 import InfraFormalization.DiscreteDAlembertian
 import InfraFormalization.Refutations.F1NoMetric
 import InfraFormalization.Refutations.F2Orthonormality
@@ -264,6 +265,11 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.schrodinger_unitary_evolution
 #print axioms InfraFormalization.schrodinger_unitary_evolution'
 #print axioms InfraFormalization.schrodingerProbability_nonneg
+#print axioms InfraFormalization.kleinGordonEnergy_nonneg
+#print axioms InfraFormalization.hasDerivAt_KG_kinetic
+#print axioms InfraFormalization.hasDerivAt_KG_mass
+#print axioms InfraFormalization.hasDerivAt_kleinGordonEnergy
+#print axioms InfraFormalization.klein_gordon_energy_conservation
 #print axioms InfraFormalization.discreteDAlembertian4_add
 #print axioms InfraFormalization.discreteDAlembertian4_smul
 #print axioms InfraFormalization.discreteDAlembertian4_zero
