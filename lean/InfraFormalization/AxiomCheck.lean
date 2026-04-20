@@ -139,6 +139,17 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.Infra.continuumSpaceDist_le_cast
 #print axioms InfraFormalization.Infra.lorentzIntEmbed_preserves_causal
 #print axioms InfraFormalization.Infra.lorentzIntEmbed_preserves_timelike
+#print axioms InfraFormalization.Infra.continuumSpaceDist_ge_cast
+#print axioms InfraFormalization.Infra.continuumSpaceDist_eq_cast
+#print axioms InfraFormalization.Infra.lorentzIntEmbed_preserves_causal_iff
+#print axioms InfraFormalization.Infra.lorentzIntEmbed_preserves_timelike_iff
+#print axioms InfraFormalization.Infra.oneOverN_lattice_dense_R
+#print axioms InfraFormalization.Infra.scaledLorentzEmbed_dense
+#print axioms InfraFormalization.Infra.continuumSpaceDist_scale_div
+#print axioms InfraFormalization.Infra.scaledLorentzEmbed_spaceDist
+#print axioms InfraFormalization.Infra.scaledLorentzEmbed_spaceDist_eq_cast
+#print axioms InfraFormalization.Infra.scaledLorentzEmbed_preserves_causal
+#print axioms InfraFormalization.Infra.scaledLorentzEmbed_preserves_causal_iff
 #print axioms InfraFormalization.Infra.causallyPrecedes_gives_continuum
 #print axioms InfraFormalization.Infra.causallyPrecedes_gives_continuum_timelike
 #print axioms InfraFormalization.Infra.fullContinuumEmbed_time

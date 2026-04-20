@@ -61,7 +61,8 @@ Grouped by phase (see [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md)). Each milestone ei
 - [x] 2D lattice → 2-torus GH bound (`Infra/ScaledTorus.lean`)
 - [x] (d+1)D lattice → (d+1)-torus GH bound, arbitrary `d ≥ 0` (`Infra/ScaledTorusD.lean`)
 - [x] **Continuum Minkowski `ℝ^{1,d}`** (`Infra/Minkowski.lean`): `continuumSpaceDist`, `ContinuumCausalPrecedes`, Timelike/Null/Spacelike, signed interval, trichotomy.
-- [x] **Int-to-ℝ forward embedding** (`Infra/ScaledLorentz.lean`): `lorentzIntEmbed` preserves `CausalPrecedes` and `Timelike` into their continuum counterparts. (Full scaled isometry-plus-density — the Lorentzian analog of `dTorus_gh_bound` — remains open; requires Lorentzian-GH machinery not in Mathlib.)
+- [x] **Int-to-ℝ embedding with exact isometry + iff preservation** (`Infra/ScaledLorentz.lean`): `lorentzIntEmbed` preserves spatial distance EXACTLY (`continuumSpaceDist_eq_cast`); `CausalPrecedes` and `Timelike` are preserved as **iff** (`_preserves_causal_iff`, `_preserves_timelike_iff`).
+- [x] **Scaled embedding at scale `1/n`** (`Infra/ScaledLorentz.lean`): `scaledLorentzEmbed n`; density `1/(2n)` in ℝ^{d+1} via `round(n·x)`; exact scaling `continuumSpaceDist (scaled p) (scaled q) = (spaceDist p q : ℝ) / n`; iff causal preservation under the scaled embedding.
 - [x] **End-to-end bridge** (`Infra/FullBridge.lean`): `causallyPrecedes_gives_continuum` — under `LightConeCompatible τ φ`, the trajectory's causal order is faithful in continuum Minkowski. Strict-interior version via `causallyPrecedes_gives_continuum_timelike` under `StrictlyTimelikeCompatible`.
 
 ### Discrete calculus (Rung 1 of the bridge ladder)
