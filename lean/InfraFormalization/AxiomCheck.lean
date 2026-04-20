@@ -43,6 +43,7 @@ import InfraFormalization.CurvatureLocalCoord
 import InfraFormalization.CurvatureRiemann
 import InfraFormalization.DiscreteRicci
 import InfraFormalization.RicciBridge
+import InfraFormalization.LaplacianBridge
 import InfraFormalization.Refutations.F1NoMetric
 import InfraFormalization.Refutations.F2Orthonormality
 import InfraFormalization.Refutations.F3Tautology
@@ -184,6 +185,11 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.cycleForman_zero
 #print axioms InfraFormalization.forman_ricci_matches_continuum_on_cycle
 #print axioms InfraFormalization.forman_ricci_real_matches_continuum_on_cycle
+#print axioms InfraFormalization.scaledSecondDiff_quadratic
+#print axioms InfraFormalization.scaledSecondDiff_const
+#print axioms InfraFormalization.scaledSecondDiff_linear
+#print axioms InfraFormalization.scaledSecondDiff_add
+#print axioms InfraFormalization.scaledSecondDiff_quadratic_independent
 #print axioms InfraFormalization.Refutations.gorard_dim_preservation_is_euler_lagrange
 #print axioms InfraFormalization.Refutations.gorard_section_3_3_contentless
 #print axioms InfraFormalization.Refutations.gorard_causal_invariance_is_general_covariance

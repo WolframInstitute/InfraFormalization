@@ -78,3 +78,4 @@ import InfraFormalization.CurvatureLocalCoord
 import InfraFormalization.CurvatureRiemann
 import InfraFormalization.DiscreteRicci
 import InfraFormalization.RicciBridge
+import InfraFormalization.LaplacianBridge
