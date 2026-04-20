@@ -18,10 +18,27 @@ the metric (or first derivatives of Christoffels) as additional data,
 and are in a follow-up file.
 
 **Why this route.** A full bundle-theoretic Riemannian formalisation
-(Rung 4) is a multi-month Mathlib project. The local-coordinate
-approach gives us usable curvature objects for explicit metrics
-(Minkowski, Schwarzschild in Schwarzschild coords, FLRW) now, without
-waiting for the full infrastructure.
+(Rung 4) is in our plan and decomposed in `BRIDGE_MACHINERY.md`; the
+local-coordinate version here is the *near-term target* for the
+discrete-side approximations (Forman-Ricci, Ollivier-Ricci, discrete
+connection on hypergraphs) to converge to.
+
+**Hypergraph anchor (status: pending, prioritised).** The Christoffel
+symbols / Riemann tensor / Ricci defined here are *targets*, not
+standalone continuum objects. Per the grounding principle, they must
+be reachable from hypergraph dynamics via:
+
+  1. **Discrete Ricci** on the hypergraph (Forman-Ricci or
+     Ollivier-Ricci — pending in `DiscreteRicci.lean`),
+  2. **Convergence theorem** showing the discrete Ricci on a scaled
+     hypergraph approaches the continuum Ricci on the GH-limit
+     manifold,
+  3. **Discrete connection** on hypergraph fibres → Levi-Civita in
+     the limit (Rung 4.4 in `BRIDGE_MACHINERY.md`).
+
+The local-coord formalisation here is therefore "future-anchored":
+the targets are written, the discrete-side anchor is the next
+priority. This file does **not** stand as continuum-only mathematics.
 -/
 
 import Mathlib.Data.Real.Basic

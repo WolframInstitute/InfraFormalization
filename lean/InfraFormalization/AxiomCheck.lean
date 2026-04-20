@@ -166,6 +166,7 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.Curvature.MetricData.christoffel_symm
 #print axioms InfraFormalization.Curvature.minkowski4_christoffel_zero
 #print axioms InfraFormalization.Curvature.ConnectionData.riemann_antisymm
+#print axioms InfraFormalization.Curvature.ConnectionData.bianchi_first
 #print axioms InfraFormalization.Curvature.flatConnection_riemann_zero
 #print axioms InfraFormalization.Curvature.flatConnection_ricci_zero
 #print axioms InfraFormalization.Curvature.flatConnection_scalar_zero

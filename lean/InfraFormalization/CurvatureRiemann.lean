@@ -20,6 +20,20 @@ become available.
 **Sanity check.** The `flat` instance has `Γ ≡ 0, ∂Γ ≡ 0`; we prove
 `riemann ≡ 0`, `ricci ≡ 0`, `scalarCurvature ≡ 0`. This is the
 flat-space check — no curvature when Christoffel symbols vanish.
+
+**Hypergraph anchor (status: pending, prioritised).** Same caveat as
+`CurvatureLocalCoord.lean`: the curvature tensors here are *targets*
+for hypergraph-anchored discrete approximations (Forman-Ricci,
+Ollivier-Ricci, discrete connection convergence). They are not
+standalone continuum mathematics; they sit on the receiving end of
+discrete-to-continuum bridges that are decomposed in
+`BRIDGE_MACHINERY.md` Rungs 4.4 and 5.
+
+`minkowski4_satisfies_vacuum_EFE` is the trivial flat-space sanity
+check that the formalism is set up correctly. The non-trivial
+hypergraph→GR bridge requires (a) a candidate rule, (b) a discrete
+Ricci on its causal graph, (c) a convergence theorem. Those are the
+priority items, not yet shipped.
 -/
 
 import InfraFormalization.CurvatureLocalCoord
@@ -33,8 +47,12 @@ structure ConnectionData (n : Nat) where
   Γ : (Fin n → ℝ) → Fin n → Fin n → Fin n → ℝ
   /-- `∂_l Γ^ρ_{μν}(x)`. -/
   dΓ : Fin n → (Fin n → ℝ) → Fin n → Fin n → Fin n → ℝ
-  /-- Lower-index symmetry of Γ. -/
+  /-- Lower-index symmetry of Γ (torsion-free). -/
   Γ_symm : ∀ x ρ μ ν, Γ x ρ μ ν = Γ x ρ ν μ
+  /-- Lower-index symmetry of `∂Γ` (inherited from `Γ_symm` when `dΓ` is the
+  actual partial derivative; we record it as an axiom since `dΓ` is
+  supplied as data). -/
+  dΓ_symm : ∀ l x ρ μ ν, dΓ l x ρ μ ν = dΓ l x ρ ν μ
 
 namespace ConnectionData
 
@@ -56,6 +74,95 @@ theorem riemann_antisymm (x : Fin n → ℝ) (ρ σ μ ν : Fin n) :
     C.riemann x ρ σ μ ν = - C.riemann x ρ σ ν μ := by
   unfold riemann
   ring
+
+/-- **First (algebraic) Bianchi identity** for a torsion-free connection:
+
+  `R^ρ_{σμν} + R^ρ_{μνσ} + R^ρ_{νσμ} = 0`.
+
+Each `∂Γ` term cancels its cyclic mate using `Γ_symm` and `dΓ_symm`.
+The six quadratic `ΓΓ` terms also cancel pairwise. -/
+theorem bianchi_first (x : Fin n → ℝ) (ρ σ μ ν : Fin n) :
+    C.riemann x ρ σ μ ν + C.riemann x ρ μ ν σ + C.riemann x ρ ν σ μ = 0 := by
+  unfold riemann
+  -- All ∂Γ terms cancel by `dΓ_symm`; all ΓΓ terms by `Γ_symm`.
+  -- Use Γ_symm to rewrite Γ^ρ_{μλ} = Γ^ρ_{λμ}? No, lower-index symmetry is
+  -- Γ x ρ μ λ = Γ x ρ λ μ. So Γ x ρ μ λ * Γ x λ ν σ involves:
+  --   second factor lower indices (ν σ): Γ x λ ν σ = Γ x λ σ ν.
+  --   first factor lower indices (μ λ): Γ x ρ μ λ = Γ x ρ λ μ.
+  -- Use these to relate cyclic terms.
+  have hG := C.Γ_symm
+  have hdG := C.dΓ_symm
+  -- For each cyclic permutation we use symmetries to bring summands to a
+  -- common form, and then the six terms cancel pairwise.
+  -- Rewrite all the ∂Γ-with-swapped-lower-indices.
+  have hd1 : C.dΓ μ x ρ ν σ = C.dΓ μ x ρ σ ν := hdG μ x ρ ν σ
+  have hd2 : C.dΓ ν x ρ σ μ = C.dΓ ν x ρ μ σ := hdG ν x ρ σ μ
+  have hd3 : C.dΓ σ x ρ μ ν = C.dΓ σ x ρ ν μ := hdG σ x ρ μ ν
+  rw [hd1, hd2, hd3]
+  -- Now ∂Γ terms: μ-derivs of Γ^ρ_{σν} cancel; ν of Γ^ρ_{μσ} cancel; σ of Γ^ρ_{νμ} cancel.
+  -- For ΓΓ terms, rewrite the second-factor lower indices using Γ_symm.
+  have hΓ1 : ∀ l, C.Γ x l ν σ = C.Γ x l σ ν := fun l => hG x l ν σ
+  have hΓ2 : ∀ l, C.Γ x l μ σ = C.Γ x l σ μ := fun l => hG x l μ σ
+  have hΓ3 : ∀ l, C.Γ x l σ μ = C.Γ x l μ σ := fun l => hG x l σ μ
+  have hΓ4 : ∀ l, C.Γ x l ν μ = C.Γ x l μ ν := fun l => hG x l ν μ
+  have hΓ5 : ∀ l, C.Γ x l μ ν = C.Γ x l ν μ := fun l => hG x l μ ν
+  have hΓ6 : ∀ l, C.Γ x l σ ν = C.Γ x l ν σ := fun l => hG x l σ ν
+  -- Sum manipulation: combine terms by pairing.
+  -- The expression after rewriting becomes a sum of three differences
+  -- where ΓΓ-pairs cancel via the Γ_symm rewrites.
+  -- Direct approach: after the dΓ rewrites, the linear (∂Γ) part is 0.
+  -- Then we need the quadratic part to also be 0. Use simp_rw with
+  -- the Γ-symmetries to align all factor orderings, then ring should close.
+  ring_nf
+  -- After ring_nf the linear-in-∂Γ part should already be 0. The remaining
+  -- quadratic part is a sum of 6 ΓΓ terms in cyclic permutations; we need
+  -- to identify them via Γ_symm.
+  -- Use Finset.sum_add_distrib to combine the cyclic sums:
+  have key :
+      (∑ l, C.Γ x ρ μ l * C.Γ x l ν σ)
+      - (∑ l, C.Γ x ρ ν l * C.Γ x l μ σ)
+      + ((∑ l, C.Γ x ρ ν l * C.Γ x l σ μ)
+         - (∑ l, C.Γ x ρ σ l * C.Γ x l ν μ))
+      + ((∑ l, C.Γ x ρ σ l * C.Γ x l μ ν)
+         - (∑ l, C.Γ x ρ μ l * C.Γ x l σ ν)) = 0 := by
+    -- Pair (T1) with (T6), (T2) with (T3), (T4) with (T5):
+    --   T1: Γ^ρ_{μl} Γ^l_{νσ}     T6 (negated): -Γ^ρ_{μl} Γ^l_{σν}
+    --      sum: Γ^ρ_{μl} (Γ^l_{νσ} - Γ^l_{σν}) = 0  via Γ_symm.
+    --   T2 (negated): -Γ^ρ_{νl} Γ^l_{μσ}     T3: +Γ^ρ_{νl} Γ^l_{σμ}
+    --      sum: Γ^ρ_{νl} (Γ^l_{σμ} - Γ^l_{μσ}) = 0.
+    --   T4 (negated): -Γ^ρ_{σl} Γ^l_{νμ}     T5: +Γ^ρ_{σl} Γ^l_{μν}
+    --      sum: Γ^ρ_{σl} (Γ^l_{μν} - Γ^l_{νμ}) = 0.
+    have p16 : (∑ l, C.Γ x ρ μ l * C.Γ x l ν σ)
+             - (∑ l, C.Γ x ρ μ l * C.Γ x l σ ν) = 0 := by
+      rw [← Finset.sum_sub_distrib]
+      apply Finset.sum_eq_zero
+      intros l _
+      rw [hG x l ν σ]
+      ring
+    have p23 : -(∑ l, C.Γ x ρ ν l * C.Γ x l μ σ)
+             + (∑ l, C.Γ x ρ ν l * C.Γ x l σ μ) = 0 := by
+      rw [show -(∑ l, C.Γ x ρ ν l * C.Γ x l μ σ)
+              + (∑ l, C.Γ x ρ ν l * C.Γ x l σ μ)
+            = (∑ l, C.Γ x ρ ν l * C.Γ x l σ μ)
+              - (∑ l, C.Γ x ρ ν l * C.Γ x l μ σ) from by ring]
+      rw [← Finset.sum_sub_distrib]
+      apply Finset.sum_eq_zero
+      intros l _
+      rw [hG x l μ σ]
+      ring
+    have p45 : -(∑ l, C.Γ x ρ σ l * C.Γ x l ν μ)
+             + (∑ l, C.Γ x ρ σ l * C.Γ x l μ ν) = 0 := by
+      rw [show -(∑ l, C.Γ x ρ σ l * C.Γ x l ν μ)
+              + (∑ l, C.Γ x ρ σ l * C.Γ x l μ ν)
+            = (∑ l, C.Γ x ρ σ l * C.Γ x l μ ν)
+              - (∑ l, C.Γ x ρ σ l * C.Γ x l ν μ) from by ring]
+      rw [← Finset.sum_sub_distrib]
+      apply Finset.sum_eq_zero
+      intros l _
+      rw [hG x l ν μ]
+      ring
+    linarith
+  linarith
 
 /-- **Ricci tensor.** Contraction of Riemann over the first upper and
 second lower index: `R_{σν}(x) = Σ_ρ R^ρ_{σρν}(x)`. -/
@@ -84,6 +191,7 @@ def flatConnection (n : Nat) : ConnectionData n where
   Γ := fun _ _ _ _ => 0
   dΓ := fun _ _ _ _ _ => 0
   Γ_symm := by intros; rfl
+  dΓ_symm := by intros; rfl
 
 /-- For the flat connection, the Riemann tensor vanishes identically. -/
 theorem flatConnection_riemann_zero (n : Nat)
