@@ -42,6 +42,7 @@ import InfraFormalization.SecondDifference
 import InfraFormalization.CurvatureLocalCoord
 import InfraFormalization.CurvatureRiemann
 import InfraFormalization.DiscreteRicci
+import InfraFormalization.RicciBridge
 import InfraFormalization.Refutations.F1NoMetric
 import InfraFormalization.Refutations.F2Orthonormality
 import InfraFormalization.Refutations.F3Tautology
@@ -178,6 +179,11 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.formanRicciEdge_regular
 #print axioms InfraFormalization.formanRicciVertex_regular
 #print axioms InfraFormalization.formanRicciTotalScalar_regular
+#print axioms InfraFormalization.circle_ricci_zero
+#print axioms InfraFormalization.circle_scalar_zero
+#print axioms InfraFormalization.cycleForman_zero
+#print axioms InfraFormalization.forman_ricci_matches_continuum_on_cycle
+#print axioms InfraFormalization.forman_ricci_real_matches_continuum_on_cycle
 #print axioms InfraFormalization.Refutations.gorard_dim_preservation_is_euler_lagrange
 #print axioms InfraFormalization.Refutations.gorard_section_3_3_contentless
 #print axioms InfraFormalization.Refutations.gorard_causal_invariance_is_general_covariance

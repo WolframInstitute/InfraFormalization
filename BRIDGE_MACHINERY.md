@@ -114,8 +114,9 @@ This rung is large, but every sub-task is a concrete formalisation target — no
 - [ ] Schwarzschild Ricci ≡ 0 (vacuum solution verification).
 - [ ] FLRW metric instance + non-zero Ricci computation.
 - [ ] Bianchi identity for ∇G^μν = 0 (needs covariant derivative).
-- ✓ **Forman-Ricci on a graph** (`DiscreteRicci.lean`): edge curvature `4 − deg(v) − deg(w)`, vertex aggregation, total scalar; cycle → 0 matches continuum.
-- [ ] **Discrete Ricci → continuum Ricci convergence**: scaled Forman-Ricci on lattice graphs → continuum Ricci on the GH-limit manifold. (Cycle case: trivially 0 = 0.)
+- ✓ **Forman-Ricci on a graph** (`DiscreteRicci.lean`): edge curvature `4 − deg(v) − deg(w)`, vertex aggregation, total scalar.
+- ✓ **First explicit bridge** (`RicciBridge.lean`): Forman-Ricci on 2-regular graph (e.g., cycle) = continuum Ricci on circle (= 0); `circleMetric : MetricData 1`; `forman_ricci_matches_continuum_on_cycle`. The grounding-principle obligation is met for the cycle/circle case.
+- [ ] **Discrete Ricci → continuum Ricci convergence (general)**: extend beyond trivially-flat to non-flat targets (sphere → positive Ricci).
 - [ ] Ollivier-Ricci with full proof (currently statement-only).
 
 ## Rung 6 — ODEs and PDEs on graphs and their continuum limits

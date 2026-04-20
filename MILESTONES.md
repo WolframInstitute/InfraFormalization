@@ -95,7 +95,8 @@ Grouped by phase (see [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md)). Each milestone ei
 - [x] `formanRicciEdge_zero_of_two_regular`: 2-regular graphs (e.g., cycle `Fin n`) have zero Forman-Ricci — matches the continuum Ricci of the circle (which is zero).
 - [x] `formanRicciEdge_regular`, `formanRicciVertex_regular`, `formanRicciTotalScalar_regular` for arbitrary `k`-regular graphs.
 - [ ] Hypergraph (not just simple graph) Forman-Ricci.
-- [ ] **Convergence theorem**: scaled Forman-Ricci on lattice graphs → continuum Ricci of the GH-limit manifold (Rung 5 + Rung 10 fusion).
+- [x] **First bridge** (`RicciBridge.lean`): `forman_ricci_matches_continuum_on_cycle` and `forman_ricci_real_matches_continuum_on_cycle` — Forman-Ricci on a 2-regular graph equals continuum Ricci on the circle (both ≡ 0); explicit `circleMetric : MetricData 1` instance.
+- [ ] **Convergence theorem (general)**: scaled Forman-Ricci on lattice graphs → continuum Ricci of the GH-limit manifold (extending beyond the trivial 0 = 0 case to non-flat targets).
 - [ ] Ollivier-Ricci with full proof (currently statement-only in `Infra/OllivierStatement.lean`).
 - [ ] Heat semigroup on a finite graph as a finite-dim ODE.
 - [ ] Scaled cycle Laplacian → 1D `d²/dx²` (Rung 2 entry).
