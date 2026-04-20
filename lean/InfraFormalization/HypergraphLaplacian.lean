@@ -298,6 +298,89 @@ theorem perEdge_dirichlet_nonpos (e : Hyperedge V) (f : V → ℝ) :
     exact_mod_cast this
   linarith
 
+/-! ### Per-edge bilinear form
+
+For generic `f g : V → ℝ`, the per-edge contribution to the bilinear
+form `B_H(f, g) := ∑_v f(v) · Δ_H g(v)` evaluates to
+`(∑_{S_e} f)(∑_{S_e} g) − |S_e| · ∑_{S_e} f·g`, which is **symmetric
+in `f` and `g`**. This is the key algebraic identity underlying both
+non-positivity of the Dirichlet form (`f = g` case) and self-
+adjointness of `Δ_H` (general `f, g`). -/
+
+/-- **Per-edge bilinear-form identity.** Per-edge contribution
+expands to `(∑ f)(∑ g) − |S| · ∑ f·g` on the edge's vertex set. -/
+theorem perEdge_bilinear_eq (e : Hyperedge V) (f g : V → ℝ) :
+    (∑ v : V, f v * (∑ w ∈ e.others v, (g w - g v)))
+    = (∑ v ∈ e.verts.toFinset, f v) * (∑ w ∈ e.verts.toFinset, g w)
+      - (e.verts.toFinset.card : ℝ) *
+        ∑ v ∈ e.verts.toFinset, f v * g v := by
+  set S : Finset V := e.verts.toFinset with hS
+  have step1 :
+      (∑ v : V, f v * ∑ w ∈ e.others v, (g w - g v))
+      = ∑ v ∈ S, f v * ∑ w ∈ S.erase v, (g w - g v) := by
+    rw [show (Finset.univ : Finset V) = S ∪ (Finset.univ \ S) from
+          (Finset.union_sdiff_of_subset (Finset.subset_univ S)).symm]
+    rw [Finset.sum_union Finset.disjoint_sdiff]
+    have hzero :
+        (∑ v ∈ Finset.univ \ S, f v * ∑ w ∈ e.others v, (g w - g v)) = 0 := by
+      apply Finset.sum_eq_zero
+      intros v hv
+      rw [Finset.mem_sdiff] at hv
+      have := Hypergraph.laplacianHyper_perEdge_zero_of_not_mem e g v hv.2
+      rw [this, mul_zero]
+    rw [hzero, add_zero]
+    apply Finset.sum_congr rfl
+    intros v hv
+    unfold Hyperedge.others
+    rw [if_pos hv]
+  have step2 : ∀ v ∈ S,
+      ∑ w ∈ S.erase v, (g w - g v) = (∑ w ∈ S, g w) - (S.card : ℝ) * g v := by
+    intros v hv
+    rw [Finset.sum_sub_distrib, Finset.sum_const]
+    have herase_sum : (∑ w ∈ S.erase v, g w) = (∑ w ∈ S, g w) - g v := by
+      have := Finset.sum_erase_add S g hv
+      linarith
+    rw [herase_sum]
+    have hcard_erase : ((S.erase v).card : ℝ) = (S.card : ℝ) - 1 := by
+      rw [Finset.card_erase_of_mem hv]
+      have hScard_pos : 1 ≤ S.card := Finset.Nonempty.card_pos ⟨v, hv⟩
+      have : ((S.card - 1 : ℕ) : ℝ) = (S.card : ℝ) - 1 := by
+        rw [Nat.cast_sub hScard_pos]
+        simp
+      exact this
+    rw [show ((S.erase v).card • g v) = ((S.erase v).card : ℝ) * g v from by
+          simp [nsmul_eq_mul]]
+    rw [hcard_erase]
+    ring
+  rw [step1, Finset.sum_congr rfl (fun v hv => by rw [step2 v hv])]
+  -- Step 3: collapse the S-sum to (∑ f)(∑ g) − |S| · ∑ f·g.
+  have h1 :
+      (∑ v ∈ S, f v * ((∑ w ∈ S, g w) - (S.card : ℝ) * g v))
+      = (∑ v ∈ S, f v * (∑ w ∈ S, g w))
+        - ∑ v ∈ S, (S.card : ℝ) * (f v * g v) := by
+    rw [← Finset.sum_sub_distrib]
+    apply Finset.sum_congr rfl
+    intros v _
+    ring
+  have h2 : (∑ v ∈ S, f v * (∑ w ∈ S, g w))
+          = (∑ v ∈ S, f v) * (∑ w ∈ S, g w) := by
+    rw [← Finset.sum_mul]
+  have h3 : (∑ v ∈ S, (S.card : ℝ) * (f v * g v))
+          = (S.card : ℝ) * ∑ v ∈ S, f v * g v := by
+    rw [← Finset.mul_sum]
+  rw [h1, h2, h3]
+
+/-- **Symmetry of the per-edge bilinear form.** The per-edge
+contribution with `f, g` equals that with `g, f`. Immediate from
+`perEdge_bilinear_eq` since the RHS is symmetric in `f, g`. -/
+theorem perEdge_bilinear_symm (e : Hyperedge V) (f g : V → ℝ) :
+    (∑ v : V, f v * (∑ w ∈ e.others v, (g w - g v)))
+    = ∑ v : V, g v * (∑ w ∈ e.others v, (f w - f v)) := by
+  rw [perEdge_bilinear_eq e f g, perEdge_bilinear_eq e g f]
+  have h : ∀ v : V, f v * g v = g v * f v := fun v => mul_comm _ _
+  rw [Finset.sum_congr rfl (fun v _ => h v)]
+  ring
+
 /-- **Dirichlet form non-positivity** for the hypergraph Laplacian:
 `∑_v f(v) · Δ_H f(v) ≤ 0`. Equivalently, `Δ_H` is negative
 semidefinite in the `Δ = A − D` sign convention.
@@ -329,6 +412,43 @@ theorem laplacianHyper_dirichlet_nonpos
     have hper : (∑ v : V, f v * (∑ w ∈ e.others v, (f w - f v))) ≤ 0 :=
       perEdge_dirichlet_nonpos e f
     linarith
+
+/-- **Self-adjointness of the hypergraph Laplacian** with respect to
+the counting inner product: `∑_v f(v) · Δ_H g(v) = ∑_v g(v) · Δ_H f(v)`.
+
+Proof: the per-edge bilinear form evaluates to
+`(∑_{S_e} f)(∑_{S_e} g) − |S_e| · ∑_{S_e} f·g`, which is manifestly
+symmetric in `f, g`. Summing over edges preserves the identity. -/
+theorem laplacianHyper_self_adjoint (H : Hypergraph V) (f g : V → ℝ) :
+    (∑ v : V, f v * Hypergraph.laplacianHyper H g v)
+    = ∑ v : V, g v * Hypergraph.laplacianHyper H f v := by
+  unfold Hypergraph.laplacianHyper
+  induction H.edges using Multiset.induction_on with
+  | empty => simp
+  | cons e es ih =>
+    have swap_f_g :
+        (∑ v : V, f v *
+          ((e ::ₘ es).map (fun e' => ∑ w ∈ e'.others v, (g w - g v))).sum)
+        = (∑ v : V, f v * (∑ w ∈ e.others v, (g w - g v)))
+          + (∑ v : V, f v *
+             (es.map (fun e' => ∑ w ∈ e'.others v, (g w - g v))).sum) := by
+      rw [← Finset.sum_add_distrib]
+      apply Finset.sum_congr rfl
+      intros v _
+      simp only [Multiset.map_cons, Multiset.sum_cons]
+      ring
+    have swap_g_f :
+        (∑ v : V, g v *
+          ((e ::ₘ es).map (fun e' => ∑ w ∈ e'.others v, (f w - f v))).sum)
+        = (∑ v : V, g v * (∑ w ∈ e.others v, (f w - f v)))
+          + (∑ v : V, g v *
+             (es.map (fun e' => ∑ w ∈ e'.others v, (f w - f v))).sum) := by
+      rw [← Finset.sum_add_distrib]
+      apply Finset.sum_congr rfl
+      intros v _
+      simp only [Multiset.map_cons, Multiset.sum_cons]
+      ring
+    rw [swap_f_g, swap_g_f, perEdge_bilinear_symm e f g, ih]
 
 end Hypergraph
 

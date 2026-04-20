@@ -48,6 +48,7 @@ import InfraFormalization.LaplacianBridge
 import InfraFormalization.HypergraphLaplacian
 import InfraFormalization.HypergraphCalculus
 import InfraFormalization.HeatEquation
+import InfraFormalization.WaveEquation
 import InfraFormalization.DiscreteDAlembertian
 import InfraFormalization.Refutations.F1NoMetric
 import InfraFormalization.Refutations.F2Orthonormality
@@ -229,6 +230,9 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.Hypergraph.laplacianHyper_sum_zero
 #print axioms InfraFormalization.Hypergraph.perEdge_dirichlet_nonpos
 #print axioms InfraFormalization.Hypergraph.laplacianHyper_dirichlet_nonpos
+#print axioms InfraFormalization.Hypergraph.perEdge_bilinear_eq
+#print axioms InfraFormalization.Hypergraph.perEdge_bilinear_symm
+#print axioms InfraFormalization.Hypergraph.laplacianHyper_self_adjoint
 #print axioms InfraFormalization.hyperedgeGradient_add
 #print axioms InfraFormalization.hyperedgeGradient_smul
 #print axioms InfraFormalization.hyperedgeGradient_const
@@ -248,6 +252,13 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.heat_L2_derivative_nonpos
 #print axioms InfraFormalization.heat_L2_antitone
 #print axioms InfraFormalization.heat_L2_decay
+#print axioms InfraFormalization.hasDerivAt_laplacianHyper_coord
+#print axioms InfraFormalization.waveEnergy_nonneg
+#print axioms InfraFormalization.hasDerivAt_wave_kinetic
+#print axioms InfraFormalization.hasDerivAt_wave_potential
+#print axioms InfraFormalization.hasDerivAt_waveEnergy
+#print axioms InfraFormalization.wave_energy_conservation
+#print axioms InfraFormalization.wave_energy_conservation'
 #print axioms InfraFormalization.discreteDAlembertian4_add
 #print axioms InfraFormalization.discreteDAlembertian4_smul
 #print axioms InfraFormalization.discreteDAlembertian4_zero

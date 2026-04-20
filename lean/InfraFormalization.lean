@@ -83,4 +83,5 @@ import InfraFormalization.LaplacianBridge
 import InfraFormalization.HypergraphLaplacian
 import InfraFormalization.HypergraphCalculus
 import InfraFormalization.HeatEquation
+import InfraFormalization.WaveEquation
 import InfraFormalization.DiscreteDAlembertian
