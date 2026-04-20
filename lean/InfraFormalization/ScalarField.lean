@@ -32,6 +32,7 @@ here.
 
 import InfraFormalization.HypergraphLaplacian
 import InfraFormalization.HypergraphCalculus
+import InfraFormalization.KleinGordon
 import Mathlib.Analysis.InnerProductSpace.Basic
 
 namespace InfraFormalization
@@ -168,5 +169,60 @@ theorem discreteHamiltonian_eq_legendre
     = (∑ v : V, (dφ t v)^2) - discreteLagrangian H m φ dφ t := by
   unfold discreteHamiltonian discreteLagrangian
   ring
+
+/-! ## Variational / Euler-Lagrange content
+
+The **variational derivative** of the Dirichlet form
+`F(φ) := ⟨φ, Δ_H φ⟩` is the map `φ ↦ 2·Δ_H φ`, as follows from
+self-adjointness of `Δ_H`: for any perturbation `η`,
+
+  `F(φ + εη) − F(φ) = ε · (⟨η, Δφ⟩ + ⟨φ, Δη⟩) + O(ε²)
+                    = ε · 2 ⟨η, Δφ⟩`.
+
+This gives the `∂L/∂φ` for the Klein-Gordon Lagrangian and is the
+formal origin of the Euler-Lagrange reduction to Klein-Gordon. -/
+
+/-- **Variational-derivative identity for the Dirichlet form.** The
+first-order variation of `∑_v φ(v) · Δ_H φ(v)` under `φ → φ + εη`
+equals `2ε · ⟨η, Δ_H φ⟩ + O(ε²)`, captured here by the identity
+
+  `⟨η, Δφ⟩ + ⟨φ, Δη⟩ = 2 · ⟨η, Δφ⟩`. -/
+theorem variational_dirichlet (H : Hypergraph V)
+    (φ η : ScalarField V) :
+    ScalarField.innerProd η (Hypergraph.laplacianHyper H φ)
+    + ScalarField.innerProd φ (Hypergraph.laplacianHyper H η)
+    = 2 * ScalarField.innerProd η (Hypergraph.laplacianHyper H φ) := by
+  unfold ScalarField.innerProd
+  have h := Hypergraph.laplacianHyper_self_adjoint H φ η
+  linarith
+
+/-- **Euler-Lagrange equation for the discrete Klein-Gordon Lagrangian.**
+A pair `(φ, dφ)` with `φ : ℝ → V → ℝ` satisfies the EL condition if
+`dφ = ∂_t φ` and `d/dt (∂L/∂(dφ)) = ∂L/∂φ`, i.e.,
+
+  `dφ'(t, v) = Δ_H φ(t) v − m² · φ(t, v)`.
+
+For the Klein-Gordon Lagrangian:
+  `∂L/∂(dφ(v)) = dφ(v)`   (direct)
+  `∂L/∂φ(v)   = Δ_H φ(v) − m² φ(v)` (via `variational_dirichlet`).
+
+So `d/dt dφ(v) = Δ_H φ(v) − m² φ(v)`. -/
+def KG_EulerLagrange (H : Hypergraph V) (m : ℝ) (φ dφ : ℝ → V → ℝ) : Prop :=
+  (∀ t v, HasDerivAt (fun s => φ s v) (dφ t v) t) ∧
+  (∀ t v, HasDerivAt (fun s => dφ s v)
+    (Hypergraph.laplacianHyper H (φ t) v - m ^ 2 * φ t v) t)
+
+/-- **EL equation is KG equation.** The Euler-Lagrange condition
+for the discrete Klein-Gordon Lagrangian is literally the
+`KleinGordonSolution` structure — by the variational derivatives
+computed above. -/
+theorem KG_EulerLagrange_iff_KleinGordonSolution (H : Hypergraph V) (m : ℝ)
+    (φ dφ : ℝ → V → ℝ) :
+    KG_EulerLagrange H m φ dφ ↔ KleinGordonSolution H m φ dφ := by
+  constructor
+  · rintro ⟨h1, h2⟩
+    exact { position := h1, velocity := h2 }
+  · intro h
+    exact ⟨h.position, h.velocity⟩
 
 end InfraFormalization

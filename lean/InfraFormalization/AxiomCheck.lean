@@ -290,6 +290,8 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.innerProd_laplacianHyper_symm
 #print axioms InfraFormalization.innerProd_laplacianHyper_nonpos
 #print axioms InfraFormalization.discreteHamiltonian_eq_legendre
+#print axioms InfraFormalization.variational_dirichlet
+#print axioms InfraFormalization.KG_EulerLagrange_iff_KleinGordonSolution
 #print axioms InfraFormalization.discreteDAlembertian4_add
 #print axioms InfraFormalization.discreteDAlembertian4_smul
 #print axioms InfraFormalization.discreteDAlembertian4_zero
