@@ -83,4 +83,69 @@ theorem scaledSecondDiff_quadratic_independent
   rw [scaledSecondDiff_quadratic a b c n hn x,
       scaledSecondDiff_quadratic a b c m hm y]
 
+/-- **Cycle Laplacian = central second difference** at an interior
+point. Given a real-to-real function `f`, a scale `n ≥ 2`, and an
+interior index `i : Fin n` (with `1 ≤ i.val` and `i.val + 1 < n`),
+the cycle Laplacian of `g(j) := f(j.val / n)` equals
+`secondDifference f (i.val / n) (1 / n)`.
+
+At the boundary (`i.val = 0` or `i.val = n − 1`), the cyclic
+wrap-around makes the cycle Laplacian deviate from the second
+difference unless `f` is periodic. The interior identity here is
+enough to connect the discrete cycle operator with the continuum
+second derivative on smooth test functions. -/
+theorem cycleLaplacian_in_terms_of_secondDifference
+    (n : Nat) [NeZero n] (f : ℝ → ℝ) (i : Fin n)
+    (hlo : 1 ≤ i.val) (hhi : i.val + 1 < n) :
+    cycleLaplacian n (fun j => f ((j.val : ℝ) / (n : ℝ))) i
+    = secondDifference f ((i.val : ℝ) / (n : ℝ)) (1 / (n : ℝ)) := by
+  have hn_ge_2 : 2 ≤ n := by omega
+  -- Compute the `.val` of `i + 1` and `i - 1` using Fin.val_add.
+  have hone_val : (1 : Fin n).val = 1 := by
+    show (1 % n) = 1
+    exact Nat.mod_eq_of_lt hn_ge_2
+  have h_succ : (i + 1 : Fin n).val = i.val + 1 := by
+    rw [Fin.val_add, hone_val]
+    exact Nat.mod_eq_of_lt hhi
+  have h_pred : (i - 1 : Fin n).val = i.val - 1 := by
+    -- In the group Fin n, i - 1 = i + (-1).
+    have heq : (i - 1 : Fin n) = i + (-1 : Fin n) := sub_eq_add_neg _ _
+    rw [heq, Fin.val_add]
+    -- In the group Fin n, -1 has value n - 1.
+    have hnegone_val : (-1 : Fin n).val = n - 1 := by
+      show (n - (1 : Fin n).val) % n = n - 1
+      rw [hone_val]
+      exact Nat.mod_eq_of_lt (by omega : n - 1 < n)
+    rw [hnegone_val]
+    -- (i.val + (n - 1)) % n = i.val - 1 when i.val ≥ 1.
+    have step : i.val + (n - 1) = (i.val - 1) + n := by omega
+    rw [step, Nat.add_mod_right]
+    exact Nat.mod_eq_of_lt (by omega : i.val - 1 < n)
+  -- Now rewrite both sides, converting Fin-indexed coords to real-arithmetic.
+  unfold cycleLaplacian secondDifference
+  -- Beta-reduce to expose the Fin .val cast structure.
+  simp only []
+  have hn_pos : (0 : ℝ) < n :=
+    by exact_mod_cast (Nat.pos_of_ne_zero (NeZero.ne n))
+  -- Convert the .val expressions on the LHS to ℝ-arithmetic.
+  have e_succ_cast : (((i + 1 : Fin n).val : ℕ) : ℝ) = (i.val : ℝ) + 1 := by
+    rw [h_succ]
+    push_cast
+    ring
+  have e_pred_cast : (((i - 1 : Fin n).val : ℕ) : ℝ) = (i.val : ℝ) - 1 := by
+    rw [h_pred, Nat.cast_sub hlo]
+    push_cast
+    ring
+  rw [e_succ_cast, e_pred_cast]
+  -- Now: f (((i.val : ℝ) + 1) / n) + f (((i.val : ℝ) - 1) / n) - 2 f(i.val/n)
+  --   = f (i.val/n + 1/n) - 2 f(i.val/n) + f (i.val/n - 1/n).
+  have div_add : ((i.val : ℝ) + 1) / (n : ℝ)
+               = (i.val : ℝ) / (n : ℝ) + 1 / (n : ℝ) := by
+    field_simp
+  have div_sub : ((i.val : ℝ) - 1) / (n : ℝ)
+               = (i.val : ℝ) / (n : ℝ) - 1 / (n : ℝ) := by
+    field_simp
+  rw [div_add, div_sub]
+  ring
+
 end InfraFormalization
