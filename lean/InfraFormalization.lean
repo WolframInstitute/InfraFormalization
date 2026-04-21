@@ -88,5 +88,6 @@ import InfraFormalization.SchrodingerEquation
 import InfraFormalization.KleinGordon
 import InfraFormalization.ScalarField
 import InfraFormalization.HypergraphCycleBridge
+import InfraFormalization.HypergraphDistance
 import InfraFormalization.ContinuumLimitStatement
 import InfraFormalization.DiscreteDAlembertian

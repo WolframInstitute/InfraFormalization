@@ -53,6 +53,7 @@ import InfraFormalization.SchrodingerEquation
 import InfraFormalization.KleinGordon
 import InfraFormalization.ScalarField
 import InfraFormalization.HypergraphCycleBridge
+import InfraFormalization.HypergraphDistance
 import InfraFormalization.ContinuumLimitStatement
 import InfraFormalization.DiscreteDAlembertian
 import InfraFormalization.Refutations.F1NoMetric
@@ -300,6 +301,15 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.hypergraph_scaled_laplacian_eq_second_deriv
 #print axioms InfraFormalization.refutations_sound_given_obligations_open
 #print axioms InfraFormalization.cycle_laplacian_conv_polynomial
+#print axioms InfraFormalization.Hypergraph.Adj_symm
+#print axioms InfraFormalization.Hypergraph.Adj_irrefl
+#print axioms InfraFormalization.Hypergraph.dist_self
+#print axioms InfraFormalization.Hypergraph.dist_comm
+#print axioms InfraFormalization.Hypergraph.self_mem_geodesicBall
+#print axioms InfraFormalization.Hypergraph.geodesicBallVolume_pos
+#print axioms InfraFormalization.Hypergraph.geodesicBallVolume_mono
+#print axioms InfraFormalization.cycleHypergraph_Adj_iff
+#print axioms InfraFormalization.cycleHypergraph_succ_pred_adj
 #print axioms InfraFormalization.discreteDAlembertian4_add
 #print axioms InfraFormalization.discreteDAlembertian4_smul
 #print axioms InfraFormalization.discreteDAlembertian4_zero
