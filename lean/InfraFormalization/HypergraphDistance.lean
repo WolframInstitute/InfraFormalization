@@ -260,4 +260,117 @@ theorem cycleHypergraph_succ_pred_adj {n : Nat} [NeZero n] (hn : 2 ≤ n)
     refine ⟨Ne.symm hpred, Or.inr ?_⟩
     abel
 
+/-- **For `n ≥ 3`, `v + 1 ≠ v − 1` in `Fin n`.** This separates the
+two neighbors in `cycleHypergraph_succ_pred_adj`. -/
+theorem cycle_succ_ne_pred {n : Nat} [NeZero n] (hn : 3 ≤ n) (v : Fin n) :
+    (v + 1 : Fin n) ≠ (v - 1 : Fin n) := by
+  intro heq
+  have hn_pos : 0 < n := by omega
+  have h1 : (1 : Fin n).val = 1 := by
+    show 1 % n = 1
+    have : 1 < n := by omega
+    exact Nat.mod_eq_of_lt this
+  have h_succ_val : (v + 1 : Fin n).val = (v.val + 1) % n := by
+    rw [Fin.val_add, h1]
+  have h_pred_val : (v - 1 : Fin n).val = (n - 1 + v.val) % n := by
+    rw [Fin.sub_def, h1]
+  have hval : (v.val + 1) % n = (n - 1 + v.val) % n := by
+    rw [← h_succ_val, ← h_pred_val, heq]
+  have hv_lt : v.val < n := v.isLt
+  -- Case split on where v.val sits in [0, n-1].
+  rcases Nat.lt_or_ge v.val (n - 1) with hlt1 | hge1
+  · -- v.val ≤ n - 2, so v.val + 1 < n, (v.val+1) % n = v.val + 1.
+    have h_lhs : (v.val + 1) % n = v.val + 1 :=
+      Nat.mod_eq_of_lt (by omega)
+    rcases Nat.eq_zero_or_pos v.val with hz | hpos
+    · -- v.val = 0: RHS = (n - 1) % n = n - 1, LHS = 1. Need 1 = n-1, i.e., n=2.
+      rw [hz] at hval h_lhs
+      rw [h_lhs] at hval
+      have h_rhs : (n - 1 + 0) % n = n - 1 := Nat.mod_eq_of_lt (by omega)
+      rw [h_rhs] at hval
+      omega
+    · -- v.val ≥ 1: RHS = (n - 1 + v.val) % n = v.val - 1.
+      have h_ge_n : n ≤ n - 1 + v.val := by omega
+      have h_lt_2n : n - 1 + v.val < 2 * n := by omega
+      have h_rhs : (n - 1 + v.val) % n = n - 1 + v.val - n := by
+        rw [Nat.mod_eq_sub_mod h_ge_n]
+        exact Nat.mod_eq_of_lt (by omega)
+      rw [h_lhs, h_rhs] at hval
+      omega
+  · -- v.val = n - 1.
+    have hv_eq : v.val = n - 1 := by omega
+    rw [hv_eq] at hval
+    have h_lhs : (n - 1 + 1) % n = 0 := by
+      have : n - 1 + 1 = n := by omega
+      rw [this, Nat.mod_self]
+    rw [h_lhs] at hval
+    have h_rhs_aux : n - 1 + (n - 1) = 2 * n - 2 := by omega
+    rw [h_rhs_aux] at hval
+    -- hval : 0 = (2n - 2) % n; for n ≥ 3, 2n - 2 = n + (n - 2), so mod = n - 2.
+    have h_eq : 2 * n - 2 = n + (n - 2) := by omega
+    have h_ge : n ≤ 2 * n - 2 := by omega
+    have h_rhs : (2 * n - 2) % n = n - 2 := by
+      rw [h_eq, Nat.add_mod_left]
+      exact Nat.mod_eq_of_lt (by omega)
+    rw [h_rhs] at hval
+    omega
+
+/-- **Radius-1 ball volume in cycleHypergraph (n ≥ 3) is ≥ 3.**
+Exhibits three distinct vertices (`v`, `v + 1`, `v − 1`) in the
+ball, all at distance ≤ 1. This establishes the first concrete
+dimensional step on the cycle: `V(v, 1) ≥ 3`, hence
+`localDimension v 1`-class expectations are consistent with the
+cycle being 1-dimensional (where `V(v, r) ~ 2r + 1`). -/
+theorem cycleHypergraph_ballVolume_one_ge_three {n : Nat} [NeZero n]
+    (hn : 3 ≤ n) (v : Fin n) :
+    3 ≤ (cycleHypergraph n).geodesicBallVolume v 1 := by
+  have hn2 : 2 ≤ n := by omega
+  have ⟨hadj_succ, hadj_pred⟩ := cycleHypergraph_succ_pred_adj hn2 v
+  have h_succ_in : v + 1 ∈ (cycleHypergraph n).geodesicBall v 1 := by
+    unfold Hypergraph.geodesicBall
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+    unfold Hypergraph.dist
+    rw [SimpleGraph.dist_eq_one_iff_adj.mpr hadj_succ]
+  have h_pred_in : v - 1 ∈ (cycleHypergraph n).geodesicBall v 1 := by
+    unfold Hypergraph.geodesicBall
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+    unfold Hypergraph.dist
+    rw [SimpleGraph.dist_eq_one_iff_adj.mpr hadj_pred]
+  have h_self_in : v ∈ (cycleHypergraph n).geodesicBall v 1 :=
+    Hypergraph.self_mem_geodesicBall _ _ _
+  have hne_succ : v ≠ v + 1 := Ne.symm (cycle_succ_ne hn2 v)
+  have hne_pred : v ≠ v - 1 := by
+    intro heq
+    have h_ : v = v - 1 + 1 := by abel
+    rw [← heq] at h_
+    exact cycle_succ_ne hn2 v h_.symm
+  have hne_succ_pred : v + 1 ≠ v - 1 := cycle_succ_ne_pred hn v
+  have h_not_mem_1 : v + 1 ∉ ({v - 1} : Finset (Fin n)) := by
+    rw [Finset.mem_singleton]; exact hne_succ_pred
+  have h_not_mem_2 : v ∉ ({v + 1, v - 1} : Finset (Fin n)) := by
+    rw [Finset.mem_insert, Finset.mem_singleton]
+    intro hcases
+    cases hcases with
+    | inl h => exact hne_succ h
+    | inr h => exact hne_pred h
+  have h_triple_card :
+      ({v, v + 1, v - 1} : Finset (Fin n)).card = 3 := by
+    rw [show ({v, v + 1, v - 1} : Finset (Fin n))
+        = insert v (insert (v + 1) {v - 1}) from rfl]
+    rw [Finset.card_insert_of_notMem h_not_mem_2]
+    rw [Finset.card_insert_of_notMem h_not_mem_1]
+    rw [Finset.card_singleton]
+  have h_subset :
+      ({v, v + 1, v - 1} : Finset (Fin n)) ⊆
+      (cycleHypergraph n).geodesicBall v 1 := by
+    intros u hu
+    rw [Finset.mem_insert, Finset.mem_insert, Finset.mem_singleton] at hu
+    rcases hu with rfl | rfl | rfl
+    · exact h_self_in
+    · exact h_succ_in
+    · exact h_pred_in
+  unfold Hypergraph.geodesicBallVolume
+  calc 3 = ({v, v + 1, v - 1} : Finset (Fin n)).card := h_triple_card.symm
+    _ ≤ _ := Finset.card_le_card h_subset
+
 end InfraFormalization

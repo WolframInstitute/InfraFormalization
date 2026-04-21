@@ -310,6 +310,8 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.Hypergraph.geodesicBallVolume_mono
 #print axioms InfraFormalization.cycleHypergraph_Adj_iff
 #print axioms InfraFormalization.cycleHypergraph_succ_pred_adj
+#print axioms InfraFormalization.cycle_succ_ne_pred
+#print axioms InfraFormalization.cycleHypergraph_ballVolume_one_ge_three
 #print axioms InfraFormalization.discreteDAlembertian4_add
 #print axioms InfraFormalization.discreteDAlembertian4_smul
 #print axioms InfraFormalization.discreteDAlembertian4_zero
