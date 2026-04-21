@@ -92,6 +92,9 @@ import InfraFormalization.HypergraphDistance
 import InfraFormalization.RuleDimensionBounds
 import InfraFormalization.FiberedGraph
 import InfraFormalization.CausalGraphType
+import InfraFormalization.CausalFoliation
 import InfraFormalization.BranchialFinite
+import InfraFormalization.VietorisRips
+import InfraFormalization.SyntheticGeometry
 import InfraFormalization.ContinuumLimitStatement
 import InfraFormalization.DiscreteDAlembertian

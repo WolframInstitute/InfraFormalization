@@ -57,7 +57,10 @@ import InfraFormalization.HypergraphDistance
 import InfraFormalization.RuleDimensionBounds
 import InfraFormalization.FiberedGraph
 import InfraFormalization.CausalGraphType
+import InfraFormalization.CausalFoliation
 import InfraFormalization.BranchialFinite
+import InfraFormalization.VietorisRips
+import InfraFormalization.SyntheticGeometry
 import InfraFormalization.ContinuumLimitStatement
 import InfraFormalization.DiscreteDAlembertian
 import InfraFormalization.Refutations.F1NoMetric
@@ -333,6 +336,21 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.branchialSliceFinite_zero
 #print axioms InfraFormalization.branchialSliceFinite_succ
 #print axioms InfraFormalization.branchialSliceFinite_of_successors_finite
+#print axioms InfraFormalization.CausalGraph.isAntichain_empty
+#print axioms InfraFormalization.CausalGraph.isAntichain_singleton
+#print axioms InfraFormalization.CausalGraph.properTime_self_exists
+#print axioms InfraFormalization.Hypergraph.VietorisRipsSimplex.mono
+#print axioms InfraFormalization.Hypergraph.VietorisRipsSimplex.empty
+#print axioms InfraFormalization.Hypergraph.VietorisRipsSimplex.singleton
+#print axioms InfraFormalization.Hypergraph.VietorisRipsSimplex.mono_scale
+#print axioms InfraFormalization.Hypergraph.vietorisRipsGraph_zero_no_edges_reachable
+#print axioms InfraFormalization.Hypergraph.mem_syntheticCircle
+#print axioms InfraFormalization.Hypergraph.syntheticCircle_zero
+#print axioms InfraFormalization.Hypergraph.center_not_on_circle
+#print axioms InfraFormalization.Hypergraph.syntheticCircle_subset_ball
+#print axioms InfraFormalization.Hypergraph.syntheticCircle_disjoint
+#print axioms InfraFormalization.Hypergraph.mem_syntheticLineSegment
+#print axioms InfraFormalization.Hypergraph.endpoints_on_segment
 #print axioms InfraFormalization.discreteDAlembertian4_add
 #print axioms InfraFormalization.discreteDAlembertian4_smul
 #print axioms InfraFormalization.discreteDAlembertian4_zero

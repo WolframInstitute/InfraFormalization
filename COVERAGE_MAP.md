@@ -102,6 +102,17 @@ Pending in this group: B2 Schwarzschild Riemann components, B3 `Ric = 0`, B4 vac
 
 Pending in ID: ID2 plateau detection, ID3 homology dim, ID4 coordinatization dim, ID5 causal-graph dim, ID6 compatibility theorem, ID7 spectral dim via `Matrix.exp`.
 
+## 7b. Infragauge / Infracausality / Infratopology / Synthetic
+
+| Module | Content | Status |
+|---|---|---|
+| `FiberedGraph.lean` | `FiberedGraph V W` structure; `fiber`, `disjoint_fibers`, `exists_unique_fiber`; `IsSection`, `SmoothSection`; `Connection`, `connectionAdj`, `connectionAdj_implies_total_Adj` | ✅ IG1 + IG2 + IG3 |
+| `CausalGraphType.lean` | `CausalGraph V` TR-DAG; `causallyPrecedes` (refl+trans), `causalEdge_implies_precedes`; `ChainOfLength` observer chain; `DegenerateInterval`, `OnLightStepFrom` | ✅ IC1 + IC2 + IC3 |
+| `CausalFoliation.lean` | `IsAntichain`; `IsFoliation` (antichain+disjoint+covers); `FiniteSupportFoliation`; `HasProperTime`, `properTime_self_exists` | ✅ IC4 |
+| `BranchialFinite.lean` | `successors`, `BranchialSliceFinite`; `branchialSliceFinite_zero / _succ / _of_successors_finite` | ✅ I1 (#84) |
+| `VietorisRips.lean` | `VietorisRipsEdge`, `VietorisRipsSimplex` with mono / empty / singleton / mono_scale; `vietorisRipsGraph` as SimpleGraph; `vietorisRipsGraph_zero_no_edges_reachable` | ✅ IT1 |
+| `SyntheticGeometry.lean` | `SyntheticCircle`, `SyntheticBall`, `SyntheticLineSegment`, `SyntheticSphere`; `mem_syntheticCircle`, `syntheticCircle_zero`, `center_not_on_circle`, `syntheticCircle_subset_ball`, `syntheticCircle_disjoint`, `endpoints_on_segment` | ✅ IS1 |
+
 ## 8. Groups from the full Infrageometry program
 
 From `INFRAGEOMETRY.md` — 9 groups (57 new tasks #109–#165). Status:
@@ -109,14 +120,16 @@ From `INFRAGEOMETRY.md` — 9 groups (57 new tasks #109–#165). Status:
 | Group | Name | Done | Open |
 |---|---|---|---|
 | IA | Infraanalysis (DAG calculus, de Rham, blowups) | 0 | 5 (#109–#113) |
-| IG | InfraGaugeTheory (port Pokorny paclet) | 0 | 11 (#114–#124) |
-| IC | Infracausality (EPS, MW-clock) | 0 | 8 (#125–#132) |
-| IT | Infratopology (VR + Latschev) | 0 | 6 (#133–#138) |
+| IG | InfraGaugeTheory (port Pokorny paclet) | 3 (#114–#116) | 8 (#117–#124) |
+| IC | Infracausality (EPS, MW-clock) | 4 (#125–#128) | 4 (#129–#132) |
+| IT | Infratopology (VR + Latschev) | 1 (#133) | 5 (#134–#138) |
 | ID | Infradimension | 1 (#139) | 6 (#140–#145) |
 | IB | Infrablowup (Lie algebra, Poisson) | 0 | 6 (#146–#151) |
-| IQ | Branchial / quantum | 0 | 4 (#152–#155; others in legacy I group) |
-| IS | Synthetic axiomatic | 0 | 3 (#156–#158) |
+| IQ | Branchial / quantum | 1 (#84) | 4 (#152–#155; others in legacy I group) |
+| IS | Synthetic axiomatic | 1 (#156) | 2 (#157–#158) |
 | IR | Ruliology | 1 (#160) | 6 (#159, #161–#165) |
+
+Total for new groups: **12 done / 57 total** (21%).
 
 ## 9. Legacy phase groups (plan A/B/C/.../K)
 
