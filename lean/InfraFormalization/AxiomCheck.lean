@@ -61,6 +61,8 @@ import InfraFormalization.CausalFoliation
 import InfraFormalization.BranchialFinite
 import InfraFormalization.VietorisRips
 import InfraFormalization.SyntheticGeometry
+import InfraFormalization.ElementaryBlowup
+import InfraFormalization.DagBlowup
 import InfraFormalization.ContinuumLimitStatement
 import InfraFormalization.DiscreteDAlembertian
 import InfraFormalization.Refutations.F1NoMetric
@@ -351,6 +353,9 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.Hypergraph.syntheticCircle_disjoint
 #print axioms InfraFormalization.Hypergraph.mem_syntheticLineSegment
 #print axioms InfraFormalization.Hypergraph.endpoints_on_segment
+#print axioms InfraFormalization.dagDerivative_add
+#print axioms InfraFormalization.dagDerivative_smul
+#print axioms InfraFormalization.dagDerivative_const
 #print axioms InfraFormalization.discreteDAlembertian4_add
 #print axioms InfraFormalization.discreteDAlembertian4_smul
 #print axioms InfraFormalization.discreteDAlembertian4_zero

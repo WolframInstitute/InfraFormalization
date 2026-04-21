@@ -96,5 +96,7 @@ import InfraFormalization.CausalFoliation
 import InfraFormalization.BranchialFinite
 import InfraFormalization.VietorisRips
 import InfraFormalization.SyntheticGeometry
+import InfraFormalization.ElementaryBlowup
+import InfraFormalization.DagBlowup
 import InfraFormalization.ContinuumLimitStatement
 import InfraFormalization.DiscreteDAlembertian
