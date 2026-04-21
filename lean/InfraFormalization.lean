@@ -99,5 +99,6 @@ import InfraFormalization.SyntheticGeometry
 import InfraFormalization.ElementaryBlowup
 import InfraFormalization.DagBlowup
 import InfraFormalization.Holonomy
+import InfraFormalization.RuleSignature
 import InfraFormalization.ContinuumLimitStatement
 import InfraFormalization.DiscreteDAlembertian

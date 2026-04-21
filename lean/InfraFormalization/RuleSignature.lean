@@ -1,0 +1,124 @@
+/-
+**RuleSignature functor** (Group IR / #159).
+
+A rule's *signature* is the tuple of scalar invariants we extract
+from its trajectory output: Wolfram-Hausdorff dimension estimate,
+growth rate, average Forman-Ricci curvature, and whether the rule
+is conservative. These invariants serve as coarse fingerprints for
+ruliology: different-signature rules produce different-geometry
+output; matching signatures are necessary conditions for two rules
+to produce the same continuum limit.
+
+**Connection to hypergraphs.** Native. The signature of a
+`RewritingSystem P` acting on an initial `Hypergraph V` is a
+function of the resulting states — it depends only on the
+hypergraph data, not on continuum embeddings.
+
+**Components of a signature.**
+
+  * `hausdorffDimAt v r` — the local Wolfram-Hausdorff estimator
+    at vertex `v`, radius `r`.
+  * `growthExponent` — the asymptotic exponent in `|V_n| ~ n^α`.
+  * `avgFormanRicciEdge` — sum of Forman-Ricci over edges divided
+    by edge count (average edge curvature).
+  * `conservative` — every rule has `|LHS| = |RHS|`.
+  * `ballVolume v r` — the geodesic-ball-volume function.
+
+A signature tuple can then be compared across rules and against
+target-manifold signatures.
+-/
+
+import InfraFormalization.HypergraphDistance
+import InfraFormalization.DiscreteRicci
+import InfraFormalization.Rule
+import InfraFormalization.RuleDimensionBounds
+import InfraFormalization.Multiway
+import InfraFormalization.Causal
+
+namespace InfraFormalization
+
+variable {V : Type*} [Fintype V] [DecidableEq V]
+
+/-! ## Signature tuple components -/
+
+/-- **Ruliology signature** of a single hypergraph state: the scalar
+invariants we read off, packaged for comparison. -/
+structure RuleSignature (V : Type*) [Fintype V] [DecidableEq V] where
+  /-- Local Wolfram–Hausdorff dimension at a reference vertex and radius. -/
+  hausdorffDimAt : V → ℕ → ℝ
+  /-- Ball volume function `(v, r) ↦ V(v, r)`. -/
+  ballVolume     : V → ℕ → ℕ
+  /-- Sum of edge Forman-Ricci (proxy for average curvature). -/
+  totalFormanRicci : ℤ
+  /-- Edge count — normalisation factor for averages. -/
+  edgeCount      : ℕ
+  /-- Vertex-set size. -/
+  vertexCount    : ℕ
+
+/-- **Compute the signature of a hypergraph state**. The
+Forman-Ricci sum requires a `Neighbourhood V` structure; we use the
+hypergraph's own edge count as the edge normaliser and leave the
+discrete-curvature coupling as zero until a `Hypergraph → Neighbourhood`
+wrapper is introduced. -/
+noncomputable def hypergraphSignature (H : Hypergraph V) : RuleSignature V where
+  hausdorffDimAt := H.localDimension
+  ballVolume     := H.geodesicBallVolume
+  totalFormanRicci := 0  -- placeholder; coupling via Neighbourhood wrapper TBD
+  edgeCount      := H.size
+  vertexCount    := Fintype.card V
+
+/-- **Average Forman-Ricci per edge** (when there are edges). -/
+noncomputable def RuleSignature.avgFormanRicci
+    (σ : RuleSignature V) : ℚ :=
+  if h : σ.edgeCount = 0 then 0
+  else (σ.totalFormanRicci : ℚ) / (σ.edgeCount : ℚ)
+
+/-! ## Signature-matching predicates -/
+
+/-- **Two signatures have the same dimension** if they agree at every
+`(v, r)`. Dimension-equality is necessary (not sufficient) for two
+rules to produce the same continuum limit. -/
+def RuleSignature.sameDim (σ τ : RuleSignature V) : Prop :=
+  σ.hausdorffDimAt = τ.hausdorffDimAt
+
+/-- **Two signatures have the same ball-volume function** if they
+agree at every `(v, r)`. -/
+def RuleSignature.sameBallVolume (σ τ : RuleSignature V) : Prop :=
+  σ.ballVolume = τ.ballVolume
+
+/-- **Same edge count** check. -/
+def RuleSignature.sameEdgeCount (σ τ : RuleSignature V) : Prop :=
+  σ.edgeCount = τ.edgeCount
+
+/-- **Signatures match completely** if all four scalar invariants
+agree (dim, ball volume, Ricci, counts). -/
+def RuleSignature.FullMatch (σ τ : RuleSignature V) : Prop :=
+  σ.hausdorffDimAt = τ.hausdorffDimAt ∧
+  σ.ballVolume = τ.ballVolume ∧
+  σ.totalFormanRicci = τ.totalFormanRicci ∧
+  σ.edgeCount = τ.edgeCount ∧
+  σ.vertexCount = τ.vertexCount
+
+/-! ## Conservation → signature invariance
+
+For a conservative trajectory, `edgeCount` is invariant across
+states; the full signature is more subtle (depends on specific
+edges, vertices touched) but `edgeCount` is nailed down. -/
+
+/-- **Conservation invariance of edge count.** For any
+conservative rewriting system, the `edgeCount` component of the
+signature is constant along the trajectory. This is
+`trajectory_size_invariant` reformulated in signature terms. -/
+theorem RuleSignature.edgeCount_invariant_of_conservative
+    {P : Type*} {sys : RewritingSystem P}
+    {init : Hypergraph V} (τ : Trajectory sys init)
+    (hstep : τ.StepConsistent)
+    (hcons : ∀ i (hi : i < τ.applications.length),
+      (τ.applications.get ⟨i, hi⟩).2.1.IsConservative)
+    (i : Nat) (hi : i < τ.states.length) :
+    (hypergraphSignature (τ.states.get ⟨i, hi⟩)).edgeCount
+    = (hypergraphSignature init).edgeCount := by
+  unfold hypergraphSignature
+  exact trajectory_size_invariant τ hstep hcons i hi
+
+end InfraFormalization
