@@ -90,5 +90,8 @@ import InfraFormalization.ScalarField
 import InfraFormalization.HypergraphCycleBridge
 import InfraFormalization.HypergraphDistance
 import InfraFormalization.RuleDimensionBounds
+import InfraFormalization.FiberedGraph
+import InfraFormalization.CausalGraphType
+import InfraFormalization.BranchialFinite
 import InfraFormalization.ContinuumLimitStatement
 import InfraFormalization.DiscreteDAlembertian

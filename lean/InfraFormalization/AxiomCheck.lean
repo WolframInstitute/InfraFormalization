@@ -55,6 +55,9 @@ import InfraFormalization.ScalarField
 import InfraFormalization.HypergraphCycleBridge
 import InfraFormalization.HypergraphDistance
 import InfraFormalization.RuleDimensionBounds
+import InfraFormalization.FiberedGraph
+import InfraFormalization.CausalGraphType
+import InfraFormalization.BranchialFinite
 import InfraFormalization.ContinuumLimitStatement
 import InfraFormalization.DiscreteDAlembertian
 import InfraFormalization.Refutations.F1NoMetric
@@ -317,6 +320,19 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.trajectory_size_invariant
 #print axioms InfraFormalization.Hypergraph.geodesicBallVolume_le_card
 #print axioms InfraFormalization.trajectory_conservative_ballVolume_bounded
+#print axioms InfraFormalization.FiberedGraph.mem_fiber
+#print axioms InfraFormalization.FiberedGraph.self_mem_fiber
+#print axioms InfraFormalization.FiberedGraph.disjoint_fibers
+#print axioms InfraFormalization.FiberedGraph.exists_unique_fiber
+#print axioms InfraFormalization.FiberedGraph.section_mem_fiber
+#print axioms InfraFormalization.FiberedGraph.connectionAdj_implies_total_Adj
+#print axioms InfraFormalization.CausalGraph.causallyPrecedes_refl
+#print axioms InfraFormalization.CausalGraph.causallyPrecedes_trans
+#print axioms InfraFormalization.CausalGraph.causalEdge_implies_precedes
+#print axioms InfraFormalization.CausalGraph.chainOfLength_implies_causallyPrecedes
+#print axioms InfraFormalization.branchialSliceFinite_zero
+#print axioms InfraFormalization.branchialSliceFinite_succ
+#print axioms InfraFormalization.branchialSliceFinite_of_successors_finite
 #print axioms InfraFormalization.discreteDAlembertian4_add
 #print axioms InfraFormalization.discreteDAlembertian4_smul
 #print axioms InfraFormalization.discreteDAlembertian4_zero
