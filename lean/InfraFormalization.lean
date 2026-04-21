@@ -98,5 +98,6 @@ import InfraFormalization.VietorisRips
 import InfraFormalization.SyntheticGeometry
 import InfraFormalization.ElementaryBlowup
 import InfraFormalization.DagBlowup
+import InfraFormalization.Holonomy
 import InfraFormalization.ContinuumLimitStatement
 import InfraFormalization.DiscreteDAlembertian
