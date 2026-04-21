@@ -54,6 +54,7 @@ import InfraFormalization.KleinGordon
 import InfraFormalization.ScalarField
 import InfraFormalization.HypergraphCycleBridge
 import InfraFormalization.HypergraphDistance
+import InfraFormalization.RuleDimensionBounds
 import InfraFormalization.ContinuumLimitStatement
 import InfraFormalization.DiscreteDAlembertian
 import InfraFormalization.Refutations.F1NoMetric
@@ -312,6 +313,10 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.cycleHypergraph_succ_pred_adj
 #print axioms InfraFormalization.cycle_succ_ne_pred
 #print axioms InfraFormalization.cycleHypergraph_ballVolume_one_ge_three
+#print axioms InfraFormalization.trajectory_states_zero
+#print axioms InfraFormalization.trajectory_size_invariant
+#print axioms InfraFormalization.Hypergraph.geodesicBallVolume_le_card
+#print axioms InfraFormalization.trajectory_conservative_ballVolume_bounded
 #print axioms InfraFormalization.discreteDAlembertian4_add
 #print axioms InfraFormalization.discreteDAlembertian4_smul
 #print axioms InfraFormalization.discreteDAlembertian4_zero
