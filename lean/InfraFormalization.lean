@@ -105,5 +105,8 @@ import InfraFormalization.PlateauDimension
 import InfraFormalization.FiberBundle
 import InfraFormalization.InfrageometricScene
 import InfraFormalization.StructuralRuleBounds
+import InfraFormalization.SyntheticAxiomatic
+import InfraFormalization.HomologyDimension
+import InfraFormalization.CausalDimension
 import InfraFormalization.ContinuumLimitStatement
 import InfraFormalization.DiscreteDAlembertian
