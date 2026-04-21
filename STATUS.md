@@ -3,17 +3,40 @@
 Live document: what's proved, what's in progress, where we are on the
 research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`BRIDGE_MACHINERY.md`](BRIDGE_MACHINERY.md),
-[`MILESTONES.md`](MILESTONES.md)).
+[`MILESTONES.md`](MILESTONES.md),
+[`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
+
+**Single source of truth for coverage:** [`COVERAGE_MAP.md`](COVERAGE_MAP.md).
+Protocol: on every commit, task completion, or new obligation, both
+the task system and the coverage map are updated.
 
 ## Machine-verified theorems (axiom-clean)
 
-**137 `#print axioms` certifications** in
+**200+ `#print axioms` certifications** in
 [`lean/InfraFormalization/AxiomCheck.lean`](lean/InfraFormalization/AxiomCheck.lean),
 all depending only on Lean's three standard axioms
-(`propext`, `Classical.choice`, `Quot.sound`) — with one theorem
-(`gorard_causal_invariance_is_general_covariance`) depending on *no*
-axioms at all (`Iff.rfl`). No `sorry`, no `native_decide`, no
-`decide`, no custom axioms.
+(`propext`, `Classical.choice`, `Quot.sound`). No `sorry`, no
+`native_decide`, no `decide`, no custom axioms.
+
+## Infrageometry program — task counters (current)
+
+From [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md), 9 task groups with 57 items:
+
+| Group | Done | Total |
+|---|---|---|
+| IA — Infraanalysis | 1 | 5 |
+| IG — InfraGaugeTheory | 7 | 11 |
+| IC — Infracausality | 5 | 8 |
+| IT — Infratopology | 1 | 6 |
+| ID — Infradimension | 2 | 7 |
+| IB — Infrablowup | 1 | 6 |
+| IQ — Branchial/QM | 1 | 4 |
+| IS — Synthetic axiomatic | 1 | 3 |
+| IR — Ruliology | 2 | 7 |
+| **Total** | **21** | **57** (37%) |
+
+Plus 14 legacy-group tasks (A1, B1, D1/4/5/8/9/10, G1/3/4, I1 = 12
+directly; F1–F5 refutations = 5 more as theorem + axiom-clean).
 
 ## Rungs of the bridge ladder (see `BRIDGE_MACHINERY.md`)
 
