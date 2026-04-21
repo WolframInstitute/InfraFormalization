@@ -102,5 +102,8 @@ import InfraFormalization.Holonomy
 import InfraFormalization.RuleSignature
 import InfraFormalization.SpatialReconstruction
 import InfraFormalization.PlateauDimension
+import InfraFormalization.FiberBundle
+import InfraFormalization.InfrageometricScene
+import InfraFormalization.StructuralRuleBounds
 import InfraFormalization.ContinuumLimitStatement
 import InfraFormalization.DiscreteDAlembertian
