@@ -65,6 +65,8 @@ import InfraFormalization.ElementaryBlowup
 import InfraFormalization.DagBlowup
 import InfraFormalization.Holonomy
 import InfraFormalization.RuleSignature
+import InfraFormalization.SpatialReconstruction
+import InfraFormalization.PlateauDimension
 import InfraFormalization.ContinuumLimitStatement
 import InfraFormalization.DiscreteDAlembertian
 import InfraFormalization.Refutations.F1NoMetric
@@ -362,6 +364,8 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.FiberedGraph.holonomy_empty_loop
 #print axioms InfraFormalization.FiberedGraph.flat_holonomy_all_fixed
 #print axioms InfraFormalization.RuleSignature.edgeCount_invariant_of_conservative
+#print axioms InfraFormalization.CausalGraph.ShareImmediateAncestor.symm
+#print axioms InfraFormalization.Hypergraph.plateau_range_nonempty
 #print axioms InfraFormalization.discreteDAlembertian4_add
 #print axioms InfraFormalization.discreteDAlembertian4_smul
 #print axioms InfraFormalization.discreteDAlembertian4_zero

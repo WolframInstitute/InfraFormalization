@@ -100,5 +100,7 @@ import InfraFormalization.ElementaryBlowup
 import InfraFormalization.DagBlowup
 import InfraFormalization.Holonomy
 import InfraFormalization.RuleSignature
+import InfraFormalization.SpatialReconstruction
+import InfraFormalization.PlateauDimension
 import InfraFormalization.ContinuumLimitStatement
 import InfraFormalization.DiscreteDAlembertian
