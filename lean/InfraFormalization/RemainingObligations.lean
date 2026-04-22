@@ -69,6 +69,38 @@ def LatschevObligation : Prop :=
   ∀ (n : ℕ) [NeZero n], 2 ≤ n →
     ∀ u v : Fin n, (cycleHypergraph n).dist u v < (n : ℝ) + 1
 
+/-- **Latschev obligation is proved** (in its discrete-connectivity
+form). The `SimpleGraph.dist` of any pair in a finite graph on
+`Fin n` is `≤ n − 1` when the two are reachable (shortest path has
+length `< Fintype.card V = n`) and `= 0` otherwise. In either case
+it is strictly less than `n + 1`. -/
+theorem latschevObligation_holds : LatschevObligation := by
+  intro n _ hn u v
+  unfold Hypergraph.dist
+  by_cases hreach : (cycleHypergraph n).toSimpleGraph.Reachable u v
+  · obtain ⟨p, _hp_len⟩ := hreach.exists_walk_length_eq_dist
+    have h_path := p.toPath
+    have h_path_len : h_path.val.length < Fintype.card (Fin n) :=
+      SimpleGraph.Walk.IsPath.length_lt h_path.prop
+    have h_dist_le_path : (cycleHypergraph n).toSimpleGraph.dist u v
+        ≤ h_path.val.length :=
+      SimpleGraph.dist_le h_path.val
+    have h_dist_lt : (cycleHypergraph n).toSimpleGraph.dist u v
+        < Fintype.card (Fin n) :=
+      lt_of_le_of_lt h_dist_le_path h_path_len
+    have h_card : Fintype.card (Fin n) = n := Fintype.card_fin n
+    rw [h_card] at h_dist_lt
+    have h_real : ((cycleHypergraph n).toSimpleGraph.dist u v : ℝ) < (n : ℝ) := by
+      exact_mod_cast h_dist_lt
+    linarith
+  · have h_dist_zero : (cycleHypergraph n).toSimpleGraph.dist u v = 0 := by
+      rw [SimpleGraph.dist_eq_zero_iff_eq_or_not_reachable]
+      exact Or.inr hreach
+    rw [h_dist_zero]
+    have hn_pos : (0 : ℝ) ≤ n := by exact_mod_cast Nat.zero_le n
+    push_cast
+    linarith
+
 /-! ## IT6 — Scale trichotomy (still content-placeholder) -/
 
 /-- **Scale trichotomy obligation**: for a hypergraph `H` with
