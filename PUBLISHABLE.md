@@ -57,6 +57,10 @@ Grouped from most-immediate (parts already done) to most-ambitious.
 - [x] `torus_gh_bound` (2D) and `dTorus_gh_bound` (arbitrary d)
 - [x] `lorentzIntEmbed_preserves_causal_iff` (exact Minkowski causal correspondence)
 - [x] `scaledLorentzEmbed_dense` + `_spaceDist_eq_cast` (scaled isometry + density)
+- [x] **Rung-2 spectral core**: `CTwoTaylor.scaledSecondDiff_tendsto_iteratedDeriv` (general C² convergence), `ScaledDiffC2Bridge.scaledSecondDiff_tendsto_iteratedDeriv_C2` + `hypergraph_scaled_laplacian_eq_scaledSecondDiff` (end-to-end hypergraph → f'' for all C²).
+- [x] **Cycle spectrum closed form**: `CycleSpectrum.cycleLaplacian_eigen` (eigenvalues `−4 sin²(πk/n)` + eigenvectors `cos(2πkj/n)`, full wrap-around).
+- [x] **Eigenvalue convergence**: `CycleEigenLimit.cycleEigenvalue_scaled_tendsto` (n² · λ_k → −(2πk)², continuum circle spectrum).
+- [x] **Matrix bridge**: `LaplacianMatrix.laplacianMatrix_mulVec = laplacianHyper` and `heatKernel H t := exp(t · Δ)` (`heatKernel_add` semigroup, `heatTrace`, symmetric matrix).
 - [ ] 25-page paper with the Lean library as appendix
 
 **Audience.** arXiv math.MG + math-ph + formal-methods.
@@ -71,9 +75,17 @@ Grouped from most-immediate (parts already done) to most-ambitious.
 - [x] Edge conservation, degree sums, balance
 - [x] Level monotonicity + same-level antichain (forward)
 - [x] **Hypergraph Laplacian** + self-adjointness + Dirichlet form + PSD + divergence theorem
+- [x] **Hypergraph Laplacian as matrix** (`laplacianMatrix H`) + matrix symmetry + row-sum zero + heat kernel via `Matrix.exp` (semigroup, `heatTrace`)
 - [x] **Forman-Ricci** (simple + hypergraph) + cycle=0 bridge
 - [x] **Cycle Laplacian = central second difference** (interior-point identification)
-- [x] **Scaled-second-difference = f''** (polynomial case, Mathlib `deriv`-level)
+- [x] **Scaled-second-difference = f''** for all C² (`CTwoTaylor.lean` + `ScaledDiffC2Bridge.lean`; beyond polynomials)
+- [x] **Cycle spectrum closed form** + scaled eigenvalue → continuum circle spectrum (`CycleSpectrum.lean`, `CycleEigenLimit.lean`)
+- [x] **Discrete PDE ladder**: heat equation (mass conservation + L² decay), wave equation (energy conservation), Klein-Gordon, Schrödinger (unitarity), scalar field (Lagrangian + Euler-Lagrange ↔ KG)
+- [x] **Discrete exterior calculus**: `HypergraphCalculus.lean` with discrete Stokes (summation by parts), `DeRham.lean` (d² = 0), `FormCochainIntegration.lean`
+- [x] **Infrageometry program** (9 groups, 57 tasks): IA full, IG 10/11, IC full, IT 3+3 obligation, ID 5+2 obligation, IB 5/6, IS full, IR 6+1 obligation
+- [x] Hypergraph distance + geodesic ball + Wolfram-Hausdorff dimension (`HypergraphDistance.lean`)
+- [x] Benincasa-Dowker discrete d'Alembertian + action + EL equation
+- [x] State-size invariant under conservative trajectory (`trajectory_size_invariant`)
 - [ ] Trajectory-structure lemma (consumed expressions ≤ earlier produced)
 - [ ] Full parallel-layer bound `|layer_s| ≤ N/k`
 - [ ] 25-page paper
@@ -92,7 +104,12 @@ Grouped from most-immediate (parts already done) to most-ambitious.
 - [x] **`BenincasaDowkerConjecture`** explicitly flagged as an open `Prop`-level hypothesis.
 - [x] **Forman-Ricci → continuum Ricci** bridge on the cycle/circle (`RicciBridge.lean`) — first discrete-to-continuum curvature match.
 - [x] **`leviCivitaConnection : MetricDataC2 → ConnectionData`** — full local-coord curvature derivation.
-- [x] **Schwarzschild components + Γ^1_{00} computation** (`Schwarzschild.lean`).
+- [x] **Schwarzschild — all 8 Christoffel components** in the exterior (`Schwarzschild.lean`, B1 complete #20).
+- [x] **Cycle spectrum → continuum circle spectrum** (`CycleSpectrum.lean` + `CycleEigenLimit.lean`): first concrete hypergraph-Laplacian → continuum-Laplacian spectral convergence.
+- [x] **EPS axioms + Marzke-Wheeler clock** (`EPSAxioms.lean`, `MarzkeWheeler.lean`; IC7/IC8): operational reconstruction of Lorentzian geometry from hypergraph-level light rays and observers.
+- [x] **Spatial reconstruction + causal foliation + proper time** (IC4/IC5).
+- [x] **Candidate rule database + screening pipeline** (`CandidateRuleDatabase.lean`; IR6).
+- [x] **Conservation ⇒ bounded dimension** structural theorem (`RuleDimensionBounds.lean`; IR2).
 - [ ] At least one candidate rule identified (or engineered).
 - [ ] Convergence theorem for that rule.
 
@@ -106,10 +123,16 @@ Grouped from most-immediate (parts already done) to most-ambitious.
 
 **Sufficient conditions.**
 - [x] `Branchial.lean` — `BranchialRelated`, `NStep`, `BranchialSlice`. Basic structure.
-- [ ] Complete S1–S6 audit of Gorard's QM paper (arXiv:2004.14808)
-- [ ] Branchial measure: uniform probability on finite slices.
-- [ ] Branchial amplitudes; ℓ² Hilbert-space limit.
-- [ ] State / prove the branchial → QM bridge claim (or refute it).
+- [x] `BranchialFinite.lean` (I1 #84) — `branchialSliceFinite_of_successors_finite` (finite-dim groundwork).
+- [x] `FisherMetric.lean` (IQ5 #152) — Fisher metric on branchial distributions.
+- [x] `SchrodingerEquation.lean` (D10) — discrete Schrödinger on `Hypergraph V` with proven unitarity / probability conservation.
+- [x] Formal `∧ False` obligations for IQ6 (Fubini-Study limit), IQ8 (EME persistence), IQ9 (path integral) in `RemainingObligations.lean` — no silent assumptions.
+- [ ] Complete S1–S6 audit of Gorard's QM paper (arXiv:2004.14808).
+- [ ] Branchial measure: uniform probability on finite slices (I2 #85).
+- [ ] `ℓ²(slice)` Hilbert space (I4 #87 / R3 #178).
+- [ ] Branchial amplitudes + evolution as unitary (I3, I5, I8).
+- [ ] Fubini-Study limit under branchial refinement (IQ6 #153 in progress; currently obligation).
+- [ ] Prove (or disprove) the branchial → QM bridge claim.
 
 **Audience.** arXiv quant-ph + math-ph.
 

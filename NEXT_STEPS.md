@@ -1,73 +1,109 @@
 # Next steps — what's done, in flight, and waiting
 
-Lives next to [`README.md`](README.md) / [`INDEX.md`](INDEX.md) / [`FINDINGS.md`](FINDINGS.md). Curated by hand.
+Lives next to [`README.md`](README.md) / [`INDEX.md`](INDEX.md) / [`FINDINGS.md`](FINDINGS.md) / [`COVERAGE_MAP.md`](COVERAGE_MAP.md). Curated by hand.
 
-## Done ✓
+## Recently shipped (selected highlights)
 
-All of these are archived under `notes/` and `results/` and linked from [`INDEX.md`](INDEX.md).
+- **R5 / full cycle spectrum** (`CycleSpectrum.lean`): `cycleEigenvector n k (j) = cos(2πkj/n)` and `cycleEigenvalue n k = −4 sin²(πk/n)` satisfy the eigenvalue equation at **all** indices (interior + wrap-around boundary).
+- **R1 / A2 / A3** (`CTwoTaylor.lean`, `ScaledDiffC2Bridge.lean`): **C² Taylor convergence** of the scaled central second difference, via Mathlib's `Real.taylor_tendsto`. The Rung-2 discrete-to-continuum bridge now covers *all* C² functions, not just polynomials.
+- **A4** (`CycleEigenLimit.lean`): scaled cycle eigenvalue `n² · (−4 sin²(πk/n)) → −(2πk)²`. First concrete **spectral convergence** to continuum circle Laplacian eigenvalues.
+- **R2 / D3** (`LaplacianMatrix.lean`): hypergraph Laplacian as a Mathlib matrix, **heat kernel via `Matrix.exp`**, semigroup property, symmetric matrix, row-sum zero, `heatTrace`.
+- **B1 complete** (`Schwarzschild.lean`): **all 8** Schwarzschild Christoffel entries computed in the exterior — the first fully-computed non-trivial curved-metric connection in the corpus.
+- **Infrageometry program (57 tasks / 9 groups)**: IA full (5/5), IG 10/11, IC full (8/8), IT 3 proved + 3 obligation, ID 5 + 2 obligation, IB 5/6, IQ 1 + 3 obligation, IS full (3/3), IR 6 + 1 obligation. Full coverage in `COVERAGE_MAP.md §8`.
+- **Refutations F1–F5** (`Refutations/F*`): machine-checked; F6 (BD conjecture) flagged as an explicit `Prop` obligation (`DiscreteDAlembertian.lean`).
+- **Discrete Schrödinger unitarity** (`SchrodingerEquation.lean`, D10), **discrete Klein-Gordon energy conservation** (`KleinGordon.lean`, D9), **discrete wave energy conservation** (`WaveEquation.lean`, D8), **discrete heat mass / L² decay** (`HeatEquation.lean`, D1/D4/D5).
 
-- [x] Close-reading of all three main papers (G1, G3, G4). [`notes/*_close_reading.md`](notes/).
-- [x] Close-reading of the causal-set paper (G2) sufficient to confirm the repeated errors. [`notes/corpus_audit.md`](notes/corpus_audit.md).
-- [x] Full claims catalog for G1 (184 rows). [`notes/claims_catalog.md`](notes/claims_catalog.md).
-- [x] Phase 1A self-audit: independent Python rewriter agrees with SetReplace on 9 seeds. [`results/phase1_selfaudit/`](results/phase1_selfaudit/).
-- [x] Phase 2B audit of tube-volume coefficient (Eq 342): 4-rail refuted. [`results/phase2_continuum/eq342_verdict.md`](results/phase2_continuum/eq342_verdict.md).
-- [x] Phase 2C audit of Ollivier Wasserstein (Eq 344): structural refutation against Ollivier's cited theorem. [`results/phase2_continuum/eq344_verdict.md`](results/phase2_continuum/eq344_verdict.md).
-- [x] Empirical refutation of the named "EFE-satisfying" rule: 1-dim causal graph on every seed. [`notes/empirical_refutation.md`](notes/empirical_refutation.md).
-- [x] Severity taxonomy S1–S6 with 16 distinct errors. [`notes/severity_taxonomy.md`](notes/severity_taxonomy.md).
-- [x] Cross-paper corpus audit showing errors repeated verbatim. [`notes/corpus_audit.md`](notes/corpus_audit.md).
-- [x] Single-way vs multi-way explainer + null tetrad resolution. [`notes/singleway_vs_multiway.md`](notes/singleway_vs_multiway.md).
-- [x] Lean skeleton with Conservation theorem proved (modulo Mathlib build). [`lean/InfraFormalization/`](lean/InfraFormalization/).
-- [x] Project-wide navigation: [`INDEX.md`](INDEX.md), [`GLOSSARY.md`](GLOSSARY.md), [`FINDINGS.md`](FINDINGS.md).
+Every theorem above depends only on `{propext, Classical.choice, Quot.sound}`. No `sorry`, no `native_decide`, no custom axioms. Verified by `AxiomCheck.lean`.
 
-## In flight 🛠
+## In flight 🛠 (in_progress tasks)
 
-- [x] ~~Lean build against Mathlib to verify `Conservation.size_result_of_conservative`.~~ **Done.** Full `lake build` succeeds on 1687 jobs; Theorem A (edge conservation) and its trajectory corollary are machine-verified by Lean 4 + Mathlib 4.29.1.
+- **IR7 #165** — Reverse-engineer rule from target signature.
+- **IT5 #137** — Latschev theorem (as Prop obligation; proof for cycles).
+- **IT6 #138** — Scale-dependence trichotomy theorem.
+- **ID6 #144** — Compatibility theorem: all dimension notions agree on regular lattices.
+- **ID7 #145** — Spectral dimension via heat-kernel trace (heat trace now defined; small-`t` asymptotics pending).
+- **IB2 #147** — Causal-branchial-trivial commutator theorem.
+- **IQ6 #153** — Fubini-Study as limit of Fisher under refinement.
+- **IQ8 #154** — EME persistence as branchial observable.
+- **IQ9 #155** — Path integral over singleway causal graphs.
 
-## Ready to pick up — awaiting user direction
+## Ready to pick up
 
-### A. Extend the Lean formalisation
+### Near-term (Rung-1/Rung-2 follow-ons — the machinery is in hand)
 
-Honest sizing: ★★★ = days/weeks, ★★ = day, ★ = a few hours.
+- [ ] **R3 #178** — `ℓ²(BranchialSlice)` as Hilbert space with branchial adjacency operator. Real-QM bridge: finite-dim Hilbert space from `branchialSliceFinite_of_successors_finite`.
+- [ ] **R4 #179** — Curved discrete-Ricci convergence beyond flat. First non-zero Forman-Ricci convergence case.
+- [ ] **A5 #16** — Counting measure on `Hypergraph V` + pushforward (groundwork for A6 / weak convergence, A7 / Wasserstein).
+- [ ] **A7 #18** — Wasserstein-1 convergence rate `O(1/n)` for counting measures.
+- [ ] **D6 #47** — Long-time convergence of heat solution to uniform (spectral-gap argument using `cycleEigenvalue` lower bound).
+- [ ] **D7 #48** — Scaled discrete heat → continuous heat on GH-limit.
 
-- [ ] ★★ **Parallel-layer bound (Theorem B'):** for a conservative rule, each layer of the greedy-parallel schedule of the causal DAG has ≤ ⌊N/k⌋ events. This is the *correct* version of the antichain argument — bounds parallel layers, not arbitrary antichains and not BFS cones. Proof requires formalising greedy parallel schedules and state invariants. Real Lean theorem, no `sorry`.
-- [ ] ★★★ **Linear cone bound for the named rule on tested seeds (Theorem B''):** rule-specific induction. Takes a long time per rule. Pays off only for one specific rule.
-- [ ] ★★ **In-degree exactly $k$ (Theorem B'''):** every event in the causal graph of a conservative rule has exactly $k$ causal in-edges (multi-counted). Trivial from definitions but useful as a building block.
-- [ ] ★★★★ **Cycle-to-circle Gromov–Hausdorff convergence:** $C_n$ scaled by $1/n$ → $S^1$. The simplest non-trivial continuum-limit theorem we could state. Requires Mathlib's GH API + explicit ε-isometry construction. ~100–300 lines.
-- [ ] ★★★★★ **Correct Ollivier identity in Mathlib:** $\kappa = \varepsilon^2 \mathrm{Ric}(v,v)/(2(d+2)) + O(\varepsilon^3)$ formalised against Mathlib's Riemannian geometry + optimal transport. Multi-week project; would be a substantial Mathlib contribution.
-- [ ] ★★★★★ **Correct Gray tube formula in Mathlib:** $V(T_\varepsilon(\gamma)) = \omega_{d-1}\varepsilon^{d-1}L(1 - \varepsilon^2(R+\mathrm{Ric}(u,u))/(6(d+1)) + O(\varepsilon^4))$. Requires Fermi normal coordinates infrastructure that Mathlib doesn't fully have.
-- [ ] ★★★★ **MWEG + branchial structure:** define formally so causal invariance can be stated as a theorem-target (not a hypothesis). Useful but doesn't prove anything yet.
+### Schwarzschild follow-ons (B-group)
 
-### B. Honest claims-correction sweep
+- [ ] **B2 #21** — Schwarzschild Riemann tensor components.
+- [ ] **B3 #22** — Schwarzschild `Ric ≡ 0`.
+- [ ] **B4 #23** — `schwarzschild_satisfies_vacuum_EFE`.
+- [ ] **B5 #25** — Schwarzschild as `PartialMetricData` on exterior.
 
-- [x] ~~"Linear cone growth follows from conservation"~~ — corrected in `FINDINGS.md` and `empirical_refutation.md` (2026-04-19): conservation implies parallel-layer width bound, NOT linear BFS-cone growth. The empirical 1D-cone observation for the named rule is rule-and-seed-specific, not a structural consequence.
-- [ ] Sweep `notes/severity_taxonomy.md` for any S5 claim that overstates "structural" — none should claim more than "conservation ⇒ state-size preservation, plus rule-specific empirical confirmation that the named rule is 1D on tested seeds."
-- [ ] Sweep `notes/singleway_vs_multiway.md` table where it says "edge conservation ⇒ linear cone growth" — this needs the same correction.
+### Curved-metric families
 
-### C. What we genuinely *can* claim about conservation
+- [ ] **B6–B9** — FLRW, Reissner-Nordström, Kerr metric components + curvature.
 
-After the corrections, the firm Lean-verified claim is just **edge conservation (Theorem A)**, plus the empirical observation that the named rule is 1D on every tested seed. Neither alone refutes Gorard's headline "EFE in continuum limit" claim; *together* they refute it for the specific rule he names, on the seeds tested. That's a smaller (but still real) refutation than I was implying earlier.
+### Bundle machinery (C-group; Mathlib gap)
 
-### B. Phase 3 — discrete-side audits
-- [ ] Numerical verification of Gorard's discrete Ollivier–Ricci formula (G1 Def 33 with the specific $\mu_{A^{in}}, \mu_{B^{out}}$) on Figures 66/67/68's hypergraphs: does it give the sign Gorard claims? Does the magnitude match?
-- [ ] Re-compute the Benincasa–Dowker action on a Poisson sample of Schwarzschild via the Cunningham-style numerical protocol; compare to the continuum Einstein–Hilbert action. This is a replication of causal-set-theory convergence, not Wolfram-model-specific.
+- [ ] **C1–C8** — Riemannian / Lorentzian bundle structure, vector-bundle connections, discrete-connection ↔ Levi-Civita convergence.
 
-### C. Phase 4 — bridge-claim formalisation
-- [ ] Write up the precise theorem that G1 §3.3 would *need* to state, with all hypotheses made explicit: Γ-convergence / GH convergence / spectral convergence of the discrete EH action to the continuum one. Identify which pieces exist in the literature (e.g. Benincasa–Dowker convergence conjecture) and which do not.
-- [ ] Produce a toy counterexample: a rule whose causal-graph evolution is demonstrably *not* GH-close to any manifold, even though the rule happens to be causal-invariant. This would show that "causal invariance" alone is insufficient for a manifold-like limit.
+### Branchial / QM (I-group)
 
-### D. Positive program — our own contribution
-- [ ] Theorem target: for random-geometric-graph samples from a Riemannian manifold with proximity edges at scale $\varepsilon$, the discrete Ollivier–Ricci converges to directional $\mathrm{Ric}(v,v)$ as the sample size $\to \infty$ and $\varepsilon \to 0$ at matched rates. (Trillos–Slepčev-style, but specifically for $\kappa$.) This is a *positive* result linking discrete to continuum geometry — the opposite of the Gorard-style overclaim. Formalisable in Lean given Mathlib's optimal-transport + differential geometry.
-- [ ] Cross-check against `efficient_rewriting_final/`'s multi-way engine: verify causal invariance of simple rules computationally (which SetReplace alone cannot do).
+- [ ] **I2 #85** — Branchial measure (uniform on finite slice).
+- [ ] **I3 #86** — Branchial amplitudes (ℂ-valued).
+- [ ] **I4 #87** — `ℓ²(slice)` Hilbert space (= R3).
+- [ ] **I5 #88** — Branchial evolution as unitary.
 
-### E. Publication / external communication
-- [ ] Draft a short "technical comment" PDF summarising the S1–S6 findings, suitable for circulation to the Wolfram Institute (internal) or for public critique (arXiv). Evidence-backed, with links to this project.
-- [ ] Decide whether to frame as "corrected derivations of what Gorard's papers should have said" (constructive) or as "report of specific errors" (critical), or both.
+### Einstein / stress-energy (F-group)
 
-## Waiting on decisions
+- [ ] F-group all open (F1–F8): stress-energy tensor, energy conditions, full Einstein equations with Λ, Schwarzschild as explicit vacuum solution, FLRW explicit, Kerr, Penrose singularity theorem, Raychaudhuri equation.
 
-Before continuing, your input would resolve:
-- **Priority**: Lean depth (A) vs new audits (B, C) vs positive program (D) vs external communication (E)?
-- **Scope of Lean theorem targets**: just the Wolfram-model structural theorems (conservation + bounded cone), or also the corrected continuum identities (Ollivier directional Ricci, Gray tube formula)?
-- **MWEG / branchial verification**: invest in hooking up `efficient_rewriting_final/` for causal-invariance checks?
-- **Publication**: draft a short comment-PDF now, or wait until Lean proofs are in?
-- **Positive program scope**: ambitious (Trillos–Slepčev-for-Ollivier in Lean) vs modest (numerical reproduction of Benincasa–Dowker convergence on Schwarzschild)?
+### Lorentzian-manifold (E-group)
+
+- [ ] E-group all open: `LorentzianManifold`, chronological relations, light cones, causality conditions, Cauchy surfaces / ADM, Lorentzian GH, discrete-causal-DAG → continuum Lorentzian convergence.
+
+### BBH-numerics (H-group)
+
+- [ ] H-group all open: candidate rules catalog, empirical dimensional signatures pipeline, screening tests, curved-target RicciBridge extensions, BBH initial data, BBH evolution, discrete Ψ₄ extraction, BBH merger convergence.
+
+### Paper drafts (K-group)
+
+- [ ] K1 — P1 audit paper.
+- [ ] K2 — P2 corrected identities paper.
+- [ ] K3 — P3 infrageometry continuum-limits paper (first candidate given R1 + R2 + R5 now closed).
+- [ ] K4–K9 — P4 structural library, P5 Wolfram→GR, P6 branchial QM audit, P7 BBH, P8 discrete d'Alembertian + BD flag, P9 refutation-chain paper.
+
+### Colleague-work integration (M-group)
+
+- [ ] M1 — Ioana Milea gauge-intern coordination.
+- [ ] M2 — Van Le Fisher → Fubini-Study bridge.
+- [ ] M3 — Hubert Kolcz Lie-Poisson MBQC.
+- [ ] M4 — Jan Pullman IBL-∞ / BV formalism.
+- [ ] M5 — Zapata + Ahmed axiomatic-relativity paper.
+- [ ] M6 — Pokorny Infrageometry paclet parity.
+- [ ] M7 — Ahmed EME-tracking community post.
+- [ ] M8 — Pokorny diffusion-geometry bridge.
+- [ ] M9 — Tropical-geometry synthetic infrageometry.
+- [ ] M10 — 3BP / dynamical-systems dimension signature.
+
+### Support (X-group)
+
+- [ ] X1 — `PartialMetricData` refactor with domain predicate.
+- [ ] X2 — Covariant derivative `∇` on `ConnectionData`.
+- [ ] X3 — Mathlib Taylor integration (partly used by R1; full uniform-`C^k` version still open).
+- [ ] X4 — Multi-way engine integration from `efficient_rewriting_final`.
+
+## External communication
+
+- [ ] Structured external comment PDF (audit + refutation chain); to circulate to the Wolfram Institute / submit to arXiv.
+- [ ] Publishable infrageometry paper: Phase-3 continuum-limit theorems + the Rung-1/2/3 bridge story (R1 + R2 + R5 + A3 + A4 are the technical core).
+
+## Grounding principle (non-negotiable)
+
+Every continuous structure in this repository must have an explicit hypergraph anchor or be the target of an explicit convergence theorem. See [`BRIDGE_MACHINERY.md`](BRIDGE_MACHINERY.md). No silent assumptions; every open obligation is either a `∧ False`-guarded `Prop` (`ContinuumLimitStatement.lean`, `RemainingObligations.lean`) or an explicit pending task above.

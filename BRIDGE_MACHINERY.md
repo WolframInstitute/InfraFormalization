@@ -30,7 +30,8 @@ This is what differentiates the present work from Gorard's: he wrote `g_{ab}, R,
 - [ ] Discrete gradient on directed hyperedges `(∇f)(e) := f(head e) − f(tail e)`.
 - [ ] Discrete divergence on a hyperedge multiset, compatible with `∇` via summation by parts.
 - ✓ **Hypergraph Laplacian** (`HypergraphLaplacian.lean`): defined on `Hypergraph V` directly, linearity proven. The "Wolfram-model state IS a discrete-calculus domain" anchor.
-- [ ] Heat semigroup `e^{−tΔ}` on a finite graph (Rung 6 dependency).
+- ✓ **Hypergraph Laplacian as a matrix** (`LaplacianMatrix.lean`): `laplacianMatrix H : Matrix V V ℝ`; `laplacianMatrix_mulVec = laplacianHyper`; symmetric; row-sum zero; kills constants.
+- ✓ **Heat kernel via `Matrix.exp`** (`LaplacianMatrix.lean`): `heatKernel H t := exp(t · laplacianMatrix H)`; `heatKernel_zero = 1`, `heatKernel_add` (semigroup); `heatTrace` defined, `heatTrace_zero = |V|`. Closes R2 / D3.
 
 ## Rung 2 — Convergence of discrete operators to continuous ones
 
@@ -43,10 +44,13 @@ This is what differentiates the present work from Gorard's: he wrote `g_{ab}, R,
 - ✓ Central second difference `Δ²_h f(x) := f(x+h) − 2 f(x) + f(x−h)`. (`SecondDifference.lean`)
 - ✓ Polynomial-case exact identity: for any quadratic, `Δ²_h f(x) = f''(x) · h²`. (`SecondDifference.lean`)
 - ✓ `cycleLaplacian` is the second difference. (`SecondDifference.lean`)
-- [ ] `C²` Taylor-remainder version: `Δ²_h f(x) / h² → f''(x)` for `f ∈ C²(ℝ)` (uses Mathlib `taylorWithinEval`).
-- [ ] Lift to the circle: `n² · cycleLaplacian (f ∘ φ_n) i → f''(i/n)` for `f ∈ C²(S¹)`.
-- [ ] Uniform convergence on `C^k` compacts.
-- [ ] Eigenvalue convergence: `cycleLaplacian` eigenvalues `2 cos(2πk/n) − 2` scale to circle Laplacian eigenvalues `−(2πk)²`.
+- ✓ **`C²` Taylor-remainder version**: `Δ²_h f(x) / h² → f''(x)` for any `ContDiff ℝ 2 f` (`CTwoTaylor.lean`, `scaledSecondDiff_tendsto_iteratedDeriv`), via Mathlib's `Real.taylor_tendsto` (Peano remainder). Closes R1 / A2.
+- ✓ **Sequence-along-integers version**: `scaledSecondDiff f n x → iteratedDeriv 2 f x` as `n → ∞` for any C² f (`ScaledDiffC2Bridge.lean`, `scaledSecondDiff_tendsto_iteratedDeriv_C2`).
+- ✓ **Hypergraph-anchored scaled Laplacian** = `scaledSecondDiff` at interior indices (`ScaledDiffC2Bridge.lean`, `hypergraph_scaled_laplacian_eq_scaledSecondDiff`). Closes A3.
+- [ ] Uniform convergence on `C^k` compacts (weaker than pointwise; work follow-up).
+- ✓ **Cycle Laplacian spectrum closed form**: `cycleEigenvector n k (j) = cos(2πkj/n)`, `cycleEigenvalue n k = −4 sin²(πk/n)`, satisfying the eigenvalue equation at all indices including boundary (`CycleSpectrum.lean`, `cycleLaplacian_eigen`). Closes R5.
+- ✓ **Eigenvalue convergence**: `n² · cycleEigenvalue n k → −(2πk)²` (`CycleEigenLimit.lean`, `cycleEigenvalue_scaled_tendsto`). Closes A4.
+- ✓ **Matrix-level eigenvalue equation** (`CycleMatrixSpectrum.lean`, `laplacianMatrix_cycleHypergraph_eigen`): the cycle eigenvectors are genuine matrix eigenvectors of `laplacianMatrix (cycleHypergraph n)`.
 - [ ] Generalisation: scaled torus / lattice Laplacians → continuous Laplace-Beltrami on the limit torus.
 
 ## Rung 3 — Measure-theoretic limits

@@ -30,6 +30,12 @@ Legend: ✅ proved, axiom-clean. 🟡 partial. 🔲 open. 🚫 uninhabited forma
 | `HypergraphCalculus.lean` | `hyperedgeGradient`, `hypergraphDiv`, `summation_by_parts` (Stokes) | ✅ |
 | `SecondDifference.lean` | Central second difference, quadratic identity | ✅ |
 | `CycleGraph.lean` | `cycleLaplacian`, cycle Dirichlet form | ✅ |
+| `CTwoTaylor.lean` | C² Taylor convergence of scaled second difference — `scaledSecondDiff_tendsto_iteratedDeriv` | ✅ R1 / A2 |
+| `CycleSpectrum.lean` | `cycleEigenvector`, `cycleEigenvalue`, `cos_three_term_identity`; interior + full wrap-around eigenvalue equations | ✅ R5 |
+| `CycleEigenLimit.lean` | Scaled cycle eigenvalue → continuum circle Laplacian eigenvalue — `cycleEigenvalue_scaled_tendsto` | ✅ A4 |
+| `ScaledDiffC2Bridge.lean` | `scaledSecondDiff_tendsto_iteratedDeriv_C2` + `hypergraph_scaled_laplacian_eq_scaledSecondDiff`: end-to-end hypergraph → f'' for all C² | ✅ A3 |
+| `LaplacianMatrix.lean` | `laplacianMatrixEdge`, `laplacianMatrix`, `laplacianMatrix_mulVec`, `heatKernel = exp(t · Δ)`, `heatKernel_zero`, `heatKernel_add`, `heatTrace`, `laplacianMatrix_symm`, `laplacianMatrix_row_sum`, `laplacianMatrix_mulVec_const` | ✅ R2 / D3 |
+| `CycleMatrixSpectrum.lean` | Matrix eigenvalue equation: `laplacianMatrix (cycleHypergraph n) * cycleEigenvector = cycleEigenvalue • cycleEigenvector` | ✅ |
 
 ## 3. PDE ladder on `Hypergraph V`
 
@@ -44,7 +50,9 @@ All proofs go through `laplacianHyper`. The Hypergraph is the domain; no continu
 | `ScalarField.lean` | Lagrangian + Hamiltonian + EL | `EL ↔ KG` equivalence | ✅ G1 + G3 + G4 |
 | `DiscreteDAlembertian.lean` | BD 4D operator, `discreteAction`, `discreteEL` | BD conjecture flagged | 🟡 operator + action ✅; BD conjecture 🚫 |
 
-Pending in this group: D2 existence-uniqueness (blocked on Matrix.exp), D3 heat semigroup, D6 long-time convergence, D7 discrete → continuum heat on GH limit, D11 Choquet-Bruhat.
+Pending in this group: D2 existence-uniqueness, D6 long-time convergence, D7 discrete → continuum heat on GH limit, D11 Choquet-Bruhat.
+
+D3 (heat semigroup via `Matrix.exp`) is now ✅ in `LaplacianMatrix.lean`.
 
 ## 4. Continuum limits (Rungs 1–6)
 
@@ -68,7 +76,7 @@ Pending in this group: D2 existence-uniqueness (blocked on Matrix.exp), D3 heat 
 | `HypergraphCycleBridge.lean` | `cycleHypergraph n` + `laplacianHyper = cycleLaplacian` + end-to-end to `f''` | ✅ hypergraph-anchor of cycle bridge |
 | `ContinuumLimitStatement.lean` | Formal Props for open obligations | 🚫 `SchwarzschildObligationMet`, `KerrObligationMet`, `FLRWObligationMet` all `∧ False` |
 
-Partial: `CycleLaplacianConvergenceC2` — polynomial case proved via `cycle_laplacian_conv_polynomial`; general C² case open (blocked by #33 Mathlib Taylor integration).
+General C² case now proved in `CTwoTaylor.lean` + `ScaledDiffC2Bridge.lean` — the scaled discrete Laplacian on `cycleHypergraph n` converges to `f''` for any `ContDiff ℝ 2 f` (R1/A2/A3 done).
 
 ## 5. Curvature / connection (local-coord)
 
@@ -146,11 +154,16 @@ Total for new groups: **57/57** addressed. But honest breakdown:
 - Conservation ⇒ size invariance along trajectory (IR2).
 
 **The real-work items tracked explicitly** (#176-#180, R1–R5):
-- R1: C² Taylor convergence for scaled second difference (the one that unlocks all non-polynomial bridges).
-- R2: laplacianMatrix + heatKernel via Matrix.exp (unlocks #44, #145).
-- R3: ℓ²(BranchialSlice) Hilbert space + unitary branchial evolution (real QM bridge).
-- R4: Curved discrete-Ricci convergence (first non-flat case).
-- R5: Cycle Laplacian spectrum closed form.
+- ✅ **R1**: C² Taylor convergence for scaled second difference (`CTwoTaylor.lean`). Unlocks all non-polynomial bridges.
+- ✅ **R2**: `laplacianMatrix` + `heatKernel` via Matrix.exp (`LaplacianMatrix.lean`). Heat propagator as `exp(t · Δ)`, semigroup property, symmetry, row-sum zero, heat trace.
+- 🔲 **R3**: ℓ²(BranchialSlice) Hilbert space + unitary branchial evolution (real QM bridge).
+- 🔲 **R4**: Curved discrete-Ricci convergence (first non-flat case).
+- ✅ **R5**: Cycle Laplacian spectrum closed form (`CycleSpectrum.lean`, full wrap-around).
+
+**Follow-on bridges proved on top of R1/R2/R5** (this session):
+- ✅ **A3/A4**: scaled cycle eigenvalue → continuum circle Laplacian spectrum (`CycleEigenLimit.lean`); hypergraph scaled Laplacian = scaled second difference (`ScaledDiffC2Bridge.lean`).
+- ✅ **D3**: heat semigroup via `Matrix.exp` — now captured by `heatKernel_add`.
+- ✅ Matrix eigenvalue equation packaging in `CycleMatrixSpectrum.lean`.
 
 **Colleague-work items added** (#166-#175, M1–M10):
 Ioana Milea (IG intern), Van Le (Fisher→FS), Hubert Kolcz (MBQC
@@ -162,10 +175,10 @@ diffusion-geometry bridge, tropical geometry, 3BP dynamics.
 
 | Group | Purpose | Done | Open |
 |---|---|---|---|
-| A | Calculus foundations | 1 (A1) | 7 |
+| A | Calculus foundations | 4 (A1, A2, A3, A4) | 4 |
 | B | Schwarzschild / curved metrics | 1 (B1) | 10 |
 | C | Bundles + Levi-Civita | 0 | 8 |
-| D | PDEs on Hypergraph V | 5 (D1,D4,D5,D8,D9,D10) | 6 |
+| D | PDEs on Hypergraph V | 7 (D1,D3,D4,D5,D8,D9,D10) | 4 |
 | E | Lorentzian manifolds | 0 | 7 |
 | F | Einstein / stress-energy / energy conditions | 0 | 8 |
 | G | Scalar fields / Lagrangian | 4 (G1,G3,G4, partial G2–G6) | 2 |
