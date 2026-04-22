@@ -206,6 +206,35 @@ theorem expectationValue_eigenvector {S : Type*} [Fintype S]
   unfold expectationValue
   rw [heigen, inner_smul_right]
 
+/-! ### Observables (I6 / #89) -/
+
+/-- **Quantum observable on a branchial Hilbert space** (I6 / #89).
+A ℂ-linear self-adjoint operator `A : BranchialHilbert S →ₗ[ℂ]
+BranchialHilbert S` — satisfying `⟨A φ, ψ⟩ = ⟨φ, A ψ⟩` for all
+`φ, ψ`. The real-valued expectation values (via
+`expectationValue_re_of_symm`) are the measurement outcomes. -/
+structure BranchialObservable (S : Type*) [Fintype S] where
+  /-- The underlying ℂ-linear operator. -/
+  op : BranchialHilbert S →ₗ[ℂ] BranchialHilbert S
+  /-- Self-adjointness (Hermitianness). -/
+  isSymm : ∀ φ ψ : BranchialHilbert S,
+    @inner ℂ _ _ (op φ) ψ = @inner ℂ _ _ φ (op ψ)
+
+/-- **The adjacency operator is a branchial observable** for symmetric
+adjacency `adj`. Concrete instance connecting the Wolfram-model graph
+structure to the observable interpretation. -/
+noncomputable def branchialAdjObservable {S : Type*} [Fintype S] [DecidableEq S]
+    (adj : S → S → Prop) [DecidableRel adj] (hsymm : ∀ a b, adj a b → adj b a) :
+    BranchialObservable S where
+  op := branchialAdjLM adj
+  isSymm := branchialAdjLM_inner adj hsymm
+
+/-- **Expectation values of observables are real**. -/
+theorem BranchialObservable.expectationValue_real {S : Type*} [Fintype S]
+    (A : BranchialObservable S) (ψ : BranchialHilbert S) :
+    starRingEnd ℂ (expectationValue A.op ψ) = expectationValue A.op ψ :=
+  expectationValue_re_of_symm A.op A.isSymm ψ
+
 /-! ### Connection to the concrete branchial slice
 
 Given the finite-successor hypothesis on a rewriting system, every

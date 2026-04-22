@@ -483,3 +483,5 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.branchialSchrodinger_unitary_evolution
 #print axioms InfraFormalization.expectationValue_re_of_symm
 #print axioms InfraFormalization.expectationValue_eigenvector
+#print axioms InfraFormalization.branchialAdjObservable
+#print axioms InfraFormalization.BranchialObservable.expectationValue_real
