@@ -45,7 +45,7 @@ real-work items):
 |---|---|---|
 | R1 | C² Taylor convergence of scaled second difference | ✅ (`CTwoTaylor.lean`) |
 | R2 | laplacianMatrix + heatKernel via Matrix.exp | ✅ (`LaplacianMatrix.lean`) |
-| R3 | ℓ²(BranchialSlice) as Hilbert space | ✅ partial (`BranchialHilbert.lean`: finite-dim ℂ-Hilbert alias, ℂ-linear adjacency operator + Hermitian self-adjointness for symmetric adj) |
+| R3 | ℓ²(BranchialSlice) as Hilbert space | ✅ partial (`BranchialHilbert.lean`: finite-dim ℂ-Hilbert alias, ℂ-linear adjacency operator + Hermitian self-adjointness for symmetric adj; + Born-rule `bornProbability` (I3) + uniform `branchialUniformWeight` (I2) + concrete slice `branchialSliceHilbert`) |
 | R4 | Curved discrete-Ricci convergence beyond flat | pending |
 | R5 | Cycle Laplacian spectrum closed form | ✅ (`CycleSpectrum.lean`; full wrap-around version) |
 
@@ -127,7 +127,9 @@ All formalized as Lean theorems, axiom-clean:
 
 ### Branchial skeleton (QM bridge groundwork)
 - ✅ `BranchialRelated`, `NStep`, `BranchialSlice` + slice recursion (`Branchial.lean`).
-- ⌛ Branchial measure → amplitudes → Hilbert-space limit.
+- ✅ Finite-slice condition I1 (`BranchialFinite.lean`), ℓ²(slice) Hilbert space I4/R3 partial (`BranchialHilbert.lean`: ℂ-Hilbert + ℂ-linear adjacency + Hermitian).
+- ✅ Branchial amplitudes I3 + Born rule (`BranchialHilbert.lean`), uniform branchial measure I2 (`branchialUniformWeight`).
+- ⌛ I5 unitary evolution `exp(i·t·A)`; I8 Hilbert-space continuum limit; IQ6 FS←Fisher limit.
 
 ## Documentation
 - [`README.md`](README.md), [`INDEX.md`](INDEX.md) — navigation.
