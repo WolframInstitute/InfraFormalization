@@ -134,6 +134,17 @@ theorem laplacianMatrix_mulVec_const (H : Hypergraph V) (c : ℝ) (v : V) :
   rw [laplacianMatrix_mulVec]
   exact laplacianHyper_const H c v
 
+/-- **Laplacian matrix row-sum is zero**: for each `v : V`,
+`∑ u, laplacianMatrix H v u = 0`. This is the matrix-level statement
+of "the Laplacian kills constants," and implies that the all-ones
+vector `fun _ => 1` lies in the kernel of `laplacianMatrix H`. -/
+theorem laplacianMatrix_row_sum (H : Hypergraph V) (v : V) :
+    ∑ u, laplacianMatrix H v u = 0 := by
+  have h := laplacianMatrix_mulVec_const H 1 v
+  unfold Matrix.mulVec at h
+  simp only [dotProduct, mul_one] at h
+  exact h
+
 /-! ## Heat kernel trace -/
 
 /-- **Heat trace** `Tr(exp(−t Δ_H))`: the fundamental object whose
