@@ -133,11 +133,30 @@ From `INFRAGEOMETRY.md` — 9 groups (57 new tasks #109–#165). Status:
 | IS | Synthetic axiomatic | 3 | 0 |
 | IR | Ruliology | 7 | 0 (IR7 as obligation) |
 
-Total for new groups: **57/57** addressed (100%). Note: 7 tasks
-are stated as formal `∧ False` obligations
-(`RemainingObligations.lean`) to enforce the grounding principle —
-any future proof must produce a concrete term, not assume the
-obligation.
+Total for new groups: **57/57** addressed. But honest breakdown:
+- ~38 tasks are real theorems or constructions.
+- ~12 tasks are predicate-level scaffolding (types, sentinel Props).
+- ~10 tasks are formal `∧ False` obligations now marked `in_progress`.
+
+**The honest bridges proved so far** (task R-group, see task list):
+- Flat GH limits (cycle→S¹, path, torus, lattice→Minkowski).
+- Polynomial scaled-second-difference = f''.
+- Forman-Ricci = 0 on cycle ≡ S¹ Ricci = 0.
+- Schrödinger unitarity on Hypergraph V.
+- Conservation ⇒ size invariance along trajectory (IR2).
+
+**The real-work items tracked explicitly** (#176-#180, R1–R5):
+- R1: C² Taylor convergence for scaled second difference (the one that unlocks all non-polynomial bridges).
+- R2: laplacianMatrix + heatKernel via Matrix.exp (unlocks #44, #145).
+- R3: ℓ²(BranchialSlice) Hilbert space + unitary branchial evolution (real QM bridge).
+- R4: Curved discrete-Ricci convergence (first non-flat case).
+- R5: Cycle Laplacian spectrum closed form.
+
+**Colleague-work items added** (#166-#175, M1–M10):
+Ioana Milea (IG intern), Van Le (Fisher→FS), Hubert Kolcz (MBQC
+Lie-Poisson), Jan Pullman (IBL-∞/BV), Zapata-Ahmed (axiomatic
+relativity), Pokorny paclet parity, Ahmed EME-tracking, Pokorny
+diffusion-geometry bridge, tropical geometry, 3BP dynamics.
 
 ## 9. Legacy phase groups (plan A/B/C/.../K)
 
