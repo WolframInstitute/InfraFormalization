@@ -117,4 +117,105 @@ theorem cycleLaplacian_eigen_interior {n : ℕ} [NeZero n] (k : ℕ) (i : Fin n)
   have hB_half : B / 2 = π * k / n := by simp only [hB]; ring
   rw [cos_three_term_identity A B, hB_half]
 
+/-! ## Full (wrap-around) eigenvalue identity
+
+The cycle eigenvector is periodic in `j` modulo `n`: if `j₁ ≡ j₂ (mod n)`
+then `cos(2πk·j₁/n) = cos(2πk·j₂/n)` because the difference is an
+integer multiple of `2πk`. This lets us extend the interior result
+to all indices. -/
+
+/-- **Helper**: `cos` is `2π k`-periodic, for integer `k`. -/
+lemma cos_add_two_pi_int_mul (x : ℝ) (k : ℤ) :
+    cos (x + 2 * π * k) = cos x := by
+  simpa [mul_comm (2 * π) (k : ℝ)] using Real.cos_add_int_mul_two_pi x k
+
+/-- **Eigenvector at `j + n` ≡ eigenvector at `j`**: for any real `y` and
+integer `n`-shift, `cos(2πk·(y + n)/n) = cos(2πk·y/n)` because the difference
+is an integer multiple of `2πk`. -/
+lemma cos_eigenarg_shift_by_n {n : ℕ} [NeZero n] (k : ℕ) (y : ℝ) :
+    cos (2 * π * k * (y + n) / n) = cos (2 * π * k * y / n) := by
+  have hn_ne : (n : ℝ) ≠ 0 := by
+    have : 0 < n := Nat.pos_of_ne_zero (NeZero.ne n)
+    positivity
+  have hrewrite : 2 * π * k * (y + n) / n = 2 * π * k * y / n + 2 * π * k := by
+    field_simp
+  rw [hrewrite]
+  show cos (2 * π * k * y / n + 2 * π * k) = _
+  have : (2 * π * k : ℝ) = (k : ℤ) * (2 * π) := by push_cast; ring
+  rw [this]
+  exact Real.cos_add_int_mul_two_pi _ _
+
+/-- **Eigenvalue equation at all indices** (including boundary, via
+wrap-around). For the cycle hypergraph and any `k : ℕ`, `i : Fin n`:
+  `cycleLaplacian n (cycleEigenvector n k) i
+   = cycleEigenvalue n k · cycleEigenvector n k i`.
+This is the full spectral theorem for the cycle graph Laplacian. -/
+theorem cycleLaplacian_eigen {n : ℕ} [NeZero n] (hn : 2 ≤ n) (k : ℕ) (i : Fin n) :
+    cycleLaplacian n (cycleEigenvector n k) i
+    = cycleEigenvalue n k * cycleEigenvector n k i := by
+  have hn_pos : (0 : ℝ) < n := by
+    have : 0 < n := Nat.pos_of_ne_zero (NeZero.ne n)
+    exact_mod_cast this
+  have hn_ne : (n : ℝ) ≠ 0 := ne_of_gt hn_pos
+  have h_one : (1 : Fin n).val = 1 := by
+    show 1 % n = 1
+    exact Nat.mod_eq_of_lt (by omega)
+  unfold cycleLaplacian cycleEigenvector cycleEigenvalue
+  -- h_succ: cos at (i+1).val equals cos at (i.val + 1 : ℝ), using Fin wrap + cos period.
+  have h_succ : cos (2 * π * k * ((i + 1 : Fin n).val : ℝ) / n)
+              = cos (2 * π * k * ((i.val : ℝ) + 1) / n) := by
+    rcases lt_or_ge (i.val + 1) n with hlt | hge
+    · have hsucc_eq : ((i + 1 : Fin n).val : ℝ) = (i.val : ℝ) + 1 := by
+        rw [Fin.val_add, h_one, Nat.mod_eq_of_lt hlt]; push_cast; rfl
+      rw [hsucc_eq]
+    · have hi_eq : i.val = n - 1 := by have := i.isLt; omega
+      have hn_1 : (1 : ℕ) ≤ n := by omega
+      have hcast : ((n - 1 : ℕ) : ℝ) = (n : ℝ) - 1 := by
+        rw [Nat.cast_sub hn_1]; push_cast; ring
+      have hsucc_eq : ((i + 1 : Fin n).val : ℝ) = 0 := by
+        rw [Fin.val_add, h_one]
+        have hmod : (i.val + 1) % n = 0 := by
+          rw [hi_eq]
+          have : n - 1 + 1 = n := Nat.sub_add_cancel hn_1
+          rw [this]; exact Nat.mod_self n
+        rw [hmod]; simp
+      rw [hsucc_eq]
+      -- Show: cos (2πk·0/n) = cos (2πk·(i.val + 1)/n)
+      have hx : ((i.val : ℝ) + 1) = 0 + (n : ℝ) := by
+        have : (i.val : ℝ) = (n : ℝ) - 1 := by rw [hi_eq]; exact hcast
+        rw [this]; ring
+      rw [hx, cos_eigenarg_shift_by_n k 0]
+  have h_pred : cos (2 * π * k * ((i - 1 : Fin n).val : ℝ) / n)
+              = cos (2 * π * k * ((i.val : ℝ) - 1) / n) := by
+    rcases Nat.lt_or_ge 0 i.val with hgt | hle
+    · have hpred_eq : ((i - 1 : Fin n).val : ℝ) = (i.val : ℝ) - 1 := by
+        show (((n - (1 : Fin n).val + i.val) % n : ℕ) : ℝ) = (i.val : ℝ) - 1
+        rw [h_one]
+        have hstep : n - 1 + i.val = (i.val - 1) + n := by omega
+        rw [hstep, Nat.add_mod_right, Nat.mod_eq_of_lt (by omega)]
+        rw [Nat.cast_sub hgt]; push_cast; ring
+      rw [hpred_eq]
+    · have hi_zero : i.val = 0 := by omega
+      have hpred_eq : ((i - 1 : Fin n).val : ℝ) = (n : ℝ) - 1 := by
+        show (((n - (1 : Fin n).val + i.val) % n : ℕ) : ℝ) = (n : ℝ) - 1
+        rw [h_one, hi_zero, Nat.add_zero, Nat.mod_eq_of_lt (by omega)]
+        rw [Nat.cast_sub (by omega : (1 : ℕ) ≤ n)]; push_cast; ring
+      rw [hpred_eq, hi_zero]
+      -- Goal: cos(2πk(n-1)/n) = cos(2πk(0 - 1)/n). Use y = -1: (-1 + n) · ... = (n-1).
+      have hx : (n : ℝ) - 1 = -1 + (n : ℝ) := by ring
+      rw [hx, cos_eigenarg_shift_by_n k (-1)]
+      congr 1; push_cast; ring
+  rw [h_succ, h_pred]
+  -- Now interior-style computation.
+  set A : ℝ := 2 * π * k * i.val / n with hA
+  set B : ℝ := 2 * π * k / n with hB
+  have hrw1 : (2 * π * k * ((i.val : ℝ) + 1) / n) = A + B := by
+    simp only [hA, hB]; field_simp
+  have hrw2 : (2 * π * k * ((i.val : ℝ) - 1) / n) = A - B := by
+    simp only [hA, hB]; field_simp
+  rw [hrw1, hrw2]
+  show cos (A + B) + cos (A - B) - 2 * cos A = _ * cos A
+  have hB_half : B / 2 = π * k / n := by simp only [hB]; ring
+  rw [cos_three_term_identity A B, hB_half]
+
 end InfraFormalization
