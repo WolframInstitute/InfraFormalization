@@ -42,7 +42,7 @@ Every theorem above depends only on `{propext, Classical.choice, Quot.sound}`. N
 - [ ] **R4 #179** — Curved discrete-Ricci convergence beyond flat. First non-zero Forman-Ricci convergence case.
 - [ ] **A5 #16** — Counting measure on `Hypergraph V` + pushforward (groundwork for A6 / weak convergence, A7 / Wasserstein).
 - [ ] **A7 #18** — Wasserstein-1 convergence rate `O(1/n)` for counting measures.
-- [~] **D6 #47 (partial)** — Long-time convergence of heat solution to uniform. `HeatKernelDecay.lean` proves each non-constant eigenmode (`1 ≤ k < n`) tends to `0` coordinate-wise under heat flow: `heatKernel_cycleHypergraph_firstMode_tendsto_zero` (k=1 spectral gap) and `heatKernel_cycleHypergraph_nonzero_mode_tendsto_zero` (all non-zero modes). Remaining: eigenbasis decomposition of arbitrary `ψ : Fin n → ℝ`, so arbitrary initial data also converge to uniform.
+- [~] **D6 #47 (partial)** — Long-time convergence of heat solution to uniform. `HeatKernelDecay.lean` proves each non-constant eigenmode (`1 ≤ k < n`) tends to `0` coordinate-wise under heat flow: `heatKernel_cycleHypergraph_firstMode_tendsto_zero` (k=1 spectral gap) and `heatKernel_cycleHypergraph_nonzero_mode_tendsto_zero` (all non-zero modes). `SymmEigenOrthogonal.lean` adds the classical spectral-theorem step `cycleEigenvector_orthogonal` — cycle eigenvectors with distinct eigenvalues are orthogonal. Remaining: verification that all `n` cycle eigenvalues are distinct (so they span), plus Parseval-style decomposition of arbitrary `ψ : Fin n → ℝ`.
 - [ ] **D7 #48** — Scaled discrete heat → continuous heat on GH-limit.
 
 ### Schwarzschild follow-ons (B-group)

@@ -137,3 +137,4 @@ import InfraFormalization.ContinuumLimitStatement
 import InfraFormalization.DiscreteDAlembertian
 import InfraFormalization.BranchialHilbert
 import InfraFormalization.HeatKernelDecay
+import InfraFormalization.SymmEigenOrthogonal
