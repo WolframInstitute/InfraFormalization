@@ -74,6 +74,7 @@ import InfraFormalization.CTwoTaylor
 import InfraFormalization.CycleEigenLimit
 import InfraFormalization.ScaledDiffC2Bridge
 import InfraFormalization.LaplacianMatrix
+import InfraFormalization.CycleMatrixSpectrum
 import InfraFormalization.Refutations.F1NoMetric
 import InfraFormalization.Refutations.F2Orthonormality
 import InfraFormalization.Refutations.F3Tautology
@@ -419,3 +420,4 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.Hypergraph.laplacianMatrix_mulVec_const
 #print axioms InfraFormalization.Hypergraph.laplacianMatrix_row_sum
 #print axioms InfraFormalization.Hypergraph.heatTrace_zero
+#print axioms InfraFormalization.laplacianMatrix_cycleHypergraph_eigen

@@ -127,5 +127,6 @@ import InfraFormalization.CTwoTaylor
 import InfraFormalization.CycleEigenLimit
 import InfraFormalization.ScaledDiffC2Bridge
 import InfraFormalization.LaplacianMatrix
+import InfraFormalization.CycleMatrixSpectrum
 import InfraFormalization.ContinuumLimitStatement
 import InfraFormalization.DiscreteDAlembertian
