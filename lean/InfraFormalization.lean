@@ -140,3 +140,4 @@ import InfraFormalization.HeatKernelDecay
 import InfraFormalization.SymmEigenOrthogonal
 import InfraFormalization.BranchialSchrodinger
 import InfraFormalization.HodgeLaplacianSpectrum
+import InfraFormalization.BranchialCanonical

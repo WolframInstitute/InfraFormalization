@@ -86,6 +86,7 @@ import InfraFormalization.HeatKernelDecay
 import InfraFormalization.SymmEigenOrthogonal
 import InfraFormalization.BranchialSchrodinger
 import InfraFormalization.HodgeLaplacianSpectrum
+import InfraFormalization.BranchialCanonical
 import InfraFormalization.Refutations.F1NoMetric
 import InfraFormalization.Refutations.F2Orthonormality
 import InfraFormalization.Refutations.F3Tautology
@@ -483,6 +484,9 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.cycleEigenvalue_strict_mono_first_half
 #print axioms InfraFormalization.cycleEigenvalue_ne_first_half
 #print axioms InfraFormalization.cycleEigenvector_first_half_orthogonal
+#print axioms InfraFormalization.branchialSliceAdj_symm
+#print axioms InfraFormalization.branchialSliceHamiltonian_isSymm
+#print axioms InfraFormalization.branchial_qm_is_rewriting_grounded
 #print axioms InfraFormalization.symm_eigenvectors_orthogonal
 #print axioms InfraFormalization.cycleEigenvector_orthogonal
 #print axioms InfraFormalization.cycleEigenvalue_zero_ne_nonzero_mode

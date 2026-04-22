@@ -209,6 +209,7 @@ This rung is large, but every sub-task is a concrete formalisation target — no
 - ✓ Branchial amplitudes: `BranchialAmplitude S := BranchialHilbert S` + Born rule `bornProbability` (`BranchialHilbert.lean`, I3 #86).
 - ✓ Branchial Hilbert space: `BranchialHilbert S := EuclideanSpace ℂ S` with ℂ-linear adjacency `branchialAdjLM` and self-adjointness `branchialAdjLM_inner` (`BranchialHilbert.lean`, I4 #87 / R3 #178 partial).
 - ✓ Branchial evolution as unitary: `branchialSchrodinger_unitary_evolution` in `BranchialSchrodinger.lean` (I5 #88 / I9 #92). Total probability conserved via self-adjointness of the adjacency operator.
+- ✓ **Grounding**: `BranchialCanonical.lean` — `branchialSliceHamiltonian sys s₀ n h` is the canonical rewriting-system-grounded Hamiltonian on the concrete slice. `branchial_qm_is_rewriting_grounded`: every QM feature (Hilbert space, Hermitian observable, Schrödinger evolution, Born-rule measurement) derives from `(sys, s₀, n)` alone; no continuous structure is imposed.
 - ✓ Observables as Hermitian operators: `BranchialObservable S` + `branchialAdjObservable` (`BranchialHilbert.lean`, I6 #89).
 - ✓ Expectation values + Born rule on observables: `expectationValue`, `expectationValue_re_of_symm`, `expectationValue_eigenvector` (`BranchialHilbert.lean`, I7 #90).
 - ✓ Fubini-Study/Bhattacharyya bound: `fubiniStudyBhattacharyya_bound` (`RemainingObligations.lean`, IQ6 upgraded + proved).
