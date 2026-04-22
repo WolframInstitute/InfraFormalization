@@ -117,5 +117,9 @@ import InfraFormalization.CoordinatizationDimension
 import InfraFormalization.CandidateRuleDatabase
 import InfraFormalization.MarzkeWheeler
 import InfraFormalization.BlowupLieAlgebra
+import InfraFormalization.DagCalculus
+import InfraFormalization.RadialLaminarBlowup
+import InfraFormalization.HodgeVR
+import InfraFormalization.FisherMetric
 import InfraFormalization.ContinuumLimitStatement
 import InfraFormalization.DiscreteDAlembertian
