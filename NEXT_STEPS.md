@@ -66,6 +66,7 @@ Every theorem above depends only on `{propext, Classical.choice, Quot.sound}`. N
 - [x] **I3 #86** — Branchial amplitudes (ℂ-valued). `BranchialHilbert.lean` defines `BranchialAmplitude S := BranchialHilbert S` + Born-rule probability `bornProbability ψ s := Complex.normSq (ψ s)` with `sum = ‖ψ‖²`.
 - [x] **I4 #87** — `ℓ²(slice)` Hilbert space (= R3 partial; `BranchialHilbert.lean`).
 - [x] **I5 #88** — Branchial evolution as unitary. `BranchialSchrodinger.lean` proves `branchialSchrodinger_unitary_evolution` — Schrödinger `i∂_tψ = Aψ` with adjacency `A` preserves total probability `∑(u² + v²)` on real/imaginary decomposition. Closes the Stone-type unitarity claim for the finite-dim branchial slice.
+- [x] **I7 #90** — Expectation values + Born rule. `BranchialHilbert.lean` defines `expectationValue A ψ := ⟨ψ, A ψ⟩` with `expectationValue_re_of_symm` (real for Hermitian A) and `expectationValue_eigenvector` (eigenvalue · ‖ψ‖² for eigenvectors).
 
 ### Einstein / stress-energy (F-group)
 

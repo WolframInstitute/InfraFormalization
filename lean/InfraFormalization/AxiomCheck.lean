@@ -481,3 +481,5 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.cycleEigenvalue_nonzero_mode_neg
 #print axioms InfraFormalization.branchialAdjReal_symm
 #print axioms InfraFormalization.branchialSchrodinger_unitary_evolution
+#print axioms InfraFormalization.expectationValue_re_of_symm
+#print axioms InfraFormalization.expectationValue_eigenvector

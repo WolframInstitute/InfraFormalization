@@ -170,6 +170,42 @@ theorem sum_branchialUniformWeight (S : Type*) [Fintype S] [Nonempty S] :
     exact_mod_cast Fintype.card_pos
   field_simp
 
+/-! ### Expectation values (I7 / #90) -/
+
+/-- **Expectation value** of a ℂ-linear operator `A` in the state `ψ`:
+`⟨A⟩_ψ := ⟨ψ, A ψ⟩`. For a Hermitian `A` this is a real number; for
+any `A` it is ℂ-linear in the right slot, conjugate-linear in the
+left, making it a bona-fide quantum-mechanical matrix element. -/
+noncomputable def expectationValue {S : Type*} [Fintype S]
+    (A : BranchialHilbert S →ₗ[ℂ] BranchialHilbert S)
+    (ψ : BranchialHilbert S) : ℂ :=
+  @inner ℂ _ _ ψ (A ψ)
+
+/-- **Expectation value is real for Hermitian (self-adjoint) operators**.
+If `A` satisfies `⟨A φ, ψ⟩ = ⟨φ, A ψ⟩` for all `φ, ψ`, then
+`⟨A⟩_ψ = ⟨ψ, A ψ⟩` is a real number — one of the core observations of
+quantum mechanics. -/
+theorem expectationValue_re_of_symm {S : Type*} [Fintype S]
+    (A : BranchialHilbert S →ₗ[ℂ] BranchialHilbert S)
+    (hsa : ∀ φ ψ : BranchialHilbert S, @inner ℂ _ _ (A φ) ψ = @inner ℂ _ _ φ (A ψ))
+    (ψ : BranchialHilbert S) :
+    starRingEnd ℂ (expectationValue A ψ) = expectationValue A ψ := by
+  unfold expectationValue
+  rw [inner_conj_symm]
+  exact hsa ψ ψ
+
+/-- **Born rule via expectation value.** For a Hermitian operator `A`
+with eigenvector `ψ` of eigenvalue `a : ℝ`, the expectation value is
+`a · ‖ψ‖²`. So unit-norm eigenvectors realize the eigenvalue as the
+definite measurement outcome. -/
+theorem expectationValue_eigenvector {S : Type*} [Fintype S]
+    (A : BranchialHilbert S →ₗ[ℂ] BranchialHilbert S)
+    (ψ : BranchialHilbert S) (a : ℂ)
+    (heigen : A ψ = a • ψ) :
+    expectationValue A ψ = a * (@inner ℂ _ _ ψ ψ) := by
+  unfold expectationValue
+  rw [heigen, inner_smul_right]
+
 /-! ### Connection to the concrete branchial slice
 
 Given the finite-successor hypothesis on a rewriting system, every
