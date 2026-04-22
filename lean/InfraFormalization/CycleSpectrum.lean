@@ -79,6 +79,32 @@ theorem cycleEigenvalue_one_neg {n : ℕ} (hn : 2 ≤ n) :
   rw [h_cast]
   nlinarith
 
+/-- **Non-constant mode eigenvalues are strictly negative.** For every
+`k` with `1 ≤ k` and `k < n`, the cycle eigenvalue
+`cycleEigenvalue n k = −4 sin²(πk/n)` is strictly negative, because
+`0 < πk/n < π` forces `sin(πk/n) > 0`. Generalises
+`cycleEigenvalue_one_neg` and underlies the spectral-gap decay of
+every non-constant heat-kernel mode (`HeatKernelDecay.lean`). -/
+theorem cycleEigenvalue_nonzero_mode_neg {n : ℕ} [NeZero n]
+    (k : ℕ) (hk_lo : 1 ≤ k) (hk_hi : k < n) :
+    cycleEigenvalue n k < 0 := by
+  unfold cycleEigenvalue
+  have hn_pos : (0 : ℝ) < n := by
+    have : 0 < n := Nat.pos_of_ne_zero (NeZero.ne n)
+    exact_mod_cast this
+  have hk_pos_real : (0 : ℝ) < k := by exact_mod_cast hk_lo
+  have hk_lt_n_real : (k : ℝ) < n := by exact_mod_cast hk_hi
+  have h_arg_pos : 0 < π * k / n := by
+    apply div_pos _ hn_pos
+    exact mul_pos Real.pi_pos hk_pos_real
+  have h_arg_lt_pi : π * k / n < π := by
+    rw [div_lt_iff₀ hn_pos]
+    exact mul_lt_mul_of_pos_left hk_lt_n_real Real.pi_pos
+  have h_sin_pos : 0 < sin (π * k / n) :=
+    Real.sin_pos_of_pos_of_lt_pi h_arg_pos h_arg_lt_pi
+  have h_sin_sq_pos : 0 < (sin (π * k / n))^2 := by positivity
+  nlinarith
+
 /-! ## Algebraic identity: sum-to-product form for the eigenvalue.
 
 Given `A, B : ℝ`:

@@ -76,23 +76,8 @@ theorem heatKernel_cycleHypergraph_nonzero_mode_tendsto_zero
     rw [heatKernel_cycleHypergraph_mulVec_eigenvector hn k t]
     simp [Pi.smul_apply, smul_eq_mul]
   simp only [h_eigen]
-  have h_neg : cycleEigenvalue n k < 0 := by
-    unfold cycleEigenvalue
-    have hn_pos : (0 : ℝ) < n := by
-      have : 0 < n := Nat.pos_of_ne_zero (NeZero.ne n)
-      exact_mod_cast this
-    have hk_pos_real : (0 : ℝ) < k := by exact_mod_cast hk_lo
-    have hk_lt_n_real : (k : ℝ) < n := by exact_mod_cast hk_hi
-    have h_arg_pos : 0 < Real.pi * k / n := by
-      apply div_pos _ hn_pos
-      exact mul_pos Real.pi_pos hk_pos_real
-    have h_arg_lt_pi : Real.pi * k / n < Real.pi := by
-      rw [div_lt_iff₀ hn_pos]
-      exact mul_lt_mul_of_pos_left hk_lt_n_real Real.pi_pos
-    have h_sin_pos : 0 < Real.sin (Real.pi * k / n) :=
-      Real.sin_pos_of_pos_of_lt_pi h_arg_pos h_arg_lt_pi
-    have h_sin_sq_pos : 0 < (Real.sin (Real.pi * k / n))^2 := by positivity
-    nlinarith
+  have h_neg : cycleEigenvalue n k < 0 :=
+    cycleEigenvalue_nonzero_mode_neg k hk_lo hk_hi
   have h_inner : Tendsto (fun t : ℝ => t * cycleEigenvalue n k) atTop atBot :=
     (tendsto_mul_const_atBot_of_neg h_neg).mpr tendsto_id
   have h_exp_tendsto : Tendsto (fun t : ℝ => Real.exp (t * cycleEigenvalue n k))
