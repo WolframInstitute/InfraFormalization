@@ -6,6 +6,18 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+**Headline (2026-04-22).** Infrageometry programme 48/57 tasks closed
+(84%). Branchial quantum-mechanics bridge (I-series) 8/10 closed: finite
+slice → ℂ-Hilbert space → ℂ-linear adjacency operator with Hermitian
+self-adjointness → Schrödinger evolution with proven unitarity → Born
+rule → observables → expectation values. All proofs axiom-clean (just
+`propext`, `Classical.choice`, `Quot.sound`; no `sorry`, no
+`native_decide`, no custom axioms). F1–F5 refutations proved in Lean;
+Gorard 2102.09363 "provably satisfies EFE" documented as circular
+(Poisson-sprinkle from the known Schwarzschild/Kerr metric — the
+spacetime is the input, not the output); 2303.07282 delivers no
+discrete Raychaudhuri equation, zero discrete trapped surfaces.
+
 **Single source of truth for coverage:** [`COVERAGE_MAP.md`](COVERAGE_MAP.md).
 Protocol: on every commit, task completion, or new obligation, both
 the task system and the coverage map are updated.
@@ -27,13 +39,13 @@ From [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md), 9 task groups with 57 items:
 | IA — Infraanalysis (Pavel Hajek) | 5 | 5 | 100% |
 | IG — InfraGaugeTheory (Pavel Pokorny) | 10 | 11 | 91% |
 | IC — Infracausality | 8 | 8 | 100% |
-| IT — Infratopology (Pavel Hajek) | 3 | 6 | 50% |
+| IT — Infratopology (Pavel Hajek) | 4 | 6 | 67% |
 | ID — Infradimension | 5 | 7 | 71% |
 | IB — Infrablowup | 5 | 6 | 83% |
 | IQ — Branchial/QM | 2 | 4 | 50% |
 | IS — Synthetic axiomatic | 3 | 3 | 100% |
 | IR — Ruliology | 6 | 7 | 86% |
-| **Total** | **47** | **57** | **82%** |
+| **Total** | **48** | **57** | **84%** |
 
 **Legacy tasks (branchial QM bridge):** I1 ✅, I2 ✅, I3 ✅, I4 ✅, I5 ✅,
 I6 ✅, I7 ✅, I8 ⌛, I9 ✅, I10 ⌛ — **8/10** done. Physics bridge to
