@@ -70,6 +70,7 @@ import InfraFormalization.PlateauDimension
 import InfraFormalization.ContinuumLimitStatement
 import InfraFormalization.DiscreteDAlembertian
 import InfraFormalization.CycleSpectrum
+import InfraFormalization.CTwoTaylor
 import InfraFormalization.Refutations.F1NoMetric
 import InfraFormalization.Refutations.F2Orthonormality
 import InfraFormalization.Refutations.F3Tautology
@@ -397,3 +398,7 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.branchialSlice_succ
 #print axioms InfraFormalization.cos_three_term_identity
 #print axioms InfraFormalization.cycleLaplacian_eigen_interior
+#print axioms InfraFormalization.taylorWithinEval_two_univ
+#print axioms InfraFormalization.taylor_remainder_pos_tendsto
+#print axioms InfraFormalization.taylor_remainder_neg_tendsto
+#print axioms InfraFormalization.scaledSecondDiff_tendsto_iteratedDeriv
