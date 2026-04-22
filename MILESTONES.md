@@ -338,13 +338,13 @@ Full collation of the post-phase-1 infrageometry programme. Each group is a cohe
 
 ## Phase 4 — Discrete geometric structures library (Lean)
 
-- [x] `Hypergraph V` as a graph-distance space (`HypergraphDistance.lean`): `Hypergraph.Adj`, `Hypergraph.dist`, geodesic balls, ball volume; `dist_self`, `dist_comm`, monotonicity; cycle-hypergraph adjacency / ballVolume instances.
+- [x] `Hypergraph V` as a graph-distance space (`HypergraphDistance.lean`): `Hypergraph.Adj`, `Hypergraph.dist`, geodesic balls, ball volume; `dist_self`, `dist_comm`, **`dist_triangle`** (via `Connected` hypothesis) + **`dist_triangle_of_reachable_{left,right}`** (conditional forms), monotonicity; cycle-hypergraph adjacency / ballVolume instances; **`cycleHypergraph_connected`** (for n ≥ 2) + **`cycleHypergraph_dist_triangle`** unconditional on cycles (T3 tightening).
 - [x] Wolfram-Hausdorff dimension as function on hypergraphs (task ID1 `wolframHausdorffDimension`; plateau version ID2).
 - [x] Benincasa–Dowker discrete d'Alembertian on a causal graph (`DiscreteDAlembertian.lean`): BD-4D operator, action, EL, F6 flagged as explicit Prop obligation.
 - [x] Vietoris-Rips complex + Hodge Laplacian on a hypergraph (`VietorisRips.lean`, `HodgeVR.lean`).
 - [x] Hypergraph Laplacian as a matrix (`LaplacianMatrix.lean`): symmetric matrix, kills constants, row-sum zero; heat kernel as `Matrix.exp`.
 - [ ] Counting measure on a hypergraph + pushforward (A5 #16 pending).
-- [ ] Pseudo-metric axioms proved in full — triangle inequality for `Hypergraph.dist` (currently the triangle piece is missing, though `dist_self` and `dist_comm` are done).
+- [x] **Pseudo-metric axioms** proved: `dist_self`, `dist_comm`, **`dist_triangle`** (T3; `Connected` form + conditional `Reachable` forms). `PseudoMetricSpace` instance via ℕ→ℝ cast deferred but all axioms in hand.
 - [ ] Ollivier–Ricci on directed hyperedges, following Eidi–Jost 2019 (statement-only in `Infra/OllivierStatement.lean`).
 - [ ] Convergence results connecting discrete to continuum via random-geometric-graph / Poisson sampling.
 

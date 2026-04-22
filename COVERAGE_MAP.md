@@ -105,7 +105,7 @@ Pending in this group: B2 Schwarzschild Riemann components, B3 `Ric = 0`, B4 vac
 
 | Module | Content | Status |
 |---|---|---|
-| `HypergraphDistance.lean` | `Hypergraph.dist`, `geodesicBall`, `geodesicBallVolume`, `localDimension`, `wolframHausdorffDimension`, `plateauDimension`; cycle: `Adj_iff`, `succ_pred_adj`, `ballVolume_one_ge_three` | ✅ ID1 |
+| `HypergraphDistance.lean` | `Hypergraph.dist`, `geodesicBall`, `geodesicBallVolume`, `localDimension`, `wolframHausdorffDimension`, `plateauDimension`; cycle: `Adj_iff`, `succ_pred_adj`, `ballVolume_one_ge_three`; **`dist_triangle` + `dist_triangle_of_reachable_{left,right}`** (T3); **`cycleHypergraph_reachable_zero`**, **`cycleHypergraph_connected`**, **`cycleHypergraph_dist_triangle`** | ✅ ID1 + T3 triangle inequality |
 | `RuleDimensionBounds.lean` | `Trajectory.StepConsistent`, `trajectory_size_invariant`, `geodesicBallVolume_le_card` | ✅ IR2 |
 
 Pending in ID: ID2 plateau detection, ID3 homology dim, ID4 coordinatization dim, ID5 causal-graph dim, ID6 compatibility theorem, ID7 spectral dim via `Matrix.exp`.
