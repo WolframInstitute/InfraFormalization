@@ -93,6 +93,7 @@ import InfraFormalization.Refutations.F3Tautology
 import InfraFormalization.Refutations.F4Tautology
 import InfraFormalization.Refutations.F5Illdefined
 import InfraFormalization.Refutations.F6Circularity
+import InfraFormalization.Refutations.F7NamedRuleStructure
 
 #print axioms InfraFormalization.edge_conservation
 #print axioms InfraFormalization.trajectory_preserves_size
@@ -497,6 +498,8 @@ import InfraFormalization.Refutations.F6Circularity
 #print axioms InfraFormalization.cycleEigenvalue_periodic
 #print axioms InfraFormalization.Refutations.circular_reconstruction_has_no_content
 #print axioms InfraFormalization.Refutations.circular_procedure_is_identity
+#print axioms InfraFormalization.Refutations.namedRule_trajectory_edge_count_fixed
+#print axioms InfraFormalization.Refutations.isConservative_implies_structurallyOneDim
 #print axioms InfraFormalization.branchialSliceAdj_symm
 #print axioms InfraFormalization.branchialSliceHamiltonian_isSymm
 #print axioms InfraFormalization.branchial_qm_is_rewriting_grounded
