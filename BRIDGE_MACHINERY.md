@@ -51,6 +51,8 @@ This is what differentiates the present work from Gorard's: he wrote `g_{ab}, R,
 - ✓ **Cycle Laplacian spectrum closed form**: `cycleEigenvector n k (j) = cos(2πkj/n)`, `cycleEigenvalue n k = −4 sin²(πk/n)`, satisfying the eigenvalue equation at all indices including boundary (`CycleSpectrum.lean`, `cycleLaplacian_eigen`). Closes R5.
 - ✓ **Eigenvalue convergence**: `n² · cycleEigenvalue n k → −(2πk)²` (`CycleEigenLimit.lean`, `cycleEigenvalue_scaled_tendsto`). Closes A4.
 - ✓ **Matrix-level eigenvalue equation** (`CycleMatrixSpectrum.lean`, `laplacianMatrix_cycleHypergraph_eigen`): the cycle eigenvectors are genuine matrix eigenvectors of `laplacianMatrix (cycleHypergraph n)`.
+- ✓ **Mathlib `HasEigenvalue` form** (`CycleHasEigenvalue.lean`, `laplacianMatrix_cycleHypergraph_hasEigenvalue`, T4): connects to Mathlib's spectral-theory API.
+- ✓ **Matrix exp fixes eigenvectors** (`ExpEigenvector.lean`, `exp_mulVec_of_eigenvector`, T2): general operator fact; in particular `heatKernel_mulVec_const` shows heat kernel fixes constants.
 - [ ] Generalisation: scaled torus / lattice Laplacians → continuous Laplace-Beltrami on the limit torus.
 
 ## Rung 3 — Measure-theoretic limits
@@ -59,8 +61,9 @@ This is what differentiates the present work from Gorard's: he wrote `g_{ab}, R,
 
 **Decomposition:**
 - ✓ Wasserstein distance is in Mathlib (`MeasureTheory.Measure.WassersteinDistance`).
-- [ ] `CountingMeasure (H : Hypergraph V) : Measure V` — finite uniform measure on the vertex set.
-- [ ] `CountingMeasure_pushforward_under_lattice_embedding` — push forward through the GH-embedding.
+- ✓ **`countingMeasure H : Measure V`** — finite uniform measure on the vertex set (`HypergraphMeasure.lean`, A5). `countingMeasure_univ = |V|`.
+- ✓ **`uniformProbability H`** — normalised probability measure on V. `uniformProbability_univ = 1` for `Nonempty V`.
+- ✓ **`pushforwardCounting`, `pushforwardUniform`** — push forward under any embedding `V → X` via `Measure.map`.
 - [ ] **Weak convergence**: counting measure on `Fin n` (uniform) under `latticeEmbed n` converges weakly to Lebesgue on `[0, 1)` as `n → ∞`.
 - [ ] Wasserstein-1 convergence rate: `W₁(counting_n, Lebesgue) ≤ C/n`.
 - [ ] Lift to (d+1)-torus.

@@ -61,6 +61,11 @@ Grouped from most-immediate (parts already done) to most-ambitious.
 - [x] **Cycle spectrum closed form**: `CycleSpectrum.cycleLaplacian_eigen` (eigenvalues `−4 sin²(πk/n)` + eigenvectors `cos(2πkj/n)`, full wrap-around).
 - [x] **Eigenvalue convergence**: `CycleEigenLimit.cycleEigenvalue_scaled_tendsto` (n² · λ_k → −(2πk)², continuum circle spectrum).
 - [x] **Matrix bridge**: `LaplacianMatrix.laplacianMatrix_mulVec = laplacianHyper` and `heatKernel H t := exp(t · Δ)` (`heatKernel_add` semigroup, `heatTrace`, symmetric matrix).
+- [x] **ODE ↔ matrix heat kernel unified** (T1, `HeatKernelODE.lean`): `heatKernel_isHeatSolution` — the matrix kernel satisfies the `HeatSolution H` ODE predicate. Heat existence + forward uniqueness (D2) follows.
+- [x] **Matrix-level conservation laws**: `heatKernel_mulVec_const`, `heatKernel_mass_conservation`, `heatKernel_L2_decay`, `heatKernel_mulVec_add`.
+- [x] **Matrix exp fixes eigenvectors** (T2): `exp_mulVec_of_eigenvector`. Opens Mathlib `Module.End.HasEigenvalue` form of cycle spectrum (T4).
+- [x] **Counting-measure + pushforward** on Hypergraph V (A5, `HypergraphMeasure.lean`): foundation for A6 (weak convergence) and A7 (Wasserstein rate).
+- [x] **`Hypergraph.dist` triangle inequality + cycle connectivity** (T3).
 - [ ] 25-page paper with the Lean library as appendix
 
 **Audience.** arXiv math.MG + math-ph + formal-methods.

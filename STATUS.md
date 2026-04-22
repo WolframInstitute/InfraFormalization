@@ -55,12 +55,12 @@ Plus additional proved legacy items: A2, A3, A4, D3.
 
 | Rung | Topic | Status |
 |---|---|---|
-| 1 | Discrete calculus | ✅ graph Laplacian, inner product, self-adjointness, Dirichlet form, PSD, divergence theorem, Laplacian-as-LinearMap, cycle instance; matrix form + heat kernel via `Matrix.exp` (R2/D3), symmetric Laplacian matrix, row-sum zero, heat trace |
-| 2 | Op. convergence to continuum | ✅ C² Taylor convergence of scaled second difference (R1/A2); ✅ scaled discrete → continuum f'' for all C² (A3); ✅ cycle spectrum closed form (R5) + eigenvalue → continuum (A4) |
-| 3 | Measure limits | ⌛ Wasserstein in Mathlib; GH-Prokhorov not yet |
+| 1 | Discrete calculus | ✅ graph Laplacian, inner product, self-adjointness, Dirichlet form, PSD, divergence theorem, Laplacian-as-LinearMap, cycle instance; matrix form + heat kernel via `Matrix.exp` (R2/D3), symmetric Laplacian matrix, row-sum zero, heat trace; **`Hypergraph.dist` triangle inequality + cycle connectivity (T3)** |
+| 2 | Op. convergence to continuum | ✅ C² Taylor convergence of scaled second difference (R1/A2); ✅ scaled discrete → continuum f'' for all C² (A3); ✅ cycle spectrum closed form (R5) + eigenvalue → continuum (A4); **cycle spectrum in `HasEigenvalue` form (T4)**; **exp fixes eigenvectors (T2)** |
+| 3 | Measure limits | ✅ counting measure + pushforward (A5); ⌛ weak convergence (A6), Wasserstein (A7) still pending |
 | 4 | Connections / Levi-Civita | ⌛ Mathlib gap; local-coord route planned |
 | 5 | Riemann / Ricci / scalar | ⌛ blocked by Rung 4; statement-only for Ollivier / Gray |
-| 6 | ODE/PDE | ⌛ partial ODE in Mathlib; discrete heat equation as linear ODE planned next |
+| 6 | ODE/PDE | ✅ discrete heat equation (D1/D4/D5) + existence/uniqueness (D2 forward-time); wave (D8); Klein-Gordon (D9); Schrödinger unitarity (D10); scalar field Lagrangian/EL (G1/G3/G4); **ODE ↔ matrix heat kernel unified (T1)**; matrix-level mass/L²/semigroup corollaries |
 | 7 | Fields / gauge | Far |
 | 8 | Lorentzian geometry | ✅ discrete (`LorentzLattice`, `Minkowski`); ⌛ continuum Lorentzian missing in Mathlib |
 | 9 | Einstein equations | Far |
