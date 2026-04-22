@@ -77,6 +77,42 @@ theorem causalEdge_implies_precedes {u v : V} (h : G.causalEdge u v) :
     G.causallyPrecedes u v :=
   Relation.ReflTransGen.single h
 
+/-! ### Chronological vs causal relations (E2 / #54)
+
+In continuum Lorentzian geometry, the *chronological* relation `I^+`
+is strict timelike precedence (`u ≪ v`); the *causal* relation `J^+`
+is non-strict ≤ (`u ≼ v`), including both timelike and null. On a
+discrete causal graph:
+
+  * `causallyPrecedes u v` = `u ≼ v`  (causal J^+)
+  * `strictCausallyPrecedes u v` = `u ≠ v ∧ u ≼ v`  (chronological I^+)
+
+The inclusion `I^+ ⊆ J^+` (chronological ⇒ causal) is immediate from
+the definition. -/
+
+/-- **Chronological relation** (alias of `strictCausallyPrecedes`): on
+a discrete causal graph the chronological future is strict causal
+precedence. -/
+def chronological (u v : V) : Prop := G.strictCausallyPrecedes u v
+
+/-- **Causal relation** (alias of `causallyPrecedes`): non-strict
+causal precedence. -/
+def causal (u v : V) : Prop := G.causallyPrecedes u v
+
+/-- **Chronological implies causal** (`I^+ ⊆ J^+`). -/
+theorem chronological_implies_causal {u v : V}
+    (h : G.chronological u v) : G.causal u v :=
+  h.2
+
+/-- **Causal relation is reflexive**. -/
+theorem causal_refl (v : V) : G.causal v v :=
+  G.causallyPrecedes_refl v
+
+/-- **Chronological relation is irreflexive**: no event is strictly
+causally before itself. -/
+theorem chronological_irrefl (v : V) : ¬ G.chronological v v :=
+  fun h => h.1 rfl
+
 /-! ## Observer chains (Prop-level)
 
 An **observer chain from `u` to `v`** is simply the causal-precedence
