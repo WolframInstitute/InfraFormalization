@@ -480,6 +480,9 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.Hypergraph.vrHodge0_add
 #print axioms InfraFormalization.Hypergraph.vrHodge0_smul
 #print axioms InfraFormalization.Hypergraph.vrHodge0_has_zero_eigenvalue
+#print axioms InfraFormalization.cycleEigenvalue_strict_mono_first_half
+#print axioms InfraFormalization.cycleEigenvalue_ne_first_half
+#print axioms InfraFormalization.cycleEigenvector_first_half_orthogonal
 #print axioms InfraFormalization.symm_eigenvectors_orthogonal
 #print axioms InfraFormalization.cycleEigenvector_orthogonal
 #print axioms InfraFormalization.cycleEigenvalue_zero_ne_nonzero_mode

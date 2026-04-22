@@ -118,6 +118,71 @@ theorem cycleEigenvalue_zero_ne_nonzero_mode {n : ℕ} [NeZero n]
     cycleEigenvalue_nonzero_mode_neg k hk_lo hk_hi
   linarith
 
+/-- **Strict monotonicity of cycle eigenvalues on the first half.**
+For `1 ≤ j < k ≤ n/2` (equivalently `1 ≤ j < k` and `2 * k ≤ n`), the
+cycle eigenvalue `cycleEigenvalue n k = −4 sin²(πk/n)` is strictly
+less than `cycleEigenvalue n j`.
+
+Proof: `sin` is strictly increasing on `[0, π/2]`, so `sin(πj/n) <
+sin(πk/n)` when `0 < πj/n < πk/n ≤ π/2`; squaring preserves the
+inequality (positive side); the factor `−4` flips it.
+
+Gives pairwise distinctness of eigenvalues indexed in `[1, n/2]`. -/
+theorem cycleEigenvalue_strict_mono_first_half {n : ℕ} [NeZero n]
+    {j k : ℕ} (hj_lo : 1 ≤ j) (hjk : j < k) (hk_hi : 2 * k ≤ n) :
+    cycleEigenvalue n k < cycleEigenvalue n j := by
+  unfold cycleEigenvalue
+  have hn_pos : (0 : ℝ) < n := by
+    have : 0 < n := Nat.pos_of_ne_zero (NeZero.ne n)
+    exact_mod_cast this
+  have hj_pos : (0 : ℝ) < j := by exact_mod_cast hj_lo
+  have hjk_real : (j : ℝ) < k := by exact_mod_cast hjk
+  have hk_pos_real : (0 : ℝ) < k := by linarith
+  have h2k_le_n : (2 * k : ℝ) ≤ n := by exact_mod_cast hk_hi
+  -- 0 < π j / n < π k / n ≤ π / 2.
+  have h_argj_pos : 0 < π * j / n := by
+    apply div_pos _ hn_pos
+    exact mul_pos Real.pi_pos hj_pos
+  have h_argk_le : π * k / n ≤ π / 2 := by
+    rw [div_le_iff₀ hn_pos, div_mul_eq_mul_div, le_div_iff₀ (by norm_num : (0:ℝ) < 2)]
+    calc π * k * 2 = π * (2 * k) := by ring
+      _ ≤ π * n := (mul_le_mul_of_nonneg_left h2k_le_n Real.pi_pos.le)
+  have h_args_lt : π * j / n < π * k / n := by
+    apply div_lt_div_of_pos_right _ hn_pos
+    exact mul_lt_mul_of_pos_left hjk_real Real.pi_pos
+  have h_argk_pos : 0 < π * k / n := by linarith
+  have h_argk_lt_pi : π * k / n < π := by
+    have hpi_half_lt_pi : π / 2 < π := by
+      have := Real.pi_pos; linarith
+    linarith
+  -- sin is strictly increasing on (0, π/2], so sin(πj/n) < sin(πk/n).
+  have h_sinj_lt : Real.sin (π * j / n) < Real.sin (π * k / n) := by
+    apply Real.strictMonoOn_sin
+    · exact Set.mem_Icc.mpr ⟨by linarith, by linarith⟩
+    · exact Set.mem_Icc.mpr ⟨by linarith, h_argk_le⟩
+    · exact h_args_lt
+  have h_sinj_pos : 0 < Real.sin (π * j / n) := by
+    apply Real.sin_pos_of_pos_of_lt_pi h_argj_pos
+    linarith
+  have h_sink_pos : 0 < Real.sin (π * k / n) :=
+    Real.sin_pos_of_pos_of_lt_pi h_argk_pos h_argk_lt_pi
+  -- Squaring preserves strict inequality for positives.
+  have h_sq_lt : (Real.sin (π * j / n))^2 < (Real.sin (π * k / n))^2 := by
+    have := mul_lt_mul'' h_sinj_lt h_sinj_lt h_sinj_pos.le h_sinj_pos.le
+    have h2 := mul_lt_mul'' h_sinj_lt h_sinj_lt h_sinj_pos.le h_sinj_pos.le
+    nlinarith [sq_nonneg (Real.sin (π * j / n)), sq_nonneg (Real.sin (π * k / n))]
+  -- Multiplying by −4 flips the inequality.
+  nlinarith
+
+/-- **Pairwise distinctness of first-half cycle eigenvalues.** -/
+theorem cycleEigenvalue_ne_first_half {n : ℕ} [NeZero n]
+    {j k : ℕ} (hj_lo : 1 ≤ j) (hjk : j ≠ k) (hj_hi : 2 * j ≤ n) (hk_hi : 2 * k ≤ n)
+    (hk_lo : 1 ≤ k) :
+    cycleEigenvalue n j ≠ cycleEigenvalue n k := by
+  rcases lt_or_gt_of_ne hjk with h | h
+  · exact (cycleEigenvalue_strict_mono_first_half hj_lo h hk_hi).ne'
+  · exact (cycleEigenvalue_strict_mono_first_half hk_lo h hj_hi).ne
+
 /-! ## Algebraic identity: sum-to-product form for the eigenvalue.
 
 Given `A, B : ℝ`:

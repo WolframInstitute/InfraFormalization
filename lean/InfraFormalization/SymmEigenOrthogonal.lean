@@ -81,4 +81,17 @@ theorem cycleEigenvector_const_orthogonal_nonzero
     cycleEigenvector n 0 ⬝ᵥ cycleEigenvector n k = 0 :=
   cycleEigenvector_orthogonal hn (cycleEigenvalue_zero_ne_nonzero_mode k hk_lo hk_hi)
 
+/-- **Distinct first-half eigenvectors are pairwise orthogonal.** For
+`1 ≤ j < k ≤ n/2`, the cycle eigenvectors `cycleEigenvector n j` and
+`cycleEigenvector n k` have dot product zero. Closes the pairwise
+orthogonality of the first-half eigenvectors — a substantial part of
+the orthonormal-eigenbasis structure needed for full D6. -/
+theorem cycleEigenvector_first_half_orthogonal
+    {n : ℕ} [NeZero n] (hn : 2 ≤ n) {j k : ℕ}
+    (hj_lo : 1 ≤ j) (hjk : j ≠ k) (hj_hi : 2 * j ≤ n) (hk_hi : 2 * k ≤ n)
+    (hk_lo : 1 ≤ k) :
+    cycleEigenvector n j ⬝ᵥ cycleEigenvector n k = 0 :=
+  cycleEigenvector_orthogonal hn
+    (cycleEigenvalue_ne_first_half hj_lo hjk hj_hi hk_hi hk_lo)
+
 end InfraFormalization
