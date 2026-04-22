@@ -38,12 +38,25 @@ From [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md), 9 task groups with 57 items:
 Plus 14 legacy-group tasks (A1, B1, D1/4/5/8/9/10, G1/3/4, I1 = 12
 directly; F1–F5 refutations = 5 more as theorem + axiom-clean).
 
+**Concrete bridge extensions added post-initial-completion** (R-series
+real-work items):
+
+| R# | Theorem | Status |
+|---|---|---|
+| R1 | C² Taylor convergence of scaled second difference | ✅ (`CTwoTaylor.lean`) |
+| R2 | laplacianMatrix + heatKernel via Matrix.exp | ✅ (`LaplacianMatrix.lean`) |
+| R3 | ℓ²(BranchialSlice) as Hilbert space | pending |
+| R4 | Curved discrete-Ricci convergence beyond flat | pending |
+| R5 | Cycle Laplacian spectrum closed form | ✅ (`CycleSpectrum.lean`; full wrap-around version) |
+
+Plus additional proved legacy items: A2, A3, A4, D3.
+
 ## Rungs of the bridge ladder (see `BRIDGE_MACHINERY.md`)
 
 | Rung | Topic | Status |
 |---|---|---|
-| 1 | Discrete calculus | ✅ graph Laplacian, inner product, self-adjointness, Dirichlet form, PSD, divergence theorem, Laplacian-as-LinearMap, cycle instance |
-| 2 | Op. convergence to continuum | ▣ polynomial case exact (`SecondDifference.lean`); `C²` Taylor remainder pending |
+| 1 | Discrete calculus | ✅ graph Laplacian, inner product, self-adjointness, Dirichlet form, PSD, divergence theorem, Laplacian-as-LinearMap, cycle instance; matrix form + heat kernel via `Matrix.exp` (R2/D3), symmetric Laplacian matrix, row-sum zero, heat trace |
+| 2 | Op. convergence to continuum | ✅ C² Taylor convergence of scaled second difference (R1/A2); ✅ scaled discrete → continuum f'' for all C² (A3); ✅ cycle spectrum closed form (R5) + eigenvalue → continuum (A4) |
 | 3 | Measure limits | ⌛ Wasserstein in Mathlib; GH-Prokhorov not yet |
 | 4 | Connections / Levi-Civita | ⌛ Mathlib gap; local-coord route planned |
 | 5 | Riemann / Ricci / scalar | ⌛ blocked by Rung 4; statement-only for Ollivier / Gray |
