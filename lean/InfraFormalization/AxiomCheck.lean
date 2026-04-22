@@ -108,6 +108,8 @@ import InfraFormalization.StressEnergyTensor
 #print axioms InfraFormalization.wec_implies_nec
 #print axioms InfraFormalization.zero_stressEnergyTensor_weakEnergy
 #print axioms InfraFormalization.zero_stressEnergyTensor_nullEnergy
+#print axioms InfraFormalization.CausalGraph.self_mem_lightCone
+#print axioms InfraFormalization.CausalGraph.causalFuture_trans
 #print axioms InfraFormalization.in_degree_eq_lhsSize
 #print axioms InfraFormalization.out_degree_eq_rhsSize
 #print axioms InfraFormalization.balanced_of_conservative

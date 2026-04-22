@@ -124,6 +124,49 @@ if `[v, u]` is degenerate. This aligns with Carlos Zapata's
 Marzke–Wheeler setup where direct causal edges are light-steps. -/
 def OnLightStepFrom (v u : V) : Prop := G.DegenerateInterval v u
 
+/-! ### Discrete light cones, causal future and past (E3 / #55)
+
+The causal partial order on a causal graph induces light-cone-like
+set-theoretic structures: the causal future of an event is the set of
+events it can influence; the causal past is the set of events that
+can influence it; the (closed) light cone is the union.
+-/
+
+/-- **Causal future** of an event `v`: the set of events `u` with
+`v ≼ u`. -/
+def causalFuture (v : V) : Set V :=
+  {u | G.causallyPrecedes v u}
+
+/-- **Causal past** of an event `v`: the set of events `u` with
+`u ≼ v`. -/
+def causalPast (v : V) : Set V :=
+  {u | G.causallyPrecedes u v}
+
+/-- **Closed light cone** of an event `v`: the union of its causal
+future and causal past. -/
+def lightCone (v : V) : Set V :=
+  G.causalFuture v ∪ G.causalPast v
+
+/-- **Every event is in its own causal future** (reflexivity of
+`causallyPrecedes`). -/
+theorem self_mem_causalFuture (v : V) : v ∈ G.causalFuture v :=
+  G.causallyPrecedes_refl v
+
+/-- **Every event is in its own causal past**. -/
+theorem self_mem_causalPast (v : V) : v ∈ G.causalPast v :=
+  G.causallyPrecedes_refl v
+
+/-- **Every event is in its own light cone**. -/
+theorem self_mem_lightCone (v : V) : v ∈ G.lightCone v :=
+  Or.inl (G.self_mem_causalFuture v)
+
+/-- **Causal future is transitively closed**: if `v` is in `u`'s
+future and `w` is in `v`'s future, then `w` is in `u`'s future. -/
+theorem causalFuture_trans {u v w : V}
+    (hvu : v ∈ G.causalFuture u) (hwv : w ∈ G.causalFuture v) :
+    w ∈ G.causalFuture u :=
+  G.causallyPrecedes_trans hvu hwv
+
 end CausalGraph
 
 end InfraFormalization
