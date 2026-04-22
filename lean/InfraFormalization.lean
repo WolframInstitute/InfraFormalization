@@ -130,5 +130,6 @@ import InfraFormalization.LaplacianMatrix
 import InfraFormalization.HeatKernelODE
 import InfraFormalization.ExpEigenvector
 import InfraFormalization.CycleMatrixSpectrum
+import InfraFormalization.CycleHasEigenvalue
 import InfraFormalization.ContinuumLimitStatement
 import InfraFormalization.DiscreteDAlembertian

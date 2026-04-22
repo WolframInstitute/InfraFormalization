@@ -92,6 +92,7 @@ Grouped by phase (see [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md)). Each milestone ei
 - [x] **`CycleMatrixSpectrum.lean`**: `laplacianMatrix_cycleHypergraph_eigen` — matrix-level eigenvalue equation (cycle eigenvectors are genuine matrix eigenvectors of `laplacianMatrix (cycleHypergraph n)`).
 - [x] **`HeatKernelODE.lean`** (T1): ODE ↔ matrix heat kernel unification. `hasDerivAt_heatKernel` (d/dt = · · Δ), `heatKernel_commute_laplacianMatrix`, `hasDerivAt_heatKernel_mulVec`, **`heatKernel_isHeatSolution`** (the matrix heatKernel satisfies `HeatSolution H`). The two heat-equation definitions (ODE predicate + Matrix.exp propagator) are now linked.
 - [x] **`ExpEigenvector.lean`** (T2): matrix exp fixes eigenvectors. **`exp_mulVec_of_eigenvector`**: if `A.mulVec v = λ • v`, then `(NormedSpace.exp A).mulVec v = Real.exp λ • v`. Via `exp_eq_tsum_rat` + `ContinuousLinearMap.map_tsum` + `matrix_pow_mulVec_of_eigenvector` induction + `Real.summable_pow_div_factorial`.
+- [x] **`CycleHasEigenvalue.lean`** (T4): cycle spectrum in Mathlib `Module.End.HasEigenvalue` form. **`laplacianMatrix_cycleHypergraph_hasEigenvalue`** connects our pointwise eigenvalue theorem to Mathlib's spectral-theory API.
 
 ### Rung 5 — Riemann/Ricci/scalar curvature (local-coordinate route)
 - [x] **`MetricData n`** (`CurvatureLocalCoord.lean`): metric components, inverse, first partial derivatives, symmetry + inverse axioms. Avoids bundle machinery.
