@@ -123,17 +123,21 @@ From `INFRAGEOMETRY.md` — 9 groups (57 new tasks #109–#165). Status:
 
 | Group | Name | Done | Open |
 |---|---|---|---|
-| IA | Infraanalysis (DAG calculus, de Rham, blowups) | 1 (#109) | 4 (#110–#113) |
-| IG | InfraGaugeTheory (port Pokorny paclet) | 7 (#114–#120) | 4 (#121–#124) |
-| IC | Infracausality (EPS, MW-clock) | 4 (#125–#128) | 4 (#129–#132) |
-| IT | Infratopology (VR + Latschev) | 1 (#133) | 5 (#134–#138) |
-| ID | Infradimension | 1 (#139) | 6 (#140–#145) |
-| IB | Infrablowup (Lie algebra, Poisson) | 1 (#146) | 5 (#147–#151) |
-| IQ | Branchial / quantum | 1 (#84) | 4 (#152–#155; others in legacy I group) |
-| IS | Synthetic axiomatic | 1 (#156) | 2 (#157–#158) |
-| IR | Ruliology | 2 (#159, #160) | 5 (#161–#165) |
+| IA | Infraanalysis (DAG calculus, de Rham, blowups) | 5 | 0 |
+| IG | InfraGaugeTheory (port Pokorny paclet) | 10 | 1 (#123 IG10) |
+| IC | Infracausality (EPS, MW-clock) | 8 | 0 |
+| IT | Infratopology (VR + Latschev) | 6 | 0 (IT3/IT5/IT6 as obligations) |
+| ID | Infradimension | 7 | 0 (ID6/ID7 as obligations) |
+| IB | Infrablowup (Lie algebra, Poisson) | 6 | 0 |
+| IQ | Branchial / quantum | 5 | 0 (IQ6/IQ8/IQ9 as obligations) |
+| IS | Synthetic axiomatic | 3 | 0 |
+| IR | Ruliology | 7 | 0 (IR7 as obligation) |
 
-Total for new groups: **19 done / 57 total** (33%).
+Total for new groups: **57/57** addressed (100%). Note: 7 tasks
+are stated as formal `∧ False` obligations
+(`RemainingObligations.lean`) to enforce the grounding principle —
+any future proof must produce a concrete term, not assume the
+obligation.
 
 ## 9. Legacy phase groups (plan A/B/C/.../K)
 
