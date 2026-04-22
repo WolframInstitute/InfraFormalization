@@ -453,6 +453,7 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.cycleEigenvector_zero_val
 #print axioms InfraFormalization.cycleEigenvector_ne_zero
 #print axioms InfraFormalization.laplacianMatrix_cycleHypergraph_hasEigenvalue
+#print axioms InfraFormalization.heatKernel_cycleHypergraph_mulVec_eigenvector
 #print axioms InfraFormalization.Hypergraph.heat_exists
 #print axioms InfraFormalization.Hypergraph.heatSolution_sub
 #print axioms InfraFormalization.Hypergraph.heat_unique_forward
