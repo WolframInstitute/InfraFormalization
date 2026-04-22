@@ -10,13 +10,17 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 (84%). Branchial quantum-mechanics bridge (I-series) 8/10 closed: finite
 slice → ℂ-Hilbert space → ℂ-linear adjacency operator with Hermitian
 self-adjointness → Schrödinger evolution with proven unitarity → Born
-rule → observables → expectation values. All proofs axiom-clean (just
-`propext`, `Classical.choice`, `Quot.sound`; no `sorry`, no
-`native_decide`, no custom axioms). F1–F5 refutations proved in Lean;
-Gorard 2102.09363 "provably satisfies EFE" documented as circular
-(Poisson-sprinkle from the known Schwarzschild/Kerr metric — the
-spacetime is the input, not the output); 2303.07282 delivers no
-discrete Raychaudhuri equation, zero discrete trapped surfaces.
+rule → observables → expectation values. F-series GR obligations:
+F1 (stress-energy type) ✅, F2 (energy conditions) ✅, F7 (Penrose
+statement) ✅, F8 (Raychaudhuri focusing statement) ✅; F3-F6
+(Einstein+Λ, Schwarzschild, FLRW, Kerr) pending Lorentzian-bundle
+infrastructure. E-series: E2 (causal/chronological relations) ✅,
+E3 (light cones) ✅. All proofs axiom-clean (just `propext`,
+`Classical.choice`, `Quot.sound`; no `sorry`, no `native_decide`,
+no custom axioms). **Gorard refutations F1-F7 Lean-formal**, including
+F6Circularity (the Poisson-sprinkle-then-reconstruct schema formally
+proved to produce its input identically — "mathematically content-
+free").
 
 **Single source of truth for coverage:** [`COVERAGE_MAP.md`](COVERAGE_MAP.md).
 Protocol: on every commit, task completion, or new obligation, both
