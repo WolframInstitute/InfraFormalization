@@ -95,6 +95,7 @@ import InfraFormalization.Refutations.F5Illdefined
 import InfraFormalization.Refutations.F6Circularity
 import InfraFormalization.Refutations.F7NamedRuleStructure
 import InfraFormalization.StressEnergyTensor
+import InfraFormalization.WolframPhysicsBridgeDemo
 
 #print axioms InfraFormalization.edge_conservation
 #print axioms InfraFormalization.trajectory_preserves_size
@@ -110,6 +111,8 @@ import InfraFormalization.StressEnergyTensor
 #print axioms InfraFormalization.zero_stressEnergyTensor_nullEnergy
 #print axioms InfraFormalization.penrose_obligation_vacuous_if_no_trapped
 #print axioms InfraFormalization.raychaudhuri_trivially_satisfied_at_zero
+#print axioms InfraFormalization.wolfram_physics_bridge_summary
+#print axioms InfraFormalization.wolfram_physics_bridge_from_finite_successors
 #print axioms InfraFormalization.CausalGraph.self_mem_lightCone
 #print axioms InfraFormalization.CausalGraph.causalFuture_trans
 #print axioms InfraFormalization.CausalGraph.chronological_implies_causal
