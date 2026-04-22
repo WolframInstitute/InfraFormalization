@@ -488,6 +488,8 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.cycleEigenvalue_strict_mono_first_half
 #print axioms InfraFormalization.cycleEigenvalue_ne_first_half
 #print axioms InfraFormalization.cycleEigenvector_first_half_orthogonal
+#print axioms InfraFormalization.cycleEigenvalue_four_two
+#print axioms InfraFormalization.cycleEigenvalue_four_one
 #print axioms InfraFormalization.branchialSliceAdj_symm
 #print axioms InfraFormalization.branchialSliceHamiltonian_isSymm
 #print axioms InfraFormalization.branchial_qm_is_rewriting_grounded

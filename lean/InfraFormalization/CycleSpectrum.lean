@@ -183,6 +183,33 @@ theorem cycleEigenvalue_ne_first_half {n : ℕ} [NeZero n]
   · exact (cycleEigenvalue_strict_mono_first_half hj_lo h hk_hi).ne'
   · exact (cycleEigenvalue_strict_mono_first_half hk_lo h hj_hi).ne
 
+/-! ### Concrete small-n spectrum
+
+For a four-cycle (`n = 4`), the full spectrum can be computed
+explicitly: `{0, −2, −4, −2}` (three distinct values, the `-2`
+realized with multiplicity 2 by the `k = 1` and `k = 3` modes). -/
+
+/-- **Four-cycle Laplacian eigenvalue at `k = 2`**: equals `−4`.
+Concrete value computation: `cycleEigenvalue 4 2 = −4 · sin²(π · 2 / 4)
+= −4 · sin²(π/2) = −4 · 1 = −4`. This is the most-negative eigenvalue
+of the 4-cycle, corresponding to the alternating eigenvector
+`(+1, −1, +1, −1)`. -/
+theorem cycleEigenvalue_four_two : cycleEigenvalue 4 2 = -4 := by
+  unfold cycleEigenvalue
+  have h : (Real.pi * (2 : ℕ) / (4 : ℕ) : ℝ) = Real.pi / 2 := by
+    push_cast; ring
+  rw [h, Real.sin_pi_div_two]
+  ring
+
+/-- **Four-cycle Laplacian eigenvalue at `k = 1`**: equals `−2`. -/
+theorem cycleEigenvalue_four_one : cycleEigenvalue 4 1 = -2 := by
+  unfold cycleEigenvalue
+  have h : (Real.pi * (1 : ℕ) / (4 : ℕ) : ℝ) = Real.pi / 4 := by
+    push_cast; ring
+  rw [h, Real.sin_pi_div_four]
+  rw [div_pow, Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 2)]
+  ring
+
 /-! ## Algebraic identity: sum-to-product form for the eigenvalue.
 
 Given `A, B : ℝ`:
