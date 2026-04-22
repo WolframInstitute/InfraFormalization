@@ -85,6 +85,7 @@ import InfraFormalization.BranchialHilbert
 import InfraFormalization.HeatKernelDecay
 import InfraFormalization.SymmEigenOrthogonal
 import InfraFormalization.BranchialSchrodinger
+import InfraFormalization.HodgeLaplacianSpectrum
 import InfraFormalization.Refutations.F1NoMetric
 import InfraFormalization.Refutations.F2Orthonormality
 import InfraFormalization.Refutations.F3Tautology
@@ -476,6 +477,9 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.heatKernel_cycleHypergraph_nonzero_mode_tendsto_zero
 #print axioms InfraFormalization.heatKernel_cycleHypergraph_const_plus_mode_tendsto
 #print axioms InfraFormalization.heatKernel_cycleHypergraph_constMode_invariant
+#print axioms InfraFormalization.Hypergraph.vrHodge0_add
+#print axioms InfraFormalization.Hypergraph.vrHodge0_smul
+#print axioms InfraFormalization.Hypergraph.vrHodge0_has_zero_eigenvalue
 #print axioms InfraFormalization.symm_eigenvectors_orthogonal
 #print axioms InfraFormalization.cycleEigenvector_orthogonal
 #print axioms InfraFormalization.cycleEigenvalue_zero_ne_nonzero_mode

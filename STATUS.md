@@ -22,18 +22,23 @@ all depending only on Lean's three standard axioms
 
 From [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md), 9 task groups with 57 items:
 
-| Group | Done | Total |
-|---|---|---|
-| IA — Infraanalysis | 1 | 5 |
-| IG — InfraGaugeTheory | 7 | 11 |
-| IC — Infracausality | 5 | 8 |
-| IT — Infratopology | 1 | 6 |
-| ID — Infradimension | 2 | 7 |
-| IB — Infrablowup | 1 | 6 |
-| IQ — Branchial/QM | 1 | 4 |
-| IS — Synthetic axiomatic | 1 | 3 |
-| IR — Ruliology | 2 | 7 |
-| **Total** | **21** | **57** (37%) |
+| Group | Done | Total | % |
+|---|---|---|---|
+| IA — Infraanalysis (Pavel Hajek) | 5 | 5 | 100% |
+| IG — InfraGaugeTheory (Pavel Pokorny) | 10 | 11 | 91% |
+| IC — Infracausality | 8 | 8 | 100% |
+| IT — Infratopology (Pavel Hajek) | 3 | 6 | 50% |
+| ID — Infradimension | 5 | 7 | 71% |
+| IB — Infrablowup | 5 | 6 | 83% |
+| IQ — Branchial/QM | 2 | 4 | 50% |
+| IS — Synthetic axiomatic | 3 | 3 | 100% |
+| IR — Ruliology | 6 | 7 | 86% |
+| **Total** | **47** | **57** | **82%** |
+
+**Legacy tasks (branchial QM bridge):** I1 ✅, I2 ✅, I3 ✅, I4 ✅, I5 ✅,
+I6 ✅, I7 ✅, I8 ⌛, I9 ✅, I10 ⌛ — **8/10** done. Physics bridge to
+Schrödinger/Hilbert/Born-rule/observables established on finite branchial
+slices; continuum limit and path integral remain.
 
 Plus legacy-group tasks: A1/A2/A3/A4/A5, B1, D1/2/3/4/5/8/9/10,
 G1/3/4, I1/I2/I3/I4/I5/I6/I7/I9 (branchial QM suite substantially
