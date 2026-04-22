@@ -94,13 +94,16 @@ theorem laplacianMatrix_mulVec (H : Hypergraph V) (f : V → ℝ) (v : V) :
 
 /-! ## Heat kernel via `Matrix.exp` -/
 
-/-- **Heat kernel on a hypergraph**. Since the Laplacian (on a
-finite vertex set) has matrix representation `laplacianMatrix H`,
-the heat propagator is
-`exp(-t · laplacianMatrix H) : Matrix V V ℝ`
+/-- **Heat kernel on a hypergraph**. Since `laplacianHyper H` is
+negative-semidefinite (eigenvalues `≤ 0`) under our convention
+(cycle gives `−4 sin²(π k / n)`), the heat equation `∂_t u = Δ u`
+has solution `u(t) = exp(t · Δ) · u(0)`. The propagator is
+
+  `heatKernel H t := exp(t · laplacianMatrix H) : Matrix V V ℝ`
+
 (Mathlib's matrix exponential). -/
 noncomputable def heatKernel (H : Hypergraph V) (t : ℝ) : Matrix V V ℝ :=
-  NormedSpace.exp (-(t • laplacianMatrix H))
+  NormedSpace.exp (t • laplacianMatrix H)
 
 /-- **Heat kernel at `t = 0` is the identity.** -/
 theorem heatKernel_zero (H : Hypergraph V) :
@@ -108,7 +111,7 @@ theorem heatKernel_zero (H : Hypergraph V) :
   unfold heatKernel
   simp [NormedSpace.exp_zero]
 
-/-- **Heat kernel semigroup**: `exp(−(s+t) Δ) = exp(−s Δ) · exp(−t Δ)`.
+/-- **Heat kernel semigroup**: `exp((s + t) Δ) = exp(s Δ) · exp(t Δ)`.
 
 Both factors are matrix exponentials of commuting matrices (scalar
 multiples of the same matrix), so the standard `exp_add_of_commute`
@@ -116,15 +119,12 @@ gives the result. -/
 theorem heatKernel_add (H : Hypergraph V) (s t : ℝ) :
     heatKernel H (s + t) = heatKernel H s * heatKernel H t := by
   unfold heatKernel
-  have hcommute : Commute (-(s • laplacianMatrix H)) (-(t • laplacianMatrix H)) := by
+  have hcommute : Commute (s • laplacianMatrix H) (t • laplacianMatrix H) := by
     unfold Commute SemiconjBy
-    show -(s • laplacianMatrix H) * -(t • laplacianMatrix H)
-         = -(t • laplacianMatrix H) * -(s • laplacianMatrix H)
-    rw [neg_mul_neg, neg_mul_neg, smul_mul_smul_comm, smul_mul_smul_comm,
-        mul_comm s t]
-  rw [show -((s + t) • laplacianMatrix H)
-          = (-(s • laplacianMatrix H)) + (-(t • laplacianMatrix H)) by
-        rw [add_smul]; abel]
+    rw [smul_mul_smul_comm, smul_mul_smul_comm, mul_comm s t]
+  rw [show ((s + t) • laplacianMatrix H)
+          = (s • laplacianMatrix H) + (t • laplacianMatrix H) by
+        rw [add_smul]]
   exact Matrix.exp_add_of_commute _ _ hcommute
 
 /-- **Laplacian matrix annihilates constants**: for any `c : ℝ`,
