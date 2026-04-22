@@ -84,6 +84,7 @@ import InfraFormalization.CycleHasEigenvalue
 import InfraFormalization.BranchialHilbert
 import InfraFormalization.HeatKernelDecay
 import InfraFormalization.SymmEigenOrthogonal
+import InfraFormalization.BranchialSchrodinger
 import InfraFormalization.Refutations.F1NoMetric
 import InfraFormalization.Refutations.F2Orthonormality
 import InfraFormalization.Refutations.F3Tautology
@@ -478,3 +479,5 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.sum_bornProbability
 #print axioms InfraFormalization.sum_branchialUniformWeight
 #print axioms InfraFormalization.cycleEigenvalue_nonzero_mode_neg
+#print axioms InfraFormalization.branchialAdjReal_symm
+#print axioms InfraFormalization.branchialSchrodinger_unitary_evolution

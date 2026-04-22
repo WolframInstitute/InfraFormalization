@@ -135,7 +135,7 @@ Grouped from most-immediate (parts already done) to most-ambitious.
 - [ ] Complete S1–S6 audit of Gorard's QM paper (arXiv:2004.14808).
 - [x] Branchial measure: uniform probability on finite slices (I2 #85; `BranchialHilbert.lean` — `branchialUniformWeight` summing to 1 when nonempty).
 - [x] `ℓ²(slice)` Hilbert space (I4 #87 / R3 #178 partial; `BranchialHilbert.lean` — ℂ-Hilbert alias, ℂ-linear adjacency operator `branchialAdjLM`, self-adjointness for symmetric adjacency).
-- [~] Branchial amplitudes + evolution as unitary (I3 ✅, I5/I8 pending). `BranchialHilbert.lean` defines `BranchialAmplitude` + Born rule; unitary evolution `exp(i·t·A)` remains for I5.
+- [~] Branchial amplitudes + evolution as unitary (I3 ✅, I5 ✅, I8 pending). `BranchialHilbert.lean` defines `BranchialAmplitude` + Born rule; `BranchialSchrodinger.lean` proves `branchialSchrodinger_unitary_evolution` (total probability conservation for `i ∂_t ψ = A ψ` with adjacency `A`).
 - [ ] Fubini-Study limit under branchial refinement (IQ6 #153 in progress; currently obligation).
 - [ ] Prove (or disprove) the branchial → QM bridge claim.
 

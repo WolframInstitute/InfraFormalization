@@ -206,6 +206,7 @@ Grouped by phase (see [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md)). Each milestone ei
 - [x] ℓ²(slice) Hilbert space (I4 #87 / R3 #178 partial; `BranchialHilbert.lean` — `BranchialHilbert S := EuclideanSpace ℂ S` with ℂ-linear adjacency operator `branchialAdjLM` and self-adjointness `branchialAdjLM_inner` for symmetric adj).
 - [x] Branchial amplitudes (I3 #86; `BranchialHilbert.lean` — `BranchialAmplitude S := BranchialHilbert S` + Born-rule `bornProbability ψ s := Complex.normSq (ψ s)`, sum = `‖ψ‖²`).
 - [x] Branchial measure (I2 #85; `BranchialHilbert.lean` — `branchialUniformWeight S s := 1/|S|`, sum = 1 when nonempty).
+- [x] Branchial Schrödinger evolution as unitary (I5 #88; `BranchialSchrodinger.lean` — `BranchialSchrodinger adj u v` structure, `branchialSchrodinger_unitary_evolution` proves total-probability conservation via self-adjointness of real adjacency operator).
 - [ ] Branchial amplitudes / evolution toward Hilbert-space limit (I3 #86, I5 #88, I8 #91 pending).
 - [ ] Fubini-Study limit under refinement (IQ6 #153 in progress).
 - [ ] EME persistence as branchial observable (IQ8 #154 in progress).

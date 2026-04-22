@@ -138,3 +138,4 @@ import InfraFormalization.DiscreteDAlembertian
 import InfraFormalization.BranchialHilbert
 import InfraFormalization.HeatKernelDecay
 import InfraFormalization.SymmEigenOrthogonal
+import InfraFormalization.BranchialSchrodinger
