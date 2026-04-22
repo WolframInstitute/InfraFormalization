@@ -87,6 +87,7 @@ import InfraFormalization.SymmEigenOrthogonal
 import InfraFormalization.BranchialSchrodinger
 import InfraFormalization.HodgeLaplacianSpectrum
 import InfraFormalization.BranchialCanonical
+import InfraFormalization.PathHypergraph
 import InfraFormalization.Refutations.F1NoMetric
 import InfraFormalization.Refutations.F2Orthonormality
 import InfraFormalization.Refutations.F3Tautology
@@ -120,6 +121,9 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.CausalGraph.chronological_implies_causal
 #print axioms InfraFormalization.CausalGraph.chronological_irrefl
 #print axioms InfraFormalization.CausalGraph.stablyCausal_implies_stronglyCausal
+#print axioms InfraFormalization.pathHypergraph_edges_card_le
+#print axioms InfraFormalization.pathEigenvalue_nonpos
+#print axioms InfraFormalization.heatKernel_cycleHypergraph_multi_mode_tendsto
 #print axioms InfraFormalization.in_degree_eq_lhsSize
 #print axioms InfraFormalization.out_degree_eq_rhsSize
 #print axioms InfraFormalization.balanced_of_conservative

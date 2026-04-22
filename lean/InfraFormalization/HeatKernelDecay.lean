@@ -261,4 +261,76 @@ theorem heatKernel_cycleHypergraph_two_mode_parseval
   rw [h_sym]
   ring
 
+/-! ### Multi-mode convergence to constant component (D6 core step) -/
+
+/-- **Multi-mode heat-flow convergence.** For any finite set `S` of
+non-constant mode indices (each `k ∈ S` with `1 ≤ k < n`) and any
+coefficient assignment `d : Fin n → ℝ`, the heat kernel applied to
+
+  `c • v_0 + ∑_{k ∈ S} d k • v_k`
+
+converges pointwise to `c • v_0` as `t → ∞`, because each non-constant
+mode decays independently. This is the core spectral-theorem
+ingredient of D6: once an eigenbasis decomposition is established, the
+long-time limit of the heat flow is the projection onto the constant
+(average) component. -/
+theorem heatKernel_cycleHypergraph_multi_mode_tendsto
+    {n : ℕ} [NeZero n] (hn : 2 ≤ n) (S : Finset ℕ)
+    (hS : ∀ k ∈ S, 1 ≤ k ∧ k < n)
+    (c : ℝ) (d : ℕ → ℝ) (i : Fin n) :
+    Tendsto
+      (fun t : ℝ => ((Hypergraph.heatKernel (cycleHypergraph n) t).mulVec
+        (c • cycleEigenvector n 0
+          + ∑ k ∈ S, d k • cycleEigenvector n k)) i)
+      atTop (𝓝 (c * cycleEigenvector n 0 i)) := by
+  -- Step 1: rewrite heatKernel applied to the sum using linearity + eigenvalue action.
+  have h_rewrite : ∀ t : ℝ,
+      ((Hypergraph.heatKernel (cycleHypergraph n) t).mulVec
+        (c • cycleEigenvector n 0
+          + ∑ k ∈ S, d k • cycleEigenvector n k)) i
+      = c * cycleEigenvector n 0 i
+        + ∑ k ∈ S, d k * Real.exp (t * cycleEigenvalue n k)
+          * cycleEigenvector n k i := by
+    intro t
+    rw [Matrix.mulVec_add]
+    rw [Matrix.mulVec_smul]
+    rw [heatKernel_cycleHypergraph_mulVec_eigenvector hn 0 t]
+    rw [cycleEigenvalue_zero, mul_zero, Real.exp_zero, one_smul]
+    rw [Matrix.mulVec_sum]
+    simp only [Matrix.mulVec_smul, Pi.add_apply, Pi.smul_apply,
+      Finset.sum_apply, smul_eq_mul]
+    congr 1
+    refine Finset.sum_congr rfl (fun k hk => ?_)
+    rw [heatKernel_cycleHypergraph_mulVec_eigenvector hn k t]
+    simp [Pi.smul_apply, smul_eq_mul, mul_assoc]
+  simp only [h_rewrite]
+  -- Step 2: show each summand tends to 0, then the finite sum also does.
+  have h_each_tendsto : ∀ k ∈ S,
+      Tendsto
+        (fun t : ℝ => d k * Real.exp (t * cycleEigenvalue n k)
+          * cycleEigenvector n k i)
+        atTop (𝓝 0) := by
+    intro k hk
+    obtain ⟨hk_lo, hk_hi⟩ := hS k hk
+    have h_neg : cycleEigenvalue n k < 0 :=
+      cycleEigenvalue_nonzero_mode_neg k hk_lo hk_hi
+    have h_inner : Tendsto (fun t : ℝ => t * cycleEigenvalue n k) atTop atBot :=
+      (tendsto_mul_const_atBot_of_neg h_neg).mpr tendsto_id
+    have h_exp : Tendsto (fun t : ℝ => Real.exp (t * cycleEigenvalue n k))
+        atTop (𝓝 0) := Real.tendsto_exp_atBot.comp h_inner
+    have h1 := (h_exp.const_mul (d k)).mul_const (cycleEigenvector n k i)
+    simpa using h1
+  have h_sum_tendsto :
+      Tendsto
+        (fun t : ℝ => ∑ k ∈ S, d k * Real.exp (t * cycleEigenvalue n k)
+          * cycleEigenvector n k i)
+        atTop (𝓝 0) := by
+    have h := tendsto_finset_sum S
+      (f := fun k t =>
+        d k * Real.exp (t * cycleEigenvalue n k) * cycleEigenvector n k i)
+      (fun k hk => h_each_tendsto k hk)
+    simpa using h
+  have := (tendsto_const_nhds (x := c * cycleEigenvector n 0 i)).add h_sum_tendsto
+  simpa using this
+
 end InfraFormalization

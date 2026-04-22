@@ -84,7 +84,7 @@ Plus additional proved legacy items: A2, A3, A4, D3.
 | 3 | Measure limits | ✅ counting measure + pushforward (A5); ⌛ weak convergence (A6), Wasserstein (A7) still pending |
 | 4 | Connections / Levi-Civita | ⌛ Mathlib gap; local-coord route planned |
 | 5 | Riemann / Ricci / scalar | ⌛ blocked by Rung 4; statement-only for Ollivier / Gray |
-| 6 | ODE/PDE | ✅ discrete heat equation (D1/D4/D5) + existence/uniqueness (D2 forward-time); wave (D8); Klein-Gordon (D9); Schrödinger unitarity (D10); scalar field Lagrangian/EL (G1/G3/G4); **ODE ↔ matrix heat kernel unified (T1)**; matrix-level mass/L²/semigroup corollaries; **long-time heat decay of non-constant cycle modes (D6 partial, `HeatKernelDecay.lean`)** |
+| 6 | ODE/PDE | ✅ discrete heat equation (D1/D4/D5) + existence/uniqueness (D2 forward-time); wave (D8); Klein-Gordon (D9); Schrödinger unitarity (D10); scalar field Lagrangian/EL (G1/G3/G4); **ODE ↔ matrix heat kernel unified (T1)**; matrix-level mass/L²/semigroup corollaries; **long-time heat decay of non-constant cycle modes (D6 partial, `HeatKernelDecay.lean`); multi-mode convergence `heatKernel_cycleHypergraph_multi_mode_tendsto` — heat flow of any finite eigen-combination converges to its constant component** |
 | 7 | Fields / gauge | Far |
 | 8 | Lorentzian geometry | ✅ discrete (`LorentzLattice`, `Minkowski`); ⌛ continuum Lorentzian missing in Mathlib |
 | 9 | Einstein equations | Far |
