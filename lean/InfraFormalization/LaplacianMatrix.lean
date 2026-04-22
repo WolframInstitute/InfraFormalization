@@ -212,6 +212,13 @@ theorem heatKernel_neg (H : Hypergraph V) (t : ℝ) :
   unfold heatKernel
   rw [neg_smul, Matrix.exp_neg]
 
+/-- **Heat kernel composed with its time-reversal is the identity**:
+`heatKernel H t * heatKernel H (-t) = 1`. Direct consequence of
+`heatKernel_add` at `s = t, t = -t` plus `heatKernel_zero`. -/
+theorem heatKernel_mul_heatKernel_neg (H : Hypergraph V) (t : ℝ) :
+    heatKernel H t * heatKernel H (-t) = 1 := by
+  rw [← heatKernel_add, add_neg_cancel, heatKernel_zero]
+
 /-! ## Heat kernel trace -/
 
 /-- **Heat trace** `Tr(exp(−t Δ_H))`: the fundamental object whose
