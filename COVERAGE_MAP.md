@@ -135,22 +135,26 @@ Pending in ID: ID2 plateau detection, ID3 homology dim, ID4 coordinatization dim
 
 From `INFRAGEOMETRY.md` — 9 groups (57 new tasks #109–#165). Status:
 
-| Group | Name | Done | Open |
+| Group | Name | Addressed | Closed with real content |
 |---|---|---|---|
-| IA | Infraanalysis (DAG calculus, de Rham, blowups) | 5 | 0 |
-| IG | InfraGaugeTheory (port Pokorny paclet) | 10 | 1 (#123 IG10) |
-| IC | Infracausality (EPS, MW-clock) | 8 | 0 |
-| IT | Infratopology (VR + Latschev) | 6 | 0 (IT3/IT5/IT6 as obligations) |
-| ID | Infradimension | 7 | 0 (ID6/ID7 as obligations) |
-| IB | Infrablowup (Lie algebra, Poisson) | 6 | 0 |
-| IQ | Branchial / quantum | 5 | 0 (IQ6/IQ8/IQ9 as obligations) |
-| IS | Synthetic axiomatic | 3 | 0 |
-| IR | Ruliology | 7 | 0 (IR7 as obligation) |
+| IA | Infraanalysis (Pavel Hajek) | 5/5 | 5 |
+| IG | InfraGaugeTheory (Pavel Pokorny paclet port) | 11/11 | 10 (IG10 open) |
+| IC | Infracausality (EPS, MW-clock) | 8/8 | 8 |
+| IT | Infratopology (VR + Latschev; Pavel Hajek) | 6/6 | 4 (IT5/IT6 obligations pending) |
+| ID | Infradimension | 7/7 | 5 (ID6/ID7 in progress with real content) |
+| IB | Infrablowup (Lie algebra, Poisson) | 6/6 | 5 (IB2 commutator theorem pending) |
+| IQ | Branchial / quantum | 4/4 | 2 (IQ8/IQ9 obligations pending) |
+| IS | Synthetic axiomatic | 3/3 | 3 |
+| IR | Ruliology | 7/7 | 6 (IR7 in progress — over-strong form disproved, correct form open) |
 
-Total for new groups: **57/57** addressed. But honest breakdown:
-- ~38 tasks are real theorems or constructions.
-- ~12 tasks are predicate-level scaffolding (types, sentinel Props).
-- ~10 tasks are formal `∧ False` obligations now marked `in_progress`.
+**Addressed: 57/57. Closed with real content: 48/57 (84%).**
+
+Honest breakdown of the remaining 9:
+- T6 obligations **closed by upgrade** this session: IR7 (real content + disproof of over-strong form), ID6 (real content), **IQ6 (real content + proved `fubiniStudyBhattacharyya_bound`)**.
+- T6 obligations remaining: IT5 Latschev, IT6 scale trichotomy, IQ8 EME persistence, IQ9 path integral — these genuinely need Mathlib infrastructure we do not have yet (GH-distance + homotopy equivalence, persistent-homology barcode, EME tracking functor, path-integral amplitude assignment).
+- IG10 exponential-map: needs shortest-path-counting infrastructure.
+- IB2 commutator-vanishing: needs multi-way system infrastructure.
+- ID7 spectral dimension: heat trace defined; small-`t` asymptotics pending.
 
 **The honest bridges proved so far** (task R-group, see task list):
 - Flat GH limits (cycle→S¹, path, torus, lattice→Minkowski).
@@ -162,7 +166,7 @@ Total for new groups: **57/57** addressed. But honest breakdown:
 **The real-work items tracked explicitly** (#176-#180, R1–R5):
 - ✅ **R1**: C² Taylor convergence for scaled second difference (`CTwoTaylor.lean`). Unlocks all non-polynomial bridges.
 - ✅ **R2**: `laplacianMatrix` + `heatKernel` via Matrix.exp (`LaplacianMatrix.lean`). Heat propagator as `exp(t · Δ)`, semigroup property, symmetry, row-sum zero, heat trace.
-- 🟡 **R3 (partial)**: ℓ²(BranchialSlice) Hilbert space (`BranchialHilbert.lean`) — `BranchialHilbert S := EuclideanSpace ℂ S` finite-dim ℂ-Hilbert alias; `branchialAdjLM` ℂ-linear adjacency operator; `branchialAdjLM_inner` self-adjointness for symmetric adjacency. Remaining: unitary branchial evolution `exp (i·t·A)`.
+- ✅ **R3 (closed)**: ℓ²(BranchialSlice) Hilbert space (`BranchialHilbert.lean` + `BranchialSchrodinger.lean`) — `BranchialHilbert S := EuclideanSpace ℂ S` finite-dim ℂ-Hilbert alias; `branchialAdjLM` ℂ-linear adjacency operator + `branchialAdjLM_inner` self-adjointness for symmetric adjacency; `branchialSchrodinger_unitary_evolution` proves the unitary branchial evolution (discrete Schrödinger on the slice conserves total probability `∑(u² + v²)`). Born rule + uniform measure + observables + expectation values also in place. Closes I2/I3/I4/I5/I6/I7/I9.
 - 🔲 **R4**: Curved discrete-Ricci convergence (first non-flat case).
 - ✅ **R5**: Cycle Laplacian spectrum closed form (`CycleSpectrum.lean`, full wrap-around).
 
