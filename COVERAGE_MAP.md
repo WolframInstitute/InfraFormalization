@@ -111,7 +111,7 @@ Pending in this group: B2 Schwarzschild Riemann components, B3 `Ric = 0`, B4 vac
 |---|---|---|
 | `HypergraphDistance.lean` | `Hypergraph.dist`, `geodesicBall`, `geodesicBallVolume`, `localDimension`, `wolframHausdorffDimension`, `plateauDimension`; cycle: `Adj_iff`, `succ_pred_adj`, `ballVolume_one_ge_three`; **`dist_triangle` + `dist_triangle_of_reachable_{left,right}`** (T3); **`cycleHypergraph_reachable_zero`**, **`cycleHypergraph_connected`**, **`cycleHypergraph_dist_triangle`** | ✅ ID1 + T3 triangle inequality |
 | `HypergraphMeasure.lean` | `countingMeasure`, `uniformProbability`, `pushforwardCounting`, `pushforwardUniform`; `countingMeasure_univ = |V|`, `uniformProbability_univ = 1` | ✅ A5 |
-| `RemainingObligations.lean` | T6 partial upgrade: **`ReverseEngineeringObligation`** (IR7) and **`DimensionCompatibilityObligation`** (ID6) now state real content (no longer `True ∧ False`). Five others remain at stub level. `five_stub_obligations_open` certifies the stubs are uninhabited. | ✅ T6 (2/7 upgraded) |
+| `RemainingObligations.lean` | T6 partial upgrade: **`ReverseEngineeringObligation`** (IR7), **`DimensionCompatibilityObligation`** (ID6), and **`FubiniStudyLimitObligation`** (IQ6, also proved as `fubiniStudyBhattacharyya_bound`) now state real content (no longer `True ∧ False`). Four others remain at stub level. `four_stub_obligations_open` certifies the stubs are uninhabited. | ✅ T6 (3/7 upgraded) |
 | `RuleDimensionBounds.lean` | `Trajectory.StepConsistent`, `trajectory_size_invariant`, `geodesicBallVolume_le_card` | ✅ IR2 |
 
 Pending in ID: ID2 plateau detection, ID3 homology dim, ID4 coordinatization dim, ID5 causal-graph dim, ID6 compatibility theorem, ID7 spectral dim via `Matrix.exp`.

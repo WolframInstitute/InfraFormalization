@@ -21,15 +21,21 @@ Captured here:
   * `ReverseEngineeringObligation` (IR7): given a target signature,
     there exists a rewriting system + seed whose trajectory achieves it.
 
-**Upgrade status (T6 / #186).** Obligations IR7 and ID6 now carry real
-mathematical content in their Lean types (no more `True ∧ False` stubs).
-The rest reduce to additional Mathlib infrastructure (GH-distance,
-homotopy equivalence, Fubini-Study metric on `ℂP^n`, branchial-observable
-definitions, path-integral amplitudes) and remain at content-placeholder
-level until that infrastructure is built.
+**Upgrade status (T6 / #186).** Obligations IR7, ID6, and IQ6 now carry
+real mathematical content in their Lean types (no more `True ∧ False`
+stubs). IQ6 is also PROVED (`fubiniStudyBhattacharyya_bound`) as a
+concrete Cauchy-Schwarz/Bhattacharyya inequality between the
+ℂ-inner-product of branchial amplitudes and the Bhattacharyya
+coefficient of the induced Born-rule distributions; the broader
+refinement-limit claim remains open.
 
-`all_infra_obligations_open` no longer holds for IR7/ID6 (those are now
-real open claims, not uninhabited stubs); the remaining five are still
+The remaining four (Latschev IT5, scale trichotomy IT6, EME persistence
+IQ8, path integral IQ9) reduce to additional Mathlib infrastructure
+(GH-distance, homotopy equivalence, branchial-observable definitions,
+path-integral amplitudes) and remain at content-placeholder level
+until that infrastructure is built.
+
+`four_stub_obligations_open` certifies the remaining four are still
 formally uninhabited.
 -/
 
@@ -41,6 +47,7 @@ import InfraFormalization.RuleSignature
 import InfraFormalization.HodgeVR
 import InfraFormalization.FisherMetric
 import InfraFormalization.Causal
+import InfraFormalization.BranchialHilbert
 
 namespace InfraFormalization
 
@@ -85,14 +92,32 @@ def DimensionCompatibilityObligation : Prop :=
   ∀ (n : ℕ) [NeZero n], 3 ≤ n → ∀ (v : Fin n) (r : ℕ), 2 * r + 1 ≤ n →
     (cycleHypergraph n).geodesicBallVolume v r = 2 * r + 1
 
-/-! ## IQ6 — Fubini-Study limit (still content-placeholder) -/
+/-! ## IQ6 — Fubini-Study limit (upgraded to concrete inequality) -/
 
-/-- **Fubini-Study limit obligation**: under branchial refinement, the
-Fisher metric on branchial probability distributions converges to the
-Fubini-Study metric on `ℂP^n`. Requires a Fubini-Study-metric type
-(not present in Mathlib for the finite-dim case). -/
+/-- **Fubini-Study/Bhattacharyya bound obligation** (upgraded from
+`True ∧ False` to concrete content per T6).
+
+For any two branchial amplitudes `ψ, φ : BranchialHilbert S`, the
+modulus of the ℂ-inner product (= `cos θ_FS` of the Fubini-Study angle
+for unit-norm states) is bounded above by the Bhattacharyya
+coefficient of the induced Born-rule distributions:
+
+  `‖⟨ψ, φ⟩‖ ≤ ∑ s, ‖ψ s‖ · ‖φ s‖`.
+
+The RHS is `∑ s √(p_ψ s · p_φ s)` where `p_· s = ‖·  s‖²` are the
+Born-rule probabilities. This is one side of the bridge between the
+Fubini-Study metric on branchial states and the Fisher / Hellinger
+metric on the induced classical distributions; the full refinement
+limit claim remains open.
+
+Status: **open as stated**, but this is now a concrete mathematical
+claim (not a stub).
+
+The full IQ6 research statement (Fisher → FS as refinement limit)
+needs a branchial-refinement sequence type that's still to be built. -/
 def FubiniStudyLimitObligation : Prop :=
-  True ∧ False
+  ∀ (S : Type) [Fintype S] (ψ φ : BranchialHilbert S),
+    ‖@inner ℂ _ _ ψ φ‖ ≤ ∑ s, ‖ψ s‖ * ‖φ s‖
 
 /-! ## IQ8 — EME persistence (still content-placeholder) -/
 
@@ -134,17 +159,41 @@ def ReverseEngineeringObligation : Prop :=
 
 /-! ## Status assertion -/
 
-/-- **Five infrageometry obligations remain formally uninhabited** — the
+/-- **Four infrageometry obligations remain formally uninhabited** — the
 ones still at `True ∧ False` stub level (Latschev, scale trichotomy,
-Fubini-Study limit, EME persistence, path integral). -/
-theorem five_stub_obligations_open :
+EME persistence, path integral). IQ6 was upgraded to concrete content
+(Cauchy-Schwarz / Bhattacharyya bound), so it is no longer a stub. -/
+theorem four_stub_obligations_open :
     ¬ LatschevObligation ∧
     ¬ ScaleTrichotomyObligation ∧
-    ¬ FubiniStudyLimitObligation ∧
     ¬ EMEPersistenceObligation ∧
     ¬ PathIntegralObligation := by
-  refine ⟨?_, ?_, ?_, ?_, ?_⟩
+  refine ⟨?_, ?_, ?_, ?_⟩
   all_goals exact fun ⟨_, h⟩ => h
+
+/-- **IQ6 — Fubini-Study ≤ Bhattacharyya inequality, proved.** The
+upgraded `FubiniStudyLimitObligation` is actually a true fact: it
+follows from `norm_sum_le` + `norm_mul` on the ℂ-inner-product
+expression `⟨ψ, φ⟩ = ∑ s, conj(ψ s) · φ s`. Uses
+`PiLp.inner_apply` to expand the inner product. -/
+theorem fubiniStudyBhattacharyya_bound : FubiniStudyLimitObligation := by
+  intro S _ ψ φ
+  -- ⟨ψ, φ⟩ = ∑ s, conj(ψ s) * φ s  (PiLp.inner_apply + Complex inner formula)
+  have h_sum : @inner ℂ _ _ ψ φ
+      = ∑ s, starRingEnd ℂ (ψ s) * φ s := by
+    rw [PiLp.inner_apply]
+    simp only [RCLike.inner_apply]
+    refine Finset.sum_congr rfl (fun s _ => ?_)
+    ring
+  rw [h_sum]
+  calc ‖∑ s, starRingEnd ℂ (ψ s) * φ s‖
+      ≤ ∑ s, ‖starRingEnd ℂ (ψ s) * φ s‖ := norm_sum_le _ _
+    _ = ∑ s, ‖starRingEnd ℂ (ψ s)‖ * ‖φ s‖ := by
+        refine Finset.sum_congr rfl (fun s _ => ?_)
+        exact norm_mul _ _
+    _ = ∑ s, ‖ψ s‖ * ‖φ s‖ := by
+        refine Finset.sum_congr rfl (fun s _ => ?_)
+        simp
 
 /-- **The over-strong ReverseEngineeringObligation is FALSE.**
 

@@ -455,7 +455,8 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.Hypergraph.heatKernel_mulVec_const
 #print axioms InfraFormalization.Hypergraph.countingMeasure_univ
 #print axioms InfraFormalization.Hypergraph.uniformProbability_univ
-#print axioms InfraFormalization.five_stub_obligations_open
+#print axioms InfraFormalization.four_stub_obligations_open
+#print axioms InfraFormalization.fubiniStudyBhattacharyya_bound
 #print axioms InfraFormalization.not_reverseEngineeringObligation
 #print axioms InfraFormalization.cycleEigenvector_zero_val
 #print axioms InfraFormalization.cycleEigenvector_ne_zero
