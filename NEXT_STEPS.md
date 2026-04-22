@@ -4,6 +4,8 @@ Lives next to [`README.md`](README.md) / [`INDEX.md`](INDEX.md) / [`FINDINGS.md`
 
 ## Recently shipped (selected highlights)
 
+- **T6 partial / Upgrade obligations to real content** (`RemainingObligations.lean`, #186): IR7 `ReverseEngineeringObligation` and ID6 `DimensionCompatibilityObligation` now carry real Lean content (existence of rule for target signature; exact `2r+1` ball-volume on the cycle). Five others (Latschev IT5, scale trichotomy IT6, Fubini-Study limit IQ6, EME persistence IQ8, path integral IQ9) remain `True ∧ False` pending additional Mathlib infrastructure.
+- **A5 / Counting measure on Hypergraph V + pushforward** (`HypergraphMeasure.lean`): `countingMeasure`, `uniformProbability`, `pushforwardCounting`, `pushforwardUniform`. Unblocks A6/A7.
 - **D2 / Heat equation existence + forward uniqueness** (`HeatEquationUniqueness.lean`): `heat_exists` (via heatKernel T1), `heat_unique_forward` (via L² antitone applied to difference of solutions), `heat_exists_unique_forward`. Closes D2 modulo two-sided uniqueness (fails generically — heat equation is irreversible).
 - **T4 / Cycle spectrum in `HasEigenvalue` form** (`CycleHasEigenvalue.lean`): `laplacianMatrix_cycleHypergraph_hasEigenvalue` — `Module.End.HasEigenvalue (Matrix.toLin' (laplacianMatrix (cycleHypergraph n))) (cycleEigenvalue n k)`. Connects pointwise eigenvalue theorem to Mathlib's spectral API.
 - **T2 / Matrix exp fixes eigenvectors** (`ExpEigenvector.lean`): `exp_mulVec_of_eigenvector` — if `A.mulVec v = λ • v`, then `(NormedSpace.exp A).mulVec v = Real.exp λ • v`. Proved via `exp_eq_tsum_rat` (series definition) + `ContinuousLinearMap.map_tsum` + inductive `matrix_pow_mulVec_of_eigenvector` + `Real.summable_pow_div_factorial`. General operator fact; underpins T4 + ID7.

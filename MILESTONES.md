@@ -308,7 +308,7 @@ Full collation of the post-phase-1 infrageometry programme. Each group is a cohe
 - [ ] M10 3BP / dynamical-systems dimension signature (#175).
 
 ### Remaining-obligations module
-- [x] `RemainingObligations.lean`: formal `∧ False` Props for the deferred IT5, IT6, ID6, IQ6, IQ8, IQ9, IR7 — no silent assumptions; `all_infra_obligations_open` certifies they're uninhabited until proven.
+- [~] `RemainingObligations.lean`: **T6 partial upgrade (2/7 done)**. IR7 `ReverseEngineeringObligation` and ID6 `DimensionCompatibilityObligation` now state real mathematical content in Lean types (existence of rule producing target signature; exact ball-volume formula on the cycle respectively). Five others (Latschev IT5, scale trichotomy IT6, Fubini-Study limit IQ6, EME persistence IQ8, path integral IQ9) remain at `True ∧ False` stub level pending additional Mathlib infrastructure; `five_stub_obligations_open` certifies those stubs are uninhabited.
 
 ## Phase 2 — Corrected continuum identities (Lean)
 
