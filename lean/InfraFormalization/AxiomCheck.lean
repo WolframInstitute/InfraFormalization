@@ -92,6 +92,7 @@ import InfraFormalization.Refutations.F2Orthonormality
 import InfraFormalization.Refutations.F3Tautology
 import InfraFormalization.Refutations.F4Tautology
 import InfraFormalization.Refutations.F5Illdefined
+import InfraFormalization.Refutations.F6Circularity
 
 #print axioms InfraFormalization.edge_conservation
 #print axioms InfraFormalization.trajectory_preserves_size
@@ -490,6 +491,8 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.cycleEigenvector_first_half_orthogonal
 #print axioms InfraFormalization.cycleEigenvalue_four_two
 #print axioms InfraFormalization.cycleEigenvalue_four_one
+#print axioms InfraFormalization.Refutations.circular_reconstruction_has_no_content
+#print axioms InfraFormalization.Refutations.circular_procedure_is_identity
 #print axioms InfraFormalization.branchialSliceAdj_symm
 #print axioms InfraFormalization.branchialSliceHamiltonian_isSymm
 #print axioms InfraFormalization.branchial_qm_is_rewriting_grounded

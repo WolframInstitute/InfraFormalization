@@ -68,6 +68,7 @@ import InfraFormalization.Refutations.F2Orthonormality
 import InfraFormalization.Refutations.F3Tautology
 import InfraFormalization.Refutations.F4Tautology
 import InfraFormalization.Refutations.F5Illdefined
+import InfraFormalization.Refutations.F6Circularity
 
 -- Discrete calculus (Rung 1 of the bridge ladder)
 import InfraFormalization.DiscreteCalculus
