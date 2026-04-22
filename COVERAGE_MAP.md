@@ -37,6 +37,7 @@ Legend: ✅ proved, axiom-clean. 🟡 partial. 🔲 open. 🚫 uninhabited forma
 | `LaplacianMatrix.lean` | `laplacianMatrixEdge`, `laplacianMatrix`, `laplacianMatrix_mulVec`, `heatKernel = exp(t · Δ)`, `heatKernel_zero`, `heatKernel_add`, `heatTrace`, `laplacianMatrix_symm`, `laplacianMatrix_row_sum`, `laplacianMatrix_mulVec_const` | ✅ R2 / D3 |
 | `CycleMatrixSpectrum.lean` | Matrix eigenvalue equation: `laplacianMatrix (cycleHypergraph n) * cycleEigenvector = cycleEigenvalue • cycleEigenvector` | ✅ |
 | `HeatKernelODE.lean` | **T1**: ODE ↔ matrix heat kernel unification. `hasDerivAt_heatKernel`, `heatKernel_commute_laplacianMatrix`, `hasDerivAt_heatKernel_mulVec`, **`heatKernel_isHeatSolution`** (the matrix heatKernel satisfies `HeatSolution H`). `mulVecEvalCLM` helper. | ✅ T1 |
+| `ExpEigenvector.lean` | **T2**: matrix exp fixes eigenvectors. `mulVecCLM` (mulVec as a CLM in the matrix argument), `matrix_pow_mulVec_of_eigenvector` (`A^n.mulVec v = λ^n • v` by induction), **`exp_mulVec_of_eigenvector`**: if `A.mulVec v = λ • v`, then `(NormedSpace.exp A).mulVec v = Real.exp λ • v`. Via `exp_eq_tsum_rat` + `ContinuousLinearMap.map_tsum` + `Real.summable_pow_div_factorial`. | ✅ T2 |
 
 ## 3. PDE ladder on `Hypergraph V`
 

@@ -75,6 +75,7 @@ import InfraFormalization.CycleEigenLimit
 import InfraFormalization.ScaledDiffC2Bridge
 import InfraFormalization.LaplacianMatrix
 import InfraFormalization.HeatKernelODE
+import InfraFormalization.ExpEigenvector
 import InfraFormalization.CycleMatrixSpectrum
 import InfraFormalization.Refutations.F1NoMetric
 import InfraFormalization.Refutations.F2Orthonormality
@@ -434,3 +435,5 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.Hypergraph.heatKernel_commute_laplacianMatrix
 #print axioms InfraFormalization.Hypergraph.hasDerivAt_heatKernel_mulVec
 #print axioms InfraFormalization.Hypergraph.heatKernel_isHeatSolution
+#print axioms InfraFormalization.Hypergraph.matrix_pow_mulVec_of_eigenvector
+#print axioms InfraFormalization.Hypergraph.exp_mulVec_of_eigenvector
