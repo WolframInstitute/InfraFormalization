@@ -56,6 +56,29 @@ theorem cycleEigenvalue_zero (n : ℕ) : cycleEigenvalue n 0 = 0 := by
   unfold cycleEigenvalue
   simp
 
+/-- **First nonzero eigenvalue is strictly negative** (spectral gap).
+For `n ≥ 2`, `cycleEigenvalue n 1 = −4 sin²(π/n) < 0`. The absolute
+value `4 sin²(π/n)` is the spectral gap — the slowest heat-decay rate
+for non-constant initial data on the cycle. -/
+theorem cycleEigenvalue_one_neg {n : ℕ} (hn : 2 ≤ n) :
+    cycleEigenvalue n 1 < 0 := by
+  unfold cycleEigenvalue
+  have hn_pos : (0 : ℝ) < n := by exact_mod_cast (by omega : 0 < n)
+  have h_arg_pos : 0 < π / n := div_pos Real.pi_pos hn_pos
+  have h_arg_le : π / n ≤ π / 2 := by
+    apply div_le_div_of_nonneg_left Real.pi_pos.le (by norm_num) (by exact_mod_cast hn)
+  have h_arg_lt_pi : π / n < π := by
+    rw [div_lt_iff₀ hn_pos]
+    have hpi : 0 < π := Real.pi_pos
+    have hn_ge_two : (2 : ℝ) ≤ n := by exact_mod_cast hn
+    nlinarith
+  have h_sin_pos : 0 < sin (π / n) :=
+    Real.sin_pos_of_pos_of_lt_pi h_arg_pos h_arg_lt_pi
+  have h_sin_sq_pos : 0 < (sin (π / n))^2 := by positivity
+  have h_cast : π * (1 : ℕ) / n = π / n := by push_cast; ring
+  rw [h_cast]
+  nlinarith
+
 /-! ## Algebraic identity: sum-to-product form for the eigenvalue.
 
 Given `A, B : ℝ`:

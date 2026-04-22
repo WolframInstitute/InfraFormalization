@@ -412,6 +412,7 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.cycleLaplacian_eigen
 #print axioms InfraFormalization.cycleEigenvalue_nonpos
 #print axioms InfraFormalization.cycleEigenvalue_zero
+#print axioms InfraFormalization.cycleEigenvalue_one_neg
 #print axioms InfraFormalization.taylorWithinEval_two_univ
 #print axioms InfraFormalization.taylor_remainder_pos_tendsto
 #print axioms InfraFormalization.taylor_remainder_neg_tendsto
