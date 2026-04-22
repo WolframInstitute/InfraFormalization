@@ -109,6 +109,7 @@ import InfraFormalization.StressEnergyTensor
 #print axioms InfraFormalization.zero_stressEnergyTensor_weakEnergy
 #print axioms InfraFormalization.zero_stressEnergyTensor_nullEnergy
 #print axioms InfraFormalization.penrose_obligation_vacuous_if_no_trapped
+#print axioms InfraFormalization.raychaudhuri_trivially_satisfied_at_zero
 #print axioms InfraFormalization.CausalGraph.self_mem_lightCone
 #print axioms InfraFormalization.CausalGraph.causalFuture_trans
 #print axioms InfraFormalization.CausalGraph.chronological_implies_causal

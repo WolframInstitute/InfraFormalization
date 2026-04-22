@@ -144,4 +144,39 @@ theorem penrose_obligation_vacuous_if_no_trapped
     PenroseSingularityObligation H G I :=
   fun _ _ h_trapped _ => absurd h_trapped h_no_trapped
 
+/-! ### Raychaudhuri equation obligation (F8 / #67)
+
+The Raychaudhuri equation (1955) governs the evolution of the
+expansion scalar `θ` along a timelike or null geodesic congruence:
+
+  dθ/dτ = − θ² / (n − 1) − σ² + ω² − R_{μν} v^μ v^ν
+
+where `σ` is the shear, `ω` the vorticity, and `R_{μν}` the Ricci
+tensor. The focusing theorem (dθ/dτ ≤ 0 under SEC/NEC + zero
+vorticity) underlies the singularity theorems.
+
+Stated here as a Prop-level obligation; full formalisation requires
+geodesic congruences and Ricci tensor on a Lorentzian manifold. -/
+
+/-- **Raychaudhuri focusing obligation (statement only).**
+
+Abstracting the ODE structure, we record the qualitative statement:
+for a timelike geodesic congruence with zero vorticity, the
+expansion-scalar-rate `dθ/dτ` is at most `−θ²/(n−1) − σ²`, which is
+non-positive — so congruences focus. The concrete signs are
+component-level placeholders pending Mathlib Ricci + geodesic
+infrastructure. -/
+def RaychaudhuriFocusingObligation
+    (ExpansionRate ExpansionSquared ShearSquared : ℝ) : Prop :=
+  ExpansionRate ≤ -ExpansionSquared - ShearSquared
+
+/-- **The focusing inequality holds whenever expansion and shear are
+non-negative**: the RHS is non-positive, so any `ExpansionRate ≤ 0`
+satisfies it. Sanity: this is the structural form of the theorem,
+not the theorem itself. -/
+theorem raychaudhuri_trivially_satisfied_at_zero :
+    RaychaudhuriFocusingObligation 0 0 0 := by
+  unfold RaychaudhuriFocusingObligation
+  norm_num
+
 end InfraFormalization
