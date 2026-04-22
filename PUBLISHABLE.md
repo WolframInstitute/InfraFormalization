@@ -31,6 +31,7 @@ Grouped from most-immediate (parts already done) to most-ambitious.
 - F4: `Refutations.F4Tautology.gorard_causal_invariance_is_general_covariance` (axiom-free)
 - F5: `Refutations.F5Illdefined.becomes_is_underdetermined`
 - F6: `Refutations.F6Circularity.circular_reconstruction_has_no_content` (formal refutation of Gorard's circular "derivation" at the type level); also `DiscreteDAlembertian.BenincasaDowkerConjecture` (explicit unproven-load-bearing flag on the conjectured side).
+- F7: `Refutations.F7NamedRuleStructure.namedRule_trajectory_edge_count_fixed` + `isConservative_implies_structurallyOneDim` (structural barrier to 4D continuum limit for any conservative rule).
 - F7: `Application.size_result_of_conservative`
 
 ## P2 — Corrected continuum identities formalised

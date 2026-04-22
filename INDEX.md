@@ -188,6 +188,7 @@ Every Lean file has a doc comment describing its role. Built on Mathlib via Lake
 | [`lean/InfraFormalization/Refutations/F4Tautology.lean`](lean/InfraFormalization/Refutations/F4Tautology.lean) | **F4 refuted**: "causal invariance ⇔ general covariance" is `Iff.rfl` (axiom-free). |
 | [`lean/InfraFormalization/Refutations/F5Illdefined.lean`](lean/InfraFormalization/Refutations/F5Illdefined.lean) | **F5 refuted**: "discrete sum becomes integral" is under-determined without a convergence notion. |
 | [`lean/InfraFormalization/Refutations/F6Circularity.lean`](lean/InfraFormalization/Refutations/F6Circularity.lean) | **F6 refuted**: Gorard 2102.09363 "provably satisfies EFE" follows the Poisson-sprinkle + BD-reconstruct schema, which is CircularReconstruction; `circular_reconstruction_has_no_content` (0 axioms) proves this procedure produces its input identically. The "derivation" is mathematically content-free. |
+| [`lean/InfraFormalization/Refutations/F7NamedRuleStructure.lean`](lean/InfraFormalization/Refutations/F7NamedRuleStructure.lean) | **F7 refuted**: Gorard's named rule `{{x,y},{y,z},{z,w},{w,v}} → {{y,u},{u,v},{w,x},{x,u}}` is conservative (|LHS|=|RHS|=4). `namedRule_trajectory_edge_count_fixed` + `isConservative_implies_structurallyOneDim` show edge count is preserved on every trajectory, so the causal DAG has in-degree exactly 4 per event — forcing linear cone growth and ruling out the 4D continuum limit Gorard's §3.3 requires. |
 
 ## Primary sources (read-only)
 
