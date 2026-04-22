@@ -194,6 +194,17 @@ theorem laplacianMatrix_symm (H : Hypergraph V) :
     simp only [Multiset.map_cons, Multiset.sum_cons, Matrix.add_apply]
     rw [ih, laplacianMatrixEdge_symm e u v]
 
+/-- **Heat kernel is symmetric.** Since `laplacianMatrix H` is symmetric,
+`t • laplacianMatrix H` is symmetric, and `Matrix.exp` of a symmetric
+matrix is symmetric (via `Matrix.IsSymm.exp`). -/
+theorem heatKernel_symm (H : Hypergraph V) (t : ℝ) :
+    (heatKernel H t).IsSymm := by
+  unfold heatKernel
+  have h_sym : (t • laplacianMatrix H).IsSymm := by
+    unfold Matrix.IsSymm
+    rw [Matrix.transpose_smul, (laplacianMatrix_symm H).eq]
+  exact h_sym.exp
+
 /-! ## Heat kernel trace -/
 
 /-- **Heat trace** `Tr(exp(−t Δ_H))`: the fundamental object whose
