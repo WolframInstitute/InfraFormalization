@@ -115,5 +115,7 @@ import InfraFormalization.FormCochainIntegration
 import InfraFormalization.BlowupOperations
 import InfraFormalization.CoordinatizationDimension
 import InfraFormalization.CandidateRuleDatabase
+import InfraFormalization.MarzkeWheeler
+import InfraFormalization.BlowupLieAlgebra
 import InfraFormalization.ContinuumLimitStatement
 import InfraFormalization.DiscreteDAlembertian
