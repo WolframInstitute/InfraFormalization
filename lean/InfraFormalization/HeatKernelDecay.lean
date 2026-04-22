@@ -84,6 +84,17 @@ theorem heatKernel_cycleHypergraph_nonzero_mode_tendsto_zero
       atTop (𝓝 0) := Real.tendsto_exp_atBot.comp h_inner
   simpa using h_exp_tendsto.mul_const (cycleEigenvector n k i)
 
+/-- **Heat kernel preserves the constant eigenvector** on the cycle.
+Corollary of `heatKernel_cycleHypergraph_mulVec_eigenvector` at `k = 0`:
+since `cycleEigenvalue n 0 = 0` and `Real.exp 0 = 1`, the heat flow
+of `cycleEigenvector n 0` is just `cycleEigenvector n 0` itself. -/
+theorem heatKernel_cycleHypergraph_constMode_invariant
+    {n : ℕ} [NeZero n] (hn : 2 ≤ n) (t : ℝ) :
+    (Hypergraph.heatKernel (cycleHypergraph n) t).mulVec (cycleEigenvector n 0)
+      = cycleEigenvector n 0 := by
+  rw [heatKernel_cycleHypergraph_mulVec_eigenvector hn 0 t]
+  rw [cycleEigenvalue_zero, mul_zero, Real.exp_zero, one_smul]
+
 /-- **Linear combination of constant + one non-constant mode**: the heat
 kernel applied to `c · v_0 + d · v_k` tends to `c · v_0` pointwise as
 `t → ∞`, because the constant mode (`k = 0`) is preserved while any
