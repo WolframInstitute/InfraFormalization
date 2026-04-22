@@ -100,6 +100,8 @@ import InfraFormalization.Refutations.F7NamedRuleStructure
 #print axioms InfraFormalization.Application.size_result_of_conservative
 #print axioms InfraFormalization.size_preserved_by_applications
 #print axioms InfraFormalization.growthExponentAtMost_of_linear
+#print axioms InfraFormalization.boundedConeOfConservativeObligation
+#print axioms InfraFormalization.noHigherDimLimitObligation
 #print axioms InfraFormalization.in_degree_eq_lhsSize
 #print axioms InfraFormalization.out_degree_eq_rhsSize
 #print axioms InfraFormalization.balanced_of_conservative

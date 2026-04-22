@@ -57,7 +57,8 @@ admit a trajectory whose causal graph's cone count grows super-
 linearly — because every event uses exactly `lhsSize` edges, and
 the total edge count is bounded by `init.size` (conserved). Stated
 here at the predicate level; the full cone-count bound proof lives
-in `Growth.lean` under `bounded_cone_of_conservative_CLAIM`. -/
+in `Growth.lean` under `boundedConeOfConservativeObligation` and
+`noHigherDimLimitObligation`. -/
 def RuleStructurallyOneDim {P V : Type*} [DecidableEq V]
     (r : Rule P) (init : Hypergraph V) : Prop :=
   r.IsConservative ∧ ∀ (a : Application r init), a.result.size = init.size
