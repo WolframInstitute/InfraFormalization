@@ -110,5 +110,10 @@ import InfraFormalization.HomologyDimension
 import InfraFormalization.CausalDimension
 import InfraFormalization.EPSAxioms
 import InfraFormalization.DeRham
+import InfraFormalization.MultiFibrationProjection
+import InfraFormalization.FormCochainIntegration
+import InfraFormalization.BlowupOperations
+import InfraFormalization.CoordinatizationDimension
+import InfraFormalization.CandidateRuleDatabase
 import InfraFormalization.ContinuumLimitStatement
 import InfraFormalization.DiscreteDAlembertian
