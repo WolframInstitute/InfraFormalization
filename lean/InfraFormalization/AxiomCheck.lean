@@ -453,3 +453,4 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.Hypergraph.heatSolution_sub
 #print axioms InfraFormalization.Hypergraph.heat_unique_forward
 #print axioms InfraFormalization.Hypergraph.heat_exists_unique_forward
+#print axioms InfraFormalization.Hypergraph.heatKernel_mass_conservation

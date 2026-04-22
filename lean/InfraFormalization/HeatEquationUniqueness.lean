@@ -113,5 +113,22 @@ theorem heat_exists_unique_forward (H : Hypergraph V) (u₀ : V → ℝ) :
   intro u' h_u' h_u'_init t ht
   exact heat_unique_forward H h_u' h_heat (h_u'_init.trans h_init.symm) ht
 
+/-- **Matrix-level mass conservation for the heat kernel.** For any
+initial data `u₀` and time `t`, the total mass `∑_v u₀(v)` is preserved
+under heat-kernel evolution: `∑_v (heatKernel H t).mulVec u₀ v = ∑_v u₀ v`.
+
+Composes `heatKernel_isHeatSolution` (T1) with the ODE-level
+`heat_mass_conservation`. -/
+theorem heatKernel_mass_conservation (H : Hypergraph V) (u₀ : V → ℝ) (t : ℝ) :
+    ∑ v : V, (heatKernel H t).mulVec u₀ v = ∑ v : V, u₀ v := by
+  have h_heat : HeatSolution H (fun s v => (heatKernel H s).mulVec u₀ v) :=
+    heatKernel_isHeatSolution H u₀
+  have h_mass := heat_mass_conservation H h_heat t
+  have h_init : (fun v => (heatKernel H 0).mulVec u₀ v) = u₀ := by
+    funext v
+    rw [heatKernel_zero, Matrix.one_mulVec]
+  rw [h_mass]
+  exact congr_arg _ h_init
+
 end Hypergraph
 end InfraFormalization
