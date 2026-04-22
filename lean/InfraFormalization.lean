@@ -89,6 +89,7 @@ import InfraFormalization.KleinGordon
 import InfraFormalization.ScalarField
 import InfraFormalization.HypergraphCycleBridge
 import InfraFormalization.HypergraphDistance
+import InfraFormalization.HypergraphMeasure
 import InfraFormalization.RuleDimensionBounds
 import InfraFormalization.FiberedGraph
 import InfraFormalization.CausalGraphType

@@ -347,7 +347,7 @@ Full collation of the post-phase-1 infrageometry programme. Each group is a cohe
 - [x] Benincasa–Dowker discrete d'Alembertian on a causal graph (`DiscreteDAlembertian.lean`): BD-4D operator, action, EL, F6 flagged as explicit Prop obligation.
 - [x] Vietoris-Rips complex + Hodge Laplacian on a hypergraph (`VietorisRips.lean`, `HodgeVR.lean`).
 - [x] Hypergraph Laplacian as a matrix (`LaplacianMatrix.lean`): symmetric matrix, kills constants, row-sum zero; heat kernel as `Matrix.exp`.
-- [ ] Counting measure on a hypergraph + pushforward (A5 #16 pending).
+- [x] **Counting measure on a hypergraph + pushforward** (`HypergraphMeasure.lean`, A5 #16): `countingMeasure`, `uniformProbability`, `pushforwardCounting`, `pushforwardUniform`; `countingMeasure_univ = |V|`, `uniformProbability_univ = 1`.
 - [x] **Pseudo-metric axioms** proved: `dist_self`, `dist_comm`, **`dist_triangle`** (T3; `Connected` form + conditional `Reachable` forms). `PseudoMetricSpace` instance via ℕ→ℝ cast deferred but all axioms in hand.
 - [ ] Ollivier–Ricci on directed hyperedges, following Eidi–Jost 2019 (statement-only in `Infra/OllivierStatement.lean`).
 - [ ] Convergence results connecting discrete to continuum via random-geometric-graph / Poisson sampling.

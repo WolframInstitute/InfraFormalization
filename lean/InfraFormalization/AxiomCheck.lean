@@ -54,6 +54,7 @@ import InfraFormalization.KleinGordon
 import InfraFormalization.ScalarField
 import InfraFormalization.HypergraphCycleBridge
 import InfraFormalization.HypergraphDistance
+import InfraFormalization.HypergraphMeasure
 import InfraFormalization.RuleDimensionBounds
 import InfraFormalization.FiberedGraph
 import InfraFormalization.CausalGraphType
@@ -440,6 +441,8 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.Hypergraph.matrix_pow_mulVec_of_eigenvector
 #print axioms InfraFormalization.Hypergraph.exp_mulVec_of_eigenvector
 #print axioms InfraFormalization.Hypergraph.heatKernel_mulVec_const
+#print axioms InfraFormalization.Hypergraph.countingMeasure_univ
+#print axioms InfraFormalization.Hypergraph.uniformProbability_univ
 #print axioms InfraFormalization.cycleEigenvector_zero_val
 #print axioms InfraFormalization.cycleEigenvector_ne_zero
 #print axioms InfraFormalization.laplacianMatrix_cycleHypergraph_hasEigenvalue
