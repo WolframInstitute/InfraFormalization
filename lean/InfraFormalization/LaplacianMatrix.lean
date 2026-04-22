@@ -127,5 +127,27 @@ theorem heatKernel_add (H : Hypergraph V) (s t : ℝ) :
         rw [add_smul]; abel]
   exact Matrix.exp_add_of_commute _ _ hcommute
 
+/-- **Laplacian matrix annihilates constants**: for any `c : ℝ`,
+`(laplacianMatrix H).mulVec (fun _ => c) v = 0`. -/
+theorem laplacianMatrix_mulVec_const (H : Hypergraph V) (c : ℝ) (v : V) :
+    (laplacianMatrix H).mulVec (fun _ => c) v = 0 := by
+  rw [laplacianMatrix_mulVec]
+  exact laplacianHyper_const H c v
+
+/-! ## Heat kernel trace -/
+
+/-- **Heat trace** `Tr(exp(−t Δ_H))`: the fundamental object whose
+small-`t` asymptotics `Tr(exp(−t Δ)) ~ C · t^{−d_s/2}` defines the
+**spectral dimension** of a hypergraph (task ID7). -/
+noncomputable def heatTrace (H : Hypergraph V) (t : ℝ) : ℝ :=
+  (heatKernel H t).trace
+
+/-- **Heat trace at `t = 0`** equals the number of vertices: the
+heat kernel at zero time is the identity matrix, whose trace is `|V|`. -/
+theorem heatTrace_zero (H : Hypergraph V) :
+    heatTrace H 0 = (Fintype.card V : ℝ) := by
+  unfold heatTrace
+  rw [heatKernel_zero, Matrix.trace_one]
+
 end Hypergraph
 end InfraFormalization

@@ -414,3 +414,5 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.Hypergraph.laplacianMatrix_mulVec
 #print axioms InfraFormalization.Hypergraph.heatKernel_zero
 #print axioms InfraFormalization.Hypergraph.heatKernel_add
+#print axioms InfraFormalization.Hypergraph.laplacianMatrix_mulVec_const
+#print axioms InfraFormalization.Hypergraph.heatTrace_zero
