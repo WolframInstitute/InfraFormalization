@@ -136,3 +136,4 @@ import InfraFormalization.CycleHasEigenvalue
 import InfraFormalization.ContinuumLimitStatement
 import InfraFormalization.DiscreteDAlembertian
 import InfraFormalization.BranchialHilbert
+import InfraFormalization.HeatKernelDecay

@@ -82,6 +82,7 @@ import InfraFormalization.ExpEigenvector
 import InfraFormalization.CycleMatrixSpectrum
 import InfraFormalization.CycleHasEigenvalue
 import InfraFormalization.BranchialHilbert
+import InfraFormalization.HeatKernelDecay
 import InfraFormalization.Refutations.F1NoMetric
 import InfraFormalization.Refutations.F2Orthonormality
 import InfraFormalization.Refutations.F3Tautology
@@ -468,3 +469,5 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.branchialAdj_add
 #print axioms InfraFormalization.branchialAdj_smul
 #print axioms InfraFormalization.branchialAdjLM_inner
+#print axioms InfraFormalization.heatKernel_cycleHypergraph_firstMode_tendsto_zero
+#print axioms InfraFormalization.heatKernel_cycleHypergraph_nonzero_mode_tendsto_zero

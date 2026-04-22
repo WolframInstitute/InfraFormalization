@@ -54,7 +54,7 @@ All proofs go through `laplacianHyper`. The Hypergraph is the domain; no continu
 | `ScalarField.lean` | Lagrangian + Hamiltonian + EL | `EL ↔ KG` equivalence | ✅ G1 + G3 + G4 |
 | `DiscreteDAlembertian.lean` | BD 4D operator, `discreteAction`, `discreteEL` | BD conjecture flagged | 🟡 operator + action ✅; BD conjecture 🚫 |
 
-Pending in this group: D2 existence-uniqueness, D6 long-time convergence, D7 discrete → continuum heat on GH limit, D11 Choquet-Bruhat.
+Pending in this group: D7 discrete → continuum heat on GH limit, D11 Choquet-Bruhat. D2 existence-uniqueness ✅ (`HeatEquationUniqueness.lean`). D6 long-time convergence ✅ partial (`HeatKernelDecay.lean`: non-constant eigenmodes decay to 0; full D6 needs eigenbasis decomposition of arbitrary initial data).
 
 D3 (heat semigroup via `Matrix.exp`) is now ✅ in `LaplacianMatrix.lean`.
 

@@ -162,7 +162,7 @@ Grouped by phase (see [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md)). Each milestone ei
 - [x] **ODE ↔ matrix heat kernel identification** (`HeatKernelODE.lean`, T1): `heatKernel_isHeatSolution` — the matrix propagator satisfies the `HeatSolution H` ODE predicate. Unifies the two heat-equation definitions.
 - [x] Scaled cycle Laplacian → 1D `d²/dx²` for all C² test functions (R1/A2/A3; `CTwoTaylor.lean` + `ScaledDiffC2Bridge.lean`).
 - [x] **Existence + forward-time uniqueness** (`HeatEquationUniqueness.lean`, D2 #43): `heat_exists` (via heatKernel T1), `heat_unique_forward` (via `heat_L2_antitone`), `heat_exists_unique_forward` package.
-- [ ] Long-time convergence to uniform (once spectral gap proved; D6 #47).
+- [~] Long-time convergence to uniform (D6 #47 partial; `HeatKernelDecay.lean` proves each non-constant eigenmode `1 ≤ k < n` decays coordinate-wise to 0 under heat flow, via strict negativity of `cycleEigenvalue n k` and `Real.tendsto_exp_atBot`; remaining: eigenbasis decomposition of arbitrary initial data).
 - [ ] Scaled discrete heat → continuous heat on GH-limit (D7 #48).
 - [ ] Ollivier-Ricci with full proof (currently statement-only in `Infra/OllivierStatement.lean`).
 - [ ] Choquet-Bruhat Einstein evolution (D11 #52).
