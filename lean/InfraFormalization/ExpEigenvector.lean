@@ -111,5 +111,24 @@ theorem exp_mulVec_of_eigenvector (A : Matrix V V ℝ) (v : V → ℝ) (lam : �
   -- Lift to V → ℝ via HasSum.smul_const.
   exact (h_hasSum.smul_const v).tsum_eq
 
+/-- **Heat kernel preserves constants.** For any `c : ℝ` and `t : ℝ`,
+`(heatKernel H t).mulVec (fun _ => c) = (fun _ => c)`. Corollary of T2
+(`exp_mulVec_of_eigenvector`) with eigenvalue 0: the Laplacian kills
+constants, so `exp(t · Δ)` fixes them.
+
+This is the matrix-level incarnation of heat-equation mass conservation. -/
+theorem heatKernel_mulVec_const (H : Hypergraph V) (c : ℝ) (t : ℝ) :
+    (heatKernel H t).mulVec (fun _ => c) = (fun _ => c) := by
+  unfold heatKernel
+  have h_lapvec_zero : (laplacianMatrix H).mulVec (fun _ : V => c) = 0 := by
+    funext v
+    exact laplacianMatrix_mulVec_const H c v
+  have h_eigen : (t • laplacianMatrix H).mulVec (fun _ : V => c) =
+                 (0 : ℝ) • (fun _ : V => c) := by
+    rw [Matrix.smul_mulVec, h_lapvec_zero, smul_zero, zero_smul]
+  have := exp_mulVec_of_eigenvector (t • laplacianMatrix H) (fun _ => c) 0 h_eigen
+  rw [this]
+  simp
+
 end Hypergraph
 end InfraFormalization
