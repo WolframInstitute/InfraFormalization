@@ -145,6 +145,55 @@ theorem laplacianMatrix_row_sum (H : Hypergraph V) (v : V) :
   simp only [dotProduct, mul_one] at h
   exact h
 
+/-- **Per-edge Laplacian matrix is symmetric**: for each edge `e`,
+`laplacianMatrixEdge e v u = laplacianMatrixEdge e u v` because
+membership `u ∈ e.others v` is symmetric in `(u, v)` when `u ≠ v`,
+and the diagonal `u = v` case reduces to `-|e.others v|` on both
+sides. -/
+theorem laplacianMatrixEdge_symm (e : Hyperedge V) (v u : V) :
+    laplacianMatrixEdge e v u = laplacianMatrixEdge e u v := by
+  unfold laplacianMatrixEdge
+  by_cases huv : u = v
+  · subst huv; rfl
+  · have huv' : v ≠ u := fun h => huv h.symm
+    rw [if_neg huv, if_neg huv']
+    simp only [sub_zero]
+    -- u ∈ e.others v iff v ∈ e.others u (both mean u,v both ∈ e.verts and u ≠ v).
+    have h_iff : (u ∈ e.others v) ↔ (v ∈ e.others u) := by
+      unfold Hyperedge.others
+      constructor
+      · intro h
+        split_ifs at h with hv
+        · rw [Finset.mem_erase] at h
+          rw [if_pos h.2, Finset.mem_erase]
+          exact ⟨huv', hv⟩
+        · exact absurd h (Finset.notMem_empty u)
+      · intro h
+        split_ifs at h with hu
+        · rw [Finset.mem_erase] at h
+          rw [if_pos h.2, Finset.mem_erase]
+          exact ⟨huv, hu⟩
+        · exact absurd h (Finset.notMem_empty v)
+    by_cases h : u ∈ e.others v
+    · rw [if_pos h, if_pos (h_iff.mp h)]
+    · rw [if_neg h, if_neg (fun h' => h (h_iff.mpr h'))]
+
+/-- **Full Laplacian matrix is symmetric**: sum of symmetric
+per-edge matrices is symmetric. -/
+theorem laplacianMatrix_symm (H : Hypergraph V) :
+    (laplacianMatrix H).IsSymm := by
+  unfold Matrix.IsSymm laplacianMatrix
+  funext u v
+  simp only [Matrix.transpose_apply]
+  -- Sum of matrices at (u, v) vs (v, u).
+  show (H.edges.map laplacianMatrixEdge).sum v u
+     = (H.edges.map laplacianMatrixEdge).sum u v
+  induction H.edges using Multiset.induction_on with
+  | empty => simp
+  | cons e es ih =>
+    simp only [Multiset.map_cons, Multiset.sum_cons, Matrix.add_apply]
+    rw [ih, laplacianMatrixEdge_symm e u v]
+
 /-! ## Heat kernel trace -/
 
 /-- **Heat trace** `Tr(exp(−t Δ_H))`: the fundamental object whose

@@ -419,5 +419,7 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.Hypergraph.heatKernel_add
 #print axioms InfraFormalization.Hypergraph.laplacianMatrix_mulVec_const
 #print axioms InfraFormalization.Hypergraph.laplacianMatrix_row_sum
+#print axioms InfraFormalization.Hypergraph.laplacianMatrixEdge_symm
+#print axioms InfraFormalization.Hypergraph.laplacianMatrix_symm
 #print axioms InfraFormalization.Hypergraph.heatTrace_zero
 #print axioms InfraFormalization.laplacianMatrix_cycleHypergraph_eigen
