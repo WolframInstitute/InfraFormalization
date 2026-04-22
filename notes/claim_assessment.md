@@ -69,6 +69,8 @@ Tabulating:
 
 Whether each is "an error of register" or "a deliberate choice" is a question about authorial intent which is outside the mathematical record. What *is* in the mathematical record is that the papers, read literally, do not deliver what the titles and abstracts claim; and that the central mechanism presented as a derivation is, at the Lean-type level, mathematically content-free.
 
+**The pattern is not incidental.** The same fiat orthonormality assumption (G1 §3.2 line 840, reused in G2 §5 and G3 §5), the same undefined discrete `g^ab` (G1 Def 15, reused in G2 §5 and G3 §5), the same treatment of the Sorkin–Benincasa–Dowker conjecture as if it were a settled theorem, and the same Poisson-sprinkle-then-reconstruct procedure recur across four papers over three years. In the published texts, the gap between plausibility argument and derivation, between open conjecture and theorem, between sample-consistency check and "provably satisfies the Einstein field equations" is consistently collapsed in the direction that favours the stronger claim. Whether this is best explained by shorthand, by institutional publication pressure, or by something else is outside the mathematical record; what *is* on the record is the repetition, its direction, and its consequence. The derivations, read as written, are not derivations.
+
 **The central "derivation" in 2102.09363 is circular, and this is now unambiguous, and Lean-formalised (`Refutations/F6Circularity.lean`).** The procedure that produces a "hypergraph satisfying the Einstein field equations" is:
 1. Pick a target manifold (Schwarzschild, Kerr) known a priori.
 2. Poisson-sprinkle vertices into it.
