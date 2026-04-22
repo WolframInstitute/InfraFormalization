@@ -436,6 +436,7 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.cycleHypergraph_reachable_zero
 #print axioms InfraFormalization.cycleHypergraph_connected
 #print axioms InfraFormalization.cycleHypergraph_dist_triangle
+#print axioms InfraFormalization.cycleHypergraph_ballVolume_one_exact
 #print axioms InfraFormalization.Hypergraph.hasDerivAt_heatKernel
 #print axioms InfraFormalization.Hypergraph.heatKernel_commute_laplacianMatrix
 #print axioms InfraFormalization.Hypergraph.hasDerivAt_heatKernel_mulVec

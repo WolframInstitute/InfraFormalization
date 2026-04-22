@@ -456,4 +456,59 @@ theorem cycleHypergraph_dist_triangle {n : Nat} [NeZero n] (hn : 2 ≤ n)
       (cycleHypergraph n).dist u v + (cycleHypergraph n).dist v w :=
   Hypergraph.dist_triangle _ (cycleHypergraph_connected hn) u v w
 
+/-- **Exact ball volume at radius 1** on `cycleHypergraph n` for `n ≥ 3`:
+`geodesicBallVolume v 1 = 3`. Combined with `_one_ge_three` for the
+lower bound and a direct upper bound from `dist ≤ 1 ⇒ Adj ∨ =`. -/
+theorem cycleHypergraph_ballVolume_one_exact {n : Nat} [NeZero n]
+    (hn : 3 ≤ n) (v : Fin n) :
+    (cycleHypergraph n).geodesicBallVolume v 1 = 3 := by
+  have hn2 : 2 ≤ n := by omega
+  refine le_antisymm ?_ (cycleHypergraph_ballVolume_one_ge_three hn v)
+  -- Upper bound: ball v 1 ⊆ {v, v+1, v-1}.
+  unfold Hypergraph.geodesicBallVolume Hypergraph.geodesicBall
+  have h_subset : (Finset.univ.filter
+      (fun u => (cycleHypergraph n).dist v u ≤ 1)) ⊆
+      ({v, v + 1, v - 1} : Finset (Fin n)) := by
+    intro u hu
+    rw [Finset.mem_filter] at hu
+    obtain ⟨_, h_dist⟩ := hu
+    rw [Finset.mem_insert, Finset.mem_insert, Finset.mem_singleton]
+    -- h_dist: dist v u ≤ 1. So u = v (dist 0) or Adj v u (dist 1).
+    rw [Nat.le_one_iff_eq_zero_or_eq_one] at h_dist
+    rcases h_dist with h0 | h1
+    · -- dist = 0 implies u = v (connected graph, else junk value).
+      left
+      unfold Hypergraph.dist at h0
+      have hreach : (cycleHypergraph n).toSimpleGraph.Reachable v u := by
+        exact (cycleHypergraph_connected hn2).preconnected v u
+      have := (SimpleGraph.Reachable.dist_eq_zero_iff hreach).mp h0
+      exact this.symm
+    · -- dist = 1 implies Adj v u.
+      unfold Hypergraph.dist at h1
+      have hadj : (cycleHypergraph n).toSimpleGraph.Adj v u :=
+        SimpleGraph.dist_eq_one_iff_adj.mp h1
+      have := (cycleHypergraph_Adj_iff hn2 v u).mp hadj
+      obtain ⟨_, hor⟩ := this
+      rcases hor with hsucc | hpred
+      · right; left; exact hsucc
+      · right; right
+        have : u = v - 1 := by
+          have : v - 1 = (v + 1) - 1 - 1 := by abel
+          have h2 : u = v + 1 - 1 - 1 := by
+            have : u + 1 = v := hpred.symm
+            have hu : u = v - 1 := by
+              have : (u + 1) - 1 = v - 1 := by rw [this]
+              simpa using this
+            rw [hu]; abel
+          rw [h2]; abel
+        exact this
+  calc (Finset.univ.filter
+          (fun u => (cycleHypergraph n).dist v u ≤ 1)).card
+      ≤ ({v, v + 1, v - 1} : Finset (Fin n)).card := Finset.card_le_card h_subset
+    _ ≤ 3 := by
+        refine le_trans (Finset.card_insert_le _ _) ?_
+        refine Nat.succ_le_succ ?_
+        refine le_trans (Finset.card_insert_le _ _) ?_
+        simp
+
 end InfraFormalization
