@@ -125,11 +125,17 @@ All formalized as Lean theorems, axiom-clean:
 - ✅ Central second difference `Δ²_h f := f(x+h) − 2 f(x) + f(x−h)`, linearity, polynomial-case exact identity: for any quadratic, `Δ²_h f(x) = f''(x) · h²` (no error). Identifies cycle Laplacian with the second difference.
 - ⌛ `C²` Taylor-remainder version (pending Mathlib `iteratedDeriv` / `taylorWithinEval` integration).
 
-### Branchial skeleton (QM bridge groundwork)
-- ✅ `BranchialRelated`, `NStep`, `BranchialSlice` + slice recursion (`Branchial.lean`).
-- ✅ Finite-slice condition I1 (`BranchialFinite.lean`), ℓ²(slice) Hilbert space I4/R3 partial (`BranchialHilbert.lean`: ℂ-Hilbert + ℂ-linear adjacency + Hermitian).
-- ✅ Branchial amplitudes I3 + Born rule (`BranchialHilbert.lean`), uniform branchial measure I2 (`branchialUniformWeight`).
-- ⌛ I5 unitary evolution `exp(i·t·A)`; I8 Hilbert-space continuum limit; IQ6 FS←Fisher limit.
+### Branchial QM bridge (I1–I10)
+- ✅ I1 BranchialSlice finiteness (`BranchialFinite.lean`).
+- ✅ I2 Uniform branchial measure `branchialUniformWeight` (`BranchialHilbert.lean`).
+- ✅ I3 Branchial amplitudes + Born rule `bornProbability` (`BranchialHilbert.lean`).
+- ✅ I4 / R3 partial — ℓ²(slice) Hilbert space `BranchialHilbert S := EuclideanSpace ℂ S` with ℂ-linear adjacency `branchialAdjLM` and self-adjointness `branchialAdjLM_inner` (`BranchialHilbert.lean`).
+- ✅ I5 Unitary branchial evolution `branchialSchrodinger_unitary_evolution` (`BranchialSchrodinger.lean`) — Schrödinger eq `i ∂_t ψ = A ψ` preserves `∑(u² + v²)`.
+- ✅ I6 Observables as Hermitian operators `BranchialObservable S` (`BranchialHilbert.lean`).
+- ✅ I7 Expectation values + real-valuedness on observables (`BranchialHilbert.lean`).
+- ✅ I9 Schrödinger on branchial graph (via `BranchialSchrodinger adj u v`).
+- ⌛ I8 Hilbert-space continuum limit; I10 path-integral formulation.
+- ⌛ IQ6 FS←Fisher limit; IQ8 EME persistence; IQ9 path integral over causal graphs.
 
 ## Documentation
 - [`README.md`](README.md), [`INDEX.md`](INDEX.md) — navigation.

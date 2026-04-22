@@ -68,6 +68,7 @@ Every theorem above depends only on `{propext, Classical.choice, Quot.sound}`. N
 - [x] **I5 #88** — Branchial evolution as unitary. `BranchialSchrodinger.lean` proves `branchialSchrodinger_unitary_evolution` — Schrödinger `i∂_tψ = Aψ` with adjacency `A` preserves total probability `∑(u² + v²)` on real/imaginary decomposition. Closes the Stone-type unitarity claim for the finite-dim branchial slice.
 - [x] **I7 #90** — Expectation values + Born rule. `BranchialHilbert.lean` defines `expectationValue A ψ := ⟨ψ, A ψ⟩` with `expectationValue_re_of_symm` (real for Hermitian A) and `expectationValue_eigenvector` (eigenvalue · ‖ψ‖² for eigenvectors).
 - [x] **I6 #89** — Observables as Hermitian operators. `BranchialHilbert.lean` defines `BranchialObservable S` as a ℂ-linear self-adjoint operator structure; `branchialAdjObservable` packages the adjacency operator as an observable; `expectationValue_real` derives reality of the measurement outcome.
+- [x] **I9 #92** — Schrödinger on branchial graph. Closed by `BranchialSchrodinger.lean` (= I5). The `BranchialSchrodinger adj u v` structure IS the Schrödinger equation on the branchial slice with adjacency Hamiltonian.
 
 ### Einstein / stress-energy (F-group)
 
