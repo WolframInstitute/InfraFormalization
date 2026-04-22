@@ -47,67 +47,75 @@ theorem pathHypergraph_edges_card_le (n : ℕ) :
   refine le_trans Finset.card_image_le ?_
   simp
 
-/-- **Path-Dirichlet eigenvalue formula** (sentinel). For `n ≥ 2` and
-`k : Fin n`, the `k`-th Dirichlet-boundary path-Laplacian eigenvalue is
+/-- **Path (free / Neumann-like) eigenvalue formula** (sentinel). For
+`n ≥ 2` and `k : Fin n`, the `k`-th eigenvalue of the free path-graph
+Laplacian (no boundary conditions — the natural Laplacian on
+`pathHypergraph n`) is
 
-  `pathEigenvalue n k = −4 sin² (π(k+1) / (2(n+1)))`.
+  `pathEigenvalue n k = −4 sin² (kπ / (2n))`,
+
+equivalent to `−(2 − 2 cos(kπ/n))`. `k = 0` gives `0` (constant
+mode preserved), `k = n-1` gives the maximum `−4 sin²(π(n-1)/(2n))`.
 
 Stated as a definition for reference; the eigenvalue equation proof
-is future work. -/
+is future work (open-path eigenvectors use the `cos((k π)(j + 1/2) / n)`
+family, not the `sin` Dirichlet basis). -/
 noncomputable def pathEigenvalue (n k : ℕ) : ℝ :=
-  -4 * (Real.sin (Real.pi * (k + 1) / (2 * (n + 1))))^2
+  -4 * (Real.sin (Real.pi * k / (2 * n)))^2
 
-/-- **Path-Dirichlet eigenvector formula** (sentinel). The `k`-th
-Dirichlet eigenvector at position `j : Fin n` is
+/-- **Path (free / Neumann-like) eigenvector formula** (sentinel). The
+`k`-th free-path-graph eigenvector at position `j : Fin n` is
 
-  `pathEigenvector n k (j) = sin (π(k+1)(j+1) / (n+1))`.
+  `pathEigenvector n k (j) = cos (k π (j + 1/2) / n)`.
+
+Half-integer offset `j + 1/2` is characteristic of open-path
+(Neumann-like) eigenfunctions, distinguishing from the cycle's
+`cos(2πkj/n)` (no offset; periodic) and from the Dirichlet chain's
+`sin(kπ(j+1)/(n+1))` (integer offset; zero boundary).
 
 Stated as a definition for reference; eigenvalue equation proof is
 future work. -/
 noncomputable def pathEigenvector (n k : ℕ) (j : Fin n) : ℝ :=
-  Real.sin (Real.pi * (k + 1) * (j.val + 1) / (n + 1))
+  Real.cos (Real.pi * k * (2 * j.val + 1) / (2 * n))
 
 /-- **All path eigenvalues are non-positive**. -/
 theorem pathEigenvalue_nonpos (n k : ℕ) : pathEigenvalue n k ≤ 0 := by
   unfold pathEigenvalue
-  have h_sq : (0 : ℝ) ≤ (Real.sin (Real.pi * (k + 1) / (2 * (n + 1))))^2 :=
+  have h_sq : (0 : ℝ) ≤ (Real.sin (Real.pi * k / (2 * n)))^2 :=
     sq_nonneg _
   nlinarith
 
-/-- **Path-Dirichlet ground state is strictly negative.** For `n ≥ 1`
-and `k = 0` (the first Dirichlet mode), the eigenvalue
-`−4 sin²(π/(2(n+1)))` is strictly negative: the argument
-`π/(2(n+1))` lies strictly between `0` and `π/2`, so its sine is
-strictly positive, so its square is strictly positive.
-
-Analog of `cycleEigenvalue_one_neg` for the path-Laplacian: the
-Dirichlet ground state decays (does not drift), confirming the path
-spectral gap. -/
-theorem pathEigenvalue_zero_neg {n : ℕ} (hn : 1 ≤ n) :
-    pathEigenvalue n 0 < 0 := by
+/-- **Path ground-mode eigenvalue vanishes.** The `k = 0` mode has
+`pathEigenvalue n 0 = 0` — matching the constant mode on the free path
+(just as `cycleEigenvalue n 0 = 0` on the cycle). -/
+theorem pathEigenvalue_ground_zero (n : ℕ) : pathEigenvalue n 0 = 0 := by
   unfold pathEigenvalue
-  -- `0 < π / (2(n+1)) < π/2` so `sin` is strictly positive there.
-  have hn' : (0 : ℝ) < n + 1 := by exact_mod_cast Nat.succ_pos n
-  have h_pos : (0 : ℝ) < Real.pi * (0 + 1) / (2 * (n + 1)) := by
+  simp
+
+/-- **Path first non-constant mode is strictly negative.** For `n ≥ 2`
+and `k = 1`, the eigenvalue `−4 sin²(π/(2n))` is strictly negative
+(`π/(2n)` lies in `(0, π/2)`, so its sine is positive, so its square is
+positive). This is the path analog of `cycleEigenvalue_one_neg` —
+spectral gap of the free path-Laplacian. -/
+theorem pathEigenvalue_one_neg {n : ℕ} (hn : 2 ≤ n) :
+    pathEigenvalue n 1 < 0 := by
+  unfold pathEigenvalue
+  have hn_pos : (0 : ℝ) < n := by exact_mod_cast (lt_of_lt_of_le (by norm_num) hn)
+  have h_two_n_pos : (0 : ℝ) < 2 * n := by linarith
+  have h_pos : (0 : ℝ) < Real.pi * 1 / (2 * n) := by
     have hpi : (0 : ℝ) < Real.pi := Real.pi_pos
-    have h_two_pos : (0 : ℝ) < 2 * (n + 1) := by linarith
     positivity
-  have h_lt : Real.pi * (0 + 1) / (2 * (n + 1)) < Real.pi := by
+  have h_lt : Real.pi * 1 / (2 * n) < Real.pi := by
     have hpi : (0 : ℝ) < Real.pi := Real.pi_pos
-    have h1 : (1 : ℝ) ≤ n + 1 := by exact_mod_cast Nat.succ_le_succ (Nat.zero_le n)
-    have h_denom_ge_two : (2 : ℝ) ≤ 2 * (n + 1) := by linarith
-    have h_denom_pos : (0 : ℝ) < 2 * (n + 1) := by linarith
-    rw [div_lt_iff₀ h_denom_pos]
-    calc Real.pi * (0 + 1) = Real.pi * 1 := by ring
-      _ = Real.pi := by ring
-      _ < Real.pi * 2 := by linarith
-      _ ≤ Real.pi * (2 * (n + 1)) := by nlinarith
-  have h_sin_pos : 0 < Real.sin (Real.pi * (0 + 1) / (2 * (n + 1))) :=
+    have hn_real : (2 : ℝ) ≤ n := by exact_mod_cast hn
+    rw [div_lt_iff₀ h_two_n_pos]
+    calc Real.pi * 1 = Real.pi := by ring
+      _ < Real.pi * (2 * n) := by nlinarith
+  have h_sin_pos : 0 < Real.sin (Real.pi * 1 / (2 * n)) :=
     Real.sin_pos_of_pos_of_lt_pi h_pos h_lt
-  have h_sq_pos : 0 < (Real.sin (Real.pi * (0 + 1) / (2 * (n + 1))))^2 := by
-    positivity
-  have : (0 : ℕ) + 1 = 1 := rfl
-  push_cast
-  nlinarith [h_sq_pos]
+  have h_sq_pos : 0 < (Real.sin (Real.pi * 1 / (2 * n)))^2 := by positivity
+  have h_sq_pos' : 0 < (Real.sin (Real.pi * ↑(1 : ℕ) / (2 * ↑n)))^2 := by
+    push_cast; exact h_sq_pos
+  nlinarith [h_sq_pos']
 
 end InfraFormalization
