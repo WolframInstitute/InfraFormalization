@@ -122,5 +122,6 @@ import InfraFormalization.RadialLaminarBlowup
 import InfraFormalization.HodgeVR
 import InfraFormalization.FisherMetric
 import InfraFormalization.RemainingObligations
+import InfraFormalization.CycleSpectrum
 import InfraFormalization.ContinuumLimitStatement
 import InfraFormalization.DiscreteDAlembertian

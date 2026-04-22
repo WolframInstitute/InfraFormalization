@@ -69,6 +69,7 @@ import InfraFormalization.SpatialReconstruction
 import InfraFormalization.PlateauDimension
 import InfraFormalization.ContinuumLimitStatement
 import InfraFormalization.DiscreteDAlembertian
+import InfraFormalization.CycleSpectrum
 import InfraFormalization.Refutations.F1NoMetric
 import InfraFormalization.Refutations.F2Orthonormality
 import InfraFormalization.Refutations.F3Tautology
@@ -394,3 +395,5 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.nStep_implies_multiStep
 #print axioms InfraFormalization.branchialSlice_zero
 #print axioms InfraFormalization.branchialSlice_succ
+#print axioms InfraFormalization.cos_three_term_identity
+#print axioms InfraFormalization.cycleLaplacian_eigen_interior
