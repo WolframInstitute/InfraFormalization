@@ -57,17 +57,37 @@ Formally stated, the EPS axioms enforce:
   (A2) Light-ray "crossings" obey combinatorial consistency.
   (A3) Particle worldlines project to timelike curves.
   (A4) Compatibility: light-rays + particle-worldlines agree on
-       the conformal class.
+       the conformal class — worldline edges are NEVER light-ray
+       edges (null vs timelike distinction).
   (A5) Physical-extension axiom: every physical observer has a
        coordinatisation.
 
-Here encoded as a structure bundling the two styles with a
-compatibility predicate (axiom A4 as a sentinel, full details in
-the Zapata-Ahmed paper). -/
+Per Zapata–Ahmed's axiomatic-relativity programme, A4 is the
+compatibility condition that separates null from timelike structure:
+a particle worldline's consecutive edges cannot be light-ray edges
+(otherwise the worldline would be null, not timelike). -/
 structure EPSAxioms (G : CausalGraph V) where
   lightStyle    : LightStyle G
   particleStyle : ParticleStyle G
-  compatibility : True  -- placeholder; full A4-A5 statements TBD
+  /-- **A4 (compatibility).** Worldline edges are NOT light-ray edges.
+  Encodes the conformal-class separation of timelike from null
+  directions. -/
+  compatibility : ∀ (p : Nat → Option V), particleStyle.isWorldline p →
+    ∀ (n : Nat) (u v : V), p n = some u → p (n + 1) = some v →
+      ¬ lightStyle.isLight u v
+
+/-- **Worldlines are strictly timelike under EPS.** An immediate
+corollary of the compatibility axiom A4: any worldline's consecutive
+edges are causal edges (by `ParticleStyle.chain_like`) but not
+light-ray edges (by `EPSAxioms.compatibility`). This is the
+conformal-class separation stated as a theorem. -/
+theorem eps_worldline_not_light {G : CausalGraph V}
+    (eps : EPSAxioms G) (p : Nat → Option V)
+    (hw : eps.particleStyle.isWorldline p)
+    (n : Nat) (u v : V) (hu : p n = some u) (hv : p (n + 1) = some v) :
+    G.causalEdge u v ∧ ¬ eps.lightStyle.isLight u v :=
+  ⟨eps.particleStyle.chain_like p hw n u v hu hv,
+   eps.compatibility p hw n u v hu hv⟩
 
 end CausalGraph
 end InfraFormalization
