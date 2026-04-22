@@ -103,4 +103,45 @@ theorem zero_stressEnergyTensor_nullEnergy :
     StressEnergyTensor.zero.NullEnergyCondition :=
   wec_implies_nec zero_stressEnergyTensor_weakEnergy
 
+/-! ### Penrose singularity theorem obligation (F7 / #66)
+
+The Penrose singularity theorem (1965): any Lorentzian manifold
+satisfying the null energy condition, containing a closed trapped
+surface, and globally hyperbolic, is geodesically incomplete. Stated
+here as a Prop-level obligation since the full bundle-level
+infrastructure (global hyperbolicity, trapped surfaces, geodesic
+completeness) is not yet formalised.
+-/
+
+/-- **Penrose singularity obligation (statement only).** For every
+stress-energy tensor `T` satisfying `NullEnergyCondition`, and every
+spacetime it is placed on satisfying:
+
+  * global hyperbolicity,
+  * existence of a closed trapped surface,
+
+the spacetime is geodesically incomplete (contains a singularity).
+
+We state this at the predicate level using abstract unspecified
+hypothesis flags (`TrappedSurfaceExists`, `GloballyHyperbolic`,
+`GeodesicallyIncomplete`) so the *shape* of the theorem is recorded
+in Lean; specific instantiations require the Lorentzian-manifold
+infrastructure not yet available. -/
+def PenroseSingularityObligation
+    (TrappedSurfaceExists GloballyHyperbolic
+      GeodesicallyIncomplete : Prop) : Prop :=
+  ∀ (T : StressEnergyTensor),
+    T.NullEnergyCondition →
+    TrappedSurfaceExists →
+    GloballyHyperbolic →
+    GeodesicallyIncomplete
+
+/-- **Obligation is vacuous under the impossible hypothesis
+`¬ TrappedSurfaceExists`**. Structural sanity: the statement is not
+false, it is an implication. -/
+theorem penrose_obligation_vacuous_if_no_trapped
+    (H G I : Prop) (h_no_trapped : ¬ H) :
+    PenroseSingularityObligation H G I :=
+  fun _ _ h_trapped _ => absurd h_trapped h_no_trapped
+
 end InfraFormalization
