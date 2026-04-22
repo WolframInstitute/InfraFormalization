@@ -187,6 +187,7 @@ Every Lean file has a doc comment describing its role. Built on Mathlib via Lake
 | [`lean/InfraFormalization/Refutations/F3Tautology.lean`](lean/InfraFormalization/Refutations/F3Tautology.lean) | **F3 refuted**: "asymptotic dim preservation ⇒ Einstein equations" is `Iff.rfl`. |
 | [`lean/InfraFormalization/Refutations/F4Tautology.lean`](lean/InfraFormalization/Refutations/F4Tautology.lean) | **F4 refuted**: "causal invariance ⇔ general covariance" is `Iff.rfl` (axiom-free). |
 | [`lean/InfraFormalization/Refutations/F5Illdefined.lean`](lean/InfraFormalization/Refutations/F5Illdefined.lean) | **F5 refuted**: "discrete sum becomes integral" is under-determined without a convergence notion. |
+| [`lean/InfraFormalization/Refutations/F6Circularity.lean`](lean/InfraFormalization/Refutations/F6Circularity.lean) | **F6 refuted**: Gorard 2102.09363 "provably satisfies EFE" follows the Poisson-sprinkle + BD-reconstruct schema, which is CircularReconstruction; `circular_reconstruction_has_no_content` (0 axioms) proves this procedure produces its input identically. The "derivation" is mathematically content-free. |
 
 ## Primary sources (read-only)
 
