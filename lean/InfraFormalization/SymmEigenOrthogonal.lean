@@ -71,4 +71,14 @@ theorem cycleEigenvector_orthogonal
     (laplacianMatrix_cycleHypergraph_eigen hn k)
     hjk
 
+/-- **Constant mode is orthogonal to every non-constant mode**
+(specialization). For `1 ≤ k < n`, the constant eigenvector
+`cycleEigenvector n 0` (= 1 everywhere) has dot product `0` with
+`cycleEigenvector n k`. Automatic from
+`cycleEigenvector_orthogonal` + `cycleEigenvalue_zero_ne_nonzero_mode`. -/
+theorem cycleEigenvector_const_orthogonal_nonzero
+    {n : ℕ} [NeZero n] (hn : 2 ≤ n) (k : ℕ) (hk_lo : 1 ≤ k) (hk_hi : k < n) :
+    cycleEigenvector n 0 ⬝ᵥ cycleEigenvector n k = 0 :=
+  cycleEigenvector_orthogonal hn (cycleEigenvalue_zero_ne_nonzero_mode k hk_lo hk_hi)
+
 end InfraFormalization

@@ -105,6 +105,19 @@ theorem cycleEigenvalue_nonzero_mode_neg {n : ℕ} [NeZero n]
   have h_sin_sq_pos : 0 < (sin (π * k / n))^2 := by positivity
   nlinarith
 
+/-- **Zero eigenvalue ≠ any non-constant mode eigenvalue.** A corollary
+of `cycleEigenvalue_nonzero_mode_neg`: since non-constant modes have
+strictly negative eigenvalues and the constant mode has eigenvalue `0`,
+they are distinct. Needed when applying `cycleEigenvector_orthogonal`
+to pair the constant eigenvector with any non-constant one. -/
+theorem cycleEigenvalue_zero_ne_nonzero_mode {n : ℕ} [NeZero n]
+    (k : ℕ) (hk_lo : 1 ≤ k) (hk_hi : k < n) :
+    cycleEigenvalue n 0 ≠ cycleEigenvalue n k := by
+  rw [cycleEigenvalue_zero]
+  have h_neg : cycleEigenvalue n k < 0 :=
+    cycleEigenvalue_nonzero_mode_neg k hk_lo hk_hi
+  linarith
+
 /-! ## Algebraic identity: sum-to-product form for the eigenvalue.
 
 Given `A, B : ℝ`:

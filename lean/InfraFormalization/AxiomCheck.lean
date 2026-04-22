@@ -477,6 +477,8 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.heatKernel_cycleHypergraph_const_plus_mode_tendsto
 #print axioms InfraFormalization.symm_eigenvectors_orthogonal
 #print axioms InfraFormalization.cycleEigenvector_orthogonal
+#print axioms InfraFormalization.cycleEigenvalue_zero_ne_nonzero_mode
+#print axioms InfraFormalization.cycleEigenvector_const_orthogonal_nonzero
 #print axioms InfraFormalization.bornProbability_nonneg
 #print axioms InfraFormalization.sum_bornProbability
 #print axioms InfraFormalization.sum_branchialUniformWeight
