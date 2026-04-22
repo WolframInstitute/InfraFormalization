@@ -455,3 +455,4 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.Hypergraph.heat_exists_unique_forward
 #print axioms InfraFormalization.Hypergraph.heatKernel_mass_conservation
 #print axioms InfraFormalization.Hypergraph.heatKernel_L2_decay
+#print axioms InfraFormalization.Hypergraph.heatKernel_mulVec_add

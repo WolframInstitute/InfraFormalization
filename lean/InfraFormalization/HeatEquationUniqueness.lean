@@ -152,5 +152,16 @@ theorem heatKernel_L2_decay (H : Hypergraph V) (u₀ : V → ℝ) {t : ℝ} (ht 
         congr 1
         exact h_init v
 
+/-- **Semigroup property at the vector level**: for any `u₀`, `s`, `t`,
+`(heatKernel H (s + t)).mulVec u₀ = (heatKernel H s).mulVec ((heatKernel H t).mulVec u₀)`.
+
+Direct consequence of `heatKernel_add` (matrix-level semigroup) via
+`Matrix.mulVec_mulVec`. Heat flow for time `s + t` factors as heat
+flow for time `t` followed by heat flow for time `s`. -/
+theorem heatKernel_mulVec_add (H : Hypergraph V) (u₀ : V → ℝ) (s t : ℝ) :
+    (heatKernel H (s + t)).mulVec u₀
+    = (heatKernel H s).mulVec ((heatKernel H t).mulVec u₀) := by
+  rw [heatKernel_add, ← Matrix.mulVec_mulVec]
+
 end Hypergraph
 end InfraFormalization
