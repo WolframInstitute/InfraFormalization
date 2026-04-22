@@ -142,4 +142,63 @@ theorem heatKernel_cycleHypergraph_const_plus_mode_tendsto
   have := (tendsto_const_nhds (x := c * cycleEigenvector n 0 i)).add h_second
   simpa using this
 
+/-! ### ℓ²-norm-squared decay on the 2-mode subspace -/
+
+/-- **ℓ²-norm-squared contraction for a non-constant heat-kernel mode.**
+For every non-constant cycle eigenmode and every time `t`,
+
+  `‖(heatKernel t).mulVec (cycleEigenvector n k)‖² = exp(2·t·λ_k) · ‖cycleEigenvector n k‖²`.
+
+In particular, `‖·‖²` decays to zero exponentially in `t` for `1 ≤ k < n`. -/
+theorem heatKernel_cycleHypergraph_mulVec_nonzero_mode_normSq
+    {n : ℕ} [NeZero n] (hn : 2 ≤ n) (k : ℕ) (t : ℝ) :
+    dotProduct
+        ((Hypergraph.heatKernel (cycleHypergraph n) t).mulVec
+          (cycleEigenvector n k))
+        ((Hypergraph.heatKernel (cycleHypergraph n) t).mulVec
+          (cycleEigenvector n k))
+      = Real.exp (t * cycleEigenvalue n k) ^ 2
+        * dotProduct (cycleEigenvector n k) (cycleEigenvector n k) := by
+  rw [heatKernel_cycleHypergraph_mulVec_eigenvector hn k t]
+  -- ⟨a • v, a • v⟩ = a² · ⟨v, v⟩
+  rw [smul_dotProduct, dotProduct_smul, smul_eq_mul, smul_eq_mul]
+  ring
+
+/-- **Non-constant mode ℓ² contraction tends to 0.** For `1 ≤ k < n`,
+the squared ℓ² norm of the heat-flowed `k`-th eigenmode tends to zero
+as `t → ∞`. Stronger than the coordinate-wise decay — this is full
+L²(Fin n → ℝ) decay of non-constant modes. -/
+theorem heatKernel_cycleHypergraph_nonzero_mode_normSq_tendsto_zero
+    {n : ℕ} [NeZero n] (hn : 2 ≤ n) (k : ℕ) (hk_lo : 1 ≤ k) (hk_hi : k < n) :
+    Tendsto
+      (fun t : ℝ => dotProduct
+        ((Hypergraph.heatKernel (cycleHypergraph n) t).mulVec
+          (cycleEigenvector n k))
+        ((Hypergraph.heatKernel (cycleHypergraph n) t).mulVec
+          (cycleEigenvector n k)))
+      atTop (𝓝 0) := by
+  have h_rewrite : ∀ t : ℝ,
+      dotProduct
+          ((Hypergraph.heatKernel (cycleHypergraph n) t).mulVec
+            (cycleEigenvector n k))
+          ((Hypergraph.heatKernel (cycleHypergraph n) t).mulVec
+            (cycleEigenvector n k))
+        = Real.exp (t * cycleEigenvalue n k) ^ 2
+          * dotProduct (cycleEigenvector n k) (cycleEigenvector n k) :=
+    fun t => heatKernel_cycleHypergraph_mulVec_nonzero_mode_normSq hn k t
+  simp only [h_rewrite]
+  have h_neg : cycleEigenvalue n k < 0 :=
+    cycleEigenvalue_nonzero_mode_neg k hk_lo hk_hi
+  have h_inner : Tendsto (fun t : ℝ => t * cycleEigenvalue n k) atTop atBot :=
+    (tendsto_mul_const_atBot_of_neg h_neg).mpr tendsto_id
+  have h_exp : Tendsto (fun t : ℝ => Real.exp (t * cycleEigenvalue n k)) atTop (𝓝 0) :=
+    Real.tendsto_exp_atBot.comp h_inner
+  have h_exp_sq : Tendsto (fun t : ℝ => Real.exp (t * cycleEigenvalue n k) ^ 2)
+      atTop (𝓝 0) := by
+    have := h_exp.mul h_exp
+    simpa [pow_two] using this
+  have := h_exp_sq.mul_const
+    (dotProduct (cycleEigenvector n k) (cycleEigenvector n k))
+  simpa using this
+
 end InfraFormalization
