@@ -59,9 +59,11 @@ Tabulating:
 
 ## The honest verdict
 
-**No fabricated data.** There is no evidence of invented data or of false numerics. The numerical validation in 2102.09363 against Schwarzschild / Kerr is real work. The references to Sorkin, Benincasa, Dowker, and others are correct and relevant.
+**The published texts claim more than their arguments establish, and contain no fabricated data.** There is no evidence of invented numerical data or simulation results; the CCZ4-on-mesh validation against Schwarzschild/Kerr is real NR work, and the references to Sorkin/Benincasa/Dowker are correct. What *is* present: circular "derivations" presented as theorems, title/abstract claims that the body does not deliver, load-bearing conjectures cited as established results, and at least one verbatim misstatement of a cited source (the Ollivier scalar/directional error) reused across four papers.
 
-**But the central "derivation" in 2102.09363 is circular, and this is now unambiguous.** The procedure that produces a "hypergraph satisfying the Einstein field equations" is:
+The same steps recur across the papers: the fiat orthonormality assumption, the undefined `g^ab`, the Benincasa-Dowker conjecture treated as a theorem, and the Poisson-sprinkle-and-reconstruct procedure. The papers present plausibility arguments as derivations, open conjectures as theorems, and sample-consistency checks as a proof that the rule "provably satisfies EFE".
+
+**The central "derivation" in 2102.09363 is circular, and this is now unambiguous, and Lean-formalised (`Refutations/F6Circularity.lean`).** The procedure that produces a "hypergraph satisfying the Einstein field equations" is:
 1. Pick a target manifold (Schwarzschild, Kerr) known a priori.
 2. Poisson-sprinkle vertices into it.
 3. Connect nearby vertices.
