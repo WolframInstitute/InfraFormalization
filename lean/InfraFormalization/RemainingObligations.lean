@@ -82,7 +82,7 @@ exact `= 2r + 1` for all `r ≤ n/2` is the natural extension.
 
 Previous form `True ∧ False` was content-free; this is a real claim. -/
 def DimensionCompatibilityObligation : Prop :=
-  ∀ (n : ℕ) [NeZero n], 3 ≤ n → ∀ (v : Fin n) (r : ℕ), r ≤ n / 2 →
+  ∀ (n : ℕ) [NeZero n], 3 ≤ n → ∀ (v : Fin n) (r : ℕ), 2 * r + 1 ≤ n →
     (cycleHypergraph n).geodesicBallVolume v r = 2 * r + 1
 
 /-! ## IQ6 — Fubini-Study limit (still content-placeholder) -/
@@ -136,9 +136,7 @@ def ReverseEngineeringObligation : Prop :=
 
 /-- **Five infrageometry obligations remain formally uninhabited** — the
 ones still at `True ∧ False` stub level (Latschev, scale trichotomy,
-Fubini-Study limit, EME persistence, path integral). ID6 and IR7 have
-been upgraded to real Lean Props; their non-inhabitation (= "we haven't
-disproved them") is not claimed here. -/
+Fubini-Study limit, EME persistence, path integral). -/
 theorem five_stub_obligations_open :
     ¬ LatschevObligation ∧
     ¬ ScaleTrichotomyObligation ∧
@@ -147,5 +145,33 @@ theorem five_stub_obligations_open :
     ¬ PathIntegralObligation := by
   refine ⟨?_, ?_, ?_, ?_, ?_⟩
   all_goals exact fun ⟨_, h⟩ => h
+
+/-- **The over-strong ReverseEngineeringObligation is FALSE.**
+
+The universally-quantified form ("for every target signature there's a
+rule") is too strong: `hypergraphSignature h` always has `vertexCount =
+Fintype.card V`, so any target with a different `vertexCount` cannot be
+matched. We disprove the obligation by exhibiting a signature on
+`Fin 2` with `vertexCount = 3`.
+
+This finding is **content**, not a bug: it shows the honest obligation
+must be restricted to signatures with `vertexCount = Fintype.card V`
+(and analogous constraints on other fields). Formalising that refined
+version is a follow-up. -/
+theorem not_reverseEngineeringObligation : ¬ ReverseEngineeringObligation := by
+  intro h
+  have h2 := h (Fin 2)
+  let σ : RuleSignature (Fin 2) :=
+    { hausdorffDimAt := fun _ _ => 0
+      ballVolume := fun _ _ => 0
+      totalFormanRicci := 0
+      edgeCount := 0
+      vertexCount := 3 }
+  have h3 := h2 σ
+  obtain ⟨_P, _sys, _s₀, _τ, _i, _hi, hσ⟩ := h3
+  have h_vcount : (hypergraphSignature
+      (_τ.states.get ⟨_i, _hi⟩)).vertexCount = σ.vertexCount :=
+    congrArg RuleSignature.vertexCount hσ
+  simp [hypergraphSignature, σ] at h_vcount
 
 end InfraFormalization
