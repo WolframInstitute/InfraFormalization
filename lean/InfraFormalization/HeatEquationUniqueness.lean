@@ -130,5 +130,27 @@ theorem heatKernel_mass_conservation (H : Hypergraph V) (u₀ : V → ℝ) (t : 
   rw [h_mass]
   exact congr_arg _ h_init
 
+/-- **Matrix-level L² decay for the heat kernel.** For any initial data
+`u₀` and `t ≥ 0`,
+  `∑_v ((heatKernel H t).mulVec u₀ v)² ≤ ∑_v (u₀ v)²`.
+
+Composes T1 with the ODE-level `heat_L2_decay`. -/
+theorem heatKernel_L2_decay (H : Hypergraph V) (u₀ : V → ℝ) {t : ℝ} (ht : 0 ≤ t) :
+    (∑ v : V, ((heatKernel H t).mulVec u₀ v) ^ 2) ≤ (∑ v : V, (u₀ v) ^ 2) := by
+  have h_heat : HeatSolution H (fun s v => (heatKernel H s).mulVec u₀ v) :=
+    heatKernel_isHeatSolution H u₀
+  have h_decay := heat_L2_decay H h_heat ht
+  have h_init : ∀ v, (fun s v => (heatKernel H s).mulVec u₀ v) 0 v = u₀ v := by
+    intro v
+    show (heatKernel H 0).mulVec u₀ v = u₀ v
+    rw [heatKernel_zero, Matrix.one_mulVec]
+  calc (∑ v : V, ((heatKernel H t).mulVec u₀ v) ^ 2)
+      ≤ (∑ v : V, ((heatKernel H 0).mulVec u₀ v) ^ 2) := h_decay
+    _ = (∑ v : V, (u₀ v) ^ 2) := by
+        apply Finset.sum_congr rfl
+        intros v _
+        congr 1
+        exact h_init v
+
 end Hypergraph
 end InfraFormalization
