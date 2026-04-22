@@ -71,6 +71,7 @@ import InfraFormalization.ContinuumLimitStatement
 import InfraFormalization.DiscreteDAlembertian
 import InfraFormalization.CycleSpectrum
 import InfraFormalization.CTwoTaylor
+import InfraFormalization.CycleEigenLimit
 import InfraFormalization.Refutations.F1NoMetric
 import InfraFormalization.Refutations.F2Orthonormality
 import InfraFormalization.Refutations.F3Tautology
@@ -402,3 +403,5 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.taylor_remainder_pos_tendsto
 #print axioms InfraFormalization.taylor_remainder_neg_tendsto
 #print axioms InfraFormalization.scaledSecondDiff_tendsto_iteratedDeriv
+#print axioms InfraFormalization.n_sin_pi_k_div_n_tendsto
+#print axioms InfraFormalization.cycleEigenvalue_scaled_tendsto

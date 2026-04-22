@@ -124,5 +124,6 @@ import InfraFormalization.FisherMetric
 import InfraFormalization.RemainingObligations
 import InfraFormalization.CycleSpectrum
 import InfraFormalization.CTwoTaylor
+import InfraFormalization.CycleEigenLimit
 import InfraFormalization.ContinuumLimitStatement
 import InfraFormalization.DiscreteDAlembertian
