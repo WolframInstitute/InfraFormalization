@@ -161,7 +161,7 @@ Grouped by phase (see [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md)). Each milestone ei
 - [x] Heat semigroup on a finite graph as `Matrix.exp` (`LaplacianMatrix.lean`, D3 #44 / R2 #177): `heatKernel H t := exp(t · laplacianMatrix H)`, `heatKernel_zero = 1`, `heatKernel_add` (semigroup).
 - [x] **ODE ↔ matrix heat kernel identification** (`HeatKernelODE.lean`, T1): `heatKernel_isHeatSolution` — the matrix propagator satisfies the `HeatSolution H` ODE predicate. Unifies the two heat-equation definitions.
 - [x] Scaled cycle Laplacian → 1D `d²/dx²` for all C² test functions (R1/A2/A3; `CTwoTaylor.lean` + `ScaledDiffC2Bridge.lean`).
-- [ ] Uniqueness of solutions (Cauchy-Lipschitz in finite dim; D2 #43).
+- [x] **Existence + forward-time uniqueness** (`HeatEquationUniqueness.lean`, D2 #43): `heat_exists` (via heatKernel T1), `heat_unique_forward` (via `heat_L2_antitone`), `heat_exists_unique_forward` package.
 - [ ] Long-time convergence to uniform (once spectral gap proved; D6 #47).
 - [ ] Scaled discrete heat → continuous heat on GH-limit (D7 #48).
 - [ ] Ollivier-Ricci with full proof (currently statement-only in `Infra/OllivierStatement.lean`).

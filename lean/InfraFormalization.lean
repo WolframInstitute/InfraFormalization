@@ -128,6 +128,7 @@ import InfraFormalization.CycleEigenLimit
 import InfraFormalization.ScaledDiffC2Bridge
 import InfraFormalization.LaplacianMatrix
 import InfraFormalization.HeatKernelODE
+import InfraFormalization.HeatEquationUniqueness
 import InfraFormalization.ExpEigenvector
 import InfraFormalization.CycleMatrixSpectrum
 import InfraFormalization.CycleHasEigenvalue

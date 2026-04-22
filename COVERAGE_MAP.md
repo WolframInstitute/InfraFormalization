@@ -47,6 +47,7 @@ All proofs go through `laplacianHyper`. The Hypergraph is the domain; no continu
 | Module | Equation | Conservation law | Status |
 |---|---|---|---|
 | `HeatEquation.lean` | `u' = Δ_H u` | Mass `∑u`, L² decay | ✅ D1 + D4 + D5 |
+| `HeatEquationUniqueness.lean` | Existence + forward uniqueness | `heat_exists`, `heat_unique_forward`, `heat_exists_unique_forward` | ✅ D2 |
 | `WaveEquation.lean` | `u'' = Δ_H u` | Energy `∑(du)² − ∑u·Δu` | ✅ D8 |
 | `KleinGordon.lean` | `u'' = Δ_H u − m²u` | Energy + mass term | ✅ D9 |
 | `SchrodingerEquation.lean` | `iψ' = −Δ_H ψ` | Probability `∑|ψ|²` | ✅ D10 |
