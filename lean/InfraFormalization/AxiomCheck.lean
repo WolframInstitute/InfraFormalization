@@ -496,6 +496,7 @@ import InfraFormalization.Refutations.F7NamedRuleStructure
 #print axioms InfraFormalization.cycleEigenvalue_four_three
 #print axioms InfraFormalization.cycleEigenvalue_four_spectrum
 #print axioms InfraFormalization.cycleEigenvalue_periodic
+#print axioms InfraFormalization.cycleEigenvector_zero_eq_one
 #print axioms InfraFormalization.Refutations.circular_reconstruction_has_no_content
 #print axioms InfraFormalization.Refutations.circular_procedure_is_identity
 #print axioms InfraFormalization.Refutations.namedRule_trajectory_edge_count_fixed

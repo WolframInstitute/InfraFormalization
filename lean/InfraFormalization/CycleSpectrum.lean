@@ -223,6 +223,14 @@ theorem cycleEigenvalue_four_three : cycleEigenvalue 4 3 = -2 := by
   rw [div_pow, Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 2)]
   ring
 
+/-- **The constant mode is the all-ones function.** `cycleEigenvector n 0`
+evaluated at any index `j` equals `cos(0) = 1`. Concrete identification
+of the zeroth mode as the uniform/constant eigenvector. -/
+theorem cycleEigenvector_zero_eq_one (n : ℕ) [NeZero n] (j : Fin n) :
+    cycleEigenvector n 0 j = 1 := by
+  unfold cycleEigenvector
+  simp
+
 /-- **n-periodicity of cycle eigenvalues in the wave-number index.**
 For every `n` and `k`, `cycleEigenvalue n (n + k) = cycleEigenvalue n k`.
 This reflects the `ℤ/nℤ` character-theoretic structure: the cycle
