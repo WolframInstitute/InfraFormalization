@@ -491,6 +491,8 @@ import InfraFormalization.Refutations.F6Circularity
 #print axioms InfraFormalization.cycleEigenvector_first_half_orthogonal
 #print axioms InfraFormalization.cycleEigenvalue_four_two
 #print axioms InfraFormalization.cycleEigenvalue_four_one
+#print axioms InfraFormalization.cycleEigenvalue_four_three
+#print axioms InfraFormalization.cycleEigenvalue_four_spectrum
 #print axioms InfraFormalization.Refutations.circular_reconstruction_has_no_content
 #print axioms InfraFormalization.Refutations.circular_procedure_is_identity
 #print axioms InfraFormalization.branchialSliceAdj_symm

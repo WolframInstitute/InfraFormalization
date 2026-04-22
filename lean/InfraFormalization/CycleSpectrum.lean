@@ -210,6 +210,30 @@ theorem cycleEigenvalue_four_one : cycleEigenvalue 4 1 = -2 := by
   rw [div_pow, Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 2)]
   ring
 
+/-- **Four-cycle Laplacian eigenvalue at `k = 3`**: equals `−2`.
+By the reflection symmetry `λ_k = λ_{n-k}` (since `sin(π(n-k)/n)
+= sin(π - πk/n) = sin(πk/n)`), the `k = 3` mode has the same
+eigenvalue as the `k = 1` mode. Demonstrates the 2-fold degeneracy
+in the non-zero spectrum. -/
+theorem cycleEigenvalue_four_three : cycleEigenvalue 4 3 = -2 := by
+  unfold cycleEigenvalue
+  have h : (Real.pi * (3 : ℕ) / (4 : ℕ) : ℝ) = Real.pi - Real.pi / 4 := by
+    push_cast; ring
+  rw [h, Real.sin_pi_sub, Real.sin_pi_div_four]
+  rw [div_pow, Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 2)]
+  ring
+
+/-- **Four-cycle complete spectrum** `{0, −2, −4, −2}` in order k = 0, 1, 2, 3.
+Explicitly demonstrates the spectrum table: three distinct eigenvalues
+(0, −2, −4), with the `−2` eigenvalue having multiplicity 2 from the
+`k = 1` and `k = 3` modes (standard reflection symmetry of cycle
+Fourier basis). -/
+theorem cycleEigenvalue_four_spectrum :
+    (cycleEigenvalue 4 0, cycleEigenvalue 4 1, cycleEigenvalue 4 2,
+      cycleEigenvalue 4 3) = (0, -2, -4, -2) := by
+  rw [cycleEigenvalue_zero, cycleEigenvalue_four_one,
+    cycleEigenvalue_four_two, cycleEigenvalue_four_three]
+
 /-! ## Algebraic identity: sum-to-product form for the eigenvalue.
 
 Given `A, B : ℝ`:
