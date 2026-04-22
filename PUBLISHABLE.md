@@ -13,6 +13,7 @@ Grouped from most-immediate (parts already done) to most-ambitious.
 **Sufficient conditions.**
 - [x] S1/S2/S6 error taxonomy with TeX line references
 - [x] F1–F5 structural flaws **formally refuted in Lean** (`Refutations/F1-F5*.lean`), all axiom-clean
+- [x] **F6 circularity of 2102.09363 "provably satisfies EFE"** formalised in Lean (`Refutations/F6Circularity.lean`): `CircularReconstruction` schema + `circular_reconstruction_has_no_content` (0 axioms) + `circular_procedure_is_identity`. Gorard's Poisson-sprinkle-and-reconstruct procedure is PROVED mathematically content-free at the Lean-type level.
 - [x] Corpus-wide cross-paper propagation map
 - [x] Continuum-limit claims catalog
 - [x] Line-by-line close readings of all four Gorard papers
@@ -29,7 +30,7 @@ Grouped from most-immediate (parts already done) to most-ambitious.
 - F3: `Refutations.F3Tautology.gorard_dim_preservation_is_euler_lagrange` (Iff.rfl)
 - F4: `Refutations.F4Tautology.gorard_causal_invariance_is_general_covariance` (axiom-free)
 - F5: `Refutations.F5Illdefined.becomes_is_underdetermined`
-- F6: `DiscreteDAlembertian.BenincasaDowkerConjecture` (explicit unproven-load-bearing flag)
+- F6: `Refutations.F6Circularity.circular_reconstruction_has_no_content` (formal refutation of Gorard's circular "derivation" at the type level); also `DiscreteDAlembertian.BenincasaDowkerConjecture` (explicit unproven-load-bearing flag on the conjectured side).
 - F7: `Application.size_result_of_conservative`
 
 ## P2 — Corrected continuum identities formalised
