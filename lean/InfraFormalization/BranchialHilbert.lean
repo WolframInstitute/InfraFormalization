@@ -111,4 +111,30 @@ theorem branchialAdjLM_inner {S : Type*} [Fintype S] [DecidableEq S]
   · have h' : ¬ adj v u := fun h' => h (hsymm _ _ h')
     simp [h, h']
 
+/-! ### Connection to the concrete branchial slice
+
+Given the finite-successor hypothesis on a rewriting system, every
+branchial slice at depth `n` is finite
+(`branchialSliceFinite_of_successors_finite`). We turn that `Set.Finite`
+witness into a Fintype so `BranchialHilbert` can be instantiated on
+the concrete slice `↑(BranchialSlice sys s₀ n)`. -/
+
+/-- Fintype on a finite branchial slice, extracted from the
+`Set.Finite` witness. -/
+@[reducible]
+noncomputable def branchialSliceFintype {P V : Type*} [DecidableEq V]
+    (sys : RewritingSystem P) (s₀ : Hypergraph V) (n : ℕ)
+    (h : BranchialSliceFinite sys s₀ n) :
+    Fintype ↑(BranchialSlice sys s₀ n) :=
+  h.fintype
+
+/-- **Branchial Hilbert space on a concrete finite slice.** With the
+finite-successor hypothesis supplied, `BranchialSlice sys s₀ n` is a
+finite set, so ℓ²(slice) = `EuclideanSpace ℂ ↑(BranchialSlice sys s₀ n)`
+is automatic. -/
+noncomputable abbrev branchialSliceHilbert {P V : Type*} [DecidableEq V]
+    (sys : RewritingSystem P) (s₀ : Hypergraph V) (n : ℕ)
+    (h : BranchialSliceFinite sys s₀ n) : Type _ :=
+  @BranchialHilbert ↑(BranchialSlice sys s₀ n) (branchialSliceFintype sys s₀ n h)
+
 end InfraFormalization
