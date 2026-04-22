@@ -162,7 +162,7 @@ Total for new groups: **57/57** addressed. But honest breakdown:
 **The real-work items tracked explicitly** (#176-#180, R1–R5):
 - ✅ **R1**: C² Taylor convergence for scaled second difference (`CTwoTaylor.lean`). Unlocks all non-polynomial bridges.
 - ✅ **R2**: `laplacianMatrix` + `heatKernel` via Matrix.exp (`LaplacianMatrix.lean`). Heat propagator as `exp(t · Δ)`, semigroup property, symmetry, row-sum zero, heat trace.
-- 🔲 **R3**: ℓ²(BranchialSlice) Hilbert space + unitary branchial evolution (real QM bridge).
+- 🟡 **R3 (partial)**: ℓ²(BranchialSlice) Hilbert space (`BranchialHilbert.lean`) — `BranchialHilbert S := EuclideanSpace ℂ S` finite-dim ℂ-Hilbert alias; `branchialAdjLM` ℂ-linear adjacency operator; `branchialAdjLM_inner` self-adjointness for symmetric adjacency. Remaining: unitary branchial evolution `exp (i·t·A)`.
 - 🔲 **R4**: Curved discrete-Ricci convergence (first non-flat case).
 - ✅ **R5**: Cycle Laplacian spectrum closed form (`CycleSpectrum.lean`, full wrap-around).
 

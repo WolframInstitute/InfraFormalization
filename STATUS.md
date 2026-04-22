@@ -45,7 +45,7 @@ real-work items):
 |---|---|---|
 | R1 | C² Taylor convergence of scaled second difference | ✅ (`CTwoTaylor.lean`) |
 | R2 | laplacianMatrix + heatKernel via Matrix.exp | ✅ (`LaplacianMatrix.lean`) |
-| R3 | ℓ²(BranchialSlice) as Hilbert space | pending |
+| R3 | ℓ²(BranchialSlice) as Hilbert space | ✅ partial (`BranchialHilbert.lean`: finite-dim ℂ-Hilbert alias, ℂ-linear adjacency operator + Hermitian self-adjointness for symmetric adj) |
 | R4 | Curved discrete-Ricci convergence beyond flat | pending |
 | R5 | Cycle Laplacian spectrum closed form | ✅ (`CycleSpectrum.lean`; full wrap-around version) |
 

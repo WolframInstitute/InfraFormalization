@@ -38,7 +38,7 @@ Every theorem above depends only on `{propext, Classical.choice, Quot.sound}`. N
 
 ### Near-term (Rung-1/Rung-2 follow-ons — the machinery is in hand)
 
-- [ ] **R3 #178** — `ℓ²(BranchialSlice)` as Hilbert space with branchial adjacency operator. Real-QM bridge: finite-dim Hilbert space from `branchialSliceFinite_of_successors_finite`.
+- [x] **R3 #178 (partial)** — `ℓ²(BranchialSlice)` as Hilbert space with branchial adjacency operator. `BranchialHilbert.lean` defines `BranchialHilbert S := EuclideanSpace ℂ S` (finite-dim ℂ-Hilbert alias); `branchialAdjLM` is the ℂ-linear adjacency operator; `branchialAdjLM_inner` proves Hermitian self-adjointness for symmetric `adj` (spectral-theorem prerequisite for real spectrum). Remaining: I2 uniform measure, I3 amplitudes, I5 unitary evolution (`exp (i t A)`).
 - [ ] **R4 #179** — Curved discrete-Ricci convergence beyond flat. First non-zero Forman-Ricci convergence case.
 - [ ] **A5 #16** — Counting measure on `Hypergraph V` + pushforward (groundwork for A6 / weak convergence, A7 / Wasserstein).
 - [ ] **A7 #18** — Wasserstein-1 convergence rate `O(1/n)` for counting measures.
@@ -64,7 +64,7 @@ Every theorem above depends only on `{propext, Classical.choice, Quot.sound}`. N
 
 - [ ] **I2 #85** — Branchial measure (uniform on finite slice).
 - [ ] **I3 #86** — Branchial amplitudes (ℂ-valued).
-- [ ] **I4 #87** — `ℓ²(slice)` Hilbert space (= R3).
+- [x] **I4 #87** — `ℓ²(slice)` Hilbert space (= R3 partial; `BranchialHilbert.lean`).
 - [ ] **I5 #88** — Branchial evolution as unitary.
 
 ### Einstein / stress-energy (F-group)

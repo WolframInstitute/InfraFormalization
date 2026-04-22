@@ -81,6 +81,7 @@ import InfraFormalization.HeatEquationUniqueness
 import InfraFormalization.ExpEigenvector
 import InfraFormalization.CycleMatrixSpectrum
 import InfraFormalization.CycleHasEigenvalue
+import InfraFormalization.BranchialHilbert
 import InfraFormalization.Refutations.F1NoMetric
 import InfraFormalization.Refutations.F2Orthonormality
 import InfraFormalization.Refutations.F3Tautology
@@ -464,3 +465,6 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.Hypergraph.heatKernel_mass_conservation
 #print axioms InfraFormalization.Hypergraph.heatKernel_L2_decay
 #print axioms InfraFormalization.Hypergraph.heatKernel_mulVec_add
+#print axioms InfraFormalization.branchialAdj_add
+#print axioms InfraFormalization.branchialAdj_smul
+#print axioms InfraFormalization.branchialAdjLM_inner

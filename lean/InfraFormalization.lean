@@ -135,3 +135,4 @@ import InfraFormalization.CycleMatrixSpectrum
 import InfraFormalization.CycleHasEigenvalue
 import InfraFormalization.ContinuumLimitStatement
 import InfraFormalization.DiscreteDAlembertian
+import InfraFormalization.BranchialHilbert

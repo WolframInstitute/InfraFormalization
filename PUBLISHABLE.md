@@ -134,7 +134,7 @@ Grouped from most-immediate (parts already done) to most-ambitious.
 - [x] Formal `∧ False` obligations for IQ6 (Fubini-Study limit), IQ8 (EME persistence), IQ9 (path integral) in `RemainingObligations.lean` — no silent assumptions.
 - [ ] Complete S1–S6 audit of Gorard's QM paper (arXiv:2004.14808).
 - [ ] Branchial measure: uniform probability on finite slices (I2 #85).
-- [ ] `ℓ²(slice)` Hilbert space (I4 #87 / R3 #178).
+- [x] `ℓ²(slice)` Hilbert space (I4 #87 / R3 #178 partial; `BranchialHilbert.lean` — ℂ-Hilbert alias, ℂ-linear adjacency operator `branchialAdjLM`, self-adjointness for symmetric adjacency).
 - [ ] Branchial amplitudes + evolution as unitary (I3, I5, I8).
 - [ ] Fubini-Study limit under branchial refinement (IQ6 #153 in progress; currently obligation).
 - [ ] Prove (or disprove) the branchial → QM bridge claim.

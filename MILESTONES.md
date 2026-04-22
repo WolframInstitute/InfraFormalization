@@ -203,7 +203,7 @@ Grouped by phase (see [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md)). Each milestone ei
 - [x] Finite-slice cardinality bound under finite-successors assumption (`BranchialFinite.lean`, `branchialSliceFinite_of_successors_finite`, task I1 #84).
 - [x] Fisher metric on branchial probability distributions (`FisherMetric.lean`, task IQ5 #152).
 - [ ] Branchial measure: a probability assignment on each slice (I2 #85 pending).
-- [ ] ℓ²(slice) Hilbert space (I4 #87 / R3 #178 pending).
+- [x] ℓ²(slice) Hilbert space (I4 #87 / R3 #178 partial; `BranchialHilbert.lean` — `BranchialHilbert S := EuclideanSpace ℂ S` with ℂ-linear adjacency operator `branchialAdjLM` and self-adjointness `branchialAdjLM_inner` for symmetric adj).
 - [ ] Branchial amplitudes / evolution toward Hilbert-space limit (I3 #86, I5 #88, I8 #91 pending).
 - [ ] Fubini-Study limit under refinement (IQ6 #153 in progress).
 - [ ] EME persistence as branchial observable (IQ8 #154 in progress).
@@ -288,10 +288,10 @@ Full collation of the post-phase-1 infrageometry programme. Each group is a cohe
 - [x] IR6 Candidate-rule database + screening pipeline (`CandidateRuleDatabase.lean`; #164).
 - [ ] IR7 Reverse-engineer rule from target signature (#165 in progress; obligation).
 
-### R-series real-work items (5 tasks, 3/5 done)
+### R-series real-work items (5 tasks, 3.5/5 done)
 - [x] R1 C² Taylor convergence for scaled second difference (`CTwoTaylor.lean`; #176).
 - [x] R2 laplacianMatrix + heatKernel via Matrix.exp (`LaplacianMatrix.lean`; #177).
-- [ ] R3 ℓ²(BranchialSlice) as Hilbert space with branchial adjacency operator (#178).
+- [~] R3 ℓ²(BranchialSlice) as Hilbert space with branchial adjacency operator (#178) — partial: Hilbert alias + ℂ-linear adjacency operator + self-adjointness proved (`BranchialHilbert.lean`); remaining: unitary evolution `exp (i·t·A)`.
 - [ ] R4 Curved discrete-Ricci convergence beyond flat (#179).
 - [x] R5 Cycle Laplacian spectrum closed form (`CycleSpectrum.lean`; #180).
 
@@ -384,7 +384,7 @@ Gorard's companion program (arXiv:2004.14808 and related) claims that the *branc
 - [x] Fisher metric on branchial distributions (`FisherMetric.lean`, IQ5 #152).
 - [ ] Integrate with `../efficient_rewriting_final/` multi-way engine for concrete examples (X4 #75 pending).
 - [ ] Define a measure / amplitude on branchial paths (I2 #85 pending).
-- [ ] Branchial-amplitude / Hilbert-space limit (I3 #86, I4 #87, I5 #88, I8 #91 pending; R3 #178 ℓ²(slice) pending).
+- [~] Branchial-amplitude / Hilbert-space limit (I3 #86, I5 #88, I8 #91 pending; I4 #87 / R3 #178 ℓ²(slice) ✅ partial via `BranchialHilbert.lean`).
 - [ ] Fubini-Study limit under branchial refinement (IQ6 #153 in progress).
 
 ## Multi-way engine integration
