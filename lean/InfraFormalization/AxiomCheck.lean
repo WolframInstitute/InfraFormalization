@@ -430,6 +430,7 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.Hypergraph.laplacianMatrixEdge_symm
 #print axioms InfraFormalization.Hypergraph.laplacianMatrix_symm
 #print axioms InfraFormalization.Hypergraph.heatKernel_symm
+#print axioms InfraFormalization.Hypergraph.heatKernel_neg
 #print axioms InfraFormalization.Hypergraph.heatTrace_zero
 #print axioms InfraFormalization.laplacianMatrix_cycleHypergraph_eigen
 #print axioms InfraFormalization.Hypergraph.dist_triangle_of_reachable_left

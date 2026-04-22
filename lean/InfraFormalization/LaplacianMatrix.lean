@@ -205,6 +205,13 @@ theorem heatKernel_symm (H : Hypergraph V) (t : ℝ) :
     rw [Matrix.transpose_smul, (laplacianMatrix_symm H).eq]
   exact h_sym.exp
 
+/-- **Heat kernel at `−t` is the inverse of heat kernel at `t`.**
+Backward heat flow is the formal inverse of forward heat flow. -/
+theorem heatKernel_neg (H : Hypergraph V) (t : ℝ) :
+    heatKernel H (-t) = (heatKernel H t)⁻¹ := by
+  unfold heatKernel
+  rw [neg_smul, Matrix.exp_neg]
+
 /-! ## Heat kernel trace -/
 
 /-- **Heat trace** `Tr(exp(−t Δ_H))`: the fundamental object whose
