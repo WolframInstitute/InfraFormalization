@@ -441,6 +441,7 @@ import InfraFormalization.Refutations.F6Circularity
 #print axioms InfraFormalization.Hypergraph.heatKernel_neg
 #print axioms InfraFormalization.Hypergraph.heatKernel_mul_heatKernel_neg
 #print axioms InfraFormalization.Hypergraph.heatTrace_zero
+#print axioms InfraFormalization.Hypergraph.heatKernel_zero_mulVec
 #print axioms InfraFormalization.laplacianMatrix_cycleHypergraph_eigen
 #print axioms InfraFormalization.Hypergraph.dist_triangle_of_reachable_left
 #print axioms InfraFormalization.Hypergraph.dist_triangle_of_reachable_right

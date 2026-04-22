@@ -111,6 +111,12 @@ theorem heatKernel_zero (H : Hypergraph V) :
   unfold heatKernel
   simp [NormedSpace.exp_zero]
 
+/-- **Heat kernel at `t = 0` acts as identity on any initial data**.
+For every vector `v : V → ℝ`, `(heatKernel H 0).mulVec v = v`. -/
+theorem heatKernel_zero_mulVec (H : Hypergraph V) (v : V → ℝ) :
+    (heatKernel H 0).mulVec v = v := by
+  rw [heatKernel_zero, Matrix.one_mulVec]
+
 /-- **Heat kernel semigroup**: `exp((s + t) Δ) = exp(s Δ) · exp(t Δ)`.
 
 Both factors are matrix exponentials of commuting matrices (scalar
