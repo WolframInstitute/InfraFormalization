@@ -113,6 +113,7 @@ causally before itself. -/
 theorem chronological_irrefl (v : V) : ¬ G.chronological v v :=
   fun h => h.1 rfl
 
+
 /-! ## Observer chains (Prop-level)
 
 An **observer chain from `u` to `v`** is simply the causal-precedence
@@ -202,6 +203,62 @@ theorem causalFuture_trans {u v w : V}
     (hvu : v ∈ G.causalFuture u) (hwv : w ∈ G.causalFuture v) :
     w ∈ G.causalFuture u :=
   G.causallyPrecedes_trans hvu hwv
+
+/-! ### Causality conditions (E4 / #56)
+
+Discrete analogs of continuum Lorentzian causality conditions:
+
+  * **StronglyCausal** — there are no closed timelike-like loops: no
+    non-trivial chain of causal edges returns to its start.
+  * **StablyCausal** — there exists a "time function" `τ : V → ℕ`
+    strictly increasing along causal edges.
+  * Implication: stably causal ⇒ strongly causal. -/
+
+/-- **Strong causality**: no non-trivial closed chain.
+`ChainOfLength G n v v` with `n > 0` never holds. -/
+def StronglyCausal : Prop :=
+  ∀ {n : Nat} {v : V}, 0 < n → ¬ ChainOfLength G n v v
+
+/-- **A time function** on `G` is a map `V → ℕ` strictly increasing
+along every direct causal edge. -/
+structure TimeFunction where
+  /-- The underlying map. -/
+  τ : V → ℕ
+  /-- `τ` strictly increases along every direct causal edge. -/
+  monotone : ∀ {u v}, G.causalEdge u v → τ u < τ v
+
+/-- **Stable causality**: a time function exists. -/
+def StablyCausal : Prop := Nonempty G.TimeFunction
+
+/-- **Time-function chain lemma**: along any chain of length `n`, the
+time function weakly increases. -/
+theorem chain_monotone_time (tf : G.TimeFunction) :
+    ∀ {n : Nat} {u v : V}, ChainOfLength G n u v → tf.τ u ≤ tf.τ v
+  | 0, _, _, ChainOfLength.refl _ => le_refl _
+  | _ + 1, _, _, ChainOfLength.cons c e => by
+    have ih := chain_monotone_time tf c
+    have hedge : tf.τ _ < tf.τ _ := tf.monotone e
+    omega
+
+/-- **Strict time-function chain lemma**: a chain of length `n > 0`
+forces strict increase of `τ`. -/
+theorem chain_strict_time (tf : G.TimeFunction) :
+    ∀ {n : Nat} {u v : V}, 0 < n → ChainOfLength G n u v →
+      tf.τ u < tf.τ v
+  | 0, _, _, hpos, _ => absurd hpos (by omega)
+  | _ + 1, _, _, _, ChainOfLength.cons c e => by
+    have ih := G.chain_monotone_time tf c
+    have hedge := tf.monotone e
+    omega
+
+/-- **Stably causal implies strongly causal** — a time function blocks
+closed non-trivial chains: `τ(v) < τ(v)` is impossible. -/
+theorem stablyCausal_implies_stronglyCausal
+    (h : G.StablyCausal) : G.StronglyCausal := by
+  intro n v hn_pos hchain
+  have tf : G.TimeFunction := Classical.choice h
+  have : tf.τ v < tf.τ v := G.chain_strict_time tf hn_pos hchain
+  exact absurd this (Nat.lt_irrefl _)
 
 end CausalGraph
 

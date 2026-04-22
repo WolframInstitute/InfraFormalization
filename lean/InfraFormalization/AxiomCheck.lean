@@ -117,6 +117,7 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.CausalGraph.causalFuture_trans
 #print axioms InfraFormalization.CausalGraph.chronological_implies_causal
 #print axioms InfraFormalization.CausalGraph.chronological_irrefl
+#print axioms InfraFormalization.CausalGraph.stablyCausal_implies_stronglyCausal
 #print axioms InfraFormalization.in_degree_eq_lhsSize
 #print axioms InfraFormalization.out_degree_eq_rhsSize
 #print axioms InfraFormalization.balanced_of_conservative
