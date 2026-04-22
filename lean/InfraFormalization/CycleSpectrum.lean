@@ -223,6 +223,27 @@ theorem cycleEigenvalue_four_three : cycleEigenvalue 4 3 = -2 := by
   rw [div_pow, Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 2)]
   ring
 
+/-- **n-periodicity of cycle eigenvalues in the wave-number index.**
+For every `n` and `k`, `cycleEigenvalue n (n + k) = cycleEigenvalue n k`.
+This reflects the `ℤ/nℤ` character-theoretic structure: the cycle
+Fourier modes are labelled by `k ∈ ℤ/nℤ`, and any shift by a multiple
+of `n` gives the same eigenvalue.
+
+Proof: `sin(π(n+k)/n) = sin(π + πk/n) = −sin(πk/n)`, so squaring
+recovers the `k`-th value. -/
+theorem cycleEigenvalue_periodic {n : ℕ} [NeZero n] (k : ℕ) :
+    cycleEigenvalue n (n + k) = cycleEigenvalue n k := by
+  unfold cycleEigenvalue
+  have hn_pos : (0 : ℝ) < n := by
+    have : 0 < n := Nat.pos_of_ne_zero (NeZero.ne n)
+    exact_mod_cast this
+  have hn_ne : (n : ℝ) ≠ 0 := ne_of_gt hn_pos
+  have h_arg : (Real.pi * (n + k : ℕ) / n : ℝ)
+      = Real.pi + Real.pi * k / n := by
+    push_cast; field_simp
+  rw [h_arg, Real.sin_add, Real.sin_pi, Real.cos_pi]
+  ring
+
 /-- **Four-cycle complete spectrum** `{0, −2, −4, −2}` in order k = 0, 1, 2, 3.
 Explicitly demonstrates the spectrum table: three distinct eigenvalues
 (0, −2, −4), with the `−2` eigenvalue having multiplicity 2 from the
