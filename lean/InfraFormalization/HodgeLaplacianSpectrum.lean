@@ -62,5 +62,76 @@ theorem vrHodge0_const_in_kernel (H : Hypergraph V) (ε : ℕ) (c : ℝ) (v : V)
     H.vrHodge0 ε (fun _ => c) v = 0 :=
   vrHodge0_const H ε c v
 
+/-- **Self-adjointness (ℓ² symmetry) of the Hodge 0-Laplacian.**
+For all `f g : V → ℝ`,
+
+  `∑ v, f v · (vrHodge0 g v) = ∑ v, g v · (vrHodge0 f v)`.
+
+This is the spectral-theorem prerequisite for IT3: `vrHodge0` has a
+real spectrum and an orthogonal eigenbasis (finite-dim spectral
+theorem).
+
+Proof strategy: split each side into two double sums. The
+"bilinear cross term" `∑_{(v,u) adj} f(v) g(u)` has a swap-under-adj
+symmetry (since `SimpleGraph.Adj` is symmetric, so the ordered pair
+`(v,u)` running over adjacent pairs is in bijection with `(u,v)`
+running over the same set). The "diagonal" contributions
+`∑_{(v,u) adj} f(v) g(v)` collect into `∑_v deg(v) · f(v) · g(v)` —
+already symmetric in `f ↔ g`. So the two sides agree. -/
+theorem vrHodge0_symm (H : Hypergraph V) (ε : ℕ) (f g : V → ℝ) :
+    ∑ v, f v * H.vrHodge0 ε g v = ∑ v, g v * H.vrHodge0 ε f v := by
+  classical
+  -- Rewrite each side to a ∑∑ if-form, then compare term-wise.
+  have h_expand : ∀ (f g : V → ℝ),
+      ∑ v, f v * H.vrHodge0 ε g v
+        = ∑ v, ∑ u, (if (H.vietorisRipsGraph ε).Adj v u
+            then f v * (g u - g v) else 0) := by
+    intro f g
+    unfold vrHodge0
+    simp only [Finset.mul_sum, Finset.sum_filter, mul_ite, mul_zero]
+  rw [h_expand f g, h_expand g f]
+  -- Now each side is a double sum over (v, u) pairs. Split into
+  -- cross (f v * g u) and diagonal (f v * g v) contributions; the
+  -- diagonal is trivially symmetric, the cross is symmetric under
+  -- the adj-swap (adj v u ↔ adj u v).
+  have h_split : ∀ h₁ h₂ : V → ℝ,
+      (∑ v, ∑ u, (if (H.vietorisRipsGraph ε).Adj v u then
+          h₁ v * (h₂ u - h₂ v) else 0))
+      = (∑ v, ∑ u, (if (H.vietorisRipsGraph ε).Adj v u then
+          h₁ v * h₂ u else 0))
+        - (∑ v, ∑ u, (if (H.vietorisRipsGraph ε).Adj v u then
+          h₁ v * h₂ v else 0)) := by
+    intro h₁ h₂
+    rw [← Finset.sum_sub_distrib]
+    refine Finset.sum_congr rfl (fun v _ => ?_)
+    rw [← Finset.sum_sub_distrib]
+    refine Finset.sum_congr rfl (fun u _ => ?_)
+    by_cases h : (H.vietorisRipsGraph ε).Adj v u
+    · simp [h]; ring
+    · simp [h]
+  rw [h_split f g, h_split g f]
+  have h_cross_symm :
+      (∑ v, ∑ u, (if (H.vietorisRipsGraph ε).Adj v u then
+          f v * g u else 0))
+      = (∑ v, ∑ u, (if (H.vietorisRipsGraph ε).Adj v u then
+          g v * f u else 0)) := by
+    rw [Finset.sum_comm]
+    refine Finset.sum_congr rfl (fun a _ => Finset.sum_congr rfl (fun b _ => ?_))
+    by_cases h : (H.vietorisRipsGraph ε).Adj a b
+    · have h' : (H.vietorisRipsGraph ε).Adj b a := h.symm
+      simp [h, h']; ring
+    · have h' : ¬ (H.vietorisRipsGraph ε).Adj b a := fun hba => h hba.symm
+      simp [h, h']
+  have h_diag_symm :
+      (∑ v, ∑ u, (if (H.vietorisRipsGraph ε).Adj v u then
+          f v * g v else 0))
+      = (∑ v, ∑ u, (if (H.vietorisRipsGraph ε).Adj v u then
+          g v * f v else 0)) := by
+    refine Finset.sum_congr rfl (fun v _ => Finset.sum_congr rfl (fun u _ => ?_))
+    by_cases h : (H.vietorisRipsGraph ε).Adj v u
+    · simp [h]; ring
+    · simp [h]
+  rw [h_cross_symm, h_diag_symm]
+
 end Hypergraph
 end InfraFormalization
