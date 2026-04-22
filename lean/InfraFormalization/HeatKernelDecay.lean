@@ -20,6 +20,7 @@ on the eigenbasis; that pairing is not yet formalized.
 -/
 
 import InfraFormalization.CycleMatrixSpectrum
+import InfraFormalization.SymmEigenOrthogonal
 import Mathlib.Analysis.SpecialFunctions.Exp
 
 namespace InfraFormalization
@@ -200,5 +201,64 @@ theorem heatKernel_cycleHypergraph_nonzero_mode_normSq_tendsto_zero
   have := h_exp_sq.mul_const
     (dotProduct (cycleEigenvector n k) (cycleEigenvector n k))
   simpa using this
+
+/-- **2-mode Parseval identity.** For `v = c · v_0 + d · v_k` with
+`v_0, v_k` orthogonal cycle eigenvectors (here `v_0` is the constant
+mode, `v_k` with `1 ≤ k < n` is non-constant), the squared ℓ² norm of
+the heat-flowed vector splits as
+
+  `⟨heatKernel t · v, heatKernel t · v⟩
+     = c² · ⟨v_0, v_0⟩ + d² · exp(2·t·λ_k) · ⟨v_k, v_k⟩`.
+
+Cross terms vanish by orthogonality (`cycleEigenvector_const_orthogonal_nonzero`).
+This is the concrete Parseval-style decomposition on the 2-mode subspace,
+with each mode decaying at its own eigenvalue rate. -/
+theorem heatKernel_cycleHypergraph_two_mode_parseval
+    {n : ℕ} [NeZero n] (hn : 2 ≤ n) (k : ℕ) (hk_lo : 1 ≤ k) (hk_hi : k < n)
+    (c d : ℝ) (t : ℝ) :
+    dotProduct
+        ((Hypergraph.heatKernel (cycleHypergraph n) t).mulVec
+          (c • cycleEigenvector n 0 + d • cycleEigenvector n k))
+        ((Hypergraph.heatKernel (cycleHypergraph n) t).mulVec
+          (c • cycleEigenvector n 0 + d • cycleEigenvector n k))
+      = c ^ 2 * dotProduct (cycleEigenvector n 0) (cycleEigenvector n 0)
+        + d ^ 2 * Real.exp (t * cycleEigenvalue n k) ^ 2
+          * dotProduct (cycleEigenvector n k) (cycleEigenvector n k) := by
+  -- Distribute heatKernel.mulVec over add + smul, use eigenvalue actions.
+  have h_heat_v :
+      (Hypergraph.heatKernel (cycleHypergraph n) t).mulVec
+        (c • cycleEigenvector n 0 + d • cycleEigenvector n k)
+      = c • cycleEigenvector n 0
+          + (d * Real.exp (t * cycleEigenvalue n k)) • cycleEigenvector n k := by
+    rw [Matrix.mulVec_add, Matrix.mulVec_smul, Matrix.mulVec_smul]
+    rw [heatKernel_cycleHypergraph_mulVec_eigenvector hn 0 t]
+    rw [heatKernel_cycleHypergraph_mulVec_eigenvector hn k t]
+    rw [cycleEigenvalue_zero, mul_zero, Real.exp_zero, one_smul]
+    rw [smul_smul]
+  rw [h_heat_v]
+  -- ⟨c·v_0 + e·v_k, c·v_0 + e·v_k⟩ = c²⟨v_0,v_0⟩ + e²⟨v_k,v_k⟩ + 2ce·⟨v_0, v_k⟩.
+  -- Orthogonality kills the cross term.
+  rw [show (c • cycleEigenvector n 0
+          + (d * Real.exp (t * cycleEigenvalue n k)) • cycleEigenvector n k) ⬝ᵥ
+          (c • cycleEigenvector n 0
+          + (d * Real.exp (t * cycleEigenvalue n k)) • cycleEigenvector n k)
+        = c * c * dotProduct (cycleEigenvector n 0) (cycleEigenvector n 0)
+          + c * (d * Real.exp (t * cycleEigenvalue n k))
+            * dotProduct (cycleEigenvector n 0) (cycleEigenvector n k)
+          + (d * Real.exp (t * cycleEigenvalue n k)) * c
+            * dotProduct (cycleEigenvector n k) (cycleEigenvector n 0)
+          + (d * Real.exp (t * cycleEigenvalue n k))
+            * (d * Real.exp (t * cycleEigenvalue n k))
+            * dotProduct (cycleEigenvector n k) (cycleEigenvector n k) from by
+    simp [add_dotProduct, dotProduct_add, smul_dotProduct, dotProduct_smul,
+      smul_eq_mul, mul_assoc]
+    ring]
+  rw [cycleEigenvector_const_orthogonal_nonzero hn k hk_lo hk_hi]
+  have h_sym : dotProduct (cycleEigenvector n k) (cycleEigenvector n 0) = 0 := by
+    rw [show (cycleEigenvector n k ⬝ᵥ cycleEigenvector n 0)
+          = (cycleEigenvector n 0 ⬝ᵥ cycleEigenvector n k) from dotProduct_comm _ _]
+    exact cycleEigenvector_const_orthogonal_nonzero hn k hk_lo hk_hi
+  rw [h_sym]
+  ring
 
 end InfraFormalization

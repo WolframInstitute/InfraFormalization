@@ -480,6 +480,7 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.heatKernel_cycleHypergraph_constMode_invariant
 #print axioms InfraFormalization.heatKernel_cycleHypergraph_mulVec_nonzero_mode_normSq
 #print axioms InfraFormalization.heatKernel_cycleHypergraph_nonzero_mode_normSq_tendsto_zero
+#print axioms InfraFormalization.heatKernel_cycleHypergraph_two_mode_parseval
 #print axioms InfraFormalization.Hypergraph.vrHodge0_add
 #print axioms InfraFormalization.Hypergraph.vrHodge0_smul
 #print axioms InfraFormalization.Hypergraph.vrHodge0_has_zero_eigenvalue
