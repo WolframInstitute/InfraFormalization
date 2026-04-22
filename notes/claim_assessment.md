@@ -59,9 +59,15 @@ Tabulating:
 
 ## The honest verdict
 
-**The published texts claim more than their arguments establish, and contain no fabricated data.** There is no evidence of invented numerical data or simulation results; the CCZ4-on-mesh validation against Schwarzschild/Kerr is real NR work, and the references to Sorkin/Benincasa/Dowker are correct. What *is* present: circular "derivations" presented as theorems, title/abstract claims that the body does not deliver, load-bearing conjectures cited as established results, and at least one verbatim misstatement of a cited source (the Ollivier scalar/directional error) reused across four papers.
+**The published texts claim more than their arguments establish, and contain no fabricated data.** There is no evidence of invented numerical data or simulation results — the CCZ4-on-mesh validation against Schwarzschild/Kerr is real NR work, and the references to Sorkin/Benincasa/Dowker are correct. What *is* present in the published corpus:
 
-The same steps recur across the papers: the fiat orthonormality assumption, the undefined `g^ab`, the Benincasa-Dowker conjecture treated as a theorem, and the Poisson-sprinkle-and-reconstruct procedure. The papers present plausibility arguments as derivations, open conjectures as theorems, and sample-consistency checks as a proof that the rule "provably satisfies EFE".
+  * circular "derivations" presented as theorems (2102.09363 §5 — now Lean-formalised as mathematically content-free, `Refutations/F6Circularity.lean`),
+  * title/abstract claims that the body does not deliver (2303.07282 promises discrete singularity theorems and delivers none; the paper's own conclusions concede this),
+  * load-bearing conjectures (Sorkin–Benincasa–Dowker) cited in contexts that read as if the conjecture were settled,
+  * a verbatim Ollivier-curvature misstatement (scalar where Ollivier's theorem has directional Ric(v,v)) reused across four papers,
+  * fiat orthonormality and an undefined discrete metric tensor that carry the weight of the §3.3 "Einstein equations" derivation.
+
+Whether each is "an error of register" or "a deliberate choice" is a question about authorial intent which is outside the mathematical record. What *is* in the mathematical record is that the papers, read literally, do not deliver what the titles and abstracts claim; and that the central mechanism presented as a derivation is, at the Lean-type level, mathematically content-free.
 
 **The central "derivation" in 2102.09363 is circular, and this is now unambiguous, and Lean-formalised (`Refutations/F6Circularity.lean`).** The procedure that produces a "hypergraph satisfying the Einstein field equations" is:
 1. Pick a target manifold (Schwarzschild, Kerr) known a priori.
