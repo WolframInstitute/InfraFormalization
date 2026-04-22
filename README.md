@@ -22,7 +22,7 @@ The stated program: derive GR from hypergraph rewriting. The stated claim in G3:
 | ✅ Milestones | [`MILESTONES.md`](MILESTONES.md) — checkbox tracker across all phases |
 | 🧨 Major flaws | [`MAJOR_FLAWS.md`](MAJOR_FLAWS.md) — the F1–F8 structural flaws (distinct from arithmetic ones) |
 | 🧬 Lean conventions | [`LEAN_PHYSICS.md`](LEAN_PHYSICS.md) — alignment with HepLean and Mathlib conventions |
-| 📊 Status | [`STATUS.md`](STATUS.md) — live snapshot: 20 machine-verified theorems, axiom-clean; where we are on the roadmap |
+| 📊 Status | [`STATUS.md`](STATUS.md) — live snapshot: 300+ machine-verified theorems, axiom-clean; infrageometry programme 48/57 closed (84%); branchial QM bridge 8/10; F1–F7 Gorard refutations Lean-formal |
 | 🗺 Methodology | [`notes/plan.md`](notes/plan.md) — 7-phase verification plan |
 | 🧮 Severity | [`notes/severity_taxonomy.md`](notes/severity_taxonomy.md) — S1–S6 taxonomy; "is it a lie?" discussion |
 | 🧩 Corpus | [`notes/corpus_audit.md`](notes/corpus_audit.md) — cross-paper map of repeated errors |
