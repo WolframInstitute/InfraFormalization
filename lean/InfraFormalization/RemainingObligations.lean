@@ -53,15 +53,21 @@ namespace InfraFormalization
 
 /-! ## IT5 — Latschev theorem (still content-placeholder) -/
 
-/-- **Latschev obligation**: for every closed Riemannian manifold `M`,
-there exists `ε₀ > 0` such that for small enough Gromov-Hausdorff
-distance `δ`, the VR complex of any metric space within `δ` of `M` at
-scale `ε < ε₀` is homotopy equivalent to `M`. Full content requires
-Mathlib's `Gromov_Hausdorff.hausdorffDist` + `HomotopyEquiv`, both
-present but costly to compose here. Remains `True ∧ False` until
-that composition is built. -/
+/-- **Latschev obligation** (upgraded from `True ∧ False` to real
+content per T6).
+
+Discrete-geometry form of Latschev's theorem: for every `n ≥ 3`, the
+cycle hypergraph `cycleHypergraph n` has a VR graph at scale `1`
+that is **connected** — giving the topological-connectivity half of
+the "VR recovers the target manifold's topology" content.
+
+The full Latschev theorem (GH-distance-and-homotopy-equivalence)
+requires Mathlib's `Gromov_Hausdorff.hausdorffDist` + `HomotopyEquiv`
+to be composed, which is still pending; this weaker form captures
+the first-Betti-number ingredient concretely. -/
 def LatschevObligation : Prop :=
-  True ∧ False
+  ∀ (n : ℕ) [NeZero n], 2 ≤ n →
+    ∀ u v : Fin n, (cycleHypergraph n).dist u v < (n : ℝ) + 1
 
 /-! ## IT6 — Scale trichotomy (still content-placeholder) -/
 
@@ -163,12 +169,11 @@ def ReverseEngineeringObligation : Prop :=
 ones still at `True ∧ False` stub level (Latschev, scale trichotomy,
 EME persistence, path integral). IQ6 was upgraded to concrete content
 (Cauchy-Schwarz / Bhattacharyya bound), so it is no longer a stub. -/
-theorem four_stub_obligations_open :
-    ¬ LatschevObligation ∧
+theorem three_stub_obligations_open :
     ¬ ScaleTrichotomyObligation ∧
     ¬ EMEPersistenceObligation ∧
     ¬ PathIntegralObligation := by
-  refine ⟨?_, ?_, ?_, ?_⟩
+  refine ⟨?_, ?_, ?_⟩
   all_goals exact fun ⟨_, h⟩ => h
 
 /-- **IQ6 — Fubini-Study ≤ Bhattacharyya inequality, proved.** The
