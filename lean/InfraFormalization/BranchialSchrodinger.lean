@@ -138,4 +138,36 @@ theorem branchialSchrodinger_unitary_evolution
   rw [← h_zero]
   exact h_sum
 
+/-- **Global Born-rule conservation.** For any two times `s t : ℝ`,
+the branchial Schrödinger probability is identical:
+`branchialSchrodinger_probability u v s = branchialSchrodinger_probability u v t`.
+
+Derived from the pointwise `branchialSchrodinger_unitary_evolution`
+via `is_const_of_deriv_eq_zero` (a constant function has zero
+derivative, and conversely a function with zero derivative on an
+interval is constant on that interval).
+
+This is the global form: the total probability is *literally the
+same number* at every time, not just "instantaneously constant." -/
+theorem branchialSchrodinger_probability_const
+    {adj : S → S → Prop} [DecidableRel adj]
+    (hsymm : ∀ a b, adj a b → adj b a)
+    {u v : ℝ → S → ℝ} (hsol : BranchialSchrodinger adj u v)
+    (s t : ℝ) :
+    branchialSchrodinger_probability u v s
+      = branchialSchrodinger_probability u v t := by
+  have h_deriv : ∀ x : ℝ,
+      HasDerivAt (branchialSchrodinger_probability u v) 0 x :=
+    fun x => branchialSchrodinger_unitary_evolution hsymm hsol x
+  have h_const : ∀ x y, branchialSchrodinger_probability u v x
+      = branchialSchrodinger_probability u v y := by
+    intro x y
+    have h_diffble : Differentiable ℝ (branchialSchrodinger_probability u v) := by
+      intro z
+      exact (h_deriv z).differentiableAt
+    have h_deriv_zero : ∀ z, deriv (branchialSchrodinger_probability u v) z = 0 :=
+      fun z => (h_deriv z).deriv
+    exact (is_const_of_deriv_eq_zero h_diffble h_deriv_zero x y)
+  exact h_const s t
+
 end InfraFormalization

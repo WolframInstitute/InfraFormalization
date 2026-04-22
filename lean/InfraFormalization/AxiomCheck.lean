@@ -506,6 +506,7 @@ import InfraFormalization.Refutations.F6Circularity
 #print axioms InfraFormalization.cycleEigenvalue_nonzero_mode_neg
 #print axioms InfraFormalization.branchialAdjReal_symm
 #print axioms InfraFormalization.branchialSchrodinger_unitary_evolution
+#print axioms InfraFormalization.branchialSchrodinger_probability_const
 #print axioms InfraFormalization.expectationValue_re_of_symm
 #print axioms InfraFormalization.expectationValue_eigenvector
 #print axioms InfraFormalization.branchialAdjObservable
