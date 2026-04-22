@@ -40,6 +40,22 @@ noncomputable def cycleEigenvector (n k : ℕ) (j : Fin n) : ℝ :=
 noncomputable def cycleEigenvalue (n k : ℕ) : ℝ :=
   -4 * (sin (π * k / n))^2
 
+/-- **All cycle eigenvalues are non-positive** — `−Δ_{C_n}` is PSD.
+
+`cycleEigenvalue n k ≤ 0` for every `n`, `k`. Immediate from `sin² ≥ 0`. -/
+theorem cycleEigenvalue_nonpos (n k : ℕ) : cycleEigenvalue n k ≤ 0 := by
+  unfold cycleEigenvalue
+  have h_sq : (0 : ℝ) ≤ (sin (π * k / n))^2 := sq_nonneg _
+  nlinarith
+
+/-- **Zero is an eigenvalue** — witnessed by `k = 0`
+(`sin 0 = 0 ⇒ cycleEigenvalue n 0 = 0`). Represents the
+constant eigenvector, aligned with the Laplacian-kills-constants
+principle. -/
+theorem cycleEigenvalue_zero (n : ℕ) : cycleEigenvalue n 0 = 0 := by
+  unfold cycleEigenvalue
+  simp
+
 /-! ## Algebraic identity: sum-to-product form for the eigenvalue.
 
 Given `A, B : ℝ`:
