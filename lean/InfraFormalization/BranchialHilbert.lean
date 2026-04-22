@@ -111,6 +111,65 @@ theorem branchialAdjLM_inner {S : Type*} [Fintype S] [DecidableEq S]
   · have h' : ¬ adj v u := fun h' => h (hsymm _ _ h')
     simp [h, h']
 
+/-! ### Branchial amplitudes and the Born-rule probability
+
+In the Wolfram-model QM bridge, a **branchial amplitude** is exactly a
+wavefunction in `BranchialHilbert S`, and the induced **probability
+distribution** on states is `|ψ|²` — the Born rule. We record those
+definitions and the basic sanity facts (non-negativity, normalisation
+under unit norm). -/
+
+/-- **Branchial amplitude** = wavefunction in `BranchialHilbert S`. An
+alias recording the physical interpretation (I3 / #86). -/
+abbrev BranchialAmplitude (S : Type*) [Fintype S] : Type _ := BranchialHilbert S
+
+/-- **Born-rule probability distribution** induced by an amplitude:
+`bornProbability ψ s = |ψ s|²`. This is the induced mass assigned to
+state `s` when observing the branchial amplitude. -/
+noncomputable def bornProbability {S : Type*} [Fintype S]
+    (ψ : BranchialAmplitude S) (s : S) : ℝ :=
+  Complex.normSq (ψ s)
+
+/-- **Born-rule is non-negative at every state**. -/
+theorem bornProbability_nonneg {S : Type*} [Fintype S]
+    (ψ : BranchialAmplitude S) (s : S) :
+    0 ≤ bornProbability ψ s :=
+  Complex.normSq_nonneg _
+
+/-- **Born-rule is normalised to `‖ψ‖²`**. In particular, if `‖ψ‖ = 1`
+then the Born probabilities sum to `1` and define a genuine probability
+distribution on `S`. -/
+theorem sum_bornProbability {S : Type*} [Fintype S]
+    (ψ : BranchialAmplitude S) :
+    ∑ s, bornProbability ψ s = ‖ψ‖ ^ 2 := by
+  rw [EuclideanSpace.norm_eq]
+  unfold bornProbability
+  rw [Real.sq_sqrt]
+  · simp only [Complex.norm_def, Real.sq_sqrt (Complex.normSq_nonneg _)]
+  · exact Finset.sum_nonneg (fun s _ => sq_nonneg _)
+
+/-- **Uniform branchial weight** on a finite slice (I2 / #85). Every
+element carries weight `1 / |S|`; summed over `S` this gives `1`,
+i.e. a bona-fide discrete probability distribution. -/
+noncomputable def branchialUniformWeight (S : Type*) [Fintype S]
+    (_s : S) : ℝ :=
+  (Fintype.card S : ℝ)⁻¹
+
+/-- **Uniform branchial weight is non-negative**. -/
+theorem branchialUniformWeight_nonneg (S : Type*) [Fintype S] (s : S) :
+    0 ≤ branchialUniformWeight S s := by
+  unfold branchialUniformWeight
+  positivity
+
+/-- **Uniform branchial weights sum to 1** when the slice is nonempty. -/
+theorem sum_branchialUniformWeight (S : Type*) [Fintype S] [Nonempty S] :
+    ∑ s : S, branchialUniformWeight S s = 1 := by
+  unfold branchialUniformWeight
+  rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
+  have hcard : (0 : ℝ) < Fintype.card S := by
+    exact_mod_cast Fintype.card_pos
+  field_simp
+
 /-! ### Connection to the concrete branchial slice
 
 Given the finite-successor hypothesis on a rewriting system, every
