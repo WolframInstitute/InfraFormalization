@@ -103,6 +103,34 @@ theorem Hypergraph.dist_comm (H : Hypergraph V) (u v : V) :
   unfold Hypergraph.dist
   exact SimpleGraph.dist_comm
 
+/-- **Triangle inequality for the hypergraph distance**, conditional on
+reachability (via `SimpleGraph.Reachable.dist_triangle_left`). On a
+disconnected graph, `dist = 0` as a junk value on unreachable pairs,
+so the unconditional inequality fails; this form requires the
+connecting edge `u ⇝ v` to be reachable. -/
+theorem Hypergraph.dist_triangle_of_reachable_left (H : Hypergraph V)
+    {u v : V} (h : H.toSimpleGraph.Reachable u v) (w : V) :
+    H.dist u w ≤ H.dist u v + H.dist v w := by
+  unfold Hypergraph.dist
+  exact SimpleGraph.Reachable.dist_triangle_left h w
+
+/-- **Triangle inequality**, right-variant. -/
+theorem Hypergraph.dist_triangle_of_reachable_right (H : Hypergraph V)
+    (u : V) {v w : V} (h : H.toSimpleGraph.Reachable v w) :
+    H.dist u w ≤ H.dist u v + H.dist v w := by
+  unfold Hypergraph.dist
+  exact SimpleGraph.Reachable.dist_triangle_right h u
+
+/-- **Unconditional triangle inequality** on a connected hypergraph:
+for any three vertices `u, v, w : V`, `dist u w ≤ dist u v + dist v w`.
+This is the condition needed for `(V, Hypergraph.dist H)` to be a
+pseudo-metric space (modulo the ℕ → ℝ cast). -/
+theorem Hypergraph.dist_triangle (H : Hypergraph V)
+    (hconn : H.toSimpleGraph.Connected) (u v w : V) :
+    H.dist u w ≤ H.dist u v + H.dist v w := by
+  unfold Hypergraph.dist
+  exact hconn.dist_triangle
+
 /-! ## Geodesic balls and their volumes -/
 
 /-- **Closed geodesic ball** of radius `r` around `v`: the set of
@@ -372,5 +400,60 @@ theorem cycleHypergraph_ballVolume_one_ge_three {n : Nat} [NeZero n]
   unfold Hypergraph.geodesicBallVolume
   calc 3 = ({v, v + 1, v - 1} : Finset (Fin n)).card := h_triple_card.symm
     _ ≤ _ := Finset.card_le_card h_subset
+
+/-! ## Cycle-hypergraph connectivity
+
+For `n ≥ 2`, `cycleHypergraph n` is a connected graph. This lets us
+apply the unconditional triangle inequality `Hypergraph.dist_triangle`
+to cycles. -/
+
+/-- **Reachability from `0` to any vertex in `cycleHypergraph n`** via
+the successor-adjacency ladder. -/
+theorem cycleHypergraph_reachable_zero {n : Nat} [NeZero n] (hn : 2 ≤ n)
+    (v : Fin n) :
+    (cycleHypergraph n).toSimpleGraph.Reachable 0 v := by
+  -- Auxiliary lemma: for every k : ℕ with k < n, Reachable 0 ⟨k, _⟩.
+  suffices haux : ∀ (k : ℕ) (hkn : k < n),
+      (cycleHypergraph n).toSimpleGraph.Reachable 0 ⟨k, hkn⟩ by
+    have := haux v.val v.isLt
+    convert this
+  intro k
+  induction k with
+  | zero =>
+    intro hkn
+    exact SimpleGraph.Reachable.refl _
+  | succ k ih =>
+    intro hkn
+    have hk_lt : k < n := by omega
+    let vk : Fin n := ⟨k, hk_lt⟩
+    have ih' : (cycleHypergraph n).toSimpleGraph.Reachable 0 vk := ih hk_lt
+    -- ⟨k+1, hkn⟩ = vk + 1 in Fin n.
+    have h_one : (1 : Fin n).val = 1 := by
+      show 1 % n = 1; exact Nat.mod_eq_of_lt (by omega)
+    have hv_eq : (⟨k + 1, hkn⟩ : Fin n) = vk + 1 := by
+      apply Fin.ext
+      rw [Fin.val_add, h_one]
+      rw [Nat.mod_eq_of_lt (by omega : vk.val + 1 < n)]
+    have hadj : (cycleHypergraph n).toSimpleGraph.Adj vk (vk + 1) :=
+      (cycleHypergraph_succ_pred_adj hn vk).1
+    rw [hv_eq]
+    exact ih'.trans hadj.reachable
+
+/-- **`cycleHypergraph n` is connected** for `n ≥ 2`. Using the
+reachability-from-zero theorem + symmetry + transitivity. -/
+theorem cycleHypergraph_connected {n : Nat} [NeZero n] (hn : 2 ≤ n) :
+    (cycleHypergraph n).toSimpleGraph.Connected := by
+  refine SimpleGraph.Connected.mk ?_
+  intro u v
+  have hu := cycleHypergraph_reachable_zero hn u
+  have hv := cycleHypergraph_reachable_zero hn v
+  exact hu.symm.trans hv
+
+/-- **Triangle inequality specialised to `cycleHypergraph n`**. -/
+theorem cycleHypergraph_dist_triangle {n : Nat} [NeZero n] (hn : 2 ≤ n)
+    (u v w : Fin n) :
+    (cycleHypergraph n).dist u w ≤
+      (cycleHypergraph n).dist u v + (cycleHypergraph n).dist v w :=
+  Hypergraph.dist_triangle _ (cycleHypergraph_connected hn) u v w
 
 end InfraFormalization

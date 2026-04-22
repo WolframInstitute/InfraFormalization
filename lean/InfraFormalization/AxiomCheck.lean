@@ -423,3 +423,9 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.Hypergraph.laplacianMatrix_symm
 #print axioms InfraFormalization.Hypergraph.heatTrace_zero
 #print axioms InfraFormalization.laplacianMatrix_cycleHypergraph_eigen
+#print axioms InfraFormalization.Hypergraph.dist_triangle_of_reachable_left
+#print axioms InfraFormalization.Hypergraph.dist_triangle_of_reachable_right
+#print axioms InfraFormalization.Hypergraph.dist_triangle
+#print axioms InfraFormalization.cycleHypergraph_reachable_zero
+#print axioms InfraFormalization.cycleHypergraph_connected
+#print axioms InfraFormalization.cycleHypergraph_dist_triangle
