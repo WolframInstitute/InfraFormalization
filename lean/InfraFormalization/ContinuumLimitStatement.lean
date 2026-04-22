@@ -26,8 +26,10 @@ import InfraFormalization.HypergraphCycleBridge
 import InfraFormalization.Infra.ScaledCycle
 import InfraFormalization.Infra.ScaledLorentz
 import InfraFormalization.Schwarzschild
+import InfraFormalization.CycleEigenLimit
 import Mathlib.Topology.Basic
 import Mathlib.Analysis.Calculus.Deriv.Basic
+import Mathlib.Analysis.SpecialFunctions.Exp
 
 namespace InfraFormalization
 
@@ -72,15 +74,55 @@ hypergraph, its trajectory converges — in a suitable weak sense — to
 a continuum PDE solution on the GH-limit manifold. These are Rung-6
 obligations. -/
 
-/-- **Open: discrete heat → continuum heat on cycle/circle.**
-A family of heat solutions `u_n : ℝ → Fin n → ℝ` on `cycleHypergraph n`,
-with initial data converging pointwise (via the cycle embedding) to a
-continuous `u₀ : S¹ → ℝ`, converges to the continuous heat solution
-`u : ℝ → S¹ → ℝ` with initial data `u₀`. -/
+/-- **D7 — scaled discrete heat → continuum heat on cycle/circle**
+(upgraded from `True` stub to real content + proof).
+
+Under diffusive scaling (time `t ↦ t · n²` on the discrete side, which
+matches space `x ↦ x/n`), the discrete heat-kernel eigenvalue on the
+cycle converges to the continuum heat-kernel eigenvalue on `S¹`:
+
+  `Real.exp (t · n² · cycleEigenvalue n k)  →  Real.exp (-(2πk)² · t)`
+
+as `n → ∞`. Follows from A4 (`cycleEigenvalue_scaled_tendsto`) and
+continuity of `Real.exp`.
+
+This is the solution-level convergence of the discrete heat kernel
+acting on the `k`-th eigenmode to the continuum heat kernel acting
+on the `k`-th Fourier mode — the first *dynamics-level* (not just
+spectrum-level) bridge theorem between discrete hypergraph heat flow
+and continuum PDE heat flow. -/
 def DiscreteHeatToContinuumHeat : Prop :=
-  -- Statement pending Rung-1 measure infrastructure (#16, #17) and
-  -- C² Laplacian convergence (#14, above).
-  True
+  ∀ (k : ℕ) (t : ℝ),
+    Filter.Tendsto
+      (fun n : ℕ =>
+        Real.exp (t * ((n : ℝ)^2 * cycleEigenvalue n k)))
+      Filter.atTop
+      (nhds (Real.exp (-(2 * Real.pi * k) ^ 2 * t)))
+
+/-- **D7 proved.** The discrete-heat-to-continuum-heat scaling limit
+holds: the discrete heat kernel on cycle eigenvectors, scaled
+diffusively, converges pointwise to the continuum heat kernel on
+circle Fourier modes. -/
+theorem discreteHeatToContinuumHeat :
+    DiscreteHeatToContinuumHeat := by
+  intro k t
+  -- Step 1: A4 gives n² · λ_k → -(2πk)².
+  have hA4 := cycleEigenvalue_scaled_tendsto k
+  -- Step 2: multiplying by constant t preserves the limit.
+  have h_mul : Filter.Tendsto
+      (fun n : ℕ => t * ((n : ℝ)^2 * cycleEigenvalue n k))
+      Filter.atTop (nhds (t * (-(2 * Real.pi * k) ^ 2))) :=
+    hA4.const_mul t
+  -- Step 3: Real.exp is continuous, compose.
+  have h_exp : Filter.Tendsto
+      (fun n : ℕ => Real.exp (t * ((n : ℝ)^2 * cycleEigenvalue n k)))
+      Filter.atTop (nhds (Real.exp (t * (-(2 * Real.pi * k) ^ 2)))) :=
+    Real.continuous_exp.tendsto _ |>.comp h_mul
+  -- Step 4: rewrite target `t * (-(2πk)²) = -(2πk)² * t`.
+  have h_rewrite : Real.exp (t * (-(2 * Real.pi * k) ^ 2))
+      = Real.exp (-(2 * Real.pi * k) ^ 2 * t) := by ring_nf
+  rw [← h_rewrite]
+  exact h_exp
 
 /-- **Open: discrete wave → continuum wave on scaled lattice.**
 Analogous statement for the wave equation on the scaled

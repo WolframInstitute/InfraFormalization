@@ -113,6 +113,7 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.raychaudhuri_trivially_satisfied_at_zero
 #print axioms InfraFormalization.wolfram_physics_bridge_summary
 #print axioms InfraFormalization.wolfram_physics_bridge_from_finite_successors
+#print axioms InfraFormalization.discreteHeatToContinuumHeat
 #print axioms InfraFormalization.CausalGraph.self_mem_lightCone
 #print axioms InfraFormalization.CausalGraph.causalFuture_trans
 #print axioms InfraFormalization.CausalGraph.chronological_implies_causal
