@@ -105,6 +105,9 @@ import InfraFormalization.StressEnergyTensor
 #print axioms InfraFormalization.noHigherDimLimitObligation
 #print axioms InfraFormalization.zero_stressEnergyTensor_trace
 #print axioms InfraFormalization.zero_stressEnergyTensor_energyDensity
+#print axioms InfraFormalization.wec_implies_nec
+#print axioms InfraFormalization.zero_stressEnergyTensor_weakEnergy
+#print axioms InfraFormalization.zero_stressEnergyTensor_nullEnergy
 #print axioms InfraFormalization.in_degree_eq_lhsSize
 #print axioms InfraFormalization.out_degree_eq_rhsSize
 #print axioms InfraFormalization.balanced_of_conservative
