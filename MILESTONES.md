@@ -250,7 +250,7 @@ Full collation of the post-phase-1 infrageometry programme. Each group is a cohe
 - [x] IT1 Vietoris-Rips complex on a hypergraph (`VietorisRips.lean`; #133).
 - [x] IT2 Hodge Laplacian on VR-complex 0- and 1-forms (`HodgeVR.lean`; #134).
 - [x] IT4 Persistence diagram / barcode sentinel (#136).
-- [ ] IT3 Spectrum of Hodge Laplacian as hypergraph invariant (#135 in progress).
+- [x] IT3 Spectrum of Hodge Laplacian as hypergraph invariant (#135; `HodgeLaplacianSpectrum.lean`: `vrHodge0_add`, `vrHodge0_smul`, `vrHodge0_symm` (ℓ² self-adjointness), `vrHodge0_has_zero_eigenvalue`, `vrHodge0_const_in_kernel` — finite-dim spectral theorem now applies).
 - [ ] IT5 Latschev theorem as Prop obligation + proof for cycles (#137 in progress).
 - [ ] IT6 Scale-dependence trichotomy theorem (#138 in progress).
 
@@ -294,7 +294,7 @@ Full collation of the post-phase-1 infrageometry programme. Each group is a cohe
 ### R-series real-work items (5 tasks, 3.5/5 done)
 - [x] R1 C² Taylor convergence for scaled second difference (`CTwoTaylor.lean`; #176).
 - [x] R2 laplacianMatrix + heatKernel via Matrix.exp (`LaplacianMatrix.lean`; #177).
-- [~] R3 ℓ²(BranchialSlice) as Hilbert space with branchial adjacency operator (#178) — partial: Hilbert alias + ℂ-linear adjacency operator + self-adjointness proved (`BranchialHilbert.lean`); remaining: unitary evolution `exp (i·t·A)`.
+- [x] R3 ℓ²(BranchialSlice) as Hilbert space with branchial adjacency operator (#178) — closed: `BranchialHilbert.lean` (Hilbert alias, ℂ-linear adjacency, Born rule, uniform measure, observables, expectation values) + `BranchialSchrodinger.lean` (unitary Schrödinger evolution) + `BranchialCanonical.lean` (canonical rewriting-system-grounded Hamiltonian — no islands).
 - [ ] R4 Curved discrete-Ricci convergence beyond flat (#179).
 - [x] R5 Cycle Laplacian spectrum closed form (`CycleSpectrum.lean`; #180).
 
