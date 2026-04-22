@@ -88,6 +88,7 @@ import InfraFormalization.BranchialSchrodinger
 import InfraFormalization.HodgeLaplacianSpectrum
 import InfraFormalization.BranchialCanonical
 import InfraFormalization.PathHypergraph
+import InfraFormalization.CurvedRicciBridge
 import InfraFormalization.Refutations.F1NoMetric
 import InfraFormalization.Refutations.F2Orthonormality
 import InfraFormalization.Refutations.F3Tautology
@@ -124,6 +125,10 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.pathHypergraph_edges_card_le
 #print axioms InfraFormalization.pathEigenvalue_nonpos
 #print axioms InfraFormalization.heatKernel_cycleHypergraph_multi_mode_tendsto
+#print axioms InfraFormalization.pathEigenvalue_zero_neg
+#print axioms InfraFormalization.curvedRicciBridgeObligation
+#print axioms InfraFormalization.warpedDiag2_christoffel_nonzero
+#print axioms InfraFormalization.threeRegular_formanRicci_nonzero
 #print axioms InfraFormalization.in_degree_eq_lhsSize
 #print axioms InfraFormalization.out_degree_eq_rhsSize
 #print axioms InfraFormalization.balanced_of_conservative

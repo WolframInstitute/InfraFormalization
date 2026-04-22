@@ -74,4 +74,40 @@ theorem pathEigenvalue_nonpos (n k : ℕ) : pathEigenvalue n k ≤ 0 := by
     sq_nonneg _
   nlinarith
 
+/-- **Path-Dirichlet ground state is strictly negative.** For `n ≥ 1`
+and `k = 0` (the first Dirichlet mode), the eigenvalue
+`−4 sin²(π/(2(n+1)))` is strictly negative: the argument
+`π/(2(n+1))` lies strictly between `0` and `π/2`, so its sine is
+strictly positive, so its square is strictly positive.
+
+Analog of `cycleEigenvalue_one_neg` for the path-Laplacian: the
+Dirichlet ground state decays (does not drift), confirming the path
+spectral gap. -/
+theorem pathEigenvalue_zero_neg {n : ℕ} (hn : 1 ≤ n) :
+    pathEigenvalue n 0 < 0 := by
+  unfold pathEigenvalue
+  -- `0 < π / (2(n+1)) < π/2` so `sin` is strictly positive there.
+  have hn' : (0 : ℝ) < n + 1 := by exact_mod_cast Nat.succ_pos n
+  have h_pos : (0 : ℝ) < Real.pi * (0 + 1) / (2 * (n + 1)) := by
+    have hpi : (0 : ℝ) < Real.pi := Real.pi_pos
+    have h_two_pos : (0 : ℝ) < 2 * (n + 1) := by linarith
+    positivity
+  have h_lt : Real.pi * (0 + 1) / (2 * (n + 1)) < Real.pi := by
+    have hpi : (0 : ℝ) < Real.pi := Real.pi_pos
+    have h1 : (1 : ℝ) ≤ n + 1 := by exact_mod_cast Nat.succ_le_succ (Nat.zero_le n)
+    have h_denom_ge_two : (2 : ℝ) ≤ 2 * (n + 1) := by linarith
+    have h_denom_pos : (0 : ℝ) < 2 * (n + 1) := by linarith
+    rw [div_lt_iff₀ h_denom_pos]
+    calc Real.pi * (0 + 1) = Real.pi * 1 := by ring
+      _ = Real.pi := by ring
+      _ < Real.pi * 2 := by linarith
+      _ ≤ Real.pi * (2 * (n + 1)) := by nlinarith
+  have h_sin_pos : 0 < Real.sin (Real.pi * (0 + 1) / (2 * (n + 1))) :=
+    Real.sin_pos_of_pos_of_lt_pi h_pos h_lt
+  have h_sq_pos : 0 < (Real.sin (Real.pi * (0 + 1) / (2 * (n + 1))))^2 := by
+    positivity
+  have : (0 : ℕ) + 1 = 1 := rfl
+  push_cast
+  nlinarith [h_sq_pos]
+
 end InfraFormalization
