@@ -12,7 +12,7 @@ the task system and the coverage map are updated.
 
 ## Machine-verified theorems (axiom-clean)
 
-**200+ `#print axioms` certifications** in
+**300+ `#print axioms` certifications** in
 [`lean/InfraFormalization/AxiomCheck.lean`](lean/InfraFormalization/AxiomCheck.lean),
 all depending only on Lean's three standard axioms
 (`propext`, `Classical.choice`, `Quot.sound`). No `sorry`, no
@@ -35,8 +35,11 @@ From [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md), 9 task groups with 57 items:
 | IR — Ruliology | 2 | 7 |
 | **Total** | **21** | **57** (37%) |
 
-Plus 14 legacy-group tasks (A1, B1, D1/4/5/8/9/10, G1/3/4, I1 = 12
-directly; F1–F5 refutations = 5 more as theorem + axiom-clean).
+Plus legacy-group tasks: A1/A2/A3/A4/A5, B1, D1/2/3/4/5/8/9/10,
+G1/3/4, I1/I2/I3/I4/I5/I6/I7/I9 (branchial QM suite substantially
+closed via `BranchialHilbert.lean` + `BranchialSchrodinger.lean`;
+I8 continuum limit and I10 path integral remain). F1–F5 refutations
+theorem-and-axiom-clean.
 
 **Concrete bridge extensions added post-initial-completion** (R-series
 real-work items):
