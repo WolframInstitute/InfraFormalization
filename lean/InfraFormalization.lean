@@ -70,6 +70,7 @@ import InfraFormalization.Refutations.F4Tautology
 import InfraFormalization.Refutations.F5Illdefined
 import InfraFormalization.Refutations.F6Circularity
 import InfraFormalization.Refutations.F7NamedRuleStructure
+import InfraFormalization.StressEnergyTensor
 
 -- Discrete calculus (Rung 1 of the bridge ladder)
 import InfraFormalization.DiscreteCalculus

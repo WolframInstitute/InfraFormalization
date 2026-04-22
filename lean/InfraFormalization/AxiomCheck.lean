@@ -94,6 +94,7 @@ import InfraFormalization.Refutations.F4Tautology
 import InfraFormalization.Refutations.F5Illdefined
 import InfraFormalization.Refutations.F6Circularity
 import InfraFormalization.Refutations.F7NamedRuleStructure
+import InfraFormalization.StressEnergyTensor
 
 #print axioms InfraFormalization.edge_conservation
 #print axioms InfraFormalization.trajectory_preserves_size
@@ -102,6 +103,8 @@ import InfraFormalization.Refutations.F7NamedRuleStructure
 #print axioms InfraFormalization.growthExponentAtMost_of_linear
 #print axioms InfraFormalization.boundedConeOfConservativeObligation
 #print axioms InfraFormalization.noHigherDimLimitObligation
+#print axioms InfraFormalization.zero_stressEnergyTensor_trace
+#print axioms InfraFormalization.zero_stressEnergyTensor_energyDensity
 #print axioms InfraFormalization.in_degree_eq_lhsSize
 #print axioms InfraFormalization.out_degree_eq_rhsSize
 #print axioms InfraFormalization.balanced_of_conservative
