@@ -133,6 +133,7 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.warpedDiag2_christoffel_0_1_1
 #print axioms InfraFormalization.threeRegular_formanRicci_nonzero
 #print axioms InfraFormalization.latschevObligation_holds
+#print axioms InfraFormalization.scaleTrichotomyObligation_holds
 #print axioms InfraFormalization.in_degree_eq_lhsSize
 #print axioms InfraFormalization.out_degree_eq_rhsSize
 #print axioms InfraFormalization.balanced_of_conservative
