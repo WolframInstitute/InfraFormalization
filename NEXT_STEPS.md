@@ -4,6 +4,7 @@ Lives next to [`README.md`](README.md) / [`INDEX.md`](INDEX.md) / [`FINDINGS.md`
 
 ## Recently shipped (selected highlights)
 
+- **T1 / Heat kernel ODE identification** (`HeatKernelODE.lean`): `heatKernel_isHeatSolution` — the matrix propagator `exp(t · Δ_H)` applied to initial data `u₀` satisfies the `HeatSolution H` ODE predicate. Proved via `hasDerivAt_exp_smul_const` composed with a continuous linear map (`mulVecEvalCLM`) and the commutativity of `heatKernel H t` with `laplacianMatrix H` (`heatKernel_commute_laplacianMatrix`). The two heat-equation definitions are now linked.
 - **T3 / Hypergraph.dist triangle inequality** (`HypergraphDistance.lean`): `dist_triangle` (via `Connected` hypothesis) + `dist_triangle_of_reachable_{left,right}` (conditional forms). `cycleHypergraph_connected` for n ≥ 2, giving unconditional triangle inequality on cycles. Pseudo-metric axioms now all in hand; measure-theoretic work (A5/A6/A7/A8) unblocked.
 - **R5 / full cycle spectrum** (`CycleSpectrum.lean`): `cycleEigenvector n k (j) = cos(2πkj/n)` and `cycleEigenvalue n k = −4 sin²(πk/n)` satisfy the eigenvalue equation at **all** indices (interior + wrap-around boundary).
 - **R1 / A2 / A3** (`CTwoTaylor.lean`, `ScaledDiffC2Bridge.lean`): **C² Taylor convergence** of the scaled central second difference, via Mathlib's `Real.taylor_tendsto`. The Rung-2 discrete-to-continuum bridge now covers *all* C² functions, not just polynomials.

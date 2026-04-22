@@ -74,6 +74,7 @@ import InfraFormalization.CTwoTaylor
 import InfraFormalization.CycleEigenLimit
 import InfraFormalization.ScaledDiffC2Bridge
 import InfraFormalization.LaplacianMatrix
+import InfraFormalization.HeatKernelODE
 import InfraFormalization.CycleMatrixSpectrum
 import InfraFormalization.Refutations.F1NoMetric
 import InfraFormalization.Refutations.F2Orthonormality
@@ -429,3 +430,7 @@ import InfraFormalization.Refutations.F5Illdefined
 #print axioms InfraFormalization.cycleHypergraph_reachable_zero
 #print axioms InfraFormalization.cycleHypergraph_connected
 #print axioms InfraFormalization.cycleHypergraph_dist_triangle
+#print axioms InfraFormalization.Hypergraph.hasDerivAt_heatKernel
+#print axioms InfraFormalization.Hypergraph.heatKernel_commute_laplacianMatrix
+#print axioms InfraFormalization.Hypergraph.hasDerivAt_heatKernel_mulVec
+#print axioms InfraFormalization.Hypergraph.heatKernel_isHeatSolution

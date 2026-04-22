@@ -90,6 +90,7 @@ Grouped by phase (see [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md)). Each milestone ei
 - [x] **`CycleEigenLimit.lean`** (A4; #15): `cycleEigenvalue_scaled_tendsto` — `n² · λ_k → -(2πk)²` (scaled cycle eigenvalues converge to continuum circle-Laplacian spectrum); key helper `n_sin_pi_k_div_n_tendsto` via Mathlib's `Real.sinc`.
 - [x] **`LaplacianMatrix.lean`** (R2 / D3; #177, #44): `laplacianMatrix H : Matrix V V ℝ`, `laplacianMatrix_mulVec = laplacianHyper`, heat kernel via Mathlib's `Matrix.exp` (`heatKernel H t := exp(t • Δ_H)`), `heatKernel_zero = 1`, `heatKernel_add` (semigroup), `laplacianMatrix_symm`, `laplacianMatrix_row_sum`, `laplacianMatrix_mulVec_const`, `heatTrace`, `heatTrace_zero = |V|`. Rung-3 matrix/heat-kernel infrastructure.
 - [x] **`CycleMatrixSpectrum.lean`**: `laplacianMatrix_cycleHypergraph_eigen` — matrix-level eigenvalue equation (cycle eigenvectors are genuine matrix eigenvectors of `laplacianMatrix (cycleHypergraph n)`).
+- [x] **`HeatKernelODE.lean`** (T1): ODE ↔ matrix heat kernel unification. `hasDerivAt_heatKernel` (d/dt = · · Δ), `heatKernel_commute_laplacianMatrix`, `hasDerivAt_heatKernel_mulVec`, **`heatKernel_isHeatSolution`** (the matrix heatKernel satisfies `HeatSolution H`). The two heat-equation definitions (ODE predicate + Matrix.exp propagator) are now linked.
 
 ### Rung 5 — Riemann/Ricci/scalar curvature (local-coordinate route)
 - [x] **`MetricData n`** (`CurvatureLocalCoord.lean`): metric components, inverse, first partial derivatives, symmetry + inverse axioms. Avoids bundle machinery.
@@ -156,6 +157,7 @@ Grouped by phase (see [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md)). Each milestone ei
 - [x] Schrödinger equation on hypergraph (`SchrodingerEquation.lean`, D10 #51) with unitarity / probability conservation.
 - [x] Discrete scalar field Lagrangian + Euler-Lagrange (`ScalarField.lean`, G1 #68, G3 #70, G4 #71); `KG_EulerLagrange_iff_KleinGordonSolution`.
 - [x] Heat semigroup on a finite graph as `Matrix.exp` (`LaplacianMatrix.lean`, D3 #44 / R2 #177): `heatKernel H t := exp(t · laplacianMatrix H)`, `heatKernel_zero = 1`, `heatKernel_add` (semigroup).
+- [x] **ODE ↔ matrix heat kernel identification** (`HeatKernelODE.lean`, T1): `heatKernel_isHeatSolution` — the matrix propagator satisfies the `HeatSolution H` ODE predicate. Unifies the two heat-equation definitions.
 - [x] Scaled cycle Laplacian → 1D `d²/dx²` for all C² test functions (R1/A2/A3; `CTwoTaylor.lean` + `ScaledDiffC2Bridge.lean`).
 - [ ] Uniqueness of solutions (Cauchy-Lipschitz in finite dim; D2 #43).
 - [ ] Long-time convergence to uniform (once spectral gap proved; D6 #47).
