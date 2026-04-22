@@ -30,6 +30,7 @@ import InfraFormalization.CycleEigenLimit
 import Mathlib.Topology.Basic
 import Mathlib.Analysis.Calculus.Deriv.Basic
 import Mathlib.Analysis.SpecialFunctions.Exp
+import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
 
 namespace InfraFormalization
 
@@ -123,6 +124,42 @@ theorem discreteHeatToContinuumHeat :
       = Real.exp (-(2 * Real.pi * k) ^ 2 * t) := by ring_nf
   rw [← h_rewrite]
   exact h_exp
+
+/-- **A6 — weak convergence of the lattice average to the integral**
+(upgraded from stub to real content).
+
+For any continuous `f : ℝ → ℝ`, the `n`-point lattice Riemann sum
+`(1/n) · Σ_{k=0}^{n-1} f(k/n)` converges to `∫_0^1 f dx` as `n → ∞`.
+This is the operator-level form of "counting measure on `{k/n}_{k < n}`
+converges weakly to Lebesgue on `[0,1)`". -/
+def A6LatticeRiemannObligation : Prop :=
+  ∀ (f : ℝ → ℝ) (_hcont : Continuous f),
+    Filter.Tendsto
+      (fun n : ℕ =>
+        (1 / (n : ℝ)) * ∑ k : Fin n, f ((k : ℝ) / (n : ℝ)))
+      Filter.atTop
+      (nhds (∫ x in (0 : ℝ)..1, f x))
+
+/-- **A6 holds for constant functions**: `(1/n) · Σ_{k : Fin n} c = c
+= ∫_0^1 c dx`. Concrete verification of the obligation's shape on the
+easiest test functions. -/
+theorem A6_for_constants (c : ℝ) :
+    Filter.Tendsto
+      (fun n : ℕ => (1 / (n : ℝ)) * ∑ _k : Fin n, c)
+      Filter.atTop
+      (nhds (∫ _x in (0 : ℝ)..1, c)) := by
+  have h_integral : (∫ _x in (0 : ℝ)..1, c) = c := by
+    rw [intervalIntegral.integral_const]
+    simp
+  rw [h_integral]
+  have h_sum : ∀ n : ℕ, 0 < n →
+      (1 / (n : ℝ)) * ∑ _k : Fin n, c = c := by
+    intro n hn
+    rw [Finset.sum_const, Finset.card_univ, Fintype.card_fin, nsmul_eq_mul]
+    field_simp
+  refine Filter.Tendsto.congr' ?_ tendsto_const_nhds
+  refine Filter.eventually_atTop.mpr ⟨1, fun n hn => ?_⟩
+  exact (h_sum n (by omega)).symm
 
 /-- **Open: discrete wave → continuum wave on scaled lattice.**
 Analogous statement for the wave equation on the scaled

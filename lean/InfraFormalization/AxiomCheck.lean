@@ -114,6 +114,7 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.wolfram_physics_bridge_summary
 #print axioms InfraFormalization.wolfram_physics_bridge_from_finite_successors
 #print axioms InfraFormalization.discreteHeatToContinuumHeat
+#print axioms InfraFormalization.A6_for_constants
 #print axioms InfraFormalization.CausalGraph.self_mem_lightCone
 #print axioms InfraFormalization.CausalGraph.causalFuture_trans
 #print axioms InfraFormalization.CausalGraph.chronological_implies_causal
