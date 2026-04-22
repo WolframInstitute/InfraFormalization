@@ -129,6 +129,8 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.pathEigenvalue_one_neg
 #print axioms InfraFormalization.curvedRicciBridgeObligation
 #print axioms InfraFormalization.warpedDiag2_christoffel_nonzero
+#print axioms InfraFormalization.warpedDiag2_christoffel_1_0_1
+#print axioms InfraFormalization.warpedDiag2_christoffel_0_1_1
 #print axioms InfraFormalization.threeRegular_formanRicci_nonzero
 #print axioms InfraFormalization.latschevObligation_holds
 #print axioms InfraFormalization.in_degree_eq_lhsSize

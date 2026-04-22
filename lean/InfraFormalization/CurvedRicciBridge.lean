@@ -68,13 +68,12 @@ noncomputable def warpedDiag2 : MetricData 2 where
     intros l x μ ν
     fin_cases l <;> fin_cases μ <;> fin_cases ν <;> simp
 
-/-- **Warped metric has non-vanishing Christoffel** `Γ¹_{01}` at a
-point where `x₀ ≠ 0`. Specifically, `Γ¹_{01}(x) = x₀ / (1 + x₀²)`,
-which is non-zero whenever `x 0 ≠ 0`. This confirms the continuum
-side detects the non-flat warping. -/
-theorem warpedDiag2_christoffel_nonzero (x : Fin 2 → ℝ)
-    (hx : x 0 ≠ 0) :
-    warpedDiag2.christoffel x 1 0 1 ≠ 0 := by
+/-- **Warped metric Christoffel closed form** `Γ¹_{01} = x₀ / (1 + x₀²)`.
+Explicit value of the non-zero Christoffel symbol of `warpedDiag2` —
+one of the two non-vanishing components (the other is
+`Γ⁰_{11} = −x₀`). -/
+theorem warpedDiag2_christoffel_1_0_1 (x : Fin 2 → ℝ) :
+    warpedDiag2.christoffel x 1 0 1 = x 0 / (1 + (x 0)^2) := by
   unfold MetricData.christoffel
   simp only [warpedDiag2, Fin.sum_univ_two]
   have h_pos : (0 : ℝ) < 1 + (x 0)^2 := by
@@ -82,7 +81,29 @@ theorem warpedDiag2_christoffel_nonzero (x : Fin 2 → ℝ)
     linarith
   have h_ne : (1 : ℝ) + (x 0)^2 ≠ 0 := ne_of_gt h_pos
   simp
-  exact ⟨h_ne, hx⟩
+  field_simp
+
+/-- **Warped metric Christoffel closed form** `Γ⁰_{11} = −x₀`. The
+second non-vanishing Christoffel symbol of `warpedDiag2`. -/
+theorem warpedDiag2_christoffel_0_1_1 (x : Fin 2 → ℝ) :
+    warpedDiag2.christoffel x 0 1 1 = -(x 0) := by
+  unfold MetricData.christoffel
+  simp only [warpedDiag2, Fin.sum_univ_two]
+  simp
+
+/-- **Warped metric has non-vanishing Christoffel** `Γ¹_{01}` at a
+point where `x₀ ≠ 0`. Specifically, `Γ¹_{01}(x) = x₀ / (1 + x₀²)`,
+which is non-zero whenever `x 0 ≠ 0`. This confirms the continuum
+side detects the non-flat warping. -/
+theorem warpedDiag2_christoffel_nonzero (x : Fin 2 → ℝ)
+    (hx : x 0 ≠ 0) :
+    warpedDiag2.christoffel x 1 0 1 ≠ 0 := by
+  rw [warpedDiag2_christoffel_1_0_1]
+  have h_pos : (0 : ℝ) < 1 + (x 0)^2 := by
+    have : 0 ≤ (x 0)^2 := sq_nonneg _
+    linarith
+  have h_ne : (1 : ℝ) + (x 0)^2 ≠ 0 := ne_of_gt h_pos
+  exact div_ne_zero hx h_ne
 
 /-- **Curved Ricci bridge obligation** (R4 / #179 partial form).
 
