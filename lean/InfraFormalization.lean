@@ -155,6 +155,7 @@ import InfraFormalization.EMETracker
 import InfraFormalization.BranchialCommutator
 import InfraFormalization.ProperTimeBounds
 import InfraFormalization.RuleSignatureEquiv
+import InfraFormalization.HypergraphMetricBridges
 import InfraFormalization.CurvedRicciBridge
 import InfraFormalization.ContinuumBridgeDemo
 import InfraFormalization.EinsteinEquations

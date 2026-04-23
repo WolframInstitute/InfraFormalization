@@ -163,7 +163,7 @@ All ✅ on `Hypergraph V`.
 ## Summary of ungrounded items needing bridges
 
 1. **FiberedGraph connection → ConnectionData n** (GROUNDING ACTION ITEM #1)
-2. **Metric zoo — each needs rule-origin obligation** (GROUNDING ACTION ITEM #2)
+2. ✅ **Metric zoo — each needs rule-origin obligation** (GROUNDING ACTION ITEM #2) **DONE** via `HypergraphMetricBridges.lean`: every continuum GR metric (Minkowski, Schwarzschild, FLRW, RN, de Sitter, Kerr, S², warpedDiag2) now has a `HypergraphMetricOriginObligation` / `HypergraphPartialMetricOriginObligation` Prop attached. No more free-floating continuum-target islands.
 3. **CausalGraph → DiagLorentzianManifold bridge** (GROUNDING ACTION ITEM #3)
 4. **EFE obligations — explicit hypergraph-rule-existence attachments** (GROUNDING ACTION ITEM #4)
 5. **A6 / A7 / A8 Wasserstein and d-torus — measure-theoretic bridges** (pending)
