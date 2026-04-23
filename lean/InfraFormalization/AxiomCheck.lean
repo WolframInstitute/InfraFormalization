@@ -631,6 +631,8 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.cycleHypergraph_dist_add_two_le
 #print axioms InfraFormalization.cycleHypergraph_dist_sub_two_le
 #print axioms InfraFormalization.cycleHypergraph_ballVolume_two_ge_five
+#print axioms InfraFormalization.cycleHypergraph_ballVolume_two_le_five
+#print axioms InfraFormalization.cycleHypergraph_ballVolume_two_exact
 #print axioms InfraFormalization.Hypergraph.hasDerivAt_heatKernel
 #print axioms InfraFormalization.Hypergraph.heatKernel_commute_laplacianMatrix
 #print axioms InfraFormalization.Hypergraph.hasDerivAt_heatKernel_mulVec

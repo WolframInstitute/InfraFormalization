@@ -816,6 +816,147 @@ theorem cycleHypergraph_ballVolume_two_ge_five {n : Nat} [NeZero n]
   calc 5 = ({v, v + 1, v - 1, v + 2, v - 2} : Finset (Fin n)).card := h_card.symm
     _ ≤ _ := Finset.card_le_card h_subset
 
+/-- **Radius-2 ball volume on `cycleHypergraph n` is `≤ 5` for `n ≥ 5`.**
+Every `u` with `dist v u ≤ 2` arises from a shortest walk of length 0, 1,
+or 2. Length 0 gives `u = v`; length 1 gives `u ∈ {v ± 1}`; length 2 pins
+the intermediate vertex `w ∈ {v ± 1}` via `cycleHypergraph_Adj_iff`, and
+then `u ∈ N(w) = {w ± 1} = {v, v ± 2}`. Combined with `u ≠ v`, this puts
+`u ∈ {v, v ± 1, v ± 2}`. -/
+theorem cycleHypergraph_ballVolume_two_le_five {n : Nat} [NeZero n]
+    (hn : 3 ≤ n) (v : Fin n) :
+    (cycleHypergraph n).geodesicBallVolume v 2 ≤ 5 := by
+  have hn2 : 2 ≤ n := by omega
+  unfold Hypergraph.geodesicBallVolume Hypergraph.geodesicBall
+  have h_subset : (Finset.univ.filter
+      (fun u : Fin n => (cycleHypergraph n).dist v u ≤ 2)) ⊆
+      ({v, v + 1, v - 1, v + 2, v - 2} : Finset (Fin n)) := by
+    intro u hu
+    rw [Finset.mem_filter] at hu
+    obtain ⟨_, h_dist⟩ := hu
+    rw [Finset.mem_insert, Finset.mem_insert, Finset.mem_insert,
+        Finset.mem_insert, Finset.mem_singleton]
+    -- Extract minimal walk
+    have hreach : (cycleHypergraph n).toSimpleGraph.Reachable v u :=
+      (cycleHypergraph_connected hn2).preconnected v u
+    obtain ⟨p, hp_len⟩ := hreach.exists_walk_length_eq_dist
+    have hp_le : p.length ≤ 2 := by
+      unfold Hypergraph.dist at h_dist
+      exact hp_len ▸ h_dist
+    -- Case on p.length ∈ {0, 1, 2}
+    have hpl_cases : p.length = 0 ∨ p.length = 1 ∨ p.length = 2 := by omega
+    rcases hpl_cases with hpl | hpl | hpl
+    · -- length 0: u = v
+      left
+      have h0 := p.getVert_zero
+      have h2 := p.getVert_length
+      rw [hpl] at h2
+      rw [h0] at h2
+      exact h2.symm
+    · -- length 1: adj v u
+      have hadj : (cycleHypergraph n).toSimpleGraph.Adj v u := by
+        have hlt : (0 : ℕ) < p.length := by rw [hpl]; exact Nat.zero_lt_one
+        have h := p.adj_getVert_succ hlt
+        rw [p.getVert_zero] at h
+        have h2 : p.getVert (0 + 1) = u := by
+          have := p.getVert_length
+          rw [hpl] at this
+          simpa using this
+        rw [h2] at h
+        exact h
+      have := (cycleHypergraph_Adj_iff hn2 v u).mp hadj
+      obtain ⟨_, hor⟩ := this
+      rcases hor with hsucc | hpred
+      · right; left; exact hsucc
+      · right; right; left
+        have h1 : u + 1 - 1 = v - 1 := by rw [hpred.symm]
+        rw [add_sub_cancel_right] at h1
+        exact h1
+    · -- length 2: common-neighbor argument
+      -- w = p.getVert 1 is adjacent to both v and u
+      have hadj1 : (cycleHypergraph n).toSimpleGraph.Adj v (p.getVert 1) := by
+        have hlt : (0 : ℕ) < p.length := by rw [hpl]; norm_num
+        have h := p.adj_getVert_succ hlt
+        rw [p.getVert_zero] at h
+        exact h
+      have hadj2 : (cycleHypergraph n).toSimpleGraph.Adj (p.getVert 1) u := by
+        have hlt : (1 : ℕ) < p.length := by rw [hpl]; norm_num
+        have h := p.adj_getVert_succ hlt
+        have h2 : p.getVert (1 + 1) = u := by
+          have := p.getVert_length
+          rw [hpl] at this
+          simpa using this
+        rw [h2] at h
+        exact h
+      -- From Adj v w: w = v+1 or w = v-1
+      have hvw_cases := (cycleHypergraph_Adj_iff hn2 v (p.getVert 1)).mp hadj1
+      obtain ⟨_, h_vw_or⟩ := hvw_cases
+      rcases h_vw_or with hw_eq | hw_eq
+      · -- w = v + 1
+        -- Adj w u: u = w+1 = v+2 or w = u+1 (u = w-1 = v)
+        rw [hw_eq] at hadj2
+        have hwu_cases := (cycleHypergraph_Adj_iff hn2 (v + 1) u).mp hadj2
+        obtain ⟨_, h_wu_or⟩ := hwu_cases
+        rcases h_wu_or with hu_eq | hv_eq
+        · -- u = (v + 1) + 1 = v + 2
+          right; right; right; left
+          rw [hu_eq, cycle_add_one_one_eq_add_two]
+        · -- v + 1 = u + 1, hence u = v
+          left
+          have : u + 1 - 1 = v + 1 - 1 := by rw [hv_eq]
+          rw [add_sub_cancel_right, add_sub_cancel_right] at this
+          exact this
+      · -- v = w + 1, so w = v - 1
+        -- hw_eq : v = (p.getVert 1) + 1
+        have hw_eq2 : p.getVert 1 = v - 1 := by
+          have h := hw_eq.symm
+          have : (p.getVert 1) + 1 - 1 = v - 1 := by rw [h]
+          rw [add_sub_cancel_right] at this
+          exact this
+        rw [hw_eq2] at hadj2
+        -- Adj (v-1) u: u = (v-1)+1 = v, or v-1 = u+1
+        have hwu_cases := (cycleHypergraph_Adj_iff hn2 (v - 1) u).mp hadj2
+        obtain ⟨_, h_wu_or⟩ := hwu_cases
+        rcases h_wu_or with hu_eq | hv_eq
+        · -- u = (v - 1) + 1 = v
+          left
+          have : u = v := by
+            have hrw : (v - 1 + 1 : Fin n) = v := by abel
+            rw [hrw] at hu_eq
+            exact hu_eq
+          exact this
+        · -- v - 1 = u + 1, so u = v - 2
+          right; right; right; right
+          have hu_eq : u = v - 2 := by
+            -- v - 1 = u + 1 ⟹ u = v - 1 - 1 = v - 2
+            have : v - 1 - 1 = u + 1 - 1 := by rw [hv_eq]
+            rw [cycle_sub_one_one_eq_sub_two, add_sub_cancel_right] at this
+            exact this.symm
+          exact hu_eq
+  calc (Finset.univ.filter
+          (fun u : Fin n => (cycleHypergraph n).dist v u ≤ 2)).card
+      ≤ ({v, v + 1, v - 1, v + 2, v - 2} : Finset (Fin n)).card :=
+        Finset.card_le_card h_subset
+    _ ≤ 5 := by
+        refine le_trans (Finset.card_insert_le _ _) ?_
+        refine Nat.succ_le_succ ?_
+        refine le_trans (Finset.card_insert_le _ _) ?_
+        refine Nat.succ_le_succ ?_
+        refine le_trans (Finset.card_insert_le _ _) ?_
+        refine Nat.succ_le_succ ?_
+        refine le_trans (Finset.card_insert_le _ _) ?_
+        simp
+
+/-- **Exact radius-2 ball volume `V(v, 2) = 5` on `cycleHypergraph n`
+for `n ≥ 5`.** Combines the `≥ 5` lower bound (`_two_ge_five`) with the
+`≤ 5` upper bound (`_two_le_five`). This closes the `r = 2` base case
+for the `V(v, r) = 2r + 1` formula on cycles. -/
+theorem cycleHypergraph_ballVolume_two_exact {n : Nat} [NeZero n]
+    (hn : 5 ≤ n) (v : Fin n) :
+    (cycleHypergraph n).geodesicBallVolume v 2 = 5 := by
+  have h3 : 3 ≤ n := by omega
+  exact le_antisymm (cycleHypergraph_ballVolume_two_le_five h3 v)
+    (cycleHypergraph_ballVolume_two_ge_five hn v)
+
 /-- **Large-radius ball covers everything on a connected cycle**: for
 `n ≥ 2` and radius `r ≥ n`, the closed ball of radius `r` around any
 vertex equals all of `Fin n`. Proof: on a connected finite graph,
