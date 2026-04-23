@@ -1,4 +1,4 @@
-# Weekly report — 2026-04-23 (email summary)
+# Weekly report — 2026-04-23 (short version)
 
 **Project.** `infra_formalization` — Lean 4 / Mathlib formalisation of the Wolfram-model → GR / QM bridge programme, plus a machine-checked audit of Gorard's published derivation claims (arXiv 2004.14810, 2011.12174, 2102.09363, 2303.07282). Comprehensive version attached.
 
@@ -7,7 +7,7 @@
 - 140 Lean files, ~20k LOC, 3468 of 3468 `lake` build jobs succeed.
 - 679 theorems + 17 lemmas + 17 examples proved; 381 definitions, 57 structures.
 - 497 `#print axioms` certifications; every theorem reduces to `{propext, Classical.choice, Quot.sound}`. No `sorry`, no `native_decide`, no custom axioms.
-- Infrageometry programme: 50 of 57 tasks closed with real content; 7 in progress with substantive open content.
+- Infrageometry programme: 52 of 57 tasks closed with real content; 5 still open (IG10 exponential map; ID6 dimension compatibility; ID7 spectral dimension asymptotics; IB2 commutator theorem; IR7 reverse-engineer rule from signature).
 - Grounding audit: 4 of 4 action items closed (no free-floating continuum objects at the obligation level).
 
 ## Why (audit of the Gorard corpus)
@@ -47,10 +47,6 @@ Legend for the State column:
 | 9 | Einstein equations | flat case proved; curved case open | `EinsteinEqLambda` predicate; Minkowski + flat connection solves vacuum EFE; flat connection forces Λ = 0; stress-energy type; energy conditions; Penrose and Raychaudhuri statements; Schwarzschild / FLRW / Kerr vacuum-EFE proofs pending |
 | 10 | Hypergraph → GR | flat case proved end-to-end; curved case has the obligation Prop attached but the curved bridge theorem is open | Flat bridges proved: cycle → circle, path → interval, 2-torus, d-torus, discrete Lorentz → Minkowski; every continuum GR target carries an origin-obligation Prop; flat-case witnesses are inhabited; curved-case witnesses are not |
 
-## Research directions on file
-
-Items from Pavel Hájek's weekly update and Discord core dump (2025-10-06 to 2026-04-14) have been mapped against the library and tracked as tasks **P1–P19**. Highlights: P1 delta / simplicial machinery on hypergraphs; P3 discrete Chern-Simons amplitude (overlaps M4 Pullman IBL-∞); P4 ribbon (hyper)graph structure + Whitehead moves; P5 sheaves on hypergraphs; P6 Koszul signs; P7 homotopy colimit of multiway systems; P9 action principle for rewriting; P10 n-Lie extension of the insertion bracket; P13 Utkarsh Bajaj twisted-difference operators (ring-of-functions reconstruction); P16 Knill geodesics approximating Riemannian geodesics. Full item-by-item mapping in [`NEXT_STEPS.md`](NEXT_STEPS.md) § "Pavel Hájek planning items (P-group)".
-
 ## Open items
 
 Every item below is an active task; full per-task breakdown in [`NEXT_STEPS.md`](NEXT_STEPS.md) and [`COVERAGE_MAP.md`](COVERAGE_MAP.md).
@@ -64,7 +60,7 @@ Every item below is an active task; full per-task breakdown in [`NEXT_STEPS.md`]
 - **Numerical relativity (H-series).** Candidate-rule catalog, empirical signature pipeline + screens, scaled-trajectory convergence, curved RicciBridge extensions, BBH initial data / evolution / Ψ₄ extraction / merger convergence (H1–H9).
 - **Combined / emergent frameworks (J-series).** Combined causal + branchial (J1), path integral over causal graphs (J2), emergent gravity à la Jacobson / Verlinde (J3), causal-set-theory comparison (J4), LQG spin-foam comparison (J5), AdS/CFT-analog (J6).
 - **Quantum / branchial continuum (I-series).** I8 continuum limit of branchial Hilbert space, I10 full path-integral formulation.
-- **Infrageometry programme — 7 substantive open items.** IT5 Latschev GH form, IT6 scale-trichotomy bulk, IQ8 EME-tracking functor, IQ9 path-integral amplitudes, IG10 exponential map via weighted shortest-path counts, IB2 causal-branchial-trivial commutator (in progress), ID6 dimension compatibility on regular lattices (in progress), ID7 spectral-dimension small-`t` asymptotics (in progress), IR7 reverse-engineer rule from target signature (in progress), T5 path and d-torus Laplacian spectrum closed forms (in progress).
+- **Infrageometry programme open tasks.** IG10 exponential map via weighted shortest-path counts (pending); ID6 dimension compatibility on regular lattices (in progress); ID7 spectral-dimension small-`t` asymptotics (in progress); IB2 causal-branchial-trivial commutator (in progress); IR7 reverse-engineer rule from target signature (in progress). Separately, several infrageometry tasks are marked closed at a baseline but have substantive full forms still open as future work: IT5 Latschev GH-form, IT6 scale-trichotomy bulk, IQ6 Fubini-Study refinement limit, IQ8 EME-tracking functor, IQ9 path-integral amplitudes. T5 (path and d-torus Laplacian spectrum closed forms, in progress) sits outside the infrageometry programme but in the same spirit.
 - **Rule search.** Large-scale empirical enumeration via `wolframscript` / SetReplace (task #190); Lean-side `RuleSearch.lean` catalog infrastructure in place.
 - **Support (X-series).** X3 Mathlib Taylor integration (uniform C^k-on-compacts), X4 multi-way engine integration from `efficient_rewriting_final`.
 - **Colleague-work (M-series).** M1 Ioana Milea IG-intern coordination, M3 Kolcz Lie-Poisson MBQC, M4 Pullman IBL-∞ / BV, M6 Pokorny paclet parity, M7 Ahmed EME community post, M8 Pokorny diffusion-geometry bridge, M9 tropical geometry, M10 3BP / dynamical-systems dimension signature.

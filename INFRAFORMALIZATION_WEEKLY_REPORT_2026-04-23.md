@@ -21,7 +21,7 @@ Project: **`infra_formalization`** — Lean 4 / Mathlib formalisation of the Wol
 
 - Axiom-cleanliness: no `sorry`, no `native_decide`, no custom axioms; only the three standard Lean axioms.
 - Grounding audit: 4 of 4 action items closed. Every continuum GR structure in the repository carries an obligation Prop binding it to a hypergraph-side witness, so no continuum object stands unattached to the hypergraph substrate.
-- Infrageometry programme: 50 of 57 tasks closed with real content; 7 in progress with substantive open content (not stubs).
+- Infrageometry programme: 52 of 57 tasks closed with real content; 5 still open (IG10 exponential map; ID6 dimension compatibility; ID7 spectral-dimension asymptotics; IB2 commutator theorem; IR7 reverse-engineer rule from signature).
 - Gorard corpus: F1–F7 formalised as Lean theorems, plus F8 as a documentary finding (title-body gap in G4).
 - Flat continuum-limit bridges proved: cycle → circle, path → interval, 2-torus, d-torus, discrete Lorentz → Minkowski.
 
@@ -317,8 +317,9 @@ Every item here corresponds to a pending or in-progress task in the task list; t
 **Quantum / branchial continuum (I, IQ).**
 - I8 branchial → QM Hilbert-space continuum limit; I10 full path-integral formulation. IQ6 / IQ8 / IQ9 baselines proved; full forms open.
 
-**Infrageometry programme — 7 substantive open items.**
-- IT5 Latschev GH-form; IT6 scale-trichotomy bulk; IQ8 EME-tracking functor; IQ9 path-integral amplitudes; IG10 exponential map via weighted shortest-path counts; IB2 causal-branchial-trivial commutator (in progress); ID6 dimension compatibility on regular lattices (in progress); ID7 spectral dimension via heat-kernel trace small-`t` asymptotics (in progress); IR7 reverse-engineer rule from target signature (in progress); T5 path and d-torus Laplacian spectrum closed forms (in progress).
+**Infrageometry programme open tasks.**
+- Five infrageometry tasks are still open: IG10 exponential map via weighted shortest-path counts (pending); ID6 dimension compatibility on regular lattices (in progress); ID7 spectral dimension via heat-kernel trace, small-`t` asymptotics (in progress); IB2 causal-branchial-trivial commutator (in progress); IR7 reverse-engineer rule from target signature (in progress).
+- Separately, a handful of infrageometry tasks are marked closed at a baseline but have substantive full forms that remain future work: IT5 Latschev GH-form, IT6 scale-trichotomy bulk, IQ6 Fubini-Study refinement limit, IQ8 EME-tracking functor, IQ9 path-integral amplitudes. T5 (path and d-torus Laplacian spectrum closed forms, in progress) sits outside the infrageometry programme but in the same spirit.
 
 **Rule search.**
 - Large-scale empirical rule enumeration via `wolframscript` / SetReplace (Lean-side `RuleSearch.lean` catalog infrastructure in place; large-scale enumeration pending — task #190).

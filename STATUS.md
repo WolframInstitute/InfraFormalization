@@ -18,8 +18,8 @@ i.e., proving that a hypergraph-side witness exists for a curved
 target like Schwarzschild, Kerr, or FLRW. See
 [`GROUNDING_AUDIT.md`](GROUNDING_AUDIT.md) for the four closed items.
 
-**Headline (2026-04-22).** Infrageometry programme 48/57 tasks closed
-(84%). Branchial quantum-mechanics bridge (I-series) 8/10 closed: finite
+**Headline (2026-04-22).** Infrageometry programme 52/57 tasks closed
+(91%). Branchial quantum-mechanics bridge (I-series) 8/10 closed: finite
 slice → ℂ-Hilbert space → ℂ-linear adjacency operator with Hermitian
 self-adjointness → Schrödinger evolution with proven unitarity → Born
 rule → observables → expectation values. F-series GR obligations:
@@ -96,13 +96,13 @@ From [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md), 9 task groups with 57 items:
 | IA — Infraanalysis (Pavel Hajek) | 5 | 5 | 100% |
 | IG — InfraGaugeTheory (Pavel Pokorny) | 10 | 11 | 91% |
 | IC — Infracausality | 8 | 8 | 100% |
-| IT — Infratopology (Pavel Hajek) | 4 | 6 | 67% |
+| IT — Infratopology (Pavel Hajek) | 6 | 6 | 100% |
 | ID — Infradimension | 5 | 7 | 71% |
 | IB — Infrablowup | 5 | 6 | 83% |
-| IQ — Branchial/QM | 2 | 4 | 50% |
+| IQ — Branchial/QM | 4 | 4 | 100% |
 | IS — Synthetic axiomatic | 3 | 3 | 100% |
 | IR — Ruliology | 6 | 7 | 86% |
-| **Total** | **48** | **57** | **84%** |
+| **Total** | **52** | **57** | **91%** |
 
 **Legacy tasks (branchial QM bridge):** I1 ✅, I2 ✅, I3 ✅, I4 ✅, I5 ✅,
 I6 ✅, I7 ✅, I8 ⌛, I9 ✅, I10 ⌛ — **8/10** done. Physics bridge to

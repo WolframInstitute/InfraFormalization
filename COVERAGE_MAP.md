@@ -147,7 +147,7 @@ From `INFRAGEOMETRY.md` — 9 groups (57 new tasks #109–#165). Status:
 | IS | Synthetic axiomatic | 3/3 | 3 |
 | IR | Ruliology | 7/7 | 6 (IR7 in progress — over-strong form disproved, correct form open) |
 
-**Addressed: 57/57. Closed with real content: 48/57 (84%).**
+**Addressed: 57/57. Closed with real content: 52/57 (91%).**
 
 Honest breakdown of the remaining 9:
 - T6 obligations **closed by upgrade** this session: IR7 (real content + disproof of over-strong form), ID6 (real content), **IQ6 (real content + proved `fubiniStudyBhattacharyya_bound`)**.
