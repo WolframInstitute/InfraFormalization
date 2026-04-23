@@ -1,5 +1,8 @@
 Added or done since the 2026-04-23 weekly update (newest first):
 
+- ID6 general-r lower bound (one-sided): V(v, r) ≥ r + 1 for n ≥ 2 and 2r+1 ≤ n (cycleHypergraph_ballVolume_forward_ge). Forward-shift Finset-image cardinality + dist bound.
+- ID6 general-r injectivity: iterSucc_injOn — forward shifts distinct on [0, r] when 2r+1 ≤ n (cycleHypergraph_iterSucc_injOn). Uses the .val closed form + ModEq cancellation. Classical.choice-free.
+- ID6 general-r .val closed form for backward shift: iterPred_val — (g^[k] v).val = (v.val + (n-1)*k) % n (cycleHypergraph_iterPred_val). Symmetric to iterSucc_val.
 - ID6 general-r .val closed form: (f^[k] v).val = (v.val + k) % n (cycleHypergraph_iterSucc_val). Classical.choice-free (propext + Quot.sound only). Enables distinctness reasoning without Fin.NatCast.
 - ID6 general-r distance tool: dist v (f^[k] v) ≤ k for iterated ±1 shifts (cycleHypergraph_dist_iter{Succ,Pred}_le). Uniform upper bound without Fin.NatCast coercion; induction via triangle + adjacency.
 - ID6 partial obligation lifted to r=2 (dimensionCompatibilityObligation_r_two, dimensionCompatibilityObligation_base_cases_through_two) — the partial compatibility proof now covers r ∈ {0, 1, 2}.
