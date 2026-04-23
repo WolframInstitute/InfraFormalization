@@ -234,7 +234,7 @@ Source items that map to existing coverage:
 
 - Mathematical content of his persistence project: `VietorisRips.lean` (IT1), `HodgeVR.lean` (IT2), `HodgeLaplacianSpectrum.lean` + `HodgeLaplacianBounds.lean` (IT3), persistence barcode (IT4), Latschev obligation proved for cycles (IT5), scale-trichotomy endpoints proved (IT6). Paclet migration itself is M6 (pending).
 - Fisher-information side of holographic-duality discussions: `FisherMetric.lean` (IQ5), `FisherMetricExtended.lean`, M2 Van Le Fisher → Fubini-Study bridge completed, IQ6 `fubiniStudyBhattacharyya_bound` proved.
-- Classification of graphs with pointwise constant Wolfram-Hausdorff dimension (with Dugan, inspired by Sam Rodkey): `ID1` WH dimension on hypergraphs, `ID2` plateau detection, `ID6` compatibility theorem in progress (target locus).
+- Classification of graphs with pointwise constant Wolfram-Hausdorff dimension (with Dugan, inspired by Sam Rodkey): `ID1` WH dimension on hypergraphs, `ID2` plateau detection, `ID6` compatibility theorem in progress (target locus). Tracked explicitly as **P20 (#212)** below. Web search (2026-04) returned no published Rodkey paper on the topic; the attribution is to a conversational question (Sam Rodkey, GitHub `SamRodkey`, Texas), not to a paper.
 - Combinatorial Levi-Civita connection in InfraGaugeTheory: IG1–IG11 covered; C5 Koszul Levi-Civita and C7 discrete connection on a hypergraph pending; `FiberedGraphConnectionBridge.lean` attaches the obligation Prop.
 - Carlos's InfraCausality paper: IC1 CausalGraphType, IC2 ObserverChain, IC3 LightRay, IC4 Foliation + ProperTime, IC5 SpatialReconstruction, IC6 MultiFibrationProjection, IC7 EPSAxioms, IC8 MarzkeWheeler; M5 Zapata + Ahmed paper completed.
 - Ioana on InfraGaugeTheory coordinatization pipeline: ID4 CoordinatizationDimension completed; M1 IG-intern coordination pending.
@@ -263,6 +263,7 @@ New tasks P1–P19 (items not yet covered in any existing module or task):
 - [ ] **P17 (#209)** — Homotopy algebra / homological-algebra scaffold (supports future paclets: quantum topology, homological algebra, homotopy algebras). Core-dump 2025-10-06.
 - [ ] **P18 (#210)** — Holography / Unruh effect discussion track (Rangamani talk, Aaronson group, UT junior researchers); relates to J6 AdS/CFT-analog.
 - [ ] **P19 (#211)** — Hypergraph as (1-skeleton, clique-complex cochain) decomposition (Kolpakov direction).
+- [ ] **P20 (#212)** — Rodkey classification: characterise hypergraphs / graphs for which `localDimension v r` is constant across vertices at each fixed `r` (equivalently, `wolframHausdorffDimension` is vertex-uniform). Partner task with Pavel Hájek and Dugan Hammock; attributed to a question of Sam Rodkey. Infrastructure already in place — missing piece is a classification theorem (e.g., vertex-transitivity as sufficient condition, non-trivial examples on cycleHypergraph / pathHypergraph / d-torus / small 3-regular graphs). Per weekly update 2026-04.
 
 Items deliberately out of scope here: Austin talk, Aaronson group meeting, Mukund Rangamani holography talk attendance (external activities); Vim distance, minimal square covering, git as hypergraph rewriting (off-topic fun posts); Knutt's paper (reference not held here); Turing 2 DS (done by Pavel in GeneralizedShift).
 

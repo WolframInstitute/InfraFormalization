@@ -114,7 +114,9 @@ Pending in this group: B2 Schwarzschild Riemann components, B3 `Ric = 0`, B4 vac
 | `RemainingObligations.lean` | T6 partial upgrade: **`ReverseEngineeringObligation`** (IR7), **`DimensionCompatibilityObligation`** (ID6), and **`FubiniStudyLimitObligation`** (IQ6, also proved as `fubiniStudyBhattacharyya_bound`) now state real content (no longer `True ∧ False`). Four others remain at stub level. `four_stub_obligations_open` certifies the stubs are uninhabited. | ✅ T6 (3/7 upgraded) |
 | `RuleDimensionBounds.lean` | `Trajectory.StepConsistent`, `trajectory_size_invariant`, `geodesicBallVolume_le_card` | ✅ IR2 |
 
-Pending in ID: ID2 plateau detection, ID3 homology dim, ID4 coordinatization dim, ID5 causal-graph dim, ID6 compatibility theorem, ID7 spectral dim via `Matrix.exp`.
+Pending in ID: ID6 compatibility theorem (all dimension notions agree on regular lattices; in progress), ID7 spectral dim via `Matrix.exp` small-`t` asymptotics (in progress). ID2 / ID3 / ID4 / ID5 are closed with real content.
+
+Adjacent open problem: **P20 Rodkey classification** (task #212) — characterise hypergraphs for which `localDimension v r` is constant across vertices; infrastructure in place (`Hypergraph.localDimension`, `wolframHausdorffDimension`, `plateauDimension`), classification theorem open. Partner with Pavel Hájek and Dugan Hammock.
 
 ## 7b. Infragauge / Infracausality / Infratopology / Synthetic / Blowup / Ruliology
 
