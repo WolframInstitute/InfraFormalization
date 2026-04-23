@@ -171,6 +171,26 @@ theorem dimensionCompatibilityObligation_base_cases
     simpa using cycleHypergraph_ballVolume_zero_exact h2 v
   · simpa using cycleHypergraph_ballVolume_one_exact hn v
 
+/-- **Partial ID6 extended to `r = 2`**: `ballVolume v 2 = 5 = 2·2 + 1`
+on every `cycleHypergraph n` with `n ≥ 5`. This is the exact base case
+at radius 2 and advances the compatibility obligation one step further
+toward the general `V(v, r) = 2r + 1` formula. -/
+theorem dimensionCompatibilityObligation_r_two
+    (n : ℕ) [NeZero n] (hn : 5 ≤ n) (v : Fin n) :
+    (cycleHypergraph n).geodesicBallVolume v 2 = 2 * 2 + 1 := by
+  simpa using cycleHypergraph_ballVolume_two_exact hn v
+
+/-- **Partial ID6 for `r ∈ {0, 1, 2}`** on `cycleHypergraph n` with
+`n ≥ 5`. Direct consequence of the three exact-ball-volume theorems. -/
+theorem dimensionCompatibilityObligation_base_cases_through_two
+    (n : ℕ) [NeZero n] (hn : 5 ≤ n) (v : Fin n) :
+    (cycleHypergraph n).geodesicBallVolume v 0 = 2 * 0 + 1
+    ∧ (cycleHypergraph n).geodesicBallVolume v 1 = 2 * 1 + 1
+    ∧ (cycleHypergraph n).geodesicBallVolume v 2 = 2 * 2 + 1 := by
+  have h3 : 3 ≤ n := by omega
+  obtain ⟨h0, h1⟩ := dimensionCompatibilityObligation_base_cases n h3 v
+  exact ⟨h0, h1, dimensionCompatibilityObligation_r_two n hn v⟩
+
 /-! ## IQ6 — Fubini-Study limit (upgraded to concrete inequality) -/
 
 /-- **Fubini-Study/Bhattacharyya bound obligation** (upgraded from
