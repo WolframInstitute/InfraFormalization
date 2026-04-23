@@ -1,6 +1,9 @@
 Added or done since the 2026-04-23 weekly update (newest first):
 
+- **ID6 GENERAL LOWER BOUND CLOSED**: V(v, r) ≥ 2r + 1 on cycleHypergraph n for every n ≥ 2, r with 2r+1 ≤ n (cycleHypergraph_ballVolume_ge). Builds {F^[0] v, ..., F^[r] v} ∪ {G^[1] v, ..., G^[r] v} as 2r+1 distinct ball members. This closes the LOWER bound of the cycle compatibility claim V(v, r) = 2r+1; upper bound still needs general shortest-walk structural analysis.
+- ID6 general-r: forward/backward families disjoint when i ≤ r, 1 ≤ j ≤ r, 2r+1 ≤ n (cycleHypergraph_iterSucc_ne_iterPred). Via .val formulas and ModEq cancellation.
 - ID6 general-r lower bound (one-sided): V(v, r) ≥ r + 1 for n ≥ 2 and 2r+1 ≤ n (cycleHypergraph_ballVolume_forward_ge). Forward-shift Finset-image cardinality + dist bound.
+- ID6 general-r injectivity (backward): iterPred_injOn via conjugation G^[k] v = -(F^[k] (-v)) + neg_injective (cycleHypergraph_iterPred_injOn, cycleHypergraph_iterPred_neg_iterSucc).
 - ID6 general-r injectivity: iterSucc_injOn — forward shifts distinct on [0, r] when 2r+1 ≤ n (cycleHypergraph_iterSucc_injOn). Uses the .val closed form + ModEq cancellation. Classical.choice-free.
 - ID6 general-r .val closed form for backward shift: iterPred_val — (g^[k] v).val = (v.val + (n-1)*k) % n (cycleHypergraph_iterPred_val). Symmetric to iterSucc_val.
 - ID6 general-r .val closed form: (f^[k] v).val = (v.val + k) % n (cycleHypergraph_iterSucc_val). Classical.choice-free (propext + Quot.sound only). Enables distinctness reasoning without Fin.NatCast.
