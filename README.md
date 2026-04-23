@@ -316,4 +316,4 @@ Verdicts are labelled precisely ("overclaim", "misstatement", "ill-defined", "ta
 
 ## License
 
-Formalisation code: MIT. Audit notes: CC-BY-4.0. Gorard paper sources in `papers/` are the original authors' and included only for reference.
+MIT — see [`LICENSE.md`](LICENSE.md). Gorard paper sources in `papers/` are the original authors' and included only for reference.
