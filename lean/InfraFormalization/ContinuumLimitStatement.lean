@@ -161,16 +161,90 @@ theorem A6_for_constants (c : ℝ) :
   refine Filter.eventually_atTop.mpr ⟨1, fun n hn => ?_⟩
   exact (h_sum n (by omega)).symm
 
-/-- **Open: discrete wave → continuum wave on scaled lattice.**
-Analogous statement for the wave equation on the scaled
-d-dimensional lattice converging to the continuum wave equation on
-`ℝ^{d+1}` (Minkowski). -/
-def DiscreteWaveToContinuumWave : Prop :=
-  True
+/-- **Discrete wave → continuum wave on scaled lattice** (upgraded
+from `True` to real content).
 
-/-- **Open: discrete Schrödinger → continuum Schrödinger.** -/
+Spectral form: the `k`-th discrete wave-propagator frequency (the
+dispersion relation eigenvalue) on the `n`-cycle, scaled by `n`,
+converges to the continuum-wave frequency `2πk` on the circle.
+
+Discrete dispersion: `ω_k(n) = 2 sin(πk/n)` (the square root of the
+discrete Laplacian eigenvalue magnitude). Scaled: `n · ω_k(n) =
+2n sin(πk/n) → 2πk` as `n → ∞`. This is the Rung-2 / A4 bridge for the
+wave equation: the cycle wave-Laplacian eigenvalues converge to the
+continuum-circle wave-Laplacian eigenvalues.
+
+Full wave-equation convergence (propagator level) needs wave-kernel
+infrastructure; the spectral bridge is the foundational step. -/
+def DiscreteWaveToContinuumWave : Prop :=
+  ∀ (k : ℕ),
+    Filter.Tendsto
+      (fun n : ℕ =>
+        (n : ℝ) * (2 * Real.sin (Real.pi * (k : ℝ) / (n : ℝ))))
+      Filter.atTop
+      (nhds (2 * Real.pi * k))
+
+/-- **Discrete Schrödinger → continuum Schrödinger** (upgraded from
+`True` to real content).
+
+Spectral form: the scaled discrete Schrödinger dispersion relation
+on the cycle converges to the continuum one.
+
+Discrete Schrödinger Hamiltonian eigenvalue = minus the discrete
+Laplacian eigenvalue = `4 sin²(πk/n)`. Scaled by `n²`:
+`n² · 4 sin²(πk/n) → (2πk)²` as `n → ∞`. This matches the continuum
+Schrödinger Hamiltonian eigenvalue `-d²/dx² = (2πk)²` on the circle.
+
+Same content as `cycleEigenvalue_scaled_tendsto` (A4) in magnitude;
+stated here for the Schrödinger operator. Full propagator-level
+convergence `exp(-itH_n) → exp(-itH_∞)` needs unitary-convergence
+infrastructure. -/
 def DiscreteSchrodingerToContinuumSchrodinger : Prop :=
-  True
+  ∀ (k : ℕ),
+    Filter.Tendsto
+      (fun n : ℕ =>
+        ((n : ℝ))^2 * (4 * (Real.sin (Real.pi * (k : ℝ) / (n : ℝ)))^2))
+      Filter.atTop
+      (nhds ((2 * Real.pi * k)^2))
+
+/-- **DiscreteWaveToContinuumWave PROVED.** Follows from the helper
+`n_sin_pi_k_div_n_tendsto`: `n · sin(πk/n) → πk`, so
+`n · 2 sin(πk/n) = 2 · (n · sin(πk/n)) → 2πk`. Uses `Tendsto.const_mul`. -/
+theorem discreteWaveToContinuumWave_holds :
+    DiscreteWaveToContinuumWave := by
+  intro k
+  have h1 := n_sin_pi_k_div_n_tendsto k
+  have h2 : Filter.Tendsto (fun n : ℕ => (2 : ℝ) * ((n : ℝ) * Real.sin (Real.pi * k / n)))
+      Filter.atTop (nhds (2 * (Real.pi * k))) :=
+    h1.const_mul 2
+  have h_eq : ∀ n : ℕ, (2 : ℝ) * ((n : ℝ) * Real.sin (Real.pi * k / n))
+      = (n : ℝ) * (2 * Real.sin (Real.pi * k / n)) := by
+    intro n; ring
+  have h_target : 2 * (Real.pi * (k : ℝ)) = 2 * Real.pi * k := by ring
+  rw [h_target] at h2
+  exact h2.congr h_eq
+
+/-- **DiscreteSchrodingerToContinuumSchrodinger PROVED.** Negative of
+`cycleEigenvalue_scaled_tendsto` (A4). Since
+`n² · cycleEigenvalue n k = -n² · 4 sin²(πk/n) → -(2πk)²`, we get
+`n² · 4 sin²(πk/n) → (2πk)²`. -/
+theorem discreteSchrodingerToContinuumSchrodinger_holds :
+    DiscreteSchrodingerToContinuumSchrodinger := by
+  intro k
+  have hA4 := cycleEigenvalue_scaled_tendsto k
+  -- hA4: n² · (−4 sin²(π k / n)) → −(2πk)².
+  -- Negate to get: n² · 4 sin²(π k / n) → (2πk)².
+  have hneg : Filter.Tendsto
+      (fun n : ℕ => - ((n : ℝ)^2 * cycleEigenvalue n k))
+      Filter.atTop (nhds (-(-(2 * Real.pi * k)^2))) := hA4.neg
+  have h_eq : ∀ n : ℕ, - ((n : ℝ)^2 * cycleEigenvalue n k)
+      = (n : ℝ)^2 * (4 * (Real.sin (Real.pi * k / n))^2) := by
+    intro n
+    unfold cycleEigenvalue
+    ring
+  have h_target : -(-(2 * Real.pi * (k : ℝ))^2) = (2 * Real.pi * k)^2 := by ring
+  rw [h_target] at hneg
+  exact hneg.congr h_eq
 
 /-! ## C. Rule-driven trajectories → curved spacetimes
 
