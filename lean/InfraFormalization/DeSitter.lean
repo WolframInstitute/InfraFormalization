@@ -96,5 +96,84 @@ theorem dsLapse_pos_iff (Λ : ℝ) (hΛ : Λ > 0) (r : ℝ) :
       linarith
     linarith
 
+/-- **de Sitter first partial derivatives** `∂_l g_{μν}`. Non-zero
+components on the validity domain:
+  * `∂_r g_{00} = −f'(r)` where `f'(r) = −2Λr/3`
+  * `∂_r g_{11} = −f'(r)/f(r)²`
+  * `∂_r g_{22} = 2 r`
+  * `∂_r g_{33} = 2 r sin²θ`
+  * `∂_θ g_{33} = 2 r² sinθ cosθ`
+-/
+noncomputable def dsDg (Λ : ℝ) (l : Fin 4) (x : Fin 4 → ℝ) (μ ν : Fin 4) : ℝ :=
+  if μ ≠ ν then 0
+  else
+    let r := x 1
+    let θ := x 2
+    let fp := -(2 * Λ * r / 3)
+    if l.val = 1 then
+      if μ.val = 0 then -fp
+      else if μ.val = 1 then -fp / (dsLapse Λ r)^2
+      else if μ.val = 2 then 2 * r
+      else 2 * r * (Real.sin θ)^2
+    else if l.val = 2 then
+      if μ.val = 3 then 2 * r^2 * Real.sin θ * Real.cos θ
+      else 0
+    else 0
+
+/-- **`dsDg` symmetry**: `dg l x μ ν = dg l x ν μ`. -/
+theorem dsDg_symm (Λ : ℝ) (l : Fin 4) (x : Fin 4 → ℝ) (μ ν : Fin 4) :
+    dsDg Λ l x μ ν = dsDg Λ l x ν μ := by
+  unfold dsDg
+  by_cases h : μ = ν
+  · rw [h]
+  · simp [h, Ne.symm h]
+
+/-- **de Sitter as a `PartialMetricData 4`** on the static-patch
+validity domain `DSValid Λ` (inside the cosmological horizon, off the
+polar axis). -/
+noncomputable def dsPartial (Λ : ℝ) : PartialMetricData 4 where
+  g := dsG Λ
+  ginv := dsGinv Λ
+  dg := dsDg Λ
+  valid := DSValid Λ
+  g_symm := fun x _ μ ν => dsG_symm Λ x μ ν
+  ginv_symm := fun x _ μ ν => dsGinv_symm Λ x μ ν
+  ginv_mul := by
+    intros x hx μ ν
+    obtain ⟨hr, hf, hsinθ⟩ := hx
+    have hr_ne : x 1 ≠ 0 := ne_of_gt hr
+    have hr_sq_ne : (x 1)^2 ≠ 0 := pow_ne_zero 2 hr_ne
+    have hf_ne : dsLapse Λ (x 1) ≠ 0 := ne_of_gt hf
+    have hsinθ_sq_ne : (Real.sin (x 2))^2 ≠ 0 := pow_ne_zero 2 hsinθ
+    by_cases hμν : μ = ν
+    · subst hμν
+      rw [Finset.sum_eq_single μ]
+      · rw [if_pos rfl]
+        unfold dsGinv dsG
+        simp only [ne_eq, not_true_eq_false, if_false]
+        by_cases h0 : μ.val = 0
+        · simp [h0]; field_simp
+        by_cases h1 : μ.val = 1
+        · simp [h0, h1]; field_simp
+        by_cases h2 : μ.val = 2
+        · simp [h0, h1, h2]; field_simp
+        · simp [h0, h1, h2]; field_simp
+      · intros α _ hα
+        unfold dsGinv
+        simp [Ne.symm hα]
+      · intro hne; exact absurd (Finset.mem_univ _) hne
+    · rw [if_neg hμν]
+      apply Finset.sum_eq_zero
+      intros α _
+      by_cases hαμ : α = μ
+      · subst hαμ
+        unfold dsG
+        have hne : α ≠ ν := hμν
+        simp [hne]
+      · unfold dsGinv
+        have hne : μ ≠ α := fun heq => hαμ heq.symm
+        simp [hne]
+  dg_symm := fun l x _ μ ν => dsDg_symm Λ l x μ ν
+
 end Curvature
 end InfraFormalization

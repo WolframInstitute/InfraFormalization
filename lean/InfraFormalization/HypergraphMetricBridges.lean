@@ -87,6 +87,11 @@ bound to the hypergraph side). -/
 def rn_from_hypergraph (M Q : ℝ) : Prop :=
   HypergraphPartialMetricOriginObligation (rnPartial M Q)
 
+/-- **de Sitter bridge obligation**: the de Sitter `PartialMetricData`
+is bound existentially to a hypergraph-side witness. -/
+def deSitter_from_hypergraph (Λ : ℝ) : Prop :=
+  HypergraphPartialMetricOriginObligation (dsPartial Λ)
+
 /-- **2-sphere bridge obligation** (H5 curved-target extension). -/
 def sphere_from_hypergraph : Prop :=
   HypergraphPartialMetricOriginObligation spherePartial

@@ -238,6 +238,19 @@ theorem rn_from_hypergraph_proved (M Q : ℝ) :
   intro k
   positivity
 
+/-- **Witness: de Sitter's origin obligation**, for every cosmological
+constant `Λ`. -/
+theorem deSitter_from_hypergraph_proved (Λ : ℝ) :
+    deSitter_from_hypergraph Λ := by
+  unfold deSitter_from_hypergraph
+    HypergraphPartialMetricOriginObligation
+  refine ⟨Fin 2, inferInstance, inferInstance, Unit,
+    identitySystem Unit, cycleHypergraph 2,
+    emptyTrajectory (identitySystem Unit) (cycleHypergraph 2),
+    fun k => (1 : ℝ) / (k + 1), ?_⟩
+  intro k
+  positivity
+
 /-- **Umbrella witness**: every GR target in the zoo has an attached
 hypergraph-origin obligation that is *provably inhabited*. -/
 theorem all_gr_targets_have_hypergraph_obligations_proved :
