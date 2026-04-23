@@ -670,5 +670,46 @@ def SchwarzschildVacuumObligation (M : ℝ) : Prop :=
     ∧ (∀ x : Fin 4 → ℝ, SchwarzschildValid M x →
       ∀ σ ν : Fin 4, C.ricci x σ ν = 0)
 
+/-- **Schwarzschild has Lorentzian signature on the exterior.** At
+every exterior point, the `sgg M x μ ν` has diagonal Lorentzian form
+(`g_00 < 0`, `g_ii > 0`, off-diagonal = 0). Confirms Schwarzschild is
+a valid Lorentzian geometry where non-singular. -/
+theorem sgg_lorentzian_pointwise (M : ℝ) (x : Fin 4 → ℝ)
+    (hv : SchwarzschildValid M x) :
+    sgg M x 0 0 < 0
+    ∧ (∀ i : Fin 4, 0 < i.val → 0 < sgg M x i i)
+    ∧ (∀ μ ν : Fin 4, μ ≠ ν → sgg M x μ ν = 0) := by
+  obtain ⟨hr_gt_2M, hr_pos, hsinθ⟩ := hv
+  have hr_ne_zero : x 1 ≠ 0 := ne_of_gt hr_pos
+  have h_factor_pos : 0 < 1 - 2 * M / (x 1) := by
+    have : 1 - 2 * M / (x 1) = (x 1 - 2 * M) / (x 1) := by field_simp
+    rw [this]
+    exact div_pos (by linarith) hr_pos
+  have h_factor_ne : (1 : ℝ) - 2 * M / x 1 ≠ 0 := ne_of_gt h_factor_pos
+  refine ⟨?_, ?_, ?_⟩
+  · -- g_00 = -(1 - 2M/r) < 0.
+    unfold sgg
+    simp
+    linarith
+  · -- g_ii > 0 for i ≥ 1.
+    intro i hi
+    unfold sgg
+    have hi_ne_zero : i.val ≠ 0 := Nat.pos_iff_ne_zero.mp hi
+    simp [hi_ne_zero]
+    fin_cases i
+    · exact absurd rfl hi_ne_zero
+    · simp
+      -- Need 2M/r < 1, equivalent to r > 2M.
+      rw [div_lt_one hr_pos]
+      linarith
+    · simp; positivity
+    · simp
+      have h_sq_sin_pos : 0 < (Real.sin (x 2))^2 := by positivity
+      positivity
+  · -- off-diagonal zero.
+    intros μ ν h
+    unfold sgg
+    simp [h]
+
 end Curvature
 end InfraFormalization
