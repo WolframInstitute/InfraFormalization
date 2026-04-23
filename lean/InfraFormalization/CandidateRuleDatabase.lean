@@ -95,4 +95,19 @@ theorem CandidateRule.allConservative_edgeCount_screen
   exact RuleSignature.edgeCount_mismatch_unreachable_of_conservative
     τ hstep hcons_all σ hmis i hi
 
+/-- **Unconditional admissibility screen**: any non-admissible target
+`σ` is unreachable by every candidate `c` and every trajectory over
+`c.sys`, regardless of conservativity, step-consistency, or anything
+else about the rules. Follows directly from
+`RuleSignature.not_admissible_unreachable`. -/
+theorem CandidateRule.notAdmissible_unreachable
+    {P : Type*} (_c : CandidateRule P)
+    {V : Type*} [Fintype V] [DecidableEq V] {init : Hypergraph V}
+    {sys : RewritingSystem P}
+    (τ : Trajectory sys init)
+    (σ : RuleSignature V) (hnotadmis : ¬ σ.Admissible)
+    (i : Nat) (hi : i < τ.states.length) :
+    hypergraphSignature (τ.states.get ⟨i, hi⟩) ≠ σ :=
+  RuleSignature.not_admissible_unreachable σ hnotadmis _
+
 end InfraFormalization
