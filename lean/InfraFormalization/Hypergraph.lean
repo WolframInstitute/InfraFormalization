@@ -162,6 +162,22 @@ theorem cons_ne_empty (e : Hyperedge V) (H : Hypergraph V) :
   rw [size_cons] at this
   omega
 
+/-- **`cons` distributes over union on the right**: inserting `e` into
+`H₁ + H₂` equals adding `H₁.cons e + H₂`. Inherited from multiset
+cons/add interaction. -/
+theorem cons_add (e : Hyperedge V) (H₁ H₂ : Hypergraph V) :
+    (H₁ + H₂).cons e = H₁.cons e + H₂ := by
+  show (⟨e ::ₘ (H₁.edges + H₂.edges)⟩ : Hypergraph V)
+    = ⟨(e ::ₘ H₁.edges) + H₂.edges⟩
+  congr 1
+  exact (Multiset.cons_add e H₁.edges H₂.edges).symm
+
+/-- **Size strict monotonicity under `cons`**: `(H.cons e).size > H.size`.
+Immediate from `size_cons`. -/
+theorem size_lt_cons (e : Hyperedge V) (H : Hypergraph V) :
+    H.size < (H.cons e).size := by
+  rw [size_cons]; omega
+
 end Hypergraph
 
 end InfraFormalization
