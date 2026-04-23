@@ -152,3 +152,4 @@ import InfraFormalization.EinsteinEquations
 import InfraFormalization.CovariantDerivative
 import InfraFormalization.LorentzianManifold
 import InfraFormalization.PartialMetricData
+import InfraFormalization.FLRW
