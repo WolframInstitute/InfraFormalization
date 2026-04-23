@@ -482,6 +482,25 @@ theorem A6Holds_sq : A6Holds (fun x => x^2) := A6_for_sq
 /-- `A6_for_cube` in the `A6Holds`-predicate form. -/
 theorem A6Holds_cube : A6Holds (fun x => x^3) := A6_for_cube
 
+/-- **A6 holds for the zero function.** Special case of `A6Holds_const`
+with `c = 0`. -/
+theorem A6Holds_zero : A6Holds (fun _ : ℝ => (0 : ℝ)) := A6Holds_const 0
+
+/-- **A6 closed under subtraction.** Immediate from `A6Holds.add` +
+`A6Holds.const_mul` with scalar `-1`. -/
+theorem A6Holds.sub {f g : ℝ → ℝ}
+    (hf : A6Holds f) (hg : A6Holds g)
+    (hf_int : IntervalIntegrable f MeasureTheory.volume 0 1)
+    (hg_int : IntervalIntegrable g MeasureTheory.volume 0 1) :
+    A6Holds (fun x => f x - g x) := by
+  have h_neg_g : A6Holds (fun x => (-1) * g x) := hg.const_mul (-1)
+  have h_neg_g_int : IntervalIntegrable (fun x : ℝ => (-1) * g x)
+      MeasureTheory.volume 0 1 := hg_int.const_mul (-1)
+  have h_eq : (fun x : ℝ => f x - g x) = (fun x : ℝ => f x + (-1) * g x) := by
+    funext x; ring
+  rw [h_eq]
+  exact hf.add h_neg_g hf_int h_neg_g_int
+
 /-- **A6 holds for every polynomial of degree ≤ 3** (linear combination
 of the monomial cases). Witnesses the usefulness of
 `A6Holds.add`/`const_mul`: no new filter-limit arguments needed once
