@@ -313,6 +313,24 @@ theorem cycleHypergraph_regular {n : Nat} [NeZero n] (hn : 3 ≤ n) :
   rw [cycleHypergraph_regular_degree_two hn v,
       cycleHypergraph_regular_degree_two hn w]
 
+/-- **`pathHypergraph n` is NOT regular for `n ≥ 3`**: the endpoint
+`0 : Fin n` has degree 1 while the interior vertex `1 : Fin n` has
+degree 2. Matches the pre-existing
+`pathHypergraph_not_ballVolumeVertexUniform` result, but cast at the
+structural (degree) level rather than the ball-volume level. -/
+theorem pathHypergraph_not_regular {n : ℕ} [NeZero n] (hn : 3 ≤ n) :
+    ¬ (pathHypergraph n).Regular := by
+  intro hreg
+  have h0 : (pathHypergraph n).toSimpleGraph.degree
+      ⟨0, Nat.pos_of_ne_zero (NeZero.ne n)⟩ = 1 :=
+    pathHypergraph_degree_zero (by omega)
+  have h1 : (pathHypergraph n).toSimpleGraph.degree
+      ⟨1, by omega⟩ = 2 :=
+    pathHypergraph_degree_one hn
+  have hdiff := hreg ⟨0, Nat.pos_of_ne_zero (NeZero.ne n)⟩ ⟨1, by omega⟩
+  rw [h0, h1] at hdiff
+  omega
+
 /-- **Adj-transitive implies uniform degree.** An Adj-preserving
 `Equiv σ : V ≃ V` sending `v` to `w` bijects the neighbour set of `v`
 with the neighbour set of `w`, so the simple-graph degrees agree. This
