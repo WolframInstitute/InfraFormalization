@@ -1,5 +1,8 @@
 Added or done since the 2026-04-23 weekly update (newest first):
 
+- Hypergraph: size bounds under add + non-empty positivity (size_le_add_right, size_le_add_left, size_pos_of_ne_empty)
+- Hypergraph: cons/add distributivity + size strict monotonicity (cons_add, size_lt_cons)
+- Hypergraph: size ↔ empty characterisation + cons non-empty (size_eq_zero_iff_empty, cons_ne_empty)
 - Hypergraph: size monotonicity for diff + empty-size corollary (size_diff_le, size_eq_zero_of_empty)
 - Hypergraph: union is a commutative monoid (add_empty, empty_add, add_comm', add_assoc')
 - P20: cycle and path witnesses at the restricted-predicate level (cycleHypergraph_ballVolumeVertexUniformRestricted, pathHypergraph_not_ballVolumeVertexUniformRestricted)
