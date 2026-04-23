@@ -214,4 +214,24 @@ theorem RuleSignature.not_admissible_unreachable
     simp [hypergraphSignature] at h_vc
     exact h_vcount h_vc.symm
 
+/-- **Signature edgeCount of `cycleHypergraph n` is `n`.** Immediate
+corollary of `cycleHypergraph_size` via the definition of
+`hypergraphSignature.edgeCount = Hypergraph.size`. Concrete screening
+anchor: under a conservative system starting from `cycleHypergraph n`,
+any target with `edgeCount ≠ n` is unreachable (via
+`edgeCount_mismatch_unreachable_of_conservative`). -/
+theorem RuleSignature.cycleHypergraph_signature_edgeCount (n : Nat) [NeZero n] :
+    (hypergraphSignature (V := Fin n) (cycleHypergraph n)).edgeCount = n :=
+  cycleHypergraph_size n
+
+/-- **Signature edgeCount of `Hypergraph.empty : Hypergraph V` is 0.**
+The empty hypergraph has zero edges by definition; its signature
+edgeCount equals 0. Together with `cycleHypergraph_signature_edgeCount`
+this gives concrete edgeCount anchors for the two canonical starting
+states (empty and cycle). -/
+theorem RuleSignature.empty_signature_edgeCount :
+    (hypergraphSignature (Hypergraph.empty : Hypergraph V)).edgeCount = 0 := by
+  show (Hypergraph.empty : Hypergraph V).size = 0
+  rfl
+
 end InfraFormalization

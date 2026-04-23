@@ -240,4 +240,12 @@ theorem hypergraph_scaled_laplacian_eq_second_deriv
   have hn_pos : 0 < n := Nat.pos_of_ne_zero (NeZero.ne n)
   exact polynomial_scaled_laplacian_eq_second_deriv a b c n hn_pos ((i.val : ℝ) / n)
 
+/-- **Cycle hypergraph edge count equals `n`.** `cycleHypergraph n` is
+defined as the image-map of `cycleHyperedge n` over `Finset.univ : Finset
+(Fin n)`, which has multiset cardinality `n`. -/
+theorem cycleHypergraph_size (n : Nat) [NeZero n] :
+    (cycleHypergraph n).size = n := by
+  unfold cycleHypergraph Hypergraph.size
+  simp
+
 end InfraFormalization
