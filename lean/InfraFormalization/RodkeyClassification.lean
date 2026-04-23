@@ -361,6 +361,19 @@ theorem not_ballVolumeVertexUniform_of_not_regular (H : Hypergraph V)
     ¬ H.BallVolumeVertexUniform :=
   fun hb => hnotreg (regular_of_ballVolumeVertexUniform H hconn hb)
 
+/-- **Ball volume is vertex-uniform at any radius `r ≥ |V|` on every
+connected hypergraph.** Both sides equal `|V|` by
+`geodesicBallVolume_ge_card`. So the obstruction to
+`BallVolumeVertexUniform` always lies in the "small-radius" regime
+`r < |V|`; once `r ≥ |V|`, uniformity is automatic regardless of
+graph structure. -/
+theorem ballVolumeVertexUniform_at_large_radius (H : Hypergraph V)
+    (hconn : H.toSimpleGraph.Connected) (r : ℕ) (hr : Fintype.card V ≤ r)
+    (v w : V) :
+    H.geodesicBallVolume v r = H.geodesicBallVolume w r := by
+  rw [geodesicBallVolume_ge_card H hconn v r hr,
+      geodesicBallVolume_ge_card H hconn w r hr]
+
 /-- **Adj-transitive implies uniform degree.** An Adj-preserving
 `Equiv σ : V ≃ V` sending `v` to `w` bijects the neighbour set of `v`
 with the neighbour set of `w`, so the simple-graph degrees agree. This
