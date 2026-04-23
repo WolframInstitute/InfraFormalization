@@ -699,6 +699,34 @@ theorem cycleHypergraph_iterPred_val {n : Nat} [NeZero n] (hn : 2 ≤ n)
     congr 1
     ring
 
+/-- **Conjugation identity**: `(· - 1)^[k] v = -((· + 1)^[k] (-v))` in `Fin n`.
+This lets us derive `iterPred_injOn` from `iterSucc_injOn` via a negation
+conjugation. -/
+private theorem cycleHypergraph_iterPred_neg_iterSucc {n : Nat} [NeZero n]
+    (w : Fin n) : ∀ (k : ℕ),
+    (fun x : Fin n => x - 1)^[k] w = -((fun x : Fin n => x + 1)^[k] (-w)) := by
+  intro k
+  induction k with
+  | zero => simp
+  | succ k ih =>
+    rw [Function.iterate_succ', Function.comp_apply, ih]
+    rw [Function.iterate_succ', Function.comp_apply]
+    show -((fun x : Fin n => x + 1)^[k] (-w)) - 1 = -((fun x : Fin n => x + 1)^[k] (-w) + 1)
+    abel
+
+/-- **Injectivity of iterated predecessor on small range**: symmetric
+counterpart of `cycleHypergraph_iterSucc_injOn`, derived via the
+conjugation `G^[k] v = -(F^[k] (-v))`. -/
+theorem cycleHypergraph_iterPred_injOn {n : Nat} [NeZero n] (v : Fin n)
+    {r i j : ℕ} (hir : i ≤ r) (hjr : j ≤ r) (hr : 2 * r + 1 ≤ n)
+    (h : (fun x : Fin n => x - 1)^[i] v = (fun x : Fin n => x - 1)^[j] v) :
+    i = j := by
+  rw [cycleHypergraph_iterPred_neg_iterSucc v i,
+      cycleHypergraph_iterPred_neg_iterSucc v j] at h
+  have h' : (fun x : Fin n => x + 1)^[i] (-v) = (fun x : Fin n => x + 1)^[j] (-v) :=
+    neg_injective h
+  exact cycleHypergraph_iterSucc_injOn (-v) hir hjr hr h'
+
 /-- **Forward-shift lower bound for ball volume**: for `n ≥ 2` and
 `2r + 1 ≤ n`, `V(v, r) ≥ r + 1`. Exhibits the `r + 1` forward iterates
 `F^[0] v, F^[1] v, ..., F^[r] v` as distinct ball members. This is the
