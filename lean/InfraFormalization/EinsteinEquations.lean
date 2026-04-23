@@ -90,4 +90,30 @@ theorem minkowski4_flat_vacuum_forces_lambda_zero
   simp at h11
   exact h11
 
+/-- **Second Bianchi identity (divergence of Einstein tensor) vanishes
+on the flat connection** — trivially, since the entire Einstein tensor
+vanishes. This is `∇_μ G^{μν} = 0` in the degenerate flat case.
+
+For general torsion-free metric-compatible (Levi-Civita) connections
+the contracted second Bianchi identity `∇_μ G^{μν} = 0` is a
+consequence of the un-contracted Bianchi `∇_{[λ} R_{μν]ρσ} = 0`; full
+proof requires metric compatibility (not yet formalised). Here we
+close the flat-vacuum case. -/
+theorem flatConnection_einstein_divergence_zero (n : Nat)
+    (M : MetricData n) (x : Fin n → ℝ)
+    (dG : Fin n → (Fin n → ℝ) → Fin n → Fin n → ℝ)
+    (h_dG : ∀ μ ν ρ y, dG μ y ν ρ = 0) (ν : Fin n) :
+    (∑ μ : Fin n, dG μ x μ ν)
+      + (∑ μ : Fin n, ∑ ρ : Fin n, (flatConnection n).Γ x μ μ ρ
+          * (flatConnection n).einsteinTensor M x ρ ν) = 0 := by
+  -- dG = 0 everywhere, and Γ_flat = 0.
+  have h_first : (∑ μ : Fin n, dG μ x μ ν) = 0 := by
+    refine Finset.sum_eq_zero (fun μ _ => ?_)
+    exact h_dG μ μ ν x
+  have h_second : (∑ μ : Fin n, ∑ ρ : Fin n, (flatConnection n).Γ x μ μ ρ
+      * (flatConnection n).einsteinTensor M x ρ ν) = 0 := by
+    simp [flatConnection]
+  rw [h_first, h_second]
+  ring
+
 end InfraFormalization
