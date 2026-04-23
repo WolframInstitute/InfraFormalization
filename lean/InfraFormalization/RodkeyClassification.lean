@@ -374,6 +374,40 @@ theorem ballVolumeVertexUniform_at_large_radius (H : Hypergraph V)
   rw [geodesicBallVolume_ge_card H hconn v r hr,
       geodesicBallVolume_ge_card H hconn w r hr]
 
+/-- **Radius-0 ball volume = 1 on every connected hypergraph.** On a
+connected graph, `dist v u = 0 ↔ v = u`, so the only vertex within
+distance 0 of `v` is `v` itself. -/
+theorem geodesicBallVolume_zero_of_connected (H : Hypergraph V)
+    (hconn : H.toSimpleGraph.Connected) (v : V) :
+    H.geodesicBallVolume v 0 = 1 := by
+  unfold Hypergraph.geodesicBallVolume Hypergraph.geodesicBall
+  have h_eq : (Finset.univ.filter (fun u : V => H.dist v u ≤ 0)) = {v} := by
+    ext u
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and,
+               Finset.mem_singleton, Nat.le_zero]
+    constructor
+    · intro h_dist
+      unfold Hypergraph.dist at h_dist
+      rw [SimpleGraph.dist_eq_zero_iff_eq_or_not_reachable] at h_dist
+      rcases h_dist with heq | hnreach
+      · exact heq.symm
+      · exact absurd (hconn v u) hnreach
+    · intro huv
+      subst huv
+      unfold Hypergraph.dist
+      exact SimpleGraph.dist_self
+  rw [h_eq]
+  simp
+
+/-- **Ball volume is vertex-uniform at radius 0 on every connected
+hypergraph.** Both sides equal 1. The `r = 0` slice of
+`BallVolumeVertexUniform` is trivial. -/
+theorem ballVolumeVertexUniform_at_zero (H : Hypergraph V)
+    (hconn : H.toSimpleGraph.Connected) (v w : V) :
+    H.geodesicBallVolume v 0 = H.geodesicBallVolume w 0 := by
+  rw [geodesicBallVolume_zero_of_connected H hconn v,
+      geodesicBallVolume_zero_of_connected H hconn w]
+
 /-- **Adj-transitive implies uniform degree.** An Adj-preserving
 `Equiv σ : V ≃ V` sending `v` to `w` bijects the neighbour set of `v`
 with the neighbour set of `w`, so the simple-graph degrees agree. This
