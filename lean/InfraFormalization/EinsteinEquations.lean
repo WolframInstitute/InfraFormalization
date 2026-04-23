@@ -22,6 +22,7 @@ via a discrete-Ricci → continuum-Ricci convergence theorem.
 
 import InfraFormalization.CurvatureRiemann
 import InfraFormalization.StressEnergyTensor
+import InfraFormalization.LorentzianManifold
 
 namespace InfraFormalization
 
@@ -115,5 +116,17 @@ theorem flatConnection_einstein_divergence_zero (n : Nat)
     simp [flatConnection]
   rw [h_first, h_second]
   ring
+
+/-- **Bundled Lorentzian vacuum bridge**: the Minkowski 4-space, as a
+`DiagLorentzianManifold`, with the flat connection, satisfies vacuum
+Einstein equations (zero Λ, zero stress-energy) at every point.
+
+This ties E1 (`DiagLorentzianManifold`) + F3 (`EinsteinEqLambda`) into
+a single theorem: we have a formal Lorentzian GR framework with
+Minkowski as a concrete instance. -/
+theorem minkowski4Manifold_satisfies_vacuum_EFE (κ : ℝ) (x : Fin 4 → ℝ) :
+    EinsteinEqLambda minkowski4Manifold.toMetric
+      (flatConnection 4) 0 κ StressEnergyTensor.zero x :=
+  minkowski4_satisfies_EFE_zero_lambda κ x
 
 end InfraFormalization
