@@ -59,9 +59,9 @@ The published Wolfram-model-to-GR derivations of Jonathan Gorard make a strong c
 
 **F8** (G4 title-body gap) is not a formal claim but a documentary finding: the title promises discrete singularity theorems that the body does not deliver, a fact Gorard himself concedes in the paper's conclusion.
 
-**Summary verdict on the corpus.** Systematic overclaim. The §3.3 Einstein-equations derivation in G1 uses objects that are never constructed (F1, F2). The logical spine reduces, in multiple places, to `Iff.rfl` (F3, F4). The continuum-limit step is left informal (F5). The G3 "proof" that a rule satisfies EFE is circular (F6). The specific named rule is empirically and structurally 1-dimensional (F7). The correct cited identities are mis-stated by non-trivial factors on simple test manifolds (Eq 342, Eq 344).
+**Summary verdict on the corpus.** Overclaim in multiple load-bearing places. The §3.3 Einstein-equations derivation in G1 uses objects that are never constructed (F1, F2). The logical spine reduces, in multiple places, to `Iff.rfl` (F3, F4). The continuum-limit step is left informal (F5). The G3 argument that a rule satisfies EFE is circular (F6). The specific named rule is empirically and structurally 1-dimensional (F7). The correct cited identities are mis-stated by non-trivial factors on simple test manifolds (Eq 342, Eq 344).
 
-Nothing in the corpus is fabrication; every error is public and checkable. The goal of this formalisation is not to discredit but to leave a load-bearing, verifiable record of what is true, what is wrong, and what remains genuinely open.
+All errors are in the public record and checkable. The goal of this formalisation is not to discredit but to leave a load-bearing, verifiable record of what is true, what is wrong, and what remains genuinely open.
 
 ## State of the discrete-continuum bridge
 
@@ -148,7 +148,7 @@ Legend for the State column:
 - `Infra/ScaledLorentz` — int-to-ℝ scaling, iff preservation of `CausalPrecedes`, `Timelike`.
 - `Infra/TrajectoryLorentz`, `Infra/TrajectoryLorentzD` — trajectory → Lorentz-lattice embedding (1+0 and d+1 versions).
 - `Infra/FullBridge` — end-to-end `causallyPrecedes → continuum Minkowski` under `LightConeCompatible`.
-- `Infra/OllivierStatement`, `Infra/GrayTubeStatement` — correct identity vs Gorard mis-statement, with disagreement proofs on S² (1/6 vs 1/3) and S³ (1/3 vs 2).
+- `Infra/OllivierStatement`, `Infra/GrayTubeStatement` — correct identity vs Gorard's form, with disagreement proofs on S² (1/6 vs 1/3) and S³ (1/3 vs 2).
 
 ## Distance and measure
 

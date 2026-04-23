@@ -19,12 +19,12 @@ Gorard's headline claim: a specific hypergraph rewriting rule "provably satisfie
 - **F3** — "asymptotic dimensionality preservation ⇒ Einstein equations" unfolds to `Iff.rfl`; the preservation condition *is* the Euler-Lagrange equation of the Einstein-Hilbert action. Formalised in `Refutations/F3Tautology.lean`.
 - **F4** — "causal invariance ⇔ discrete general covariance" is `Iff.rfl` (the two terms are defined as the same thing); the Lean certificate shows the proposition depends on **zero axioms**. Formalised in `Refutations/F4Tautology.lean`.
 - **F5** — "discrete sum becomes continuum integral" is convergence-notion-dependent; no notion is specified. Formalised in `Refutations/F5Illdefined.lean`.
-- **F6** — G3's "derivation" is the Poisson-sprinkle-then-reconstruct schema: the target spacetime is input, not output. `circular_procedure_is_identity` in Lean proves that any such procedure returns its input. Formalised in `Refutations/F6Circularity.lean`.
+- **F6** — G3's argument is the Poisson-sprinkle-then-reconstruct schema: the target spacetime is input, not output. `circular_procedure_is_identity` in Lean proves that any such procedure returns its input. Formalised in `Refutations/F6Circularity.lean`.
 - **F7** — the named rule has `|LHS| = |RHS| = 4`, which forces state-size conservation, hence linear causal-cone growth, hence dimension ≤ 1 on every tested seed (confirmed in SetReplace and in an independent Python re-implementation). Formalised in `Refutations/F7NamedRuleStructure.lean`.
 - **F8** — the G4 title promises "Discrete Singularity Theorems" that the body does not contain (no discrete Raychaudhuri, expansion scalar, energy condition, or stress-energy tensor; no "shear" or "vorticity" in the text). Documentary finding, not Lean-formalised.
 - **Plus arithmetic errors.** Eq 342 (tube-volume coefficient): wrong by factor 2 on S², factor 6 on S³. Eq 344 (Ollivier Wasserstein): uses scalar `R` where Ollivier's cited theorem has directional `Ric(v,v)`.
 
-**Verdict.** Systematic overclaim with embedded mathematical errors. Nothing fabricated; every error public and checkable.
+**Verdict.** Overclaim in multiple load-bearing places, with embedded mathematical errors. All errors are in the public record and checkable.
 
 ## State of the discrete-continuum bridge
 

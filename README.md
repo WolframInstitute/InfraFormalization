@@ -21,7 +21,7 @@ All `lake build` jobs pass (3468 of 3468). Every theorem reduces to Lean's three
 
 The published Wolfram-model-to-GR derivations make a strong claim: that a specific rewriting rule "provably satisfies the Einstein field equations in the continuum limit" (2102.09363). The machinery of the claim is a chain of informally-stated approximations through Ollivier–Ricci, Gray-tube expansions, and a Poisson-sprinkle reconstruction. No part of this chain is machine-checked. Several steps, once separated from their prose, reduce to `Iff.rfl` or to mis-stated continuum identities.
 
-The project exists to settle, formally, what is actually true in this corpus and what remains open, and to build the substantive bridge machinery that would have to be in place for any honest future claim of this form.
+The project exists to settle, formally, what is actually true in this corpus and what remains open, and to build the substantive bridge machinery that would have to be in place for any future claim of this form.
 
 ## Status headline (2026-04-23)
 
@@ -232,7 +232,7 @@ Supporting papers referenced: 2308.07508, 2401.14209.
 - **Mis-stated cited continuum identities.** Ollivier's theorem uses directional `Ric(v,v)`; the papers write scalar `R`. Gray's tube coefficient is `(R + Ric(u,u))/(6(d+1))`; the papers write `(d−1)(R − Ric(u,u))/(d+1)`. Factor-2 off on S², factor-6 off on S³.
 - **Definitions restated as theorems.** "Causal invariance ⇔ discrete general covariance" and "asymptotic dimensionality preservation ⇒ EFE" both unfold to `Iff.rfl`.
 - **Informal bridge prose.** "Becomes" (which topology?), "weak ergodicity" (precise definition?), "provably" (applied to an open Sorkin–Benincasa–Dowker conjecture).
-- **Circularity in G3.** The initial hypergraph is built by Poisson-sampling vertices from the known target spacetime; the "derivation" then recovers that spacetime from the sample. Target-as-input.
+- **Circularity in G3.** The initial hypergraph is built by Poisson-sampling vertices from the known target spacetime; the subsequent reconstruction then recovers that spacetime from the sample. Target-as-input.
 - **Structural block on the named rule.** `|LHS| = |RHS| = 4` forces edge-count conservation, hence linear cone growth; cone dimension ≈ 1 on every tested seed in two independent implementations.
 
 ### Lean-formal refutations
@@ -257,7 +257,7 @@ Supporting papers referenced: 2308.07508, 2401.14209.
 
 ### Summary verdict
 
-Systematic overclaim with embedded arithmetic errors. The §3.3 Einstein-equations derivation uses objects that are never constructed (F1, F2). The logical spine reduces, in multiple places, to `Iff.rfl` (F3, F4). The continuum-limit step is left informal (F5). The G3 "proof" that a rule satisfies EFE is circular (F6). The named rule is empirically and structurally 1-dimensional (F7). The cited continuum identities are mis-stated by non-trivial factors on simple test manifolds. Nothing fabricated; every error public and checkable.
+Overclaim in multiple load-bearing places, with embedded arithmetic errors. The §3.3 Einstein-equations derivation uses objects that are never constructed (F1, F2). The logical spine reduces, in multiple places, to `Iff.rfl` (F3, F4). The continuum-limit step is left informal (F5). The G3 argument that a rule satisfies EFE is circular (F6). The named rule is empirically and structurally 1-dimensional (F7). The cited continuum identities are mis-stated by non-trivial factors on simple test manifolds. All errors are in the public record and checkable.
 
 See [`MAJOR_FLAWS.md`](MAJOR_FLAWS.md), [`FINDINGS.md`](FINDINGS.md), [`notes/corpus_assessment.md`](notes/corpus_assessment.md), and the close-reading notes for paper-by-paper detail.
 
