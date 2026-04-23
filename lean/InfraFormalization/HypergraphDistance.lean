@@ -71,6 +71,26 @@ theorem Hypergraph.Adj_irrefl {H : Hypergraph V} (v : V) : ¬ H.Adj v v := by
   rintro ⟨hne, _⟩
   exact hne rfl
 
+/-- **Adjacency is monotone under union on the left.** Adding more
+edges can only add to adjacency: `H₁.Adj u v → (H₁ + H₂).Adj u v`.
+Lifts Multiset.mem_add to the adjacency level. -/
+theorem Hypergraph.Adj_add_left {H₁ H₂ : Hypergraph V} {u v : V}
+    (h : H₁.Adj u v) : (H₁ + H₂).Adj u v := by
+  obtain ⟨hne, e, he, hcontains⟩ := h
+  refine ⟨hne, e, ?_, hcontains⟩
+  rw [Multiset.mem_toFinset] at he ⊢
+  show e ∈ (H₁.edges + H₂.edges)
+  exact Multiset.mem_add.mpr (Or.inl he)
+
+/-- **Adjacency is monotone under union on the right.** Symmetric. -/
+theorem Hypergraph.Adj_add_right {H₁ H₂ : Hypergraph V} {u v : V}
+    (h : H₂.Adj u v) : (H₁ + H₂).Adj u v := by
+  obtain ⟨hne, e, he, hcontains⟩ := h
+  refine ⟨hne, e, ?_, hcontains⟩
+  rw [Multiset.mem_toFinset] at he ⊢
+  show e ∈ (H₁.edges + H₂.edges)
+  exact Multiset.mem_add.mpr (Or.inr he)
+
 /-- **The simple graph underlying a hypergraph.** Uses
 clique-expansion adjacency. This is the object on which Mathlib's
 `SimpleGraph.dist` computes the hypergraph distance. -/
