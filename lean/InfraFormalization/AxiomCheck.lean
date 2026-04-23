@@ -135,6 +135,8 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.latschevObligation_holds
 #print axioms InfraFormalization.scaleTrichotomyObligation_holds
 #print axioms InfraFormalization.no_stub_obligations_remain
+#print axioms InfraFormalization.dimensionCompatibilityObligation_base_cases
+#print axioms InfraFormalization.cycleHypergraph_ballVolume_zero_exact
 #print axioms InfraFormalization.in_degree_eq_lhsSize
 #print axioms InfraFormalization.out_degree_eq_rhsSize
 #print axioms InfraFormalization.balanced_of_conservative

@@ -154,6 +154,23 @@ def DimensionCompatibilityObligation : Prop :=
   ∀ (n : ℕ) [NeZero n], 3 ≤ n → ∀ (v : Fin n) (r : ℕ), 2 * r + 1 ≤ n →
     (cycleHypergraph n).geodesicBallVolume v r = 2 * r + 1
 
+/-- **Partial ID6: ball-volume formula verified for `r ∈ {0, 1}`** on
+the cycle hypergraph. For every `n ≥ 3` and vertex `v`:
+`ballVolume v 0 = 1 = 2·0 + 1` and `ballVolume v 1 = 3 = 2·1 + 1`.
+
+Direct corollaries of `cycleHypergraph_ballVolume_zero_exact` and
+`cycleHypergraph_ballVolume_one_exact`. Full obligation for `r ≤ n/2`
+needs a general cycle-distance formula; these are the easy
+base cases. -/
+theorem dimensionCompatibilityObligation_base_cases
+    (n : ℕ) [NeZero n] (hn : 3 ≤ n) (v : Fin n) :
+    (cycleHypergraph n).geodesicBallVolume v 0 = 2 * 0 + 1
+    ∧ (cycleHypergraph n).geodesicBallVolume v 1 = 2 * 1 + 1 := by
+  refine ⟨?_, ?_⟩
+  · have h2 : 2 ≤ n := by omega
+    simpa using cycleHypergraph_ballVolume_zero_exact h2 v
+  · simpa using cycleHypergraph_ballVolume_one_exact hn v
+
 /-! ## IQ6 — Fubini-Study limit (upgraded to concrete inequality) -/
 
 /-- **Fubini-Study/Bhattacharyya bound obligation** (upgraded from

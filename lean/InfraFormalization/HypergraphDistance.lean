@@ -511,4 +511,31 @@ theorem cycleHypergraph_ballVolume_one_exact {n : Nat} [NeZero n]
         refine le_trans (Finset.card_insert_le _ _) ?_
         simp
 
+/-- **Ball volume at radius 0 on the cycle** `= 1`: only the basepoint
+itself is within distance 0 (cycle is connected, so `dist = 0 ↔ u = v`).
+This is the `r = 0` case of the ID6 dimension-compatibility formula
+`geodesicBallVolume v r = 2r + 1`. -/
+theorem cycleHypergraph_ballVolume_zero_exact {n : Nat} [NeZero n]
+    (hn : 2 ≤ n) (v : Fin n) :
+    (cycleHypergraph n).geodesicBallVolume v 0 = 1 := by
+  unfold Hypergraph.geodesicBallVolume Hypergraph.geodesicBall
+  -- {u : dist v u ≤ 0} = {u : dist v u = 0} = {v} on a connected graph.
+  have h_eq : (Finset.univ.filter
+      (fun u : Fin n => (cycleHypergraph n).dist v u ≤ 0)) = {v} := by
+    ext u
+    rw [Finset.mem_filter, Finset.mem_singleton]
+    refine ⟨?_, ?_⟩
+    · rintro ⟨_, h_dist⟩
+      -- dist ≤ 0 ↔ dist = 0.
+      have h0 : (cycleHypergraph n).dist v u = 0 := Nat.le_zero.mp h_dist
+      unfold Hypergraph.dist at h0
+      have hreach : (cycleHypergraph n).toSimpleGraph.Reachable v u :=
+        (cycleHypergraph_connected hn).preconnected v u
+      exact ((SimpleGraph.Reachable.dist_eq_zero_iff hreach).mp h0).symm
+    · rintro rfl
+      refine ⟨Finset.mem_univ _, ?_⟩
+      rw [Hypergraph.dist_self]
+  rw [h_eq]
+  simp
+
 end InfraFormalization
