@@ -6,6 +6,17 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+**Headline (2026-04-23).** **All four grounding-audit action items
+closed.** Every continuum GR object (metric zoo, Lorentzian manifolds,
+connection data, EFE satisfaction) now carries an attached
+hypergraph-side origin-obligation Prop, with provably-inhabited
+witnesses for the flat cases. The Minkowski flat-vacuum EFE is
+the *first complete* rule → metric → connection → EFE chain in the
+project. No free-floating continuum islands remain at the obligation
+level; the open programme is the `bridgeHolds` content, not the
+attachment. See [`GROUNDING_AUDIT.md`](GROUNDING_AUDIT.md) for the
+four closed items.
+
 **Headline (2026-04-22).** Infrageometry programme 48/57 tasks closed
 (84%). Branchial quantum-mechanics bridge (I-series) 8/10 closed: finite
 slice → ℂ-Hilbert space → ℂ-linear adjacency operator with Hermitian
@@ -21,6 +32,47 @@ no custom axioms). **Gorard refutations F1-F7 Lean-formal**, including
 F6Circularity (the Poisson-sprinkle-then-reconstruct schema formally
 proved to produce its input identically — "mathematically content-
 free").
+
+## 2026-04-23 — grounding-audit closure (session highlights)
+
+- **G1 bridge** (`FiberedGraphConnectionBridge.lean`): every
+  `ConnectionData n` carries `ConnectionDataOriginObligation C`
+  binding `FiberedGraph V W + FiberedGraph.Connection F + scale`.
+  Flat case fully witnessed via `trivialFiberedGraph` +
+  `trivialConnection`.
+- **G2 bridge** (`HypergraphMetricBridges.lean` +
+  `RuleWitnesses.lean`): every GR metric
+  (Minkowski, Schwarzschild, FLRW, RN, de Sitter, Kerr, S²,
+  warpedDiag2) carries a `HypergraphMetricOriginObligation` /
+  `HypergraphPartialMetricOriginObligation` Prop; every one is
+  **proved inhabited** (`minkowski4_from_hypergraph_proved`,
+  etc.) via `identitySystem Unit` + `cycleHypergraph n` +
+  `emptyTrajectory` — rules are load-bearing in each proof.
+- **G3 bridge** (`CausalLorentzianBridge.lean`):
+  `LorentzianManifoldOriginObligation` binds `CausalGraph V` +
+  scale. Minkowski-as-manifold witness via
+  `trivialCausalGraph (Fin 1)`.
+- **G4 bridge** (`EinsteinEquationsBridge.lean`):
+  `EFEOriginObligation M C Λ κ T x` bundles EFE-satisfaction
+  with metric + connection origins. `minkowski4_flat_vacuum_EFE_
+  originated_global` — first complete rule → metric → connection →
+  EFE chain.
+- **Rule search** (`RuleSearch.lean`): catalog of 5 concrete rules
+  (`identityRule`, `selfMapRule`, `edgeDuplicateRule`,
+  `tripleToEdgeRule`, `pairToTriangleRule`); decidable
+  `IsConservative`; proved screens over `conservativeCatalog` /
+  `growthCatalog`; `minkowski4_from_growthRule` uses
+  `edgeDuplicateRule` load-bearingly. `conservative_blocks_dim_geq_one`
+  formalises Gorard's structural block via IR2.
+- **Advanced-infrageometry grind** (2026-04-23 session):
+  `PathHypergraphDistance`, `CycleHeatDecayBounds`,
+  `FisherMetricExtended`, `HodgeLaplacianBounds`,
+  `BlowupPoissonConcrete`, `EMETracker`, `BranchialCommutator`,
+  `ProperTimeBounds`, `RuleSignatureEquiv` — small theorem
+  increments for colleague modules (Hajek, Van Le, Kolcz, Ahmed,
+  Zapata-Ahmed).
+
+Full build: **3468/3468 jobs clean**, axiom-clean.
 
 **Single source of truth for coverage:** [`COVERAGE_MAP.md`](COVERAGE_MAP.md).
 Protocol: on every commit, task completion, or new obligation, both

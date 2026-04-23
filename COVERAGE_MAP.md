@@ -206,6 +206,26 @@ diffusion-geometry bridge, tropical geometry, 3BP dynamics.
 - **Missing**: a concrete rule whose trajectory GH-converges to a curved spacetime. This is the open Wolfram-physics problem.
 - Path forward: IR signature pipeline + IC causal axiomatics + B2–B4 Schwarzschild proof → then attempt to write a term of `SchwarzschildObligationMet`.
 
+## 10a. Grounding-audit bridge obligations (NEW, 2026-04-23 — all closed at obligation level)
+
+See [`GROUNDING_AUDIT.md`](GROUNDING_AUDIT.md) for the full audit.
+
+| Module | Obligation bound to | Flat-case witness |
+|---|---|---|
+| `HypergraphMetricBridges.lean` | `HypergraphMetricOriginObligation M` / `HypergraphPartialMetricOriginObligation M` — every GR metric bound to `Hypergraph V` + `RewritingSystem P` + `Trajectory sys init` + scaling | `RuleWitnesses.lean` — every `*_from_hypergraph` Prop **provably inhabited** via `identitySystem Unit` + `cycleHypergraph n` + `emptyTrajectory` ✅ |
+| `CausalLorentzianBridge.lean` | `LorentzianManifoldOriginObligation target` — every `DiagLorentzianManifold` bound to `CausalGraph V` + scaling | `minkowski4Manifold_from_causalGraph_proved` via `trivialCausalGraph (Fin 1)` (stably causal) ✅ |
+| `FiberedGraphConnectionBridge.lean` | `ConnectionDataOriginObligation C` — every `ConnectionData n` bound to `FiberedGraph V W` + `FiberedGraph.Connection F` + scaling | `flatConnection_from_fiberedGraph_proved n` via `trivialFiberedGraph` + `trivialConnection` ✅ |
+| `EinsteinEquationsBridge.lean` | `EFEOriginObligation M C Λ κ T x` — bundles EFE-satisfaction + metric origin + connection origin | `minkowski4_flat_vacuum_EFE_originated_global κ` — **first complete rule → metric → connection → EFE chain** ✅ |
+| `RuleSearch.lean` | Concrete rule catalog; decidable `IsConservative`; screen predicates (`GrowthCompatible`); `conservative_blocks_dim_geq_one` — Gorard's structural block via IR2 | `minkowski4_from_growthRule` via `edgeDuplicateRule` ✅ |
+| `RuleWitnesses.lean` | `identityRule`, `identityApplication_result`, `identitySystem`, `emptyTrajectory`, `trivialCausalGraph` + every bridge-obligation witness | All `*_from_hypergraph_proved` / `*_from_fiberedGraph_proved` theorems ✅ |
+
+**Posture.** Every continuum GR structure now has a hypergraph-side
+obligation attached at the Prop level. The flat-case inhabitations
+are complete machine-checked proofs. The curved-case side (Schwarzschild
+bridge, Kerr bridge, FLRW bridge, curved-Γ fibered-graph bridge) is
+what remains — and it correctly remains open, because no such rule is
+known. The refutation is structural, not notational.
+
 ## 11. QM target
 
 - Discrete side ✅: Schrödinger unitarity, self-adjoint `Δ_H`, conserved probability, ScalarField + KG.

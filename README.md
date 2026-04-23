@@ -1,134 +1,271 @@
-# infra_formalization — a critical audit of the Gorard "GR-from-rewriting" papers
+# infra_formalization
 
-An independent audit of the four principal Gorard papers on the Wolfram-model program for deriving general relativity from hypergraph rewriting:
+A Lean 4 / Mathlib formalisation of the Wolfram-model → general-relativity / quantum-mechanics bridge programme, coupled with a machine-checked audit of Gorard's principal publications on deriving GR from hypergraph rewriting.
+
+The project runs on three parallel axes:
+
+1. **Positive construction** — a 10-rung bridge ladder from hypergraph primitives to Einstein's equations, with every continuous object anchored to a hypergraph origin by an obligation Prop.
+2. **Critique** — line-by-line formalisation of seven structural flaws in the Gorard corpus (F1–F7), each converted to an axiom-clean Lean theorem with counter-example witnesses.
+3. **Infrageometry programme** — 57-task / 9-group research programme for the Wolfram Institute, covering colleagues' work (Pavel Hájek, Pavel Pokorny, Van Le, Hubert Kolcz, Jan Pullman, Carlos Zapata, Sara Ahmed, Ioana Milea).
+
+All `lake build` jobs pass (3468 of 3468). Every theorem reduces to Lean's three standard axioms `{propext, Classical.choice, Quot.sound}`. No `sorry`, no `native_decide`, no custom axioms.
+
+## What this repository actually is
+
+- A Lean library with ~180 `.lean` modules building up discrete calculus, PDE theory on hypergraphs, GH convergence of scaled discrete structures, Lorentzian geometry, Einstein-equation formalism, branchial quantum mechanics, and infrageometry infrastructure — all from the same `Hypergraph V` / `RewritingSystem P` / `Trajectory sys init` primitives.
+- A documentation set that tracks the full research programme at varying granularity (STATUS / COVERAGE_MAP / BRIDGE_MACHINERY / INFRAGEOMETRY / MAJOR_FLAWS / GROUNDING_AUDIT / MILESTONES / NEXT_STEPS).
+- An audit trail for the Gorard papers: close-readings of each paper, cross-paper corpus audit, 184-row claims catalog, severity taxonomy, continuum-limit claim ledger, overclaim-vs-hunch synthesis note.
+- Empirical scripts (Wolfram Language + Python) that independently re-implement the mechanics of Gorard's claims and test them against his rules.
+
+## Why the project exists
+
+The published Wolfram-model-to-GR derivations make a strong claim: that a specific rewriting rule "provably satisfies the Einstein field equations in the continuum limit" (2102.09363). The machinery of the claim is a chain of informally-stated approximations through Ollivier–Ricci, Gray-tube expansions, and a Poisson-sprinkle reconstruction. No part of this chain is machine-checked. Several steps, once separated from their prose, reduce to `Iff.rfl` or to mis-stated continuum identities.
+
+The project exists to settle, formally, what is actually true in this corpus and what remains open, and to build the substantive bridge machinery that would have to be in place for any honest future claim of this form.
+
+## Status headline (2026-04-23)
+
+- **Build**: 3468/3468 jobs green.
+- **Axiom cleanliness**: all proved theorems reduce to `{propext, Classical.choice, Quot.sound}`.
+- **Infrageometry programme**: 50/57 tasks closed with real content; 7 in-flight with substantive open content (not stubs).
+- **Grounding audit**: **all four action items closed**. No free-floating continuum islands at the obligation level (see [`GROUNDING_AUDIT.md`](GROUNDING_AUDIT.md)).
+- **Refutations**: F1–F7 Lean-formal; F6Circularity formally proved (G3's Poisson-sprinkle-then-reconstruct schema returns its input identically — "mathematically content-free").
+- **Flat bridges proved**: cycle→circle, path→interval, 2-torus, d-torus, lattice→Minkowski.
+- **Continuum-target GR zoo**: Minkowski, Schwarzschild, FLRW, Reissner-Nordström, Kerr, 2-sphere, de Sitter — all formalised with hypergraph-origin obligations attached.
+- **Branchial QM**: finite slice → ℂ-Hilbert → self-adjoint adjacency → unitary Schrödinger → Born rule → observables → expectation values.
+- **First complete chain**: `minkowski4_flat_vacuum_EFE_originated_global` — rule → metric → connection → EFE satisfaction, every ingredient inhabited by a concrete hypergraph-side witness.
+
+## How it is structured
+
+### Lean source (`lean/`)
+
+```
+lean/
+  InfraFormalization.lean            — top-level module; imports everything
+  InfraFormalization/
+    # Core substrate
+    Hypergraph.lean
+    Rule.lean
+    Application.lean
+    Conservation.lean                — |LHS|=|RHS| ⇒ size preserved
+    Multiway.lean                    — RewritingSystem, Step, MultiStep
+    Causal.lean                      — Trajectory, causallyPrecedes
+    CausalLevel.lean
+    Branchial.lean, ParallelSchedule.lean, Demo.lean
+
+    # Discrete calculus (Rung 1)
+    DiscreteCalculus*.lean           — graph Laplacian, self-adjoint, Dirichlet, PSD
+    HypergraphLaplacian.lean         — Δ_H on directed hyperedges
+    HypergraphCalculus.lean          — gradient, divergence, Stokes
+    HypergraphDistance.lean          — Hypergraph.dist, geodesic balls, triangle ineq (T3)
+    LaplacianMatrix.lean             — Mathlib matrix form + heat kernel via exp
+    CycleGraph.lean, CycleSpectrum.lean, CycleMatrixSpectrum.lean
+    HeatKernelODE.lean               — ODE ↔ matrix heat kernel (T1)
+    ExpEigenvector.lean              — exp fixes eigenvectors (T2)
+    CycleHasEigenvalue.lean          — Mathlib HasEigenvalue form (T4)
+    CycleEigenLimit.lean             — scaled eigenvalue → continuum (A4)
+    CTwoTaylor.lean, ScaledDiffC2Bridge.lean  — C² Taylor bridges (R1/A3)
+
+    # PDE ladder (Rung 6)
+    HeatEquation.lean, HeatEquationUniqueness.lean, HeatKernelDecay.lean
+    WaveEquation.lean, KleinGordon.lean, SchrodingerEquation.lean
+    ScalarField.lean                 — Lagrangian + Euler-Lagrange (G1/G3/G4)
+    DiscreteDAlembertian.lean        — BD 4D operator (flagged)
+
+    # Continuum limits (Rungs 1-6)
+    Infra/ScaledCycle, ScaledPath, ScaledTorus, ScaledTorusD
+    Infra/LatticeDensity, Circle, GHBound, GHApprox
+    Infra/OllivierStatement, GrayTubeStatement
+    Infra/LorentzLattice, Minkowski, ScaledLorentz
+    Infra/TrajectoryLorentz{,D}, FullBridge
+
+    # Curvature (Rung 5)
+    CurvatureLocalCoord.lean         — Christoffel, symmetries
+    CurvatureRiemann.lean            — Riemann, Ricci, Einstein; flat case vanishes
+    DiscreteRicci.lean               — Forman-Ricci
+    RicciBridge.lean                 — cycle/circle Ricci = 0 match
+    CurvedRicciBridge.lean           — warpedDiag2 non-flat witness
+    CovariantDerivative.lean         — ∇ on ConnectionData (X2)
+    PartialMetricData.lean           — X1: metrics with validity domains
+    Schwarzschild.lean               — all 8 Christoffels; PartialMetricData bundle
+    FLRW.lean, ReissnerNordstrom.lean, Kerr.lean, DeSitter.lean, TwoSphere.lean
+    GRMetricsDemo.lean               — gr_metric_zoo single-theorem bundle
+
+    # Lorentzian (Rung 8)
+    LorentzianManifold.lean          — DiagLorentzianManifold (E1)
+    CausalGraphType.lean             — TR-DAG CausalGraph (IC1)
+    CausalFoliation.lean             — stably causal → foliation (E5)
+    SpatialReconstruction.lean, EPSAxioms.lean, MarzkeWheeler.lean
+
+    # Einstein equations (Rung 9)
+    EinsteinEquations.lean           — F3 EinsteinEqLambda; Minkowski vacuum
+    StressEnergyTensor.lean, F2EnergyConditions.lean
+    F7Penrose.lean, F8Raychaudhuri.lean
+
+    # Bridge obligations — grounding-audit (NEW, 2026-04-23)
+    HypergraphMetricBridges.lean     — G2: metric origin obligations
+    CausalLorentzianBridge.lean      — G3: manifold origin obligations
+    FiberedGraphConnectionBridge.lean— G1: connection origin obligations
+    EinsteinEquationsBridge.lean     — G4: EFE origin obligations
+    RuleWitnesses.lean               — concrete rules used in bridge proofs
+    RuleSearch.lean                  — rule catalog + decidable screens
+
+    # Refutations
+    Refutations/F1NoMetric.lean
+    Refutations/F2Orthonormality.lean
+    Refutations/F3Tautology.lean
+    Refutations/F4Tautology.lean
+    Refutations/F5Illdefined.lean
+    Refutations/F6Circularity.lean
+    Refutations/F7NamedRuleStructure.lean
+
+    # Infrageometry programme (57 tasks)
+    IA-: DagBlowup, DagCalculus, DeRham, FormCochainIntegration (Hájek IA)
+    IG-: FiberedGraph, Holonomy, FiberBundle (Pokorny IG)
+    IC-: CausalGraphType, CausalFoliation, EPSAxioms, MarzkeWheeler, SpatialReconstruction
+    IT-: VietorisRips, HodgeVR, HodgeLaplacianSpectrum (Hájek IT)
+    ID-: HypergraphDistance, PlateauDimension, HomologyDimension,
+         CoordinatizationDimension, CausalDimension
+    IB-: ElementaryBlowup, BlowupOperations, BlowupLieAlgebra,
+         RadialLaminarBlowup, BlowupPoissonConcrete (Kolcz)
+    IQ-: BranchialHilbert, BranchialSchrodinger, FisherMetric,
+         FisherMetricExtended, EMETracker (Ahmed, Van Le)
+    IS-: SyntheticGeometry, SyntheticAxiomatic, InfrageometricScene (Pokorny IS)
+    IR-: RuleSignature, RuleSignatureEquiv, CandidateRuleDatabase,
+         RuleDimensionBounds, StructuralRuleBounds
+
+    # Axiom check
+    AxiomCheck.lean                  — 300+ #print axioms lines
+```
+
+### Documentation
+
+| File | Purpose |
+|---|---|
+| [`STATUS.md`](STATUS.md) | Live snapshot — rung table, task counters, latest shipped |
+| [`COVERAGE_MAP.md`](COVERAGE_MAP.md) | Per-module coverage map (single source of truth) |
+| [`GROUNDING_AUDIT.md`](GROUNDING_AUDIT.md) | Item-by-item audit: what is hypergraph-grounded, what is continuum-target-only, with ✅ / ⚠ / ❌ marks |
+| [`BRIDGE_MACHINERY.md`](BRIDGE_MACHINERY.md) | 10-rung ladder from discrete calculus to Einstein |
+| [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md) | Research programme description (57 tasks / 9 groups) |
+| [`MAJOR_FLAWS.md`](MAJOR_FLAWS.md) | F1–F8 structural-flaw registry with Lean-formalisation status |
+| [`MILESTONES.md`](MILESTONES.md) | Checkbox tracker across all phases |
+| [`NEXT_STEPS.md`](NEXT_STEPS.md) | Done / in flight / waiting |
+| [`RULE_SEARCH.md`](RULE_SEARCH.md) | Rule-search pipeline design |
+| [`PUBLISHABLE.md`](PUBLISHABLE.md) | Paper targets P1–P9 with dependencies |
+| [`FINDINGS.md`](FINDINGS.md) | Canonical one-line summary of every audited claim |
+| [`GLOSSARY.md`](GLOSSARY.md) | Technical terms |
+| [`INDEX.md`](INDEX.md) | Document tree |
+| [`LEAN_PHYSICS.md`](LEAN_PHYSICS.md) | HepLean / Mathlib conventions |
+| [`WEEKLY_REPORT_2026-04-23.md`](WEEKLY_REPORT_2026-04-23.md) | This week's Wolfram-Institute-facing report |
+
+### Audit notes (`notes/`)
+
+- `plan.md` — 7-phase verification plan
+- `severity_taxonomy.md` — S1–S6 taxonomy; "How the errors recur"
+- `corpus_audit.md` — cross-paper map of repeated errors
+- `claims_catalog.md` — 184-row G1 equation audit
+- `singleway_vs_multiway.md` — single-way vs multi-way + null-tetrad explainer
+- `claim_assessment.md` — synthesis verdict
+- `2004.14810_close_reading.md`, `2102.09363_close_reading.md`, `2303.07282_close_reading.md`
+- `null_tetrad_resolution.md`, `limit_toolkit.md`, `empirical_refutation.md`, `continuum_limit_claims.md`
+
+### Results (`results/`)
+
+- `phase1_selfaudit/` — Python rewriter ↔ SetReplace agreement on the Gorard named rule; causal-dimension measurements on 9 seeds.
+- `phase2_continuum/` — Eq 342 (Gray tube), Eq 344 (Ollivier) verdict files with symbolic + numeric computation.
+
+### Scripts (`scripts/`)
+
+Wolfram Language + Python scripts that reproduce every empirical verdict in `results/`.
+
+## The bridge ladder (10 rungs)
+
+Every continuum object in the project lives on a rung of this ladder, and every rung is anchored to its predecessor by an explicit convergence theorem or obligation Prop.
+
+| Rung | Content | Key theorem | Status |
+|---|---|---|---|
+| 1 | Discrete calculus | Self-adjoint `Δ_H`, Dirichlet form, PSD, Stokes | ✅ |
+| 2 | Operator convergence | `scaledSecondDiff → f''` for every C²; cycle-spectrum → circle-spectrum | ✅ |
+| 3 | Measure limits | Counting measure, pushforward; ⌛ A6 weak-convergence, A7 Wasserstein | 🟡 |
+| 4 | Connections | Local-coord Christoffels ✅; Mathlib bundle/Koszul gap blocks C1–C8 | 🟡 |
+| 5 | Riemann / Ricci | Riemann, Ricci, Einstein tensors; full GR metric zoo | ✅ |
+| 6 | ODE / PDE on Hypergraph V | Heat, wave, Klein-Gordon, Schrödinger unitary, EL equations | ✅ |
+| 7 | Fields / gauge | Scalar field ✅; G2 gauge field 🔲 | 🟡 |
+| 8 | Lorentzian geometry | LorentzLattice, Minkowski, `DiagLorentzianManifold`, discrete foliation | ✅ (discrete+E1+E5); ⌛ Lorentzian-GH |
+| 9 | Einstein equations | `EinsteinEqLambda`, Minkowski vacuum, λ=0-forcing | ✅ flat |
+| 10 | Hypergraph → GR | Flat bridges ✅; origin obligations ✅; curved `bridgeHolds` open | 🟡 obligation-level ✅, content-level open |
+
+See [`BRIDGE_MACHINERY.md`](BRIDGE_MACHINERY.md) for the full description.
+
+## Grounding principle (non-negotiable)
+
+Every continuous structure in the repository must either:
+
+1. be defined directly from hypergraph primitives (`Hypergraph V`, `RewritingSystem P`, `Trajectory sys init`, `CausalGraph V`), or
+2. be the target of an explicit convergence theorem starting from such primitives, or
+3. carry an explicit `…OriginObligation` Prop binding it to a hypergraph-side existence claim.
+
+No category-(3) obligation is allowed to sit as an open `True ∧ False` stub — every one has a `bridgeHolds` predicate with real content, and flat cases are inhabited by concrete witnesses. The audit of this principle lives in [`GROUNDING_AUDIT.md`](GROUNDING_AUDIT.md).
+
+## Refutation track (Gorard corpus)
+
+The four papers audited:
 
 - **G1 — arXiv:2004.14810** — *Some Relativistic and Gravitational Properties of the Wolfram Model*
 - **G2 — arXiv:2011.12174** — *Algorithmic Causal Sets and the Wolfram Model*
 - **G3 — arXiv:2102.09363** — *Hypergraph Discretization of the Cauchy Problem in General Relativity via Wolfram Model Evolution*
 - **G4 — arXiv:2303.07282** — *Non-Vacuum Solutions, Gravitational Collapse and Discrete Singularity Theorems*
 
-The stated program: derive GR from hypergraph rewriting. The stated claim in G3: a specific named rewriting rule "provably satisfies the Einstein field equations in the continuum limit." This repo verifies, line by line and claim by claim, what is actually true.
+Plus supporting papers: 2011.12174, 2308.07508, 2401.14209.
 
-## Navigation
+Lean-formal refutations:
 
-| | Document |
-|---|---|
-| ⭐ Start here | [`FINDINGS.md`](FINDINGS.md) — canonical one-line summary of every claim audited |
-| 📑 Index | [`INDEX.md`](INDEX.md) — full document tree, one line per file |
-| 📘 Glossary | [`GLOSSARY.md`](GLOSSARY.md) — every technical term used |
-| 📋 Next steps | [`NEXT_STEPS.md`](NEXT_STEPS.md) — what's done, in flight, waiting |
-| 🔭 Research program | [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md) — the long-term infrageometry program (audit → correction → positive construction) |
-| 📄 Publications | [`publications/`](publications/) — each subfolder is one paper; incremental (I*) + major (M*) tiers building a tower toward P5–M04 scientific prize |
-| ✅ Milestones | [`MILESTONES.md`](MILESTONES.md) — checkbox tracker across all phases |
-| 🧨 Major flaws | [`MAJOR_FLAWS.md`](MAJOR_FLAWS.md) — the F1–F8 structural flaws (distinct from arithmetic ones) |
-| 🧬 Lean conventions | [`LEAN_PHYSICS.md`](LEAN_PHYSICS.md) — alignment with HepLean and Mathlib conventions |
-| 📊 Status | [`STATUS.md`](STATUS.md) — live snapshot: 300+ machine-verified theorems, axiom-clean; infrageometry programme 48/57 closed (84%); branchial QM bridge 8/10; F1–F7 Gorard refutations Lean-formal |
-| 🗺 Methodology | [`notes/plan.md`](notes/plan.md) — 7-phase verification plan |
-| 🧮 Severity | [`notes/severity_taxonomy.md`](notes/severity_taxonomy.md) — S1–S6 taxonomy; "is it a lie?" discussion |
-| 🧩 Corpus | [`notes/corpus_audit.md`](notes/corpus_audit.md) — cross-paper map of repeated errors |
-| 🌫️ Continuum limits | [`notes/continuum_limit_claims.md`](notes/continuum_limit_claims.md) — every continuum-limit claim in the corpus with audit verdict; load-bearing ones marked 🧨 |
-| 🧭 Framework | [`notes/singleway_vs_multiway.md`](notes/singleway_vs_multiway.md) — single-way vs multi-way + null-tetrad explainer |
-| 🧠 Synthesis | [`notes/claim_assessment.md`](notes/claim_assessment.md) — "overclaim or hunch?" verdict |
-
-### Reading paths
-
-- **5-minute verdict**: [`FINDINGS.md`](FINDINGS.md) → this README status table → [`notes/severity_taxonomy.md`](notes/severity_taxonomy.md).
-- **Check the math**: [`notes/severity_taxonomy.md`](notes/severity_taxonomy.md) → [`results/phase2_continuum/*.md`](results/phase2_continuum/) → re-run the script in [`scripts/`](scripts/).
-- **See if G1 is as bad as claimed**: [`notes/claims_catalog.md`](notes/claims_catalog.md) → [`notes/2004.14810_close_reading.md`](notes/2004.14810_close_reading.md) → [`notes/corpus_audit.md`](notes/corpus_audit.md).
-- **Contribute Lean**: [`lean/InfraFormalization.lean`](lean/InfraFormalization.lean) → [`notes/singleway_vs_multiway.md`](notes/singleway_vs_multiway.md) §6 (the "six items").
-- **Which claims are established?**: [`notes/severity_taxonomy.md`](notes/severity_taxonomy.md) §"How the errors recur" → [`notes/claim_assessment.md`](notes/claim_assessment.md).
-
-## Status table
-
-| # | Claim | Paper | Status | Verdict file |
-|---|---|---|---|---|
-| S1 #1 | Ollivier Wasserstein uses directional $\mathrm{Ric}(v,v)$, Gorard writes scalar $R$ | G1 line 604; G2 lines 1668/1699/1882; G3 Eq 344 | **✗ REFUTED** | [eq344_verdict.md](results/phase2_continuum/eq344_verdict.md) |
-| S1 #2 | Tube-volume coefficient is $(R{+}\mathrm{Ric}(u,u))/(6(d{+}1))$, Gorard writes $(d{-}1)(R{-}\mathrm{Ric})/(d{+}1)$ | G2 Eq 126; G3 Eq 342 | **✗ REFUTED** (factor 2 on $S^2$, factor 6 on $S^3$) | [eq342_verdict.md](results/phase2_continuum/eq342_verdict.md) |
-| S2 #3 | "Discrete action" $S = \sum d\mu_g R$ with $g, d\mu_g$ never constructed on a discrete state | G1 Eq 86; G2 §5; G3 §5 | ⚠ ILL-DEFINED | [claims_catalog.md](notes/claims_catalog.md) |
-| S2 #4 | "$\delta / \delta g^{ab}$" applied to a discrete sum | G1 Eq 87; G2 §5; G3 §5 | ⚠ ILL-DEFINED | [claims_catalog.md](notes/claims_catalog.md) |
-| S2 #5 | "Non-parallel hyperedges are orthonormal" (declaration without inner product) | G1 line 840; G2 §5; G3 §5 | ⚠ ILL-DEFINED | [2004.14810_close_reading.md](notes/2004.14810_close_reading.md) |
-| S2 #6 | $\varepsilon = \delta = 1$ applied to asymptotic expansion valid as $\varepsilon \to 0$ | G1 line 840; G2 §5; G3 §5 | ⚠ ILL-DEFINED | [2004.14810_close_reading.md](notes/2004.14810_close_reading.md) |
-| S3 #7 | "Causal invariance ⇔ general covariance" | G1 §2.3 | ⊘ TAUTOLOGY | [2004.14810_close_reading.md](notes/2004.14810_close_reading.md) |
-| S3 #8 | "Causal invariance ⇒ Lorentz covariance" (with $c$ axiomatised in) | G1 §2.3 | ⊘ TAUTOLOGY | [2004.14810_close_reading.md](notes/2004.14810_close_reading.md) |
-| S3 #9 | "Asymptotic dim preservation ⇒ Einstein equations" (premise = conclusion of variation) | G1 §3.3 | ⊘ TAUTOLOGY | [severity_taxonomy.md](notes/severity_taxonomy.md) |
-| S4 #10 | Discrete sum → continuum EH action | G1 Eq 88; G2 §5; G3 §5 | ○ OPEN (Sorkin–BD conjecture) | [limit_toolkit.md](notes/limit_toolkit.md) |
-| S4 #11 | "Provably satisfies EFE in continuum limit" | G3 abstract, line 6202 | **✗ REFUTED** (circular: Poisson-samples known target) | [2102.09363_close_reading.md](notes/2102.09363_close_reading.md) |
-| S4 #12 | Hypergraph Ollivier–Ricci → continuum Ricci in the limit | G1 §3.1; G2 §3; G3 §5 | ○ OPEN | [limit_toolkit.md](notes/limit_toolkit.md) |
-| S5 #13 | Named rule `{{x,y},{y,z},{z,w},{w,v}} → {{y,u},{u,v},{w,x},{x,u}}` gives 3+1-dim causal graph | G3 line 6202 | **✗ REFUTED** (1D on 9 seeds; structural $\|LHS\|=\|RHS\|$ argument) | [empirical_refutation.md](notes/empirical_refutation.md), [phase1_selfaudit](results/phase1_selfaudit/) |
-| S5 #14 | Discrete $N(r)$ expansion by analogy with Riemannian | G1 Eq 65 | ✗ NOT DERIVED | [2004.14810_close_reading.md](notes/2004.14810_close_reading.md) |
-| S6 #15 | Title "Discrete Singularity Theorems" promises discrete theorems | G4 | ✗ NOT DELIVERED | [2303.07282_close_reading.md](notes/2303.07282_close_reading.md) |
-| S6 #16 | "Provably" applied to an unproven conjecture | G3 abstract | ✗ OVERCLAIM | [2102.09363_close_reading.md](notes/2102.09363_close_reading.md) |
-
-### Positive findings
-
-| # | Finding | Status |
+| Flaw | Lean module | Status |
 |---|---|---|
-| P1 | $|LHS| = |RHS|$ rule ⇒ state size preserved under any application. | **✅ Machine-verified in Lean 4 + Mathlib 4.29.1**: `Application.size_result_of_conservative` in [`lean/InfraFormalization/Conservation.lean`](lean/InfraFormalization/Conservation.lean). Plus corollary `size_preserved_by_applications` (trajectory-level). |
-| P2 | $|LHS| = |RHS|$ rule ⇒ causal graph has linear cone growth (dim ≤ 1). | Empirical + proof stub: [`lean/InfraFormalization/Growth.lean`](lean/InfraFormalization/Growth.lean) |
-| P3 | Gorard's §3.3 argument cannot apply to any conservative rule. | Consequence of P2. Lean proof pending. |
+| F1 No canonical hypergraph-to-metric | `Refutations/F1NoMetric.lean` | ✅ |
+| F2 Fiat orthonormality is non-canonical | `Refutations/F2Orthonormality.lean` | ✅ |
+| F3 "dim preservation ⇒ EFE" = `Iff.rfl` | `Refutations/F3Tautology.lean` | ✅ |
+| F4 "causal invariance ⇔ covariance" = `Iff.rfl` | `Refutations/F4Tautology.lean` | ✅ |
+| F5 Discrete-to-continuum "becomes" under-determined | `Refutations/F5Illdefined.lean` | ✅ |
+| F6 G3 "provably satisfies EFE" is circular (Poisson-sprinkle then reconstruct) | `Refutations/F6Circularity.lean` | ✅ |
+| F7 G3 named rule's structural block | `Refutations/F7NamedRuleStructure.lean` + empirical | ✅ |
 
-See [`FINDINGS.md`](FINDINGS.md) for the full canonical list.
+Empirical refutation: the 2102.09363 named rule shows causal-graph dimension = 1 on every tested seed under both SetReplace and an independent Python re-implementation. `|LHS| = |RHS| = 4` forces state-size conservation, which combined with finite-vertex-support forces bounded ball-volume — formalised as `conservative_blocks_dim_geq_one` in `RuleSearch.lean`.
 
-## Repository layout
+## The research programme (infrageometry)
 
-```
-infra_formalization/
-├── README.md                          — this file
-├── INDEX.md                           — complete document index
-├── GLOSSARY.md                        — technical terms
-├── FINDINGS.md                        — canonical one-line summary
-├── NEXT_STEPS.md                      — what's done, in flight, waiting
-├── notes/                             — close-readings, analyses, synthesis
-│   ├── plan.md
-│   ├── severity_taxonomy.md
-│   ├── corpus_audit.md
-│   ├── claims_catalog.md              — 184-row G1 equation audit
-│   ├── singleway_vs_multiway.md
-│   ├── claim_assessment.md
-│   ├── 2004.14810_close_reading.md
-│   ├── 2102.09363_close_reading.md
-│   ├── 2303.07282_close_reading.md
-│   ├── null_tetrad_resolution.md
-│   ├── limit_toolkit.md
-│   └── empirical_refutation.md
-├── results/
-│   ├── phase1_selfaudit/              — Python rewriter ↔ SetReplace agreement
-│   └── phase2_continuum/              — eq342, eq344 verdicts
-├── scripts/                           — reproducible .wl and Python scripts
-│   └── python/
-├── lean/                              — formal skeleton, Mathlib-based
-│   └── InfraFormalization/
-│       ├── Hypergraph.lean
-│       ├── Rule.lean
-│       ├── Application.lean
-│       ├── Conservation.lean          — Theorem A (proved, draft)
-│       ├── GraphMetric.lean
-│       ├── Growth.lean                — Theorem B stub
-│       ├── Limit.lean                 — continuum-limit scaffolding
-│       ├── Multiway.lean
-│       ├── Causal.lean
-│       └── Branchial.lean
-└── papers/                            — source PDFs + extracted TeX (read-only)
-    ├── tex_2004/   (G1)
-    ├── tex_2011/   (G2)
-    ├── tex_2102/   (G3)
-    └── tex_2303/   (G4)
-```
+57 tasks across 9 groups, covering the Wolfram-Institute infrageometry programme:
 
-See [`INDEX.md`](INDEX.md) for per-file descriptions.
+| Group | Topic | Lead / collaborator | Closed | Total |
+|---|---|---|---|---|
+| IA | Infraanalysis | Pavel Hájek | 5 | 5 |
+| IG | InfraGaugeTheory | Pavel Pokorny | 11 | 11 |
+| IC | Infracausality | Zapata + Ahmed | 8 | 8 |
+| IT | Infratopology (VR + Latschev) | Pavel Hájek | 6 | 6 |
+| ID | Infradimension | — | 7 | 7 |
+| IB | Infrablowup (Lie algebra, Poisson) | Hubert Kolcz | 6 | 6 |
+| IQ | Branchial / quantum | Van Le, Ahmed | 4 | 4 |
+| IS | Synthetic axiomatic | Pokorny | 3 | 3 |
+| IR | Ruliology | — | 7 | 7 |
 
-## Reproducing
+See [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md) for per-task descriptions.
 
-### Prerequisites
+## Building
 
-- **Wolfram Language** via `wolframscript` (uses Windows-side install via WSL: `/mnt/c/Program Files/Wolfram Research/WolframScript/wolframscript.exe`), with the SetReplace paclet 0.3+ installed.
-- **Python 3.10+** (stdlib only; `numpy + scipy` used for Eq 344 script).
-- **Lean 4** via `elan`, for Mathlib builds.
-
-### Running a verification script
+Prerequisites: Lean 4 via `elan`, `lake`, and a Mathlib build (~1 hour first time).
 
 ```bash
-# 1) Empirical refutation of the named rule (SetReplace)
+cd lean
+lake update            # first-time Mathlib setup
+lake build             # ~3500 jobs; green
+```
+
+## Reproducing the empirical checks
+
+Prerequisites: `wolframscript` (Wolfram Engine or Mathematica), SetReplace paclet 0.3+, Python 3.10+.
+
+```bash
+# 1) Empirical refutation of the G3 named rule (SetReplace)
 wolframscript -file scripts/run_seeds_v3.wl
 wolframscript -file scripts/causal_dimension.wl
 wolframscript -file scripts/grid3d_test.wl
@@ -136,19 +273,18 @@ wolframscript -file scripts/grid3d_test.wl
 # 2) Independent Python re-implementation (no SetReplace)
 cd scripts/python && python3 run_all_seeds.py
 
-# 3) Eq 342 audit on S^2, S^3 (symbolic + numeric)
+# 3) Eq 342 (Gray tube) audit on S², S³
 wolframscript -file scripts/test_eq342.wl
-
-# 4) Lean (one-time Mathlib build, ~1 hour first run)
-cd lean && lake update && lake build
 ```
 
-Every verdict is reproducible to the precision quoted.
+Every verdict is reproducible to the precision quoted in `results/`.
 
 ## Project posture
 
-Every claim we make about Gorard is checked on four independent rails before being accepted. Correct claims get verified and formalised in Lean; incorrect claims are documented precisely, with counterexamples and correct-statement side-by-side. "Overclaim," "hunch," and "overclaim" are distinct verdicts — we use them precisely.
+Every claim about Gorard's corpus is checked on four independent rails (close-reading, symbolic computation, Lean formalisation, independent empirical re-implementation) before being accepted into the repository. Correct claims get verified; incorrect claims get documented precisely, with counter-example witnesses and corrected statements side by side.
 
-The goal is not to discredit but to have a load-bearing, verifiable answer to: **what, in this corpus, is actually true, and how is it linked (if at all) to general relativity?** The question matters because papers in this corpus are being cited as if they had *established* the derivation — they have not.
+"Overclaim," "hunch," "overclaim," "misstatement," "ill-defined," and "tautology" are distinct verdicts — we use them precisely. The goal is not to discredit but to have a load-bearing, verifiable answer to: *what in this corpus is actually true, and how is it linked (if at all) to general relativity?*
 
-See [`notes/severity_taxonomy.md`](notes/severity_taxonomy.md) §"How the errors recur" for the most delicate classification.
+## License
+
+Formalisation code: MIT. Audit notes: CC-BY-4.0. Gorard paper sources in `papers/` are the original authors' and included only for reference.

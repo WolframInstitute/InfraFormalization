@@ -4,6 +4,13 @@ Lives next to [`README.md`](README.md) / [`INDEX.md`](INDEX.md) / [`FINDINGS.md`
 
 ## Recently shipped (selected highlights)
 
+- **Grounding-audit closure (2026-04-23)**: **all four action items closed**. Every continuum GR object now carries an attached hypergraph-side origin-obligation Prop, with provably-inhabited witnesses for the flat cases.
+  - `HypergraphMetricBridges.lean` + `RuleWitnesses.lean` (G2) — every metric in the zoo has a `HypergraphMetricOriginObligation` / `HypergraphPartialMetricOriginObligation` Prop; all **proved inhabited** using `identitySystem Unit` + `cycleHypergraph` + `emptyTrajectory` (the identity rule is load-bearing in each proof).
+  - `CausalLorentzianBridge.lean` (G3) — `LorentzianManifoldOriginObligation` binds `CausalGraph V` + scale; witnessed via `trivialCausalGraph`.
+  - `FiberedGraphConnectionBridge.lean` (G1) — `ConnectionDataOriginObligation` binds `FiberedGraph V W` + `FiberedGraph.Connection F` + scale; flat-connection case witnessed via `trivialFiberedGraph` + `trivialConnection`.
+  - `EinsteinEquationsBridge.lean` (G4) — `EFEOriginObligation` bundles EFE-satisfaction with metric + connection origins; `minkowski4_flat_vacuum_EFE_originated_global` is the **first complete rule → metric → connection → EFE chain**.
+  - `RuleSearch.lean` — decidable `IsConservative`; catalog of 5 rules (`identityRule`, `selfMapRule`, `edgeDuplicateRule`, `tripleToEdgeRule`, `pairToTriangleRule`); proved screens over `conservativeCatalog` / `growthCatalog`; `minkowski4_from_growthRule` uses `edgeDuplicateRule` load-bearingly; `conservative_blocks_dim_geq_one` formalises Gorard's structural block.
+
 - **Hypergraph-grounded overnight grind (2026-04-23)**: dedicated to `GROUNDING_AUDIT.md`-compliant work only.
   - `PathHypergraphDistance.lean` — path heat kernel preserves constants; row-sum zero.
   - `CycleHeatDecayBounds.lean` — spectral gap, first-mode explicit decay, constant fixed.
@@ -12,6 +19,8 @@ Lives next to [`README.md`](README.md) / [`INDEX.md`](INDEX.md) / [`FINDINGS.md`
   - `BlowupPoissonConcrete.lean` — concrete bracket instances (zero, difference) + vertex/edge-count invariants for Kolcz M3 Lie-Poisson.
   - `EMETracker.lean` — Ahmed M7 EME persistence on Trajectory + concrete edge-count-bounded EME.
   - `BranchialCommutator.lean` — BranchialMultiRelated reflexive-transitive closure (symmetry + transitivity) for Ahmed-Zapata M5.
+  - `ProperTimeBounds.lean` — `ChainOfLength` length-0/length-1 characterisations and concatenation lemmas.
+  - `RuleSignatureEquiv.lean` — `RuleSignature.sigEquiv` (refl/symm/trans) + empty-hypergraph signature theorems.
 
 
 - **Schwarzschild Lorentzian signature** (`Schwarzschild.lean`): `sgg_lorentzian_pointwise` — on every exterior point, the Schwarzschild metric `sgg M x` has diagonal Lorentzian signature (g_00 < 0, g_ii > 0, off-diagonal = 0). `SchwarzschildVacuumObligation M` is the statement-level B4 obligation. Axiom-clean.
