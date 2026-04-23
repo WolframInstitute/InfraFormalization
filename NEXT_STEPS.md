@@ -4,6 +4,8 @@ Lives next to [`README.md`](README.md) / [`INDEX.md`](INDEX.md) / [`FINDINGS.md`
 
 ## Recently shipped (selected highlights)
 
+- **Klein-Gordon continuum spectrum PROVED** (`ContinuumLimitStatement.lean`): `DiscreteKleinGordonSpectrum m` — lattice KG dispersion `n² · 4 sin²(πk/n) + m²` converges to `(2πk)² + m²` for every `m ∈ ℝ` and `k`. Proved via Schrödinger bridge + `Filter.Tendsto.add tendsto_const_nhds`. `pde_spectrum_bridge_summary_with_mass` in `ContinuumBridgeDemo.lean` extends the PDE bridge summary to include the massive KG case. Axiom-clean.
+- **Lorentzian vacuum EFE bridge**: `minkowski4Manifold_satisfies_vacuum_EFE` — ties E1 + F3 into a single theorem; Minkowski-as-Lorentzian-manifold + flat connection solves vacuum EFE. Axiom-clean.
 - **E1 / DiagLorentzianMetric + DiagLorentzianManifold** (`LorentzianManifold.lean`, #53): signature predicate asserting `g_{00} < 0`, `g_{ii} > 0` for `i ≥ 1`, off-diagonal zero. Bundled `DiagLorentzianManifold n = MetricData + Lorentzian witness`. `minkowski4_diagLorentzian` + `minkowski4Manifold` exhibit Minkowski 4-space as a Lorentzian manifold. Accessors `g_00_neg`, `g_ii_pos`, `g_off_diag`, `g_00_ne_zero`. Axiom-clean.
 - **X2 / Covariant derivative on ConnectionData** (`CovariantDerivative.lean`, #31): `nabla_scalar`, `nabla_vector` (`∂_μ V^ν + Γ^ν_{μρ} V^ρ`), `nabla_covector` (`∂_μ ω_ν − Γ^ρ_{μν} ω_ρ`). Flat-connection cases collapse to partials. ℝ-linearity `nabla_{vector,covector}_add`. Axiom-clean.
 - **Second Bianchi (flat vacuum case)** (`EinsteinEquations.lean`): `flatConnection_einstein_divergence_zero` — for the flat connection with vanishing partials of G, the divergence vanishes. The vacuous form of `∇_μ G^{μν} = 0`; Levi-Civita full Bianchi needs metric compatibility. Axiom-clean.
