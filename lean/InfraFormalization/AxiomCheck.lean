@@ -162,6 +162,8 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.Infra.ollivier_gorard_agree_iff
 #print axioms InfraFormalization.Infra.s2_gorard_error
 #print axioms InfraFormalization.Infra.s2_gorard_error_pos
+#print axioms InfraFormalization.reverseEngineering_for_realisable_signatures
+#print axioms InfraFormalization.reverseEngineering_for_empty
 #print axioms InfraFormalization.pathEigenvalue_nonpos
 #print axioms InfraFormalization.heatKernel_cycleHypergraph_multi_mode_tendsto
 #print axioms InfraFormalization.pathEigenvalue_ground_zero

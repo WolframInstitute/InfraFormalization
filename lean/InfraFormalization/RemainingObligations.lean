@@ -386,4 +386,38 @@ theorem not_reverseEngineeringObligation : ¬ ReverseEngineeringObligation := by
     congrArg RuleSignature.vertexCount hσ
   simp [hypergraphSignature, σ] at h_vcount
 
+/-- **Refined IR7 (realisability-restricted)**: every signature that is
+*actually realised* by some hypergraph is reachable by a trajectory.
+Contrast with `ReverseEngineeringObligation`, which over-claims for
+arbitrary `RuleSignature V` values (including ones with inconsistent
+`vertexCount`). The refined version restricts to signatures in the
+image of `hypergraphSignature`; it is trivially true via the
+single-state trajectory whose initial state is that hypergraph. -/
+theorem reverseEngineering_for_realisable_signatures
+    (V : Type) [Fintype V] [DecidableEq V] (H : Hypergraph V) :
+    ∃ (P : Type) (sys : RewritingSystem P) (s₀ : Hypergraph V)
+      (τ : Trajectory sys s₀) (i : ℕ) (hi : i < τ.states.length),
+        hypergraphSignature (τ.states.get ⟨i, hi⟩) = hypergraphSignature H := by
+  refine ⟨Unit, ⟨[]⟩, H,
+    { states := [H]
+      applications := []
+      length_eq := rfl
+      first_state := rfl
+      well_formed := by intro i hi; simp at hi },
+    0, by simp, ?_⟩
+  rfl
+
+/-- **Corollary: the empty-hypergraph signature is reachable on every
+`V`.** Direct specialisation of `reverseEngineering_for_realisable_signatures`
+to `H = Hypergraph.empty`. This is the trivial "ruliology search
+terminates" witness — at minimum, every program space reaches the
+empty state. -/
+theorem reverseEngineering_for_empty
+    (V : Type) [Fintype V] [DecidableEq V] :
+    ∃ (P : Type) (sys : RewritingSystem P) (s₀ : Hypergraph V)
+      (τ : Trajectory sys s₀) (i : ℕ) (hi : i < τ.states.length),
+        hypergraphSignature (τ.states.get ⟨i, hi⟩)
+          = hypergraphSignature (Hypergraph.empty : Hypergraph V) :=
+  reverseEngineering_for_realisable_signatures V Hypergraph.empty
+
 end InfraFormalization
