@@ -161,6 +161,25 @@ theorem A6_for_constants (c : ℝ) :
   refine Filter.eventually_atTop.mpr ⟨1, fun n hn => ?_⟩
   exact (h_sum n (by omega)).symm
 
+/-- **Gauss summation formula on `Fin n` (real-valued)**:
+`∑_{k : Fin n} k.val = n(n-1)/2` (in `ℝ`). The real-valued analog of
+`Finset.sum_range_id`, obtained by induction via `Fin.sum_univ_castSucc`.
+
+This is the building block for A6 tests on polynomial integrands
+(e.g., the identity function `x`, quadratic `x²`, etc.), where the
+Riemann sum `(1/n) · Σ_{k<n} (k/n)^d` reduces to a closed-form
+polynomial in `n`. -/
+theorem sum_fin_val_eq_triangular (n : ℕ) :
+    (∑ k : Fin n, (k.val : ℝ)) = (n : ℝ) * ((n : ℝ) - 1) / 2 := by
+  induction n with
+  | zero => simp
+  | succ n ih =>
+    rw [Fin.sum_univ_castSucc]
+    simp only [Fin.val_castSucc, Fin.val_last]
+    rw [ih]
+    push_cast
+    ring
+
 /-- **Discrete wave → continuum wave on scaled lattice** (upgraded
 from `True` to real content).
 
