@@ -147,3 +147,4 @@ import InfraFormalization.HodgeLaplacianSpectrum
 import InfraFormalization.BranchialCanonical
 import InfraFormalization.PathHypergraph
 import InfraFormalization.CurvedRicciBridge
+import InfraFormalization.ContinuumBridgeDemo

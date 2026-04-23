@@ -89,6 +89,7 @@ import InfraFormalization.HodgeLaplacianSpectrum
 import InfraFormalization.BranchialCanonical
 import InfraFormalization.PathHypergraph
 import InfraFormalization.CurvedRicciBridge
+import InfraFormalization.ContinuumBridgeDemo
 import InfraFormalization.Refutations.F1NoMetric
 import InfraFormalization.Refutations.F2Orthonormality
 import InfraFormalization.Refutations.F3Tautology
@@ -139,6 +140,7 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.cycleHypergraph_ballVolume_zero_exact
 #print axioms InfraFormalization.discreteWaveToContinuumWave_holds
 #print axioms InfraFormalization.discreteSchrodingerToContinuumSchrodinger_holds
+#print axioms InfraFormalization.pde_spectrum_bridge_summary
 #print axioms InfraFormalization.in_degree_eq_lhsSize
 #print axioms InfraFormalization.out_degree_eq_rhsSize
 #print axioms InfraFormalization.balanced_of_conservative
