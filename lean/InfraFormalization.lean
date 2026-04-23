@@ -157,4 +157,5 @@ import InfraFormalization.ReissnerNordstrom
 import InfraFormalization.TwoSphere
 import InfraFormalization.DeSitter
 import InfraFormalization.GRMetricsDemo
+import InfraFormalization.Kerr
 import InfraFormalization.GrandTour

@@ -181,6 +181,11 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.Curvature.sphereChristoffel_nonzero
 #print axioms InfraFormalization.Curvature.dsLapse_minkowski
 #print axioms InfraFormalization.Curvature.dsLapse_pos_iff
+#print axioms InfraFormalization.Curvature.kerrSigma_zero_spin
+#print axioms InfraFormalization.Curvature.kerrDelta_zero_spin
+#print axioms InfraFormalization.Curvature.kerrG_00_zero_spin
+#print axioms InfraFormalization.Curvature.kerrG_θθ_zero_spin
+#print axioms InfraFormalization.Curvature.kerrG_tφ_zero_spin
 #print axioms InfraFormalization.Curvature.gr_metric_zoo
 #print axioms InfraFormalization.in_degree_eq_lhsSize
 #print axioms InfraFormalization.out_degree_eq_rhsSize
