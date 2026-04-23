@@ -180,6 +180,19 @@ theorem sum_fin_val_eq_triangular (n : ℕ) :
     push_cast
     ring
 
+/-- **A6 Riemann-sum closed form for the identity function**:
+`(1/n) · Σ_{k : Fin n} (k/n) = (n - 1) / (2n)` for every positive `n`.
+Direct consequence of `sum_fin_val_eq_triangular`; the `n → ∞` limit
+gives `1/2 = ∫_0^1 x dx`, which is the `A6_for_identity` obligation
+(filter-side statement deferred to the general polynomial case). -/
+theorem A6_identity_sum_closed_form (n : ℕ) (hn : 0 < n) :
+    (1 / (n : ℝ)) * (∑ k : Fin n, ((k : ℝ) / (n : ℝ)))
+      = ((n : ℝ) - 1) / (2 * n) := by
+  have hn_pos : (0 : ℝ) < n := by exact_mod_cast hn
+  have hn_ne : (n : ℝ) ≠ 0 := ne_of_gt hn_pos
+  rw [← Finset.sum_div, sum_fin_val_eq_triangular]
+  field_simp
+
 /-- **Discrete wave → continuum wave on scaled lattice** (upgraded
 from `True` to real content).
 
