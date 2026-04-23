@@ -362,6 +362,21 @@ theorem cycleHypergraph_adjTransitive {n : Nat} [NeZero n] (hn : 2 ≤ n) :
   · intro a b
     exact cycleHypergraph_Adj_translation hn (w - v) a b
 
+/-- **Full Rodkey chain on the cycle.** Every `cycleHypergraph n` with
+`n ≥ 2` satisfies all four levels of the Rodkey classification
+hierarchy: Adj-transitive, dist-transitive, ball-volume
+vertex-uniform, and local-dimension vertex-uniform. This is the
+canonical positive example. -/
+theorem cycleHypergraph_rodkey_chain {n : Nat} [NeZero n] (hn : 2 ≤ n) :
+    (cycleHypergraph n).AdjTransitive ∧
+    (cycleHypergraph n).DistTransitive ∧
+    (cycleHypergraph n).BallVolumeVertexUniform ∧
+    (cycleHypergraph n).LocalDimensionVertexUniform :=
+  ⟨cycleHypergraph_adjTransitive hn,
+   cycleHypergraph_distTransitive hn,
+   cycleHypergraph_ballVolumeVertexUniform hn,
+   cycleHypergraph_localDimensionVertexUniform hn⟩
+
 /-! ## Classification obligation
 
 The full Rodkey classification is open: characterise every finite
