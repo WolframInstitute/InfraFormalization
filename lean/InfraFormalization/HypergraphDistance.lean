@@ -507,6 +507,74 @@ theorem cycleHypergraph_dist_triangle {n : Nat} [NeZero n] (hn : 2 ≤ n)
       (cycleHypergraph n).dist u v + (cycleHypergraph n).dist v w :=
   Hypergraph.dist_triangle _ (cycleHypergraph_connected hn) u v w
 
+/-- **`v + 1 + 1 = v + 2` in `Fin n`** — follows from associativity and
+`(1 + 1 : Fin n) = 2`. Used to re-shape adjacency statements. -/
+private theorem cycle_add_one_one_eq_add_two {n : Nat} [NeZero n] (v : Fin n) :
+    (v + 1 + 1 : Fin n) = v + 2 := by
+  rw [add_assoc]
+  congr 1
+  apply Fin.ext
+  simp [Fin.val_add]
+
+/-- **`v - 1 - 1 = v - 2` in `Fin n`** — commutative-group computation. -/
+private theorem cycle_sub_one_one_eq_sub_two {n : Nat} [NeZero n] (v : Fin n) :
+    (v - 1 - 1 : Fin n) = v - 2 := by
+  rw [sub_sub]
+  congr 1
+  apply Fin.ext
+  simp [Fin.val_add]
+
+/-- **Adjacency `(v + 1, v + 2)` on `cycleHypergraph n` for `n ≥ 2`.** Obtained
+by applying `cycleHypergraph_succ_pred_adj` at `v + 1`. -/
+theorem cycleHypergraph_succ_succ_adj {n : Nat} [NeZero n] (hn : 2 ≤ n)
+    (v : Fin n) :
+    (cycleHypergraph n).Adj (v + 1) (v + 2) := by
+  have h := (cycleHypergraph_succ_pred_adj hn (v + 1)).1
+  rwa [cycle_add_one_one_eq_add_two] at h
+
+/-- **Adjacency `(v - 1, v - 2)` on `cycleHypergraph n` for `n ≥ 2`.** Obtained
+by applying `cycleHypergraph_succ_pred_adj` at `v - 1`. -/
+theorem cycleHypergraph_pred_pred_adj {n : Nat} [NeZero n] (hn : 2 ≤ n)
+    (v : Fin n) :
+    (cycleHypergraph n).Adj (v - 1) (v - 2) := by
+  have h := (cycleHypergraph_succ_pred_adj hn (v - 1)).2
+  rwa [cycle_sub_one_one_eq_sub_two] at h
+
+/-- **`dist v (v + 2) ≤ 2` on `cycleHypergraph n` for `n ≥ 2`.**
+Via triangle inequality: `dist v (v+2) ≤ dist v (v+1) + dist (v+1) (v+2)
+= 1 + 1 = 2`. -/
+theorem cycleHypergraph_dist_add_two_le {n : Nat} [NeZero n]
+    (hn : 2 ≤ n) (v : Fin n) :
+    (cycleHypergraph n).dist v (v + 2) ≤ 2 := by
+  have h1 : (cycleHypergraph n).dist v (v + 1) = 1 := by
+    unfold Hypergraph.dist
+    exact SimpleGraph.dist_eq_one_iff_adj.mpr (cycleHypergraph_succ_pred_adj hn v).1
+  have h2 : (cycleHypergraph n).dist (v + 1) (v + 2) = 1 := by
+    unfold Hypergraph.dist
+    exact SimpleGraph.dist_eq_one_iff_adj.mpr (cycleHypergraph_succ_succ_adj hn v)
+  calc (cycleHypergraph n).dist v (v + 2)
+      ≤ (cycleHypergraph n).dist v (v + 1) + (cycleHypergraph n).dist (v + 1) (v + 2) :=
+        cycleHypergraph_dist_triangle hn v (v + 1) (v + 2)
+    _ = 1 + 1 := by rw [h1, h2]
+    _ = 2 := rfl
+
+/-- **`dist v (v - 2) ≤ 2` on `cycleHypergraph n` for `n ≥ 2`.**
+Symmetric counterpart via the predecessor walk. -/
+theorem cycleHypergraph_dist_sub_two_le {n : Nat} [NeZero n]
+    (hn : 2 ≤ n) (v : Fin n) :
+    (cycleHypergraph n).dist v (v - 2) ≤ 2 := by
+  have h1 : (cycleHypergraph n).dist v (v - 1) = 1 := by
+    unfold Hypergraph.dist
+    exact SimpleGraph.dist_eq_one_iff_adj.mpr (cycleHypergraph_succ_pred_adj hn v).2
+  have h2 : (cycleHypergraph n).dist (v - 1) (v - 2) = 1 := by
+    unfold Hypergraph.dist
+    exact SimpleGraph.dist_eq_one_iff_adj.mpr (cycleHypergraph_pred_pred_adj hn v)
+  calc (cycleHypergraph n).dist v (v - 2)
+      ≤ (cycleHypergraph n).dist v (v - 1) + (cycleHypergraph n).dist (v - 1) (v - 2) :=
+        cycleHypergraph_dist_triangle hn v (v - 1) (v - 2)
+    _ = 1 + 1 := by rw [h1, h2]
+    _ = 2 := rfl
+
 /-- **Exact ball volume at radius 1** on `cycleHypergraph n` for `n ≥ 3`:
 `geodesicBallVolume v 1 = 3`. Combined with `_one_ge_three` for the
 lower bound and a direct upper bound from `dist ≤ 1 ⇒ Adj ∨ =`. -/
