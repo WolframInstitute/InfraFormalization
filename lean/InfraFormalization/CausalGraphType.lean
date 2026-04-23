@@ -260,6 +260,14 @@ theorem stablyCausal_implies_stronglyCausal
   have : tf.τ v < tf.τ v := G.chain_strict_time tf hn_pos hchain
   exact absurd this (Nat.lt_irrefl _)
 
+/-- **Edge-free causal graph is stably causal.** If `G` has no causal
+edges, the constant-zero function is a valid time function (vacuously
+monotone). -/
+theorem stablyCausal_of_no_edges (h : ∀ u v : V, ¬ G.causalEdge u v) :
+    G.StablyCausal :=
+  ⟨{ τ := fun _ => 0
+     monotone := fun {u v} hedge => absurd hedge (h u v) }⟩
+
 end CausalGraph
 
 end InfraFormalization

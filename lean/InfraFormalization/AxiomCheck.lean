@@ -159,6 +159,7 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.minkowski4_flat_vacuum_forces_lambda_zero
 #print axioms InfraFormalization.CausalGraph.timeFunction_foliation
 #print axioms InfraFormalization.CausalGraph.stablyCausal_hasFoliation
+#print axioms InfraFormalization.CausalGraph.stablyCausal_of_no_edges
 #print axioms InfraFormalization.Curvature.ConnectionData.nabla_vector_flat
 #print axioms InfraFormalization.Curvature.ConnectionData.nabla_covector_flat
 #print axioms InfraFormalization.Curvature.ConnectionData.nabla_vector_add
