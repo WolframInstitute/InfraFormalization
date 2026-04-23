@@ -1,5 +1,9 @@
 Added or done since the 2026-04-23 weekly update (newest first):
 
+- ID6 r=2 base case: V(v, 2) ≥ 5 on cycleHypergraph n ≥ 5 (cycleHypergraph_ballVolume_two_ge_five). Extends past r=0, r=1; feeds into the full V(v,r) = 2r+1 formula.
+- ID6: dist v (v±2) ≤ 2 via triangle inequality (cycleHypergraph_dist_add_two_le, cycleHypergraph_dist_sub_two_le) + cons adjacencies (cycleHypergraph_succ_succ_adj, cycleHypergraph_pred_pred_adj)
+- HypergraphDistance: 10-pair distinctness on Fin n for n ≥ 5 via add_left_cancel on AddCommGroup (cycle_add_two_ne_sub_two n≥5, cycle_succ_ne_sub_two n≥4, cycle_pred_ne_add_two n≥4, cycle_succ_ne_add_two, cycle_pred_ne_sub_two n≥3)
+- HypergraphDistance: shift-by-±2 is non-trivial for n ≥ 3 (cycle_add_two_ne_self, cycle_sub_two_ne_self)
 - **TASKS CLOSED**: #165 IR7 (refined form: ReverseEngineeringObligationRefined holds; original form is false and has a formal counterexample). #26 B6 FLRW metric bundle (flrwPartial as PartialMetricData 4 with domain, Christoffel, Lorentzian, origin obligation).
 - IR7 CLOSED: ReverseEngineeringObligationRefined — the honest form of IR7 restricted to realisable target signatures (ReverseEngineeringObligationRefined, reverseEngineeringObligationRefined_holds)
 - HypergraphDistance: adjacency is monotone under union (Adj_add_left, Adj_add_right)
