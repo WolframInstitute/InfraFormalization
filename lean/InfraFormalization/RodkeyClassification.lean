@@ -499,6 +499,21 @@ theorem pathHypergraph_not_ballVolumeVertexUniform {n : ℕ} [NeZero n]
       pathHypergraph_degree_one hn]
   omega
 
+/-- **Classification separates**: there exist finite hypergraphs on
+the same vertex type (`Fin 3`) of which one satisfies
+`BallVolumeVertexUniform` and another does not. This is the non-
+triviality check for the Rodkey predicate — it rules out both
+"vacuous-true" and "vacuous-false" defect modes of the classification.
+
+Witnessed by `cycleHypergraph 3` (positive, via rotation automorphism)
+and `pathHypergraph 3` (negative, via endpoint/interior degree gap). -/
+theorem rodkey_classification_nontrivial :
+    ∃ (H : Hypergraph (Fin 3)) (K : Hypergraph (Fin 3)),
+      H.BallVolumeVertexUniform ∧ ¬ K.BallVolumeVertexUniform := by
+  refine ⟨cycleHypergraph 3, pathHypergraph 3, ?_, ?_⟩
+  · exact cycleHypergraph_ballVolumeVertexUniform (by omega)
+  · exact pathHypergraph_not_ballVolumeVertexUniform (by omega)
+
 /-! ## Classification obligation
 
 The full Rodkey classification is open: characterise every finite

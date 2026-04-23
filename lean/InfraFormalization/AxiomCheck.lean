@@ -140,6 +140,7 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.pathHypergraph_degree_zero
 #print axioms InfraFormalization.pathHypergraph_degree_one
 #print axioms InfraFormalization.Hypergraph.pathHypergraph_not_ballVolumeVertexUniform
+#print axioms InfraFormalization.Hypergraph.rodkey_classification_nontrivial
 #print axioms InfraFormalization.pathEigenvalue_nonpos
 #print axioms InfraFormalization.heatKernel_cycleHypergraph_multi_mode_tendsto
 #print axioms InfraFormalization.pathEigenvalue_ground_zero
