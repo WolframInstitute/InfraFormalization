@@ -17,7 +17,7 @@ Grouped by phase (see [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md)). Each milestone ei
 - [x] Severity taxonomy S1–S6 ([notes/severity_taxonomy.md](notes/severity_taxonomy.md))
 - [x] Continuum-limit claims catalog ([notes/continuum_limit_claims.md](notes/continuum_limit_claims.md))
 - [x] Major-structural-flaws index F1–F8 ([MAJOR_FLAWS.md](MAJOR_FLAWS.md))
-- [x] Overclaim-or-hunch synthesis ([notes/claim_assessment.md](notes/claim_assessment.md))
+- [x] Corpus assessment ([notes/corpus_assessment.md](notes/corpus_assessment.md))
 - [x] Empirical refutation of the named "EFE rule" ([notes/empirical_refutation.md](notes/empirical_refutation.md))
 - [x] Independent Python rewriter confirming SetReplace agreement ([results/phase1_selfaudit/](results/phase1_selfaudit/))
 - [ ] Structured external comment PDF (to circulate / submit to arXiv)

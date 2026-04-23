@@ -77,7 +77,7 @@ and then concludes that conservative + asymptotically-dimensionality-preserving 
 
 **What refutation looks like.** Lean-level proof that, if we *define* "asymptotic dimensionality preservation" the way Gorard does, the "Einstein equations" claim follows by definitional unfolding alone — no combinatorial or geometric content. I.e., prove the implication is *logically trivial*.
 
-**Status.** Documented in `notes/severity_taxonomy.md` S3 #9, `notes/claim_assessment.md`.
+**Status.** Documented in `notes/severity_taxonomy.md` S3 #9, `notes/corpus_assessment.md`.
 
 **Lean status.** Formalised in `lean/InfraFormalization/Refutations/F3Tautology.lean`:
 - `gorard_dim_preservation_is_euler_lagrange : AsymptoticDimPreservation P g ↔ EulerLagrange P g := Iff.rfl` — the biconditional is definitional unfolding.

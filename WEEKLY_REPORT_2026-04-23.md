@@ -1,154 +1,226 @@
 # Weekly report — 2026-04-23
 
-Project: **`infra_formalization`** — Lean 4 / Mathlib formalisation of
-the Wolfram-model → GR / QM programme, with a parallel
-audit of Gorard's published derivation claims.
+Project: **`infra_formalization`** — Lean 4 / Mathlib formalisation of the Wolfram-model → GR / QM programme, plus a machine-checked audit of Gorard's published derivation claims.
 
-## What the project is
+## Project at a glance
 
-A machine-checked corpus that does three things simultaneously:
-
-1. Formalises a discrete-to-continuum bridge ladder from hypergraph
-   rewriting to Einstein's equations, with every continuum object
-   anchored to a hypergraph origin.
-2. Formalises the critique of Gorard's four principal papers, converting
-   every structural flaw into an axiom-clean Lean theorem.
-3. Hosts the Wolfram-Institute *infrageometry* programme — 57 tasks
-   across 9 groups (infraanalysis, infragauge, infracausality,
-   infratopology, infradimension, infrablowup, branchial-QM, synthetic,
-   ruliology) covering colleagues' work (Pavel Hájek, Van Le,
-   Pavel Pokorny, Hubert Kolcz, Jan Pullman, Carlos Zapata, Sara Ahmed,
-   Ioana Milea).
+- Three axes: (i) positive construction of a 10-rung bridge from hypergraph rewriting to Einstein's equations; (ii) Lean-formal audit of four Gorard papers (2004.14810, 2011.12174, 2102.09363, 2303.07282); (iii) Wolfram-Institute *infrageometry* programme (57 tasks / 9 groups).
+- ~180 Lean modules; ~3468 `lake` build jobs.
+- Every proved theorem reduces to `{propext, Classical.choice, Quot.sound}`; no `sorry`, no `native_decide`, no custom axioms.
+- Grounding principle: every continuous object has a hypergraph anchor or an attached origin-obligation Prop.
 
 ## Headline numbers
 
-- `lake build` green at 3468/3468 jobs.
-- Every proved theorem reduces to `{propext, Classical.choice, Quot.sound}`.
-  No `sorry`, no `native_decide`, no custom axioms.
-- Infrageometry programme: 50/57 tasks closed with real content; 7
-  in-flight with substantive open content (not stubs).
-- Grounding audit: all four action items closed. No free-floating
-  continuum islands at the obligation level.
-- Gorard refutations F1–F7 Lean-formal, including F6 Circularity.
+- Build: 3468 / 3468 jobs green.
+- Axiom-cleanliness: certified by `AxiomCheck.lean` (300+ `#print axioms` lines).
+- Infrageometry programme: 50 / 57 tasks closed with real content.
+- Grounding audit: 4 / 4 action items closed; no free-floating continuum islands at the obligation level.
+- Gorard corpus: F1–F7 Lean-formal refutations.
+- Flat continuum-limit bridges proved: cycle→circle, path→interval, 2-torus, d-torus, discrete Lorentz→Minkowski.
 
-## Bridge ladder (10 rungs from discrete calculus to Einstein)
+## Core substrate (Rung 0)
 
-| Rung | Topic | Status |
-|---|---|---|
-| 1 | Discrete calculus | full |
-| 2 | Operator convergence to continuum | C² Taylor (R1/A2/A3), cycle spectrum (R5), eigenvalue limit (A4) |
-| 3 | Measure limits | counting measure, pushforward (A5); weak convergence (A6), Wasserstein (A7) open |
-| 4 | Connections / Levi-Civita | local-coord only; bundle/Koszul gap in Mathlib |
-| 5 | Riemann / Ricci / scalar | local-coord Riemann, Ricci, Einstein; all GR metrics in zoo (Minkowski, Schwarzschild, FLRW, RN, Kerr, S², de Sitter) |
-| 6 | ODE / PDE on `Hypergraph V` | heat (D1/D2/D4/D5/D6 partial), wave (D8), Klein-Gordon (D9), Schrödinger unitary (D10), Euler-Lagrange (G1/G3/G4) |
-| 7 | Fields / gauge | scalar field closed; gauge-field G2 open |
-| 8 | Lorentzian geometry | discrete (LorentzLattice, Minkowski), continuum `DiagLorentzianManifold` (E1), discrete Cauchy foliation (E5); continuum Lorentzian-GH open |
-| 9 | Einstein equations | F3 `EinsteinEqLambda`; Minkowski vacuum solves it; flat connection forces λ=0 |
-| 10 | Hypergraph → GR (obligation form) | every obligation Prop attached with flat-case witness; curved-case `bridgeHolds` open |
+- `Hypergraph V`, `Hyperedge V` — directed multi-hyperedges.
+- `Rule P`, `IsConservative` predicate (`|LHS| = |RHS|`).
+- `Application r H` with `consumed`, `produced`, `result`; size-preservation under conservation.
+- `RewritingSystem P`, `Step`, `MultiStep`, `Confluent`, `LocallyConfluent`.
+- `Trajectory sys init`, `StepConsistent`, `causallyPrecedes`.
+- `CausalLevel` — well-founded level function, same-level antichain.
+- `Branchial`, `BranchialRelated`, `NStep`, `BranchialSlice`, `BranchialFinite`.
+- `ParallelSchedule` — trajectory-level conservation, in/out-degree balance.
 
-## Refutation track (Gorard corpus)
+## Discrete calculus and Laplacians (Rung 1)
 
-F1–F7 Lean-formal, axiom-clean:
+- `DiscreteCalculus` — `Neighbourhood V`, graph Laplacian Δ, discrete inner product, linearity of Δ, `laplacianLinear` as a `LinearMap`.
+- `DiscreteCalculusSymm` — self-adjointness `⟪Δ f, g⟫ = ⟪f, Δ g⟫`, Dirichlet form `⟪f, −Δ f⟫ = ½ ∑(f(w) − f(v))²`, PSD of `−Δ`, `∑ Δ f = 0` (discrete divergence theorem).
+- `HypergraphLaplacian` — `laplacianHyper` on directed hyperedges, Dirichlet non-positivity, self-adjointness, per-edge bilinear identity.
+- `HypergraphCalculus` — `hyperedgeGradient`, `hypergraphDiv`, `summation_by_parts` (discrete Stokes).
+- `SecondDifference` — central second difference, quadratic-case exact identity.
+- `CycleGraph` — `cycleLaplacian`, cycle Dirichlet form.
+- `LaplacianMatrix` (R2 / D3) — `laplacianMatrixEdge`, `laplacianMatrix`, `laplacianMatrix_mulVec`, `heatKernel t = exp(t · Δ)`, semigroup `heatKernel_add`, `laplacianMatrix_symm`, row-sum zero, `heatTrace`.
+- `HeatKernelODE` (T1) — `heatKernel_isHeatSolution`: `exp(t · Δ_H) u₀` satisfies the ODE `u' = Δ u`; `heatKernel_commute_laplacianMatrix`.
+- `ExpEigenvector` (T2) — `exp_mulVec_of_eigenvector`: `A.mulVec v = λ v ⇒ exp(A).mulVec v = exp(λ) · v`.
 
-| Flaw | Module | Content |
-|---|---|---|
-| F1 | `F1NoMetric.lean` | No canonical hypergraph-to-metric construction |
-| F2 | `F2Orthonormality.lean` | Fiat orthonormality is non-canonical |
-| F3 | `F3Tautology.lean` | "dim preservation ⇒ EFE" = `Iff.rfl` |
-| F4 | `F4Tautology.lean` | "causal invariance ⇔ covariance" = `Iff.rfl` |
-| F5 | `F5Illdefined.lean` | Discrete-to-continuum "becomes" under-determined |
-| F6 | `F6Circularity.lean` | G3 "provably satisfies EFE" is Poisson-sprinkle-then-reconstruct |
-| F7 | `F7NamedRuleStructure.lean` | 2102.09363 named rule structurally blocked by |LHS|=|RHS| |
+## Cycle spectral machinery (Rung 2)
 
-Empirical: the G3 named rule has causal-graph dimension = 1 on every
-tested seed, in SetReplace and in an independent Python
-re-implementation.
+- `CycleSpectrum` (R5) — `cycleEigenvector n k j = cos(2πkj/n)`, `cycleEigenvalue n k = −4 sin²(πk/n)`, eigenvalue equation at interior and wrap-around.
+- `CycleMatrixSpectrum` — matrix-form eigenvalue equation; `heatKernel_cycleHypergraph_mulVec_eigenvector`: each cycle eigenvector decays as `exp(t · λ)`.
+- `CycleHasEigenvalue` (T4) — packaged as Mathlib `Module.End.HasEigenvalue`.
+- `CycleEigenLimit` (A4) — scaled cycle eigenvalue `n² · (−4 sin²(πk/n)) → −(2πk)²` (continuum circle Laplacian spectrum).
+- `CTwoTaylor`, `ScaledDiffC2Bridge` (R1 / A2 / A3) — scaled second difference → `f''` for every `C²` function, via Mathlib `Real.taylor_tendsto`.
+- `CycleHeatDecayBounds` — spectral gap, first-mode explicit decay, constant mode fixed.
+- `SymmEigenOrthogonal`, `HeatKernelDecay` — eigenvector orthogonality for distinct eigenvalues; pointwise decay of non-constant modes; convergence of linear combinations to the constant component.
 
-## Infrageometry programme (57 tasks / 9 groups)
+## PDE ladder on `Hypergraph V` (Rung 6)
 
-| Group | Topic | Lead / collaborator | Closed | Total |
-|---|---|---|---|---|
-| IA | Infraanalysis | Pavel Hájek | 5 | 5 |
-| IG | InfraGaugeTheory | Pavel Pokorny | 11 | 11 |
-| IC | Infracausality | Zapata + Ahmed | 8 | 8 |
-| IT | Infratopology (VR + Latschev) | Pavel Hájek | 6 | 6 |
-| ID | Infradimension | — | 7 | 7 |
-| IB | Infrablowup (Lie algebra, Poisson) | Hubert Kolcz | 6 | 6 |
-| IQ | Branchial / quantum | Van Le, Ahmed | 4 | 4 |
-| IS | Synthetic axiomatic | Pokorny | 3 | 3 |
-| IR | Ruliology | — | 7 | 7 |
+- `HeatEquation` (D1 / D4 / D5) — `u' = Δ_H u`, mass `∑ u` conserved, L² decay.
+- `HeatEquationUniqueness` (D2) — `heat_exists`, `heat_unique_forward`.
+- `WaveEquation` (D8) — `u'' = Δ_H u`, energy conservation.
+- `KleinGordon` (D9) — `u'' = Δ_H u − m² u`, energy + mass.
+- `SchrodingerEquation` (D10) — `i ψ' = −Δ_H ψ`, probability `∑|ψ|²` conserved.
+- `ScalarField` (G1 / G3 / G4) — Lagrangian + Hamiltonian + Euler-Lagrange; `EL ↔ KG` equivalence.
+- `DiscreteDAlembertian` — Benincasa–Dowker 4D operator; `discreteAction`, `discreteEL`; BD conjecture flagged as open Prop obligation.
+- `BranchialSchrodinger` (I5) — unitary branchial evolution; `branchialSchrodinger_unitary_evolution`.
+- `ContinuumBridgeDemo` — `pde_spectrum_bridge_summary` and `_with_mass`: bundled wave / heat / Schrödinger / KG dispersion relations on cycle → circle.
+- `ContinuumLimitStatement` — `DiscreteWaveToContinuumWave`, `DiscreteSchrodingerToContinuumSchrodinger`, `DiscreteKleinGordonSpectrum`, `DiscreteHeatToContinuumHeat` — all proved.
 
-All 57 addressed. 50 closed with real content. 7 carrying substantive
-open content: Latschev GH form (IT5), scale trichotomy bulk (IT6),
-EME-tracking functor (IQ8), path-integral amplitudes (IQ9),
-exponential-map (IG10), commutator theorem (IB2), spectral dimension
-asymptotics (ID7).
+## Continuum-limit bridges (Rungs 1–6)
 
-## Grounding-audit obligations
+- `Infra/ScaledCycle` — `cycleDist`, scaled n-cycle metric.
+- `Infra/LatticeDensity` — `latticeEmbed`, density, isometry.
+- `Infra/Circle` — circle via fundamental domain.
+- `Infra/GHBound` — `cycle_circle_gh_bound` at `1/(2n)`.
+- `Infra/ScaledPath` — path → interval GH.
+- `Infra/ScaledTorus`, `Infra/ScaledTorusD` — 2D / d-D lattice → torus for any `d ≥ 0`.
+- `Infra/GHApprox` — abstract `GHApproximation`.
+- `Infra/LorentzLattice` — discrete Lorentzian lattice, causal trichotomy, signed Minkowski interval.
+- `Infra/Minkowski` — continuum Minkowski with L∞ spatial metric.
+- `Infra/ScaledLorentz` — int-to-ℝ scaling, iff preservation of `CausalPrecedes`, `Timelike`.
+- `Infra/TrajectoryLorentz`, `Infra/TrajectoryLorentzD` — trajectory → Lorentz-lattice embedding (1+0 and d+1 versions).
+- `Infra/FullBridge` — end-to-end `causallyPrecedes → continuum Minkowski` under `LightConeCompatible`.
+- `Infra/OllivierStatement`, `Infra/GrayTubeStatement` — correct identity vs Gorard mis-statement, with disagreement proofs on S² (1/6 vs 1/3) and S³ (1/3 vs 2).
 
-Every continuum GR object has an attached hypergraph-side origin-obligation
-Prop, with flat cases provably inhabited.
+## Distance and measure
+
+- `HypergraphDistance` — `Hypergraph.dist`, `geodesicBall`, `geodesicBallVolume`, `localDimension`, `wolframHausdorffDimension`, `plateauDimension`; triangle inequality (T3: `dist_triangle`); cycle connectivity; ball-volume formulas at `r = 0, 1, ≥ n`.
+- `HypergraphMeasure` (A5) — `countingMeasure`, `uniformProbability`, `pushforwardCounting`, `pushforwardUniform`; `countingMeasure_univ = |V|`, `uniformProbability_univ = 1`.
+- `PathHypergraph` (T5 partial) — `pathHypergraph n` on `Fin n`; free-path spectrum `pathEigenvalue = −4 sin²(kπ/(2n))`, `pathEigenvector = cos(kπ(2j+1)/(2n))`; ground-mode annihilation; spectral gap.
+- `PathHypergraphDistance` — path Laplacian row-sum zero, path heat kernel preserves constants.
+
+## Curvature (local-coord, Rung 5)
+
+- `CurvatureLocalCoord` — `MetricData n`, Christoffel symbols with lower-index symmetry; Minkowski Christoffel = 0.
+- `CurvatureRiemann` — Riemann, Ricci, Scalar, Einstein tensors; first Bianchi; flat-connection vanishing; `minkowski4_satisfies_vacuum_EFE`; `MetricDataC2`; `leviCivitaConnection`.
+- `PartialMetricData` (X1) — metrics with validity domain.
+- `CovariantDerivative` (X2) — `nabla_scalar`, `nabla_vector`, `nabla_covector`; flat cases collapse to partials; ℝ-linearity.
+- `DiscreteRicci` — Forman-Ricci on graphs and hypergraphs; sign theorems.
+- `RicciBridge` — cycle Forman-Ricci = 0 ↔ circle Ricci = 0.
+- `CurvedRicciBridge` — `warpedDiag2` curved 2-D witness with `g₁₁ = 1 + x₀²`; non-zero Christoffel on 3-regular graphs.
+
+## GR metric zoo (Rung 5)
+
+Each metric is a fully bundled `MetricData` or `PartialMetricData` with an attached hypergraph-origin obligation inhabited on the flat/existence side.
+
+- `Schwarzschild` — `sgg`, `sginv`, `sdg`; `SchwarzschildValid` exterior predicate; all 8 Christoffels; `schwarzschildPartial M : PartialMetricData 4`; `sgg_lorentzian_pointwise`; `SchwarzschildVacuumObligation M`.
+- `FLRW` (B6) — `flrwG a`, `flrwGinv a`, `flrwDg a da`; `flrwPartial a da : PartialMetricData 4`; `FLRWValid a x`; `flrwChristoffel_0_00 = 0`.
+- `ReissnerNordstrom` (B8) — `rnLapse M Q r = 1 − 2M/r + Q²/r²`; `rnG`, `rnGinv`; `RNValid`; `rnLapse_schwarzschild` (Q = 0 recovers Schwarzschild).
+- `Kerr` (B9) — metric components, `kerrSigma`, `kerrDelta`, `KerrValid`.
+- `TwoSphere` — `sphereG`, `sphereGinv`, `sphereDg`, `spherePartial : PartialMetricData 2`; `sphereChristoffel_0_1_1 = -sin θ cos θ`; `sphereChristoffel_1_0_1 = cot θ`.
+- `DeSitter` — `dsLapse Λ r = 1 − Λr²/3`, `dsG`, `dsGinv`, `DSValid`; `dsLapse_minkowski`; `dsLapse_pos_iff` cosmological horizon.
+- `GRMetricsDemo` — `gr_metric_zoo` bundled theorem exhibiting all six.
+
+## Lorentzian geometry (Rung 8)
+
+- `LorentzianManifold` (E1) — `DiagLorentzianMetric` signature predicate; `DiagLorentzianManifold n`; `minkowski4Manifold`; accessors `g_00_neg`, `g_ii_pos`, `g_off_diag`.
+- `CausalGraphType` (IC1) — TR-DAG `CausalGraph V`; `causallyPrecedes` (refl + trans); `ChainOfLength`; `DegenerateInterval`, `OnLightStepFrom`; strong/stable causality; `TimeFunction`; `stablyCausal_implies_stronglyCausal`; causal future/past/light-cone.
+- `CausalFoliation` (E5) — `IsAntichain`, `IsFoliation`, `HasProperTime`; `timeFunction_foliation`; `stablyCausal_hasFoliation` (every stably-causal DAG admits a foliation).
+- `SpatialReconstruction` (IC5), `EPSAxioms` (IC7), `MarzkeWheeler` (IC8).
+- `ProperTimeBounds` — `ChainOfLength` length-0 / length-1 characterisations, concatenation.
+- `BranchialCommutator` — `BranchialMultiRelated` (refl+trans closure), symmetry, transitivity.
+
+## Einstein equations (Rung 9)
+
+- `StressEnergyTensor` (F1) — `StressEnergyTensor` type, `.zero`.
+- `F2EnergyConditions` — WEC, NEC, SEC, DEC; trivial-zero cases.
+- `EinsteinEquations` (F3) — `EinsteinEqLambda M C Λ κ T x`; `minkowski4_satisfies_EFE_zero_lambda`; `einsteinEqLambda_vacuum_iff`; `minkowski4_flat_vacuum_forces_lambda_zero` (excludes Minkowski-as-de-Sitter); `flatConnection_einstein_divergence_zero` (vacuous second Bianchi).
+- `F7Penrose` — Penrose singularity theorem as a Prop statement.
+- `F8Raychaudhuri` — Raychaudhuri focusing statement.
+
+## Grounding-audit obligation bridges
 
 | Obligation | Binds | Flat-case witness |
 |---|---|---|
-| `HypergraphMetricOriginObligation M` | `Hypergraph V + RewritingSystem P + Trajectory sys init + scale` | Every metric in the zoo (Minkowski, FLRW, Schwarzschild, RN, Kerr, S², de Sitter, warpedDiag2) has a proved `*_from_hypergraph_proved` theorem |
-| `ConnectionDataOriginObligation C` | `FiberedGraph V W + FiberedGraph.Connection F + scale` | `flatConnection_from_fiberedGraph_proved n` |
-| `LorentzianManifoldOriginObligation target` | `CausalGraph V + scale` | `minkowski4Manifold_from_causalGraph_proved` |
+| `HypergraphMetricOriginObligation M` | `Hypergraph V + RewritingSystem P + Trajectory sys init + scale` | `minkowski4_from_hypergraph_proved`, `schwarzschild_from_hypergraph_proved M`, `flrw_from_hypergraph_proved a da`, `sphere_from_hypergraph_proved`, `warpedDiag2_from_hypergraph_proved` |
+| `ConnectionDataOriginObligation C` | `FiberedGraph V W + FiberedGraph.Connection F + scale` | `flatConnection_from_fiberedGraph_proved n`; specialised `flatConnection_minkowski4_from_fiberedGraph` |
+| `LorentzianManifoldOriginObligation target` | `CausalGraph V + scale` | `minkowski4Manifold_from_causalGraph_proved` via `trivialCausalGraph` |
 | `EFEOriginObligation M C Λ κ T x` | EFE-satisfaction ∧ metric-origin ∧ connection-origin | `minkowski4_flat_vacuum_EFE_originated_global κ` — first complete rule → metric → connection → EFE chain |
 
-Relevant modules: `HypergraphMetricBridges.lean`,
-`CausalLorentzianBridge.lean`, `FiberedGraphConnectionBridge.lean`,
-`EinsteinEquationsBridge.lean`, `RuleWitnesses.lean`, `RuleSearch.lean`.
+Modules: `HypergraphMetricBridges`, `CausalLorentzianBridge`, `FiberedGraphConnectionBridge`, `EinsteinEquationsBridge`, `RuleWitnesses`.
 
-## Continuum-target GR zoo (Rung 5)
+## Rule infrastructure
 
-Each of the following is fully bundled as `MetricData` or
-`PartialMetricData`, with an attached hypergraph-origin obligation
-Prop inhabited on the flat side:
+- `RuleWitnesses` — `identityRule`, `identityApplication_result` (result = H), `identitySystem`, `emptyTrajectory`, `trivialCausalGraph`, `trivialFiberedGraph`, `trivialConnection`.
+- `RuleSearch` — decidable `Rule.IsConservative` via `Nat.decEq`; catalog of 5 rules (`identityRule`, `selfMapRule`, `edgeDuplicateRule`, `tripleToEdgeRule`, `pairToTriangleRule`); proved screens `conservativeCatalog_all_conservative`, `growthCatalog_all_non_conservative`; `Rule.GrowthCompatible`; `minkowski4_from_growthRule` uses `edgeDuplicateRule` load-bearingly; `conservative_blocks_dim_geq_one` formalises the structural obstruction.
+- `CandidateRuleDatabase` — `CandidateRule P` metadata, `PassesScreens`.
+- `RuleSignature` (IR1) — structure `(hausdorffDimAt, ballVolume, totalFormanRicci, edgeCount, vertexCount)`; `hypergraphSignature`; match predicates; `edgeCount_invariant_of_conservative`.
+- `RuleSignatureEquiv` — `sigEquiv` (refl / symm / trans).
+- `RuleDimensionBounds` (IR2) — `trajectory_size_invariant`, `geodesicBallVolume_le_card`, `trajectory_conservative_ballVolume_bounded`.
+- `StructuralRuleBounds` (IR3-IR5) — `ProducesTrees`, `ProducesPlanar`, `IsProductSystem` predicates.
 
-Minkowski (full), Schwarzschild (`PartialMetricData` on exterior,
-all 8 Christoffels), FLRW (`PartialMetricData`), Reissner-Nordström
-(`PartialMetricData`), Kerr (components + valid domain), 2-sphere
-(`PartialMetricData`), de Sitter (`PartialMetricData`), warpedDiag2
-(non-flat Ricci witness).
+## Branchial quantum mechanics (I-series, IQ)
+
+- `BranchialFinite` (I1) — `branchialSliceFintype`.
+- `BranchialHilbert` (I2 / I3 / I4 / I6 / I7) — `BranchialHilbert S := EuclideanSpace ℂ S`; `branchialUniformWeight`; `BranchialAmplitude`; Born rule `bornProbability ψ s := Complex.normSq (ψ s)`; `sum_bornProbability = ‖ψ‖²`; ℂ-linear `branchialAdjLM`; Hermitian self-adjointness `branchialAdjLM_inner`; `BranchialObservable S`; `expectationValue A ψ := ⟨ψ, A ψ⟩`; `expectationValue_real` for Hermitian; `branchialSliceHilbert`.
+- `BranchialSchrodinger` (I5) — `branchialSchrodinger_unitary_evolution`: Schrödinger `i ∂_t ψ = A ψ` preserves total probability.
+- `BranchialCanonical` — canonical form.
+- `FisherMetric` (IQ5) — branchial Fisher metric.
+- `FisherMetricExtended` — ℝ-linearity (`_add_left/right`, `_smul_left/right`), PSD (`fisherInner_self_nonneg`).
+- `EMETracker` — `EMEPredicate V`, `emeHoldsEverywhere`, edge-count-bounded EME.
+- `RemainingObligations` — `FubiniStudyLimitObligation` with proof `fubiniStudyBhattacharyya_bound` (Cauchy–Schwarz / Bhattacharyya); EME and path-integral baselines; IT5 Latschev connectivity; IT6 scale trichotomy endpoints.
+
+## Audit of the Gorard corpus (refutations F1–F7)
+
+| Flaw | Lean module | Substance |
+|---|---|---|
+| F1 | `Refutations/F1NoMetric` | No canonical hypergraph-to-metric construction |
+| F2 | `Refutations/F2Orthonormality` | Fiat orthonormality non-canonical |
+| F3 | `Refutations/F3Tautology` | "asymptotic dim preservation ⇒ EFE" = `Iff.rfl` |
+| F4 | `Refutations/F4Tautology` | "causal invariance ⇔ general covariance" = `Iff.rfl` |
+| F5 | `Refutations/F5Illdefined` | Discrete-to-continuum "becomes" convergence-notion-dependent |
+| F6 | `Refutations/F6Circularity` | G3's Poisson-sprinkle-then-reconstruct schema returns its input identically |
+| F7 | `Refutations/F7NamedRuleStructure` | 2102.09363 named rule structurally blocked by `\|LHS\| = \|RHS\|` |
+
+Empirical: 2102.09363 named rule shows causal-graph dimension = 1 on every tested seed, in SetReplace and an independent Python re-implementation.
+
+## Infrageometry programme (57 tasks / 9 groups)
+
+| Group | Topic | Lead | Closed | Total | Open items (substantive) |
+|---|---|---|---|---|---|
+| IA | Infraanalysis | Pavel Hájek | 5 | 5 | — |
+| IG | InfraGaugeTheory | Pavel Pokorny | 11 | 11 | IG10 exponential map (needs shortest-path counting) |
+| IC | Infracausality | Zapata, Ahmed | 8 | 8 | — |
+| IT | Infratopology (VR + Latschev) | Pavel Hájek | 6 | 6 | IT5 GH form, IT6 scale trichotomy bulk |
+| ID | Infradimension | — | 7 | 7 | ID6 compatibility, ID7 spectral asymptotics |
+| IB | Infrablowup | Hubert Kolcz | 6 | 6 | IB2 commutator theorem |
+| IQ | Branchial / quantum | Van Le, Ahmed | 4 | 4 | IQ8 EME tracking functor, IQ9 path-integral amplitudes |
+| IS | Synthetic axiomatic | Pokorny | 3 | 3 | — |
+| IR | Ruliology | — | 7 | 7 | IR7 reverse-engineering full form |
+
+## Additional key modules (not yet listed above)
+
+- `FiberedGraph`, `Holonomy`, `FiberBundle`, `MultiFibrationProjection` (IG series).
+- `VietorisRips`, `HodgeVR`, `HodgeLaplacianSpectrum`, `HodgeLaplacianBounds` (IT series).
+- `PlateauDimension`, `HomologyDimension`, `CausalDimension`, `CoordinatizationDimension` (ID series).
+- `ElementaryBlowup`, `BlowupOperations`, `BlowupLieAlgebra`, `RadialLaminarBlowup`, `BlowupPoissonConcrete` (IB series).
+- `DagBlowup`, `DagCalculus`, `DeRham`, `FormCochainIntegration` (IA series).
+- `SyntheticGeometry`, `SyntheticAxiomatic`, `InfrageometricScene` (IS series).
 
 ## Open items
 
-- Curved rule → curved metric bridges (no known rule produces
-  Schwarzschild / Kerr / FLRW in the GH limit). This is the open
-  Wolfram-physics problem; Gorard's claim to have solved it is what
-  the refutation chain dismantles.
-- A7 Wasserstein rate, A8 d-torus measure lift.
-- Mathlib gap blocks bundle machinery C1–C8.
+- Curved rule → curved metric bridges (Schwarzschild / Kerr / FLRW) — no known rule; obligations correctly open.
+- Measure-theory: A6 weak convergence counting → Lebesgue, A7 Wasserstein rate `O(1/n)`, A8 d-torus measure lift.
+- Bundle machinery (C1–C8): Mathlib gap for Riemannian / Lorentzian vector bundles and Koszul Levi-Civita.
 - G2 discrete gauge field via Rung-4 connection.
-- E6 Lorentzian-GH, E7 discrete-causal → continuum Lorentzian.
-- Empirical rule search via `wolframscript` / SetReplace
-  (task #190): rule-search infrastructure is in place in
-  `RuleSearch.lean`; large-scale enumeration pending.
+- E6 Lorentzian Gromov-Hausdorff; E7 discrete-causal → continuum Lorentzian convergence.
+- Discrete stress-energy counterpart (F-series continuation).
+- H-series: BBH initial data / evolution / Ψ₄ extraction / merger convergence.
+- J-series: combined causal + branchial, emergent gravity (Jacobson / Verlinde), AdS/CFT analogs, path integral over causal graphs.
+- Empirical rule search via `wolframscript` / SetReplace (infrastructure in place in `RuleSearch.lean`; large-scale enumeration pending).
 
 ## Near-term priorities
 
-1. Rule-search pipeline: enumerate small rules via `wolframscript`,
-   compute signatures, feed hits back into the `RuleSearch.lean`
-   catalog. Catalog grows from 5 formalised rules toward ~50 with
-   signature claims attached.
-2. Curved-Γ FiberedGraph bridge: extend
-   `FiberedGraphConnectionBridge` from flat-case witness to a
-   non-trivial curved `Connection F` approximating Schwarzschild's
-   Γ at the horizon boundary.
-3. A6 / A7 measure bridges (Wasserstein, d-torus measure lift).
-4. Paper drafts: K1 audit paper, K3 infrageometry continuum-limits
-   paper (R1 / R2 / R5 / A3 / A4 are the technical core).
+1. Rule-search pipeline — enumerate small rules via `wolframscript`; compute signatures; feed hits into the `RuleSearch.lean` catalog with signature-property theorems attached. Catalog grows from 5 toward a populated candidate-rule database.
+2. Curved-Γ FiberedGraph bridge — extend `FiberedGraphConnectionBridge` from the flat witness to a non-trivial curved `Connection F` approximating Schwarzschild's Γ on a horizon boundary.
+3. Measure bridges A6 / A7 / A8.
+4. Paper drafts: K1 audit paper, K3 infrageometry continuum-limits paper (R1 / R2 / R5 / A3 / A4 are the technical core).
 
-## Links to internal docs
+## Links
 
-- [`GROUNDING_AUDIT.md`](GROUNDING_AUDIT.md) — item-by-item audit
-  of continuum structures against the grounding principle.
+- [`GROUNDING_AUDIT.md`](GROUNDING_AUDIT.md) — item-by-item audit of continuum structures.
 - [`STATUS.md`](STATUS.md) — live snapshot with full rung table.
 - [`COVERAGE_MAP.md`](COVERAGE_MAP.md) — per-module coverage map.
 - [`BRIDGE_MACHINERY.md`](BRIDGE_MACHINERY.md) — 10-rung ladder.
-- [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md) — research programme
-  (57 tasks / 9 groups).
-- [`MAJOR_FLAWS.md`](MAJOR_FLAWS.md) — Gorard F1–F8 flaws with
-  Lean-formalisation status.
+- [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md) — research programme (57 tasks).
+- [`MAJOR_FLAWS.md`](MAJOR_FLAWS.md) — Gorard F1–F8 flaws with Lean status.
 - [`RULE_SEARCH.md`](RULE_SEARCH.md) — rule-search pipeline design.
+- [`notes/corpus_assessment.md`](notes/corpus_assessment.md) — per-claim assessment synthesis.

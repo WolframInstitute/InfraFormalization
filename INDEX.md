@@ -25,7 +25,7 @@ Complete navigation for `infra_formalization`. This file is hand-maintained; eve
 | [`notes/plan.md`](notes/plan.md) | 7-phase verification methodology with quadruple-rail rules. |
 | [`notes/severity_taxonomy.md`](notes/severity_taxonomy.md) | S1–S6 classification of all 16 distinct errors, with a discussion of how the errors recur. |
 | [`notes/corpus_audit.md`](notes/corpus_audit.md) | Cross-paper map: which errors originate in which paper and propagate to which others. |
-| [`notes/claim_assessment.md`](notes/claim_assessment.md) | Per-claim synthesis (True / Conjectural / Hunch / Tautology / Error) with overall verdict: "the texts claim more than their arguments establish, and contain no fabricated data." |
+| [`notes/corpus_assessment.md`](notes/corpus_assessment.md) | Per-claim synthesis (True / Conjectural / Hunch / Tautology / Error) with overall verdict: "the texts claim more than their arguments establish, and contain no fabricated data." |
 | [`notes/singleway_vs_multiway.md`](notes/singleway_vs_multiway.md) | Why Gorard uses single-way evolution, why this is inconsistent, why our refutations still hold, where the null tetrad and GR machinery actually live. |
 
 ## Per-paper close-readings
@@ -243,4 +243,4 @@ The papers themselves are under [`papers/`](papers/) — PDFs plus extracted TeX
 
 **"I want to know which claims are established."**
 1. [`notes/severity_taxonomy.md`](notes/severity_taxonomy.md) — "How the errors recur" section.
-2. [`notes/claim_assessment.md`](notes/claim_assessment.md) — "The honest verdict" section.
+2. [`notes/corpus_assessment.md`](notes/corpus_assessment.md) — "The honest verdict" section.

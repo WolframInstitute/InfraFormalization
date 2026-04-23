@@ -5,16 +5,16 @@ A Lean 4 / Mathlib formalisation of the Wolfram-model → general-relativity / q
 The project runs on three parallel axes:
 
 1. **Positive construction** — a 10-rung bridge ladder from hypergraph primitives to Einstein's equations, with every continuous object anchored to a hypergraph origin by an obligation Prop.
-2. **Critique** — line-by-line formalisation of seven structural flaws in the Gorard corpus (F1–F7), each converted to an axiom-clean Lean theorem with counter-example witnesses.
+2. **Audit of the Gorard corpus** — line-by-line formalisation of seven structural flaws (F1–F7), each converted to an axiom-clean Lean theorem with counter-example witnesses.
 3. **Infrageometry programme** — 57-task / 9-group research programme for the Wolfram Institute, covering colleagues' work (Pavel Hájek, Pavel Pokorny, Van Le, Hubert Kolcz, Jan Pullman, Carlos Zapata, Sara Ahmed, Ioana Milea).
 
 All `lake build` jobs pass (3468 of 3468). Every theorem reduces to Lean's three standard axioms `{propext, Classical.choice, Quot.sound}`. No `sorry`, no `native_decide`, no custom axioms.
 
-## What this repository actually is
+## Contents
 
 - A Lean library with ~180 `.lean` modules building up discrete calculus, PDE theory on hypergraphs, GH convergence of scaled discrete structures, Lorentzian geometry, Einstein-equation formalism, branchial quantum mechanics, and infrageometry infrastructure — all from the same `Hypergraph V` / `RewritingSystem P` / `Trajectory sys init` primitives.
 - A documentation set that tracks the full research programme at varying granularity (STATUS / COVERAGE_MAP / BRIDGE_MACHINERY / INFRAGEOMETRY / MAJOR_FLAWS / GROUNDING_AUDIT / MILESTONES / NEXT_STEPS).
-- An audit trail for the Gorard papers: close-readings of each paper, cross-paper corpus audit, 184-row claims catalog, severity taxonomy, continuum-limit claim ledger, overclaim-vs-hunch synthesis note.
+- An audit trail for the Gorard papers: close-readings of each paper, cross-paper corpus audit, 184-row claims catalog, severity taxonomy, continuum-limit claim ledger, per-claim corpus assessment.
 - Empirical scripts (Wolfram Language + Python) that independently re-implement the mechanics of Gorard's claims and test them against his rules.
 
 ## Why the project exists
@@ -165,7 +165,7 @@ lean/
 - `corpus_audit.md` — cross-paper map of repeated errors
 - `claims_catalog.md` — 184-row G1 equation audit
 - `singleway_vs_multiway.md` — single-way vs multi-way + null-tetrad explainer
-- `claim_assessment.md` — synthesis verdict
+- `corpus_assessment.md` — synthesis verdict
 - `2004.14810_close_reading.md`, `2102.09363_close_reading.md`, `2303.07282_close_reading.md`
 - `null_tetrad_resolution.md`, `limit_toolkit.md`, `empirical_refutation.md`, `continuum_limit_claims.md`
 
@@ -279,11 +279,11 @@ wolframscript -file scripts/test_eq342.wl
 
 Every verdict is reproducible to the precision quoted in `results/`.
 
-## Project posture
+## Methodology
 
-Every claim about Gorard's corpus is checked on four independent rails (close-reading, symbolic computation, Lean formalisation, independent empirical re-implementation) before being accepted into the repository. Correct claims get verified; incorrect claims get documented precisely, with counter-example witnesses and corrected statements side by side.
+Every claim about the Gorard corpus is checked against four independent rails (close-reading, symbolic computation, Lean formalisation, independent empirical re-implementation) before being accepted into the repository. Correct claims are verified; incorrect claims are documented precisely, with counter-example witnesses and corrected statements side by side.
 
-"Overclaim," "hunch," "overclaim," "misstatement," "ill-defined," and "tautology" are distinct verdicts — we use them precisely. The goal is not to discredit but to have a load-bearing, verifiable answer to: *what in this corpus is actually true, and how is it linked (if at all) to general relativity?*
+Verdicts are labelled precisely ("overclaim", "misstatement", "ill-defined", "tautology", "error", "conjectural", "hunch"). The goal is to have a load-bearing, verifiable answer to: *what in this corpus is actually true, and how is it linked (if at all) to general relativity?*
 
 ## License
 
