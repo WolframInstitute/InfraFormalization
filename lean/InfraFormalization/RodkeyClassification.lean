@@ -434,6 +434,27 @@ theorem ballVolumeVertexUniform_iff_restricted (H : Hypergraph V)
       · exact hres r hpos hlt v w
     · exact ballVolumeVertexUniform_at_large_radius H hconn r hge v w
 
+/-- **Vertex count is ≥ 2 whenever the non-trivial regime is
+non-empty**: the range `1 ≤ r < |V|` is inhabited iff `|V| ≥ 2`. -/
+theorem restrictedRegime_nonempty_iff (H : Hypergraph V) :
+    (∃ r : ℕ, 1 ≤ r ∧ r < Fintype.card V) ↔ 2 ≤ Fintype.card V := by
+  constructor
+  · rintro ⟨r, hr1, hrV⟩
+    omega
+  · intro h
+    exact ⟨1, le_refl 1, h⟩
+
+/-- **On vertex types with `|V| ≤ 1`, every hypergraph is trivially
+`BallVolumeVertexUniform`**: only `v = w` cases arise, so the equality
+holds reflexively. -/
+theorem ballVolumeVertexUniform_of_card_le_one (H : Hypergraph V)
+    (hcard : Fintype.card V ≤ 1) : H.BallVolumeVertexUniform := by
+  intro r v w
+  have h_uv : v = w := by
+    have := Fintype.card_le_one_iff.mp hcard
+    exact this v w
+  rw [h_uv]
+
 /-- **Adj-transitive implies uniform degree.** An Adj-preserving
 `Equiv σ : V ≃ V` sending `v` to `w` bijects the neighbour set of `v`
 with the neighbour set of `w`, so the simple-graph degrees agree. This
