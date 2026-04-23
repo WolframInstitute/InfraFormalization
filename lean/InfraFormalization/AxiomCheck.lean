@@ -88,6 +88,8 @@ import InfraFormalization.BranchialSchrodinger
 import InfraFormalization.HodgeLaplacianSpectrum
 import InfraFormalization.BranchialCanonical
 import InfraFormalization.PathHypergraph
+import InfraFormalization.PathHypergraphDistance
+import InfraFormalization.RodkeyClassification
 import InfraFormalization.CurvedRicciBridge
 import InfraFormalization.ContinuumBridgeDemo
 import InfraFormalization.EinsteinEquations
@@ -133,6 +135,11 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.CausalGraph.chronological_irrefl
 #print axioms InfraFormalization.CausalGraph.stablyCausal_implies_stronglyCausal
 #print axioms InfraFormalization.pathHypergraph_edges_card_le
+#print axioms InfraFormalization.pathHypergraph_Adj_iff
+#print axioms InfraFormalization.pathHypergraph_connected
+#print axioms InfraFormalization.pathHypergraph_degree_zero
+#print axioms InfraFormalization.pathHypergraph_degree_one
+#print axioms InfraFormalization.Hypergraph.pathHypergraph_not_ballVolumeVertexUniform
 #print axioms InfraFormalization.pathEigenvalue_nonpos
 #print axioms InfraFormalization.heatKernel_cycleHypergraph_multi_mode_tendsto
 #print axioms InfraFormalization.pathEigenvalue_ground_zero

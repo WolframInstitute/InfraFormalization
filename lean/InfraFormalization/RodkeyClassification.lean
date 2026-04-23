@@ -31,6 +31,7 @@ are all hypergraph primitives.
 -/
 
 import InfraFormalization.HypergraphDistance
+import InfraFormalization.PathHypergraphDistance
 
 namespace InfraFormalization
 namespace Hypergraph
@@ -474,6 +475,29 @@ theorem cycleHypergraph_rodkey_chain {n : Nat} [NeZero n] (hn : 2 ≤ n) :
    cycleHypergraph_distTransitive hn,
    cycleHypergraph_ballVolumeVertexUniform hn,
    cycleHypergraph_localDimensionVertexUniform hn⟩
+
+/-! ## Path hypergraph negative example
+
+The path hypergraph `pathHypergraph n` with `n ≥ 3` is a canonical
+negative example for the Rodkey classification: ball-volume-vertex-
+uniformity fails at radius 1 because endpoints (degree 1) differ from
+interior vertices (degree 2). -/
+
+/-- **`pathHypergraph n` is NOT ball-volume vertex-uniform** for `n ≥ 3`.
+The endpoint `0 : Fin n` has SimpleGraph degree `1`, the interior
+vertex `1 : Fin n` has degree `2`; by
+`not_ballVolumeVertexUniform_of_degree_ne` (connected + degree
+mismatch ⇒ ball-volume-uniformity fails), the path is ruled out.
+Canonical negative example complementing the cycle positive example. -/
+theorem pathHypergraph_not_ballVolumeVertexUniform {n : ℕ} [NeZero n]
+    (hn : 3 ≤ n) :
+    ¬ (pathHypergraph n).BallVolumeVertexUniform := by
+  apply not_ballVolumeVertexUniform_of_degree_ne
+    (pathHypergraph n) pathHypergraph_connected
+    (v := ⟨0, Nat.pos_of_ne_zero (NeZero.ne n)⟩) (w := ⟨1, by omega⟩)
+  rw [pathHypergraph_degree_zero (by omega),
+      pathHypergraph_degree_one hn]
+  omega
 
 /-! ## Classification obligation
 
