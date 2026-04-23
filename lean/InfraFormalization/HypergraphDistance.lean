@@ -655,6 +655,32 @@ theorem cycleHypergraph_iterSucc_val {n : Nat} [NeZero n] (v : Fin n) :
     have h1 : (1 : Fin n).val = 1 % n := rfl
     rw [h1, ← Nat.add_mod, Nat.add_assoc]
 
+/-- **Value of iterated predecessor on `Fin n`**: `((· - 1)^[k] v).val = (v.val + (n - 1) * k) % n`
+for `n ≥ 2`. Used analogously to `cycleHypergraph_iterSucc_val` for distinctness
+reasoning on the backward-shift family. -/
+theorem cycleHypergraph_iterPred_val {n : Nat} [NeZero n] (hn : 2 ≤ n)
+    (v : Fin n) : ∀ (k : ℕ),
+    ((fun x : Fin n => x - 1)^[k] v).val = (v.val + (n - 1) * k) % n := by
+  intro k
+  induction k with
+  | zero =>
+    simp
+    exact (Nat.mod_eq_of_lt v.isLt).symm
+  | succ k ih =>
+    rw [Function.iterate_succ', Function.comp_apply]
+    show ((fun x : Fin n => x - 1)^[k] v - 1).val = (v.val + (n - 1) * (k + 1)) % n
+    rw [Fin.sub_def, ih]
+    have h1 : (1 : Fin n).val = 1 := by
+      show 1 % n = 1; exact Nat.mod_eq_of_lt (by omega)
+    rw [h1]
+    show (n - 1 + (v.val + (n - 1) * k) % n) % n = (v.val + (n - 1) * (k + 1)) % n
+    have hmod : ((n - 1) % n) = n - 1 := Nat.mod_eq_of_lt (by omega)
+    rw [show (n - 1 + (v.val + (n - 1) * k) % n : ℕ)
+        = ((n - 1) % n + (v.val + (n - 1) * k) % n) from by rw [hmod]]
+    rw [← Nat.add_mod]
+    congr 1
+    ring
+
 /-- **Exact ball volume at radius 1** on `cycleHypergraph n` for `n ≥ 3`:
 `geodesicBallVolume v 1 = 3`. Combined with `_one_ge_three` for the
 lower bound and a direct upper bound from `dist ≤ 1 ⇒ Adj ∨ =`. -/
