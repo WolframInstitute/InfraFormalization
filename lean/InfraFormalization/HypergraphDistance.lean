@@ -630,6 +630,192 @@ theorem cycleHypergraph_ballVolume_one_exact {n : Nat} [NeZero n]
         refine le_trans (Finset.card_insert_le _ _) ?_
         simp
 
+/-! ## Five-vertex distinctness on `Fin n` for `n ≥ 5`
+
+The five shift-offsets `0, 1, -1, 2, -2` are pairwise distinct in
+`Fin n` when `n ≥ 5`. This drives `V(v, 2) ≥ 5` on cycleHypergraph. -/
+
+/-- **Offset shift is left-cancellable in `Fin n`** (since `Fin n` with
+`NeZero n` is an `AddCommGroup`). -/
+private lemma fin_add_ne_of_ne {n : Nat} [NeZero n] (v : Fin n) {a b : Fin n}
+    (hab : a ≠ b) : v + a ≠ v + b := by
+  intro h
+  exact hab (add_left_cancel h)
+
+/-- **Value of `(1 : Fin n)` for `n ≥ 2`**. -/
+private lemma fin_val_one {n : Nat} [NeZero n] (hn : 2 ≤ n) :
+    (1 : Fin n).val = 1 := by
+  show 1 % n = 1; exact Nat.mod_eq_of_lt (by omega)
+
+/-- **Value of `(2 : Fin n)` for `n ≥ 3`**. -/
+private lemma fin_val_two {n : Nat} [NeZero n] (hn : 3 ≤ n) :
+    (2 : Fin n).val = 2 := by
+  show 2 % n = 2; exact Nat.mod_eq_of_lt (by omega)
+
+/-- **Value of `(-1 : Fin n)` for `n ≥ 2`**: equals `n - 1`. -/
+private lemma fin_val_neg_one {n : Nat} [NeZero n] (hn : 2 ≤ n) :
+    (-1 : Fin n).val = n - 1 := by
+  have h1 : (1 : Fin n).val = 1 := fin_val_one hn
+  rw [Fin.val_neg']
+  rw [h1]
+  exact Nat.mod_eq_of_lt (by omega)
+
+/-- **Value of `(-2 : Fin n)` for `n ≥ 3`**: equals `n - 2`. -/
+private lemma fin_val_neg_two {n : Nat} [NeZero n] (hn : 3 ≤ n) :
+    (-2 : Fin n).val = n - 2 := by
+  have h2 : (2 : Fin n).val = 2 := fin_val_two hn
+  rw [Fin.val_neg']
+  rw [h2]
+  exact Nat.mod_eq_of_lt (by omega)
+
+/-- **`(v + 2 : Fin n) ≠ (v - 2 : Fin n)` for `n ≥ 5`.** Differ by 4 in
+Fin n, and 4 < n. -/
+theorem cycle_add_two_ne_sub_two {n : Nat} [NeZero n] (hn : 5 ≤ n) (v : Fin n) :
+    (v + 2 : Fin n) ≠ (v - 2 : Fin n) := by
+  have h3 : 3 ≤ n := by omega
+  intro h
+  rw [sub_eq_add_neg] at h
+  have h2eq : (2 : Fin n) = -(2 : Fin n) := add_left_cancel h
+  have hv : (2 : Fin n).val = (-(2 : Fin n)).val := congrArg Fin.val h2eq
+  rw [fin_val_two h3, show (-(2 : Fin n)).val = n - 2 from fin_val_neg_two h3] at hv
+  omega
+
+/-- **`(v + 1 : Fin n) ≠ (v - 2 : Fin n)` for `n ≥ 4`.** Differ by 3 in
+Fin n. -/
+theorem cycle_succ_ne_sub_two {n : Nat} [NeZero n] (hn : 4 ≤ n) (v : Fin n) :
+    (v + 1 : Fin n) ≠ (v - 2 : Fin n) := by
+  have h2 : 2 ≤ n := by omega
+  have h3 : 3 ≤ n := by omega
+  intro h
+  rw [sub_eq_add_neg] at h
+  have h2eq : (1 : Fin n) = -(2 : Fin n) := add_left_cancel h
+  have hv : (1 : Fin n).val = (-(2 : Fin n)).val := congrArg Fin.val h2eq
+  rw [fin_val_one h2, show (-(2 : Fin n)).val = n - 2 from fin_val_neg_two h3] at hv
+  omega
+
+/-- **`(v - 1 : Fin n) ≠ (v + 2 : Fin n)` for `n ≥ 4`.** Symmetric of
+`cycle_succ_ne_sub_two`. -/
+theorem cycle_pred_ne_add_two {n : Nat} [NeZero n] (hn : 4 ≤ n) (v : Fin n) :
+    (v - 1 : Fin n) ≠ (v + 2 : Fin n) := by
+  have h2 : 2 ≤ n := by omega
+  have h3 : 3 ≤ n := by omega
+  intro h
+  rw [sub_eq_add_neg] at h
+  have h2eq : -(1 : Fin n) = (2 : Fin n) := add_left_cancel h
+  have hv : (-(1 : Fin n)).val = (2 : Fin n).val := congrArg Fin.val h2eq
+  rw [show (-(1 : Fin n)).val = n - 1 from fin_val_neg_one h2, fin_val_two h3] at hv
+  omega
+
+/-- **`(v + 1 : Fin n) ≠ (v + 2 : Fin n)` for `n ≥ 2`.** Directly from
+`cycle_succ_ne` applied at `v + 1`. -/
+theorem cycle_succ_ne_add_two {n : Nat} [NeZero n] (hn : 2 ≤ n) (v : Fin n) :
+    (v + 1 : Fin n) ≠ (v + 2 : Fin n) := by
+  intro heq
+  have h := cycle_succ_ne hn (v + 1)
+  apply h
+  rw [cycle_add_one_one_eq_add_two]
+  exact heq.symm
+
+/-- **`(v - 1 : Fin n) ≠ (v - 2 : Fin n)` for `n ≥ 3`.** Reduce via left
+cancellation to `(-1 : Fin n) ≠ (-2 : Fin n)`, then compare `.val`. -/
+theorem cycle_pred_ne_sub_two {n : Nat} [NeZero n] (hn : 3 ≤ n) (v : Fin n) :
+    (v - 1 : Fin n) ≠ (v - 2 : Fin n) := by
+  have h2 : 2 ≤ n := by omega
+  intro heq
+  have h1 : -(1 : Fin n) = -(2 : Fin n) := by
+    have h' : v + (-(1 : Fin n)) = v + (-(2 : Fin n)) := by
+      rw [← sub_eq_add_neg, ← sub_eq_add_neg]; exact heq
+    exact add_left_cancel h'
+  have h12 : (1 : Fin n) = (2 : Fin n) := neg_injective h1
+  have hv : (1 : Fin n).val = (2 : Fin n).val := congrArg Fin.val h12
+  rw [fin_val_one h2, fin_val_two hn] at hv
+  omega
+
+/-- **Radius-2 ball volume on `cycleHypergraph n` is `≥ 5` for `n ≥ 5`.**
+Exhibits five distinct vertices `v, v + 1, v - 1, v + 2, v - 2` all within
+distance 2 of `v`. This advances ID6 past the `r = 1` base case toward
+the general `V(v, r) = 2r + 1` claim on cycles. -/
+theorem cycleHypergraph_ballVolume_two_ge_five {n : Nat} [NeZero n]
+    (hn : 5 ≤ n) (v : Fin n) :
+    5 ≤ (cycleHypergraph n).geodesicBallVolume v 2 := by
+  have h4 : 4 ≤ n := by omega
+  have h3 : 3 ≤ n := by omega
+  have h2 : 2 ≤ n := by omega
+  -- Ball membership facts
+  have ⟨hadj_succ, hadj_pred⟩ := cycleHypergraph_succ_pred_adj h2 v
+  have hadj_succ2 := cycleHypergraph_succ_succ_adj h2 v
+  have hadj_pred2 := cycleHypergraph_pred_pred_adj h2 v
+  have h_self_in : v ∈ (cycleHypergraph n).geodesicBall v 2 :=
+    Hypergraph.self_mem_geodesicBall _ _ _
+  have h_succ_in : v + 1 ∈ (cycleHypergraph n).geodesicBall v 2 := by
+    unfold Hypergraph.geodesicBall
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+    unfold Hypergraph.dist
+    rw [SimpleGraph.dist_eq_one_iff_adj.mpr hadj_succ]
+    omega
+  have h_pred_in : v - 1 ∈ (cycleHypergraph n).geodesicBall v 2 := by
+    unfold Hypergraph.geodesicBall
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+    unfold Hypergraph.dist
+    rw [SimpleGraph.dist_eq_one_iff_adj.mpr hadj_pred]
+    omega
+  have h_succ2_in : v + 2 ∈ (cycleHypergraph n).geodesicBall v 2 := by
+    unfold Hypergraph.geodesicBall
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+    exact cycleHypergraph_dist_add_two_le h2 v
+  have h_pred2_in : v - 2 ∈ (cycleHypergraph n).geodesicBall v 2 := by
+    unfold Hypergraph.geodesicBall
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+    exact cycleHypergraph_dist_sub_two_le h2 v
+  -- Distinctness facts
+  have hne_01 : v ≠ v + 1 := Ne.symm (cycle_succ_ne h2 v)
+  have hne_0m1 : v ≠ v - 1 := by
+    intro heq
+    have h_ : v = v - 1 + 1 := by abel
+    rw [← heq] at h_
+    exact cycle_succ_ne h2 v h_.symm
+  have hne_02 : v ≠ v + 2 := Ne.symm (cycle_add_two_ne_self h3 v)
+  have hne_0m2 : v ≠ v - 2 := Ne.symm (cycle_sub_two_ne_self h3 v)
+  have hne_1m1 : v + 1 ≠ v - 1 := cycle_succ_ne_pred h3 v
+  have hne_12 : v + 1 ≠ v + 2 := cycle_succ_ne_add_two h2 v
+  have hne_1m2 : v + 1 ≠ v - 2 := cycle_succ_ne_sub_two h4 v
+  have hne_m12 : v - 1 ≠ v + 2 := cycle_pred_ne_add_two h4 v
+  have hne_m1m2 : v - 1 ≠ v - 2 := cycle_pred_ne_sub_two h3 v
+  have hne_2m2 : v + 2 ≠ v - 2 := cycle_add_two_ne_sub_two hn v
+  -- Finset.card = 5
+  have h_card : ({v, v + 1, v - 1, v + 2, v - 2} : Finset (Fin n)).card = 5 := by
+    rw [show ({v, v + 1, v - 1, v + 2, v - 2} : Finset (Fin n))
+        = insert v (insert (v + 1) (insert (v - 1) (insert (v + 2) {v - 2}))) from rfl]
+    rw [Finset.card_insert_of_notMem, Finset.card_insert_of_notMem,
+        Finset.card_insert_of_notMem, Finset.card_insert_of_notMem, Finset.card_singleton]
+    · -- (v+2) ∉ {v-2}
+      rw [Finset.mem_singleton]; exact hne_2m2
+    · -- (v-1) ∉ {v+2, v-2}
+      rw [Finset.mem_insert, Finset.mem_singleton]
+      push_neg; exact ⟨hne_m12, hne_m1m2⟩
+    · -- (v+1) ∉ {v-1, v+2, v-2}
+      rw [Finset.mem_insert, Finset.mem_insert, Finset.mem_singleton]
+      push_neg; exact ⟨hne_1m1, hne_12, hne_1m2⟩
+    · -- v ∉ {v+1, v-1, v+2, v-2}
+      rw [Finset.mem_insert, Finset.mem_insert, Finset.mem_insert, Finset.mem_singleton]
+      push_neg; exact ⟨hne_01, hne_0m1, hne_02, hne_0m2⟩
+  -- Subset into the ball
+  have h_subset :
+      ({v, v + 1, v - 1, v + 2, v - 2} : Finset (Fin n)) ⊆
+      (cycleHypergraph n).geodesicBall v 2 := by
+    intros u hu
+    rw [Finset.mem_insert, Finset.mem_insert, Finset.mem_insert,
+        Finset.mem_insert, Finset.mem_singleton] at hu
+    rcases hu with rfl | rfl | rfl | rfl | rfl
+    · exact h_self_in
+    · exact h_succ_in
+    · exact h_pred_in
+    · exact h_succ2_in
+    · exact h_pred2_in
+  unfold Hypergraph.geodesicBallVolume
+  calc 5 = ({v, v + 1, v - 1, v + 2, v - 2} : Finset (Fin n)).card := h_card.symm
+    _ ≤ _ := Finset.card_le_card h_subset
+
 /-- **Large-radius ball covers everything on a connected cycle**: for
 `n ≥ 2` and radius `r ≥ n`, the closed ball of radius `r` around any
 vertex equals all of `Fin n`. Proof: on a connected finite graph,
