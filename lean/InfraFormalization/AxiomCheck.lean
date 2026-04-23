@@ -200,6 +200,8 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.Hypergraph.ballVolumeVertexUniform_iff_restricted
 #print axioms InfraFormalization.Hypergraph.restrictedRegime_nonempty_iff
 #print axioms InfraFormalization.Hypergraph.ballVolumeVertexUniform_of_card_le_one
+#print axioms InfraFormalization.Hypergraph.rodkey_classification_nontrivial_for_Fin
+#print axioms InfraFormalization.Hypergraph.regular_dichotomy_for_Fin
 #print axioms InfraFormalization.pathEigenvalue_nonpos
 #print axioms InfraFormalization.heatKernel_cycleHypergraph_multi_mode_tendsto
 #print axioms InfraFormalization.pathEigenvalue_ground_zero

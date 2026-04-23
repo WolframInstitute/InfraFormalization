@@ -455,6 +455,7 @@ theorem ballVolumeVertexUniform_of_card_le_one (H : Hypergraph V)
     exact this v w
   rw [h_uv]
 
+
 /-- **Adj-transitive implies uniform degree.** An Adj-preserving
 `Equiv σ : V ≃ V` sending `v` to `w` bijects the neighbour set of `v`
 with the neighbour set of `w`, so the simple-graph degrees agree. This
@@ -751,6 +752,28 @@ theorem rodkeyClassificationObligation_holds (V : Type)
     [Fintype V] [DecidableEq V] :
     RodkeyClassificationObligation V :=
   fun H h => ballVolumeVertexUniform_implies_localDimensionVertexUniform H h
+
+/-- **P20 dichotomy holds on every `Fin n` with `n ≥ 3`**: for every
+such vertex type there is both a Rodkey-valid hypergraph
+(`cycleHypergraph n`) and a Rodkey-invalid one (`pathHypergraph n`).
+Generalises `rodkey_classification_nontrivial` from `Fin 3` to every
+sufficiently-large cardinality. -/
+theorem rodkey_classification_nontrivial_for_Fin {n : ℕ} [NeZero n]
+    (hn : 3 ≤ n) :
+    ∃ (H : Hypergraph (Fin n)) (K : Hypergraph (Fin n)),
+      H.BallVolumeVertexUniform ∧ ¬ K.BallVolumeVertexUniform :=
+  ⟨cycleHypergraph n, pathHypergraph n,
+   cycleHypergraph_ballVolumeVertexUniform (by omega),
+   pathHypergraph_not_ballVolumeVertexUniform hn⟩
+
+/-- **Regular dichotomy on every `Fin n` with `n ≥ 3`**: structural
+analogue at the degree level. -/
+theorem regular_dichotomy_for_Fin {n : ℕ} [NeZero n] (hn : 3 ≤ n) :
+    ∃ (H : Hypergraph (Fin n)) (K : Hypergraph (Fin n)),
+      H.Regular ∧ ¬ K.Regular :=
+  ⟨cycleHypergraph n, pathHypergraph n,
+   cycleHypergraph_regular hn,
+   pathHypergraph_not_regular hn⟩
 
 end Hypergraph
 end InfraFormalization
