@@ -25,12 +25,13 @@ The project exists to settle, formally, what is actually true in this corpus and
 
 ## Status headline (2026-04-23)
 
-- **Build**: 3468/3468 jobs green.
-- **Axiom cleanliness**: all proved theorems reduce to `{propext, Classical.choice, Quot.sound}`.
-- **Infrageometry programme**: 50/57 tasks closed with real content; 7 in-flight with substantive open content (not stubs).
-- **Grounding audit**: **all four action items closed**. No free-floating continuum islands at the obligation level (see [`GROUNDING_AUDIT.md`](GROUNDING_AUDIT.md)).
-- **Refutations**: F1–F7 Lean-formal; F6Circularity formally proved (G3's Poisson-sprinkle-then-reconstruct schema returns its input identically — "mathematically content-free").
-- **Flat bridges proved**: cycle→circle, path→interval, 2-torus, d-torus, lattice→Minkowski.
+- **Size**: 140 Lean files, ~20k LOC; 679 theorems + 17 lemmas + 17 examples proved; 381 definitions, 57 structures, 6 inductives, 12 instances.
+- **Build**: 3468 / 3468 jobs green.
+- **Axiom cleanliness**: 497 `#print axioms` certifications in `AxiomCheck.lean` across 94 modules; every listed theorem reduces to `{propext, Classical.choice, Quot.sound}`. No `sorry`, no `native_decide`, no custom axioms.
+- **Infrageometry programme**: 50 / 57 tasks closed with real content; 7 in-flight with substantive open content (not stubs).
+- **Grounding audit**: all four action items closed. No free-floating continuum islands at the obligation level (see [`GROUNDING_AUDIT.md`](GROUNDING_AUDIT.md)).
+- **Refutations**: F1–F7 Lean-formal; F6 (circular G3 derivation) formally proved as `circular_procedure_is_identity`; F8 documentary.
+- **Flat bridges proved**: cycle → circle, path → interval, 2-torus, d-torus, discrete Lorentz → Minkowski.
 - **Continuum-target GR zoo**: Minkowski, Schwarzschild, FLRW, Reissner-Nordström, Kerr, 2-sphere, de Sitter — all formalised with hypergraph-origin obligations attached.
 - **Branchial QM**: finite slice → ℂ-Hilbert → self-adjoint adjacency → unitary Schrödinger → Born rule → observables → expectation values.
 - **First complete chain**: `minkowski4_flat_vacuum_EFE_originated_global` — rule → metric → connection → EFE satisfaction, every ingredient inhabited by a concrete hypergraph-side witness.
@@ -209,28 +210,49 @@ No category-(3) obligation is allowed to sit as an open `True ∧ False` stub �
 
 ## Refutation track (Gorard corpus)
 
-The four papers audited:
+### The four audited papers
 
-- **G1 — arXiv:2004.14810** — *Some Relativistic and Gravitational Properties of the Wolfram Model*
-- **G2 — arXiv:2011.12174** — *Algorithmic Causal Sets and the Wolfram Model*
-- **G3 — arXiv:2102.09363** — *Hypergraph Discretization of the Cauchy Problem in General Relativity via Wolfram Model Evolution*
-- **G4 — arXiv:2303.07282** — *Non-Vacuum Solutions, Gravitational Collapse and Discrete Singularity Theorems*
+- **G1 — arXiv:2004.14810** — *Some Relativistic and Gravitational Properties of the Wolfram Model.* Foundational. §3.3 is the claimed Einstein-equations derivation; §3.1 states the Ollivier–Ricci identity; §3.2 introduces the fiat-orthonormality convention.
+- **G2 — arXiv:2011.12174** — *Algorithmic Causal Sets and the Wolfram Model.* Reuses G1 §5; introduces Eq 126 (tube-volume coefficient) used later in G3 Eq 342.
+- **G3 — arXiv:2102.09363** — *Hypergraph Discretization of the Cauchy Problem in GR via Wolfram Model Evolution.* Contains the "provably satisfies EFE" claim and the named rule. Relies on a Poisson-sprinkle-then-reconstruct schema (TeX lines 6080, 6152).
+- **G4 — arXiv:2303.07282** — *Non-Vacuum Solutions, Gravitational Collapse and Discrete Singularity Theorems.* Title-body gap: no discrete Raychaudhuri, no discrete expansion scalar, no discrete energy condition, no discrete stress-energy tensor, no "shear" or "vorticity" in the text.
 
-Plus supporting papers: 2011.12174, 2308.07508, 2401.14209.
+Supporting papers referenced: 2308.07508, 2401.14209.
 
-Lean-formal refutations:
+### General patterns
 
-| Flaw | Lean module | Status |
+- **Objects introduced by analogy, not by construction.** Discrete metric `g^{ab}`, volume form `d\mu_g`, functional derivative `δ/δg^{ab}`, orthonormal hyperedges — all named, none defined.
+- **Mis-stated cited continuum identities.** Ollivier's theorem uses directional `Ric(v,v)`; the papers write scalar `R`. Gray's tube coefficient is `(R + Ric(u,u))/(6(d+1))`; the papers write `(d−1)(R − Ric(u,u))/(d+1)`. Factor-2 off on S², factor-6 off on S³.
+- **Definitions restated as theorems.** "Causal invariance ⇔ discrete general covariance" and "asymptotic dimensionality preservation ⇒ EFE" both unfold to `Iff.rfl`.
+- **Informal bridge prose.** "Becomes" (which topology?), "weak ergodicity" (precise definition?), "provably" (applied to an open Sorkin–Benincasa–Dowker conjecture).
+- **Circularity in G3.** The initial hypergraph is built by Poisson-sampling vertices from the known target spacetime; the "derivation" then recovers that spacetime from the sample. Target-as-input.
+- **Structural block on the named rule.** `|LHS| = |RHS| = 4` forces edge-count conservation, hence linear cone growth; cone dimension ≈ 1 on every tested seed in two independent implementations.
+
+### Lean-formal refutations
+
+| Flaw | Lean module | Key theorem |
 |---|---|---|
-| F1 No canonical hypergraph-to-metric | `Refutations/F1NoMetric.lean` | ✅ |
-| F2 Fiat orthonormality is non-canonical | `Refutations/F2Orthonormality.lean` | ✅ |
-| F3 "dim preservation ⇒ EFE" = `Iff.rfl` | `Refutations/F3Tautology.lean` | ✅ |
-| F4 "causal invariance ⇔ covariance" = `Iff.rfl` | `Refutations/F4Tautology.lean` | ✅ |
-| F5 Discrete-to-continuum "becomes" under-determined | `Refutations/F5Illdefined.lean` | ✅ |
-| F6 G3 "provably satisfies EFE" is circular (Poisson-sprinkle then reconstruct) | `Refutations/F6Circularity.lean` | ✅ |
-| F7 G3 named rule's structural block | `Refutations/F7NamedRuleStructure.lean` + empirical | ✅ |
+| F1 — discrete `g^{ab}` never constructed | `Refutations/F1NoMetric.lean` | `metric_construction_is_never_unique`; `no_canonical_metric_from_hypergraph_alone`; `action_depends_on_construction_choice` |
+| F2 — fiat orthonormality | `Refutations/F2Orthonormality.lean` | `orthonormality_depends_on_form`; `orthonormalising_form_not_unique`; `gorard_orthonormality_is_non_canonical` |
+| F3 — "dim preservation ⇒ EFE" is tautology | `Refutations/F3Tautology.lean` | `gorard_dim_preservation_is_euler_lagrange := Iff.rfl`; `gorard_section_3_3_contentless` |
+| F4 — "causal invariance ⇔ general covariance" is tautology | `Refutations/F4Tautology.lean` | `gorard_causal_invariance_is_general_covariance := Iff.rfl` — certified to depend on **zero axioms** |
+| F5 — "becomes" ill-defined | `Refutations/F5Illdefined.lean` | `becomes_is_underdetermined`; `claim_is_vacuous_without_convergence_notion`; `different_notions_give_different_limits` |
+| F6 — G3 circular derivation | `Refutations/F6Circularity.lean` | `circular_reconstruction_has_no_content` (0 axioms); `circular_procedure_is_identity` — any Poisson-sprinkle-then-reconstruct returns its input |
+| F7 — named rule is structurally 1-D | `Refutations/F7NamedRuleStructure.lean` + empirical | `namedRule_trajectory_edge_count_fixed`; `isConservative_implies_structurallyOneDim`; `conservative_blocks_dim_geq_one` (in `RuleSearch.lean`) |
 
-Empirical refutation: the 2102.09363 named rule shows causal-graph dimension = 1 on every tested seed under both SetReplace and an independent Python re-implementation. `|LHS| = |RHS| = 4` forces state-size conservation, which combined with finite-vertex-support forces bounded ball-volume — formalised as `conservative_blocks_dim_geq_one` in `RuleSearch.lean`.
+**F8** (G4 title-body gap): not a formal claim but a documentary finding; Gorard concedes the gap in the paper's conclusion.
+
+### Empirical refutation
+
+- 2102.09363 named rule: `{{x,y},{y,z},{z,w},{w,v}} → {{y,u},{u,v},{w,x},{x,u}}`.
+- SetReplace + an independent Python re-implementation agree on 9 seeds: causal-cone dimension ≈ 1 on each.
+- The corresponding structural theorem: `|LHS|=|RHS|` ⇒ state size is conserved along every trajectory ⇒ ball volume is bounded by `Fintype.card V` ⇒ no `r^d` growth with `d ≥ 1` on any fixed finite vertex type.
+
+### Summary verdict
+
+Systematic overclaim with embedded arithmetic errors. The §3.3 Einstein-equations derivation uses objects that are never constructed (F1, F2). The logical spine reduces, in multiple places, to `Iff.rfl` (F3, F4). The continuum-limit step is left informal (F5). The G3 "proof" that a rule satisfies EFE is circular (F6). The named rule is empirically and structurally 1-dimensional (F7). The cited continuum identities are mis-stated by non-trivial factors on simple test manifolds. Nothing fabricated; every error public and checkable.
+
+See [`MAJOR_FLAWS.md`](MAJOR_FLAWS.md), [`FINDINGS.md`](FINDINGS.md), [`notes/corpus_assessment.md`](notes/corpus_assessment.md), and the close-reading notes for paper-by-paper detail.
 
 ## The research programme (infrageometry)
 

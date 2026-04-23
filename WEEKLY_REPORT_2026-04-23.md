@@ -5,18 +5,82 @@ Project: **`infra_formalization`** — Lean 4 / Mathlib formalisation of the Wol
 ## Project at a glance
 
 - Three axes: (i) positive construction of a 10-rung bridge from hypergraph rewriting to Einstein's equations; (ii) Lean-formal audit of four Gorard papers (2004.14810, 2011.12174, 2102.09363, 2303.07282); (iii) Wolfram-Institute *infrageometry* programme (57 tasks / 9 groups).
-- ~180 Lean modules; ~3468 `lake` build jobs.
+- 140 Lean modules; ~20k LOC; 3468 `lake` build jobs.
 - Every proved theorem reduces to `{propext, Classical.choice, Quot.sound}`; no `sorry`, no `native_decide`, no custom axioms.
 - Grounding principle: every continuous object has a hypergraph anchor or an attached origin-obligation Prop.
 
-## Headline numbers
+## Size and counts
 
-- Build: 3468 / 3468 jobs green.
-- Axiom-cleanliness: certified by `AxiomCheck.lean` (300+ `#print axioms` lines).
-- Infrageometry programme: 50 / 57 tasks closed with real content.
+- 140 Lean source files in `lean/InfraFormalization/` (~20.2k lines of code).
+- **679 theorems** + 17 lemmas + 17 examples proved (≈713 proved propositions).
+- 381 definitions, 57 structures, 6 inductives, 12 instances.
+- 497 `#print axioms` lines in `AxiomCheck.lean` across 94 modules — every listed theorem certified to depend only on `{propext, Classical.choice, Quot.sound}`.
+- `lake build`: 3468 / 3468 jobs green.
+
+## Headline status
+
+- Axiom-cleanliness: no `sorry`, no `native_decide`, no custom axioms; only the three standard Lean axioms.
 - Grounding audit: 4 / 4 action items closed; no free-floating continuum islands at the obligation level.
-- Gorard corpus: F1–F7 Lean-formal refutations.
-- Flat continuum-limit bridges proved: cycle→circle, path→interval, 2-torus, d-torus, discrete Lorentz→Minkowski.
+- Infrageometry programme: 50 / 57 tasks closed with real content; 7 in-flight with substantive open content (not stubs).
+- Gorard corpus: F1–F7 Lean-formal refutations, plus F8 documentary (overclaim type).
+- Flat continuum-limit bridges proved: cycle → circle, path → interval, 2-torus, d-torus, discrete Lorentz → Minkowski.
+
+## Motivation and the Gorard corpus
+
+The published Wolfram-model-to-GR derivations of Jonathan Gorard make a strong claim: that a specific hypergraph rewriting rule "provably satisfies the Einstein field equations in the continuum limit" (G3 abstract). The formal audit here checks that chain end-to-end, classifies each step, and decides the load-bearing ones either correct (verify and formalise) or flawed (refute and formalise the refutation).
+
+**The four audited papers**
+
+- **G1 — arXiv:2004.14810** — *Some Relativistic and Gravitational Properties of the Wolfram Model.* Foundational paper. §3.3 is the claimed Einstein-equations derivation; §3.1 states the Ollivier–Ricci identity; §3.2 introduces the fiat-orthonormality convention.
+- **G2 — arXiv:2011.12174** — *Algorithmic Causal Sets and the Wolfram Model.* Reuses G1's §5 derivation; introduces Eq 126 (tube-volume coefficient) used later in G3 Eq 342.
+- **G3 — arXiv:2102.09363** — *Hypergraph Discretization of the Cauchy Problem in GR via Wolfram Model Evolution.* Contains the "provably satisfies EFE" claim (abstract + line 6202) and the named rule. Relies on a Poisson-sprinkle-then-reconstruct schema (lines 6080, 6152).
+- **G4 — arXiv:2303.07282** — *Non-Vacuum Solutions, Gravitational Collapse and Discrete Singularity Theorems.* Title-body gap: no discrete Raychaudhuri, no discrete expansion scalar, no discrete energy condition, no discrete stress-energy tensor, no "shear" or "vorticity" in the text; conclusion acknowledges all these as open.
+
+**General patterns found across the corpus**
+
+- Objects introduced by analogy rather than construction: discrete metric tensor `g^{ab}`, discrete volume form `d\mu_g`, functional derivative `δ/δg^{ab}`, "orthonormal" hyperedges — all named, none defined.
+- Arithmetic mis-statements of cited continuum identities: Ollivier's theorem uses directional `Ric(v,v)`, the papers write scalar `R`; Gray's tube coefficient is `(R + Ric(u,u))/(6(d+1))`, the papers write `(d−1)(R − Ric(u,u))/(d+1)` — factor-2 off on S², factor-6 off on S³.
+- Definitions restated as theorems: "causal invariance ⇔ discrete general covariance" and "asymptotic dimensionality preservation ⇒ EFE" both unfold to `Iff.rfl`.
+- Bridge claims left to informal prose: "becomes" (which convergence topology?), "weak ergodicity" (precise definition?), "provably" applied to an open Sorkin–Benincasa–Dowker conjecture.
+- Circularity: the G3 proof of EFE-satisfaction builds the initial hypergraph by Poisson-sampling vertices from the known target spacetime, then recovers that spacetime from the sample. Target-as-input.
+- Structural block: the specific named rule has `|LHS| = |RHS| = 4`, so edge count is conserved and the causal cone grows linearly — dimension-1 — on every tested seed in two independent implementations (SetReplace and a Python re-implementation).
+
+**Flaws formalised as Lean theorems (F1–F7)**
+
+| Flaw | Lean | Substance | Axiom budget |
+|---|---|---|---|
+| F1 | `Refutations/F1NoMetric.lean` | No canonical metric from hypergraph alone: any "hypergraph → bilinear form" construction is non-unique; `metric_construction_is_never_unique` + `no_canonical_metric_from_hypergraph_alone` + `action_depends_on_construction_choice` | three standard |
+| F2 | `Refutations/F2Orthonormality.lean` | Orthonormality is a property of a bilinear form, not of the hyperedges; `orthonormalising_form_not_unique`; `gorard_orthonormality_is_non_canonical` | three standard |
+| F3 | `Refutations/F3Tautology.lean` | `gorard_dim_preservation_is_euler_lagrange : AsymptoticDimPreservation P g ↔ EulerLagrange P g := Iff.rfl`; `gorard_section_3_3_contentless` | three standard |
+| F4 | `Refutations/F4Tautology.lean` | `gorard_causal_invariance_is_general_covariance := Iff.rfl` | `#print axioms` reports "does not depend on any axioms" — zero |
+| F5 | `Refutations/F5Illdefined.lean` | "becomes" is convergence-notion-dependent: `becomes_is_underdetermined`, `claim_is_vacuous_without_convergence_notion`, `different_notions_give_different_limits` | three standard |
+| F6 | `Refutations/F6Circularity.lean` | `CircularReconstruction` schema; `circular_reconstruction_has_no_content`; `circular_procedure_is_identity` (the Poisson-sprinkle-then-reconstruct returns its input) | three standard (`circular_reconstruction_has_no_content` uses 0) |
+| F7 | `Refutations/F7NamedRuleStructure.lean` | `namedRule_trajectory_edge_count_fixed`; `isConservative_implies_structurallyOneDim` — conservative rules fix edge count along every trajectory; cone-growth dimension ≈ 1 on every tested seed | three standard |
+
+**F8** (G4 title-body gap) is not a formal claim but a documentary finding: the title promises discrete singularity theorems that the body does not deliver, a fact Gorard himself concedes in the paper's conclusion.
+
+**Summary verdict on the corpus.** Systematic overclaim. The §3.3 Einstein-equations derivation in G1 uses objects that are never constructed (F1, F2). The logical spine reduces, in multiple places, to `Iff.rfl` (F3, F4). The continuum-limit step is left informal (F5). The G3 "proof" that a rule satisfies EFE is circular (F6). The specific named rule is empirically and structurally 1-dimensional (F7). The correct cited identities are mis-stated by non-trivial factors on simple test manifolds (Eq 342, Eq 344).
+
+Nothing in the corpus is fabrication; every error is public and checkable. The goal of this formalisation is not to discredit but to leave a load-bearing, verifiable record of what is true, what is wrong, and what remains genuinely open.
+
+## State of the discrete-continuum bridge
+
+The 10-rung bridge ladder from `Hypergraph V` to Einstein's equations.
+
+| Rung | Topic | State |
+|---|---|---|
+| 1 | Discrete calculus on graphs / hypergraphs | ✅ Laplacian `Δ_H` as `LinearMap`, self-adjointness, Dirichlet form, PSD, divergence theorem `∑ Δf = 0`; matrix form `laplacianMatrix`, symmetric, row-sum zero; heat kernel `exp(t·Δ)` with semigroup property; cycle / hypergraph instances; discrete `∇`, `div`, summation by parts |
+| 2 | Operator convergence (discrete → continuum) | ✅ Scaled second difference → `f''` for every C² function (R1/A2/A3); cycle-eigenvalue spectrum closed form (R5); scaled cycle eigenvalue `n² · (−4 sin²(πk/n)) → −(2πk)²` (A4) — continuum circle Laplacian spectrum recovered; path spectrum and ground-mode (T5 partial). ODE ↔ matrix heat kernel unified (T1). Uniform-C^k-on-compacts version open |
+| 3 | Measure-theoretic limits | ⚠ counting measure, uniform probability, pushforward (A5) ✅; A6 weak convergence counting → Lebesgue open; A7 Wasserstein-1 rate O(1/n) open; A8 d-torus measure lift open |
+| 4 | Connections / Levi-Civita | ⚠ Local-coord Christoffel + covariant derivative ✅; Mathlib gap for bundle-theoretic Riemannian / Lorentzian metrics blocks C1–C8; bridge-obligation attached (`ConnectionDataOriginObligation`, flat witness inhabited) |
+| 5 | Riemann / Ricci / scalar / Einstein | ✅ Local-coord Riemann, Ricci, scalar curvature, Einstein tensor; flat connection = zero; GR metric zoo (Minkowski, Schwarzschild with all 8 Christoffels, FLRW, Reissner-Nordström, Kerr, 2-sphere, de Sitter, warpedDiag2) all bundled as `MetricData` or `PartialMetricData`; `minkowski4_satisfies_vacuum_EFE` |
+| 6 | ODE / PDE on `Hypergraph V` | ✅ Heat equation (D1/D2/D4/D5/D6 partial); wave equation (D8); Klein-Gordon (D9); Schrödinger unitary (D10); scalar field Lagrangian + EL (G1/G3/G4); Benincasa–Dowker 4D d'Alembertian (BD conjecture flagged); D7 scaled discrete heat → continuum heat on GH-limit ✅; bundled PDE spectrum bridge (cycle → circle) for heat / wave / Schrödinger / KG |
+| 7 | Fields / gauge | 🟡 Scalar field closed; G2 discrete gauge field via Rung-4 connection open; G5 continuum limits of discrete fields open |
+| 8 | Lorentzian geometry | ✅ Discrete (LorentzLattice, Minkowski); causal graph TR-DAG (IC1); `DiagLorentzianManifold` (E1) with Minkowski instance; causality conditions strong/stable/globally-hyperbolic (E4); light cones, causal future/past (E3); Cauchy-foliation existence from stably-causal time function (E5). E6 Lorentzian Gromov-Hausdorff open (Mathlib gap); E7 discrete-causal → continuum Lorentzian open |
+| 9 | Einstein equations | ✅ F3 `EinsteinEqLambda M C Λ κ T x`; Minkowski + flat satisfies vacuum EFE (`minkowski4_satisfies_EFE_zero_lambda`); Minkowski + flat forces Λ = 0 (excludes de Sitter on flat); vacuous flat-case second Bianchi. F1 stress-energy type ✅; F2 energy conditions (WEC / NEC / SEC / DEC) ✅; F7 Penrose statement ✅; F8 Raychaudhuri statement ✅. B3 / B4 / B6–B9 vacuum-solution proofs for Schwarzschild / FLRW / Kerr on concrete `MetricData` pending |
+| 10 | Hypergraph → GR (obligation form) | ✅ Flat bridges proved (cycle → circle, path → interval, 2-torus, d-torus, lattice → Minkowski). Every continuum GR object carries an attached origin-obligation Prop; flat-case witnesses proved; curved `bridgeHolds` side open |
+
+**Grounding-audit status (all four action items closed, 2026-04-23).** Every continuum GR structure in the repository carries a hypergraph-side origin-obligation Prop. See the dedicated table below.
 
 ## Core substrate (Rung 0)
 
