@@ -178,6 +178,25 @@ theorem size_lt_cons (e : Hyperedge V) (H : Hypergraph V) :
     H.size < (H.cons e).size := by
   rw [size_cons]; omega
 
+/-- **Size monotonicity under right-addition**: `H₁.size ≤ (H₁ + H₂).size`.
+Adding more edges can only increase (or preserve, if H₂ is empty) the
+total size. -/
+theorem size_le_add_right (H₁ H₂ : Hypergraph V) :
+    H₁.size ≤ (H₁ + H₂).size := by
+  rw [size_add]; omega
+
+/-- **Size monotonicity under left-addition**: `H₂.size ≤ (H₁ + H₂).size`. -/
+theorem size_le_add_left (H₁ H₂ : Hypergraph V) :
+    H₂.size ≤ (H₁ + H₂).size := by
+  rw [size_add]; omega
+
+/-- **Non-empty hypergraphs have a positive edge count.** -/
+theorem size_pos_of_ne_empty (H : Hypergraph V) (hne : H ≠ empty) :
+    0 < H.size := by
+  rcases Nat.eq_zero_or_pos H.size with hz | hpos
+  · exact absurd ((size_eq_zero_iff_empty H).mp hz) hne
+  · exact hpos
+
 end Hypergraph
 
 end InfraFormalization
