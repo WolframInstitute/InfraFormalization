@@ -148,3 +148,4 @@ import InfraFormalization.BranchialCanonical
 import InfraFormalization.PathHypergraph
 import InfraFormalization.CurvedRicciBridge
 import InfraFormalization.ContinuumBridgeDemo
+import InfraFormalization.EinsteinEquations
