@@ -210,6 +210,8 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.Hypergraph.add_assoc'
 #print axioms InfraFormalization.Hypergraph.size_diff_le
 #print axioms InfraFormalization.Hypergraph.size_eq_zero_of_empty
+#print axioms InfraFormalization.Hypergraph.size_eq_zero_iff_empty
+#print axioms InfraFormalization.Hypergraph.cons_ne_empty
 #print axioms InfraFormalization.pathEigenvalue_nonpos
 #print axioms InfraFormalization.heatKernel_cycleHypergraph_multi_mode_tendsto
 #print axioms InfraFormalization.pathEigenvalue_ground_zero

@@ -141,6 +141,27 @@ theorem size_eq_zero_of_empty (H : Hypergraph V)
     (hH : H = (empty : Hypergraph V)) : H.size = 0 := by
   rw [hH]; exact size_empty
 
+/-- **`H.size = 0 ↔ H = empty`.** A multiset has cardinality 0 iff it
+is the zero multiset; lift this to hypergraphs via the edge-multiset
+wrapping. -/
+theorem size_eq_zero_iff_empty (H : Hypergraph V) :
+    H.size = 0 ↔ H = (empty : Hypergraph V) := by
+  constructor
+  · intro hsize
+    show (⟨H.edges⟩ : Hypergraph V) = ⟨0⟩
+    congr 1
+    exact Multiset.card_eq_zero.mp hsize
+  · intro hempty
+    rw [hempty]; exact size_empty
+
+/-- **`cons` strictly increases size**, so never yields empty. -/
+theorem cons_ne_empty (e : Hyperedge V) (H : Hypergraph V) :
+    H.cons e ≠ empty := by
+  intro h
+  have : (H.cons e).size = 0 := by rw [h]; exact size_empty
+  rw [size_cons] at this
+  omega
+
 end Hypergraph
 
 end InfraFormalization
