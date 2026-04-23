@@ -228,6 +228,20 @@ theorem degree_uniform_of_ballVolumeVertexUniform
       geodesicBallVolume_one_eq_degree_plus_one H hconn w] at hvw
   omega
 
+/-- **Non-regular connected hypergraph is NOT ball-volume
+vertex-uniform.** Contrapositive of `degree_uniform_of_ballVolumeVertexUniform`
+— if any two vertices have different SimpleGraph degree on a connected
+hypergraph, the ball-volume-vertex-uniformity predicate cannot hold.
+This is the workhorse for ruling out candidate hypergraphs from the
+Rodkey classification: any non-regular connected graph fails the
+radius-1 ball-count check, regardless of what happens at larger radii. -/
+theorem not_ballVolumeVertexUniform_of_degree_ne
+    (H : Hypergraph V) (hconn : H.toSimpleGraph.Connected)
+    {v w : V} (hne : H.toSimpleGraph.degree v ≠ H.toSimpleGraph.degree w) :
+    ¬ H.BallVolumeVertexUniform := by
+  intro hb
+  exact hne (degree_uniform_of_ballVolumeVertexUniform H hconn hb v w)
+
 /-- **Adj-transitive implies uniform degree.** An Adj-preserving
 `Equiv σ : V ≃ V` sending `v` to `w` bijects the neighbour set of `v`
 with the neighbour set of `w`, so the simple-graph degrees agree. This
