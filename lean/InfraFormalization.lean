@@ -158,6 +158,7 @@ import InfraFormalization.RuleSignatureEquiv
 import InfraFormalization.HypergraphMetricBridges
 import InfraFormalization.CausalLorentzianBridge
 import InfraFormalization.RuleWitnesses
+import InfraFormalization.RuleSearch
 import InfraFormalization.CurvedRicciBridge
 import InfraFormalization.ContinuumBridgeDemo
 import InfraFormalization.EinsteinEquations
