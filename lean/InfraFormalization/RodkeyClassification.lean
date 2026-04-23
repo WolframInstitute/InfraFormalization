@@ -104,6 +104,120 @@ theorem cycleHypergraph_ballVolumeVertexUniform_baseCases {n : Nat} [NeZero n]
     exact cycleHypergraph_ballVolumeVertexUniform_at_one hn v w
   · exact cycleHypergraph_ballVolumeVertexUniform_at_large hn2 v w r hr
 
+/-! ## Translation-invariance on `cycleHypergraph n`
+
+The rotation `k ↦ k + c` on `Fin n` sends cycle-edges to cycle-edges
+in both directions, so it is a SimpleGraph automorphism of
+`(cycleHypergraph n).toSimpleGraph`. Distance is preserved under
+graph homomorphism (via `SimpleGraph.Walk.map` + `Walk.length_map`),
+giving dist-translation-invariance and hence full vertex-uniformity
+of the geodesic ball volume. -/
+
+/-- **Adj translation invariance** on the cycle: adjacency is preserved
+in both directions under `k ↦ k + c`. -/
+theorem cycleHypergraph_Adj_translation {n : Nat} [NeZero n] (hn : 2 ≤ n)
+    (c a b : Fin n) :
+    (cycleHypergraph n).Adj a b ↔ (cycleHypergraph n).Adj (a + c) (b + c) := by
+  rw [cycleHypergraph_Adj_iff hn, cycleHypergraph_Adj_iff hn]
+  constructor
+  · rintro ⟨hne, heq | heq⟩
+    · refine ⟨fun h => hne (add_right_cancel h), Or.inl ?_⟩
+      subst heq; abel
+    · refine ⟨fun h => hne (add_right_cancel h), Or.inr ?_⟩
+      subst heq; abel
+  · rintro ⟨hne, heq | heq⟩
+    · refine ⟨fun h => hne (by rw [h]), Or.inl ?_⟩
+      -- heq : b + c = (a + c) + 1; want: b = a + 1
+      have h2 : (a + 1) + c = (a + c) + 1 := by abel
+      have h3 : (a + 1) + c = b + c := h2.trans heq.symm
+      exact (add_right_cancel h3).symm
+    · refine ⟨fun h => hne (by rw [h]), Or.inr ?_⟩
+      -- heq : a + c = (b + c) + 1; want: a = b + 1
+      have h2 : (b + 1) + c = (b + c) + 1 := by abel
+      have h3 : (b + 1) + c = a + c := h2.trans heq.symm
+      exact (add_right_cancel h3).symm
+
+/-- **Rotation as a SimpleGraph Hom** on `(cycleHypergraph n).toSimpleGraph`. -/
+def cycleRotHom {n : Nat} [NeZero n] (hn : 2 ≤ n) (c : Fin n) :
+    (cycleHypergraph n).toSimpleGraph →g (cycleHypergraph n).toSimpleGraph where
+  toFun k := k + c
+  map_rel' hab :=
+    (cycleHypergraph_Adj_translation hn c _ _).mp hab
+
+/-- **Distance translation invariance** on the cycle. The shift
+`k ↦ k + c` preserves the hypergraph distance. -/
+theorem cycleHypergraph_dist_translation {n : Nat} [NeZero n] (hn : 2 ≤ n)
+    (c v w : Fin n) :
+    (cycleHypergraph n).dist v w =
+      (cycleHypergraph n).dist (v + c) (w + c) := by
+  unfold Hypergraph.dist
+  apply le_antisymm
+  · -- dist v w ≤ dist (v+c) (w+c) via Walk.map with σ⁻¹ = (· + (-c))
+    have hconn := cycleHypergraph_connected hn
+    have hreach : (cycleHypergraph n).toSimpleGraph.Reachable (v + c) (w + c) :=
+      hconn (v + c) (w + c)
+    obtain ⟨p, hp⟩ := hreach.exists_walk_length_eq_dist
+    have hvc : (cycleRotHom hn (-c)) (v + c) = v := by
+      show (v + c) + (-c) = v; abel
+    have hwc : (cycleRotHom hn (-c)) (w + c) = w := by
+      show (w + c) + (-c) = w; abel
+    let q : (cycleHypergraph n).toSimpleGraph.Walk v w :=
+      (p.map (cycleRotHom hn (-c))).copy hvc hwc
+    calc (cycleHypergraph n).toSimpleGraph.dist v w
+        ≤ q.length := SimpleGraph.dist_le q
+      _ = (p.map (cycleRotHom hn (-c))).length := by
+          simp [q, SimpleGraph.Walk.length_copy]
+      _ = p.length := p.length_map _
+      _ = (cycleHypergraph n).toSimpleGraph.dist (v + c) (w + c) := hp
+  · -- dist (v+c) (w+c) ≤ dist v w via Walk.map with σ = (· + c)
+    have hconn := cycleHypergraph_connected hn
+    have hreach : (cycleHypergraph n).toSimpleGraph.Reachable v w := hconn v w
+    obtain ⟨p, hp⟩ := hreach.exists_walk_length_eq_dist
+    calc (cycleHypergraph n).toSimpleGraph.dist (v + c) (w + c)
+        ≤ (p.map (cycleRotHom hn c)).length := SimpleGraph.dist_le _
+      _ = p.length := p.length_map _
+      _ = (cycleHypergraph n).toSimpleGraph.dist v w := hp
+
+/-- **cycleHypergraph has vertex-uniform ball volume at every radius.**
+Follows from dist translation invariance: the shift `k ↦ k + (w - v)`
+bijects `{u : dist v u ≤ r}` with `{u : dist w u ≤ r}`. -/
+theorem cycleHypergraph_ballVolumeVertexUniform {n : Nat} [NeZero n]
+    (hn : 2 ≤ n) :
+    (cycleHypergraph n).BallVolumeVertexUniform := by
+  intro r v w
+  unfold Hypergraph.geodesicBallVolume Hypergraph.geodesicBall
+  -- The shift σ : u ↦ u + (w - v) bijects the two ball sets.
+  let c : Fin n := w - v
+  have hc : v + c = w := by simp [c]
+  refine Finset.card_bij (fun u _ => u + c) ?_ ?_ ?_
+  · -- Membership preservation: dist v u ≤ r → dist w (u + c) ≤ r
+    intro u hu
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hu ⊢
+    have := cycleHypergraph_dist_translation hn c v u
+    rw [hc] at this
+    omega
+  · -- Injectivity
+    intros u _ u' _ h
+    exact add_right_cancel h
+  · -- Surjectivity: every u' in the second ball has a preimage
+    intro u' hu'
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hu'
+    refine ⟨u' - c, ?_, ?_⟩
+    · simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+      have := cycleHypergraph_dist_translation hn c v (u' - c)
+      have hc' : (u' - c) + c = u' := by abel
+      rw [hc, hc'] at this
+      omega
+    · abel
+
+/-- **Local-dimension vertex uniformity on the cycle.** The Rodkey
+condition holds for every `cycleHypergraph n` with `n ≥ 2`. -/
+theorem cycleHypergraph_localDimensionVertexUniform {n : Nat} [NeZero n]
+    (hn : 2 ≤ n) :
+    (cycleHypergraph n).LocalDimensionVertexUniform :=
+  ballVolumeVertexUniform_implies_localDimensionVertexUniform _
+    (cycleHypergraph_ballVolumeVertexUniform hn)
+
 /-! ## Classification obligation
 
 The full Rodkey classification is open: characterise every finite
