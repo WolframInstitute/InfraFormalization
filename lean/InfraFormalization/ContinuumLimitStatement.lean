@@ -408,6 +408,112 @@ theorem A6_for_cube :
     (Filter.eventually_atTop.mpr ⟨1, fun n hn => ?_⟩)
   exact (A6_cube_sum_closed_form n (by omega)).symm
 
+/-! ## A6 as a predicate + linearity
+
+Packaging the per-function A6 claim as a predicate `A6Holds f` lets
+us state linearity (constant-scalar and sum) once and derive A6 for
+polynomials from the monomial cases without re-running the filter
+machinery each time. -/
+
+/-- **A6 predicate for a test function `f`**: the `n`-point Riemann
+sum `(1/n) · Σ_{k : Fin n} f(k/n)` converges to `∫_0^1 f dx`. -/
+def A6Holds (f : ℝ → ℝ) : Prop :=
+  Filter.Tendsto
+    (fun n : ℕ => (1 / (n : ℝ)) * ∑ k : Fin n, f ((k : ℝ) / (n : ℝ)))
+    Filter.atTop
+    (nhds (∫ x in (0 : ℝ)..1, f x))
+
+/-- **A6 closed under scalar multiplication.** If A6 holds for `f`,
+it holds for `c · f`: both the Riemann sum and the integral scale by
+`c`, so the limit does too. No integrability hypothesis needed. -/
+theorem A6Holds.const_mul (c : ℝ) {f : ℝ → ℝ} (hf : A6Holds f) :
+    A6Holds (fun x => c * f x) := by
+  unfold A6Holds at *
+  have h_integral : (∫ x in (0 : ℝ)..1, (c * f x))
+      = c * (∫ x in (0 : ℝ)..1, f x) :=
+    intervalIntegral.integral_const_mul c f
+  rw [h_integral]
+  have h_sum : ∀ n : ℕ,
+      (1 / (n : ℝ)) * ∑ k : Fin n, c * f ((k : ℝ) / (n : ℝ))
+        = c * ((1 / (n : ℝ)) * ∑ k : Fin n, f ((k : ℝ) / (n : ℝ))) := by
+    intro n
+    rw [← Finset.mul_sum]
+    ring
+  refine (hf.const_mul c).congr ?_
+  intro n
+  exact (h_sum n).symm
+
+/-- **A6 closed under addition (for integrable test functions).** If
+A6 holds for `f` and `g`, both interval-integrable on `[0, 1]`, then
+A6 holds for `f + g`. The integrability hypothesis is needed to invoke
+`intervalIntegral.integral_add`. -/
+theorem A6Holds.add {f g : ℝ → ℝ}
+    (hf : A6Holds f) (hg : A6Holds g)
+    (hf_int : IntervalIntegrable f MeasureTheory.volume 0 1)
+    (hg_int : IntervalIntegrable g MeasureTheory.volume 0 1) :
+    A6Holds (fun x => f x + g x) := by
+  unfold A6Holds at *
+  have h_integral : (∫ x in (0 : ℝ)..1, (f x + g x))
+      = (∫ x in (0 : ℝ)..1, f x) + (∫ x in (0 : ℝ)..1, g x) :=
+    intervalIntegral.integral_add hf_int hg_int
+  rw [h_integral]
+  have h_sum : ∀ n : ℕ,
+      (1 / (n : ℝ))
+          * ∑ k : Fin n, (f ((k : ℝ) / (n : ℝ)) + g ((k : ℝ) / (n : ℝ)))
+        = ((1 / (n : ℝ)) * ∑ k : Fin n, f ((k : ℝ) / (n : ℝ)))
+          + ((1 / (n : ℝ)) * ∑ k : Fin n, g ((k : ℝ) / (n : ℝ))) := by
+    intro n
+    rw [Finset.sum_add_distrib]
+    ring
+  refine (hf.add hg).congr ?_
+  intro n
+  exact (h_sum n).symm
+
+/-- `A6_for_constants` in the `A6Holds`-predicate form. -/
+theorem A6Holds_const (c : ℝ) : A6Holds (fun _ => c) :=
+  A6_for_constants c
+
+/-- `A6_for_identity` in the `A6Holds`-predicate form. -/
+theorem A6Holds_id : A6Holds (fun x => x) := A6_for_identity
+
+/-- `A6_for_sq` in the `A6Holds`-predicate form. -/
+theorem A6Holds_sq : A6Holds (fun x => x^2) := A6_for_sq
+
+/-- `A6_for_cube` in the `A6Holds`-predicate form. -/
+theorem A6Holds_cube : A6Holds (fun x => x^3) := A6_for_cube
+
+/-- **A6 holds for every polynomial of degree ≤ 3** (linear combination
+of the monomial cases). Witnesses the usefulness of
+`A6Holds.add`/`const_mul`: no new filter-limit arguments needed once
+the monomial cases are in hand. `a, b, c, d` are the coefficients of
+`1, x, x², x³` respectively. -/
+theorem A6Holds_poly_deg3 (a b c d : ℝ) :
+    A6Holds (fun x => a + b * x + c * x^2 + d * x^3) := by
+  have h_const_int : IntervalIntegrable (fun _ : ℝ => a)
+      MeasureTheory.volume 0 1 := intervalIntegrable_const
+  have h_id_int : IntervalIntegrable (fun x : ℝ => x)
+      MeasureTheory.volume 0 1 := continuous_id.intervalIntegrable 0 1
+  have h_sq_int : IntervalIntegrable (fun x : ℝ => x^2)
+      MeasureTheory.volume 0 1 := by
+    exact (continuous_pow 2).intervalIntegrable 0 1
+  have h_cube_int : IntervalIntegrable (fun x : ℝ => x^3)
+      MeasureTheory.volume 0 1 := by
+    exact (continuous_pow 3).intervalIntegrable 0 1
+  have h_bx : IntervalIntegrable (fun x : ℝ => b * x)
+      MeasureTheory.volume 0 1 := h_id_int.const_mul b
+  have h_cx2 : IntervalIntegrable (fun x : ℝ => c * x^2)
+      MeasureTheory.volume 0 1 := h_sq_int.const_mul c
+  have h_dx3 : IntervalIntegrable (fun x : ℝ => d * x^3)
+      MeasureTheory.volume 0 1 := h_cube_int.const_mul d
+  have h_a_bx : IntervalIntegrable (fun x : ℝ => a + b * x)
+      MeasureTheory.volume 0 1 := h_const_int.add h_bx
+  have h_a_bx_cx2 : IntervalIntegrable
+      (fun x : ℝ => a + b * x + c * x^2)
+      MeasureTheory.volume 0 1 := h_a_bx.add h_cx2
+  exact ((((A6Holds_const a).add (A6Holds_id.const_mul b) h_const_int h_bx).add
+            (A6Holds_sq.const_mul c) h_a_bx h_cx2).add
+          (A6Holds_cube.const_mul d) h_a_bx_cx2 h_dx3)
+
 /-- **Discrete wave → continuum wave on scaled lattice** (upgraded
 from `True` to real content).
 
