@@ -83,11 +83,11 @@ Plus additional proved legacy items: A2, A3, A4, D3.
 | 2 | Op. convergence to continuum | ✅ C² Taylor convergence of scaled second difference (R1/A2); ✅ scaled discrete → continuum f'' for all C² (A3); ✅ cycle spectrum closed form (R5) + eigenvalue → continuum (A4); **cycle spectrum in `HasEigenvalue` form (T4)**; **exp fixes eigenvectors (T2)** |
 | 3 | Measure limits | ✅ counting measure + pushforward (A5); ⌛ weak convergence (A6), Wasserstein (A7) still pending |
 | 4 | Connections / Levi-Civita | ⌛ Mathlib gap; local-coord route planned |
-| 5 | Riemann / Ricci / scalar | ⌛ blocked by Rung 4; statement-only for Ollivier / Gray |
+| 5 | Riemann / Ricci / scalar | ✅ local-coord Riemann + Ricci + Einstein via `CurvatureRiemann` (X2 ∇, R/∇ commutator pending); ✅ GR metric zoo formalised: **Minkowski, Schwarzschild (B1+B5), Reissner-Nordström (B8), FLRW (B6), de Sitter, S²**; `DiagLorentzianManifold` (E1), `EinsteinEqLambda` (F3); `minkowski4_flat_vacuum_forces_lambda_zero` excludes Minkowski-as-de-Sitter |
 | 6 | ODE/PDE | ✅ discrete heat equation (D1/D4/D5) + existence/uniqueness (D2 forward-time); wave (D8); Klein-Gordon (D9); Schrödinger unitarity (D10); scalar field Lagrangian/EL (G1/G3/G4); **ODE ↔ matrix heat kernel unified (T1)**; matrix-level mass/L²/semigroup corollaries; **long-time heat decay of non-constant cycle modes (D6 partial, `HeatKernelDecay.lean`); multi-mode convergence `heatKernel_cycleHypergraph_multi_mode_tendsto` — heat flow of any finite eigen-combination converges to its constant component** |
 | 7 | Fields / gauge | Far |
-| 8 | Lorentzian geometry | ✅ discrete (`LorentzLattice`, `Minkowski`); ⌛ continuum Lorentzian missing in Mathlib |
-| 9 | Einstein equations | Far |
+| 8 | Lorentzian geometry | ✅ discrete (`LorentzLattice`, `Minkowski`); ✅ continuum `DiagLorentzianManifold` (E1) with Minkowski instance; ✅ discrete Cauchy foliation (E5) via stably-causal time function; ⌛ continuum Lorentzian-GH missing in Mathlib |
+| 9 | Einstein equations | ✅ **F3 `EinsteinEqLambda`** for general (M, C, Λ, κ, T); `minkowski4_satisfies_EFE_zero_lambda`, `einsteinEqLambda_vacuum_iff`, `minkowski4_flat_vacuum_forces_lambda_zero`, `flatConnection_einstein_divergence_zero`; ⌛ Schwarzschild / Kerr / FLRW Ricci = 0 blocked by Ricci-on-explicit-connection (B3-B4, B7) |
 | 10 | Hypergraph → GR | ✅ flat targets done (cycle→circle, path→interval, torus, d-torus, discrete→continuum Minkowski); ⌛ curved targets blocked by Rungs 4–5 |
 
 ## Key deliverables by phase
