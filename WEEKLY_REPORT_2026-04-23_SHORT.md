@@ -53,13 +53,23 @@ Items from Pavel Hájek's weekly update and Discord core dump (2025-10-06 to 202
 
 ## Open items
 
-- Curved rule → curved metric bridges (Schwarzschild, Kerr, FLRW): no known rewriting rule produces these in the continuum limit; the obligation is attached, the bridge theorem is open.
-- Measure theory A6 (weak convergence of the counting measure to Lebesgue), A7 (Wasserstein-1 rate O(1/n)), A8 (d-torus measure lift).
-- Mathlib gap for Riemannian / Lorentzian vector bundles blocks the bundle-theoretic Levi-Civita track (C1–C8).
-- G2 discrete gauge field via a Rung-4 connection.
-- E6 Lorentzian Gromov-Hausdorff; E7 discrete-causal → continuum-Lorentzian convergence.
-- Discrete stress-energy tensor counterpart.
-- Large-scale empirical rule search via `wolframscript` / SetReplace: the Lean-side infrastructure is in place in `RuleSearch.lean`; large-scale enumeration is pending.
+Every item below is an active task; full per-task breakdown in [`NEXT_STEPS.md`](NEXT_STEPS.md) and [`COVERAGE_MAP.md`](COVERAGE_MAP.md).
+
+- **Curved-target GR (Rungs 5 / 9).** Schwarzschild Riemann / Ricci / vacuum EFE (B2–B4), FLRW metric + Ricci + Einstein with perfect fluid (B6 in progress, B7), Reissner-Nordström (B8 in progress), Kerr (B9), Ricci symmetry (B10), second Bianchi (B11); explicit vacuum / matter solutions (F4 / F5 / F6); curved discrete-Ricci convergence (R4 in progress). Over the whole track: no known rewriting rule produces a curved target in the continuum limit; obligations attached, bridge theorems open.
+- **Measure-theoretic limits (Rung 3).** A6 weak convergence counting → Lebesgue (in progress), A7 Wasserstein-1 rate O(1/n), A8 d-torus measure lift.
+- **Bundle machinery / Levi-Civita (Rung 4).** C1 Riemannian bundle, C2 Lorentzian bundle, C3 vector-bundle connection, C4 torsion + curvature at bundle level, C5 Levi-Civita existence-uniqueness (Koszul), C6 bundle Γ consistency, C7 discrete connection on a hypergraph, C8 scaled discrete connection → Levi-Civita — blocked by missing Mathlib infrastructure.
+- **PDE and Einstein evolution (Rungs 6 / 9).** D6 long-time heat → uniform convergence (in progress), D11 Choquet-Bruhat Cauchy problem; discrete stress-energy counterpart.
+- **Fields and gauge (Rung 7).** G2 discrete gauge field via Rung-4 connection, G5 continuum limits of discrete fields, G6 HepLean integration.
+- **Lorentzian geometry (Rung 8).** E5 full ADM lapse-shift decomposition (in progress; foliation existence done), E6 Lorentzian Gromov-Hausdorff, E7 discrete-causal-DAG → continuum Lorentzian convergence.
+- **Numerical relativity (H-series).** Candidate-rule catalog, empirical signature pipeline + screens, scaled-trajectory convergence, curved RicciBridge extensions, BBH initial data / evolution / Ψ₄ extraction / merger convergence (H1–H9).
+- **Combined / emergent frameworks (J-series).** Combined causal + branchial (J1), path integral over causal graphs (J2), emergent gravity à la Jacobson / Verlinde (J3), causal-set-theory comparison (J4), LQG spin-foam comparison (J5), AdS/CFT-analog (J6).
+- **Quantum / branchial continuum (I-series).** I8 continuum limit of branchial Hilbert space, I10 full path-integral formulation.
+- **Infrageometry programme — 7 substantive open items.** IT5 Latschev GH form, IT6 scale-trichotomy bulk, IQ8 EME-tracking functor, IQ9 path-integral amplitudes, IG10 exponential map via weighted shortest-path counts, IB2 causal-branchial-trivial commutator (in progress), ID6 dimension compatibility on regular lattices (in progress), ID7 spectral-dimension small-`t` asymptotics (in progress), IR7 reverse-engineer rule from target signature (in progress), T5 path and d-torus Laplacian spectrum closed forms (in progress).
+- **Rule search.** Large-scale empirical enumeration via `wolframscript` / SetReplace (task #190); Lean-side `RuleSearch.lean` catalog infrastructure in place.
+- **Support (X-series).** X3 Mathlib Taylor integration (uniform C^k-on-compacts), X4 multi-way engine integration from `efficient_rewriting_final`.
+- **Colleague-work (M-series).** M1 Ioana Milea IG-intern coordination, M3 Kolcz Lie-Poisson MBQC, M4 Pullman IBL-∞ / BV, M6 Pokorny paclet parity, M7 Ahmed EME community post, M8 Pokorny diffusion-geometry bridge, M9 tropical geometry, M10 3BP / dynamical-systems dimension signature.
+- **Pavel Hájek planning items (P-series, P1–P19).** Simplicial machinery, cup product, discrete Chern-Simons amplitude, ribbon graphs + Whitehead moves, sheaves on hypergraphs, Koszul signs, homotopy colimit, filtrations of multiway systems, action principle, n-Lie extension of insertion bracket, interaction diagrams from causal graphs, chaos theory, Utkarsh twisted-difference operators, RG flow, observability tools, Knill geodesics, homotopy algebra scaffold, holography / Unruh, (1-skeleton, clique-cochain) decomposition. Mapping in [`NEXT_STEPS.md`](NEXT_STEPS.md) § "Pavel Hájek planning items (P-group)".
+- **Paper drafts (K-series).** K1 audit paper, K2 corrected identities, K3 infrageometry continuum-limits, K4 structural library, K5 Wolfram → GR bridge, K6 branchial QM audit, K7 BBH via hypergraph, K8 discrete d'Alembertian + BD flag, K9 refutation-chain.
 
 ## Near-term priorities
 

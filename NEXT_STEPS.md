@@ -87,49 +87,117 @@ Every theorem above depends only on `{propext, Classical.choice, Quot.sound}`. N
 
 ### Near-term (Rung-1/Rung-2 follow-ons — the machinery is in hand)
 
-- [x] **R3 #178 (partial)** — `ℓ²(BranchialSlice)` as Hilbert space with branchial adjacency operator. `BranchialHilbert.lean` defines `BranchialHilbert S := EuclideanSpace ℂ S` (finite-dim ℂ-Hilbert alias); `branchialAdjLM` is the ℂ-linear adjacency operator; `branchialAdjLM_inner` proves Hermitian self-adjointness for symmetric `adj` (spectral-theorem prerequisite for real spectrum). Remaining: I2 uniform measure, I3 amplitudes, I5 unitary evolution (`exp (i t A)`).
-- [ ] **R4 #179** — Curved discrete-Ricci convergence beyond flat. First non-zero Forman-Ricci convergence case.
-- [ ] **A5 #16** — Counting measure on `Hypergraph V` + pushforward (groundwork for A6 / weak convergence, A7 / Wasserstein).
+- [x] **R3 #178** — `ℓ²(BranchialSlice)` as ℂ-Hilbert space with branchial adjacency operator (done with Born rule, uniform measure, unitary evolution, Hermitian observables).
+- [~] **R4 #179 (in progress)** — Curved discrete-Ricci convergence beyond flat. First non-zero Forman-Ricci convergence case.
+- [x] **A5 #16** — Counting measure on `Hypergraph V` + pushforward (complete; groundwork for A6 / A7).
+- [~] **A6 #17 (in progress)** — Weak convergence of scaled counting measure → Lebesgue on [0,1).
 - [ ] **A7 #18** — Wasserstein-1 convergence rate `O(1/n)` for counting measures.
-- [~] **D6 #47 (partial)** — Long-time convergence of heat solution to uniform. `HeatKernelDecay.lean` proves each non-constant eigenmode (`1 ≤ k < n`) tends to `0` coordinate-wise under heat flow: `heatKernel_cycleHypergraph_firstMode_tendsto_zero` (k=1 spectral gap), `heatKernel_cycleHypergraph_nonzero_mode_tendsto_zero` (all non-zero modes), `heatKernel_cycleHypergraph_const_plus_mode_tendsto` (linear combinations of constant + one non-constant mode converge to the constant-mode component). `SymmEigenOrthogonal.lean` adds the classical spectral-theorem step `cycleEigenvector_orthogonal` — cycle eigenvectors with distinct eigenvalues are orthogonal. Remaining: verification that all `n` cycle eigenvalues are distinct (so they span), plus Parseval-style decomposition of arbitrary `ψ : Fin n → ℝ`.
-- [ ] **D7 #48** — Scaled discrete heat → continuous heat on GH-limit.
+- [ ] **A8 #19** — Lift measure convergence to d-torus.
+- [~] **D6 #47 (in progress, partial)** — Long-time convergence of heat solution to uniform. `HeatKernelDecay.lean` + `SymmEigenOrthogonal.lean` cover single-mode decay and eigenvector orthogonality; remaining: distinctness of all `n` cycle eigenvalues + Parseval-style decomposition of arbitrary `ψ : Fin n → ℝ`.
+- [x] **D7 #48** — Scaled discrete heat → continuous heat on GH-limit.
 
 ### Schwarzschild follow-ons (B-group)
 
 - [ ] **B2 #21** — Schwarzschild Riemann tensor components.
 - [ ] **B3 #22** — Schwarzschild `Ric ≡ 0`.
 - [ ] **B4 #23** — `schwarzschild_satisfies_vacuum_EFE`.
-- [ ] **B5 #25** — Schwarzschild as `PartialMetricData` on exterior.
+- [x] **B5 #25** — Schwarzschild as `PartialMetricData` on exterior.
 
-### Curved-metric families
+### Curved-metric families (B6–B11)
 
-- [ ] **B6–B9** — FLRW, Reissner-Nordström, Kerr metric components + curvature.
+- [~] **B6 #26 (in progress)** — FLRW (Robertson-Walker) metric.
+- [ ] **B7 #27** — FLRW Ricci + Einstein equations with perfect fluid.
+- [~] **B8 #28 (in progress)** — Reissner-Nordström metric.
+- [ ] **B9 #29** — Kerr metric.
+- [ ] **B10 #30** — Ricci symmetry for Levi-Civita connection.
+- [ ] **B11 #32** — second Bianchi identity `∇_μ G^{μν} = 0`.
 
 ### Bundle machinery (C-group; Mathlib gap)
 
-- [ ] **C1–C8** — Riemannian / Lorentzian bundle structure, vector-bundle connections, discrete-connection ↔ Levi-Civita convergence.
+- [ ] **C1 #34** — RiemannianMetric bundle structure.
+- [ ] **C2 #35** — LorentzianMetric bundle structure.
+- [ ] **C3 #36** — Connection on a vector bundle.
+- [ ] **C4 #37** — torsion and curvature at bundle level.
+- [ ] **C5 #38** — Levi-Civita existence-uniqueness (Koszul).
+- [ ] **C6 #39** — bundle Γ consistency with local-coord Γ.
+- [ ] **C7 #40** — discrete connection on a hypergraph.
+- [ ] **C8 #41** — scaled discrete connection → Levi-Civita.
 
 ### Branchial / QM (I-group)
 
-- [x] **I2 #85** — Branchial measure (uniform on finite slice). `BranchialHilbert.lean` defines `branchialUniformWeight` with `sum = 1` when the slice is nonempty.
-- [x] **I3 #86** — Branchial amplitudes (ℂ-valued). `BranchialHilbert.lean` defines `BranchialAmplitude S := BranchialHilbert S` + Born-rule probability `bornProbability ψ s := Complex.normSq (ψ s)` with `sum = ‖ψ‖²`.
-- [x] **I4 #87** — `ℓ²(slice)` Hilbert space (= R3 partial; `BranchialHilbert.lean`).
-- [x] **I5 #88** — Branchial evolution as unitary. `BranchialSchrodinger.lean` proves `branchialSchrodinger_unitary_evolution` — Schrödinger `i∂_tψ = Aψ` with adjacency `A` preserves total probability `∑(u² + v²)` on real/imaginary decomposition. Closes the Stone-type unitarity claim for the finite-dim branchial slice.
-- [x] **I7 #90** — Expectation values + Born rule. `BranchialHilbert.lean` defines `expectationValue A ψ := ⟨ψ, A ψ⟩` with `expectationValue_re_of_symm` (real for Hermitian A) and `expectationValue_eigenvector` (eigenvalue · ‖ψ‖² for eigenvectors).
-- [x] **I6 #89** — Observables as Hermitian operators. `BranchialHilbert.lean` defines `BranchialObservable S` as a ℂ-linear self-adjoint operator structure; `branchialAdjObservable` packages the adjacency operator as an observable; `expectationValue_real` derives reality of the measurement outcome.
-- [x] **I9 #92** — Schrödinger on branchial graph. Closed by `BranchialSchrodinger.lean` (= I5). The `BranchialSchrodinger adj u v` structure IS the Schrödinger equation on the branchial slice with adjacency Hamiltonian.
+- [x] **I1 #84** — Fintype BranchialSlice for finite systems.
+- [x] **I2 #85** — Branchial measure (uniform on finite slice).
+- [x] **I3 #86** — Branchial amplitudes (ℂ-valued) + Born rule.
+- [x] **I4 #87** — `ℓ²(slice)` Hilbert space.
+- [x] **I5 #88** — Branchial evolution as unitary.
+- [x] **I6 #89** — Observables as Hermitian operators.
+- [x] **I7 #90** — Expectation values + Born rule.
+- [ ] **I8 #91** — Branchial → QM Hilbert-space continuum limit.
+- [x] **I9 #92** — Schrödinger on branchial graph.
+- [ ] **I10 #93** — Path-integral formulation.
+
+### Combined / emergent frameworks (J-group)
+
+- [ ] **J1 #94** — combined causal + branchial structure.
+- [ ] **J2 #95** — path integral over causal graphs.
+- [ ] **J3 #96** — emergent-gravity (Jacobson / Verlinde style).
+- [ ] **J4 #97** — comparison with causal-set theory.
+- [ ] **J5 #98** — comparison with LQG spin-foam models.
+- [ ] **J6 #99** — AdS/CFT-analog in the Wolfram model.
 
 ### Einstein / stress-energy (F-group)
 
-- [ ] F-group all open (F1–F8): stress-energy tensor, energy conditions, full Einstein equations with Λ, Schwarzschild as explicit vacuum solution, FLRW explicit, Kerr, Penrose singularity theorem, Raychaudhuri equation.
+- [x] **F1 #60** — Stress-energy tensor type.
+- [x] **F2 #61** — Energy conditions (WEC / NEC / SEC / DEC).
+- [x] **F3 #62** — Full Einstein equations with Λ (`EinsteinEqLambda`).
+- [ ] **F4 #63** — Schwarzschild as explicit vacuum solution.
+- [ ] **F5 #64** — FLRW as explicit solution with matter.
+- [ ] **F6 #65** — Kerr as vacuum solution.
+- [x] **F7 #66** — Penrose singularity theorem (statement).
+- [x] **F8 #67** — Raychaudhuri equation (discrete + continuum).
+- [ ] Discrete stress-energy tensor counterpart (F-series continuation).
 
 ### Lorentzian-manifold (E-group)
 
-- [ ] E-group all open: `LorentzianManifold`, chronological relations, light cones, causality conditions, Cauchy surfaces / ADM, Lorentzian GH, discrete-causal-DAG → continuum Lorentzian convergence.
+- [x] **E1 #53** — `LorentzianManifold` structure (`DiagLorentzianManifold`).
+- [x] **E2 #54** — chronological and causal relations as filters.
+- [x] **E3 #55** — light cones, causal future / past.
+- [x] **E4 #56** — causality conditions (strong / stable / globally-hyperbolic).
+- [~] **E5 #57 (in progress)** — Cauchy surfaces + ADM decomposition (foliation existence proved; lapse-shift pending).
+- [ ] **E6 #58** — Lorentzian Gromov-Hausdorff.
+- [ ] **E7 #59** — discrete-causal-DAG → continuum Lorentzian convergence.
+- [ ] **D11 #52** — Cauchy problem for Einstein evolution (Choquet-Bruhat).
 
 ### BBH-numerics (H-group)
 
-- [ ] H-group all open: candidate rules catalog, empirical dimensional signatures pipeline, screening tests, curved-target RicciBridge extensions, BBH initial data, BBH evolution, discrete Ψ₄ extraction, BBH merger convergence.
+- [ ] **H1 #74** — catalog candidate rules from literature.
+- [ ] **H2 #76** — empirical dimensional-signatures pipeline.
+- [ ] **H3 #77** — candidate rule passing signature screens.
+- [ ] **H4 #78** — scaled trajectory → continuum manifold convergence.
+- [ ] **H5 #79** — curved-target RicciBridge extensions.
+- [ ] **H6 #80** — BBH initial data as hypergraph.
+- [ ] **H7 #81** — BBH evolution under candidate rule.
+- [ ] **H8 #82** — discrete Ψ₄ extraction matching NR waveforms.
+- [ ] **H9 #83** — convergence to BBH merger spacetime.
+
+### Fields / gauge (G-group)
+
+- [x] **G1 #68** — discrete scalar field on `Hypergraph V`.
+- [ ] **G2 #69** — discrete gauge field via Rung-4 connection.
+- [x] **G3 #70** — discrete Lagrangian density + action.
+- [x] **G4 #71** — discrete Euler-Lagrange equations.
+- [ ] **G5 #72** — continuum limits of discrete fields.
+- [ ] **G6 #73** — HepLean integration.
+
+### Infrageometry in-progress items (carried over across groups)
+
+- [~] **IR7 #165** — reverse-engineer rule from target signature.
+- [~] **IB2 #147** — causal-branchial-trivial commutator theorem.
+- [~] **ID6 #144** — compatibility theorem — all dimension notions agree on regular lattices.
+- [~] **ID7 #145** — spectral dimension via heat-kernel trace (small-`t` asymptotics).
+- [~] **T5 #185** — path and d-torus Laplacian spectrum closed forms.
+- [ ] **IG10 #123** — exponential map via weighted shortest-path counts.
+- [ ] **Rule search #190** — large-scale empirical rule enumeration via `wolframscript` / SetReplace; `RuleSearch.lean` catalog infrastructure is in place.
 
 ### Paper drafts (K-group)
 
