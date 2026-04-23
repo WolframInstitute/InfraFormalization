@@ -47,6 +47,10 @@ Legend for the State column:
 | 9 | Einstein equations | flat case proved; curved case open | `EinsteinEqLambda` predicate; Minkowski + flat connection solves vacuum EFE; flat connection forces Λ = 0; stress-energy type; energy conditions; Penrose and Raychaudhuri statements; Schwarzschild / FLRW / Kerr vacuum-EFE proofs pending |
 | 10 | Hypergraph → GR | flat case proved end-to-end; curved case has the obligation Prop attached but the curved bridge theorem is open | Flat bridges proved: cycle → circle, path → interval, 2-torus, d-torus, discrete Lorentz → Minkowski; every continuum GR target carries an origin-obligation Prop; flat-case witnesses are inhabited; curved-case witnesses are not |
 
+## Research directions on file
+
+Items from Pavel Hájek's weekly update and Discord core dump (2025-10-06 to 2026-04-14) have been mapped against the library and tracked as tasks **P1–P19**. Highlights: P1 delta / simplicial machinery on hypergraphs; P3 discrete Chern-Simons amplitude (overlaps M4 Pullman IBL-∞); P4 ribbon (hyper)graph structure + Whitehead moves; P5 sheaves on hypergraphs; P6 Koszul signs; P7 homotopy colimit of multiway systems; P9 action principle for rewriting; P10 n-Lie extension of the insertion bracket; P13 Utkarsh Bajaj twisted-difference operators (ring-of-functions reconstruction); P16 Knill geodesics approximating Riemannian geodesics. Full item-by-item mapping in [`RESEARCH_DIRECTIONS.md`](RESEARCH_DIRECTIONS.md).
+
 ## Open items
 
 - Curved rule → curved metric bridges (Schwarzschild, Kerr, FLRW): no known rewriting rule produces these in the continuum limit; the obligation is attached, the bridge theorem is open.

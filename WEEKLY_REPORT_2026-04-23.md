@@ -265,6 +265,23 @@ Empirical: 2102.09363 named rule shows causal-graph dimension = 1 on every teste
 - `DagBlowup`, `DagCalculus`, `DeRham`, `FormCochainIntegration` (IA series).
 - `SyntheticGeometry`, `SyntheticAxiomatic`, `InfrageometricScene` (IS series).
 
+## Research directions on file (cross-collaborator planning)
+
+Tracked as tasks **P1–P19** (catalog in [`RESEARCH_DIRECTIONS.md`](RESEARCH_DIRECTIONS.md)). These are items from Pavel Hájek's weekly update and Discord "core dump" (2025-10-06 to 2026-04-14) not yet formalised here.
+
+- **Simplicial / complex machinery.** P1 Delta and simplicial machinery (face maps, degeneracies, barycentric subdivision, coordinate-squashing); P2 cup product and comparison of two form definitions; P19 hypergraph as (1-skeleton, clique-complex cochain) — Kolpakov direction.
+- **Chern-Simons and homotopy algebra.** P3 Discrete Chern-Simons amplitude from Hodge propagator + ribbon graphs + IBL-∞ twist (overlaps M4 Pullman); P17 homotopy-algebra and homological-algebra scaffold.
+- **Ribbon structure.** P4 Ribbon (hyper)graph structure + Whitehead moves + amplitudohedron-type representations.
+- **Sheaves and cohomology.** P5 Sheaves on hypergraphs, restriction maps, sheaf cohomology, orientation sheaf.
+- **Signs and brackets.** P6 Koszul signs / graded Lie bracket on (hyper)graph rewriting; P10 n-Lie / Filippov extension of the insertion bracket (IB4).
+- **Multiway and action.** P7 Homotopy colimit of multiway systems (Knill invariants on simplicial sets); P8 filtrations of multiway systems; P9 action principle for rewriting (Carlos Zapata thread).
+- **Causal / interaction.** P11 Interaction diagrams from causal graphs; P12 chaos theory (vertical and horizontal).
+- **Dual and renormalisation.** P13 Utkarsh Bajaj twisted-difference operators and ring-of-functions reconstruction theorem; P14 blow-up rules as renormalisation-group flow.
+- **Geometry.** P16 Knill geodesics approximating Riemannian geodesics (Latschev extension).
+- **Physics and tooling.** P18 Holography / Unruh effect discussions; P15 observability tools (flame graph / waterfall).
+
+See [`RESEARCH_DIRECTIONS.md`](RESEARCH_DIRECTIONS.md) for the full item-by-item mapping of Pavel's planning notes to coverage status and task IDs.
+
 ## Open items
 
 - Curved rule → curved metric bridges (Schwarzschild / Kerr / FLRW) — no known rewriting rule produces these in the continuum limit; the obligation Props are attached, and the bridge theorems are open.
