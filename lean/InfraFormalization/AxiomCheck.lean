@@ -166,6 +166,7 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.Curvature.MetricData.toPartial_christoffel
 #print axioms InfraFormalization.Curvature.schwarzschildPartial_christoffel
 #print axioms InfraFormalization.Curvature.flrwChristoffel_0_00
+#print axioms InfraFormalization.Curvature.flrwG_lorentzian_pointwise
 #print axioms InfraFormalization.in_degree_eq_lhsSize
 #print axioms InfraFormalization.out_degree_eq_rhsSize
 #print axioms InfraFormalization.balanced_of_conservative

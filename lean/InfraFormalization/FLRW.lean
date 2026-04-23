@@ -139,5 +139,34 @@ theorem flrwChristoffel_0_00 (a da : ℝ → ℝ) (x : Fin 4 → ℝ) :
     ring
   rw [h_sum]; ring
 
+/-- **FLRW metric is Lorentzian where scale factor is non-zero.**
+`flrwG a x` satisfies the diagonal Lorentzian signature (`g_00 < 0`,
+`g_ii > 0`, off-diagonal zero) at every point where `a(x 0) ≠ 0`.
+
+This uses a weaker predicate than `DiagLorentzianMetric` (which
+quantifies over all `x`), since the FLRW metric is only Lorentzian
+on the non-singular region. -/
+theorem flrwG_lorentzian_pointwise (a : ℝ → ℝ) (x : Fin 4 → ℝ)
+    (hv : FLRWValid a x) :
+    flrwG a x 0 0 < 0
+    ∧ (∀ i : Fin 4, 0 < i.val → 0 < flrwG a x i i)
+    ∧ (∀ μ ν : Fin 4, μ ≠ ν → flrwG a x μ ν = 0) := by
+  refine ⟨?_, ?_, ?_⟩
+  · -- g_00 = -1 < 0.
+    unfold flrwG
+    simp
+  · -- g_ii = a(t)^2 > 0.
+    intro i hi
+    unfold flrwG
+    have hi_ne_zero : i.val ≠ 0 := Nat.pos_iff_ne_zero.mp hi
+    simp [hi_ne_zero]
+    have ha : a (x 0) ≠ 0 := hv
+    have h_sq_pos : 0 < (a (x 0))^2 := by positivity
+    exact h_sq_pos
+  · -- off-diagonal zero.
+    intros μ ν h
+    unfold flrwG
+    simp [h]
+
 end Curvature
 end InfraFormalization
