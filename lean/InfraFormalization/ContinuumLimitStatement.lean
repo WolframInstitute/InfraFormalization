@@ -31,6 +31,7 @@ import Mathlib.Topology.Basic
 import Mathlib.Analysis.Calculus.Deriv.Basic
 import Mathlib.Analysis.SpecialFunctions.Exp
 import Mathlib.MeasureTheory.Integral.IntervalIntegral.Basic
+import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 
 namespace InfraFormalization
 
@@ -192,6 +193,51 @@ theorem A6_identity_sum_closed_form (n : ℕ) (hn : 0 < n) :
   have hn_ne : (n : ℝ) ≠ 0 := ne_of_gt hn_pos
   rw [← Finset.sum_div, sum_fin_val_eq_triangular]
   field_simp
+
+/-- **Riemann sum `(n-1)/(2n)` converges to `1/2`**. Splits the
+expression as `1/2 - 1/(2n)`, then applies
+`(1/n) → 0` for the second term. -/
+theorem tendsto_nMinusOne_div_twoN :
+    Filter.Tendsto (fun n : ℕ => ((n : ℝ) - 1) / (2 * n))
+      Filter.atTop (nhds (1 / 2)) := by
+  have h_eqv : ∀ n : ℕ, 0 < n →
+      ((n : ℝ) - 1) / (2 * n) = 1 / 2 - 1 / (2 * n) := by
+    intro n hn
+    have hn_ne : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
+    field_simp
+  have h_nat : Filter.Tendsto (fun n : ℕ => (n : ℝ)) Filter.atTop Filter.atTop :=
+    tendsto_natCast_atTop_atTop
+  have h_2n : Filter.Tendsto (fun n : ℕ => 2 * (n : ℝ)) Filter.atTop Filter.atTop :=
+    Filter.Tendsto.const_mul_atTop (by norm_num : (0 : ℝ) < 2) h_nat
+  have h_inv : Filter.Tendsto (fun n : ℕ => 1 / (2 * (n : ℝ)))
+      Filter.atTop (nhds 0) := by
+    have := h_2n.inv_tendsto_atTop
+    refine this.congr ?_
+    intro n
+    rw [one_div]; rfl
+  have h_target : Filter.Tendsto
+      (fun n : ℕ => (1 / 2 : ℝ) - 1 / (2 * n)) Filter.atTop
+      (nhds ((1 / 2 : ℝ) - 0)) :=
+    Filter.Tendsto.sub tendsto_const_nhds h_inv
+  rw [sub_zero] at h_target
+  refine h_target.congr' (Filter.eventually_atTop.mpr ⟨1, fun n hn => ?_⟩)
+  exact (h_eqv n (by omega)).symm
+
+/-- **A6 holds for the identity function `f(x) = x`**: the Riemann sum
+`(1/n) · Σ_{k : Fin n} (k/n) = (n-1)/(2n) → 1/2 = ∫_0^1 x dx`.
+Follows from `A6_identity_sum_closed_form` plus
+`tendsto_nMinusOne_div_twoN`. Concrete A6 verification on the first
+non-constant polynomial integrand. -/
+theorem A6_for_identity :
+    Filter.Tendsto
+      (fun n : ℕ => (1 / (n : ℝ)) * ∑ k : Fin n, ((k : ℝ) / (n : ℝ)))
+      Filter.atTop
+      (nhds (∫ x in (0 : ℝ)..1, x)) := by
+  have h_integral : (∫ x in (0 : ℝ)..1, x) = 1 / 2 := by
+    rw [integral_id]; norm_num
+  rw [h_integral]
+  refine tendsto_nMinusOne_div_twoN.congr' (Filter.eventually_atTop.mpr ⟨1, fun n hn => ?_⟩)
+  exact (A6_identity_sum_closed_form n (by omega)).symm
 
 /-- **Discrete wave → continuum wave on scaled lattice** (upgraded
 from `True` to real content).
