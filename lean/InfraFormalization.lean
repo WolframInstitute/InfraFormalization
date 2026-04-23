@@ -148,6 +148,7 @@ import InfraFormalization.BranchialCanonical
 import InfraFormalization.PathHypergraph
 import InfraFormalization.PathHypergraphDistance
 import InfraFormalization.CycleHeatDecayBounds
+import InfraFormalization.FisherMetricExtended
 import InfraFormalization.CurvedRicciBridge
 import InfraFormalization.ContinuumBridgeDemo
 import InfraFormalization.EinsteinEquations
