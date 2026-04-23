@@ -123,5 +123,28 @@ theorem sphereChristoffel_0_1_1 (x : Fin 2 → ℝ) :
   simp
   ring
 
+/-- **2-sphere Christoffel `Γ¹_{01} = cot(θ)` = cos θ / sin θ.** The
+other non-zero Christoffel symbol on S². Non-zero whenever
+`cos θ ≠ 0`. -/
+theorem sphereChristoffel_1_0_1 (x : Fin 2 → ℝ) (hv : SphereValid x) :
+    spherePartial.christoffel x 1 0 1 = Real.cos (x 0) / Real.sin (x 0) := by
+  unfold PartialMetricData.christoffel
+  simp only [spherePartial, sphereGinv, sphereDg, sphereG]
+  have hs : Real.sin (x 0) ≠ 0 := hv
+  have hsq : (Real.sin (x 0))^2 ≠ 0 := pow_ne_zero 2 hs
+  simp
+  field_simp
+
+/-- **2-sphere has non-flat geometry at generic points**: for any
+`x : Fin 2 → ℝ` with `sin θ ≠ 0` and `cos θ ≠ 0`, the Christoffel
+symbol `Γ¹_{01}` is non-zero. This is the "beyond flat" witness for
+the 2-sphere analog of R4. -/
+theorem sphereChristoffel_nonzero (x : Fin 2 → ℝ) (hv : SphereValid x)
+    (hc : Real.cos (x 0) ≠ 0) :
+    spherePartial.christoffel x 1 0 1 ≠ 0 := by
+  rw [sphereChristoffel_1_0_1 x hv]
+  have hs : Real.sin (x 0) ≠ 0 := hv
+  exact div_ne_zero hc hs
+
 end Curvature
 end InfraFormalization

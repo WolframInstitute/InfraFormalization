@@ -175,6 +175,8 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.Curvature.rnLapse_schwarzschild
 #print axioms InfraFormalization.Curvature.rnLapse_pos_of_large_r_Q_zero
 #print axioms InfraFormalization.Curvature.sphereChristoffel_0_1_1
+#print axioms InfraFormalization.Curvature.sphereChristoffel_1_0_1
+#print axioms InfraFormalization.Curvature.sphereChristoffel_nonzero
 #print axioms InfraFormalization.Curvature.dsLapse_minkowski
 #print axioms InfraFormalization.Curvature.dsLapse_pos_iff
 #print axioms InfraFormalization.Curvature.gr_metric_zoo
