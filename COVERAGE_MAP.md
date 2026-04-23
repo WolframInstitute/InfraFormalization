@@ -92,7 +92,9 @@ General C² case now proved in `CTwoTaylor.lean` + `ScaledDiffC2Bridge.lean` —
 | `DiscreteRicci.lean` | Forman-Ricci on graphs + hypergraphs; sign-of-curvature theorems | ✅ |
 | `RicciBridge.lean` | Circle / cycle Ricci = 0 match (discrete Forman ↔ continuum Ricci) | ✅ |
 
-Pending in this group: B2 Schwarzschild Riemann components, B3 `Ric = 0`, B4 vacuum EFE, B5 Schwarzschild as PartialMetricData, B6 FLRW, B7 FLRW Ricci, B8 Reissner-Nordström, B9 Kerr, B10 Ricci symmetry (for Levi-Civita), B11 second Bianchi.
+Done in this group: B1 (Schwarzschild Christoffels), B5 (Schwarzschild `PartialMetricData`), B6 (FLRW `PartialMetricData`), B8 (Reissner-Nordström `PartialMetricData` + `rn_from_hypergraph` origin obligation inhabited).
+
+Pending in this group: B2 Schwarzschild Riemann components, B3 `Ric = 0`, B4 vacuum EFE, B7 FLRW Ricci + perfect fluid, B9 Kerr `PartialMetricData` bundle, B10 Ricci symmetry (for Levi-Civita), B11 second Bianchi.
 
 ## 6. Refutation track
 
@@ -116,7 +118,7 @@ Pending in this group: B2 Schwarzschild Riemann components, B3 `Ric = 0`, B4 vac
 
 Pending in ID: ID6 compatibility theorem (all dimension notions agree on regular lattices; in progress), ID7 spectral dim via `Matrix.exp` small-`t` asymptotics (in progress). ID2 / ID3 / ID4 / ID5 are closed with real content.
 
-Adjacent open problem: **P20 Rodkey classification** (task #212) — characterise hypergraphs for which `localDimension v r` is constant across vertices; infrastructure in place (`Hypergraph.localDimension`, `wolframHausdorffDimension`, `plateauDimension`), classification theorem open. Partner with Pavel Hájek and Dugan Hammock.
+Adjacent open problem: **P20 Rodkey classification** (task #212) — characterise hypergraphs for which `localDimension v r` is constant across vertices; infrastructure in place (`Hypergraph.localDimension`, `wolframHausdorffDimension`, `plateauDimension`), classification theorem open. Partner with Pavel Hájek and Dugan Hammock. First example class proved in `RodkeyClassification.lean` (2026-04-29 week): `cycleHypergraph_ballVolumeVertexUniform` shows every `cycleHypergraph n` with `n ≥ 2` satisfies the Rodkey condition at every radius (via rotation automorphism `cycleRotHom` + `Walk.map` + dist-translation-invariance).
 
 ## 7b. Infragauge / Infracausality / Infratopology / Synthetic / Blowup / Ruliology
 

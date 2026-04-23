@@ -107,7 +107,7 @@ Every theorem above depends only on `{propext, Classical.choice, Quot.sound}`. N
 
 - [~] **B6 #26 (in progress)** — FLRW (Robertson-Walker) metric.
 - [ ] **B7 #27** — FLRW Ricci + Einstein equations with perfect fluid.
-- [~] **B8 #28 (in progress)** — Reissner-Nordström metric.
+- [x] **B8 #28** — Reissner-Nordström metric: `rnPartial M Q : PartialMetricData 4` on exterior validity domain; attached origin-obligation `rn_from_hypergraph M Q` inhabited via `rn_from_hypergraph_proved`.
 - [ ] **B9 #29** — Kerr metric.
 - [ ] **B10 #30** — Ricci symmetry for Levi-Civita connection.
 - [ ] **B11 #32** — second Bianchi identity `∇_μ G^{μν} = 0`.
