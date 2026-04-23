@@ -1,0 +1,42 @@
+Added or done since the 2026-04-23 weekly update (newest first):
+
+- RuleSignature: universal admissibility of trajectory states (signature_ballVolume_le_card, trajectory_state_signature_admissible)
+- pathHypergraph_size: exact edge count = n-1 (pathEdge_injective, pathHypergraph_size)
+- RuleSignature: concrete edgeCount screens for canonical start states (cycleHypergraph_start, empty_start)
+- Concrete signature anchors: cycleHypergraph_size + empty_signature_edgeCount
+- IR6: unconditional admissibility screen for CandidateRule (notAdmissible_unreachable)
+- IR6: AllConservative predicate + edgeCount screen (allConservative_iff_not_notConservative, allConservative_edgeCount_screen)
+- RuleSignature: Admissible predicate + combined screening (Admissible, not_admissible_unreachable, vertexCount_mismatch_unreachable)
+- RuleSignature: ball-volume oversize screening criterion (ballVolume_oversize_unreachable)
+- RuleSignature: vertexCount_invariant + edge-count mismatch screening (vertexCount_invariant, edgeCount_mismatch_unreachable_of_conservative)
+- IR7: refined reverse-engineering obligation — realisability-restricted form (reverseEngineering_for_realisable_signatures, reverseEngineering_for_empty)
+- Ollivier audit: worked S² example — discrepancy is δε²/8 (s2_gorard_error, s2_gorard_error_pos)
+- Ollivier audit: quantitative Ric_vv vs scalar R discrepancy (ollivier_minus_gorard_leading, ollivier_gorard_agree_iff)
+- A6: A6Holds_zero + A6Holds.sub convenience lemmas
+- A6: linearity — A6Holds predicate closed under const_mul and add (A6Holds, A6Holds.const_mul, A6Holds.add, A6Holds_const/id/sq/cube, A6Holds_poly_deg3)
+- A6: A6_for_cube — full convergence for the cubic test function (sum_fin_val_cube_eq, A6_cube_sum_closed_form, tendsto_cubeRiemann_to_quarter, A6_for_cube)
+- A6: A6_for_sq — full convergence for the quadratic test function (sum_fin_val_sq_eq, A6_sq_sum_closed_form, tendsto_sqRiemann_to_third, A6_for_sq)
+- A6: A6_for_identity — full convergence for the identity test function (A6_identity_sum_closed_form, tendsto_nMinusOne_div_twoN, A6_for_identity)
+- A6: Gauss summation on Fin n in ℝ (sum_fin_val_eq_triangular)
+- A5: pushforward preserves total mass (pushforwardUniform_univ, pushforwardCounting_univ)
+- P20: rodkey_classification_nontrivial — separation theorem on Fin 3
+- P20: pathHypergraph is NOT BallVolumeVertexUniform — canonical negative example (pathHypergraph_not_ballVolumeVertexUniform)
+- P20: pathHypergraph adjacency machinery (pathHypergraph_Adj_iff, pathHypergraph_reachable_zero, pathHypergraph_connected, pathHypergraph_degree_zero, pathHypergraph_degree_one)
+- P20: contrapositive — non-regular connected graph is not BallVolumeVertexUniform (not_ballVolumeVertexUniform_of_degree_ne)
+- P20: geodesicBallVolume_one_eq_degree_plus_one + degree_uniform corollary
+- G3+G4: Universal obligation-witness for Lorentzian + EFE
+- G2: any_metric_has_obligation_witness + PartialMetricData counterpart
+- G1: ConnectionDataOriginObligation inhabited for every ConnectionData
+- P20: AdjTransitive implies uniform SimpleGraph.degree (degree_invariant_of_adjTransitive)
+- P20: Full Rodkey chain on cycleHypergraph (cycleHypergraph_rodkey_chain)
+- P20: cycleHypergraph_adjTransitive via rotation automorphism
+- P20: AdjTransitive → DistTransitive via Walk.map (distTransitive_of_adjTransitive)
+- P20: Dist-transitivity as abstract sufficient condition (DistTransitive, ballVolumeVertexUniform_of_distTransitive)
+- de Sitter: close continuum-island with dsPartial bundle + origin obligation (dsDg, dsPartial, deSitter_from_hypergraph, deSitter_from_hypergraph_proved)
+- Reissner-Nordström: close continuum-island with rnPartial bundle + origin obligation (rnDg, rnPartial, rn_from_hypergraph, rn_from_hypergraph_proved)
+- P20: cycleHypergraph full vertex-uniformity via rotation automorphism (cycleRotHom, cycleHypergraph_dist_translation, cycleHypergraph_ballVolumeVertexUniform, cycleHypergraph_localDimensionVertexUniform, cycleHypergraph_distTransitive)
+- P20: RodkeyClassification base cases (BallVolumeVertexUniform, LocalDimensionVertexUniform, cycleHypergraph_ballVolumeVertexUniform_at_{zero,one,large}, cycleHypergraph_ballVolumeVertexUniform_baseCases)
+- B8: Reissner-Nordström as PartialMetricData 4 (rnDg, rnPartial bundle)
+- Weekly-report / planning / README sync commits (LICENSE.md, RESEARCH_DIRECTIONS.md, NEXT_STEPS consolidation, tone/count corrections)
+- Docs sync: 2026-04-23 grounding-audit closure + weekly report
+- G4: EFE obligations with hypergraph-rule-existence attachments (EFEOriginObligation, EFEOriginObligation_iff_EinsteinEqLambda, minkowski4_flat_vacuum_EFE_originated_global)
