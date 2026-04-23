@@ -53,4 +53,107 @@ theorem pathHypergraph_heatKernel_preserves_const_at (n : ℕ) (c : ℝ) (t : �
     ((Hypergraph.heatKernel (pathHypergraph n) t).mulVec (fun _ => c)) v = c := by
   rw [heatKernel_pathHypergraph_const_invariant n c t]
 
+/-- **Path hypergraph adjacency iff val-difference is 1.** Two vertices
+of `pathHypergraph n` are adjacent iff they are distinct and their
+`Fin`-values differ by exactly one. Unlike the cycle, there is no
+wrap-around: `0` is not adjacent to `n - 1`. -/
+theorem pathHypergraph_Adj_iff (n : ℕ) (i j : Fin n) :
+    (pathHypergraph n).Adj i j ↔ i ≠ j ∧ (i.val + 1 = j.val ∨ j.val + 1 = i.val) := by
+  constructor
+  · rintro ⟨hne, e, he, hcontains⟩
+    refine ⟨hne, ?_⟩
+    rw [Multiset.mem_toFinset] at he
+    unfold pathHypergraph at he
+    simp only [Finset.image_val, Multiset.mem_dedup, Multiset.mem_map,
+               Finset.mem_val, Finset.mem_univ, true_and] at he
+    obtain ⟨k, hk⟩ := he
+    subst hk
+    obtain ⟨hi, hj⟩ := hcontains
+    have hverts : (pathEdge n k).verts =
+        [⟨k.val, by have h : k.val < n - 1 := k.isLt; omega⟩,
+         ⟨k.val + 1, by have h : k.val < n - 1 := k.isLt; omega⟩] := rfl
+    rw [hverts] at hi hj
+    simp only [List.mem_cons, List.mem_singleton, List.not_mem_nil,
+               or_false] at hi hj
+    rcases hi with hi_eq | hi_eq <;> rcases hj with hj_eq | hj_eq
+    · subst hi_eq; subst hj_eq; exact absurd rfl hne
+    · left
+      have hi_val : i.val = k.val := by rw [hi_eq]
+      have hj_val : j.val = k.val + 1 := by rw [hj_eq]
+      omega
+    · right
+      have hi_val : i.val = k.val + 1 := by rw [hi_eq]
+      have hj_val : j.val = k.val := by rw [hj_eq]
+      omega
+    · subst hi_eq; subst hj_eq; exact absurd rfl hne
+  · rintro ⟨hne, hcases⟩
+    have hmem_univ_val : ∀ (x : Fin (n - 1)),
+        x ∈ (Finset.univ : Finset (Fin (n - 1))).val :=
+      fun x => Finset.mem_val.mpr (Finset.mem_univ x)
+    cases hcases with
+    | inl hij =>
+      -- i.val + 1 = j.val, so i.val < n - 1 (since j.val < n)
+      have hi_lt : i.val < n - 1 := by
+        have hj_lt := j.isLt
+        omega
+      let k : Fin (n - 1) := ⟨i.val, hi_lt⟩
+      refine ⟨hne, pathEdge n k, ?_, ?_, ?_⟩
+      · rw [Multiset.mem_toFinset]
+        unfold pathHypergraph
+        simp only [Finset.image_val, Multiset.mem_dedup, Multiset.mem_map,
+                   Finset.mem_val, Finset.mem_univ, true_and]
+        exact ⟨k, rfl⟩
+      · show i ∈ (pathEdge n k).verts
+        have : (pathEdge n k).verts =
+            [⟨k.val, by have h : k.val < n - 1 := k.isLt; omega⟩,
+             ⟨k.val + 1, by have h : k.val < n - 1 := k.isLt; omega⟩] := rfl
+        rw [this]
+        simp only [List.mem_cons, List.mem_singleton]
+        left
+        exact Fin.ext rfl
+      · show j ∈ (pathEdge n k).verts
+        have : (pathEdge n k).verts =
+            [⟨k.val, by have h : k.val < n - 1 := k.isLt; omega⟩,
+             ⟨k.val + 1, by have h : k.val < n - 1 := k.isLt; omega⟩] := rfl
+        rw [this]
+        simp only [List.mem_cons, List.mem_singleton, List.not_mem_nil,
+                   or_false]
+        right
+        apply Fin.ext
+        show j.val = k.val + 1
+        have hk_val : k.val = i.val := rfl
+        omega
+    | inr hji =>
+      -- j.val + 1 = i.val, symmetric case
+      have hj_lt : j.val < n - 1 := by
+        have hi_lt := i.isLt
+        omega
+      let k : Fin (n - 1) := ⟨j.val, hj_lt⟩
+      refine ⟨hne, pathEdge n k, ?_, ?_, ?_⟩
+      · rw [Multiset.mem_toFinset]
+        unfold pathHypergraph
+        simp only [Finset.image_val, Multiset.mem_dedup, Multiset.mem_map,
+                   Finset.mem_val, Finset.mem_univ, true_and]
+        exact ⟨k, rfl⟩
+      · show i ∈ (pathEdge n k).verts
+        have : (pathEdge n k).verts =
+            [⟨k.val, by have h : k.val < n - 1 := k.isLt; omega⟩,
+             ⟨k.val + 1, by have h : k.val < n - 1 := k.isLt; omega⟩] := rfl
+        rw [this]
+        simp only [List.mem_cons, List.mem_singleton, List.not_mem_nil,
+                   or_false]
+        right
+        apply Fin.ext
+        show i.val = k.val + 1
+        have hk_val : k.val = j.val := rfl
+        omega
+      · show j ∈ (pathEdge n k).verts
+        have : (pathEdge n k).verts =
+            [⟨k.val, by have h : k.val < n - 1 := k.isLt; omega⟩,
+             ⟨k.val + 1, by have h : k.val < n - 1 := k.isLt; omega⟩] := rfl
+        rw [this]
+        simp only [List.mem_cons, List.mem_singleton]
+        left
+        exact Fin.ext rfl
+
 end InfraFormalization
