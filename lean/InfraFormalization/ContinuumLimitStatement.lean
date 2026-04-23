@@ -239,6 +239,90 @@ theorem A6_for_identity :
   refine tendsto_nMinusOne_div_twoN.congr' (Filter.eventually_atTop.mpr ⟨1, fun n hn => ?_⟩)
   exact (A6_identity_sum_closed_form n (by omega)).symm
 
+/-- **Sum of squares formula on `Fin n` (real-valued)**:
+`∑_{k : Fin n} k² = n(n-1)(2n-1)/6` (in `ℝ`). Proved by induction on
+`n` using `Fin.sum_univ_castSucc`. Building block for A6 tests on the
+x² integrand. -/
+theorem sum_fin_val_sq_eq (n : ℕ) :
+    (∑ k : Fin n, ((k.val : ℝ))^2)
+      = (n : ℝ) * ((n : ℝ) - 1) * (2 * (n : ℝ) - 1) / 6 := by
+  induction n with
+  | zero => simp
+  | succ n ih =>
+    rw [Fin.sum_univ_castSucc]
+    simp only [Fin.val_castSucc, Fin.val_last]
+    rw [ih]
+    push_cast
+    ring
+
+/-- **A6 Riemann-sum closed form for `x²`**:
+`(1/n) · Σ_{k : Fin n} (k/n)² = (n-1)(2n-1)/(6n²)` for `n ≥ 1`.
+Immediate consequence of `sum_fin_val_sq_eq`. -/
+theorem A6_sq_sum_closed_form (n : ℕ) (hn : 0 < n) :
+    (1 / (n : ℝ)) * (∑ k : Fin n, ((k : ℝ) / (n : ℝ))^2)
+      = ((n : ℝ) - 1) * (2 * (n : ℝ) - 1) / (6 * n^2) := by
+  have hn_pos : (0 : ℝ) < n := by exact_mod_cast hn
+  have hn_ne : (n : ℝ) ≠ 0 := ne_of_gt hn_pos
+  have h_rewrite : ∀ k : Fin n,
+      ((k : ℝ) / (n : ℝ))^2 = ((k.val : ℝ)^2) / (n^2) := by
+    intro k; field_simp
+  simp_rw [h_rewrite]
+  rw [← Finset.sum_div, sum_fin_val_sq_eq]
+  field_simp
+
+/-- **Convergence `(n-1)(2n-1)/(6n²) → 1/3`** as `n → ∞`. Splits the
+expression as `1/3 - 1/(2n) + 1/(6n²)`, each auxiliary term vanishing. -/
+theorem tendsto_sqRiemann_to_third :
+    Filter.Tendsto (fun n : ℕ => ((n : ℝ) - 1) * (2 * n - 1) / (6 * n^2))
+      Filter.atTop (nhds (1 / 3)) := by
+  have h_eqv : ∀ n : ℕ, 0 < n →
+      ((n : ℝ) - 1) * (2 * n - 1) / (6 * n^2)
+        = 1 / 3 - 1 / (2 * n) + 1 / (6 * n^2) := by
+    intro n hn
+    have hn_ne : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
+    field_simp
+    ring
+  have h_nat : Filter.Tendsto (fun n : ℕ => (n : ℝ)) Filter.atTop Filter.atTop :=
+    tendsto_natCast_atTop_atTop
+  have h_2n : Filter.Tendsto (fun n : ℕ => 2 * (n : ℝ)) Filter.atTop Filter.atTop :=
+    Filter.Tendsto.const_mul_atTop (by norm_num : (0 : ℝ) < 2) h_nat
+  have h_inv_2n : Filter.Tendsto (fun n : ℕ => 1 / (2 * (n : ℝ)))
+      Filter.atTop (nhds 0) := by
+    refine (h_2n.inv_tendsto_atTop).congr ?_
+    intro n; rw [one_div]; rfl
+  have h_inv_6n2 : Filter.Tendsto (fun n : ℕ => 1 / (6 * (n : ℝ)^2))
+      Filter.atTop (nhds 0) := by
+    refine squeeze_zero (fun n => ?_) (fun n => ?_) h_inv_2n
+    · positivity
+    · rcases Nat.eq_zero_or_pos n with hz | hpos
+      · subst hz; simp
+      · have hn_ge : (1 : ℝ) ≤ n := by exact_mod_cast hpos
+        have hn_pos : (0 : ℝ) < n := by linarith
+        have h2n_pos : (0 : ℝ) < 2 * n := by positivity
+        have h_le : 2 * (n : ℝ) ≤ 6 * n^2 := by nlinarith
+        exact one_div_le_one_div_of_le h2n_pos h_le
+  have h_target : Filter.Tendsto
+      (fun n : ℕ => (1 / 3 : ℝ) - 1 / (2 * n) + 1 / (6 * n^2)) Filter.atTop
+      (nhds ((1 / 3 : ℝ) - 0 + 0)) := by
+    exact (Filter.Tendsto.sub tendsto_const_nhds h_inv_2n).add h_inv_6n2
+  simp only [sub_zero, add_zero] at h_target
+  refine h_target.congr' (Filter.eventually_atTop.mpr ⟨1, fun n hn => ?_⟩)
+  exact (h_eqv n (by omega)).symm
+
+/-- **A6 holds for the quadratic function `f(x) = x²`**:
+`(1/n) · Σ_{k : Fin n} (k/n)² → ∫_0^1 x² dx = 1/3`. Third polynomial
+test function closed (after `A6_for_constants` and `A6_for_identity`). -/
+theorem A6_for_sq :
+    Filter.Tendsto
+      (fun n : ℕ => (1 / (n : ℝ)) * ∑ k : Fin n, ((k : ℝ) / (n : ℝ))^2)
+      Filter.atTop
+      (nhds (∫ x in (0 : ℝ)..1, x^2)) := by
+  have h_integral : (∫ x in (0 : ℝ)..1, x^2) = 1 / 3 := by
+    rw [integral_pow]; norm_num
+  rw [h_integral]
+  refine tendsto_sqRiemann_to_third.congr' (Filter.eventually_atTop.mpr ⟨1, fun n hn => ?_⟩)
+  exact (A6_sq_sum_closed_form n (by omega)).symm
+
 /-- **Discrete wave → continuum wave on scaled lattice** (upgraded
 from `True` to real content).
 

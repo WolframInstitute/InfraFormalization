@@ -147,6 +147,10 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.A6_identity_sum_closed_form
 #print axioms InfraFormalization.tendsto_nMinusOne_div_twoN
 #print axioms InfraFormalization.A6_for_identity
+#print axioms InfraFormalization.sum_fin_val_sq_eq
+#print axioms InfraFormalization.A6_sq_sum_closed_form
+#print axioms InfraFormalization.tendsto_sqRiemann_to_third
+#print axioms InfraFormalization.A6_for_sq
 #print axioms InfraFormalization.pathEigenvalue_nonpos
 #print axioms InfraFormalization.heatKernel_cycleHypergraph_multi_mode_tendsto
 #print axioms InfraFormalization.pathEigenvalue_ground_zero
