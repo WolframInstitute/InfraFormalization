@@ -547,6 +547,34 @@ theorem cycleHypergraph_ballVolume_large {n : Nat} [NeZero n]
   rw [h_univ]
   simp
 
+/-- **On a connected hypergraph, `V(v, r) = |V|` for `r ≥ |V|`.**
+Generalises `cycleHypergraph_ballVolume_large` to every connected
+hypergraph: once the radius exceeds the vertex count, every vertex is
+within distance `r` (since finite paths have length < `|V|`). -/
+theorem geodesicBallVolume_ge_card (H : Hypergraph V)
+    (hconn : H.toSimpleGraph.Connected)
+    (v : V) (r : ℕ) (hr : Fintype.card V ≤ r) :
+    H.geodesicBallVolume v r = Fintype.card V := by
+  unfold Hypergraph.geodesicBallVolume Hypergraph.geodesicBall
+  have h_univ : Finset.univ.filter
+      (fun u : V => H.dist v u ≤ r) = Finset.univ := by
+    ext u
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+    unfold Hypergraph.dist
+    have hreach : H.toSimpleGraph.Reachable v u := hconn.preconnected v u
+    obtain ⟨p, _hp_len⟩ := hreach.exists_walk_length_eq_dist
+    have h_path := p.toPath
+    have h_path_len : h_path.val.length < Fintype.card V :=
+      SimpleGraph.Walk.IsPath.length_lt h_path.prop
+    have h_dist_le_path : H.toSimpleGraph.dist v u ≤ h_path.val.length :=
+      SimpleGraph.dist_le h_path.val
+    have h_dist_lt : H.toSimpleGraph.dist v u < Fintype.card V :=
+      lt_of_le_of_lt h_dist_le_path h_path_len
+    simp only [iff_true]
+    exact Nat.le_of_lt (lt_of_lt_of_le h_dist_lt hr)
+  rw [h_univ]
+  simp
+
 /-- **Ball volume at radius 0 on the cycle** `= 1`: only the basepoint
 itself is within distance 0 (cycle is connected, so `dist = 0 ↔ u = v`).
 This is the `r = 0` case of the ID6 dimension-compatibility formula
