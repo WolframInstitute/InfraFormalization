@@ -162,6 +162,7 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.minkowski4Manifold_satisfies_vacuum_EFE
 #print axioms InfraFormalization.Curvature.PartialMetricData.christoffel_symm
 #print axioms InfraFormalization.Curvature.MetricData.toPartial_christoffel
+#print axioms InfraFormalization.Curvature.schwarzschildPartial_christoffel
 #print axioms InfraFormalization.in_degree_eq_lhsSize
 #print axioms InfraFormalization.out_degree_eq_rhsSize
 #print axioms InfraFormalization.balanced_of_conservative

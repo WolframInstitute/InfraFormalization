@@ -78,6 +78,7 @@ problem; it cannot be bluffed past in Lean.
 -/
 
 import InfraFormalization.CurvatureLocalCoord
+import InfraFormalization.PartialMetricData
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 import Mathlib.Tactic.FieldSimp
 
@@ -615,6 +616,36 @@ theorem schwarzschildChristoffel_3_23 {M : ℝ} {x : Fin 4 → ℝ}
   rw [h_sdg_3_33_23, h_sdg_3_23, sdg_2_33, sginv_33]
   field_simp
   ring
+
+/-! ## Schwarzschild as `PartialMetricData` on the exterior (B5) -/
+
+/-- **Schwarzschild metric bundled as a `PartialMetricData 4`** with
+validity predicate `SchwarzschildValid M` — the exterior region
+`r > 2M ∧ r > 0 ∧ sin θ ≠ 0`.
+
+This makes Schwarzschild slot into the full ConnectionData /
+Christoffel / Riemann / Ricci machinery, without lying about the
+interior (where `ginv_mul` fails). -/
+noncomputable def schwarzschildPartial (M : ℝ) : PartialMetricData 4 where
+  g := sgg M
+  ginv := sginv M
+  dg := sdg M
+  valid := SchwarzschildValid M
+  g_symm := fun x _ μ ν => sgg_symm M x μ ν
+  ginv_symm := fun x _ μ ν => sginv_symm M x μ ν
+  ginv_mul := fun x hx μ ν => sginv_mul_sgg hx μ ν
+  dg_symm := fun l x _ μ ν => sdg_symm M l x μ ν
+
+/-- **PartialMetricData-level Christoffel = the explicit Schwarzschild
+Christoffel.** On the exterior, the two coincide (same formula, same
+inputs). Makes the `PartialMetricData` packaging interoperate with
+existing `schwarzschildChristoffel`. -/
+theorem schwarzschildPartial_christoffel (M : ℝ) (x : Fin 4 → ℝ)
+    (ρ μ ν : Fin 4) :
+    (schwarzschildPartial M).christoffel x ρ μ ν
+      = schwarzschildChristoffel M x ρ μ ν := by
+  unfold PartialMetricData.christoffel schwarzschildChristoffel schwarzschildPartial
+  rfl
 
 end Curvature
 end InfraFormalization
