@@ -49,4 +49,50 @@ def filterCandidates {P : Type*} (candidates : List (CandidateRule P))
               -- decidable in general. The list is returned as-is
               -- and screening theorems are applied individually.
 
+/-- **All rules conservative** — dual to `NotConservative`. Every rule
+in the system has `|LHS| = |RHS|`. Under this predicate, any trajectory
+built over `c.sys` preserves `edgeCount` (via IR2). -/
+def CandidateRule.AllConservative {P : Type*} (c : CandidateRule P) : Prop :=
+  ∀ r ∈ c.sys.rules, r.IsConservative
+
+/-- **AllConservative is the negation of NotConservative** (over the
+rule list). Uses decidable-equality on rule predicates for the
+forward direction. -/
+theorem CandidateRule.allConservative_iff_not_notConservative
+    {P : Type*} (c : CandidateRule P) :
+    c.AllConservative ↔ ¬ c.NotConservative := by
+  unfold CandidateRule.AllConservative CandidateRule.NotConservative
+  constructor
+  · intro hall h_exists
+    obtain ⟨r, hr_mem, hr_notcons⟩ := h_exists
+    exact hr_notcons (hall r hr_mem)
+  · intro hnot r hr_mem
+    by_contra h_notcons
+    exact hnot ⟨r, hr_mem, h_notcons⟩
+
+/-- **Screening theorem**: a candidate `c` with `AllConservative` and a
+step-consistent trajectory over `c.sys` starting from `init` cannot
+reach any target signature `σ` with `σ.edgeCount ≠ init.size`.
+
+This is the IR6-level combination of IR2 (conservation theorem) with
+the signature screening criterion
+`RuleSignature.edgeCount_mismatch_unreachable_of_conservative`.
+Applied to a rule database, it immediately rules out whole classes
+of target signatures without exploring the state space. -/
+theorem CandidateRule.allConservative_edgeCount_screen
+    {P : Type*} (c : CandidateRule P) (hcons : c.AllConservative)
+    {V : Type*} [Fintype V] [DecidableEq V] {init : Hypergraph V}
+    (τ : Trajectory c.sys init) (hstep : τ.StepConsistent)
+    (happ_in_rules : ∀ i (hi : i < τ.applications.length),
+      (τ.applications.get ⟨i, hi⟩).2.1 ∈ c.sys.rules)
+    (σ : RuleSignature V)
+    (hmis : σ.edgeCount ≠ (hypergraphSignature init).edgeCount)
+    (i : Nat) (hi : i < τ.states.length) :
+    (hypergraphSignature (τ.states.get ⟨i, hi⟩)).edgeCount ≠ σ.edgeCount := by
+  have hcons_all : ∀ i (hi : i < τ.applications.length),
+      (τ.applications.get ⟨i, hi⟩).2.1.IsConservative :=
+    fun i hi => hcons _ (happ_in_rules i hi)
+  exact RuleSignature.edgeCount_mismatch_unreachable_of_conservative
+    τ hstep hcons_all σ hmis i hi
+
 end InfraFormalization
