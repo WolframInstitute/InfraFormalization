@@ -234,6 +234,26 @@ theorem RuleSignature.empty_signature_edgeCount :
   show (Hypergraph.empty : Hypergraph V).size = 0
   rfl
 
+/-- **Signature edgeCount is additive over hypergraph union**:
+`hypergraphSignature (H₁ + H₂).edgeCount = H₁'s + H₂'s`. Lifts the
+Hypergraph-level `size_add` to the signature level. Concrete
+statement of the compositionality of the edge-count invariant under
+the commutative-monoid structure. -/
+theorem RuleSignature.signature_edgeCount_add (H₁ H₂ : Hypergraph V) :
+    (hypergraphSignature (H₁ + H₂)).edgeCount
+      = (hypergraphSignature H₁).edgeCount
+        + (hypergraphSignature H₂).edgeCount := by
+  show (H₁ + H₂).size = H₁.size + H₂.size
+  exact Hypergraph.size_add H₁ H₂
+
+/-- **Signature edgeCount is monotone in the hypergraph**: adding
+more edges can only increase (or preserve) the signature edgeCount.
+Combination of `RuleSignature.signature_edgeCount_add` and non-negativity. -/
+theorem RuleSignature.signature_edgeCount_le_add_right (H₁ H₂ : Hypergraph V) :
+    (hypergraphSignature H₁).edgeCount ≤ (hypergraphSignature (H₁ + H₂)).edgeCount := by
+  show H₁.size ≤ (H₁ + H₂).size
+  exact Hypergraph.size_le_add_right H₁ H₂
+
 /-- **Concrete cycle-start screen**: a conservative step-consistent
 trajectory starting from `cycleHypergraph n` cannot reach any target
 with `edgeCount ≠ n`. Closed specialisation of
