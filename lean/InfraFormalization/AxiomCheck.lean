@@ -147,6 +147,8 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.pde_spectrum_bridge_summary
 #print axioms InfraFormalization.minkowski4_satisfies_EFE_zero_lambda
 #print axioms InfraFormalization.minkowski4_flat_vacuum_forces_lambda_zero
+#print axioms InfraFormalization.CausalGraph.timeFunction_foliation
+#print axioms InfraFormalization.CausalGraph.stablyCausal_hasFoliation
 #print axioms InfraFormalization.in_degree_eq_lhsSize
 #print axioms InfraFormalization.out_degree_eq_rhsSize
 #print axioms InfraFormalization.balanced_of_conservative
