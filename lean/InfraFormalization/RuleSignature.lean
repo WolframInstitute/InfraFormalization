@@ -176,4 +176,42 @@ theorem RuleSignature.ballVolume_oversize_unreachable
   rw [h_vol] at h_bound
   exact absurd h_bound (not_le.mpr hover)
 
+/-- **Vertex-count mismatch ⇒ unreachable (unconditional).** If a
+target signature has `σ.vertexCount ≠ Fintype.card V`, then no
+hypergraph on `V` realises `σ` — `vertexCount` is defined as the
+fixed cardinality of the vertex type. -/
+theorem RuleSignature.vertexCount_mismatch_unreachable
+    (σ : RuleSignature V) (hmis : σ.vertexCount ≠ Fintype.card V)
+    (H : Hypergraph V) : hypergraphSignature H ≠ σ := by
+  intro h
+  have h_vc : (hypergraphSignature H).vertexCount = σ.vertexCount :=
+    congrArg RuleSignature.vertexCount h
+  simp [hypergraphSignature] at h_vc
+  exact hmis h_vc.symm
+
+/-- **Admissible-signature predicate**: a signature `σ` has passed
+the unconditional screening criteria — `vertexCount = Fintype.card V`
+and every ball volume is within `Fintype.card V`. A non-admissible
+target is unreachable (no need to explore any rewriting trajectory);
+an admissible one *may* be reachable but needs further analysis
+(ruliology search, conservativity, etc.). -/
+def RuleSignature.Admissible (σ : RuleSignature V) : Prop :=
+  σ.vertexCount = Fintype.card V ∧
+  ∀ (v : V) (r : ℕ), σ.ballVolume v r ≤ Fintype.card V
+
+/-- **Non-admissible signatures are unreachable by any hypergraph.** -/
+theorem RuleSignature.not_admissible_unreachable
+    (σ : RuleSignature V) (hadmis : ¬ σ.Admissible)
+    (H : Hypergraph V) : hypergraphSignature H ≠ σ := by
+  unfold RuleSignature.Admissible at hadmis
+  push_neg at hadmis
+  intro h
+  by_cases h_vcount : σ.vertexCount = Fintype.card V
+  · obtain ⟨v, r, hover⟩ := hadmis h_vcount
+    exact RuleSignature.ballVolume_oversize_unreachable σ v r hover H h
+  · have h_vc : (hypergraphSignature H).vertexCount = σ.vertexCount :=
+      congrArg RuleSignature.vertexCount h
+    simp [hypergraphSignature] at h_vc
+    exact h_vcount h_vc.symm
+
 end InfraFormalization
