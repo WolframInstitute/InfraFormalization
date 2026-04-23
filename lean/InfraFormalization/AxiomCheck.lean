@@ -182,6 +182,8 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.pathHypergraph_size
 #print axioms InfraFormalization.RuleSignature.signature_ballVolume_le_card
 #print axioms InfraFormalization.RuleSignature.trajectory_state_signature_admissible
+#print axioms InfraFormalization.IsDirectConcatSystem.rule_in_half
+#print axioms InfraFormalization.IsDirectConcatSystem.allConservative_iff_both
 #print axioms InfraFormalization.pathEigenvalue_nonpos
 #print axioms InfraFormalization.heatKernel_cycleHypergraph_multi_mode_tendsto
 #print axioms InfraFormalization.pathEigenvalue_ground_zero

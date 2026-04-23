@@ -67,20 +67,53 @@ def RewritingSystem.ProducesPlanar (sys : RewritingSystem P) : Prop :=
 
 /-! ## IR5: Product rules -/
 
-/-- **Product rule**: `sys₁ × sys₂` acts on `V₁ ⊕ V₂` (disjoint
-union) with `sys₁` on the first summand, `sys₂` on the second.
-Predicate-level statement: a system is a "product-like combo" if
-all its rules factor through one of two subsystems on disjoint
-parts.
+/-- **Direct-concatenation system**: a system whose rule list is the
+concatenation of two sub-system rule lists, both over the same
+pattern type `P`. This is the shape-level of a product rule system,
+expressing that `sys` is built by putting `sys₁`'s rules and `sys₂`'s
+rules side by side with no interaction. Both halves required
+non-empty so the predicate is non-degenerate.
 
-For dimension additivity: `dim(sys₁ × sys₂) = dim(sys₁) + dim(sys₂)`
-when both subsystems act on disjoint vertex types. -/
-def IsProductSystem {P₁ P₂ : Type*}
-    (sys : RewritingSystem P) (sys₁ : RewritingSystem P₁)
-    (sys₂ : RewritingSystem P₂) : Prop :=
-  -- Skeleton: full definition requires defining products of
-  -- RewritingSystems, which is substantial. Here we state the
-  -- predicate at a sentinel level.
-  True
+This is the Lean-typable skeleton of "product rule"; the fuller
+version (product on disjoint vertex subsets `V₁ ⊕ V₂`) requires
+Rule types indexed by vertex-set, which is separate infrastructure. -/
+def IsDirectConcatSystem (sys sys₁ sys₂ : RewritingSystem P) : Prop :=
+  sys.rules = sys₁.rules ++ sys₂.rules ∧
+  sys₁.rules ≠ [] ∧ sys₂.rules ≠ []
+
+/-- **Every rule in a direct-concat system belongs to one of the two
+halves.** Immediate from the `List.mem_append` characterisation. -/
+theorem IsDirectConcatSystem.rule_in_half
+    {sys sys₁ sys₂ : RewritingSystem P}
+    (hsys : IsDirectConcatSystem sys sys₁ sys₂) (r : Rule P)
+    (hr : r ∈ sys.rules) : r ∈ sys₁.rules ∨ r ∈ sys₂.rules := by
+  rw [hsys.1] at hr
+  exact List.mem_append.mp hr
+
+/-- **A direct-concat system is `AllConservative`** iff both halves are.
+Machine-level witness that the `AllConservative` property is additive
+over direct-concatenation — one of the two shape-level additivity
+lemmas needed before the full product-dim additivity (IR5). -/
+theorem IsDirectConcatSystem.allConservative_iff_both
+    {sys sys₁ sys₂ : RewritingSystem P}
+    (hsys : IsDirectConcatSystem sys sys₁ sys₂) :
+    (∀ r ∈ sys.rules, r.IsConservative) ↔
+    (∀ r ∈ sys₁.rules, r.IsConservative) ∧
+    (∀ r ∈ sys₂.rules, r.IsConservative) := by
+  constructor
+  · intro hall
+    refine ⟨fun r hr => ?_, fun r hr => ?_⟩
+    · exact hall r (by rw [hsys.1]; exact List.mem_append_left _ hr)
+    · exact hall r (by rw [hsys.1]; exact List.mem_append_right _ hr)
+  · rintro ⟨h1, h2⟩ r hr
+    rcases hsys.rule_in_half r hr with hr1 | hr2
+    · exact h1 r hr1
+    · exact h2 r hr2
+
+/-- **Product rule** (sentinel at pattern-type level): a system is a
+"product-like combo" when it can be written as a `IsDirectConcatSystem`
+over two halves. -/
+def IsProductSystem (sys : RewritingSystem P) : Prop :=
+  ∃ (sys₁ sys₂ : RewritingSystem P), IsDirectConcatSystem sys sys₁ sys₂
 
 end InfraFormalization
