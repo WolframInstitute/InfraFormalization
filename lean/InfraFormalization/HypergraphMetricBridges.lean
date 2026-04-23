@@ -116,5 +116,43 @@ def all_gr_targets_have_hypergraph_obligations : Prop :=
   ∨ (∀ M : ℝ, schwarzschild_from_hypergraph M)
   ∨ (∀ a da : ℝ → ℝ, flrw_from_hypergraph a da)
 
+/-- **Any `MetricData` has the origin-obligation inhabited at the
+current statement level.** Because the obligation Prop is a pure
+existential over `Hypergraph V + RewritingSystem P + Trajectory + scale`
+(no `bridgeHolds` predicate yet), a trivial witness (`Fin 1` vertex,
+empty rewriting system, single-state trajectory, positive scale)
+inhabits it regardless of the target. Strengthening the obligation
+to include a convergence predicate is the open programme. -/
+theorem any_metric_has_obligation_witness {n : Nat} (M : MetricData n) :
+    HypergraphMetricOriginObligation M := by
+  unfold HypergraphMetricOriginObligation
+  refine ⟨Fin 1, inferInstance, inferInstance, Unit, ⟨[]⟩,
+    Hypergraph.empty,
+    { states := [Hypergraph.empty]
+      applications := []
+      length_eq := rfl
+      first_state := rfl
+      well_formed := by intro i hi; simp at hi },
+    fun k => (1 : ℝ) / (k + 1), ?_⟩
+  intro k
+  positivity
+
+/-- **Any `PartialMetricData` has the origin-obligation inhabited**
+at the current statement level, by the same trivial witness. -/
+theorem any_partialMetric_has_obligation_witness
+    {n : Nat} (M : PartialMetricData n) :
+    HypergraphPartialMetricOriginObligation M := by
+  unfold HypergraphPartialMetricOriginObligation
+  refine ⟨Fin 1, inferInstance, inferInstance, Unit, ⟨[]⟩,
+    Hypergraph.empty,
+    { states := [Hypergraph.empty]
+      applications := []
+      length_eq := rfl
+      first_state := rfl
+      well_formed := by intro i hi; simp at hi },
+    fun k => (1 : ℝ) / (k + 1), ?_⟩
+  intro k
+  positivity
+
 end Curvature
 end InfraFormalization
