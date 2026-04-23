@@ -343,6 +343,24 @@ theorem regular_dichotomy_on_fin3 :
    cycleHypergraph_regular (by omega),
    pathHypergraph_not_regular (by omega)⟩
 
+/-- **`BallVolumeVertexUniform` implies `Regular`** on a connected
+hypergraph: the radius-1 ball size equals `1 + degree v`, so uniformity
+at `r = 1` forces uniform degree. Packages
+`degree_uniform_of_ballVolumeVertexUniform` at the predicate level. -/
+theorem regular_of_ballVolumeVertexUniform (H : Hypergraph V)
+    (hconn : H.toSimpleGraph.Connected)
+    (hb : H.BallVolumeVertexUniform) : H.Regular :=
+  degree_uniform_of_ballVolumeVertexUniform H hconn hb
+
+/-- **Contrapositive at the Regular level**: a non-regular connected
+hypergraph cannot satisfy `BallVolumeVertexUniform`. Uniform restatement
+of `not_ballVolumeVertexUniform_of_degree_ne` via the `Regular`
+predicate — no explicit `v, w` pair needed. -/
+theorem not_ballVolumeVertexUniform_of_not_regular (H : Hypergraph V)
+    (hconn : H.toSimpleGraph.Connected) (hnotreg : ¬ H.Regular) :
+    ¬ H.BallVolumeVertexUniform :=
+  fun hb => hnotreg (regular_of_ballVolumeVertexUniform H hconn hb)
+
 /-- **Adj-transitive implies uniform degree.** An Adj-preserving
 `Equiv σ : V ≃ V` sending `v` to `w` bijects the neighbour set of `v`
 with the neighbour set of `w`, so the simple-graph degrees agree. This
