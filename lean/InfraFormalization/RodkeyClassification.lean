@@ -265,6 +265,32 @@ theorem ballVolumeOne_uniform_of_regular (H : Hypergraph V)
   rw [ballVolumeOne_regular H hconn k hreg v,
       ballVolumeOne_regular H hconn k hreg w]
 
+/-- **Regularity predicate**: every vertex has the same SimpleGraph
+degree. A necessary (but not sufficient) condition for
+BallVolumeVertexUniform on a connected hypergraph. -/
+def Regular (H : Hypergraph V) : Prop :=
+  ∀ v w : V, H.toSimpleGraph.degree v = H.toSimpleGraph.degree w
+
+/-- **Ball-volume vertex-uniformity (at radius 1) on a connected
+hypergraph is equivalent to regularity.** Forward: r=1 uniformity gives
+uniform degree via `degree_uniform_of_ballVolumeVertexUniform`. Backward:
+regularity gives uniform r=1 balls via `ballVolumeOne_regular`. A
+tight local characterisation of the r=1 slice of the Rodkey predicate. -/
+theorem ballVolumeOne_uniform_iff_regular (H : Hypergraph V)
+    (hconn : H.toSimpleGraph.Connected) :
+    (∀ v w : V, H.geodesicBallVolume v 1 = H.geodesicBallVolume w 1)
+      ↔ H.Regular := by
+  constructor
+  · intro h v w
+    have h_eq := h v w
+    rw [geodesicBallVolume_one_eq_degree_plus_one H hconn v,
+        geodesicBallVolume_one_eq_degree_plus_one H hconn w] at h_eq
+    omega
+  · intro hreg
+    intro v w
+    rw [geodesicBallVolume_one_eq_degree_plus_one H hconn v,
+        geodesicBallVolume_one_eq_degree_plus_one H hconn w, hreg v w]
+
 /-- **Adj-transitive implies uniform degree.** An Adj-preserving
 `Equiv σ : V ≃ V` sending `v` to `w` bijects the neighbour set of `v`
 with the neighbour set of `w`, so the simple-graph degrees agree. This
