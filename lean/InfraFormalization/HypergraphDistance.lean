@@ -699,6 +699,42 @@ theorem cycleHypergraph_iterPred_val {n : Nat} [NeZero n] (hn : 2 ≤ n)
     congr 1
     ring
 
+/-- **Forward-shift lower bound for ball volume**: for `n ≥ 2` and
+`2r + 1 ≤ n`, `V(v, r) ≥ r + 1`. Exhibits the `r + 1` forward iterates
+`F^[0] v, F^[1] v, ..., F^[r] v` as distinct ball members. This is the
+one-sided (forward only) half of the general `V(v, r) ≥ 2r + 1` claim;
+the backward half doubles it with `G^[1] v, ..., G^[r] v`. -/
+theorem cycleHypergraph_ballVolume_forward_ge {n : Nat} [NeZero n]
+    (hn : 2 ≤ n) {r : ℕ} (hr : 2 * r + 1 ≤ n) (v : Fin n) :
+    r + 1 ≤ (cycleHypergraph n).geodesicBallVolume v r := by
+  -- Shift family f^[k] v for k ∈ [0, r]
+  let F : ℕ → Fin n := fun k => (fun x : Fin n => x + 1)^[k] v
+  -- Finset of shifts
+  let S : Finset (Fin n) := (Finset.range (r + 1)).image F
+  -- S ⊆ ball(v, r)
+  have h_in_ball : S ⊆ (cycleHypergraph n).geodesicBall v r := by
+    intro u hu
+    simp only [S, Finset.mem_image, Finset.mem_range] at hu
+    obtain ⟨k, hk, hku⟩ := hu
+    subst hku
+    unfold Hypergraph.geodesicBall
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+    show (cycleHypergraph n).dist v ((fun x : Fin n => x + 1)^[k] v) ≤ r
+    have h_le_k := cycleHypergraph_dist_iterSucc_le hn v k
+    omega
+  -- card S = r + 1 via injectivity
+  have h_card : S.card = r + 1 := by
+    show ((Finset.range (r + 1)).image F).card = r + 1
+    rw [Finset.card_image_of_injOn]
+    · exact Finset.card_range _
+    · intros i hi j hj hij
+      rw [Finset.mem_coe, Finset.mem_range] at hi hj
+      exact cycleHypergraph_iterSucc_injOn v (by omega : i ≤ r) (by omega : j ≤ r) hr hij
+  -- Conclude
+  unfold Hypergraph.geodesicBallVolume
+  calc r + 1 = S.card := h_card.symm
+    _ ≤ _ := Finset.card_le_card h_in_ball
+
 /-- **Exact ball volume at radius 1** on `cycleHypergraph n` for `n ≥ 3`:
 `geodesicBallVolume v 1 = 3`. Combined with `_one_ge_three` for the
 lower bound and a direct upper bound from `dist ≤ 1 ⇒ Adj ∨ =`. -/
