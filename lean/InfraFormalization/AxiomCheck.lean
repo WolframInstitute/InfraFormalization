@@ -98,6 +98,7 @@ import InfraFormalization.FLRW
 import InfraFormalization.ReissnerNordstrom
 import InfraFormalization.TwoSphere
 import InfraFormalization.DeSitter
+import InfraFormalization.GRMetricsDemo
 import InfraFormalization.Refutations.F1NoMetric
 import InfraFormalization.Refutations.F2Orthonormality
 import InfraFormalization.Refutations.F3Tautology
@@ -175,6 +176,7 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.Curvature.sphereChristoffel_0_1_1
 #print axioms InfraFormalization.Curvature.dsLapse_minkowski
 #print axioms InfraFormalization.Curvature.dsLapse_pos_iff
+#print axioms InfraFormalization.Curvature.gr_metric_zoo
 #print axioms InfraFormalization.in_degree_eq_lhsSize
 #print axioms InfraFormalization.out_degree_eq_rhsSize
 #print axioms InfraFormalization.balanced_of_conservative
