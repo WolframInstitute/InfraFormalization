@@ -775,5 +775,27 @@ theorem regular_dichotomy_for_Fin {n : ℕ} [NeZero n] (hn : 3 ≤ n) :
    cycleHypergraph_regular hn,
    pathHypergraph_not_regular hn⟩
 
+/-- **`cycleHypergraph n` satisfies the restricted Rodkey predicate**:
+immediate consequence of `cycleHypergraph_ballVolumeVertexUniform` +
+`ballVolumeVertexUniform_iff_restricted`. Re-exports the positive
+example at the restricted-regime level for downstream use. -/
+theorem cycleHypergraph_ballVolumeVertexUniformRestricted
+    {n : Nat} [NeZero n] (hn : 2 ≤ n) :
+    (cycleHypergraph n).BallVolumeVertexUniformRestricted := by
+  have hconn := cycleHypergraph_connected hn
+  exact (ballVolumeVertexUniform_iff_restricted (cycleHypergraph n) hconn).mp
+    (cycleHypergraph_ballVolumeVertexUniform hn)
+
+/-- **`pathHypergraph n` fails even the restricted Rodkey predicate**
+for `n ≥ 3`: the obstruction at `r = 1` is in the restricted range
+`1 ≤ 1 < n`, so the restricted form fails just as the full form does. -/
+theorem pathHypergraph_not_ballVolumeVertexUniformRestricted
+    {n : ℕ} [NeZero n] (hn : 3 ≤ n) :
+    ¬ (pathHypergraph n).BallVolumeVertexUniformRestricted := by
+  intro hres
+  apply pathHypergraph_not_ballVolumeVertexUniform hn
+  have hconn := pathHypergraph_connected (n := n)
+  exact (ballVolumeVertexUniform_iff_restricted (pathHypergraph n) hconn).mpr hres
+
 end Hypergraph
 end InfraFormalization
