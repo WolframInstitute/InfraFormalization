@@ -28,7 +28,7 @@ The project exists to settle, formally, what is actually true in this corpus and
 - **Size**: 140 Lean files, ~20k LOC; 679 theorems + 17 lemmas + 17 examples proved; 381 definitions, 57 structures, 6 inductives, 12 instances.
 - **Build**: 3468 / 3468 jobs green.
 - **Axiom cleanliness**: 497 `#print axioms` certifications in `AxiomCheck.lean` across 94 modules; every listed theorem reduces to `{propext, Classical.choice, Quot.sound}`. No `sorry`, no `native_decide`, no custom axioms.
-- **Infrageometry programme**: 50 / 57 tasks closed with real content; 7 in-flight with substantive open content (not stubs).
+- **Infrageometry programme**: 50 of 57 tasks closed with real content; 7 in progress with substantive open content (not stubs).
 - **Grounding audit**: all four action items closed. No free-floating continuum islands at the obligation level (see [`GROUNDING_AUDIT.md`](GROUNDING_AUDIT.md)).
 - **Refutations**: F1–F7 Lean-formal; F6 (circular G3 derivation) formally proved as `circular_procedure_is_identity`; F8 documentary.
 - **Flat bridges proved**: cycle → circle, path → interval, 2-torus, d-torus, discrete Lorentz → Minkowski.
@@ -145,7 +145,7 @@ lean/
 |---|---|
 | [`STATUS.md`](STATUS.md) | Live snapshot — rung table, task counters, latest shipped |
 | [`COVERAGE_MAP.md`](COVERAGE_MAP.md) | Per-module coverage map (single source of truth) |
-| [`GROUNDING_AUDIT.md`](GROUNDING_AUDIT.md) | Item-by-item audit: what is hypergraph-grounded, what is continuum-target-only, with ✅ / ⚠ / ❌ marks |
+| [`GROUNDING_AUDIT.md`](GROUNDING_AUDIT.md) | Item-by-item audit: what is hypergraph-grounded, what is continuum-target-only, with per-object status |
 | [`BRIDGE_MACHINERY.md`](BRIDGE_MACHINERY.md) | 10-rung ladder from discrete calculus to Einstein |
 | [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md) | Research programme description (57 tasks / 9 groups) |
 | [`MAJOR_FLAWS.md`](MAJOR_FLAWS.md) | F1–F8 structural-flaw registry with Lean-formalisation status |
@@ -183,18 +183,25 @@ Wolfram Language + Python scripts that reproduce every empirical verdict in `res
 
 Every continuum object in the project lives on a rung of this ladder, and every rung is anchored to its predecessor by an explicit convergence theorem or obligation Prop.
 
+Legend for the Status column:
+
+- **proved** — the content of the rung is a machine-checked theorem.
+- **partial** — some of the rung's content is proved; specific sub-items remain open.
+- **flat case proved; curved case open** — proved when the underlying spacetime is flat (Minkowski, cycle, torus, lattice); the proof for a curved target (Schwarzschild, Kerr, FLRW) is open.
+- **flat case proved end-to-end; curved case has the obligation Prop attached but the curved bridge theorem is open** — every continuum GR target has a hypergraph-side obligation Prop; flat-case witnesses are inhabited; curved-case witnesses are not.
+
 | Rung | Content | Key theorem | Status |
 |---|---|---|---|
-| 1 | Discrete calculus | Self-adjoint `Δ_H`, Dirichlet form, PSD, Stokes | ✅ |
-| 2 | Operator convergence | `scaledSecondDiff → f''` for every C²; cycle-spectrum → circle-spectrum | ✅ |
-| 3 | Measure limits | Counting measure, pushforward; ⌛ A6 weak-convergence, A7 Wasserstein | 🟡 |
-| 4 | Connections | Local-coord Christoffels ✅; Mathlib bundle/Koszul gap blocks C1–C8 | 🟡 |
-| 5 | Riemann / Ricci | Riemann, Ricci, Einstein tensors; full GR metric zoo | ✅ |
-| 6 | ODE / PDE on Hypergraph V | Heat, wave, Klein-Gordon, Schrödinger unitary, EL equations | ✅ |
-| 7 | Fields / gauge | Scalar field ✅; G2 gauge field 🔲 | 🟡 |
-| 8 | Lorentzian geometry | LorentzLattice, Minkowski, `DiagLorentzianManifold`, discrete foliation | ✅ (discrete+E1+E5); ⌛ Lorentzian-GH |
-| 9 | Einstein equations | `EinsteinEqLambda`, Minkowski vacuum, λ=0-forcing | ✅ flat |
-| 10 | Hypergraph → GR | Flat bridges ✅; origin obligations ✅; curved `bridgeHolds` open | 🟡 obligation-level ✅, content-level open |
+| 1 | Discrete calculus | Self-adjoint `Δ_H`, Dirichlet form, PSD, discrete Stokes | proved |
+| 2 | Operator convergence | `scaledSecondDiff → f''` for every C²; cycle-spectrum → circle-spectrum | proved |
+| 3 | Measure limits | Counting measure, pushforward proved; A6 weak convergence, A7 Wasserstein, A8 d-torus lift open | partial |
+| 4 | Connections | Local-coordinate Christoffel proved; bundle-theoretic formulation (C1–C8) blocked by missing Mathlib infrastructure | partial |
+| 5 | Riemann / Ricci | Riemann, Ricci, Einstein tensors; full GR metric zoo | proved |
+| 6 | ODE / PDE on Hypergraph V | Heat, wave, Klein-Gordon, Schrödinger unitary, Euler-Lagrange | proved |
+| 7 | Fields / gauge | Scalar field proved; discrete gauge field (G2) open | partial |
+| 8 | Lorentzian geometry | LorentzLattice, Minkowski, `DiagLorentzianManifold` (E1), discrete Cauchy foliation (E5); continuum Lorentzian Gromov-Hausdorff open | flat case proved; curved case open |
+| 9 | Einstein equations | `EinsteinEqLambda`; Minkowski + flat connection solves vacuum EFE; flat connection forces Λ = 0 | flat case proved; curved case open |
+| 10 | Hypergraph → GR | Flat bridges proved end-to-end (cycle → circle, path → interval, 2-torus, d-torus, lattice → Minkowski); every continuum GR target has an origin-obligation Prop; flat-case witnesses are inhabited; curved-case witnesses are not | flat case proved end-to-end; curved case has the obligation Prop attached but the curved bridge theorem is open |
 
 See [`BRIDGE_MACHINERY.md`](BRIDGE_MACHINERY.md) for the full description.
 
@@ -206,7 +213,7 @@ Every continuous structure in the repository must either:
 2. be the target of an explicit convergence theorem starting from such primitives, or
 3. carry an explicit `…OriginObligation` Prop binding it to a hypergraph-side existence claim.
 
-No category-(3) obligation is allowed to sit as an open `True ∧ False` stub — every one has a `bridgeHolds` predicate with real content, and flat cases are inhabited by concrete witnesses. The audit of this principle lives in [`GROUNDING_AUDIT.md`](GROUNDING_AUDIT.md).
+No category-(3) obligation is allowed to sit as an open `True ∧ False` stub — every one carries a predicate with real mathematical content, and flat-case witnesses are inhabited by concrete hypergraph-side constructions. The audit of this principle lives in [`GROUNDING_AUDIT.md`](GROUNDING_AUDIT.md).
 
 ## Refutation track (Gorard corpus)
 

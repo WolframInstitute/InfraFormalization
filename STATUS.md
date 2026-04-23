@@ -7,15 +7,16 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
 **Headline (2026-04-23).** **All four grounding-audit action items
-closed.** Every continuum GR object (metric zoo, Lorentzian manifolds,
-connection data, EFE satisfaction) now carries an attached
-hypergraph-side origin-obligation Prop, with provably-inhabited
-witnesses for the flat cases. The Minkowski flat-vacuum EFE is
-the *first complete* rule → metric → connection → EFE chain in the
-project. No free-floating continuum islands remain at the obligation
-level; the open programme is the `bridgeHolds` content, not the
-attachment. See [`GROUNDING_AUDIT.md`](GROUNDING_AUDIT.md) for the
-four closed items.
+closed.** Every continuum GR object (the GR metric zoo, Lorentzian
+manifolds, connection data, EFE satisfaction) now carries an attached
+hypergraph-side origin-obligation Prop, with inhabited witnesses for
+the flat spacetime cases. The Minkowski flat-vacuum EFE is the *first
+complete* rule → metric → connection → EFE chain in the project. No
+continuum GR object stands unattached to the hypergraph substrate;
+what remains open is the bridge theorem itself in the curved case —
+i.e., proving that a hypergraph-side witness exists for a curved
+target like Schwarzschild, Kerr, or FLRW. See
+[`GROUNDING_AUDIT.md`](GROUNDING_AUDIT.md) for the four closed items.
 
 **Headline (2026-04-22).** Infrageometry programme 48/57 tasks closed
 (84%). Branchial quantum-mechanics bridge (I-series) 8/10 closed: finite

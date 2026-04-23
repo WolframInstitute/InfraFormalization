@@ -20,9 +20,9 @@ Project: **`infra_formalization`** — Lean 4 / Mathlib formalisation of the Wol
 ## Headline status
 
 - Axiom-cleanliness: no `sorry`, no `native_decide`, no custom axioms; only the three standard Lean axioms.
-- Grounding audit: 4 / 4 action items closed; no free-floating continuum islands at the obligation level.
-- Infrageometry programme: 50 / 57 tasks closed with real content; 7 in-flight with substantive open content (not stubs).
-- Gorard corpus: F1–F7 Lean-formal refutations, plus F8 documentary (overclaim type).
+- Grounding audit: 4 of 4 action items closed. Every continuum GR structure in the repository carries an obligation Prop binding it to a hypergraph-side witness, so no continuum object stands unattached to the hypergraph substrate.
+- Infrageometry programme: 50 of 57 tasks closed with real content; 7 in progress with substantive open content (not stubs).
+- Gorard corpus: F1–F7 formalised as Lean theorems, plus F8 as a documentary finding (title-body gap in G4).
 - Flat continuum-limit bridges proved: cycle → circle, path → interval, 2-torus, d-torus, discrete Lorentz → Minkowski.
 
 ## Motivation and the Gorard corpus
@@ -67,18 +67,24 @@ Nothing in the corpus is fabrication; every error is public and checkable. The g
 
 The 10-rung bridge ladder from `Hypergraph V` to Einstein's equations.
 
+Legend for the State column:
+- **proved** — the content of the rung is a machine-checked theorem.
+- **partial** — some of the rung's content is proved; specific sub-items are listed open in the Content column.
+- **flat case proved; curved case open** — the rung is proved when the underlying spacetime is flat (Minkowski / cycle / torus / lattice); the proof for a curved target (Schwarzschild, Kerr, FLRW) is open.
+- **flat case proved end-to-end; curved case has the obligation Prop attached but the curved bridge theorem is open** — for Rung 10: every continuum GR target has an obligation Prop binding it to a hypergraph-side witness; flat-case witnesses are inhabited; curved-case witnesses are not.
+
 | Rung | Topic | State | Content |
 |---|---|---|---|
-| 1 | Discrete calculus on graphs / hypergraphs | complete | Laplacian `Δ_H` as `LinearMap`, self-adjointness, Dirichlet form, PSD, divergence theorem `∑ Δf = 0`; matrix form `laplacianMatrix`, symmetric, row-sum zero; heat kernel `exp(t·Δ)` with semigroup property; cycle / hypergraph instances; discrete `∇`, `div`, summation by parts |
-| 2 | Operator convergence (discrete → continuum) | complete | Scaled second difference → `f''` for every C² function (R1 / A2 / A3); cycle-eigenvalue spectrum closed form (R5); scaled cycle eigenvalue `n² · (−4 sin²(πk/n)) → −(2πk)²` (A4), continuum circle Laplacian spectrum recovered; path spectrum and ground-mode (T5 partial); ODE ↔ matrix heat kernel unified (T1); uniform-C^k-on-compacts version open |
+| 1 | Discrete calculus on graphs / hypergraphs | proved | Laplacian `Δ_H` as `LinearMap`, self-adjointness, Dirichlet form, PSD, divergence theorem `∑ Δf = 0`; matrix form `laplacianMatrix`, symmetric, row-sum zero; heat kernel `exp(t·Δ)` with semigroup property; cycle / hypergraph instances; discrete `∇`, `div`, summation by parts |
+| 2 | Operator convergence (discrete → continuum) | proved | Scaled second difference → `f''` for every C² function (R1 / A2 / A3); cycle-eigenvalue spectrum closed form (R5); scaled cycle eigenvalue `n² · (−4 sin²(πk/n)) → −(2πk)²` (A4), continuum circle Laplacian spectrum recovered; path spectrum and ground-mode (T5 partial); ODE ↔ matrix heat kernel unified (T1); uniform-C^k-on-compacts version open |
 | 3 | Measure-theoretic limits | partial | Counting measure, uniform probability, pushforward all proved (A5); A6 weak convergence counting → Lebesgue open; A7 Wasserstein-1 rate O(1/n) open; A8 d-torus measure lift open |
-| 4 | Connections / Levi-Civita | partial | Local-coord Christoffel and covariant derivative proved; Mathlib gap for bundle-theoretic Riemannian / Lorentzian metrics blocks C1–C8; bridge-obligation attached (`ConnectionDataOriginObligation`), flat-connection witness inhabited |
-| 5 | Riemann / Ricci / scalar / Einstein | complete | Local-coord Riemann, Ricci, scalar curvature, Einstein tensor; flat connection = zero; GR metric zoo (Minkowski, Schwarzschild with all 8 Christoffels, FLRW, Reissner-Nordström, Kerr, 2-sphere, de Sitter, warpedDiag2) all bundled as `MetricData` or `PartialMetricData`; `minkowski4_satisfies_vacuum_EFE` |
-| 6 | ODE / PDE on `Hypergraph V` | complete | Heat equation (D1 / D2 / D4 / D5 / D6 partial); wave equation (D8); Klein-Gordon (D9); Schrödinger unitary (D10); scalar field Lagrangian + Euler-Lagrange (G1 / G3 / G4); Benincasa–Dowker 4D d'Alembertian (BD conjecture flagged); D7 scaled discrete heat → continuum heat on GH-limit proved; bundled PDE spectrum bridge (cycle → circle) for heat / wave / Schrödinger / KG |
-| 7 | Fields / gauge | partial | Scalar field closed; G2 discrete gauge field via Rung-4 connection open; G5 continuum limits of discrete fields open |
-| 8 | Lorentzian geometry | complete for flat | Discrete (LorentzLattice, Minkowski); causal graph TR-DAG (IC1); `DiagLorentzianManifold` (E1) with Minkowski instance; causality conditions strong / stable / globally-hyperbolic (E4); light cones, causal future/past (E3); Cauchy-foliation existence from stably-causal time function (E5); E6 Lorentzian Gromov-Hausdorff open (Mathlib gap); E7 discrete-causal → continuum Lorentzian open |
-| 9 | Einstein equations | complete for flat | F3 `EinsteinEqLambda M C Λ κ T x`; Minkowski + flat solves vacuum EFE (`minkowski4_satisfies_EFE_zero_lambda`); Minkowski + flat forces Λ = 0 (excludes de Sitter on flat); vacuous flat-case second Bianchi; F1 stress-energy type proved; F2 energy conditions (WEC / NEC / SEC / DEC) proved; F7 Penrose statement proved; F8 Raychaudhuri statement proved; B3 / B4 / B6–B9 vacuum-solution proofs for Schwarzschild / FLRW / Kerr on concrete `MetricData` pending |
-| 10 | Hypergraph → GR (obligation form) | complete for flat; curved at obligation-level | Flat bridges proved (cycle → circle, path → interval, 2-torus, d-torus, lattice → Minkowski); every continuum GR object carries an attached origin-obligation Prop; flat-case witnesses proved; curved `bridgeHolds` side open |
+| 4 | Connections / Levi-Civita | partial | Local-coordinate Christoffel and covariant derivative proved; bundle-theoretic formulation (Riemannian / Lorentzian vector bundles + Koszul) blocked by missing Mathlib infrastructure (C1–C8); bridge-obligation attached (`ConnectionDataOriginObligation`) and inhabited in the flat-connection case |
+| 5 | Riemann / Ricci / scalar / Einstein | proved | Local-coordinate Riemann, Ricci, scalar curvature, Einstein tensor; flat connection = zero; GR metric zoo (Minkowski, Schwarzschild with all 8 Christoffels, FLRW, Reissner-Nordström, Kerr, 2-sphere, de Sitter, warpedDiag2) all bundled as `MetricData` or `PartialMetricData`; `minkowski4_satisfies_vacuum_EFE` |
+| 6 | ODE / PDE on `Hypergraph V` | proved | Heat equation (D1 / D2 / D4 / D5 / D6 partial); wave equation (D8); Klein-Gordon (D9); Schrödinger unitary (D10); scalar field Lagrangian + Euler-Lagrange (G1 / G3 / G4); Benincasa–Dowker 4D d'Alembertian (BD conjecture flagged); D7 scaled discrete heat → continuum heat on GH-limit proved; bundled PDE spectrum bridge (cycle → circle) for heat / wave / Schrödinger / KG |
+| 7 | Fields / gauge | partial | Scalar field proved; G2 discrete gauge field via Rung-4 connection open; G5 continuum limits of discrete fields open |
+| 8 | Lorentzian geometry | flat case proved; curved case open | Discrete structures (LorentzLattice, Minkowski); causal graph TR-DAG (IC1); `DiagLorentzianManifold` (E1) with Minkowski instance; causality conditions strong / stable / globally-hyperbolic (E4); light cones, causal future/past (E3); Cauchy-foliation existence from stably-causal time function (E5); E6 Lorentzian Gromov-Hausdorff open (Mathlib gap); E7 discrete-causal → continuum-Lorentzian convergence open |
+| 9 | Einstein equations | flat case proved; curved case open | F3 `EinsteinEqLambda M C Λ κ T x`; Minkowski + flat solves vacuum EFE (`minkowski4_satisfies_EFE_zero_lambda`); Minkowski + flat forces Λ = 0 (excludes de Sitter on flat); vacuous flat-case second Bianchi; F1 stress-energy type proved; F2 energy conditions (WEC / NEC / SEC / DEC) proved; F7 Penrose statement proved; F8 Raychaudhuri statement proved; B3 / B4 / B6–B9 vacuum-solution proofs for Schwarzschild / FLRW / Kerr on concrete `MetricData` pending |
+| 10 | Hypergraph → GR | flat case proved end-to-end; curved case has the obligation Prop attached but the curved bridge theorem is open | Flat bridges proved (cycle → circle, path → interval, 2-torus, d-torus, lattice → Minkowski); every continuum GR target carries an origin-obligation Prop; flat-case witnesses are inhabited; curved-case witnesses are not |
 
 **Grounding-audit status (all four action items closed, 2026-04-23).** Every continuum GR structure in the repository carries a hypergraph-side origin-obligation Prop. See the dedicated table below.
 
@@ -261,7 +267,7 @@ Empirical: 2102.09363 named rule shows causal-graph dimension = 1 on every teste
 
 ## Open items
 
-- Curved rule → curved metric bridges (Schwarzschild / Kerr / FLRW) — no known rule; obligations correctly open.
+- Curved rule → curved metric bridges (Schwarzschild / Kerr / FLRW) — no known rewriting rule produces these in the continuum limit; the obligation Props are attached, and the bridge theorems are open.
 - Measure-theory: A6 weak convergence counting → Lebesgue, A7 Wasserstein rate `O(1/n)`, A8 d-torus measure lift.
 - Bundle machinery (C1–C8): Mathlib gap for Riemannian / Lorentzian vector bundles and Koszul Levi-Civita.
 - G2 discrete gauge field via Rung-4 connection.

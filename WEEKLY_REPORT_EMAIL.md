@@ -4,52 +4,62 @@
 
 ## Numbers
 
-- 140 Lean files, ~20k LOC, 3468/3468 `lake` build jobs green.
+- 140 Lean files, ~20k LOC, 3468 of 3468 `lake` build jobs succeed.
 - 679 theorems + 17 lemmas + 17 examples proved; 381 definitions, 57 structures.
 - 497 `#print axioms` certifications; every theorem reduces to `{propext, Classical.choice, Quot.sound}`. No `sorry`, no `native_decide`, no custom axioms.
-- Infrageometry programme: 50 / 57 tasks closed with real content; 7 in-flight.
-- Grounding audit: 4 / 4 action items closed.
+- Infrageometry programme: 50 of 57 tasks closed with real content; 7 in progress with substantive open content.
+- Grounding audit: 4 of 4 action items closed (no free-floating continuum objects at the obligation level).
 
 ## Why (audit of the Gorard corpus)
 
-Gorard's headline claim: a specific hypergraph rewriting rule "provably satisfies the Einstein field equations in the continuum limit" (G3 abstract). Load-bearing flaws, each now a Lean theorem:
+Gorard's headline claim: a specific hypergraph rewriting rule "provably satisfies the Einstein field equations in the continuum limit" (G3 abstract). Load-bearing flaws:
 
-- **F1** — discrete metric `g^{ab}` used in G1 §3.3 is never constructed; any construction is non-canonical.
-- **F2** — "non-parallel hyperedges are orthonormal" declares a property of an unconstructed bilinear form.
-- **F3** — "asymptotic dimensionality preservation ⇒ EFE" unfolds to `Iff.rfl`; the condition *is* the Euler-Lagrange equation.
-- **F4** — "causal invariance ⇔ discrete general covariance" = `Iff.rfl` (the two terms are defined as the same thing); certified "does not depend on any axioms".
-- **F5** — "discrete sum becomes continuum integral" is convergence-notion-dependent; no notion specified.
-- **F6** — G3's "derivation" is the Poisson-sprinkle-then-reconstruct schema: target spacetime is input, not output. `circular_procedure_is_identity` proves any such procedure returns its input.
-- **F7** — named rule `|LHS|=|RHS|=4` forces state-size conservation, hence linear cone growth, hence dimension ≤ 1 on every tested seed (SetReplace + independent Python).
-- **F8** — G4 title promises discrete singularity theorems that the body does not contain.
-- Plus arithmetic errors: Eq 342 tube coefficient wrong by factor 2 on S², factor 6 on S³; Eq 344 uses scalar `R` where Ollivier's theorem has directional `Ric(v,v)`.
+- **F1** — the discrete metric `g^{ab}` used in G1 §3.3 is never constructed, and any construction built from the hypergraph alone is non-canonical. Formalised in Lean as `Refutations/F1NoMetric.lean`.
+- **F2** — "non-parallel hyperedges are orthonormal" declares a property of an unconstructed bilinear form. Formalised in `Refutations/F2Orthonormality.lean`.
+- **F3** — "asymptotic dimensionality preservation ⇒ Einstein equations" unfolds to `Iff.rfl`; the preservation condition *is* the Euler-Lagrange equation of the Einstein-Hilbert action. Formalised in `Refutations/F3Tautology.lean`.
+- **F4** — "causal invariance ⇔ discrete general covariance" is `Iff.rfl` (the two terms are defined as the same thing); the Lean certificate shows the proposition depends on **zero axioms**. Formalised in `Refutations/F4Tautology.lean`.
+- **F5** — "discrete sum becomes continuum integral" is convergence-notion-dependent; no notion is specified. Formalised in `Refutations/F5Illdefined.lean`.
+- **F6** — G3's "derivation" is the Poisson-sprinkle-then-reconstruct schema: the target spacetime is input, not output. `circular_procedure_is_identity` in Lean proves that any such procedure returns its input. Formalised in `Refutations/F6Circularity.lean`.
+- **F7** — the named rule has `|LHS| = |RHS| = 4`, which forces state-size conservation, hence linear causal-cone growth, hence dimension ≤ 1 on every tested seed (confirmed in SetReplace and in an independent Python re-implementation). Formalised in `Refutations/F7NamedRuleStructure.lean`.
+- **F8** — the G4 title promises "Discrete Singularity Theorems" that the body does not contain (no discrete Raychaudhuri, expansion scalar, energy condition, or stress-energy tensor; no "shear" or "vorticity" in the text). Documentary finding, not Lean-formalised.
+- **Plus arithmetic errors.** Eq 342 (tube-volume coefficient): wrong by factor 2 on S², factor 6 on S³. Eq 344 (Ollivier Wasserstein): uses scalar `R` where Ollivier's cited theorem has directional `Ric(v,v)`.
 
-Verdict: systematic overclaim with embedded mathematical errors. Nothing fabricated; every error public and checkable.
+**Verdict.** Systematic overclaim with embedded mathematical errors. Nothing fabricated; every error public and checkable.
 
 ## State of the discrete-continuum bridge
 
-| Rung | Topic | State |
-|---|---|---|
-| 1 | Discrete calculus / Laplacian / heat kernel | complete |
-| 2 | Operator convergence (scaled Δ → d²/dx², cycle spectrum → circle spectrum) | complete |
-| 3 | Measure limits (counting measure and pushforward complete; A6 weak convergence, A7 Wasserstein, A8 d-torus open) | partial |
-| 4 | Connections / Levi-Civita (local-coord complete; Mathlib bundle gap blocks bundle form) | partial |
-| 5 | Riemann / Ricci / Einstein tensors; GR metric zoo (Minkowski, Schwarzschild, FLRW, RN, Kerr, S², de Sitter) | complete |
-| 6 | Heat / wave / Klein-Gordon / Schrödinger-unitary / scalar-field EL on `Hypergraph V`; discrete heat → continuum heat | complete |
-| 7 | Fields (scalar complete; gauge open) | partial |
-| 8 | Lorentzian (discrete complete; continuum `DiagLorentzianManifold` complete; Cauchy foliation complete; Lorentzian GH open) | complete for flat |
-| 9 | Einstein equations (`EinsteinEqLambda` complete; Minkowski vacuum solves it; flat connection forces Λ=0) | complete for flat |
-| 10 | Hypergraph → GR (flat bridges proved; curved obligations attached, `bridgeHolds` open) | complete for flat; curved at obligation-level |
+Legend for the State column:
+- **proved** — the content of the rung is a machine-checked theorem.
+- **partial** — some of the rung's content is proved; specific sub-items are listed open in the Content column.
+- **flat case proved; curved case open** — the rung is proved when the underlying spacetime is flat (Minkowski / cycle / torus / lattice); the proof for a curved target (Schwarzschild, Kerr, FLRW) is open.
+- **flat case proved end-to-end; curved case has the obligation Prop attached but the curved bridge theorem is open** — for Rung 10 specifically: every continuum GR target has an obligation Prop binding it to a hypergraph-side witness, flat-case witnesses are inhabited, curved-case witnesses are not.
 
-Flat bridges proved: cycle → circle, path → interval, 2-torus, d-torus, discrete Lorentz → Minkowski.
+| Rung | Topic | State | Content |
+|---|---|---|---|
+| 1 | Discrete calculus / Laplacian / heat kernel | proved | `Δ_H` on hypergraphs, self-adjoint, Dirichlet form, heat kernel `exp(t·Δ)` |
+| 2 | Operator convergence | proved | Scaled second difference → `f''` for every C² function; scaled cycle eigenvalue → continuum circle Laplacian spectrum |
+| 3 | Measure-theoretic limits | partial | Counting measure and pushforward proved; A6 weak convergence, A7 Wasserstein, A8 d-torus lift open |
+| 4 | Connections / Levi-Civita | partial | Local-coordinate Christoffel and covariant derivative proved; bundle-theoretic formulation blocked by missing Mathlib infrastructure |
+| 5 | Riemann / Ricci / Einstein tensors; GR metric zoo | proved | Local-coordinate curvature tensors; Minkowski, Schwarzschild, FLRW, Reissner-Nordström, Kerr, 2-sphere, de Sitter all bundled as `MetricData` / `PartialMetricData` |
+| 6 | ODE / PDE on `Hypergraph V` | proved | Heat, wave, Klein-Gordon, Schrödinger (unitary), scalar-field Lagrangian + Euler-Lagrange; discrete heat → continuum heat on GH-limit |
+| 7 | Fields / gauge | partial | Scalar field proved; discrete gauge field (G2) open |
+| 8 | Lorentzian geometry | flat case proved; curved case open | Discrete Lorentzian lattice, Minkowski, `DiagLorentzianManifold`, causality conditions, Cauchy foliation from stably-causal time function; continuum Lorentzian Gromov-Hausdorff and curved-causal convergence open |
+| 9 | Einstein equations | flat case proved; curved case open | `EinsteinEqLambda` predicate; Minkowski + flat connection solves vacuum EFE; flat connection forces Λ = 0; stress-energy type; energy conditions; Penrose and Raychaudhuri statements; Schwarzschild / FLRW / Kerr vacuum-EFE proofs pending |
+| 10 | Hypergraph → GR | flat case proved end-to-end; curved case has the obligation Prop attached but the curved bridge theorem is open | Flat bridges proved: cycle → circle, path → interval, 2-torus, d-torus, discrete Lorentz → Minkowski; every continuum GR target carries an origin-obligation Prop; flat-case witnesses are inhabited; curved-case witnesses are not |
 
 ## Open items
 
-Curved rule → curved metric bridges (Schwarzschild, Kerr, FLRW) — no known rule; correctly open. Measure theory A6/A7/A8. Mathlib bundle gap blocks C1–C8. G2 gauge field. E6/E7 Lorentzian GH. Discrete stress-energy. Large-scale empirical rule search via wolframscript.
+- Curved rule → curved metric bridges (Schwarzschild, Kerr, FLRW): no known rewriting rule produces these in the continuum limit; the obligation is attached, the bridge theorem is open.
+- Measure theory A6 (weak convergence of the counting measure to Lebesgue), A7 (Wasserstein-1 rate O(1/n)), A8 (d-torus measure lift).
+- Mathlib gap for Riemannian / Lorentzian vector bundles blocks the bundle-theoretic Levi-Civita track (C1–C8).
+- G2 discrete gauge field via a Rung-4 connection.
+- E6 Lorentzian Gromov-Hausdorff; E7 discrete-causal → continuum-Lorentzian convergence.
+- Discrete stress-energy tensor counterpart.
+- Large-scale empirical rule search via `wolframscript` / SetReplace: the Lean-side infrastructure is in place in `RuleSearch.lean`; large-scale enumeration is pending.
 
 ## Near-term priorities
 
-1. Rule-search pipeline — wolframscript enumeration, signatures, hits back into `RuleSearch.lean`.
-2. Curved-Γ FiberedGraph bridge — extend from flat witness to non-trivial curved `Connection F`.
-3. Measure bridges A6 / A7 / A8.
-4. Paper drafts K1 (audit) and K3 (infrageometry continuum-limits).
+1. **Rule-search pipeline**: enumerate small rules via `wolframscript`; compute their signatures; add hits to the Lean `RuleSearch.lean` catalog with signature-property theorems attached.
+2. **Curved-Γ FiberedGraph bridge**: extend `FiberedGraphConnectionBridge` from the flat-connection witness to a non-trivial curved `Connection` approximating Schwarzschild's Γ at the horizon boundary.
+3. **Measure bridges** A6 / A7 / A8.
+4. **Paper drafts**: K1 (audit) and K3 (infrageometry continuum-limits; R1 / R2 / R5 / A3 / A4 form the technical core).
