@@ -101,5 +101,32 @@ theorem flatConnection_minkowski4_from_fiberedGraph :
     ConnectionDataOriginObligation (flatConnection 4) := by
   exact flatConnection_from_fiberedGraph_proved 4
 
+/-- **Arbitrary connection's origin-obligation is trivially inhabited
+at the current statement level.** Because the obligation Prop as
+currently written is a pure existential over `FiberedGraph` +
+`Connection` + positive scaling (no bridgeHolds predicate), the same
+`trivialFiberedGraph` + `trivialConnection` witness inhabits it for
+every `C : ConnectionData n`, flat or curved. The open research work
+(covariant bridgeHolds) is a future strengthening of the obligation,
+not a new inhabitant of this one. -/
+theorem any_connection_has_obligation_witness {n : Nat} (C : ConnectionData n) :
+    ConnectionDataOriginObligation C := by
+  unfold ConnectionDataOriginObligation
+  refine ⟨Fin 1, Fin 1, inferInstance, inferInstance,
+    inferInstance, inferInstance,
+    trivialFiberedGraph, trivialConnection,
+    fun k => (1 : ℝ) / (k + 1), ?_⟩
+  intro k
+  positivity
+
+/-- **Levi-Civita connection from any `MetricDataC2` inherits the
+origin-obligation witness.** Every Levi-Civita connection — derivable
+from any `MetricDataC2 n` via `leviCivitaConnection` — is itself a
+`ConnectionData n` and hence satisfies the obligation, per
+`any_connection_has_obligation_witness`. -/
+theorem leviCivitaConnection_from_fiberedGraph {n : Nat} (M : MetricDataC2 n) :
+    ConnectionDataOriginObligation M.leviCivitaConnection :=
+  any_connection_has_obligation_witness _
+
 end Curvature
 end InfraFormalization
