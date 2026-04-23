@@ -14,6 +14,7 @@ needed for the d-torus product structure (`T5` = path + cycle^d).
 -/
 
 import InfraFormalization.Hypergraph
+import InfraFormalization.HypergraphLaplacian
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 
 namespace InfraFormalization
@@ -90,6 +91,40 @@ theorem pathEigenvalue_nonpos (n k : ℕ) : pathEigenvalue n k ≤ 0 := by
 (just as `cycleEigenvalue n 0 = 0` on the cycle). -/
 theorem pathEigenvalue_ground_zero (n : ℕ) : pathEigenvalue n 0 = 0 := by
   unfold pathEigenvalue
+  simp
+
+/-- **Path ground-mode eigenvector is constant**: `pathEigenvector n 0 j
+= 1` for every `j`. Direct from `cos(0) = 1`. Confirms the `k = 0`
+mode is the constant mode. -/
+theorem pathEigenvector_zero_eq_one (n : ℕ) (j : Fin n) :
+    pathEigenvector n 0 j = 1 := by
+  unfold pathEigenvector
+  simp
+
+/-- **Path Laplacian annihilates the constant vector.** For any `n`,
+`laplacianHyper (pathHypergraph n) (pathEigenvector n 0) v = 0`. This
+is the `k = 0` case of the path-Laplacian eigenvalue equation
+(`pathEigenvalue n 0 = 0`, constant-mode in the kernel) — analog of
+the corresponding cycle statement. -/
+theorem pathLaplacian_eigen_zero (n : ℕ) (v : Fin n) :
+    Hypergraph.laplacianHyper (pathHypergraph n)
+      (fun j => pathEigenvector n 0 j) v = 0 := by
+  -- `pathEigenvector n 0` is the constant-1 function, so every
+  -- `f w - f v = 1 - 1 = 0` contribution vanishes.
+  unfold Hypergraph.laplacianHyper
+  have h_inner : ∀ e : Hyperedge (Fin n),
+      ∑ w ∈ e.others v, ((fun j => pathEigenvector n 0 j) w
+        - (fun j => pathEigenvector n 0 j) v) = 0 := by
+    intro e
+    refine Finset.sum_eq_zero (fun w _ => ?_)
+    simp [pathEigenvector_zero_eq_one]
+  -- Every contribution to the sum over edges is 0.
+  have h_map : (pathHypergraph n).edges.map
+      (fun e => ∑ w ∈ e.others v, ((fun j => pathEigenvector n 0 j) w
+        - (fun j => pathEigenvector n 0 j) v))
+      = (pathHypergraph n).edges.map (fun _ => (0 : ℝ)) :=
+    Multiset.map_congr rfl (fun e _ => h_inner e)
+  rw [h_map]
   simp
 
 /-- **Path first non-constant mode is strictly negative.** For `n ≥ 2`

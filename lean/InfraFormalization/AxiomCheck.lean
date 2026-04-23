@@ -128,6 +128,8 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.heatKernel_cycleHypergraph_multi_mode_tendsto
 #print axioms InfraFormalization.pathEigenvalue_ground_zero
 #print axioms InfraFormalization.pathEigenvalue_one_neg
+#print axioms InfraFormalization.pathEigenvector_zero_eq_one
+#print axioms InfraFormalization.pathLaplacian_eigen_zero
 #print axioms InfraFormalization.curvedRicciBridgeObligation
 #print axioms InfraFormalization.warpedDiag2_christoffel_nonzero
 #print axioms InfraFormalization.warpedDiag2_christoffel_1_0_1
