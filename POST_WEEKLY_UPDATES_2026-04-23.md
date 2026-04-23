@@ -1,5 +1,6 @@
 Added or done since the 2026-04-23 weekly update (newest first):
 
+- ID6 partial obligation lifted to r=2 (dimensionCompatibilityObligation_r_two, dimensionCompatibilityObligation_base_cases_through_two) — the partial compatibility proof now covers r ∈ {0, 1, 2}.
 - ID6 r=2 exact closure: V(v, 2) = 5 on cycleHypergraph n ≥ 5 (cycleHypergraph_ballVolume_two_exact, _le_five, _ge_five). Upper bound via shortest-walk structural analysis; length-2 case pins the common neighbor w = p.getVert 1 to {v±1} then u ∈ N(w) ⊆ {v, v±2}. All three lemmas axiom-clean.
 - ID6 r=2 lower bound: V(v, 2) ≥ 5 on cycleHypergraph n ≥ 5 (cycleHypergraph_ballVolume_two_ge_five). Extends past r=0, r=1; feeds into the full V(v,r) = 2r+1 formula.
 - ID6: dist v (v±2) ≤ 2 via triangle inequality (cycleHypergraph_dist_add_two_le, cycleHypergraph_dist_sub_two_le) + cons adjacencies (cycleHypergraph_succ_succ_adj, cycleHypergraph_pred_pred_adj)
