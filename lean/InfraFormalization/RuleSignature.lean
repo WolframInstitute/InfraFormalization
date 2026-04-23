@@ -121,4 +121,37 @@ theorem RuleSignature.edgeCount_invariant_of_conservative
   unfold hypergraphSignature
   exact trajectory_size_invariant τ hstep hcons i hi
 
+/-- **Vertex count is a signature-level invariant on every
+trajectory**. No conservativity hypothesis needed — `vertexCount` is
+defined as `Fintype.card V`, which is fixed by the type. Complements
+`edgeCount_invariant_of_conservative`. -/
+theorem RuleSignature.vertexCount_invariant
+    {P : Type*} {sys : RewritingSystem P}
+    {init : Hypergraph V} (τ : Trajectory sys init)
+    (i : Nat) (hi : i < τ.states.length) :
+    (hypergraphSignature (τ.states.get ⟨i, hi⟩)).vertexCount
+    = (hypergraphSignature init).vertexCount := rfl
+
+/-- **Edge-count mismatch ⇒ unreachable from init under conservativity.**
+If a target signature `σ` has `σ.edgeCount ≠ init.size`, then no
+step-consistent conservative trajectory from `init` ever reaches a
+state whose signature `edgeCount` equals `σ.edgeCount`. This is a
+concrete, machine-checkable **screening criterion** for rule
+proposals: any candidate aiming at a target `σ` must use a
+non-conservative rule (|LHS| ≠ |RHS|) when `σ.edgeCount ≠ init.size`.
+
+Ties the IR1 signature apparatus to the IR2 conservation theorem as
+an eliminator in the IR6 candidate-rule search. -/
+theorem RuleSignature.edgeCount_mismatch_unreachable_of_conservative
+    {P : Type*} {sys : RewritingSystem P}
+    {init : Hypergraph V} (τ : Trajectory sys init)
+    (hstep : τ.StepConsistent)
+    (hcons : ∀ i (hi : i < τ.applications.length),
+      (τ.applications.get ⟨i, hi⟩).2.1.IsConservative)
+    (σ : RuleSignature V) (hmis : σ.edgeCount ≠ (hypergraphSignature init).edgeCount)
+    (i : Nat) (hi : i < τ.states.length) :
+    (hypergraphSignature (τ.states.get ⟨i, hi⟩)).edgeCount ≠ σ.edgeCount := by
+  rw [RuleSignature.edgeCount_invariant_of_conservative τ hstep hcons i hi]
+  exact fun h => hmis h.symm
+
 end InfraFormalization
