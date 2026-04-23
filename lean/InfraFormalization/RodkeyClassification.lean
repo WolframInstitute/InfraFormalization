@@ -351,6 +351,17 @@ theorem cycleHypergraph_distTransitive {n : Nat} [NeZero n] (hn : 2 ≤ n) :
     rw [hw] at this
     exact this
 
+/-- **`cycleHypergraph n` is Adj-transitive via rotation.** The shift
+`k ↦ k + (w - v)` is an `Equiv` on `Fin n` that sends `v` to `w` and
+preserves adjacency iff-both-ways (by `cycleHypergraph_Adj_translation`). -/
+theorem cycleHypergraph_adjTransitive {n : Nat} [NeZero n] (hn : 2 ≤ n) :
+    (cycleHypergraph n).AdjTransitive := by
+  intro v w
+  refine ⟨Equiv.addRight (w - v), ?_, ?_⟩
+  · show v + (w - v) = w; abel
+  · intro a b
+    exact cycleHypergraph_Adj_translation hn (w - v) a b
+
 /-! ## Classification obligation
 
 The full Rodkey classification is open: characterise every finite
