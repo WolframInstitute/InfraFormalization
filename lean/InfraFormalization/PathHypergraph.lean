@@ -101,6 +101,24 @@ theorem pathEigenvector_zero_eq_one (n : ℕ) (j : Fin n) :
   unfold pathEigenvector
   simp
 
+/-- **Path Laplacian annihilates any constant vector.** For every `c`,
+`laplacianHyper (pathHypergraph n) (fun _ => c) v = 0`. Generalisation
+of the `k = 0` eigenvalue equation to arbitrary constants. -/
+theorem pathLaplacian_of_const (n : ℕ) (c : ℝ) (v : Fin n) :
+    Hypergraph.laplacianHyper (pathHypergraph n) (fun _ => c) v = 0 := by
+  unfold Hypergraph.laplacianHyper
+  have h_inner : ∀ e : Hyperedge (Fin n),
+      ∑ w ∈ e.others v, ((fun _ => c) w - (fun _ => c) v) = 0 := by
+    intro e
+    refine Finset.sum_eq_zero (fun w _ => ?_)
+    simp
+  have h_map : (pathHypergraph n).edges.map
+      (fun e => ∑ w ∈ e.others v, ((fun _ => c) w - (fun _ => c) v))
+      = (pathHypergraph n).edges.map (fun _ => (0 : ℝ)) :=
+    Multiset.map_congr rfl (fun e _ => h_inner e)
+  rw [h_map]
+  simp
+
 /-- **Path Laplacian annihilates the constant vector.** For any `n`,
 `laplacianHyper (pathHypergraph n) (pathEigenvector n 0) v = 0`. This
 is the `k = 0` case of the path-Laplacian eigenvalue equation
@@ -109,23 +127,10 @@ the corresponding cycle statement. -/
 theorem pathLaplacian_eigen_zero (n : ℕ) (v : Fin n) :
     Hypergraph.laplacianHyper (pathHypergraph n)
       (fun j => pathEigenvector n 0 j) v = 0 := by
-  -- `pathEigenvector n 0` is the constant-1 function, so every
-  -- `f w - f v = 1 - 1 = 0` contribution vanishes.
-  unfold Hypergraph.laplacianHyper
-  have h_inner : ∀ e : Hyperedge (Fin n),
-      ∑ w ∈ e.others v, ((fun j => pathEigenvector n 0 j) w
-        - (fun j => pathEigenvector n 0 j) v) = 0 := by
-    intro e
-    refine Finset.sum_eq_zero (fun w _ => ?_)
-    simp [pathEigenvector_zero_eq_one]
-  -- Every contribution to the sum over edges is 0.
-  have h_map : (pathHypergraph n).edges.map
-      (fun e => ∑ w ∈ e.others v, ((fun j => pathEigenvector n 0 j) w
-        - (fun j => pathEigenvector n 0 j) v))
-      = (pathHypergraph n).edges.map (fun _ => (0 : ℝ)) :=
-    Multiset.map_congr rfl (fun e _ => h_inner e)
-  rw [h_map]
-  simp
+  have h_const : (fun j : Fin n => pathEigenvector n 0 j) = fun _ => (1 : ℝ) :=
+    funext (fun j => pathEigenvector_zero_eq_one n j)
+  rw [h_const]
+  exact pathLaplacian_of_const n 1 v
 
 /-- **Path first non-constant mode is strictly negative.** For `n ≥ 2`
 and `k = 1`, the eigenvalue `−4 sin²(π/(2n))` is strictly negative

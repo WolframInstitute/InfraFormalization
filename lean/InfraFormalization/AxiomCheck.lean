@@ -134,6 +134,7 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.pathEigenvalue_one_neg
 #print axioms InfraFormalization.pathEigenvector_zero_eq_one
 #print axioms InfraFormalization.pathLaplacian_eigen_zero
+#print axioms InfraFormalization.pathLaplacian_of_const
 #print axioms InfraFormalization.curvedRicciBridgeObligation
 #print axioms InfraFormalization.warpedDiag2_christoffel_nonzero
 #print axioms InfraFormalization.warpedDiag2_christoffel_1_0_1
