@@ -30,16 +30,16 @@ Verdict: systematic overclaim with embedded mathematical errors. Nothing fabrica
 
 | Rung | Topic | State |
 |---|---|---|
-| 1 | Discrete calculus / Laplacian / heat kernel | ✅ |
-| 2 | Operator convergence (scaled Δ → d²/dx², cycle spectrum → circle spectrum) | ✅ |
-| 3 | Measure limits (counting measure ✅; A6 weak, A7 Wasserstein, A8 d-torus open) | ⚠ |
-| 4 | Connections / Levi-Civita (local-coord ✅; Mathlib bundle gap) | ⚠ |
-| 5 | Riemann / Ricci / Einstein tensors; GR metric zoo (Minkowski, Schwarzschild, FLRW, RN, Kerr, S², de Sitter) | ✅ |
-| 6 | Heat / wave / Klein-Gordon / Schrödinger-unitary / scalar-field EL on `Hypergraph V`; discrete heat → continuum heat | ✅ |
-| 7 | Fields (scalar ✅; gauge open) | 🟡 |
-| 8 | Lorentzian (discrete ✅; continuum `DiagLorentzianManifold` ✅; Cauchy foliation ✅; Lorentzian GH open) | ✅ flat |
-| 9 | Einstein equations (`EinsteinEqLambda` ✅; Minkowski vacuum ✅; flat forces Λ=0) | ✅ flat |
-| 10 | Hypergraph → GR (flat bridges proved; curved obligations attached, `bridgeHolds` open) | ✅ flat / obligation-level |
+| 1 | Discrete calculus / Laplacian / heat kernel | complete |
+| 2 | Operator convergence (scaled Δ → d²/dx², cycle spectrum → circle spectrum) | complete |
+| 3 | Measure limits (counting measure and pushforward complete; A6 weak convergence, A7 Wasserstein, A8 d-torus open) | partial |
+| 4 | Connections / Levi-Civita (local-coord complete; Mathlib bundle gap blocks bundle form) | partial |
+| 5 | Riemann / Ricci / Einstein tensors; GR metric zoo (Minkowski, Schwarzschild, FLRW, RN, Kerr, S², de Sitter) | complete |
+| 6 | Heat / wave / Klein-Gordon / Schrödinger-unitary / scalar-field EL on `Hypergraph V`; discrete heat → continuum heat | complete |
+| 7 | Fields (scalar complete; gauge open) | partial |
+| 8 | Lorentzian (discrete complete; continuum `DiagLorentzianManifold` complete; Cauchy foliation complete; Lorentzian GH open) | complete for flat |
+| 9 | Einstein equations (`EinsteinEqLambda` complete; Minkowski vacuum solves it; flat connection forces Λ=0) | complete for flat |
+| 10 | Hypergraph → GR (flat bridges proved; curved obligations attached, `bridgeHolds` open) | complete for flat; curved at obligation-level |
 
 Flat bridges proved: cycle → circle, path → interval, 2-torus, d-torus, discrete Lorentz → Minkowski.
 
