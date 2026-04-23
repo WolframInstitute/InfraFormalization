@@ -175,6 +175,59 @@ theorem ballVolumeVertexUniform_of_adjTransitive
   ballVolumeVertexUniform_of_distTransitive H
     (distTransitive_of_adjTransitive H ht)
 
+/-- **Geodesic ball volume at radius 1 equals degree plus one** on a
+connected hypergraph. The radius-1 ball around `v` is the disjoint
+union of `{v}` with the SimpleGraph-neighbour set of `v` (because
+`dist v u = 1 ↔ Adj v u` on a simple graph, and connectivity rules
+out the unreachable-junk case). -/
+theorem geodesicBallVolume_one_eq_degree_plus_one
+    (H : Hypergraph V) (hconn : H.toSimpleGraph.Connected) (v : V) :
+    H.geodesicBallVolume v 1 = 1 + H.toSimpleGraph.degree v := by
+  unfold Hypergraph.geodesicBallVolume Hypergraph.geodesicBall Hypergraph.dist
+  have h_eq :
+      (Finset.univ.filter (fun u => H.toSimpleGraph.dist v u ≤ 1))
+        = insert v (H.toSimpleGraph.neighborFinset v) := by
+    ext u
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_insert,
+               SimpleGraph.mem_neighborFinset]
+    constructor
+    · intro h_le
+      rcases Nat.eq_zero_or_pos (H.toSimpleGraph.dist v u) with hdist0 | hdist_pos
+      · -- dist = 0 → u = v (since connected, reachable holds)
+        left
+        rw [SimpleGraph.dist_eq_zero_iff_eq_or_not_reachable] at hdist0
+        rcases hdist0 with heq | hnreach
+        · exact heq.symm
+        · exact absurd (hconn v u) hnreach
+      · -- dist ≥ 1 and dist ≤ 1 so dist = 1, hence Adj
+        right
+        have hdist1 : H.toSimpleGraph.dist v u = 1 := by omega
+        exact (SimpleGraph.dist_eq_one_iff_adj).mp hdist1
+    · intro h
+      rcases h with hvu | hadj
+      · subst hvu
+        simp [SimpleGraph.dist_self]
+      · rw [SimpleGraph.dist_eq_one_iff_adj.mpr hadj]
+  rw [h_eq]
+  have hvni : v ∉ H.toSimpleGraph.neighborFinset v := by
+    simp [SimpleGraph.mem_neighborFinset]
+  rw [Finset.card_insert_of_notMem hvni]
+  rw [SimpleGraph.degree]
+  omega
+
+/-- **Ball-volume vertex-uniformity at radius 1 implies uniform
+SimpleGraph degree** (on a connected hypergraph): if the radius-1 ball
+size is the same at every vertex, the SimpleGraph degrees also agree,
+since `|ball v 1| = 1 + degree v`. -/
+theorem degree_uniform_of_ballVolumeVertexUniform
+    (H : Hypergraph V) (hconn : H.toSimpleGraph.Connected)
+    (hb : H.BallVolumeVertexUniform) (v w : V) :
+    H.toSimpleGraph.degree v = H.toSimpleGraph.degree w := by
+  have hvw := hb 1 v w
+  rw [geodesicBallVolume_one_eq_degree_plus_one H hconn v,
+      geodesicBallVolume_one_eq_degree_plus_one H hconn w] at hvw
+  omega
+
 /-- **Adj-transitive implies uniform degree.** An Adj-preserving
 `Equiv σ : V ≃ V` sending `v` to `w` bijects the neighbour set of `v`
 with the neighbour set of `w`, so the simple-graph degrees agree. This
