@@ -131,5 +131,21 @@ theorem ollivier_gorard_agree_iff (n : Nat) (δ ε R Ric_vv : ℝ)
   · intro h
     rw [h]
 
+/-- **Worked example: unit 2-sphere S²**. Scalar curvature `R = 2`,
+directional Ricci `Ric(v,v) = 1` at every unit tangent vector. Gorard's
+substitution makes a leading-term error of exactly `δ · ε² / 8` on S². -/
+theorem s2_gorard_error (δ ε : ℝ) :
+    δ * (1 - ε^2 * 1 / (2 * (2 + 2)))
+      - δ * (1 - ε^2 * 2 / (2 * (2 + 2)))
+      = δ * ε^2 / 8 := by
+  ring
+
+/-- **S² discrepancy is strictly positive** for every positive `δ, ε`.
+Rules out Gorard's substitution on the 2-sphere at every smallness
+scale. -/
+theorem s2_gorard_error_pos (δ ε : ℝ) (hδ : 0 < δ) (hε : 0 < ε) :
+    0 < δ * ε^2 / 8 := by
+  positivity
+
 end Infra
 end InfraFormalization
