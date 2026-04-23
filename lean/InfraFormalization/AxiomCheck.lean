@@ -222,6 +222,7 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.Hypergraph.Adj_add_left
 #print axioms InfraFormalization.Hypergraph.Adj_add_right
 #print axioms InfraFormalization.cycle_add_two_ne_self
+#print axioms InfraFormalization.cycle_sub_two_ne_self
 #print axioms InfraFormalization.pathEigenvalue_nonpos
 #print axioms InfraFormalization.heatKernel_cycleHypergraph_multi_mode_tendsto
 #print axioms InfraFormalization.pathEigenvalue_ground_zero

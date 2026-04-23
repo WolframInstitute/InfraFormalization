@@ -382,6 +382,18 @@ theorem cycle_add_two_ne_self {n : Nat} [NeZero n] (hn : 3 ≤ n) (v : Fin n) :
       exact Nat.mod_eq_of_lt (by omega)
     rw [hmod] at hval; omega
 
+/-- **For `n ≥ 3`, `v − 2 ≠ v` in `Fin n`.** Symmetric counterpart of
+`cycle_add_two_ne_self`: shift-by-(−2) is also non-trivial. -/
+theorem cycle_sub_two_ne_self {n : Nat} [NeZero n] (hn : 3 ≤ n) (v : Fin n) :
+    (v - 2 : Fin n) ≠ v := by
+  intro heq
+  -- v - 2 = v ⟹ (v - 2) + 2 = v + 2 ⟹ v = v + 2, contradicting `cycle_add_two_ne_self`.
+  have h_add : (v - 2 : Fin n) + 2 = v + 2 := by rw [heq]
+  have h_eq : v = v + 2 := by
+    have : (v - 2 : Fin n) + 2 = v := by abel
+    rw [this] at h_add; exact h_add
+  exact cycle_add_two_ne_self hn v h_eq.symm
+
 /-- **Radius-1 ball volume in cycleHypergraph (n ≥ 3) is ≥ 3.**
 Exhibits three distinct vertices (`v`, `v + 1`, `v − 1`) in the
 ball, all at distance ≤ 1. This establishes the first concrete
