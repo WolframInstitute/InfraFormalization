@@ -4,6 +4,9 @@ Lives next to [`README.md`](README.md) / [`INDEX.md`](INDEX.md) / [`FINDINGS.md`
 
 ## Recently shipped (selected highlights)
 
+- **Schwarzschild Lorentzian signature** (`Schwarzschild.lean`): `sgg_lorentzian_pointwise` — on every exterior point, the Schwarzschild metric `sgg M x` has diagonal Lorentzian signature (g_00 < 0, g_ii > 0, off-diagonal = 0). `SchwarzschildVacuumObligation M` is the statement-level B4 obligation. Axiom-clean.
+- **2-sphere curvature witnesses** (`TwoSphere.lean`): `sphereChristoffel_1_0_1 = cot(θ)` closed form + `sphereChristoffel_nonzero` existence witness at generic points. Full "beyond flat" demonstration for the S² target.
+- **GrandTour.lean** — headline-theorems tour. One-line examples referencing the eight main results (operator convergence, PDE spectrum, D6 multi-mode, T6 obligations, F3+Minkowski-vacuum, E1+E5, GR zoo, PDE bridge + curved Ricci).
 - **gr_metric_zoo** (`GRMetricsDemo.lean`): single bundled theorem exhibiting all formalised GR target metrics — Minkowski, FLRW, Schwarzschild, Reissner-Nordström, de Sitter, 2-sphere. Centrepiece status marker for the continuum-target side of the bridge ladder. Axiom-clean.
 - **de Sitter metric** (`DeSitter.lean`): `dsLapse Λ r = 1 − Λr²/3`, `dsG Λ`, `dsGinv Λ`, `DSValid Λ x`. `dsLapse_minkowski` (Λ=0 reduces to flat), `dsLapse_pos_iff` (cosmological horizon location). The curved-vacuum geometry that accommodates non-zero Λ (which Minkowski+flat cannot, per `minkowski4_flat_vacuum_forces_lambda_zero`). Axiom-clean.
 - **2-sphere S² metric** (`TwoSphere.lean`): `sphereG`, `sphereGinv`, `sphereDg`, `SphereValid x := sin θ ≠ 0`. `spherePartial : PartialMetricData 2` fully bundled. `sphereChristoffel_0_1_1 = -sin(θ) cos(θ)` — explicit non-zero Christoffel on a genuinely curved Riemannian target (pairs with 3-regular-graph signature for R4 beyond-flat bridge). Axiom-clean.

@@ -104,6 +104,8 @@ Grouped by phase (see [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md)). Each milestone ei
 - [x] **Klein-Gordon continuum spectrum** (`ContinuumLimitStatement.lean` + `ContinuumBridgeDemo.lean`): `DiscreteKleinGordonSpectrum m` + `discreteKleinGordonSpectrum_holds` proves `n² · 4 sin²(πk/n) + m² → (2πk)² + m²`. `pde_spectrum_bridge_summary_with_mass` includes it in the bundled PDE bridge. Axiom-clean.
 - [x] **minkowski4Manifold_satisfies_vacuum_EFE**: Minkowski-as-DiagLorentzianManifold + flat-connection solves vacuum Einstein equations — bundles E1 + F3. Axiom-clean.
 - [x] **X1 / PartialMetricData refactor** (`PartialMetricData.lean`; #24): `PartialMetricData n` bundles g, ginv, dg with domain predicate `valid : (Fin n → ℝ) → Prop`. `MetricData.toPartial` + `christoffel_symm` on validity. `schwarzschildPartial_christoffel` ties back to explicit formulas. Axiom-clean.
+- [x] **GrandTour.lean** — one-file headline-theorems tour; one-line examples for every major theorem. Axiom-clean.
+- [x] **Schwarzschild Lorentzian signature + B4 obligation** (`Schwarzschild.lean`): `sgg_lorentzian_pointwise` + `SchwarzschildVacuumObligation` statement form. Ricci = 0 (B3) remains open pending ∂²g.
 - [x] **gr_metric_zoo** (`GRMetricsDemo.lean`): single bundled theorem exhibiting all formalised GR targets (Minkowski, FLRW, Schwarzschild, RN, de Sitter, S²). Centrepiece for the continuum-target side. Axiom-clean.
 - [x] **de Sitter metric** (`DeSitter.lean`): `dsLapse`, `dsG`, `dsGinv`, `DSValid`, reduction-to-Minkowski at Λ=0, cosmological-horizon characterisation. Axiom-clean.
 - [x] **2-sphere S² metric** (`TwoSphere.lean`): round sphere as `PartialMetricData 2`, non-zero `Γ⁰_{11}` closed form — concrete curved target. Axiom-clean.
