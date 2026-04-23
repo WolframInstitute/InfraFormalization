@@ -127,6 +127,20 @@ theorem add_assoc' (H₁ H₂ H₃ : Hypergraph V) :
   congr 1
   exact Multiset.add_assoc _ _ _
 
+/-- **Diff reduces size**: removing edges can only decrease (or
+preserve) the size. Mathlib's truncated `Multiset.sub` gives the
+inequality unconditionally. -/
+theorem size_diff_le [DecidableEq V] (H : Hypergraph V)
+    (E : Multiset (Hyperedge V)) :
+    (H.diff E).size ≤ H.size := by
+  show (H.edges - E).card ≤ H.edges.card
+  exact Multiset.card_le_card (Multiset.sub_le_self H.edges E)
+
+/-- **Empty has size 0** — an alternate phrasing of `size_empty`. -/
+theorem size_eq_zero_of_empty (H : Hypergraph V)
+    (hH : H = (empty : Hypergraph V)) : H.size = 0 := by
+  rw [hH]; exact size_empty
+
 end Hypergraph
 
 end InfraFormalization
