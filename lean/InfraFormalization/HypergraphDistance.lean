@@ -655,6 +655,24 @@ theorem cycleHypergraph_iterSucc_val {n : Nat} [NeZero n] (v : Fin n) :
     have h1 : (1 : Fin n).val = 1 % n := rfl
     rw [h1, ← Nat.add_mod, Nat.add_assoc]
 
+/-- **Injectivity of iterated successor on small range**: for `n ≥ 2` and
+`i, j ≤ r` with `2r + 1 ≤ n`, `F^[i] v = F^[j] v ↔ i = j`. Forward shifts
+don't wrap back onto themselves within the admissible range. -/
+theorem cycleHypergraph_iterSucc_injOn {n : Nat} [NeZero n] (v : Fin n)
+    {r i j : ℕ} (hir : i ≤ r) (hjr : j ≤ r) (hr : 2 * r + 1 ≤ n)
+    (h : (fun x : Fin n => x + 1)^[i] v = (fun x : Fin n => x + 1)^[j] v) :
+    i = j := by
+  have h_val := congrArg Fin.val h
+  rw [cycleHypergraph_iterSucc_val v i, cycleHypergraph_iterSucc_val v j] at h_val
+  -- h_val: (v.val + i) % n = (v.val + j) % n
+  have h_modeq : v.val + i ≡ v.val + j [MOD n] := h_val
+  have hij_modeq : i ≡ j [MOD n] := Nat.ModEq.add_left_cancel' v.val h_modeq
+  have hi_lt : i < n := by omega
+  have hj_lt : j < n := by omega
+  unfold Nat.ModEq at hij_modeq
+  rw [Nat.mod_eq_of_lt hi_lt, Nat.mod_eq_of_lt hj_lt] at hij_modeq
+  exact hij_modeq
+
 /-- **Value of iterated predecessor on `Fin n`**: `((· - 1)^[k] v).val = (v.val + (n - 1) * k) % n`
 for `n ≥ 2`. Used analogously to `cycleHypergraph_iterSucc_val` for distinctness
 reasoning on the backward-shift family. -/
