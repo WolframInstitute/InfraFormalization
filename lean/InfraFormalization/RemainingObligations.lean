@@ -191,6 +191,18 @@ theorem dimensionCompatibilityObligation_base_cases_through_two
   obtain ⟨h0, h1⟩ := dimensionCompatibilityObligation_base_cases n h3 v
   exact ⟨h0, h1, dimensionCompatibilityObligation_r_two n hn v⟩
 
+/-- **ID6 general lower bound**: for every `n ≥ 2`, every `r` with
+`2r + 1 ≤ n`, and every vertex `v` on the cycle: `2r + 1 ≤ V(v, r)`.
+
+This is the LOWER bound of the cycle compatibility claim `V(v, r) = 2r + 1`
+(the full obligation statement above), proved in full generality.
+Matching upper bound `V(v, r) ≤ 2r + 1` still requires general
+shortest-walk structural analysis. -/
+theorem dimensionCompatibilityObligation_lower_bound
+    (n : ℕ) [NeZero n] (hn : 2 ≤ n) {r : ℕ} (hr : 2 * r + 1 ≤ n) (v : Fin n) :
+    2 * r + 1 ≤ (cycleHypergraph n).geodesicBallVolume v r :=
+  cycleHypergraph_ballVolume_ge hn hr v
+
 /-! ## IQ6 — Fubini-Study limit (upgraded to concrete inequality) -/
 
 /-- **Fubini-Study/Bhattacharyya bound obligation** (upgraded from
