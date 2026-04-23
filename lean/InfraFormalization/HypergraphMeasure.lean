@@ -70,5 +70,27 @@ theorem uniformProbability_univ [Nonempty V] (H : Hypergraph V) :
   · exact_mod_cast hcard_pos.ne'
   · exact ENNReal.natCast_ne_top _
 
+/-- **Pushforward preserves total mass.** If `φ : V → X` is measurable,
+the pushforward uniform measure on `X` has total mass 1 (the full set
+`Set.univ : Set X` has preimage `Set.univ : Set V`, which the uniform
+probability measures at 1). -/
+theorem pushforwardUniform_univ [Nonempty V] (H : Hypergraph V)
+    {X : Type*} [MeasurableSpace X] {φ : V → X} (hφ : Measurable φ) :
+    pushforwardUniform H φ (Set.univ : Set X) = 1 := by
+  unfold pushforwardUniform
+  rw [MeasureTheory.Measure.map_apply hφ MeasurableSet.univ]
+  rw [show φ ⁻¹' (Set.univ : Set X) = Set.univ from rfl]
+  exact uniformProbability_univ H
+
+/-- **Pushforward of the counting measure has total mass `|V|`.** This
+is the un-normalised analog of `pushforwardUniform_univ`. -/
+theorem pushforwardCounting_univ (H : Hypergraph V)
+    {X : Type*} [MeasurableSpace X] {φ : V → X} (hφ : Measurable φ) :
+    pushforwardCounting H φ (Set.univ : Set X) = (Fintype.card V : ENNReal) := by
+  unfold pushforwardCounting
+  rw [MeasureTheory.Measure.map_apply hφ MeasurableSet.univ]
+  rw [show φ ⁻¹' (Set.univ : Set X) = Set.univ from rfl]
+  exact countingMeasure_univ H
+
 end Hypergraph
 end InfraFormalization
