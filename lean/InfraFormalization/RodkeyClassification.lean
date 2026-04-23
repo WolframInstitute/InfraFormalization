@@ -89,6 +89,92 @@ theorem ballVolumeVertexUniform_implies_localDimensionVertexUniform
   unfold localDimension
   rw [h r v w]
 
+/-- **Adj-transitivity**: for every pair `(v, w)` there is an `Equiv σ`
+sending `v` to `w` that preserves adjacency in both directions. This
+is the graph-theoretic vertex-transitivity condition and is strictly
+stronger than `DistTransitive` (it implies it via Walk.map on the
+induced SimpleGraph.Hom). -/
+def AdjTransitive (H : Hypergraph V) : Prop :=
+  ∀ v w : V, ∃ σ : V ≃ V, σ v = w ∧ ∀ a b, H.Adj a b ↔ H.Adj (σ a) (σ b)
+
+/-- **Adj-transitive implies dist-transitive.** Given an
+adjacency-preserving `Equiv σ` sending `v` to `w`, the SimpleGraph Hom
+structure transfers walks between `v → a` and `w → σ a` (in both
+directions, using `σ` and `σ⁻¹`), so walk lengths and hence distances
+are preserved. -/
+theorem distTransitive_of_adjTransitive
+    (H : Hypergraph V) (ht : H.AdjTransitive) :
+    H.DistTransitive := by
+  intro v w
+  obtain ⟨σ, hσvw, hσ⟩ := ht v w
+  refine ⟨σ, hσvw, ?_⟩
+  intro a
+  -- Build forward and reverse SimpleGraph Homs on H.toSimpleGraph.
+  let fwd : H.toSimpleGraph →g H.toSimpleGraph :=
+    { toFun := σ
+      map_rel' := fun hab => (hσ _ _).mp hab }
+  let bwd : H.toSimpleGraph →g H.toSimpleGraph :=
+    { toFun := σ.symm
+      map_rel' := fun {x y} hxy => by
+        -- σ.symm preserves Adj: if Adj x y, then σ (σ.symm x) = x
+        -- and σ (σ.symm y) = y, so (hσ _ _).mpr applied to Adj x y in the
+        -- shape Adj (σ (σ.symm x)) (σ (σ.symm y)).
+        have hx : σ (σ.symm x) = x := σ.apply_symm_apply x
+        have hy : σ (σ.symm y) = y := σ.apply_symm_apply y
+        have := (hσ (σ.symm x) (σ.symm y)).mpr (by rw [hx, hy]; exact hxy)
+        exact this }
+  unfold Hypergraph.dist
+  apply le_antisymm
+  · -- dist v a ≤ dist w (σ a)
+    by_cases hreach : H.toSimpleGraph.Reachable w (σ a)
+    · obtain ⟨p, hp⟩ := hreach.exists_walk_length_eq_dist
+      -- Map p via bwd: get walk from σ.symm w = v to σ.symm (σ a) = a.
+      have hwv : σ.symm w = v := by rw [← hσvw]; exact σ.symm_apply_apply v
+      have hσa : σ.symm (σ a) = a := σ.symm_apply_apply a
+      let q : H.toSimpleGraph.Walk v a :=
+        (p.map bwd).copy hwv hσa
+      calc H.toSimpleGraph.dist v a
+          ≤ q.length := SimpleGraph.dist_le q
+        _ = (p.map bwd).length := by simp [q, SimpleGraph.Walk.length_copy]
+        _ = p.length := p.length_map _
+        _ = H.toSimpleGraph.dist w (σ a) := hp
+    · -- Unreachable: dist w (σ a) = 0 as junk, so we must show dist v a ≤ 0.
+      -- But via the fwd Hom, Reachable v a would imply Reachable w (σ a).
+      -- So ¬Reachable w (σ a) implies ¬Reachable v a, hence dist v a = 0.
+      have hnreach_va : ¬ H.toSimpleGraph.Reachable v a := by
+        intro h
+        obtain ⟨p⟩ := h
+        exact hreach ⟨(p.map fwd).copy hσvw rfl⟩
+      rw [SimpleGraph.dist_eq_zero_of_not_reachable hnreach_va]
+      exact Nat.zero_le _
+  · -- dist w (σ a) ≤ dist v a
+    by_cases hreach : H.toSimpleGraph.Reachable v a
+    · obtain ⟨p, hp⟩ := hreach.exists_walk_length_eq_dist
+      have : (p.map fwd).length = p.length := p.length_map _
+      calc H.toSimpleGraph.dist w (σ a)
+          ≤ ((p.map fwd).copy hσvw rfl).length :=
+            SimpleGraph.dist_le _
+        _ = (p.map fwd).length := by simp [SimpleGraph.Walk.length_copy]
+        _ = p.length := p.length_map _
+        _ = H.toSimpleGraph.dist v a := hp
+    · have hnreach_wσa : ¬ H.toSimpleGraph.Reachable w (σ a) := by
+        intro h
+        obtain ⟨p⟩ := h
+        have hwv : σ.symm w = v := by rw [← hσvw]; exact σ.symm_apply_apply v
+        have hσa : σ.symm (σ a) = a := σ.symm_apply_apply a
+        exact hreach ⟨((p.map bwd).copy hwv hσa)⟩
+      rw [SimpleGraph.dist_eq_zero_of_not_reachable hnreach_wσa]
+      exact Nat.zero_le _
+
+/-- **Adj-transitive implies ball-volume vertex-uniform.** Composition
+of `distTransitive_of_adjTransitive` and
+`ballVolumeVertexUniform_of_distTransitive`. -/
+theorem ballVolumeVertexUniform_of_adjTransitive
+    (H : Hypergraph V) (ht : H.AdjTransitive) :
+    H.BallVolumeVertexUniform :=
+  ballVolumeVertexUniform_of_distTransitive H
+    (distTransitive_of_adjTransitive H ht)
+
 /-! ## cycleHypergraph base cases -/
 
 /-- **`cycleHypergraph n` has vertex-uniform ball volume at `r = 0`.**
