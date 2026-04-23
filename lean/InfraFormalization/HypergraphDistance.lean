@@ -511,6 +511,42 @@ theorem cycleHypergraph_ballVolume_one_exact {n : Nat} [NeZero n]
         refine le_trans (Finset.card_insert_le _ _) ?_
         simp
 
+/-- **Large-radius ball covers everything on a connected cycle**: for
+`n ≥ 2` and radius `r ≥ n`, the closed ball of radius `r` around any
+vertex equals all of `Fin n`. Proof: on a connected finite graph,
+`dist u v < card V = n`, so `dist ≤ n` always, and every vertex is in
+the ball. -/
+theorem cycleHypergraph_ballVolume_large {n : Nat} [NeZero n]
+    (hn : 2 ≤ n) (v : Fin n) (r : ℕ) (hr : n ≤ r) :
+    (cycleHypergraph n).geodesicBallVolume v r = n := by
+  unfold Hypergraph.geodesicBallVolume Hypergraph.geodesicBall
+  -- On a connected cycle, every u has dist v u < n, hence ≤ n ≤ r.
+  have h_univ : Finset.univ.filter
+      (fun u : Fin n => (cycleHypergraph n).dist v u ≤ r)
+      = Finset.univ := by
+    ext u
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+    -- dist v u < n ≤ r.
+    unfold Hypergraph.dist
+    have hreach : (cycleHypergraph n).toSimpleGraph.Reachable v u :=
+      (cycleHypergraph_connected hn).preconnected v u
+    obtain ⟨p, hp_len⟩ := hreach.exists_walk_length_eq_dist
+    have h_path := p.toPath
+    have h_path_len : h_path.val.length < Fintype.card (Fin n) :=
+      SimpleGraph.Walk.IsPath.length_lt h_path.prop
+    have h_dist_le_path : (cycleHypergraph n).toSimpleGraph.dist v u
+        ≤ h_path.val.length :=
+      SimpleGraph.dist_le h_path.val
+    have h_card : Fintype.card (Fin n) = n := Fintype.card_fin n
+    have h_dist_lt : (cycleHypergraph n).toSimpleGraph.dist v u
+        < Fintype.card (Fin n) :=
+      lt_of_le_of_lt h_dist_le_path h_path_len
+    rw [h_card] at h_dist_lt
+    simp only [iff_true]
+    exact Nat.le_of_lt (lt_of_lt_of_le h_dist_lt hr)
+  rw [h_univ]
+  simp
+
 /-- **Ball volume at radius 0 on the cycle** `= 1`: only the basepoint
 itself is within distance 0 (cycle is connected, so `dist = 0 ↔ u = v`).
 This is the `r = 0` case of the ID6 dimension-compatibility formula
