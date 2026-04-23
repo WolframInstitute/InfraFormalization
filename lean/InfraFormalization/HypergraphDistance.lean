@@ -638,6 +638,23 @@ theorem cycleHypergraph_dist_iterPred_le {n : Nat} [NeZero n]
             cycleHypergraph_dist_triangle hn v _ _
       _ ≤ k + 1 := by rw [h_dist_step]; exact Nat.add_le_add_right ih 1
 
+/-- **Value of iterated successor on `Fin n`**: `((· + 1)^[k] v).val = (v.val + k) % n`.
+Useful for distinctness reasoning: two iterates are equal iff their offsets
+agree modulo `n`. -/
+theorem cycleHypergraph_iterSucc_val {n : Nat} [NeZero n] (v : Fin n) :
+    ∀ (k : ℕ), ((fun x : Fin n => x + 1)^[k] v).val = (v.val + k) % n := by
+  intro k
+  induction k with
+  | zero =>
+    simp
+    exact (Nat.mod_eq_of_lt v.isLt).symm
+  | succ k ih =>
+    rw [Function.iterate_succ', Function.comp_apply]
+    show ((fun x : Fin n => x + 1)^[k] v + 1).val = (v.val + (k + 1)) % n
+    rw [Fin.val_add, ih]
+    have h1 : (1 : Fin n).val = 1 % n := rfl
+    rw [h1, ← Nat.add_mod, Nat.add_assoc]
+
 /-- **Exact ball volume at radius 1** on `cycleHypergraph n` for `n ≥ 3`:
 `geodesicBallVolume v 1 = 3`. Combined with `_one_ge_three` for the
 lower bound and a direct upper bound from `dist ≤ 1 ⇒ Adj ∨ =`. -/
