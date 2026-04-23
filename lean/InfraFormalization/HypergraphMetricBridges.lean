@@ -82,6 +82,11 @@ def schwarzschild_from_hypergraph (M : ℝ) : Prop :=
 def flrw_from_hypergraph (a da : ℝ → ℝ) : Prop :=
   HypergraphPartialMetricOriginObligation (flrwPartial a da)
 
+/-- **Reissner-Nordström bridge obligation** (B8 continuum target
+bound to the hypergraph side). -/
+def rn_from_hypergraph (M Q : ℝ) : Prop :=
+  HypergraphPartialMetricOriginObligation (rnPartial M Q)
+
 /-- **2-sphere bridge obligation** (H5 curved-target extension). -/
 def sphere_from_hypergraph : Prop :=
   HypergraphPartialMetricOriginObligation spherePartial

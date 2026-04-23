@@ -225,6 +225,19 @@ theorem flrw_from_hypergraph_proved (a da : ℝ → ℝ) :
   intro k
   positivity
 
+/-- **Witness: Reissner-Nordström's origin obligation**, for every
+mass `M` and charge `Q`. -/
+theorem rn_from_hypergraph_proved (M Q : ℝ) :
+    rn_from_hypergraph M Q := by
+  unfold rn_from_hypergraph
+    HypergraphPartialMetricOriginObligation
+  refine ⟨Fin 2, inferInstance, inferInstance, Unit,
+    identitySystem Unit, cycleHypergraph 2,
+    emptyTrajectory (identitySystem Unit) (cycleHypergraph 2),
+    fun k => (1 : ℝ) / (k + 1), ?_⟩
+  intro k
+  positivity
+
 /-- **Umbrella witness**: every GR target in the zoo has an attached
 hypergraph-origin obligation that is *provably inhabited*. -/
 theorem all_gr_targets_have_hypergraph_obligations_proved :
