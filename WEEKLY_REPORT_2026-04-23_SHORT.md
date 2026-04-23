@@ -49,7 +49,7 @@ Legend for the State column:
 
 ## Research directions on file
 
-Items from Pavel Hájek's weekly update and Discord core dump (2025-10-06 to 2026-04-14) have been mapped against the library and tracked as tasks **P1–P19**. Highlights: P1 delta / simplicial machinery on hypergraphs; P3 discrete Chern-Simons amplitude (overlaps M4 Pullman IBL-∞); P4 ribbon (hyper)graph structure + Whitehead moves; P5 sheaves on hypergraphs; P6 Koszul signs; P7 homotopy colimit of multiway systems; P9 action principle for rewriting; P10 n-Lie extension of the insertion bracket; P13 Utkarsh Bajaj twisted-difference operators (ring-of-functions reconstruction); P16 Knill geodesics approximating Riemannian geodesics. Full item-by-item mapping in [`RESEARCH_DIRECTIONS.md`](RESEARCH_DIRECTIONS.md).
+Items from Pavel Hájek's weekly update and Discord core dump (2025-10-06 to 2026-04-14) have been mapped against the library and tracked as tasks **P1–P19**. Highlights: P1 delta / simplicial machinery on hypergraphs; P3 discrete Chern-Simons amplitude (overlaps M4 Pullman IBL-∞); P4 ribbon (hyper)graph structure + Whitehead moves; P5 sheaves on hypergraphs; P6 Koszul signs; P7 homotopy colimit of multiway systems; P9 action principle for rewriting; P10 n-Lie extension of the insertion bracket; P13 Utkarsh Bajaj twisted-difference operators (ring-of-functions reconstruction); P16 Knill geodesics approximating Riemannian geodesics. Full item-by-item mapping in [`NEXT_STEPS.md`](NEXT_STEPS.md) § "Pavel Hájek planning items (P-group)".
 
 ## Open items
 

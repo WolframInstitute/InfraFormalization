@@ -267,7 +267,7 @@ Empirical: 2102.09363 named rule shows causal-graph dimension = 1 on every teste
 
 ## Research directions on file (cross-collaborator planning)
 
-Tracked as tasks **P1–P19** (catalog in [`RESEARCH_DIRECTIONS.md`](RESEARCH_DIRECTIONS.md)). These are items from Pavel Hájek's weekly update and Discord "core dump" (2025-10-06 to 2026-04-14) not yet formalised here.
+Tracked as tasks **P1–P19** (catalog in [`NEXT_STEPS.md`](NEXT_STEPS.md) § "Pavel Hájek planning items (P-group)"). These are items from Pavel Hájek's weekly update and Discord "core dump" (2025-10-06 to 2026-04-14) not yet formalised here.
 
 - **Simplicial / complex machinery.** P1 Delta and simplicial machinery (face maps, degeneracies, barycentric subdivision, coordinate-squashing); P2 cup product and comparison of two form definitions; P19 hypergraph as (1-skeleton, clique-complex cochain) — Kolpakov direction.
 - **Chern-Simons and homotopy algebra.** P3 Discrete Chern-Simons amplitude from Hodge propagator + ribbon graphs + IBL-∞ twist (overlaps M4 Pullman); P17 homotopy-algebra and homological-algebra scaffold.
@@ -280,7 +280,7 @@ Tracked as tasks **P1–P19** (catalog in [`RESEARCH_DIRECTIONS.md`](RESEARCH_DI
 - **Geometry.** P16 Knill geodesics approximating Riemannian geodesics (Latschev extension).
 - **Physics and tooling.** P18 Holography / Unruh effect discussions; P15 observability tools (flame graph / waterfall).
 
-See [`RESEARCH_DIRECTIONS.md`](RESEARCH_DIRECTIONS.md) for the full item-by-item mapping of Pavel's planning notes to coverage status and task IDs.
+See [`NEXT_STEPS.md`](NEXT_STEPS.md) § "Pavel Hájek planning items (P-group)" for the full item-by-item mapping of Pavel's planning notes to coverage status and task IDs.
 
 ## Open items
 

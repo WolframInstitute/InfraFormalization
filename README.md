@@ -150,8 +150,7 @@ lean/
 | [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md) | Research programme description (57 tasks / 9 groups) |
 | [`MAJOR_FLAWS.md`](MAJOR_FLAWS.md) | F1–F8 structural-flaw registry with Lean-formalisation status |
 | [`MILESTONES.md`](MILESTONES.md) | Checkbox tracker across all phases |
-| [`NEXT_STEPS.md`](NEXT_STEPS.md) | Done, in progress, waiting |
-| [`RESEARCH_DIRECTIONS.md`](RESEARCH_DIRECTIONS.md) | Item-by-item mapping of external planning notes (Pavel Hájek's weekly update + Discord core dump) to Lean coverage and task IDs |
+| [`NEXT_STEPS.md`](NEXT_STEPS.md) | Done, in progress, waiting — includes the P-group section mapping Pavel Hájek's weekly-update and Discord core-dump items to Lean coverage and task IDs |
 | [`RULE_SEARCH.md`](RULE_SEARCH.md) | Rule-search pipeline design |
 | [`PUBLISHABLE.md`](PUBLISHABLE.md) | Paper targets P1–P9 with dependencies |
 | [`FINDINGS.md`](FINDINGS.md) | Canonical one-line summary of every audited claim |

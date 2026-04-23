@@ -158,6 +158,46 @@ Every theorem above depends only on `{propext, Classical.choice, Quot.sound}`. N
 - [ ] X3 — Mathlib Taylor integration (partly used by R1; full uniform-`C^k` version still open).
 - [ ] X4 — Multi-way engine integration from `efficient_rewriting_final`.
 
+### Pavel Hájek planning items (P-group)
+
+From Pavel Hájek's weekly update and Discord "core dump" (entries dated 2025-10-06 through 2026-04-14). Each item cross-referenced below with existing Lean coverage where applicable; items without existing coverage are tracked as new tasks.
+
+Source items that map to existing coverage:
+
+- Mathematical content of his persistence project: `VietorisRips.lean` (IT1), `HodgeVR.lean` (IT2), `HodgeLaplacianSpectrum.lean` + `HodgeLaplacianBounds.lean` (IT3), persistence barcode (IT4), Latschev obligation proved for cycles (IT5), scale-trichotomy endpoints proved (IT6). Paclet migration itself is M6 (pending).
+- Fisher-information side of holographic-duality discussions: `FisherMetric.lean` (IQ5), `FisherMetricExtended.lean`, M2 Van Le Fisher → Fubini-Study bridge completed, IQ6 `fubiniStudyBhattacharyya_bound` proved.
+- Classification of graphs with pointwise constant Wolfram-Hausdorff dimension (with Dugan, inspired by Sam Rodkey): `ID1` WH dimension on hypergraphs, `ID2` plateau detection, `ID6` compatibility theorem in progress (target locus).
+- Combinatorial Levi-Civita connection in InfraGaugeTheory: IG1–IG11 covered; C5 Koszul Levi-Civita and C7 discrete connection on a hypergraph pending; `FiberedGraphConnectionBridge.lean` attaches the obligation Prop.
+- Carlos's InfraCausality paper: IC1 CausalGraphType, IC2 ObserverChain, IC3 LightRay, IC4 Foliation + ProperTime, IC5 SpatialReconstruction, IC6 MultiFibrationProjection, IC7 EPSAxioms, IC8 MarzkeWheeler; M5 Zapata + Ahmed paper completed.
+- Ioana on InfraGaugeTheory coordinatization pipeline: ID4 CoordinatizationDimension completed; M1 IG-intern coordination pending.
+- Exponential map at a vertex (shortest-path counts): IG10 pending.
+- Tropical geometry: M9 pending.
+- 3-body problem as Turing machine: M10 pending.
+
+New tasks P1–P19 (items not yet covered in any existing module or task):
+
+- [ ] **P1 (#193)** — Delta / simplicial machinery on hypergraphs (face maps, degeneracies, barycentric subdivision, coordinate-squashing for delta-complexes). Core-dump 2025-10-06 / 2025-10-18 / 2025-10-22.
+- [ ] **P2 (#194)** — Cup product on discrete de Rham + comparison of two form definitions (IA de Rham vs VR-complex route). Core-dump 2025-10-06.
+- [ ] **P3 (#195)** — Discrete Chern-Simons amplitude: Hodge propagator on graphs, 1-loop amplitude from ribbon graphs, IBL-∞ twist via Maurer-Cartan (overlaps M4 Pullman). Core-dump 2025-10-06, 2025-11-09.
+- [ ] **P4 (#196)** — Ribbon (hyper)graph structure + Whitehead moves + amplitudohedron-type alternatives (aligned with Kolpakov discussions). Core-dump 2025-10-18, 2025-11-06 + weekly update.
+- [ ] **P5 (#197)** — Sheaves on hypergraphs; restriction maps; sheaf cohomology; orientation sheaf. Core-dump 2025-10-18.
+- [ ] **P6 (#198)** — Koszul signs / graded Lie bracket on (hyper)graph rewriting. Core-dump 2025-10-18, 2025-11-12.
+- [ ] **P7 (#199)** — Homotopy colimit of a rewriting system (simplicial set from hypergraph + simplicial map from rewriting; extend Knill invariants to simplicial sets). Core-dump 2025-10-18.
+- [ ] **P8 (#200)** — Filtrations of multiway systems (vertical, layered, completion). Core-dump 2025-10-21.
+- [ ] **P9 (#201)** — Action principle for hypergraph rewriting (action functional on paths; variational). Carlos Zapata thread. Core-dump 2025-12-10, 2026-02-21.
+- [ ] **P10 (#202)** — n-Lie / Filippov extension of the insertion bracket (IB4) via signed confluence of n+1 rules. Core-dump 2026-02-22.
+- [ ] **P11 (#203)** — Interaction diagrams from causal graphs (light rays as degenerate-interval chains; elementary particles as volume-bounded subgraphs). Core-dump 2025-12-20.
+- [ ] **P12 (#204)** — Chaos theory in hypergraph rewriting (vertical + horizontal chaos). Core-dump 2026-02-02.
+- [ ] **P13 (#205)** — Utkarsh Bajaj twisted-difference operators + ring-of-functions reconstruction theorem. Core-dump 2026-04-14.
+- [ ] **P14 (#206)** — Blow-up rules as renormalization-group flow (via IB4 closure under commutator). Core-dump 2025-11-23.
+- [ ] **P15 (#207)** — Observability tools for hypergraph rewriting (flame graph, waterfall); tooling, not formal Lean theorems. Core-dump 2025-10-06.
+- [ ] **P16 (#208)** — Knill geodesics approximating Riemannian geodesics (extend Latschev); with Janko. Core-dump 2025-11-09.
+- [ ] **P17 (#209)** — Homotopy algebra / homological-algebra scaffold (supports future paclets: quantum topology, homological algebra, homotopy algebras). Core-dump 2025-10-06.
+- [ ] **P18 (#210)** — Holography / Unruh effect discussion track (Rangamani talk, Aaronson group, UT junior researchers); relates to J6 AdS/CFT-analog.
+- [ ] **P19 (#211)** — Hypergraph as (1-skeleton, clique-complex cochain) decomposition (Kolpakov direction).
+
+Items deliberately out of scope here: Austin talk, Aaronson group meeting, Mukund Rangamani holography talk attendance (external activities); Vim distance, minimal square covering, git as hypergraph rewriting (off-topic fun posts); Knutt's paper (reference not held here); Turing 2 DS (done by Pavel in GeneralizedShift).
+
 ## External communication
 
 - [ ] Structured external comment PDF (audit + refutation chain); to circulate to the Wolfram Institute / submit to arXiv.
