@@ -175,6 +175,37 @@ theorem ballVolumeVertexUniform_of_adjTransitive
   ballVolumeVertexUniform_of_distTransitive H
     (distTransitive_of_adjTransitive H ht)
 
+/-- **Adj-transitive implies uniform degree.** An Adj-preserving
+`Equiv σ : V ≃ V` sending `v` to `w` bijects the neighbour set of `v`
+with the neighbour set of `w`, so the simple-graph degrees agree. This
+gives a NECESSARY graph-theoretic condition for the Rodkey property:
+vertex-transitive graphs are regular. Contrapositive: a graph with
+vertices of different degree (e.g., `pathHypergraph n` with endpoints
+of degree 1 and interior vertices of degree 2) cannot be Adj-transitive,
+and hence its ball-volume-vertex-uniformity status is not derivable
+from the sufficient-condition chain above. -/
+theorem degree_invariant_of_adjTransitive
+    (H : Hypergraph V) (ht : H.AdjTransitive) (v w : V) :
+    H.toSimpleGraph.degree v = H.toSimpleGraph.degree w := by
+  obtain ⟨σ, hσvw, hσ⟩ := ht v w
+  rw [SimpleGraph.degree, SimpleGraph.degree]
+  refine Finset.card_bij (fun u _ => σ u) ?_ ?_ ?_
+  · -- Forward: Adj v u → Adj w (σ u). Use hσ v u and the identification σ v = w.
+    intro u hu
+    simp only [SimpleGraph.mem_neighborFinset] at hu ⊢
+    have h := (hσ v u).mp hu
+    rw [hσvw] at h
+    exact h
+  · intros u _ u' _ h; exact σ.injective h
+  · -- Surjectivity: given Adj w u', take u = σ⁻¹ u' as the preimage.
+    intro u' hu'
+    simp only [SimpleGraph.mem_neighborFinset] at hu'
+    refine ⟨σ.symm u', ?_, σ.apply_symm_apply u'⟩
+    simp only [SimpleGraph.mem_neighborFinset]
+    apply (hσ v (σ.symm u')).mpr
+    rw [hσvw, σ.apply_symm_apply]
+    exact hu'
+
 /-! ## cycleHypergraph base cases -/
 
 /-- **`cycleHypergraph n` has vertex-uniform ball volume at `r = 0`.**
