@@ -158,6 +158,8 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.A6Holds.const_mul
 #print axioms InfraFormalization.A6Holds.add
 #print axioms InfraFormalization.A6Holds_poly_deg3
+#print axioms InfraFormalization.Infra.ollivier_minus_gorard_leading
+#print axioms InfraFormalization.Infra.ollivier_gorard_agree_iff
 #print axioms InfraFormalization.pathEigenvalue_nonpos
 #print axioms InfraFormalization.heatKernel_cycleHypergraph_multi_mode_tendsto
 #print axioms InfraFormalization.pathEigenvalue_ground_zero

@@ -85,5 +85,51 @@ theorem ollivier_vs_gorard_equivalence_requires_ric_eq_scalar
   unfold GorardMisstatedForm at h2
   linarith
 
+/-- **Quantitative discrepancy**: the Gorard Riemannian leading term
+differs from the Ollivier leading term by exactly
+`δ · ε² · (Ric_vv − R) / (2(n+2))`. Once `δ, ε > 0`, the discrepancy
+vanishes iff `Ric_vv = R`. This is the precise gap Gorard's papers
+silently drop when they substitute scalar for directional Ricci. -/
+theorem ollivier_minus_gorard_leading
+    (n : Nat) (δ ε R Ric_vv : ℝ) :
+    δ * (1 - ε^2 * Ric_vv / (2 * (n + 2)))
+      - δ * (1 - ε^2 * R / (2 * (n + 2)))
+      = δ * ε^2 * (R - Ric_vv) / (2 * (n + 2)) := by
+  ring
+
+/-- **Discrepancy is zero iff scalar = directional Ricci**
+(at `δ, ε ≠ 0`, `n + 2 ≠ 0`). This is the precise algebraic condition
+under which Gorard's substitution is innocuous — essentially only
+Einstein manifolds with `Ric_vv` happening to equal `R`, i.e.
+`n = 1` or trivial-curvature cases. On a generic Riemannian manifold
+(e.g. `S²` where `R = 2` but `Ric_vv = 1`), the leading terms differ
+and Gorard's prediction is off. -/
+theorem ollivier_gorard_agree_iff (n : Nat) (δ ε R Ric_vv : ℝ)
+    (hδ : δ ≠ 0) (hε : ε ≠ 0) :
+    δ * (1 - ε^2 * Ric_vv / (2 * (n + 2)))
+      = δ * (1 - ε^2 * R / (2 * (n + 2))) ↔
+    R = Ric_vv := by
+  constructor
+  · intro h
+    have hn2_pos : (0 : ℝ) < 2 * ((n : ℝ) + 2) := by
+      have : (0 : ℝ) ≤ (n : ℝ) := Nat.cast_nonneg n
+      linarith
+    have hn2_ne : (2 * ((n : ℝ) + 2)) ≠ 0 := ne_of_gt hn2_pos
+    have hε2_ne : ε^2 ≠ 0 := pow_ne_zero 2 hε
+    -- Multiply both sides by 2(n+2)/(δ·ε²) to isolate R = Ric_vv.
+    have h_factor : δ * ε^2 * (R - Ric_vv) = 0 := by
+      have h_ring : δ * (1 - ε^2 * Ric_vv / (2 * (n + 2)))
+            - δ * (1 - ε^2 * R / (2 * (n + 2)))
+          = δ * ε^2 * (R - Ric_vv) / (2 * (n + 2)) := by ring
+      have h_sub : δ * (1 - ε^2 * Ric_vv / (2 * (n + 2)))
+            - δ * (1 - ε^2 * R / (2 * (n + 2))) = 0 := by linarith
+      rw [h_ring] at h_sub
+      exact (div_eq_zero_iff.mp h_sub).resolve_right hn2_ne
+    have hδε : δ * ε^2 ≠ 0 := mul_ne_zero hδ hε2_ne
+    have h_zero : R - Ric_vv = 0 := (mul_eq_zero.mp h_factor).resolve_left hδε
+    linarith
+  · intro h
+    rw [h]
+
 end Infra
 end InfraFormalization
