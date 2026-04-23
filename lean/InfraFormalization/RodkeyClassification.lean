@@ -47,6 +47,37 @@ not depend on `v`, for any `r`. This is the direct Rodkey condition. -/
 def LocalDimensionVertexUniform (H : Hypergraph V) : Prop :=
   ∀ r : ℕ, ∀ v w : V, H.localDimension v r = H.localDimension w r
 
+/-- **Dist-transitivity**: for every pair of vertices `(v, w)` there is
+a bijection `σ : V ≃ V` sending `v` to `w` and preserving distances from
+`v`: for every `a`, `dist v a = dist w (σ a)`. This is the abstract
+sufficient condition for ball-volume vertex-uniformity; vertex-
+transitive graphs (in the graph-automorphism sense) satisfy it. -/
+def DistTransitive (H : Hypergraph V) : Prop :=
+  ∀ v w : V, ∃ σ : V ≃ V, σ v = w ∧ ∀ a, H.dist v a = H.dist w (σ a)
+
+/-- **Rodkey classification — sufficient condition.** Any dist-transitive
+hypergraph satisfies ball-volume vertex-uniformity. The shift σ bijects
+the radius-r ball at v with the radius-r ball at w, so their cardinalities
+agree. -/
+theorem ballVolumeVertexUniform_of_distTransitive
+    (H : Hypergraph V) (ht : H.DistTransitive) :
+    H.BallVolumeVertexUniform := by
+  intro r v w
+  obtain ⟨σ, _, hσ⟩ := ht v w
+  unfold Hypergraph.geodesicBallVolume Hypergraph.geodesicBall
+  refine Finset.card_bij (fun u _ => σ u) ?_ ?_ ?_
+  · intro u hu
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hu ⊢
+    rw [← hσ u]; exact hu
+  · intros u _ u' _ h; exact σ.injective h
+  · intro u' hu'
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hu'
+    refine ⟨σ.symm u', ?_, σ.apply_symm_apply u'⟩
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+    have := hσ (σ.symm u')
+    rw [σ.apply_symm_apply] at this
+    rw [this]; exact hu'
+
 /-- Ball-volume vertex-uniformity implies local-dimension
 vertex-uniformity: `localDimension v r` is a function of
 `geodesicBallVolume v r` and `r`, so if the former is uniform in `v`,
@@ -217,6 +248,22 @@ theorem cycleHypergraph_localDimensionVertexUniform {n : Nat} [NeZero n]
     (cycleHypergraph n).LocalDimensionVertexUniform :=
   ballVolumeVertexUniform_implies_localDimensionVertexUniform _
     (cycleHypergraph_ballVolumeVertexUniform hn)
+
+/-- **`cycleHypergraph n` is dist-transitive via rotation.** For any
+vertices `v, w` the shift `k ↦ k + (w - v)` is a bijection on `Fin n`
+that sends `v` to `w` and preserves distance (by
+`cycleHypergraph_dist_translation`). This exhibits the cycle as a
+witness for the `DistTransitive` sufficient condition. -/
+theorem cycleHypergraph_distTransitive {n : Nat} [NeZero n] (hn : 2 ≤ n) :
+    (cycleHypergraph n).DistTransitive := by
+  intro v w
+  refine ⟨Equiv.addRight (w - v), ?_, ?_⟩
+  · show v + (w - v) = w; abel
+  · intro a
+    have := cycleHypergraph_dist_translation hn (w - v) v a
+    have hw : v + (w - v) = w := by abel
+    rw [hw] at this
+    exact this
 
 /-! ## Classification obligation
 
