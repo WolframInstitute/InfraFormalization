@@ -97,6 +97,7 @@ import InfraFormalization.PartialMetricData
 import InfraFormalization.FLRW
 import InfraFormalization.ReissnerNordstrom
 import InfraFormalization.TwoSphere
+import InfraFormalization.DeSitter
 import InfraFormalization.Refutations.F1NoMetric
 import InfraFormalization.Refutations.F2Orthonormality
 import InfraFormalization.Refutations.F3Tautology
@@ -172,6 +173,8 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.Curvature.rnLapse_schwarzschild
 #print axioms InfraFormalization.Curvature.rnLapse_pos_of_large_r_Q_zero
 #print axioms InfraFormalization.Curvature.sphereChristoffel_0_1_1
+#print axioms InfraFormalization.Curvature.dsLapse_minkowski
+#print axioms InfraFormalization.Curvature.dsLapse_pos_iff
 #print axioms InfraFormalization.in_degree_eq_lhsSize
 #print axioms InfraFormalization.out_degree_eq_rhsSize
 #print axioms InfraFormalization.balanced_of_conservative
