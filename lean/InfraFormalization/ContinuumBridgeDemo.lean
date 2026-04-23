@@ -48,4 +48,14 @@ theorem pde_spectrum_bridge_summary (k : ℕ) :
   · exact discreteWaveToContinuumWave_holds k
   · exact discreteSchrodingerToContinuumSchrodinger_holds k
 
+/-- **Four-PDE spectrum bridge including Klein-Gordon** — summary with
+massive KG added. For every `k ∈ ℕ` and mass `m ∈ ℝ`, the lattice KG
+dispersion `n² · 4 sin²(πk/n) + m²` converges to the continuum KG
+Hamiltonian eigenvalue `(2πk)² + m²`. -/
+theorem pde_spectrum_bridge_summary_with_mass (k : ℕ) (m : ℝ) :
+    Tendsto (fun n : ℕ =>
+      (n : ℝ)^2 * (4 * (Real.sin (Real.pi * (k : ℝ) / (n : ℝ)))^2) + m^2)
+      atTop (𝓝 ((2 * Real.pi * k)^2 + m^2)) :=
+  discreteKleinGordonSpectrum_holds m k
+
 end InfraFormalization
