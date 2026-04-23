@@ -90,7 +90,7 @@ Every theorem above depends only on `{propext, Classical.choice, Quot.sound}`. N
 - [x] **R3 #178** — `ℓ²(BranchialSlice)` as ℂ-Hilbert space with branchial adjacency operator (done with Born rule, uniform measure, unitary evolution, Hermitian observables).
 - [~] **R4 #179 (in progress)** — Curved discrete-Ricci convergence beyond flat. First non-zero Forman-Ricci convergence case.
 - [x] **A5 #16** — Counting measure on `Hypergraph V` + pushforward (complete; groundwork for A6 / A7).
-- [~] **A6 #17 (in progress)** — Weak convergence of scaled counting measure → Lebesgue on [0,1).
+- [~] **A6 #17 (in progress)** — Weak convergence of scaled counting measure → Lebesgue on [0,1). Test functions closed: `A6_for_constants` (immediate from `Finset.sum_const`) and `A6_for_identity` (via `sum_fin_val_eq_triangular` + `A6_identity_sum_closed_form` + `(n-1)/(2n) → 1/2` filter limit). General continuous case and polynomial induction remain.
 - [ ] **A7 #18** — Wasserstein-1 convergence rate `O(1/n)` for counting measures.
 - [ ] **A8 #19** — Lift measure convergence to d-torus.
 - [~] **D6 #47 (in progress, partial)** — Long-time convergence of heat solution to uniform. `HeatKernelDecay.lean` + `SymmEigenOrthogonal.lean` cover single-mode decay and eigenvector orthogonality; remaining: distinctness of all `n` cycle eigenvalues + Parseval-style decomposition of arbitrary `ψ : Fin n → ℝ`.
