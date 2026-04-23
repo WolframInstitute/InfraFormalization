@@ -151,6 +151,10 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.A6_sq_sum_closed_form
 #print axioms InfraFormalization.tendsto_sqRiemann_to_third
 #print axioms InfraFormalization.A6_for_sq
+#print axioms InfraFormalization.sum_fin_val_cube_eq
+#print axioms InfraFormalization.A6_cube_sum_closed_form
+#print axioms InfraFormalization.tendsto_cubeRiemann_to_quarter
+#print axioms InfraFormalization.A6_for_cube
 #print axioms InfraFormalization.pathEigenvalue_nonpos
 #print axioms InfraFormalization.heatKernel_cycleHypergraph_multi_mode_tendsto
 #print axioms InfraFormalization.pathEigenvalue_ground_zero
