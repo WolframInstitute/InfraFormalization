@@ -234,4 +234,40 @@ theorem RuleSignature.empty_signature_edgeCount :
   show (Hypergraph.empty : Hypergraph V).size = 0
   rfl
 
+/-- **Concrete cycle-start screen**: a conservative step-consistent
+trajectory starting from `cycleHypergraph n` cannot reach any target
+with `edgeCount ≠ n`. Closed specialisation of
+`edgeCount_mismatch_unreachable_of_conservative` at the canonical
+cycle initial state. -/
+theorem RuleSignature.cycleHypergraph_start_edgeCount_screen
+    {n : Nat} [NeZero n] {P : Type*} {sys : RewritingSystem P}
+    (τ : Trajectory sys (cycleHypergraph n))
+    (hstep : τ.StepConsistent)
+    (hcons : ∀ i (hi : i < τ.applications.length),
+      (τ.applications.get ⟨i, hi⟩).2.1.IsConservative)
+    (σ : RuleSignature (Fin n)) (hmis : σ.edgeCount ≠ n)
+    (i : Nat) (hi : i < τ.states.length) :
+    (hypergraphSignature (τ.states.get ⟨i, hi⟩)).edgeCount ≠ σ.edgeCount := by
+  refine RuleSignature.edgeCount_mismatch_unreachable_of_conservative
+    τ hstep hcons σ ?_ i hi
+  rw [RuleSignature.cycleHypergraph_signature_edgeCount n]
+  exact hmis
+
+/-- **Concrete empty-start screen**: a conservative step-consistent
+trajectory starting from `Hypergraph.empty` cannot reach any target
+with `edgeCount ≠ 0`. Corollary for the second canonical start state. -/
+theorem RuleSignature.empty_start_edgeCount_screen
+    {P : Type*} {sys : RewritingSystem P}
+    (τ : Trajectory sys (Hypergraph.empty : Hypergraph V))
+    (hstep : τ.StepConsistent)
+    (hcons : ∀ i (hi : i < τ.applications.length),
+      (τ.applications.get ⟨i, hi⟩).2.1.IsConservative)
+    (σ : RuleSignature V) (hmis : σ.edgeCount ≠ 0)
+    (i : Nat) (hi : i < τ.states.length) :
+    (hypergraphSignature (τ.states.get ⟨i, hi⟩)).edgeCount ≠ σ.edgeCount := by
+  refine RuleSignature.edgeCount_mismatch_unreachable_of_conservative
+    τ hstep hcons σ ?_ i hi
+  rw [RuleSignature.empty_signature_edgeCount]
+  exact hmis
+
 end InfraFormalization

@@ -176,6 +176,8 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.cycleHypergraph_size
 #print axioms InfraFormalization.RuleSignature.cycleHypergraph_signature_edgeCount
 #print axioms InfraFormalization.RuleSignature.empty_signature_edgeCount
+#print axioms InfraFormalization.RuleSignature.cycleHypergraph_start_edgeCount_screen
+#print axioms InfraFormalization.RuleSignature.empty_start_edgeCount_screen
 #print axioms InfraFormalization.pathEigenvalue_nonpos
 #print axioms InfraFormalization.heatKernel_cycleHypergraph_multi_mode_tendsto
 #print axioms InfraFormalization.pathEigenvalue_ground_zero
