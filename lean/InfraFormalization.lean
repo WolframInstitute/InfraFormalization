@@ -160,6 +160,7 @@ import InfraFormalization.CausalLorentzianBridge
 import InfraFormalization.RuleWitnesses
 import InfraFormalization.RuleSearch
 import InfraFormalization.FiberedGraphConnectionBridge
+import InfraFormalization.EinsteinEquationsBridge
 import InfraFormalization.CurvedRicciBridge
 import InfraFormalization.ContinuumBridgeDemo
 import InfraFormalization.EinsteinEquations
