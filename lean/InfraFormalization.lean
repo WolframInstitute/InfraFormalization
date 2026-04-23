@@ -154,3 +154,4 @@ import InfraFormalization.LorentzianManifold
 import InfraFormalization.PartialMetricData
 import InfraFormalization.FLRW
 import InfraFormalization.ReissnerNordstrom
+import InfraFormalization.TwoSphere
