@@ -48,6 +48,34 @@ theorem pathHypergraph_edges_card_le (n : ℕ) :
   refine le_trans Finset.card_image_le ?_
   simp
 
+/-- **`pathEdge n` is injective on `Fin (n - 1)`.** Two distinct index
+values `i ≠ j : Fin (n - 1)` produce edges with different vertex lists
+(the first endpoint `⟨i.val, _⟩` already distinguishes them). -/
+theorem pathEdge_injective (n : ℕ) :
+    Function.Injective (pathEdge n) := by
+  intro i j hij
+  have h_verts : (pathEdge n i).verts = (pathEdge n j).verts :=
+    congrArg Hyperedge.verts hij
+  unfold pathEdge at h_verts
+  simp only [List.cons.injEq] at h_verts
+  have h_first : (⟨i.val, by have h := i.isLt; omega⟩ : Fin n)
+      = ⟨j.val, by have h := j.isLt; omega⟩ := h_verts.1
+  have h_val : i.val = j.val := Fin.mk.injEq .. |>.mp h_first
+  exact Fin.ext h_val
+
+/-- **Path hypergraph size equals `n - 1` exactly.** The edge multiset
+has `n - 1` elements — one per `Fin (n - 1)` index, via injectivity of
+`pathEdge n`. Upgraded from the `≤ n - 1` bound. -/
+theorem pathHypergraph_size (n : ℕ) :
+    (pathHypergraph n).size = n - 1 := by
+  show Multiset.card (pathHypergraph n).edges = n - 1
+  unfold pathHypergraph
+  rw [show Multiset.card
+      (((Finset.univ : Finset (Fin (n - 1))).image (pathEdge n)).val)
+      = ((Finset.univ : Finset (Fin (n - 1))).image (pathEdge n)).card from rfl]
+  rw [Finset.card_image_of_injective _ (pathEdge_injective n)]
+  simp
+
 /-- **Path (free / Neumann-like) eigenvalue formula** (sentinel). For
 `n ≥ 2` and `k : Fin n`, the `k`-th eigenvalue of the free path-graph
 Laplacian (no boundary conditions — the natural Laplacian on
