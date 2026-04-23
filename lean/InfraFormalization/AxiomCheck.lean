@@ -166,6 +166,7 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.reverseEngineering_for_empty
 #print axioms InfraFormalization.RuleSignature.vertexCount_invariant
 #print axioms InfraFormalization.RuleSignature.edgeCount_mismatch_unreachable_of_conservative
+#print axioms InfraFormalization.RuleSignature.ballVolume_oversize_unreachable
 #print axioms InfraFormalization.pathEigenvalue_nonpos
 #print axioms InfraFormalization.heatKernel_cycleHypergraph_multi_mode_tendsto
 #print axioms InfraFormalization.pathEigenvalue_ground_zero

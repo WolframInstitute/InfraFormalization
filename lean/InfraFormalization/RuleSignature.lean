@@ -154,4 +154,26 @@ theorem RuleSignature.edgeCount_mismatch_unreachable_of_conservative
   rw [RuleSignature.edgeCount_invariant_of_conservative τ hstep hcons i hi]
   exact fun h => hmis h.symm
 
+/-- **Ball-volume oversize ⇒ unreachable (unconditional).** If a
+target signature `σ` claims a ball volume `σ.ballVolume v r` exceeding
+`Fintype.card V`, then no hypergraph `H : Hypergraph V` has
+`hypergraphSignature H = σ` — because every
+`H.geodesicBallVolume v r ≤ Fintype.card V`. No trajectory, no
+rewriting system needed; this is a pure type-level obstruction.
+
+Second concrete screening criterion, orthogonal to the edge-count
+one: rules out candidate signatures that are physically impossible
+on the given vertex type. -/
+theorem RuleSignature.ballVolume_oversize_unreachable
+    (σ : RuleSignature V) (v : V) (r : ℕ)
+    (hover : σ.ballVolume v r > Fintype.card V) (H : Hypergraph V) :
+    hypergraphSignature H ≠ σ := by
+  intro h
+  have h_vol : H.geodesicBallVolume v r = σ.ballVolume v r := by
+    have := congrArg RuleSignature.ballVolume h
+    exact (congrFun (congrFun this v) r)
+  have h_bound := H.geodesicBallVolume_le_card v r
+  rw [h_vol] at h_bound
+  exact absurd h_bound (not_le.mpr hover)
+
 end InfraFormalization
