@@ -1,5 +1,20 @@
 Added or done since the 2026-04-23 weekly update (newest first):
 
+- Hypergraph: size monotonicity for diff + empty-size corollary (size_diff_le, size_eq_zero_of_empty)
+- Hypergraph: union is a commutative monoid (add_empty, empty_add, add_comm', add_assoc')
+- P20: cycle and path witnesses at the restricted-predicate level (cycleHypergraph_ballVolumeVertexUniformRestricted, pathHypergraph_not_ballVolumeVertexUniformRestricted)
+- P20: dichotomies extended from Fin 3 to every Fin n with n ≥ 3 (rodkey_classification_nontrivial_for_Fin, regular_dichotomy_for_Fin)
+- P20: degenerate-cardinality cases and non-trivial-regime check (restrictedRegime_nonempty_iff, ballVolumeVertexUniform_of_card_le_one)
+- P20: BallVolumeVertexUniformRestricted ⇔ BallVolumeVertexUniform (BallVolumeVertexUniformRestricted, ballVolumeVertexUniform_iff_restricted)
+- P20: radius-0 ball volume = 1 on connected hypergraphs (geodesicBallVolume_zero_of_connected, ballVolumeVertexUniform_at_zero)
+- P20: ballVolumeVertexUniform_at_large_radius — universal tail behaviour on every connected hypergraph
+- HypergraphDistance: generalise cycle-ballVolume-large to every connected hypergraph (geodesicBallVolume_ge_card)
+- P20: Regular ⇐ BallVolumeVertexUniform packaging (regular_of_ballVolumeVertexUniform, not_ballVolumeVertexUniform_of_not_regular)
+- P20: regular_dichotomy_on_fin3 — structural separation on Fin 3
+- P20: pathHypergraph is NOT Regular for n ≥ 3 (pathHypergraph_not_regular)
+- P20: cycleHypergraph is 2-regular for n ≥ 3 (cycleHypergraph_regular_degree_two, cycleHypergraph_regular)
+- P20: Regular predicate + radius-1 uniformity iff regularity (Regular, ballVolumeOne_uniform_iff_regular)
+- P20: k-regular connected hypergraph is ball-volume-uniform at radius 1 (ballVolumeOne_regular, ballVolumeOne_uniform_of_regular)
 - RuleSignature: universal admissibility of trajectory states (signature_ballVolume_le_card, trajectory_state_signature_admissible)
 - pathHypergraph_size: exact edge count = n-1 (pathEdge_injective, pathHypergraph_size)
 - RuleSignature: concrete edgeCount screens for canonical start states (cycleHypergraph_start, empty_start)
