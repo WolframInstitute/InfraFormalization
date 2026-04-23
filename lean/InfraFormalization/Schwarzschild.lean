@@ -78,6 +78,7 @@ problem; it cannot be bluffed past in Lean.
 -/
 
 import InfraFormalization.CurvatureLocalCoord
+import InfraFormalization.CurvatureRiemann
 import InfraFormalization.PartialMetricData
 import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
 import Mathlib.Tactic.FieldSimp
@@ -646,6 +647,28 @@ theorem schwarzschildPartial_christoffel (M : ℝ) (x : Fin 4 → ℝ)
       = schwarzschildChristoffel M x ρ μ ν := by
   unfold PartialMetricData.christoffel schwarzschildChristoffel schwarzschildPartial
   rfl
+
+/-- **Schwarzschild-as-vacuum-solution obligation (B4 / #23)**: there
+exists a `MetricData 4` (the Schwarzschild metric, extended to a full
+metric in some way) and a `ConnectionData 4` (its Levi-Civita
+connection) such that, at every exterior point, the Ricci tensor
+vanishes.
+
+This is a *statement obligation*. Constructing the explicit connection
+from the Schwarzschild components requires second partial derivatives
+`∂²g`, not yet formalised. The obligation here makes any future
+Schwarzschild-vacuum proof machine-checkable.
+
+Note: `MetricData 4` requires `ginv_mul` *everywhere*; since
+Schwarzschild fails this at the horizon, the "extension" implicit
+here is non-trivial (one needs to extend sgg/sginv/sdg outside the
+exterior domain, e.g., to 0 or some compatible values). -/
+def SchwarzschildVacuumObligation (M : ℝ) : Prop :=
+  ∃ (metric : MetricData 4) (C : ConnectionData 4),
+    (∀ x : Fin 4 → ℝ, SchwarzschildValid M x →
+      ∀ μ ν : Fin 4, metric.g x μ ν = sgg M x μ ν)
+    ∧ (∀ x : Fin 4 → ℝ, SchwarzschildValid M x →
+      ∀ σ ν : Fin 4, C.ricci x σ ν = 0)
 
 end Curvature
 end InfraFormalization

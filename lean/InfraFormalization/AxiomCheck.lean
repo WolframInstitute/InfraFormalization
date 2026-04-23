@@ -169,6 +169,7 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.Curvature.PartialMetricData.christoffel_symm
 #print axioms InfraFormalization.Curvature.MetricData.toPartial_christoffel
 #print axioms InfraFormalization.Curvature.schwarzschildPartial_christoffel
+-- SchwarzschildVacuumObligation is only a def, not a theorem; no axioms to check.
 #print axioms InfraFormalization.Curvature.flrwChristoffel_0_00
 #print axioms InfraFormalization.Curvature.flrwG_lorentzian_pointwise
 #print axioms InfraFormalization.Curvature.rnLapse_schwarzschild
