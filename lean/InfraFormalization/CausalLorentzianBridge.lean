@@ -34,5 +34,22 @@ bridge, currently open. -/
 def minkowski4Manifold_from_causalGraph : Prop :=
   LorentzianManifoldOriginObligation minkowski4Manifold
 
+/-- **Any `DiagLorentzianManifold` has the origin-obligation inhabited
+at the current statement level.** The obligation Prop is a pure
+existential over `CausalGraph V + scale` (no bridgeHolds predicate);
+the trivial edge-free `CausalGraph (Fin 1)` inhabits it for every
+target manifold. -/
+theorem any_lorentzianManifold_has_obligation_witness {n : Nat}
+    (M : DiagLorentzianManifold n) :
+    LorentzianManifoldOriginObligation M := by
+  unfold LorentzianManifoldOriginObligation
+  refine ⟨Fin 1, inferInstance, inferInstance,
+    { causalEdge := fun _ _ => False
+      irrefl := fun _ h => h
+      transitively_reduced := fun _ _ h => absurd h id },
+    fun k => (1 : ℝ) / (k + 1), ?_⟩
+  intro k
+  positivity
+
 end Curvature
 end InfraFormalization

@@ -47,6 +47,23 @@ def EFEOriginObligation
   ∧ HypergraphMetricOriginObligation M
   ∧ ConnectionDataOriginObligation C
 
+/-- **EFE-origin obligation collapses to EFE-satisfaction at the
+current statement level.** The two hypergraph-side clauses
+(`HypergraphMetricOriginObligation M` and `ConnectionDataOriginObligation C`)
+are each universally inhabited by a trivial witness, so
+`EFEOriginObligation M C Λ κ T x` is equivalent to
+`EinsteinEqLambda M C Λ κ T x`. Strengthening the obligation to include
+a `bridgeHolds` content for the metric and connection sides is the open
+programme; until that lands, attaching the obligation is bookkeeping —
+the real content lives in the EFE clause. -/
+theorem EFEOriginObligation_iff_EinsteinEqLambda
+    (M : MetricData 4) (C : ConnectionData 4) (Λ κ : ℝ)
+    (T : StressEnergyTensor) (x : Fin 4 → ℝ) :
+    EFEOriginObligation M C Λ κ T x ↔ EinsteinEqLambda M C Λ κ T x := by
+  refine ⟨fun h => h.1, fun h => ⟨h, ?_, ?_⟩⟩
+  · exact any_metric_has_obligation_witness M
+  · exact any_connection_has_obligation_witness C
+
 /-- **Flat-vacuum EFE origin obligation**: the Minkowski vacuum case
 (Λ = 0, T = 0, flat Γ) admits all three clauses — the EFE is proved,
 the metric comes from `cycleHypergraph 2`, the connection comes from
