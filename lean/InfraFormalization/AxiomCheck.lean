@@ -92,6 +92,7 @@ import InfraFormalization.CurvedRicciBridge
 import InfraFormalization.ContinuumBridgeDemo
 import InfraFormalization.EinsteinEquations
 import InfraFormalization.CovariantDerivative
+import InfraFormalization.LorentzianManifold
 import InfraFormalization.Refutations.F1NoMetric
 import InfraFormalization.Refutations.F2Orthonormality
 import InfraFormalization.Refutations.F3Tautology
@@ -154,6 +155,7 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.Curvature.ConnectionData.nabla_covector_flat
 #print axioms InfraFormalization.Curvature.ConnectionData.nabla_vector_add
 #print axioms InfraFormalization.Curvature.ConnectionData.nabla_covector_add
+#print axioms InfraFormalization.Curvature.minkowski4_diagLorentzian
 #print axioms InfraFormalization.in_degree_eq_lhsSize
 #print axioms InfraFormalization.out_degree_eq_rhsSize
 #print axioms InfraFormalization.balanced_of_conservative

@@ -150,3 +150,4 @@ import InfraFormalization.CurvedRicciBridge
 import InfraFormalization.ContinuumBridgeDemo
 import InfraFormalization.EinsteinEquations
 import InfraFormalization.CovariantDerivative
+import InfraFormalization.LorentzianManifold
