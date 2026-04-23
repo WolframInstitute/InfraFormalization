@@ -637,6 +637,8 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.cycleHypergraph_iterSucc_injOn
 #print axioms InfraFormalization.cycleHypergraph_iterPred_injOn
 #print axioms InfraFormalization.cycleHypergraph_ballVolume_forward_ge
+#print axioms InfraFormalization.cycleHypergraph_iterSucc_ne_iterPred
+#print axioms InfraFormalization.cycleHypergraph_ballVolume_ge
 #print axioms InfraFormalization.cycleHypergraph_ballVolume_two_ge_five
 #print axioms InfraFormalization.cycleHypergraph_ballVolume_two_le_five
 #print axioms InfraFormalization.cycleHypergraph_ballVolume_two_exact

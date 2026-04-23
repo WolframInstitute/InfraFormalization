@@ -714,6 +714,32 @@ private theorem cycleHypergraph_iterPred_neg_iterSucc {n : Nat} [NeZero n]
     show -((fun x : Fin n => x + 1)^[k] (-w)) - 1 = -((fun x : Fin n => x + 1)^[k] (-w) + 1)
     abel
 
+/-- **Forward and backward shift families don't overlap in the admissible range.**
+For `n ≥ 2`, `i ≤ r`, `1 ≤ j ≤ r`, and `2r + 1 ≤ n`:
+`F^[i] v ≠ G^[j] v`. The proof uses `.val` closed forms plus the fact that
+`i + j ∈ [1, 2r]` with `2r < n` rules out the wrap-around collision. -/
+theorem cycleHypergraph_iterSucc_ne_iterPred {n : Nat} [NeZero n] (hn : 2 ≤ n)
+    (v : Fin n) {r i j : ℕ} (hir : i ≤ r) (hj_pos : 1 ≤ j) (hjr : j ≤ r)
+    (hr : 2 * r + 1 ≤ n) :
+    (fun x : Fin n => x + 1)^[i] v ≠ (fun x : Fin n => x - 1)^[j] v := by
+  intro h
+  have h_val := congrArg Fin.val h
+  rw [cycleHypergraph_iterSucc_val, cycleHypergraph_iterPred_val hn] at h_val
+  have h_modeq : v.val + i ≡ v.val + (n - 1) * j [MOD n] := h_val
+  have hij_modeq : i ≡ (n - 1) * j [MOD n] :=
+    Nat.ModEq.add_left_cancel' v.val h_modeq
+  have h_plus : i + j ≡ (n - 1) * j + j [MOD n] := Nat.ModEq.add_right j hij_modeq
+  have hnj : (n - 1) * j + j = n * j := by
+    rw [show n * j = (n - 1 + 1) * j from by congr 1; omega]
+    rw [Nat.add_mul, Nat.one_mul]
+  have h_zero : (n - 1) * j + j ≡ 0 [MOD n] := by
+    unfold Nat.ModEq; rw [hnj]; simp [Nat.mul_mod_right]
+  have h_sum : i + j ≡ 0 [MOD n] := h_plus.trans h_zero
+  have h_lt : i + j < n := by omega
+  unfold Nat.ModEq at h_sum
+  rw [Nat.mod_eq_of_lt h_lt, Nat.zero_mod] at h_sum
+  omega
+
 /-- **Injectivity of iterated predecessor on small range**: symmetric
 counterpart of `cycleHypergraph_iterSucc_injOn`, derived via the
 conjugation `G^[k] v = -(F^[k] (-v))`. -/
@@ -761,6 +787,84 @@ theorem cycleHypergraph_ballVolume_forward_ge {n : Nat} [NeZero n]
   -- Conclude
   unfold Hypergraph.geodesicBallVolume
   calc r + 1 = S.card := h_card.symm
+    _ ≤ _ := Finset.card_le_card h_in_ball
+
+/-- **General ID6 lower bound**: `V(v, r) ≥ 2r + 1` on `cycleHypergraph n`
+for every `n ≥ 2` and `r` with `2r + 1 ≤ n`.
+
+Builds the `2r + 1` distinct vertices as
+  `{F^[0] v, F^[1] v, ..., F^[r] v} ∪ {G^[1] v, G^[2] v, ..., G^[r] v}`
+(forward shifts on the left, backward on the right, both using the single
+step-by-1 adjacency on the cycle). Each iterate lies in `ball(v, r)` by
+`cycleHypergraph_dist_iter{Succ,Pred}_le`; pairwise distinctness uses
+`iterSucc_injOn`, `iterPred_injOn`, and `iterSucc_ne_iterPred`.
+
+Combined with `cycleHypergraph_ballVolume_one_exact`, `_zero_exact`,
+`_two_exact`, this recovers the `V(v, r) = 2r + 1` pattern for every
+admissible base case and advances ID6 toward closure. The matching
+upper bound `V(v, r) ≤ 2r + 1` requires the general shortest-walk
+structural analysis and remains open in this form. -/
+theorem cycleHypergraph_ballVolume_ge {n : Nat} [NeZero n]
+    (hn : 2 ≤ n) {r : ℕ} (hr : 2 * r + 1 ≤ n) (v : Fin n) :
+    2 * r + 1 ≤ (cycleHypergraph n).geodesicBallVolume v r := by
+  let F : ℕ → Fin n := fun k => (fun x : Fin n => x + 1)^[k] v
+  let G : ℕ → Fin n := fun k => (fun x : Fin n => x - 1)^[k] v
+  let S1 : Finset (Fin n) := (Finset.range (r + 1)).image F
+  let S2 : Finset (Fin n) := (Finset.Ioc 0 r).image G
+  -- Cardinalities
+  have hcard1 : S1.card = r + 1 := by
+    show ((Finset.range (r + 1)).image F).card = r + 1
+    rw [Finset.card_image_of_injOn]
+    · exact Finset.card_range _
+    · intros i hi j hj hij
+      rw [Finset.mem_coe, Finset.mem_range] at hi hj
+      exact cycleHypergraph_iterSucc_injOn v (by omega : i ≤ r) (by omega : j ≤ r) hr hij
+  have hcard2 : S2.card = r := by
+    show ((Finset.Ioc 0 r).image G).card = r
+    rw [Finset.card_image_of_injOn]
+    · rw [Nat.card_Ioc]; omega
+    · intros i hi j hj hij
+      rw [Finset.mem_coe, Finset.mem_Ioc] at hi hj
+      exact cycleHypergraph_iterPred_injOn v hi.2 hj.2 hr hij
+  -- Disjointness
+  have hdisj : Disjoint S1 S2 := by
+    rw [Finset.disjoint_iff_ne]
+    intros a ha b hb
+    rw [show S1 = (Finset.range (r + 1)).image F from rfl] at ha
+    rw [show S2 = (Finset.Ioc 0 r).image G from rfl] at hb
+    rw [Finset.mem_image] at ha hb
+    obtain ⟨i, hi, hia⟩ := ha
+    obtain ⟨j, hj, hjb⟩ := hb
+    subst hia; subst hjb
+    rw [Finset.mem_range] at hi
+    rw [Finset.mem_Ioc] at hj
+    exact cycleHypergraph_iterSucc_ne_iterPred hn v
+      (by omega : i ≤ r) hj.1 hj.2 hr
+  -- Union contained in ball
+  have h_in_ball : (S1 ∪ S2) ⊆ (cycleHypergraph n).geodesicBall v r := by
+    intro u hu
+    rw [Finset.mem_union] at hu
+    unfold Hypergraph.geodesicBall
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+    rcases hu with h1 | h2
+    · rw [show S1 = (Finset.range (r + 1)).image F from rfl, Finset.mem_image] at h1
+      obtain ⟨i, hi, hiu⟩ := h1
+      subst hiu
+      rw [Finset.mem_range] at hi
+      show (cycleHypergraph n).dist v ((fun x : Fin n => x + 1)^[i] v) ≤ r
+      have := cycleHypergraph_dist_iterSucc_le hn v i
+      omega
+    · rw [show S2 = (Finset.Ioc 0 r).image G from rfl, Finset.mem_image] at h2
+      obtain ⟨j, hj, hjv⟩ := h2
+      subst hjv
+      rw [Finset.mem_Ioc] at hj
+      show (cycleHypergraph n).dist v ((fun x : Fin n => x - 1)^[j] v) ≤ r
+      have := cycleHypergraph_dist_iterPred_le hn v j
+      omega
+  unfold Hypergraph.geodesicBallVolume
+  calc 2 * r + 1 = (r + 1) + r := by ring
+    _ = S1.card + S2.card := by rw [hcard1, hcard2]
+    _ = (S1 ∪ S2).card := (Finset.card_union_of_disjoint hdisj).symm
     _ ≤ _ := Finset.card_le_card h_in_ball
 
 /-- **Exact ball volume at radius 1** on `cycleHypergraph n` for `n ≥ 3`:
