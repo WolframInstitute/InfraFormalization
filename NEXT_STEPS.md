@@ -4,6 +4,16 @@ Lives next to [`README.md`](README.md) / [`INDEX.md`](INDEX.md) / [`FINDINGS.md`
 
 ## Recently shipped (selected highlights)
 
+- **Hypergraph-grounded overnight grind (2026-04-23)**: dedicated to `GROUNDING_AUDIT.md`-compliant work only.
+  - `PathHypergraphDistance.lean` — path heat kernel preserves constants; row-sum zero.
+  - `CycleHeatDecayBounds.lean` — spectral gap, first-mode explicit decay, constant fixed.
+  - `FisherMetricExtended.lean` — ℝ-linearity + PSD for Van Le branchial Fisher metric.
+  - `HodgeLaplacianBounds.lean` — Pavel Hajek IT3 Hodge 0-Laplacian negative semi-definite (Dirichlet energy argument).
+  - `BlowupPoissonConcrete.lean` — concrete bracket instances (zero, difference) + vertex/edge-count invariants for Kolcz M3 Lie-Poisson.
+  - `EMETracker.lean` — Ahmed M7 EME persistence on Trajectory + concrete edge-count-bounded EME.
+  - `BranchialCommutator.lean` — BranchialMultiRelated reflexive-transitive closure (symmetry + transitivity) for Ahmed-Zapata M5.
+
+
 - **Schwarzschild Lorentzian signature** (`Schwarzschild.lean`): `sgg_lorentzian_pointwise` — on every exterior point, the Schwarzschild metric `sgg M x` has diagonal Lorentzian signature (g_00 < 0, g_ii > 0, off-diagonal = 0). `SchwarzschildVacuumObligation M` is the statement-level B4 obligation. Axiom-clean.
 - **2-sphere curvature witnesses** (`TwoSphere.lean`): `sphereChristoffel_1_0_1 = cot(θ)` closed form + `sphereChristoffel_nonzero` existence witness at generic points. Full "beyond flat" demonstration for the S² target.
 - **GrandTour.lean** — headline-theorems tour. One-line examples referencing the eight main results (operator convergence, PDE spectrum, D6 multi-mode, T6 obligations, F3+Minkowski-vacuum, E1+E5, GR zoo, PDE bridge + curved Ricci).
