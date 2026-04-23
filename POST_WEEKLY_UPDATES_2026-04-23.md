@@ -1,5 +1,7 @@
 Added or done since the 2026-04-23 weekly update (newest first):
 
+- **TASKS CLOSED**: #165 IR7 (refined form: ReverseEngineeringObligationRefined holds; original form is false and has a formal counterexample). #26 B6 FLRW metric bundle (flrwPartial as PartialMetricData 4 with domain, Christoffel, Lorentzian, origin obligation).
+- IR7 CLOSED: ReverseEngineeringObligationRefined — the honest form of IR7 restricted to realisable target signatures (ReverseEngineeringObligationRefined, reverseEngineeringObligationRefined_holds)
 - HypergraphDistance: adjacency is monotone under union (Adj_add_left, Adj_add_right)
 - RuleSignature: edgeCount is additive and monotone under hypergraph union (signature_edgeCount_add, signature_edgeCount_le_add_right)
 - Hypergraph: size bounds under add + non-empty positivity (size_le_add_right, size_le_add_left, size_pos_of_ne_empty)
