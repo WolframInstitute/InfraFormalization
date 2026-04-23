@@ -270,4 +270,31 @@ theorem RuleSignature.empty_start_edgeCount_screen
   rw [RuleSignature.empty_signature_edgeCount]
   exact hmis
 
+/-- **Signature ballVolume is bounded by `Fintype.card V`**, at every
+state of every trajectory — a universal cardinality bound. Direct
+corollary of `Hypergraph.geodesicBallVolume_le_card` lifted to the
+signature level. -/
+theorem RuleSignature.signature_ballVolume_le_card
+    {P : Type*} {sys : RewritingSystem P} {init : Hypergraph V}
+    (τ : Trajectory sys init)
+    (i : Nat) (hi : i < τ.states.length) (v : V) (r : ℕ) :
+    (hypergraphSignature (τ.states.get ⟨i, hi⟩)).ballVolume v r
+      ≤ Fintype.card V :=
+  (τ.states.get ⟨i, hi⟩).geodesicBallVolume_le_card v r
+
+/-- **Every trajectory state's signature is admissible.** Combines the
+two universal invariants: `vertexCount = Fintype.card V` (by
+definition) and `ballVolume v r ≤ Fintype.card V` (by the trivial
+subset bound). So every reachable signature is Admissible — and
+conversely `not_admissible_unreachable` gives the converse elimination
+in one step. -/
+theorem RuleSignature.trajectory_state_signature_admissible
+    {P : Type*} {sys : RewritingSystem P} {init : Hypergraph V}
+    (τ : Trajectory sys init) (i : Nat) (hi : i < τ.states.length) :
+    (hypergraphSignature (τ.states.get ⟨i, hi⟩)).Admissible := by
+  refine ⟨?_, ?_⟩
+  · rfl
+  · intro v r
+    exact RuleSignature.signature_ballVolume_le_card τ i hi v r
+
 end InfraFormalization

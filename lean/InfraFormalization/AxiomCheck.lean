@@ -180,6 +180,8 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.RuleSignature.empty_start_edgeCount_screen
 #print axioms InfraFormalization.pathEdge_injective
 #print axioms InfraFormalization.pathHypergraph_size
+#print axioms InfraFormalization.RuleSignature.signature_ballVolume_le_card
+#print axioms InfraFormalization.RuleSignature.trajectory_state_signature_admissible
 #print axioms InfraFormalization.pathEigenvalue_nonpos
 #print axioms InfraFormalization.heatKernel_cycleHypergraph_multi_mode_tendsto
 #print axioms InfraFormalization.pathEigenvalue_ground_zero
