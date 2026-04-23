@@ -363,6 +363,25 @@ theorem cycle_succ_ne_pred {n : Nat} [NeZero n] (hn : 3 ≤ n) (v : Fin n) :
     rw [h_rhs] at hval
     omega
 
+/-- **For `n ≥ 4`, `v + 2 ≠ v` in `Fin n`.** The shift-by-2 is
+non-trivial once `n ≥ 3`; the proof handles the `n = 3` edge case. -/
+theorem cycle_add_two_ne_self {n : Nat} [NeZero n] (hn : 3 ≤ n) (v : Fin n) :
+    (v + 2 : Fin n) ≠ v := by
+  intro heq
+  have hval : (v + 2 : Fin n).val = v.val := congrArg Fin.val heq
+  have h_two : (2 : Fin n).val = 2 := by
+    show 2 % n = 2; exact Nat.mod_eq_of_lt (by omega)
+  rw [Fin.val_add, h_two] at hval
+  have hvlt : v.val < n := v.isLt
+  rcases Nat.lt_or_ge (v.val + 2) n with hlt | hge
+  · rw [Nat.mod_eq_of_lt hlt] at hval; omega
+  · have h_ge_n : n ≤ v.val + 2 := hge
+    have h_lt_2n : v.val + 2 < 2 * n := by omega
+    have hmod : (v.val + 2) % n = v.val + 2 - n := by
+      rw [Nat.mod_eq_sub_mod h_ge_n]
+      exact Nat.mod_eq_of_lt (by omega)
+    rw [hmod] at hval; omega
+
 /-- **Radius-1 ball volume in cycleHypergraph (n ≥ 3) is ≥ 3.**
 Exhibits three distinct vertices (`v`, `v + 1`, `v − 1`) in the
 ball, all at distance ≤ 1. This establishes the first concrete
