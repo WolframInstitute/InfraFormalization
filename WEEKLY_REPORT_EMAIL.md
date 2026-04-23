@@ -43,16 +43,6 @@ Verdict: systematic overclaim with embedded mathematical errors. Nothing fabrica
 
 Flat bridges proved: cycle → circle, path → interval, 2-torus, d-torus, discrete Lorentz → Minkowski.
 
-## What's new since 2026-04-22
-
-Grounding-audit closure — every continuum GR object now carries an attached hypergraph-side origin-obligation Prop, with flat-case witnesses proved:
-
-- `HypergraphMetricOriginObligation M` — every metric in the zoo.
-- `ConnectionDataOriginObligation C` — flat connection case witnessed via a trivial fibered graph.
-- `LorentzianManifoldOriginObligation target` — Minkowski manifold witnessed via trivial causal graph.
-- `EFEOriginObligation M C Λ κ T x` — bundles EFE satisfaction + metric origin + connection origin. `minkowski4_flat_vacuum_EFE_originated_global` is the first complete rule → metric → connection → EFE chain.
-- `RuleSearch.lean` — 5-rule catalog (identity, self-map, edge-duplicate, triple-to-edge, pair-to-triangle); decidable `IsConservative`; `conservative_blocks_dim_geq_one` formalises the F7 structural obstruction.
-
 ## Open items
 
 Curved rule → curved metric bridges (Schwarzschild, Kerr, FLRW) — no known rule; correctly open. Measure theory A6/A7/A8. Mathlib bundle gap blocks C1–C8. G2 gauge field. E6/E7 Lorentzian GH. Discrete stress-energy. Large-scale empirical rule search via wolframscript.
