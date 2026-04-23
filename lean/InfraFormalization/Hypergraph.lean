@@ -102,6 +102,31 @@ on the edges (which follows from `DecidableEq V`). -/
 def diff [DecidableEq V] (H : Hypergraph V) (E : Multiset (Hyperedge V)) : Hypergraph V :=
   ⟨H.edges - E⟩
 
+/-- **Empty is a right unit for union.** -/
+@[simp] theorem add_empty (H : Hypergraph V) : H + empty = H := by
+  show ⟨H.edges + (0 : Multiset (Hyperedge V))⟩ = H
+  simp
+
+/-- **Empty is a left unit for union.** -/
+@[simp] theorem empty_add (H : Hypergraph V) : empty + H = H := by
+  show ⟨(0 : Multiset (Hyperedge V)) + H.edges⟩ = H
+  simp
+
+/-- **Union is commutative.** Inherited from multiset addition. -/
+theorem add_comm' (H₁ H₂ : Hypergraph V) : H₁ + H₂ = H₂ + H₁ := by
+  show (⟨H₁.edges + H₂.edges⟩ : Hypergraph V)
+    = (⟨H₂.edges + H₁.edges⟩ : Hypergraph V)
+  congr 1
+  exact Multiset.add_comm _ _
+
+/-- **Union is associative.** Inherited from multiset addition. -/
+theorem add_assoc' (H₁ H₂ H₃ : Hypergraph V) :
+    H₁ + H₂ + H₃ = H₁ + (H₂ + H₃) := by
+  show (⟨H₁.edges + H₂.edges + H₃.edges⟩ : Hypergraph V)
+    = (⟨H₁.edges + (H₂.edges + H₃.edges)⟩ : Hypergraph V)
+  congr 1
+  exact Multiset.add_assoc _ _ _
+
 end Hypergraph
 
 end InfraFormalization

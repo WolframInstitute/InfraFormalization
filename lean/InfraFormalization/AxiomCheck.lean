@@ -204,6 +204,10 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.Hypergraph.regular_dichotomy_for_Fin
 #print axioms InfraFormalization.Hypergraph.cycleHypergraph_ballVolumeVertexUniformRestricted
 #print axioms InfraFormalization.Hypergraph.pathHypergraph_not_ballVolumeVertexUniformRestricted
+#print axioms InfraFormalization.Hypergraph.add_empty
+#print axioms InfraFormalization.Hypergraph.empty_add
+#print axioms InfraFormalization.Hypergraph.add_comm'
+#print axioms InfraFormalization.Hypergraph.add_assoc'
 #print axioms InfraFormalization.pathEigenvalue_nonpos
 #print axioms InfraFormalization.heatKernel_cycleHypergraph_multi_mode_tendsto
 #print axioms InfraFormalization.pathEigenvalue_ground_zero
