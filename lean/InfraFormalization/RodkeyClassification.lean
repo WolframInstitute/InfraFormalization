@@ -291,6 +291,28 @@ theorem ballVolumeOne_uniform_iff_regular (H : Hypergraph V)
     rw [geodesicBallVolume_one_eq_degree_plus_one H hconn v,
         geodesicBallVolume_one_eq_degree_plus_one H hconn w, hreg v w]
 
+/-- **`cycleHypergraph n` is 2-regular for `n ≥ 3`.** Every vertex has
+exactly `v + 1` and `v - 1` as distinct neighbours; the SimpleGraph
+degree is 2 throughout. Derived via
+`cycleHypergraph_ballVolume_one_exact` (= 3) and
+`geodesicBallVolume_one_eq_degree_plus_one`. -/
+theorem cycleHypergraph_regular_degree_two {n : Nat} [NeZero n]
+    (hn : 3 ≤ n) (v : Fin n) :
+    (cycleHypergraph n).toSimpleGraph.degree v = 2 := by
+  have hconn := cycleHypergraph_connected (by omega : 2 ≤ n)
+  have hvol := cycleHypergraph_ballVolume_one_exact hn v
+  have hid := geodesicBallVolume_one_eq_degree_plus_one
+    (cycleHypergraph n) hconn v
+  omega
+
+/-- **`cycleHypergraph n` is Regular for `n ≥ 3`**: every vertex has
+degree 2. -/
+theorem cycleHypergraph_regular {n : Nat} [NeZero n] (hn : 3 ≤ n) :
+    (cycleHypergraph n).Regular := by
+  intro v w
+  rw [cycleHypergraph_regular_degree_two hn v,
+      cycleHypergraph_regular_degree_two hn w]
+
 /-- **Adj-transitive implies uniform degree.** An Adj-preserving
 `Equiv σ : V ≃ V` sending `v` to `w` bijects the neighbour set of `v`
 with the neighbour set of `w`, so the simple-graph degrees agree. This

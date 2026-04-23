@@ -187,6 +187,8 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.Hypergraph.ballVolumeOne_regular
 #print axioms InfraFormalization.Hypergraph.ballVolumeOne_uniform_of_regular
 #print axioms InfraFormalization.Hypergraph.ballVolumeOne_uniform_iff_regular
+#print axioms InfraFormalization.Hypergraph.cycleHypergraph_regular_degree_two
+#print axioms InfraFormalization.Hypergraph.cycleHypergraph_regular
 #print axioms InfraFormalization.pathEigenvalue_nonpos
 #print axioms InfraFormalization.heatKernel_cycleHypergraph_multi_mode_tendsto
 #print axioms InfraFormalization.pathEigenvalue_ground_zero
