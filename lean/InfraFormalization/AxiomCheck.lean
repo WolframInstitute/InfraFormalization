@@ -146,6 +146,7 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.cycleHypergraph_ballVolume_large
 #print axioms InfraFormalization.discreteWaveToContinuumWave_holds
 #print axioms InfraFormalization.discreteSchrodingerToContinuumSchrodinger_holds
+#print axioms InfraFormalization.discreteKleinGordonSpectrum_holds
 #print axioms InfraFormalization.pde_spectrum_bridge_summary
 #print axioms InfraFormalization.minkowski4_satisfies_EFE_zero_lambda
 #print axioms InfraFormalization.minkowski4_flat_vacuum_forces_lambda_zero

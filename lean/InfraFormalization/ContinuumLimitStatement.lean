@@ -246,6 +246,31 @@ theorem discreteSchrodingerToContinuumSchrodinger_holds :
   rw [h_target] at hneg
   exact hneg.congr h_eq
 
+/-- **Klein-Gordon continuum-limit spectrum**: for mass `m` and any
+wavenumber `k`, the lattice KG dispersion `n²·4 sin²(πk/n) + m²`
+converges to the continuum KG Hamiltonian eigenvalue `(2πk)² + m²`
+as `n → ∞`. Follows from the Schrödinger spectral bridge
+(`discreteSchrodingerToContinuumSchrodinger_holds`) via
+`Filter.Tendsto.add`. -/
+def DiscreteKleinGordonSpectrum (m : ℝ) : Prop :=
+  ∀ (k : ℕ),
+    Filter.Tendsto
+      (fun n : ℕ =>
+        ((n : ℝ))^2 * (4 * (Real.sin (Real.pi * (k : ℝ) / (n : ℝ)))^2)
+        + m^2)
+      Filter.atTop
+      (nhds ((2 * Real.pi * k)^2 + m^2))
+
+/-- **DiscreteKleinGordonSpectrum PROVED.** Sum of the Schrödinger
+spectral convergence and the constant `m²` limit. -/
+theorem discreteKleinGordonSpectrum_holds (m : ℝ) :
+    DiscreteKleinGordonSpectrum m := by
+  intro k
+  have h_schr := discreteSchrodingerToContinuumSchrodinger_holds k
+  have h_const : Filter.Tendsto (fun _ : ℕ => m^2) Filter.atTop (nhds (m^2)) :=
+    tendsto_const_nhds
+  exact h_schr.add h_const
+
 /-! ## C. Rule-driven trajectories → curved spacetimes
 
 **This is the core open problem in Wolfram Physics.** Gorard claims
