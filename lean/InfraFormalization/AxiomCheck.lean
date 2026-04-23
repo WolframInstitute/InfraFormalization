@@ -93,6 +93,7 @@ import InfraFormalization.ContinuumBridgeDemo
 import InfraFormalization.EinsteinEquations
 import InfraFormalization.CovariantDerivative
 import InfraFormalization.LorentzianManifold
+import InfraFormalization.PartialMetricData
 import InfraFormalization.Refutations.F1NoMetric
 import InfraFormalization.Refutations.F2Orthonormality
 import InfraFormalization.Refutations.F3Tautology
@@ -159,6 +160,8 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.Curvature.minkowski4_diagLorentzian
 #print axioms InfraFormalization.flatConnection_einstein_divergence_zero
 #print axioms InfraFormalization.minkowski4Manifold_satisfies_vacuum_EFE
+#print axioms InfraFormalization.Curvature.PartialMetricData.christoffel_symm
+#print axioms InfraFormalization.Curvature.MetricData.toPartial_christoffel
 #print axioms InfraFormalization.in_degree_eq_lhsSize
 #print axioms InfraFormalization.out_degree_eq_rhsSize
 #print axioms InfraFormalization.balanced_of_conservative
