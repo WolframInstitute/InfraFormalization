@@ -161,6 +161,7 @@ import InfraFormalization.RuleWitnesses
 import InfraFormalization.RuleSearch
 import InfraFormalization.FiberedGraphConnectionBridge
 import InfraFormalization.EinsteinEquationsBridge
+import InfraFormalization.RodkeyClassification
 import InfraFormalization.CurvedRicciBridge
 import InfraFormalization.ContinuumBridgeDemo
 import InfraFormalization.EinsteinEquations
