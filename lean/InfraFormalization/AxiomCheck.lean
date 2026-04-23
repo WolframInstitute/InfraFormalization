@@ -197,6 +197,7 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.Hypergraph.ballVolumeVertexUniform_at_large_radius
 #print axioms InfraFormalization.Hypergraph.geodesicBallVolume_zero_of_connected
 #print axioms InfraFormalization.Hypergraph.ballVolumeVertexUniform_at_zero
+#print axioms InfraFormalization.Hypergraph.ballVolumeVertexUniform_iff_restricted
 #print axioms InfraFormalization.pathEigenvalue_nonpos
 #print axioms InfraFormalization.heatKernel_cycleHypergraph_multi_mode_tendsto
 #print axioms InfraFormalization.pathEigenvalue_ground_zero

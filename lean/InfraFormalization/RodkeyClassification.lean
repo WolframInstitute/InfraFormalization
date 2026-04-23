@@ -408,6 +408,32 @@ theorem ballVolumeVertexUniform_at_zero (H : Hypergraph V)
   rw [geodesicBallVolume_zero_of_connected H hconn v,
       geodesicBallVolume_zero_of_connected H hconn w]
 
+/-- **Restricted BallVolumeVertexUniform predicate**: uniformity only
+asked in the non-trivial regime `1 ≤ r < |V|`. Together with the
+"sandwich" pieces `ballVolumeVertexUniform_at_zero` and
+`ballVolumeVertexUniform_at_large_radius`, this is equivalent to the
+full `BallVolumeVertexUniform` on connected hypergraphs. -/
+def BallVolumeVertexUniformRestricted (H : Hypergraph V) : Prop :=
+  ∀ (r : ℕ), 1 ≤ r → r < Fintype.card V →
+    ∀ (v w : V), H.geodesicBallVolume v r = H.geodesicBallVolume w r
+
+/-- **Restricted ⇔ full**: on connected hypergraphs, uniformity on
+`1 ≤ r < |V|` extends automatically to `r = 0` and `r ≥ |V|` via the
+sandwich pieces, giving the full `BallVolumeVertexUniform`. -/
+theorem ballVolumeVertexUniform_iff_restricted (H : Hypergraph V)
+    (hconn : H.toSimpleGraph.Connected) :
+    H.BallVolumeVertexUniform ↔ H.BallVolumeVertexUniformRestricted := by
+  constructor
+  · intro hfull r _ _ v w
+    exact hfull r v w
+  · intro hres r v w
+    rcases Nat.lt_or_ge r (Fintype.card V) with hlt | hge
+    · rcases Nat.eq_zero_or_pos r with h0 | hpos
+      · subst h0
+        exact ballVolumeVertexUniform_at_zero H hconn v w
+      · exact hres r hpos hlt v w
+    · exact ballVolumeVertexUniform_at_large_radius H hconn r hge v w
+
 /-- **Adj-transitive implies uniform degree.** An Adj-preserving
 `Equiv σ : V ≃ V` sending `v` to `w` bijects the neighbour set of `v`
 with the neighbour set of `w`, so the simple-graph degrees agree. This
