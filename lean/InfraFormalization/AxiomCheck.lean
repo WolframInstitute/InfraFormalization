@@ -190,6 +190,7 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.Hypergraph.cycleHypergraph_regular_degree_two
 #print axioms InfraFormalization.Hypergraph.cycleHypergraph_regular
 #print axioms InfraFormalization.Hypergraph.pathHypergraph_not_regular
+#print axioms InfraFormalization.Hypergraph.regular_dichotomy_on_fin3
 #print axioms InfraFormalization.pathEigenvalue_nonpos
 #print axioms InfraFormalization.heatKernel_cycleHypergraph_multi_mode_tendsto
 #print axioms InfraFormalization.pathEigenvalue_ground_zero

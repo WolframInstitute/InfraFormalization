@@ -331,6 +331,18 @@ theorem pathHypergraph_not_regular {n : ℕ} [NeZero n] (hn : 3 ≤ n) :
   rw [h0, h1] at hdiff
   omega
 
+/-- **Regularity dichotomy on `Fin 3`**: there exist hypergraphs on
+the same vertex type such that one is Regular and another is not.
+Witnessed by `cycleHypergraph 3` (regular, degree 2) and
+`pathHypergraph 3` (not regular: endpoint degree 1, interior degree 2).
+Structural analogue of `rodkey_classification_nontrivial`. -/
+theorem regular_dichotomy_on_fin3 :
+    ∃ (H : Hypergraph (Fin 3)) (K : Hypergraph (Fin 3)),
+      H.Regular ∧ ¬ K.Regular :=
+  ⟨cycleHypergraph 3, pathHypergraph 3,
+   cycleHypergraph_regular (by omega),
+   pathHypergraph_not_regular (by omega)⟩
+
 /-- **Adj-transitive implies uniform degree.** An Adj-preserving
 `Equiv σ : V ≃ V` sending `v` to `w` bijects the neighbour set of `v`
 with the neighbour set of `w`, so the simple-graph degrees agree. This
