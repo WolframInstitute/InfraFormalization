@@ -243,6 +243,28 @@ theorem not_ballVolumeVertexUniform_of_degree_ne
   intro hb
   exact hne (degree_uniform_of_ballVolumeVertexUniform H hconn hb v w)
 
+/-- **`k`-regular connected hypergraph has uniform radius-1 ball volume
+equal to `k + 1`.** Direct application of `geodesicBallVolume_one_eq_degree_plus_one`
+at every vertex. The radius-1 piece of the BallVolumeVertexUniform
+predicate holds for every regular connected hypergraph — a partial
+necessary-and-sufficient result at the local level. -/
+theorem ballVolumeOne_regular (H : Hypergraph V)
+    (hconn : H.toSimpleGraph.Connected) (k : ℕ)
+    (hreg : ∀ v : V, H.toSimpleGraph.degree v = k) (v : V) :
+    H.geodesicBallVolume v 1 = k + 1 := by
+  rw [geodesicBallVolume_one_eq_degree_plus_one H hconn v, hreg v]
+  omega
+
+/-- **Regular connected hypergraphs are ball-volume-uniform at radius 1.**
+Direct corollary of `ballVolumeOne_regular`: if every vertex has the
+same SimpleGraph degree, every radius-1 ball has the same size. -/
+theorem ballVolumeOne_uniform_of_regular (H : Hypergraph V)
+    (hconn : H.toSimpleGraph.Connected) {k : ℕ}
+    (hreg : ∀ v : V, H.toSimpleGraph.degree v = k) (v w : V) :
+    H.geodesicBallVolume v 1 = H.geodesicBallVolume w 1 := by
+  rw [ballVolumeOne_regular H hconn k hreg v,
+      ballVolumeOne_regular H hconn k hreg w]
+
 /-- **Adj-transitive implies uniform degree.** An Adj-preserving
 `Equiv σ : V ≃ V` sending `v` to `w` bijects the neighbour set of `v`
 with the neighbour set of `w`, so the simple-graph degrees agree. This
