@@ -575,6 +575,69 @@ theorem cycleHypergraph_dist_sub_two_le {n : Nat} [NeZero n]
     _ = 1 + 1 := by rw [h1, h2]
     _ = 2 := rfl
 
+/-- **Iterated forward shift is `k` steps away from `v` on
+`cycleHypergraph n` for `n ≥ 2`**: `dist v (((· + 1)^[k]) v) ≤ k`. Induction
+on `k` via triangle inequality + adjacency. Provides a uniform upper
+bound without relying on `Fin.NatCast` coercion. -/
+theorem cycleHypergraph_dist_iterSucc_le {n : Nat} [NeZero n]
+    (hn : 2 ≤ n) (v : Fin n) : ∀ (k : ℕ),
+    (cycleHypergraph n).dist v ((fun x : Fin n => x + 1)^[k] v) ≤ k := by
+  intro k
+  induction k with
+  | zero =>
+    show (cycleHypergraph n).dist v v ≤ 0
+    exact le_of_eq (Hypergraph.dist_self _ v)
+  | succ k ih =>
+    -- (f^[k+1]) v = f (f^[k] v), so the shifted vertex is f^[k] v + 1
+    have h_iter : (fun x : Fin n => x + 1)^[k + 1] v = (fun x : Fin n => x + 1)^[k] v + 1 := by
+      rw [Function.iterate_succ']; rfl
+    have h_adj : (cycleHypergraph n).Adj
+        ((fun x : Fin n => x + 1)^[k] v)
+        ((fun x : Fin n => x + 1)^[k] v + 1) :=
+      (cycleHypergraph_succ_pred_adj hn _).1
+    have h_dist_step : (cycleHypergraph n).dist
+        ((fun x : Fin n => x + 1)^[k] v)
+        ((fun x : Fin n => x + 1)^[k] v + 1) = 1 := by
+      unfold Hypergraph.dist
+      exact SimpleGraph.dist_eq_one_iff_adj.mpr h_adj
+    calc (cycleHypergraph n).dist v ((fun x : Fin n => x + 1)^[k + 1] v)
+        = (cycleHypergraph n).dist v ((fun x : Fin n => x + 1)^[k] v + 1) := by rw [h_iter]
+      _ ≤ (cycleHypergraph n).dist v ((fun x : Fin n => x + 1)^[k] v)
+          + (cycleHypergraph n).dist ((fun x : Fin n => x + 1)^[k] v)
+              ((fun x : Fin n => x + 1)^[k] v + 1) :=
+            cycleHypergraph_dist_triangle hn v _ _
+      _ ≤ k + 1 := by rw [h_dist_step]; exact Nat.add_le_add_right ih 1
+
+/-- **Iterated backward shift is `k` steps away from `v`**: symmetric
+counterpart of `cycleHypergraph_dist_iterSucc_le`. -/
+theorem cycleHypergraph_dist_iterPred_le {n : Nat} [NeZero n]
+    (hn : 2 ≤ n) (v : Fin n) : ∀ (k : ℕ),
+    (cycleHypergraph n).dist v ((fun x : Fin n => x - 1)^[k] v) ≤ k := by
+  intro k
+  induction k with
+  | zero =>
+    show (cycleHypergraph n).dist v v ≤ 0
+    exact le_of_eq (Hypergraph.dist_self _ v)
+  | succ k ih =>
+    have h_iter : (fun x : Fin n => x - 1)^[k + 1] v = (fun x : Fin n => x - 1)^[k] v - 1 := by
+      rw [Function.iterate_succ']; rfl
+    have h_adj : (cycleHypergraph n).Adj
+        ((fun x : Fin n => x - 1)^[k] v)
+        ((fun x : Fin n => x - 1)^[k] v - 1) :=
+      (cycleHypergraph_succ_pred_adj hn _).2
+    have h_dist_step : (cycleHypergraph n).dist
+        ((fun x : Fin n => x - 1)^[k] v)
+        ((fun x : Fin n => x - 1)^[k] v - 1) = 1 := by
+      unfold Hypergraph.dist
+      exact SimpleGraph.dist_eq_one_iff_adj.mpr h_adj
+    calc (cycleHypergraph n).dist v ((fun x : Fin n => x - 1)^[k + 1] v)
+        = (cycleHypergraph n).dist v ((fun x : Fin n => x - 1)^[k] v - 1) := by rw [h_iter]
+      _ ≤ (cycleHypergraph n).dist v ((fun x : Fin n => x - 1)^[k] v)
+          + (cycleHypergraph n).dist ((fun x : Fin n => x - 1)^[k] v)
+              ((fun x : Fin n => x - 1)^[k] v - 1) :=
+            cycleHypergraph_dist_triangle hn v _ _
+      _ ≤ k + 1 := by rw [h_dist_step]; exact Nat.add_le_add_right ih 1
+
 /-- **Exact ball volume at radius 1** on `cycleHypergraph n` for `n ≥ 3`:
 `geodesicBallVolume v 1 = 3`. Combined with `_one_ge_three` for the
 lower bound and a direct upper bound from `dist ≤ 1 ⇒ Adj ∨ =`. -/
