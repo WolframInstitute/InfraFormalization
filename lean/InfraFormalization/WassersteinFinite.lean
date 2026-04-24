@@ -499,4 +499,272 @@ theorem wasserstein1_le_sup (d : X → X → ℝ) (C : ℝ) (hC : 0 ≤ C)
               Finset.sum_congr rfl (fun x _ => step1 x)]
         rw [← Finset.sum_mul, hμsum, one_mul]
 
+/-! ## Gluing of transport plans and triangle inequality for W_1
+
+Given `p : TransportPlan μ ν` and `q : TransportPlan ν ρ`, we
+construct a plan `p.glue q hν : TransportPlan μ ρ` whose cost
+under any triangle-inequality-respecting distance is bounded by
+`p.cost d + q.cost d`. This yields the triangle inequality
+`W_1(μ, ρ) ≤ W_1(μ, ν) + W_1(ν, ρ)`. -/
+
+namespace TransportPlan
+
+variable {μ ν ρ : X → ℝ}
+
+/-- **Marginal zero implies pointwise zero.** If `ν j = 0` for a
+plan `p : TransportPlan μ ν`, every entry `p.π i j = 0`. -/
+theorem entry_zero_of_col_zero (p : TransportPlan μ ν)
+    (j : X) (hνj : ν j = 0) (i : X) : p.π i j = 0 := by
+  have hsum : ∑ i', p.π i' j = 0 := by rw [p.colMarginal]; exact hνj
+  have hnn : ∀ i' ∈ (Finset.univ : Finset X), 0 ≤ p.π i' j :=
+    fun i' _ => p.nonneg i' j
+  exact (Finset.sum_eq_zero_iff_of_nonneg hnn).mp hsum i (Finset.mem_univ _)
+
+theorem entry_zero_of_row_zero (p : TransportPlan μ ν)
+    (i : X) (hμi : μ i = 0) (j : X) : p.π i j = 0 := by
+  have hsum : ∑ j', p.π i j' = 0 := by rw [p.rowMarginal]; exact hμi
+  have hnn : ∀ j' ∈ (Finset.univ : Finset X), 0 ≤ p.π i j' :=
+    fun j' _ => p.nonneg i j'
+  exact (Finset.sum_eq_zero_iff_of_nonneg hnn).mp hsum j (Finset.mem_univ _)
+
+/-- **Composition / gluing** of transport plans via the standard
+`π₁(i,j) π₂(j,k) / ν(j)` discrete coupling. When `ν j = 0`, both
+`p.π i j = 0` and `q.π j k = 0`, so the division-by-zero
+convention (`x / 0 = 0` in `ℝ`) is harmless. -/
+noncomputable def glue (p : TransportPlan μ ν) (q : TransportPlan ν ρ) :
+    TransportPlan μ ρ where
+  π := fun i k => ∑ j, p.π i j * q.π j k / ν j
+  nonneg := by
+    intros i k
+    apply Finset.sum_nonneg
+    intros j _
+    by_cases hν : ν j = 0
+    · have hp : p.π i j = 0 := entry_zero_of_col_zero p j hν i
+      rw [hp]; simp
+    · exact div_nonneg (mul_nonneg (p.nonneg i j) (q.nonneg j k)) (by
+        have : 0 ≤ ν j := by
+          have := q.rowMarginal j
+          have hnn : ∀ k' ∈ (Finset.univ : Finset X), 0 ≤ q.π j k' :=
+            fun k' _ => q.nonneg j k'
+          have := Finset.sum_nonneg hnn
+          rw [q.rowMarginal] at this
+          exact this
+        exact this)
+  rowMarginal := by
+    intro i
+    -- ∑ k ∑ j p.π i j * q.π j k / ν j = ∑ j (p.π i j / ν j) * (∑ k q.π j k)
+    rw [Finset.sum_comm]
+    have h1 : ∀ j, ∑ k, p.π i j * q.π j k / ν j
+        = p.π i j / ν j * ν j := by
+      intro j
+      rw [show (∑ k, p.π i j * q.π j k / ν j)
+            = p.π i j / ν j * ∑ k, q.π j k by
+        rw [Finset.mul_sum]
+        refine Finset.sum_congr rfl ?_
+        intros k _
+        ring]
+      rw [q.rowMarginal]
+    have h2 : ∀ j, p.π i j / ν j * ν j = p.π i j := by
+      intro j
+      by_cases hν : ν j = 0
+      · have hp : p.π i j = 0 := entry_zero_of_col_zero p j hν i
+        rw [hp, hν]; simp
+      · exact div_mul_cancel₀ _ hν
+    simp only [h1, h2]
+    exact p.rowMarginal i
+  colMarginal := by
+    intro k
+    have h1 : ∀ j, ∑ i, p.π i j * q.π j k / ν j
+        = (∑ i, p.π i j) * (q.π j k / ν j) := by
+      intro j
+      rw [Finset.sum_mul]
+      refine Finset.sum_congr rfl ?_
+      intros i _
+      ring
+    rw [show (∑ i, ∑ j, p.π i j * q.π j k / ν j)
+          = ∑ j, ∑ i, p.π i j * q.π j k / ν j by rw [Finset.sum_comm]]
+    simp only [h1]
+    have h2 : ∀ j, (∑ i, p.π i j) * (q.π j k / ν j) = q.π j k := by
+      intro j
+      rw [p.colMarginal]
+      by_cases hν : ν j = 0
+      · have hq : q.π j k = 0 := entry_zero_of_row_zero q j hν k
+        rw [hq, hν]; simp
+      · field_simp
+    simp only [h2]
+    exact q.colMarginal k
+
+/-- **Cost bound for glued plan under triangle inequality.** If
+`d` satisfies `d i k ≤ d i j + d j k`, then the cost of
+`p.glue q` against `d` is at most `p.cost d + q.cost d`. -/
+theorem glue_cost_le (p : TransportPlan μ ν) (q : TransportPlan ν ρ)
+    (d : X → X → ℝ) (hd : ∀ x y, 0 ≤ d x y)
+    (htri : ∀ i j k, d i k ≤ d i j + d j k) :
+    (p.glue q).cost d ≤ p.cost d + q.cost d := by
+  unfold cost glue
+  simp only
+  -- cost(glue) = ∑ i, ∑ k, (∑ j, p.π i j * q.π j k / ν j) * d i k
+  -- ≤ ∑ i,j,k, p.π i j * q.π j k / ν j * (d i j + d j k)
+  -- = ∑ i,j,k, [p.π i j / ν j] * q.π j k * d i j
+  --   + ∑ i,j,k, p.π i j * [q.π j k / ν j] * d j k
+  -- Note: p.π i j * q.π j k / ν j is ≥ 0 (via nonneg helper above).
+  have hνnn : ∀ j, 0 ≤ ν j := by
+    intro j
+    have := q.rowMarginal j
+    have hnn : ∀ k' ∈ (Finset.univ : Finset X), 0 ≤ q.π j k' :=
+      fun k' _ => q.nonneg j k'
+    have := Finset.sum_nonneg hnn
+    rw [q.rowMarginal] at this
+    exact this
+  -- We first distribute the outer sum via sum_mul.
+  have step1 : ∀ i k,
+      (∑ j, p.π i j * q.π j k / ν j) * d i k
+        = ∑ j, p.π i j * q.π j k / ν j * d i k := by
+    intros i k
+    rw [Finset.sum_mul]
+  simp only [step1]
+  -- The RHS: split each term via triangle inequality.
+  calc ∑ i, ∑ k, ∑ j, p.π i j * q.π j k / ν j * d i k
+      ≤ ∑ i, ∑ k, ∑ j, p.π i j * q.π j k / ν j * (d i j + d j k) := by
+        refine Finset.sum_le_sum ?_; intros i _
+        refine Finset.sum_le_sum ?_; intros k _
+        refine Finset.sum_le_sum ?_; intros j _
+        have hcoeff : 0 ≤ p.π i j * q.π j k / ν j := by
+          by_cases hν : ν j = 0
+          · have hp : p.π i j = 0 := entry_zero_of_col_zero p j hν i
+            rw [hp]; simp
+          · exact div_nonneg (mul_nonneg (p.nonneg i j) (q.nonneg j k)) (hνnn j)
+        exact mul_le_mul_of_nonneg_left (htri i j k) hcoeff
+    _ = ∑ i, ∑ k, ∑ j, (p.π i j * q.π j k / ν j * d i j
+          + p.π i j * q.π j k / ν j * d j k) := by
+        refine Finset.sum_congr rfl ?_; intros i _
+        refine Finset.sum_congr rfl ?_; intros k _
+        refine Finset.sum_congr rfl ?_; intros j _
+        ring
+    _ = (∑ i, ∑ k, ∑ j, p.π i j * q.π j k / ν j * d i j)
+        + (∑ i, ∑ k, ∑ j, p.π i j * q.π j k / ν j * d j k) := by
+        rw [← Finset.sum_add_distrib]
+        refine Finset.sum_congr rfl ?_; intros i _
+        rw [← Finset.sum_add_distrib]
+        refine Finset.sum_congr rfl ?_; intros k _
+        rw [← Finset.sum_add_distrib]
+    _ = p.cost d + q.cost d := by
+        unfold cost
+        congr 1
+        · -- first summand: ∑ i ∑ k ∑ j p.π*q.π/ν * d_ij = ∑ i ∑ j p.π * d_ij
+          refine Finset.sum_congr rfl ?_
+          intros i _
+          rw [Finset.sum_comm]
+          refine Finset.sum_congr rfl ?_
+          intros j _
+          -- Goal: ∑ k, p.π i j * q.π j k / ν j * d i j = p.π i j * d i j
+          have hsumk : ∑ k, p.π i j * q.π j k / ν j * d i j
+              = (p.π i j * d i j / ν j) * ∑ k, q.π j k := by
+            rw [Finset.mul_sum]
+            refine Finset.sum_congr rfl ?_
+            intros k _
+            ring
+          rw [hsumk, q.rowMarginal]
+          by_cases hν : ν j = 0
+          · have hp : p.π i j = 0 := entry_zero_of_col_zero p j hν i
+            rw [hp, hν]; simp
+          · field_simp
+        · -- second summand: ∑ i ∑ k ∑ j p.π*q.π/ν * d_jk = ∑ j ∑ k q.π * d_jk
+          -- Reindex (i,k,j) → (j,k,i).
+          -- Step A: (i,k,j) → (i,j,k).
+          have hstepA : (∑ i : X, ∑ k : X, ∑ j : X,
+                p.π i j * q.π j k / ν j * d j k)
+              = (∑ i : X, ∑ j : X, ∑ k : X,
+                p.π i j * q.π j k / ν j * d j k) := by
+            refine Finset.sum_congr rfl ?_
+            intros i _
+            rw [Finset.sum_comm]
+          -- Step B: (i,j,k) → (j,i,k).
+          have hstepB : (∑ i : X, ∑ j : X, ∑ k : X,
+                p.π i j * q.π j k / ν j * d j k)
+              = (∑ j : X, ∑ i : X, ∑ k : X,
+                p.π i j * q.π j k / ν j * d j k) := by
+            rw [Finset.sum_comm]
+          -- Step C: (j,i,k) → (j,k,i).
+          have hstepC : (∑ j : X, ∑ i : X, ∑ k : X,
+                p.π i j * q.π j k / ν j * d j k)
+              = (∑ j : X, ∑ k : X, ∑ i : X,
+                p.π i j * q.π j k / ν j * d j k) := by
+            refine Finset.sum_congr rfl ?_
+            intros j _
+            rw [Finset.sum_comm]
+          rw [hstepA, hstepB, hstepC]
+          refine Finset.sum_congr rfl ?_
+          intros j _
+          refine Finset.sum_congr rfl ?_
+          intros k _
+          -- Goal: ∑ i, p.π i j * q.π j k / ν j * d j k = q.π j k * d j k
+          have hsumi : ∑ i, p.π i j * q.π j k / ν j * d j k
+              = (q.π j k * d j k / ν j) * ∑ i, p.π i j := by
+            rw [Finset.mul_sum]
+            refine Finset.sum_congr rfl ?_
+            intros i _
+            ring
+          rw [hsumi, p.colMarginal]
+          by_cases hν : ν j = 0
+          · have hq : q.π j k = 0 := entry_zero_of_row_zero q j hν k
+            rw [hq, hν]; simp
+          · field_simp
+
+end TransportPlan
+
+/-- **Wasserstein-1 triangle inequality** for probability measures:
+`W_1(μ, ρ) ≤ W_1(μ, ν) + W_1(ν, ρ)` when `d` satisfies the triangle
+inequality. Proof: for any plans `p : μ → ν` and `q : ν → ρ`, the
+glue `p.glue q : μ → ρ` has cost bounded by `p.cost d + q.cost d`;
+take infima using `csInf_le` + `le_csInf` with tensor-plan witnesses. -/
+theorem wasserstein1_triangle
+    (d : X → X → ℝ) (hd : ∀ x y, 0 ≤ d x y)
+    (htri : ∀ x y z, d x z ≤ d x y + d y z)
+    (μ ν ρ : X → ℝ)
+    (hμ : ∀ x, 0 ≤ μ x) (hν : ∀ x, 0 ≤ ν x) (hρ : ∀ x, 0 ≤ ρ x)
+    (hμsum : ∑ x, μ x = 1) (hνsum : ∑ x, ν x = 1) (hρsum : ∑ x, ρ x = 1) :
+    wasserstein1 d μ ρ ≤ wasserstein1 d μ ν + wasserstein1 d ν ρ := by
+  -- Witness existence of plans via tensor.
+  let pμν : TransportPlan μ ν := TransportPlan.tensor μ ν hμ hν hμsum hνsum
+  let qνρ : TransportPlan ν ρ := TransportPlan.tensor ν ρ hν hρ hνsum hρsum
+  -- Lower bound for the μρ cost-set (bdd below by 0).
+  have hboundμρ : ∀ c ∈ {c : ℝ | ∃ r : TransportPlan μ ρ, r.cost d = c}, 0 ≤ c := by
+    rintro c ⟨r, rfl⟩; exact r.cost_nonneg d hd
+  -- Key step: W_1(μ, ρ) ≤ p.cost d + q.cost d for every pair (p, q).
+  have keystep : ∀ (p : TransportPlan μ ν) (q : TransportPlan ν ρ),
+      wasserstein1 d μ ρ ≤ p.cost d + q.cost d := by
+    intros p q
+    calc wasserstein1 d μ ρ
+        ≤ (p.glue q).cost d := by
+          show sInf _ ≤ (p.glue q).cost d
+          exact csInf_le ⟨0, hboundμρ⟩ ⟨p.glue q, rfl⟩
+      _ ≤ p.cost d + q.cost d := p.glue_cost_le q d hd htri
+  -- step1: W_1(μ, ρ) - q.cost d ≤ W_1(μ, ν) for every q.
+  have step1 : ∀ q : TransportPlan ν ρ,
+      wasserstein1 d μ ρ - q.cost d ≤ wasserstein1 d μ ν := by
+    intro q
+    have hbdd : ∀ p : TransportPlan μ ν,
+        wasserstein1 d μ ρ - q.cost d ≤ p.cost d := by
+      intro p
+      have := keystep p q
+      linarith
+    show wasserstein1 d μ ρ - q.cost d ≤ sInf _
+    refine le_csInf ⟨pμν.cost d, pμν, rfl⟩ ?_
+    rintro c ⟨p, rfl⟩
+    exact hbdd p
+  -- step2: W_1(μ, ρ) - W_1(μ, ν) ≤ W_1(ν, ρ).
+  have step2 :
+      wasserstein1 d μ ρ - wasserstein1 d μ ν ≤ wasserstein1 d ν ρ := by
+    have hbdd : ∀ q : TransportPlan ν ρ,
+        wasserstein1 d μ ρ - wasserstein1 d μ ν ≤ q.cost d := by
+      intro q
+      have := step1 q
+      linarith
+    show wasserstein1 d μ ρ - wasserstein1 d μ ν ≤ sInf _
+    refine le_csInf ⟨qνρ.cost d, qνρ, rfl⟩ ?_
+    rintro c ⟨q, rfl⟩
+    exact hbdd q
+  linarith
+
 end InfraFormalization
