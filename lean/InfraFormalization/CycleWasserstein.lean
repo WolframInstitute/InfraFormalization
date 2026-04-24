@@ -86,4 +86,18 @@ theorem wasserstein1_cycleUniform_self (n : ℕ) [NeZero n] :
     (cycleUniform n)
     (cycleUniform_nonneg n)
 
+/-- **W_1 between two Dirac deltas on the cycle equals the cycle
+graph distance.** Hypergraph-anchored instantiation of
+`wasserstein1_delta_eq_dist`: the finite metric space is
+`(Fin n, cycleMetric n)`, which is entirely defined from
+`cycleHypergraph n` (distance = shortest-path in the clique-expansion
+graph of the hypergraph). Both sides of the identity are
+computable from the hypergraph data alone. -/
+theorem wasserstein1_cycleDelta_eq_hypergraphDist
+    (n : ℕ) [NeZero n] (i j : Fin n) :
+    wasserstein1 (cycleMetric n) (delta i) (delta j)
+      = ((cycleHypergraph n).dist i j : ℝ) := by
+  rw [wasserstein1_delta_eq_dist]
+  rfl
+
 end InfraFormalization
