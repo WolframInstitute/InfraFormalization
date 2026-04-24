@@ -1,4 +1,5 @@
 import InfraFormalization.CurvatureRiemann
+import InfraFormalization.WarpedDiag2C2
 
 /-!
 **Ricci symmetry for the Levi-Civita connection** (B10 / #30).
@@ -62,6 +63,20 @@ both sides). -/
 theorem minkowski4_flat_ricci_symm (x : Fin 4 → ℝ) (σ ν : Fin 4) :
     (flatConnection 4).ricci x σ ν = (flatConnection 4).ricci x ν σ :=
   flatConnection_ricci_symm 4 x σ ν
+
+/-- **Non-flat B10 witness**: the Ricci tensor of the Levi-Civita
+connection on `warpedDiag2` (warped 2D metric with Gaussian curvature
+`K(x) = -1/(1+x₀²)²`) is symmetric. Unlike `flatConnection_ricci_symm`
+which is trivially zero, this case has explicit non-vanishing Ricci
+components `R_{00} = -1/(1+x₀²)²`, `R_{11} = -1/(1+x₀²)`, and
+`R_{01} = R_{10} = 0` — so the symmetry is content-ful on the diagonal
+as a non-trivial equality of non-zero expressions to themselves, and
+content-ful off-diagonal as an equality of two independently-computed
+zeros. Supersedes the flat-only closure of task B10 / #30. -/
+theorem warpedDiag2_leviCivita_ricci_symm (x : Fin 2 → ℝ) (σ ν : Fin 2) :
+    warpedDiag2_C2.leviCivitaConnection.ricci x σ ν
+      = warpedDiag2_C2.leviCivitaConnection.ricci x ν σ :=
+  warpedDiag2_ricci_symm x σ ν
 
 end Curvature
 end InfraFormalization

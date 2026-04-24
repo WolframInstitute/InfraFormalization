@@ -312,6 +312,21 @@ theorem warpedDiag2_ricci_1_0 (x : Fin 2 → ℝ) :
       warpedDiag2_riemann_1_1_1_0 x]
   ring
 
+/-- **Ricci symmetry on `warpedDiag2`**: `R_{μν}(x) = R_{νμ}(x)` for
+the Levi-Civita connection of the warped 2D metric. Direct case
+analysis on `(μ, ν)` using the closed-form Ricci components. This
+is the first concrete **non-flat** Ricci-symmetry witness in the
+project — upgrading the flat-case cosmetic closure of task B10
+(`flatConnection_ricci_symm`, identically zero). -/
+theorem warpedDiag2_ricci_symm (x : Fin 2 → ℝ) (μ ν : Fin 2) :
+    warpedDiag2_C2.leviCivitaConnection.ricci x μ ν
+      = warpedDiag2_C2.leviCivitaConnection.ricci x ν μ := by
+  match μ, ν with
+  | 0, 0 => rfl
+  | 0, 1 => rw [warpedDiag2_ricci_0_1 x, warpedDiag2_ricci_1_0 x]
+  | 1, 0 => rw [warpedDiag2_ricci_0_1 x, warpedDiag2_ricci_1_0 x]
+  | 1, 1 => rfl
+
 /-- **Einstein-manifold identity on `warpedDiag2`**:
 `R_{μν}(x) = K(x) · g_{μν}(x)` with Gaussian curvature
 `K(x) = -1 / (1 + x₀²)²`. Every 2D manifold is Einstein — Ricci is
