@@ -679,5 +679,63 @@ theorem flrwRicci_3_3 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
       flrwRiemann_2_3_2_3 a da dda x hv]
   ring
 
+/-! ## Scalar curvature, Einstein tensor, and the first Friedmann equation
+
+Since FLRW has a diagonal metric `g = diag(-1, a², a², a²)`, the
+scalar curvature `R = g^{μν} R_{μν}` collapses to a diagonal trace.
+We give a direct closed-form definition (bypassing the off-diagonal
+Ricci-vanishing proof, which is straightforward but tedious). -/
+
+/-- **Direct closed form for FLRW scalar curvature**:
+`R(x) = 6 a''/a + 6 (a'/a)² = 6 H² + 6 H'/(...)`. -/
+noncomputable def flrwScalarCurvatureClosed (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) : ℝ :=
+  6 * dda (x 0) / a (x 0) + 6 * (da (x 0))^2 / (a (x 0))^2
+
+/-- **Diagonal scalar curvature on FLRW** (trace of Ricci against the
+inverse metric, restricted to the diagonal — which is all that
+matters for FLRW since `g^{μν} = 0` for `μ ≠ ν`):
+
+  `R_diag = -R_{00} + (1/a²)(R_{11} + R_{22} + R_{33})`. -/
+noncomputable def flrwScalarCurvatureDiag (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) : ℝ :=
+  -(flrwConnection a da dda).ricci x 0 0
+    + (1 / (a (x 0))^2)
+        * ((flrwConnection a da dda).ricci x 1 1
+          + (flrwConnection a da dda).ricci x 2 2
+          + (flrwConnection a da dda).ricci x 3 3)
+
+/-- **FLRW scalar curvature closed form**: `R = 6 a''/a + 6 (a'/a)²`. -/
+theorem flrwScalarCurvatureDiag_eq (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
+    (hv : FLRWValid a x) :
+    flrwScalarCurvatureDiag a da dda x = flrwScalarCurvatureClosed a da dda x := by
+  have ha_ne : a (x 0) ≠ 0 := hv
+  have ha_sq_ne : (a (x 0))^2 ≠ 0 := pow_ne_zero _ ha_ne
+  unfold flrwScalarCurvatureDiag flrwScalarCurvatureClosed
+  rw [flrwRicci_0_0 a da dda x hv,
+      flrwRicci_1_1 a da dda x hv,
+      flrwRicci_2_2 a da dda x hv,
+      flrwRicci_3_3 a da dda x hv]
+  field_simp
+  ring
+
+/-- **First Friedmann equation LHS** (vacuum side): the diagonal
+Einstein tensor's time-time component on FLRW is
+
+  `G_{00}(x) = R_{00}(x) - ½ R(x) · g_{00}(x) = 3 (a'/a)²`,
+
+i.e., **3 H²**, the textbook left-hand side of the first Friedmann
+equation. With perfect-fluid stress-energy `T_{00} = ρ`, the EFE
+`G_{00} + Λ g_{00} = 8π G T_{00}` gives `3 H² = 8π G ρ + Λ`. -/
+theorem flrwEinstein_0_0 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
+    (hv : FLRWValid a x) :
+    (flrwConnection a da dda).ricci x 0 0
+        - (1 / 2) * flrwScalarCurvatureClosed a da dda x * (-1)
+      = 3 * (da (x 0))^2 / (a (x 0))^2 := by
+  have ha_ne : a (x 0) ≠ 0 := hv
+  have ha_sq_ne : (a (x 0))^2 ≠ 0 := pow_ne_zero _ ha_ne
+  rw [flrwRicci_0_0 a da dda x hv]
+  unfold flrwScalarCurvatureClosed
+  field_simp
+  ring
+
 end Curvature
 end InfraFormalization
