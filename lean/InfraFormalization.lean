@@ -109,6 +109,7 @@ import InfraFormalization.WassersteinRate
 import InfraFormalization.MeasureTorusLift
 import InfraFormalization.LQGComparison
 import InfraFormalization.ContinuumFieldLimits
+import InfraFormalization.EmergentGravity
 import InfraFormalization.CandidateRuleCatalog
 import InfraFormalization.RiemannianManifold
 import InfraFormalization.CausalGraphType
