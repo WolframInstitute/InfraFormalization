@@ -264,4 +264,164 @@ theorem cost_add {μ₁ μ₂ ν₁ ν₂ : X → ℝ}
 
 end TransportPlan
 
+/-! ## Dirac-delta measures and their Wasserstein distance -/
+
+/-- **Dirac-delta measure** at a point `x : X`: unit mass at `x`,
+zero elsewhere. -/
+def delta (x : X) : X → ℝ := fun y => if y = x then 1 else 0
+
+theorem delta_nonneg (x y : X) : 0 ≤ delta x y := by
+  unfold delta
+  by_cases h : y = x <;> simp [h]
+
+theorem delta_total (x : X) : ∑ y : X, delta x y = 1 := by
+  unfold delta
+  rw [Finset.sum_eq_single x]
+  · simp
+  · intros y _ hy
+    simp [hy]
+  · intro hne
+    exact absurd (Finset.mem_univ _) hne
+
+/-- **Dirac-delta transport plan** between `δ_x` and `δ_y`: the unique
+plan supported on `(x, y)` with mass `1`. -/
+def deltaPlan (x y : X) : TransportPlan (delta x) (delta y) where
+  π := fun a b => if a = x ∧ b = y then 1 else 0
+  nonneg := by
+    intros a b
+    by_cases h : a = x ∧ b = y <;> simp [h]
+  rowMarginal := by
+    intro a
+    unfold delta
+    by_cases h : a = x
+    · subst h
+      rw [Finset.sum_eq_single y]
+      · simp
+      · intros b _ hb
+        simp [hb]
+      · intro hne
+        exact absurd (Finset.mem_univ _) hne
+    · have : ∀ b, (if a = x ∧ b = y then (1 : ℝ) else 0) = 0 := by
+        intro b; simp [h]
+      simp [this, h]
+  colMarginal := by
+    intro b
+    unfold delta
+    by_cases h : b = y
+    · subst h
+      rw [Finset.sum_eq_single x]
+      · simp
+      · intros a _ ha
+        simp [ha]
+      · intro hne
+        exact absurd (Finset.mem_univ _) hne
+    · have : ∀ a, (if a = x ∧ b = y then (1 : ℝ) else 0) = 0 := by
+        intro a; simp [h]
+      simp [this, h]
+
+/-- **Dirac-delta plan cost equals `d x y`.** -/
+theorem deltaPlan_cost (x y : X) (d : X → X → ℝ) :
+    (deltaPlan x y).cost d = d x y := by
+  unfold TransportPlan.cost deltaPlan
+  simp only
+  rw [Finset.sum_eq_single x]
+  · rw [Finset.sum_eq_single y]
+    · simp
+    · intros b _ hb
+      simp [hb]
+    · intro hne
+      exact absurd (Finset.mem_univ _) hne
+  · intros a _ ha
+    have : ∀ b, (if a = x ∧ b = y then (1 : ℝ) else 0) * d a b = 0 := by
+      intro b
+      by_cases hab : a = x ∧ b = y
+      · exact absurd hab.1 ha
+      · simp [hab]
+    simp [this]
+  · intro hne
+    exact absurd (Finset.mem_univ _) hne
+
+/-- **Uniqueness of the Dirac-delta coupling**: any transport plan
+between `δ_x` and `δ_y` equals `deltaPlan x y` pointwise. The marginal
+constraints force the plan to be supported only on `(x, y)` with
+mass `1`. -/
+theorem deltaPlan_unique (x y : X) (p : TransportPlan (delta x) (delta y))
+    (a b : X) :
+    p.π a b = (deltaPlan x y).π a b := by
+  unfold deltaPlan
+  simp only
+  by_cases h : a = x ∧ b = y
+  · -- a = x ∧ b = y: plan value must equal 1
+    obtain ⟨hax, hby⟩ := h
+    subst hax
+    subst hby
+    -- Need π a b = 1. Use rowMarginal x: ∑_b π x b = delta x x = 1.
+    -- Since off-diagonal entries are 0 (forced by colMarginal), only π x y contributes.
+    have hrow := p.rowMarginal a
+    have hδx : delta a a = 1 := by unfold delta; simp
+    rw [hδx] at hrow
+    -- Show that π a b' = 0 for b' ≠ b via colMarginal.
+    have hother : ∀ b', b' ≠ b → p.π a b' = 0 := by
+      intros b' hbb'
+      have hcol := p.colMarginal b'
+      have hδy : delta b b' = 0 := by
+        unfold delta; simp [hbb']
+      rw [hδy] at hcol
+      exact Finset.sum_eq_zero_iff_of_nonneg
+        (fun a' _ => p.nonneg a' b') |>.mp hcol a (Finset.mem_univ a)
+    rw [Finset.sum_eq_single b] at hrow
+    · simpa using hrow
+    · intros b' _ hb'
+      exact hother b' hb'
+    · intro hne
+      exact absurd (Finset.mem_univ _) hne
+  · -- a ≠ x or b ≠ y: plan value must be 0
+    rw [if_neg h]
+    rcases Decidable.not_and_iff_or_not.mp h with hax | hby
+    · -- a ≠ x: rowMarginal at a is delta x a = 0.
+      have hrow := p.rowMarginal a
+      have hδ : delta x a = 0 := by unfold delta; simp [hax]
+      rw [hδ] at hrow
+      exact Finset.sum_eq_zero_iff_of_nonneg
+        (fun b' _ => p.nonneg a b') |>.mp hrow b (Finset.mem_univ b)
+    · -- b ≠ y: colMarginal at b is delta y b = 0.
+      have hcol := p.colMarginal b
+      have hδ : delta y b = 0 := by unfold delta; simp [hby]
+      rw [hδ] at hcol
+      exact Finset.sum_eq_zero_iff_of_nonneg
+        (fun a' _ => p.nonneg a' b) |>.mp hcol a (Finset.mem_univ a)
+
+/-- **Every plan between `δ_x` and `δ_y` has cost `d x y`.** -/
+theorem deltaPlan_forall_cost (x y : X) (d : X → X → ℝ)
+    (p : TransportPlan (delta x) (delta y)) :
+    p.cost d = d x y := by
+  have hπ : p.π = (deltaPlan x y).π := by
+    funext a b
+    exact deltaPlan_unique x y p a b
+  unfold TransportPlan.cost
+  rw [hπ]
+  exact deltaPlan_cost x y d
+
+/-- **W_1 between Dirac-deltas equals the distance**: `W_1(δ_x, δ_y) = d(x, y)`.
+Every plan in the set achieves cost `d x y`, so the infimum is a
+singleton and equals `d x y`. -/
+theorem wasserstein1_delta_eq_dist (d : X → X → ℝ) (x y : X) :
+    wasserstein1 d (delta x) (delta y) = d x y := by
+  unfold wasserstein1
+  have hset : {c : ℝ | ∃ p : TransportPlan (delta x) (delta y), p.cost d = c}
+      = {d x y} := by
+    ext c
+    constructor
+    · rintro ⟨p, hpc⟩
+      simp only [Set.mem_singleton_iff]
+      rw [← hpc]
+      exact deltaPlan_forall_cost x y d p
+    · rintro hc
+      rw [Set.mem_singleton_iff] at hc
+      refine ⟨deltaPlan x y, ?_⟩
+      rw [deltaPlan_cost]
+      exact hc.symm
+  rw [hset]
+  exact csInf_singleton _
+
 end InfraFormalization
