@@ -102,6 +102,7 @@ import InfraFormalization.MultiwayCausalGraph
 import InfraFormalization.PathIntegralCausalGraph
 import InfraFormalization.ScaledConnectionLimit
 import InfraFormalization.RicciSymmetry
+import InfraFormalization.DiscreteGaugeField
 import InfraFormalization.CandidateRuleCatalog
 import InfraFormalization.RiemannianManifold
 import InfraFormalization.CausalGraphType
