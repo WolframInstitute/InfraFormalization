@@ -100,6 +100,7 @@ import InfraFormalization.FiberedGraph
 import InfraFormalization.HypergraphConnection
 import InfraFormalization.MultiwayCausalGraph
 import InfraFormalization.PathIntegralCausalGraph
+import InfraFormalization.ScaledConnectionLimit
 import InfraFormalization.CandidateRuleCatalog
 import InfraFormalization.RiemannianManifold
 import InfraFormalization.CausalGraphType
