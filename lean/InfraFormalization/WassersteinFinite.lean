@@ -499,6 +499,135 @@ theorem wasserstein1_le_sup (d : X → X → ℝ) (C : ℝ) (hC : 0 ≤ C)
               Finset.sum_congr rfl (fun x _ => step1 x)]
         rw [← Finset.sum_mul, hμsum, one_mul]
 
+/-! ## Kantorovich-Rubinstein duality (one direction): Lipschitz test functions -/
+
+/-- **Plan-level Kantorovich-Rubinstein bound**: for any coupling `p` and any
+`L`-Lipschitz test function `f` against the cost `d`, the difference of
+`f`-expectations under the marginals is bounded by `L · p.cost d`. -/
+theorem cost_bounds_expectation_diff
+    (d : X → X → ℝ) (μ ν : X → ℝ) (p : TransportPlan μ ν)
+    (f : X → ℝ) (L : ℝ)
+    (hfLip : ∀ x y, |f x - f y| ≤ L * d x y) :
+    |(∑ x, μ x * f x) - (∑ x, ν x * f x)|
+      ≤ L * p.cost d := by
+  -- μ x * f x = (Σ_y π(x,y)) * f x; ν y * f y = (Σ_x π(x,y)) * f y.
+  have h1 : ∑ x, μ x * f x = ∑ x, ∑ y, p.π x y * f x := by
+    refine Finset.sum_congr rfl ?_
+    intros x _
+    rw [← p.rowMarginal x, Finset.sum_mul]
+  have h2 : ∑ y, ν y * f y = ∑ y, ∑ x, p.π x y * f y := by
+    refine Finset.sum_congr rfl ?_
+    intros y _
+    rw [← p.colMarginal y, Finset.sum_mul]
+  have h3 : ∑ y, ∑ x, p.π x y * f y = ∑ x, ∑ y, p.π x y * f y := by
+    rw [Finset.sum_comm]
+  have hdiff : (∑ x, μ x * f x) - (∑ x, ν x * f x)
+      = ∑ x, ∑ y, p.π x y * (f x - f y) := by
+    rw [h1]
+    rw [show (∑ x, ν x * f x) = ∑ y, ν y * f y from rfl]
+    rw [h2, h3]
+    rw [← Finset.sum_sub_distrib]
+    refine Finset.sum_congr rfl ?_
+    intros x _
+    rw [← Finset.sum_sub_distrib]
+    refine Finset.sum_congr rfl ?_
+    intros y _
+    ring
+  rw [hdiff]
+  -- |Σ_x Σ_y π * (f x - f y)| ≤ Σ_x Σ_y π * |f x - f y| ≤ Σ_x Σ_y π * L d
+  calc |∑ x, ∑ y, p.π x y * (f x - f y)|
+      ≤ ∑ x, |∑ y, p.π x y * (f x - f y)| := Finset.abs_sum_le_sum_abs _ _
+    _ ≤ ∑ x, ∑ y, |p.π x y * (f x - f y)| := by
+        refine Finset.sum_le_sum ?_
+        intros x _
+        exact Finset.abs_sum_le_sum_abs _ _
+    _ = ∑ x, ∑ y, p.π x y * |f x - f y| := by
+        refine Finset.sum_congr rfl ?_; intros x _
+        refine Finset.sum_congr rfl ?_; intros y _
+        rw [abs_mul]
+        rw [abs_of_nonneg (p.nonneg x y)]
+    _ ≤ ∑ x, ∑ y, p.π x y * (L * d x y) := by
+        refine Finset.sum_le_sum ?_; intros x _
+        refine Finset.sum_le_sum ?_; intros y _
+        exact mul_le_mul_of_nonneg_left (hfLip x y) (p.nonneg x y)
+    _ = L * p.cost d := by
+        show _ = L * (∑ x, ∑ y, p.π x y * d x y)
+        rw [Finset.mul_sum]
+        refine Finset.sum_congr rfl ?_; intros x _
+        rw [Finset.mul_sum]
+        refine Finset.sum_congr rfl ?_; intros y _
+        ring
+
+/-- **Kantorovich-Rubinstein one-direction** (finite discrete): for any
+`L`-Lipschitz test function `f` (with `L ≥ 0`, `d ≥ 0`), the absolute
+difference of expectations under `μ` and `ν` is bounded by `L · W_1(μ, ν)`:
+
+`|E_μ[f] − E_ν[f]| ≤ L · W_1(μ, ν)`.
+
+This is the standard way W_1 is used in convergence arguments — any
+Lipschitz observable has expectation variation bounded by the
+Wasserstein distance, so `W_1(μ_n, μ) → 0` implies `E_{μ_n}[f] → E_μ[f]`
+for every such `f`. -/
+theorem wasserstein1_lipschitz_bound
+    (d : X → X → ℝ) (hd : ∀ x y, 0 ≤ d x y)
+    (μ ν : X → ℝ)
+    (hμ : ∀ x, 0 ≤ μ x) (hν : ∀ x, 0 ≤ ν x)
+    (hμsum : ∑ x, μ x = 1) (hνsum : ∑ x, ν x = 1)
+    (f : X → ℝ) (L : ℝ) (hL : 0 ≤ L)
+    (hfLip : ∀ x y, |f x - f y| ≤ L * d x y) :
+    |(∑ x, μ x * f x) - (∑ x, ν x * f x)|
+      ≤ L * wasserstein1 d μ ν := by
+  -- The plan cost bounds |E_μ[f] - E_ν[f]|, for every plan.
+  -- Hence inf cost bounds |...| / L, i.e., L · W_1 bounds |...|.
+  have hbound : ∀ p : TransportPlan μ ν,
+      |(∑ x, μ x * f x) - (∑ x, ν x * f x)| ≤ L * p.cost d :=
+    fun p => cost_bounds_expectation_diff d μ ν p f L hfLip
+  -- Use the tensor plan as an existence witness + lower bound (via csInf properties).
+  have hwNn : ∀ c ∈ {c : ℝ | ∃ p : TransportPlan μ ν, p.cost d = c}, 0 ≤ c := by
+    rintro c ⟨p, rfl⟩; exact p.cost_nonneg d hd
+  have hNE : {c : ℝ | ∃ p : TransportPlan μ ν, p.cost d = c}.Nonempty :=
+    ⟨(TransportPlan.tensor μ ν hμ hν hμsum hνsum).cost d, _, rfl⟩
+  -- Divide the bound by L (if L > 0) or handle L = 0 separately.
+  rcases lt_or_eq_of_le hL with hLpos | hL0
+  · -- L > 0: use (|...|/L) ≤ inf cost ⇒ |...| ≤ L · inf cost.
+    have hdivbound : ∀ p : TransportPlan μ ν,
+        |(∑ x, μ x * f x) - (∑ x, ν x * f x)| / L ≤ p.cost d := by
+      intro p
+      rw [div_le_iff₀ hLpos]
+      rw [mul_comm]
+      exact hbound p
+    show |(∑ x, μ x * f x) - (∑ x, ν x * f x)| ≤ L * sInf _
+    rw [← div_le_iff₀' hLpos]
+    refine le_csInf hNE ?_
+    rintro c ⟨p, rfl⟩
+    exact hdivbound p
+  · -- L = 0: then f is constant, so μ, ν must have same f-expectation.
+    subst hL0
+    have habs0 : ∀ x y, |f x - f y| ≤ 0 := by
+      intros x y
+      have h := hfLip x y
+      rw [zero_mul] at h
+      exact h
+    have hf_const : ∀ x y, f x = f y := by
+      intros x y
+      have habs : |f x - f y| ≤ 0 := habs0 x y
+      have hnn := abs_nonneg (f x - f y)
+      have hzero : |f x - f y| = 0 := le_antisymm habs hnn
+      have hfxy : f x - f y = 0 := abs_eq_zero.mp hzero
+      linarith
+    have hEeq : (∑ x, μ x * f x) = (∑ x, ν x * f x) := by
+      by_cases hnonempty : (Finset.univ : Finset X).Nonempty
+      · obtain ⟨x₀, _⟩ := hnonempty
+        have h1 : ∀ x, f x = f x₀ := fun x => hf_const x x₀
+        rw [show (∑ x, μ x * f x) = (∑ x, μ x * f x₀) from
+              Finset.sum_congr rfl (fun x _ => by rw [h1 x])]
+        rw [show (∑ x, ν x * f x) = (∑ x, ν x * f x₀) from
+              Finset.sum_congr rfl (fun x _ => by rw [h1 x])]
+        rw [← Finset.sum_mul, ← Finset.sum_mul, hμsum, hνsum]
+      · rw [Finset.not_nonempty_iff_eq_empty] at hnonempty
+        rw [hnonempty, Finset.sum_empty, Finset.sum_empty]
+    rw [hEeq, sub_self, abs_zero, zero_mul]
+
 /-! ## Gluing of transport plans and triangle inequality for W_1
 
 Given `p : TransportPlan μ ν` and `q : TransportPlan ν ρ`, we
