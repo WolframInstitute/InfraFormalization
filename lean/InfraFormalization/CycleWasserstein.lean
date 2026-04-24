@@ -177,4 +177,41 @@ theorem wasserstein1_cycleMetricScaled_le_one
     (cycleMetricScaled_le_one n) (cycleMetricScaled_nonneg n)
     μ ν hμ hν hμsum hνsum
 
+/-! ## Sharp O(1/n) Wasserstein identity for adjacent Dirac measures -/
+
+/-- **Distance between adjacent cycle vertices is exactly `1`.** The
+edge `{v, v+1}` of `cycleHypergraph n` makes them adjacent in the
+clique-expansion graph, so the shortest path has length 1. -/
+theorem cycleMetric_succ_eq_one (n : ℕ) [NeZero n] (hn : 2 ≤ n) (v : Fin n) :
+    cycleMetric n v (v + 1) = 1 := by
+  unfold cycleMetric Hypergraph.dist
+  have hadj : (cycleHypergraph n).Adj v (v + 1) :=
+    (cycleHypergraph_succ_pred_adj hn v).1
+  have : ((cycleHypergraph n).toSimpleGraph).dist v (v + 1) = 1 := by
+    rw [SimpleGraph.dist_eq_one_iff_adj]
+    exact hadj
+  rw [this]
+  norm_cast
+
+/-- **Scaled distance between adjacent cycle vertices is `1/n`.**
+Direct consequence of `cycleMetric_succ_eq_one` and the `/ n` scaling. -/
+theorem cycleMetricScaled_succ_eq (n : ℕ) [NeZero n] (hn : 2 ≤ n) (v : Fin n) :
+    cycleMetricScaled n v (v + 1) = 1 / n := by
+  unfold cycleMetricScaled
+  rw [cycleMetric_succ_eq_one n hn v]
+
+/-- **Sharp A7 identity on the cycle**: the Wasserstein-1 distance
+between two adjacent Dirac deltas on `cycleHypergraph n`, under the
+scaled cycle metric, is exactly `1/n`. Combines
+`wasserstein1_delta_eq_dist` (abstract) with
+`cycleMetricScaled_succ_eq` (hypergraph-anchored). **First genuinely
+O(1/n) Wasserstein rate in the project**, all from explicit
+hypergraph data. -/
+theorem wasserstein1_cycleDelta_succ
+    (n : ℕ) [NeZero n] (hn : 2 ≤ n) (v : Fin n) :
+    wasserstein1 (cycleMetricScaled n) (delta v) (delta (v + 1))
+      = 1 / n := by
+  rw [wasserstein1_delta_eq_dist]
+  exact cycleMetricScaled_succ_eq n hn v
+
 end InfraFormalization
