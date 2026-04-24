@@ -119,6 +119,22 @@ theorem flat_isFlat (H : Hypergraph V) (G : Type*) [Monoid G] :
   intro v p
   exact flat_holonomy_eq_one H G p
 
+/-- **Transport along concatenated walks is the product of transports**:
+`transportWalk (p.append q) = transportWalk p * transportWalk q`. This is
+the semigroup homomorphism property of parallel transport, a prerequisite
+for holonomy to make sense as a group homomorphism from the fundamental
+groupoid. -/
+theorem transportWalk_append {H : Hypergraph V} {G : Type*} [Monoid G]
+    (C : HypergraphConnection H G) : ∀ {u v w : V}
+    (p : H.toSimpleGraph.Walk u v) (q : H.toSimpleGraph.Walk v w),
+    C.transportWalk (p.append q) = C.transportWalk p * C.transportWalk q := by
+  intro u v w p q
+  induction p with
+  | nil => simp [transportWalk]
+  | cons h p' ih =>
+    rw [SimpleGraph.Walk.cons_append, transportWalk_cons, transportWalk_cons]
+    rw [ih, mul_assoc]
+
 end HypergraphConnection
 
 end InfraFormalization

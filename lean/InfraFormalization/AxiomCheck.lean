@@ -724,3 +724,4 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.HypergraphConnection.flat_isSymmetric
 #print axioms InfraFormalization.HypergraphConnection.flat_transportWalk_eq_one
 #print axioms InfraFormalization.HypergraphConnection.flat_isFlat
+#print axioms InfraFormalization.HypergraphConnection.transportWalk_append
