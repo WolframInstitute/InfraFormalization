@@ -107,7 +107,7 @@ Every theorem above depends only on `{propext, Classical.choice, Quot.sound}`. N
 ### Curved-metric families (B6–B11)
 
 - [~] **B6 (in progress)** — FLRW (Robertson-Walker) metric.
-- [ ] **B7** — FLRW Ricci + Einstein equations with perfect fluid.
+- [~] **B7 (in progress)** — FLRW Ricci + Einstein equations with perfect fluid. Christoffels expanded in `FLRW.lean`: `flrwChristoffel_collapse` helper + `flrwChristoffel_0_11 = a·a'`, `flrwChristoffel_1_01 = a'/a` (Hubble rate), `flrwChristoffel_1_11 = 0`. Remaining Christoffels + Riemann + Ricci + full EFE with perfect fluid pending.
 - [x] **B8** — Reissner-Nordström metric: `rnPartial M Q : PartialMetricData 4` on exterior validity domain; attached origin-obligation `rn_from_hypergraph M Q` inhabited via `rn_from_hypergraph_proved`.
 - [ ] **B9** — Kerr metric.
 - [~] **B10 (in progress)** — Ricci symmetry for Levi-Civita connection. Non-flat witness landed on `warpedDiag2` (`warpedDiag2_leviCivita_ricci_symm` / `warpedDiag2_ricci_symm`): diagonal terms are non-zero closed-form expressions, off-diagonal terms are two independently-computed zeros. Supersedes the flat-only cosmetic closure. General Levi-Civita case (metric compatibility + Riemann pair-swap symmetry) pending.
