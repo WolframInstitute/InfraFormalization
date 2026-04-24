@@ -83,36 +83,42 @@ Strategic contrasts:
 ## 4. Coverage map — what this repo currently has
 
 ### Fully Lean-formalized (axiom-clean)
-- `laplacianHyper` on `Hypergraph V` + linearity / self-adjointness / Dirichlet-PSD / divergence theorem.
-- `hyperedgeGradient`, `hypergraphDiv`, `summation_by_parts` (discrete Stokes).
-- PDE ladder on `Hypergraph V`: heat (mass conservation + L² decay), wave (energy conservation), Klein–Gordon (energy), Schrödinger (unitarity), Euler–Lagrange equivalence.
-- Cycle bridge: `cycleHypergraph n : Hypergraph (Fin n)` → `laplacianHyper` = `cycleLaplacian` → scaled second difference → `f''` (polynomial).
-- Flat continuum limits: scaled cycle → S¹, scaled lattice → Minkowski (in `Infra/*`).
-- Forman–Ricci on graphs and hypergraphs, with sign-of-curvature theorems.
-- Schwarzschild component functions + all eight non-zero Christoffels on the exterior region.
-- Five structural refutations of Gorard corpus (F1–F5) + BD-flag.
-- Formal proof obligations (`ContinuumLimitStatement.lean`) for Schwarzschild / Kerr / FLRW origin.
+- Hypergraph calculus: `laplacianHyper` + linearity / self-adjointness / Dirichlet-PSD / divergence theorem; `hyperedgeGradient`, `hypergraphDiv`, discrete Stokes.
+- PDE ladder on `Hypergraph V`: heat (mass conservation + L² decay + long-time decay to constant), wave (energy), Klein–Gordon (energy + mass), Schrödinger (unitarity), scalar field Lagrangian + Euler–Lagrange.
+- Cycle bridge: `cycleHypergraph n` + matrix Laplacian + `exp(t · Δ)` heat kernel + C² Taylor convergence of the scaled second difference to `f''`.
+- Flat continuum limits: scaled cycle → S¹, path → interval, 2-torus, d-torus, discrete Lorentz → Minkowski.
+- Infracausality: `CausalGraph V` as TR-DAG, `ObserverChain`, `LightRay`, `Foliation` from successive antichains, EPS axioms, Marzke–Wheeler clock construction, `SpatiallyReconstructedHypergraph`, multi-fibration from non-unique shortest paths.
+- Fibered-graph machinery: `FiberedGraph`, `Section`, `Connection`, `ParallelTransport`, `HolonomyMatrix`, `WilsonLoop`, `FlatConnection`, `FiberBundle`, `GraphTangentBundle`, `MultiFiberedGraph`.
+- Hypergraph connection: `HypergraphConnection H G` with `flat`, `IsSymmetric`, `transportWalk`, `holonomy`, `IsFlat`, and the monoid-hom property `transportWalk_append`.
+- Infradimension: Wolfram–Hausdorff (ID1), plateau detection (ID2), homology dimension (ID3), coordinatization (ID4), causal-graph (ID5), compatibility `V(v, r) = 2r + 1` on cycle hypergraphs (ID6 `dimensionCompatibilityObligation_holds`).
+- Infratopology: `VietorisRipsComplex`, persistence diagram / barcode (IT4), Hodge Laplacian on VR 0- and 1-forms (IT2) with spectrum (IT3), Latschev obligation for cycles (IT5), scale trichotomy for cycles (IT6).
+- Ruliology (IR): `RuleSignature V`, `hypergraphSignature`, conservation theorem (IR2 — |LHS|=|RHS| bounds dimension), planar rules have dim ≤ 2 (IR4), tree-producing rules have log-branching dimension (IR3), product-rule additivity (IR5), candidate-rule database + screens (IR6), refined reverse-engineering obligation (IR7; over-strong form provably FALSE).
+- Blowup/Poisson (IB): `ElementaryBlowup`, blowup operations, `BlowupLieAlgebra`, insertion Lie (IB4), Poisson bracket on formal functions (IB5), radial/laminar blowup (IB6).
+- Branchial/quantum (IQ): finite `BranchialSlice` (I1), uniform measure (I2), ℂ-amplitudes + Born rule (I3), ℓ²(slice) Hilbert space + self-adjoint ℂ-linear adjacency (I4), unitary Schrödinger evolution (I5), Hermitian observables (I6) + expectation values (I7), Fisher metric on branchial (IQ5), Fubini-Study / Bhattacharyya bound (IQ6), EME persistence baseline (IQ8), path-integral baseline (IQ9).
+- Synthetic axiomatic (IS): circle, line, sphere (IS1); `InfrageometricScene` (IS2); axiomatic-synthetic layer (IS3).
+- Continuum targets (local-coord): Schwarzschild component functions + all eight Christoffels on the exterior; Schwarzschild as `PartialMetricData 4` (B1, B5); FLRW `flrwPartial a da` (B6); Reissner-Nordström `rnPartial M Q` (B8); de Sitter; 2-sphere; warpedDiag2.
+- Bundle-level metric predicates: `DiagRiemannianMetric` + Euclidean witness (C1); `DiagLorentzianMetric` + Minkowski witness (C2).
+- Hypergraph-origin obligations: every continuum metric in the GR zoo carries a `HypergraphMetricOriginObligation` Prop with flat-case witness; `LorentzianManifoldOriginObligation`, `ConnectionDataOriginObligation`, `EFEOriginObligation` similarly; `minkowski4_flat_vacuum_EFE_originated_global` is the first complete rule → metric → connection → EFE chain.
+- Refutations: F1 (no canonical metric), F2 (fiat orthonormality), F3 (dim-preservation tautology), F4 (causal-invariance ⇔ GC tautology), F5 (ill-defined "becomes"), F6 (G3 circular procedure = identity), F7 (named-rule conservativity blocks 4D cone growth); F8 Raychaudhuri statement level.
+- Ollivier–Gorard quantitative discrepancy: `ollivier_minus_gorard_leading` with S² worked example `s2_gorard_error = δε²/8`.
 
 ### Partially formalized
-- Causal / branchial scaffolding (definitions + reachability, not the full dynamical theory).
-- Discrete d'Alembertian (BD operator on trajectories).
-- Metric / connection bundles at local-coordinate level.
+- A6 weak-convergence lift: polynomials up to degree 3 done; general continuous via Weierstrass pending.
+- D6 long-time convergence of the heat equation: non-constant eigenmodes decay; full result for arbitrary initial data needs eigenbasis-spanning.
+- P20 Rodkey classification of graphs with pointwise-constant Wolfram–Hausdorff dimension: sufficient chain `AdjTransitive → DistTransitive → BallVolumeVertexUniform → LocalDimensionVertexUniform` and necessary-regularity direction proved on cycle/path; general classification open.
+- IB2 causal-branchial-trivial commutator theorem: predicate-level placeholder; real theorem statement needed.
 
-### Not yet touched (the expansion targets)
-- **Wolfram–Hausdorff dimension as a functor `Hypergraph V → ℝ`.**
-- **Vietoris–Rips complex** of a hypergraph at scale ε + persistence.
-- **Latschev theorem** stated formally.
-- **Hodge Laplacian on VR** and its spectrum.
-- **Fibered graph** type, sections, connections, holonomy, Wilson loops (ports of the paclet).
-- **Multi-fibrations** for non-unique shortest-path projections.
-- **Elementary blowup Lie algebra** on hypergraph isomorphism classes.
-- **Insertion Lie algebra** with Poisson bracket.
-- **EPS axiomatic relativity** from causal graphs.
-- **Marzke–Wheeler clocks** on transitively-reduced causal graphs.
-- **Branchial → Fubini–Study / Fisher** convergence statement.
-- **EME persistence** as a branchial observable.
-- **Synthetic constructions** (circle, line, sphere) and multi-construction scenes.
-- **Blowups / subdivisions as renormalization** operators.
+### Still open
+- IG10 exponential map via weighted shortest-path counts.
+- ID7 heat-trace small-`t` asymptotics for spectral dimension.
+- C3–C8 bundle connection / Levi-Civita existence-uniqueness (Koszul) / scaled-discrete-connection → Levi-Civita convergence.
+- Curved-GR witnesses: Schwarzschild/Kerr/FLRW Ricci computations (B2/B3/B4, B7, B9); second Bianchi for Einstein tensor (B11); Ricci symmetry (B10).
+- G2 discrete gauge field (uses Rung 4).
+- E5 ADM decomposition, E6 Lorentzian-Gromov–Hausdorff, E7 discrete causal → continuum Lorentzian convergence.
+- D11 Cauchy problem for Einstein evolution (Choquet-Bruhat 1952).
+- A7 Wasserstein-1 convergence rate; A8 d-torus measure lift.
+- Branchial quantum continuum: I8 branchial-Hilbert continuum limit, I10 path-integral / unitary-evolution equivalence.
+- Full infrageometry obligations bundled in `all_obligations_hold`; the open items above are those left after that bundling.
 
 ## 5. Lean task groups — full program coverage
 
