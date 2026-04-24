@@ -107,16 +107,19 @@ Highlights:)
   `gorardNamedRule_passes_sameEdgeCount_screen` (gorardNamedRule from
   a 4-edge seed keeps `edgeCount = 4` forever, closing the 4-edge
   screen against any 4-edge target).
-- **R4 extension — warpedDiag2 curved Ricci closed form** (substantive;
-  `WarpedDiag2C2.lean`): `warpedDiag2_C2 : MetricDataC2 2`. Ricci tensor
-  computed end-to-end on a curved 2D Einstein manifold via
-  `leviCivitaConnection`: `R_{00}(x) = -1/(1+x₀²)²`,
-  `R_{11}(x) = -1/(1+x₀²)`, and along the way
-  `R^0_{101}(x) = -1/(1+x₀²)`, `R^1_{010}(x) = -1/(1+x₀²)²`. Generic
-  `riemann_diag_zero` lemma from `riemann_antisymm`. This is the
-  first real curved-case Ricci computation in the project; off-
-  diagonal Ricci + Einstein identity `R_{μν} = K(x) · g_{μν}` with
-  `K(x) = -1/(1+x₀²)²` are the follow-ups (task #217).
+- **R4 — warpedDiag2 curved Einstein-manifold identity fully proved**
+  (substantive; `WarpedDiag2C2.lean`): first complete curved-case
+  Einstein identity in the project. `warpedDiag2_C2 : MetricDataC2 2`
+  supplies second partials + inverse-metric derivatives. Closed-form
+  Riemann: `R^0_{101}(x) = -1/(1+x₀²)`, `R^1_{010}(x) = -1/(1+x₀²)²`,
+  `R^0_{001}(x) = 0`, `R^1_{110}(x) = 0`. Closed-form Ricci:
+  `R_{00}(x) = -1/(1+x₀²)²`, `R_{11}(x) = -1/(1+x₀²)`,
+  `R_{01} = R_{10} = 0`. **Einstein identity** `warpedDiag2_einstein`:
+  `R_{μν}(x) = (-1/(1+x₀²)²) · g_{μν}(x)` for all `(μ, ν) : Fin 2²`,
+  realising the 2D Einstein-metric property with Gaussian curvature
+  `K(x) = -1/(1+x₀²)²` (non-constant, negative). Generic
+  `riemann_diag_zero` lemma (`R^ρ_{σμμ} = 0` from `riemann_antisymm`)
+  underpins the off-diagonal Ricci closure.
 
 ## Reopened: cosmetic closures that need substantive work
 

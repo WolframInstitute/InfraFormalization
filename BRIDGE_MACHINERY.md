@@ -126,7 +126,7 @@ Remaining open sub-items are concrete targets tracked in the C-series.
 - [ ] Ricci symmetry for Levi-Civita connection (B10). Tracked as #30 after reopening.
 - ✓ **Forman-Ricci on a graph** (`DiscreteRicci.lean`): edge curvature `4 − deg(v) − deg(w)`, vertex aggregation, total scalar.
 - ✓ **First explicit bridge** (`RicciBridge.lean`): Forman-Ricci on 2-regular graph (e.g., cycle) = continuum Ricci on circle (= 0); `circleMetric : MetricData 1`; `forman_ricci_matches_continuum_on_cycle`. The grounding-principle obligation is met for the cycle/circle case.
-- ✓ **First curved-case Ricci computation** (`WarpedDiag2C2.lean`): `warpedDiag2_C2 : MetricDataC2 2` with closed-form Riemann `R^0_{101}(x) = -1/(1+x₀²)`, `R^1_{010}(x) = -1/(1+x₀²)²`; Ricci `R_{00}(x) = -1/(1+x₀²)²`, `R_{11}(x) = -1/(1+x₀²)`. Off-diagonal Ricci + full Einstein identity are the remaining pieces (task #217).
+- ✓ **First complete curved-case Einstein identity** (`WarpedDiag2C2.lean`): `warpedDiag2_C2 : MetricDataC2 2` with closed-form Riemann (`R^0_{101}(x) = -1/(1+x₀²)`, `R^1_{010}(x) = -1/(1+x₀²)²`, off-diagonals 0) and Ricci (`R_{00}(x) = -1/(1+x₀²)²`, `R_{11}(x) = -1/(1+x₀²)`, `R_{01} = R_{10} = 0`). `warpedDiag2_einstein`: `R_{μν} = (-1/(1+x₀²)²) · g_{μν}` — the 2D Einstein-manifold identity in closed form.
 - [ ] **Discrete Ricci → continuum Ricci convergence (general)**: extend beyond trivially-flat to non-flat targets (sphere → positive Ricci, warped → negative Ricci). Project-own, not contingent on external infrastructure (task #218, #220).
 - [ ] Ollivier-Ricci with full convergence proof on a concrete discretisation (currently statement-level only; task #220).
 
