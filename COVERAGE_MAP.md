@@ -188,7 +188,7 @@ diffusion-geometry bridge, tropical geometry, 3BP dynamics.
 
 | Group | Purpose | Done | Open |
 |---|---|---|---|
-| A | Calculus foundations | A1–A5 | A6 (polys to deg 3), A7, A8 |
+| A | Calculus foundations | A1–A5; A7 concrete rate (cycle δ-shift sharp + measure-level shift O(1/n)) | A6 (polys to deg 3), A7 general case, A8 |
 | B | Schwarzschild / curved metrics | B1, B5, B6, B8 | B2, B3, B4, B7, B9, B10, B11 |
 | C | Bundles + Levi-Civita | C1 (`DiagRiemannianMetric`), C2 (`DiagLorentzianMetric`), C7 (`HypergraphConnection`) | C3, C4, C5, C6, C8 |
 | D | PDEs on Hypergraph V | D1, D2, D3, D4, D5, D6 (partial), D7, D8, D9, D10 | D11 |

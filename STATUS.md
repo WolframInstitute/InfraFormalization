@@ -211,7 +211,7 @@ witnesses with real convergence / amplitude / curvature computations:
 | **IB2** causal-branchial commutator theorem | predicate placeholder at `True`; needs a real theorem statement before proof |
 | **ID7** spectral dimension via heat-kernel trace | heat trace defined; small-`t` asymptotics pending |
 | **A6** weak convergence (general continuous) | polynomials to degree 3 closed; Weierstrass lift pending |
-| **A7 / A8** non-trivial Wasserstein bounds | reopened — zero-discrepancy baseline does not count as closure; tasks #214 (own Wasserstein-1) and #215 (real d-torus O(1/n)) |
+| **A7 / A8** non-trivial Wasserstein bounds | **#214 landing: project-own W_1 on finite supports + cycle-hypergraph anchor with O(1/n) rate.** `wasserstein1_delta_eq_dist` (sharp δ-to-δ identity), `wasserstein1_cycleDelta_succ` (W_1_scaled(δ_v, δ_{v+1}) = 1/n), `wasserstein1_shiftMeasure_le` (measure-level: W_1_scaled(μ, μ ∘ shift) ≤ 1/n). A7 zero-discrepancy baseline now superseded by a real rate for the shift-distance; #215 (d-torus lift) pending |
 | **Curved GR witnesses** (B3/B4, B7, F4/F5/F6) | Ricci = 0 on Schwarzschild and full EFE for FLRW with matter / Kerr vacuum; tracked as task #217 — project-own Ricci / Einstein tensors end-to-end on named GR metrics. Not contingent on Mathlib. |
 | **E5 ADM / D11 Choquet-Bruhat** | long-term GR formalization targets |
 | **C5 Levi-Civita existence-uniqueness (Koszul)** | the hard remaining C-group item; needs the explicit Koszul formula + metric compatibility |

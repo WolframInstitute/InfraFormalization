@@ -234,7 +234,7 @@ Legend for the Status column:
 |---|---|---|---|
 | 1 | Discrete calculus | Self-adjoint `Δ_H`, Dirichlet form, PSD, discrete Stokes | proved |
 | 2 | Operator convergence | `scaledSecondDiff → f''` for every C²; cycle-spectrum → circle-spectrum | proved |
-| 3 | Measure limits | Counting measure, pushforward proved; A6 weak convergence, A7 Wasserstein, A8 d-torus lift open | partial |
+| 3 | Measure limits | Counting measure + pushforward (A5); A6 weak convergence complete for polynomials ≤ deg 3; **A7 Wasserstein-1 concrete rates landed** — project-own W_1 on `TransportPlan` supports with cycle-hypergraph anchor; `W_1_scaled(δ_v, δ_{v+1}) = 1/n` (sharp) and `W_1_scaled(μ, μ∘shift) ≤ 1/n` for any probability measure μ; A8 d-torus lift open | partial |
 | 4 | Connections | Local-coordinate Christoffel proved; project-own bundle formulation in `VectorBundleConnection.lean` — C1, C2, C3, C4, C6, C7 substantive; C5 (Koszul existence/uniqueness) and C8 (curved convergence) tracked as own open tasks | partial |
 | 5 | Riemann / Ricci | Riemann, Ricci, Einstein tensors; full GR metric zoo | proved |
 | 6 | ODE / PDE on Hypergraph V | Heat, wave, Klein-Gordon, Schrödinger unitary, Euler-Lagrange | proved |
