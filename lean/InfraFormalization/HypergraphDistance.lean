@@ -789,6 +789,132 @@ theorem cycleHypergraph_ballVolume_forward_ge {n : Nat} [NeZero n]
   calc r + 1 = S.card := h_card.symm
     _ ≤ _ := Finset.card_le_card h_in_ball
 
+/-! ## Composition lemmas for iterated ±1 shifts on `Fin n` -/
+
+/-- `F^[j] (F v) = F^[j + 1] v` (iterate composition). -/
+private theorem iterSucc_after_succ {n : Nat} [NeZero n] (v : Fin n) (j : ℕ) :
+    (fun x : Fin n => x + 1)^[j] ((fun x : Fin n => x + 1) v) =
+      (fun x : Fin n => x + 1)^[j + 1] v := by
+  rw [← Function.iterate_succ_apply]
+
+/-- `G^[j] (G v) = G^[j + 1] v`. -/
+private theorem iterPred_after_pred {n : Nat} [NeZero n] (v : Fin n) (j : ℕ) :
+    (fun x : Fin n => x - 1)^[j] ((fun x : Fin n => x - 1) v) =
+      (fun x : Fin n => x - 1)^[j + 1] v := by
+  rw [← Function.iterate_succ_apply]
+
+/-- `G (F v) = v` in `Fin n`. -/
+private theorem pred_succ_cancel {n : Nat} [NeZero n] (v : Fin n) :
+    (fun x : Fin n => x - 1) ((fun x : Fin n => x + 1) v) = v := by
+  show (v + 1) - 1 = v; abel
+
+/-- `F (G v) = v` in `Fin n`. -/
+private theorem succ_pred_cancel {n : Nat} [NeZero n] (v : Fin n) :
+    (fun x : Fin n => x + 1) ((fun x : Fin n => x - 1) v) = v := by
+  show (v - 1) + 1 = v; abel
+
+/-- `G^[j+1] (F v) = G^[j] v`. -/
+private theorem iterPred_succ_after_succ {n : Nat} [NeZero n] (v : Fin n) (j : ℕ) :
+    (fun x : Fin n => x - 1)^[j + 1] ((fun x : Fin n => x + 1) v) =
+      (fun x : Fin n => x - 1)^[j] v := by
+  rw [Function.iterate_succ_apply]
+  show (fun x : Fin n => x - 1)^[j] (v + 1 - 1) = (fun x : Fin n => x - 1)^[j] v
+  congr 1; abel
+
+/-- `F^[j+1] (G v) = F^[j] v`. -/
+private theorem iterSucc_succ_after_pred {n : Nat} [NeZero n] (v : Fin n) (j : ℕ) :
+    (fun x : Fin n => x + 1)^[j + 1] ((fun x : Fin n => x - 1) v) =
+      (fun x : Fin n => x + 1)^[j] v := by
+  rw [Function.iterate_succ_apply]
+  show (fun x : Fin n => x + 1)^[j] (v - 1 + 1) = (fun x : Fin n => x + 1)^[j] v
+  congr 1; abel
+
+/-- **Walk structural result**: any walk `p : v → u` on `cycleHypergraph n`
+with `2 · p.length + 1 ≤ n` puts `u` in the shift set around `v`, i.e.,
+`u = F^[j] v` for some `j ≤ p.length` or `u = G^[j] v` for some
+`1 ≤ j ≤ p.length`.
+
+Proof by structural induction on the walk using the composition lemmas
+`iterSucc_after_succ`, `iterPred_succ_after_succ`, `iterSucc_succ_after_pred`,
+`iterPred_after_pred`. The `2·length+1 ≤ n` bound ensures the shift
+indices stay in their admissible range (no wrap-around collapses). -/
+theorem cycleHypergraph_walk_in_shift {n : Nat} [NeZero n]
+    {v u : Fin n} (p : (cycleHypergraph n).toSimpleGraph.Walk v u)
+    (hn : 2 ≤ n) (hp : 2 * p.length + 1 ≤ n) :
+    (∃ j ≤ p.length, u = (fun x : Fin n => x + 1)^[j] v) ∨
+    (∃ j, 1 ≤ j ∧ j ≤ p.length ∧ u = (fun x : Fin n => x - 1)^[j] v) := by
+  induction p with
+  | nil =>
+    left
+    exact ⟨0, Nat.zero_le _, rfl⟩
+  | @cons v w u h p' ih =>
+    simp only [SimpleGraph.Walk.length_cons] at hp
+    have hp' : 2 * p'.length + 1 ≤ n := by omega
+    have ih_result := ih hp'
+    have hadj := (cycleHypergraph_Adj_iff hn v w).mp h
+    obtain ⟨_, hw_cases⟩ := hadj
+    have hcons_len : (SimpleGraph.Walk.cons h p').length = p'.length + 1 := rfl
+    rcases hw_cases with hw_succ | hw_pred
+    · -- w = v + 1
+      subst hw_succ
+      rcases ih_result with ⟨j, hj, hju⟩ | ⟨j, hj_pos, hj, hju⟩
+      · -- u = F^[j] (v+1)
+        left
+        refine ⟨j + 1, by rw [hcons_len]; omega, ?_⟩
+        calc u = (fun x : Fin n => x + 1)^[j] (v + 1) := hju
+          _ = (fun x : Fin n => x + 1)^[j] ((fun x : Fin n => x + 1) v) := rfl
+          _ = (fun x : Fin n => x + 1)^[j + 1] v := iterSucc_after_succ v j
+      · -- u = G^[j] (v+1), 1 ≤ j ≤ p'.length
+        rcases Nat.lt_or_ge 1 j with h_j_ge_2 | h_j_le_1
+        · -- j ≥ 2
+          right
+          refine ⟨j - 1, by omega, by rw [hcons_len]; omega, ?_⟩
+          have h_j_form : j = (j - 1) + 1 := by omega
+          calc u = (fun x : Fin n => x - 1)^[j] (v + 1) := hju
+            _ = (fun x : Fin n => x - 1)^[(j - 1) + 1] ((fun x : Fin n => x + 1) v) := by
+                rw [← h_j_form]
+            _ = (fun x : Fin n => x - 1)^[j - 1] v :=
+                iterPred_succ_after_succ v (j - 1)
+        · -- j = 1
+          have hj_1 : j = 1 := by omega
+          subst hj_1
+          left
+          refine ⟨0, Nat.zero_le _, ?_⟩
+          calc u = (fun x : Fin n => x - 1)^[1] (v + 1) := hju
+            _ = v + 1 - 1 := rfl
+            _ = v := by abel
+    · -- v = w + 1, i.e., w = v - 1
+      have hw_eq : w = v - 1 := by
+        have : v - 1 = w + 1 - 1 := by rw [← hw_pred]
+        rw [add_sub_cancel_right] at this
+        exact this.symm
+      subst hw_eq
+      rcases ih_result with ⟨j, hj, hju⟩ | ⟨j, hj_pos, hj, hju⟩
+      · -- u = F^[j] (v-1), 0 ≤ j ≤ p'.length
+        rcases Nat.eq_zero_or_pos j with hj_0 | hj_pos
+        · -- j = 0: u = v - 1
+          subst hj_0
+          right
+          refine ⟨1, Nat.le_refl _, by rw [hcons_len]; omega, ?_⟩
+          calc u = (fun x : Fin n => x + 1)^[0] (v - 1) := hju
+            _ = v - 1 := rfl
+            _ = (fun x : Fin n => x - 1)^[1] v := rfl
+        · -- j ≥ 1: u = F^[j-1] v
+          left
+          refine ⟨j - 1, by rw [hcons_len]; omega, ?_⟩
+          have h_j_form : j = (j - 1) + 1 := by omega
+          calc u = (fun x : Fin n => x + 1)^[j] (v - 1) := hju
+            _ = (fun x : Fin n => x + 1)^[(j - 1) + 1] ((fun x : Fin n => x - 1) v) := by
+                rw [← h_j_form]
+            _ = (fun x : Fin n => x + 1)^[j - 1] v :=
+                iterSucc_succ_after_pred v (j - 1)
+      · -- u = G^[j] (v - 1), 1 ≤ j ≤ p'.length: u = G^[j+1] v
+        right
+        refine ⟨j + 1, by omega, by rw [hcons_len]; omega, ?_⟩
+        calc u = (fun x : Fin n => x - 1)^[j] (v - 1) := hju
+          _ = (fun x : Fin n => x - 1)^[j] ((fun x : Fin n => x - 1) v) := rfl
+          _ = (fun x : Fin n => x - 1)^[j + 1] v := iterPred_after_pred v j
+
 /-- **General ID6 lower bound**: `V(v, r) ≥ 2r + 1` on `cycleHypergraph n`
 for every `n ≥ 2` and `r` with `2r + 1 ≤ n`.
 
@@ -866,6 +992,70 @@ theorem cycleHypergraph_ballVolume_ge {n : Nat} [NeZero n]
     _ = S1.card + S2.card := by rw [hcard1, hcard2]
     _ = (S1 ∪ S2).card := (Finset.card_union_of_disjoint hdisj).symm
     _ ≤ _ := Finset.card_le_card h_in_ball
+
+/-- **General ID6 upper bound**: `V(v, r) ≤ 2r + 1` on `cycleHypergraph n`
+for every `n ≥ 2` and `r` with `2r + 1 ≤ n`.
+
+Every `u` with `dist(v, u) ≤ r` arises from a shortest walk of length ≤ r.
+By the walk-structural analysis `cycleHypergraph_walk_in_shift`, `u` sits
+in the radius-`r` shift set around `v` — i.e., `u = F^[j] v` with `j ≤ r`
+or `u = G^[j] v` with `1 ≤ j ≤ r`. Hence ball(v, r) ⊆ shiftSet, and the
+latter has cardinality `2r + 1`. -/
+theorem cycleHypergraph_ballVolume_le {n : Nat} [NeZero n]
+    (hn : 2 ≤ n) {r : ℕ} (hr : 2 * r + 1 ≤ n) (v : Fin n) :
+    (cycleHypergraph n).geodesicBallVolume v r ≤ 2 * r + 1 := by
+  let F : ℕ → Fin n := fun k => (fun x : Fin n => x + 1)^[k] v
+  let G : ℕ → Fin n := fun k => (fun x : Fin n => x - 1)^[k] v
+  let S1 : Finset (Fin n) := (Finset.range (r + 1)).image F
+  let S2 : Finset (Fin n) := (Finset.Ioc 0 r).image G
+  -- Walk-based containment: ball(v, r) ⊆ S1 ∪ S2
+  have h_subset : (cycleHypergraph n).geodesicBall v r ⊆ S1 ∪ S2 := by
+    intro u hu
+    unfold Hypergraph.geodesicBall at hu
+    rw [Finset.mem_filter] at hu
+    obtain ⟨_, h_dist⟩ := hu
+    unfold Hypergraph.dist at h_dist
+    have hreach : (cycleHypergraph n).toSimpleGraph.Reachable v u :=
+      (cycleHypergraph_connected hn).preconnected v u
+    obtain ⟨p, hp_len⟩ := hreach.exists_walk_length_eq_dist
+    have hp_le : p.length ≤ r := hp_len ▸ h_dist
+    have hp_bound : 2 * p.length + 1 ≤ n := by omega
+    have := cycleHypergraph_walk_in_shift p hn hp_bound
+    rw [Finset.mem_union]
+    rcases this with ⟨j, hj, hju⟩ | ⟨j, hj_pos, hj, hju⟩
+    · left
+      show u ∈ (Finset.range (r + 1)).image F
+      rw [Finset.mem_image]
+      exact ⟨j, by rw [Finset.mem_range]; omega, hju.symm⟩
+    · right
+      show u ∈ (Finset.Ioc 0 r).image G
+      rw [Finset.mem_image]
+      exact ⟨j, by rw [Finset.mem_Ioc]; exact ⟨hj_pos, by omega⟩, hju.symm⟩
+  -- Card bound: |S1 ∪ S2| ≤ (r+1) + r = 2r+1
+  have h_card_union : (S1 ∪ S2).card ≤ 2 * r + 1 := by
+    calc (S1 ∪ S2).card
+        ≤ S1.card + S2.card := Finset.card_union_le S1 S2
+      _ ≤ (r + 1) + r := by
+          refine Nat.add_le_add ?_ ?_
+          · exact le_trans (Finset.card_image_le) (by rw [Finset.card_range])
+          · exact le_trans (Finset.card_image_le) (by rw [Nat.card_Ioc]; omega)
+      _ = 2 * r + 1 := by ring
+  unfold Hypergraph.geodesicBallVolume
+  exact le_trans (Finset.card_le_card h_subset) h_card_union
+
+/-- **ID6 CLOSED — cycle compatibility**: `V(v, r) = 2r + 1` on
+`cycleHypergraph n` for every `n ≥ 2` and `r` with `2r + 1 ≤ n`.
+
+Combines `cycleHypergraph_ballVolume_ge` (lower bound via shift families)
+with `cycleHypergraph_ballVolume_le` (upper bound via walk structure),
+giving the exact formula `V(v, r) = 2r + 1` — a full proof of ID6's
+cycle-dimension compatibility claim. Matches the continuum expectation
+`ball volume ~ 2r + 1` for 1-dimensional geometry. -/
+theorem cycleHypergraph_ballVolume_exact {n : Nat} [NeZero n]
+    (hn : 2 ≤ n) {r : ℕ} (hr : 2 * r + 1 ≤ n) (v : Fin n) :
+    (cycleHypergraph n).geodesicBallVolume v r = 2 * r + 1 :=
+  le_antisymm (cycleHypergraph_ballVolume_le hn hr v)
+    (cycleHypergraph_ballVolume_ge hn hr v)
 
 /-- **Exact ball volume at radius 1** on `cycleHypergraph n` for `n ≥ 3`:
 `geodesicBallVolume v 1 = 3`. Combined with `_one_ge_three` for the
