@@ -134,5 +134,56 @@ theorem VectorBundleConnection.ofConnectionData_curvature_eq_riemann
          ConnectionData.riemann
   ring
 
+/-- **Torsion of a connection on the tangent bundle** (C4 / #37).
+
+For a `VectorBundleConnection n n` — i.e. the fibre and base dimensions
+coincide, so `Γ^a_{μ b}` can be interpreted with `a, b` as base
+indices — the torsion tensor is
+
+    `T^a_{μ b}(x) = Γ^a_{μ b}(x) − Γ^a_{b μ}(x)`.
+
+A connection is **torsion-free** iff this vanishes pointwise. In the
+tangent-bundle case (fibre = base) this matches the usual
+`T^ρ_{μν} = Γ^ρ_{μν} − Γ^ρ_{νμ}`. -/
+def VectorBundleConnection.torsion {n : Nat} (V : VectorBundleConnection n n)
+    (x : Fin n → ℝ) (μ : Fin n) (a b : Fin n) : ℝ :=
+  V.Γ x μ a b - V.Γ x b a μ
+
+/-- **Torsion vanishes on the lifted tangent-bundle connection.**
+Under `ofConnectionData`, the identification `Γ(x, μ, a, b) = C.Γ x a μ b`
+combined with the lower-index symmetry `C.Γ_symm` gives
+`Γ(x, b, a, μ) = C.Γ x a b μ = C.Γ x a μ b = Γ(x, μ, a, b)`. -/
+theorem VectorBundleConnection.torsion_ofConnectionData_zero
+    {n : Nat} (C : ConnectionData n)
+    (x : Fin n → ℝ) (μ : Fin n) (a b : Fin n) :
+    (VectorBundleConnection.ofConnectionData C).torsion x μ a b = 0 := by
+  unfold VectorBundleConnection.torsion VectorBundleConnection.ofConnectionData
+  have h := C.Γ_symm x a μ b
+  linarith
+
+/-- **Torsion vanishes on the flat vector-bundle connection.** -/
+theorem flatVectorBundleConnection_torsion_zero (n : Nat)
+    (x : Fin n → ℝ) (μ : Fin n) (a b : Fin n) :
+    (flatVectorBundleConnection n n).torsion x μ a b = 0 := by
+  unfold VectorBundleConnection.torsion flatVectorBundleConnection
+  simp
+
+/-- **Torsion-free predicate** on a tangent-bundle vector-bundle
+connection: the torsion tensor vanishes everywhere. -/
+def VectorBundleConnection.IsTorsionFree {n : Nat}
+    (V : VectorBundleConnection n n) : Prop :=
+  ∀ x μ a b, V.torsion x μ a b = 0
+
+/-- **Every lifted tangent-bundle connection is torsion-free.** -/
+theorem VectorBundleConnection.ofConnectionData_isTorsionFree
+    {n : Nat} (C : ConnectionData n) :
+    (VectorBundleConnection.ofConnectionData C).IsTorsionFree :=
+  fun x μ a b => VectorBundleConnection.torsion_ofConnectionData_zero C x μ a b
+
+/-- **The flat vector-bundle connection is torsion-free.** -/
+theorem flatVectorBundleConnection_isTorsionFree (n : Nat) :
+    (flatVectorBundleConnection n n).IsTorsionFree :=
+  fun x μ a b => flatVectorBundleConnection_torsion_zero n x μ a b
+
 end Curvature
 end InfraFormalization
