@@ -4,10 +4,45 @@ The project's **grounding principle** (per memory + project notes): every contin
 structure must have a hypergraph anchor. Free-floating continuum islands are
 violations of the research vision.
 
-This file tracks the status of every major object, with a ruthless honesty mark:
+## When does a type need a grounding obligation?
+
+**Continuum-target types require an explicit `HypergraphOriginObligation`-style
+Prop.** These are types whose signatures mention `Fin n → ℝ` as a coordinate
+chart, smooth manifolds, `MetricData`, `ConnectionData`, Riemannian or
+Lorentzian structures, PDE state on a continuum, tensor fields on a manifold.
+Examples in the corpus: `MetricData`, `ConnectionData`, `DiagLorentzianMetric`,
+`DiagRiemannianMetric`, `VectorBundleConnection`, `EinsteinEqLambda`. Without
+an obligation attaching them to a hypergraph source, they float as continuum
+mathematics and violate the rule.
+
+**Pure-discrete abstract types stay abstract; no grounding obligation is
+required.** These are parametric over any `[Fintype X] [DecidableEq X]` (or
+`[Finset]`, or a `Multiset`-based carrier) with no continuum content in the
+type itself. Examples: `TransportPlan μ ν`, `wasserstein1 d μ ν`,
+`PathIntegralAmplitude V`, `BranchialSlice sys s₀ n`, `CausalGraph V`, and
+`Hypergraph V` itself. Mathlib's `Finset.sum`, `SimpleGraph` etc. have the
+same status. Adding a grounding obligation to these would be a category
+error — it would couple the library uselessly and block reuse when the same
+abstract construct is instantiated on different finite carriers (vertices
+of a hypergraph, rule names, event types of a causal graph, branchial-slice
+elements, etc.).
+
+**At the consumer site**, surface the hypergraph link with a named corollary
+when the link is worth documenting. Example: the abstract
+`wasserstein1_delta_eq_dist` lives in `WassersteinFinite.lean`; its
+cycle-hypergraph specialisation is named
+`wasserstein1_cycleDelta_eq_hypergraphDist` in `CycleWasserstein.lean`
+(giving `W_1(δ_i, δ_j) = (cycleHypergraph n).dist i j`). Documentation-by-theorem,
+not a grounding obligation.
+
+## Status marks
+
+This file tracks every major object with a ruthless honesty mark:
 
 - ✅ **Grounded**: defined from `Hypergraph V` / `RewritingSystem` / `Trajectory`
-  structures, or proved as a convergence limit starting from these.
+  structures, or proved as a convergence limit starting from these; or is a
+  pure-discrete abstract construct (see policy above) anchored at a consumer
+  site.
 - ⚠ **Partially grounded**: one side grounded, the other a target; an
   obligation statement tracks the missing bridge.
 - ❌ **Continuum-target-only**: the object is a continuum construction with
