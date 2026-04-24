@@ -111,7 +111,7 @@ Every theorem above depends only on `{propext, Classical.choice, Quot.sound}`. N
 - [x] **B8** — Reissner-Nordström metric: `rnPartial M Q : PartialMetricData 4` on exterior validity domain; attached origin-obligation `rn_from_hypergraph M Q` inhabited via `rn_from_hypergraph_proved`.
 - [ ] **B9** — Kerr metric.
 - [~] **B10 (in progress)** — Ricci symmetry for Levi-Civita connection. Non-flat witness landed on `warpedDiag2` (`warpedDiag2_leviCivita_ricci_symm` / `warpedDiag2_ricci_symm`): diagonal terms are non-zero closed-form expressions, off-diagonal terms are two independently-computed zeros. Supersedes the flat-only cosmetic closure. General Levi-Civita case (metric compatibility + Riemann pair-swap symmetry) pending.
-- [ ] **B11** — second Bianchi identity `∇_μ G^{μν} = 0`.
+- [~] **B11 (in progress)** — second Bianchi identity `∇_μ G^{μν} = 0`. Non-flat witness landed on `warpedDiag2` via the 2D Einstein identity: `warpedDiag2_scalarCurvature = -2/(1+x₀²)²`, `warpedDiag2_einsteinTensor_zero : G_{μν} ≡ 0`, `warpedDiag2_einstein_divergence_zero`. Every 2D metric satisfies `G ≡ 0` because `Ric = K g ⇒ R = 2K ⇒ G = K g − K g = 0`. General Levi-Civita case (un-contracted Bianchi via metric compatibility) pending.
 
 ### Bundle machinery (C-group; Mathlib gap)
 

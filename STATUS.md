@@ -167,9 +167,14 @@ None of these are substantively finished:
   closed-form components in `WarpedDiag2C2.lean`. General
   Levi-Civita case (metric compatibility → pair-swap symmetry) still
   pending. Task #30 in progress.
-- **B11 contracted 2nd Bianchi**: reused the pre-existing flat
-  `flatConnection_einstein_divergence_zero`; no non-flat content.
-  Task #32 reopened.
+- **B11 contracted 2nd Bianchi**: **Non-flat witness landed**:
+  `warpedDiag2_einsteinTensor_zero` proves `G_{μν} ≡ 0` on
+  warpedDiag2 via the 2D Einstein identity (every 2D manifold is
+  Einstein, so `Ric = K g`, `R = 2K`, `G = 0`). From this,
+  `warpedDiag2_einstein_divergence_zero` gives the Bianchi
+  divergence piece for free. General Levi-Civita case (un-contracted
+  Bianchi ∇_{[λ} R_{μν]ρσ} = 0 via metric compatibility) pending.
+  Task #32 in progress.
 
 ## Support tasks for the reopened items
 
