@@ -16,6 +16,7 @@ Never acceptable:
 
 import InfraFormalization.Demo
 import InfraFormalization.HypergraphConnection
+import InfraFormalization.MultiwayCausalGraph
 import InfraFormalization.Branchial
 import InfraFormalization.Growth
 import InfraFormalization.ParallelSchedule
@@ -725,3 +726,6 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.HypergraphConnection.flat_transportWalk_eq_one
 #print axioms InfraFormalization.HypergraphConnection.flat_isFlat
 #print axioms InfraFormalization.HypergraphConnection.transportWalk_append
+#print axioms InfraFormalization.MultiwayCausalGraph.empty
+#print axioms InfraFormalization.MultiwayCausalGraph.empty_causalEdge
+#print axioms InfraFormalization.MultiwayCausalGraph.empty_s₀
