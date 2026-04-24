@@ -262,6 +262,30 @@ theorem cost_add {μ₁ μ₂ ν₁ ν₂ : X → ℝ}
   intros y _
   ring
 
+/-- **Tensor-product (independent) coupling**: when `μ` and `ν` are
+non-negative probability-like measures both summing to `1`, the
+product `π(x, y) = μ(x) · ν(y)` is a valid transport plan. -/
+def tensor (μ ν : X → ℝ)
+    (hμ : ∀ x, 0 ≤ μ x) (hν : ∀ x, 0 ≤ ν x)
+    (_hμsum : ∑ x, μ x = 1) (hνsum : ∑ x, ν x = 1) :
+    TransportPlan μ ν where
+  π := fun x y => μ x * ν y
+  nonneg := fun x y => mul_nonneg (hμ x) (hν y)
+  rowMarginal := fun x => by
+    rw [← Finset.mul_sum, hνsum, mul_one]
+  colMarginal := fun y => by
+    rw [← Finset.sum_mul, _hμsum, one_mul]
+
+/-- **Cost of the tensor plan** equals the μ,ν-expectation of `d`. -/
+theorem tensor_cost (μ ν : X → ℝ)
+    (hμ : ∀ x, 0 ≤ μ x) (hν : ∀ x, 0 ≤ ν x)
+    (hμsum : ∑ x, μ x = 1) (hνsum : ∑ x, ν x = 1)
+    (d : X → X → ℝ) :
+    (tensor μ ν hμ hν hμsum hνsum).cost d
+      = ∑ x, ∑ y, μ x * ν y * d x y := by
+  unfold cost tensor
+  rfl
+
 end TransportPlan
 
 /-! ## Dirac-delta measures and their Wasserstein distance -/
@@ -423,5 +447,56 @@ theorem wasserstein1_delta_eq_dist (d : X → X → ℝ) (x y : X) :
       exact hc.symm
   rw [hset]
   exact csInf_singleton _
+
+/-! ## Universal Wasserstein upper bound from a sup-norm on the cost -/
+
+/-- **Universal W_1 upper bound via the tensor plan**: for any two
+probability-like measures `μ, ν` (both non-negative, summing to `1`),
+the Wasserstein-1 distance is at most the `(μ ⊗ ν)`-expectation of
+the cost `d`. -/
+theorem wasserstein1_le_tensor_cost (d : X → X → ℝ)
+    (μ ν : X → ℝ)
+    (hμ : ∀ x, 0 ≤ μ x) (hν : ∀ x, 0 ≤ ν x)
+    (hμsum : ∑ x, μ x = 1) (hνsum : ∑ x, ν x = 1)
+    (hd : ∀ x y, 0 ≤ d x y) :
+    wasserstein1 d μ ν ≤ ∑ x, ∑ y, μ x * ν y * d x y := by
+  unfold wasserstein1
+  refine csInf_le ⟨0, ?_⟩ ?_
+  · rintro c ⟨q, rfl⟩
+    exact q.cost_nonneg d hd
+  · refine ⟨TransportPlan.tensor μ ν hμ hν hμsum hνsum, ?_⟩
+    exact TransportPlan.tensor_cost μ ν hμ hν hμsum hνsum d
+
+/-- **Universal W_1 bound by the supremum of `d`**: when `d` is
+bounded above by some `C ≥ 0` everywhere, `W_1(μ, ν) ≤ C` for any
+two probability measures. -/
+theorem wasserstein1_le_sup (d : X → X → ℝ) (C : ℝ) (hC : 0 ≤ C)
+    (hbound : ∀ x y, d x y ≤ C)
+    (hd : ∀ x y, 0 ≤ d x y)
+    (μ ν : X → ℝ)
+    (hμ : ∀ x, 0 ≤ μ x) (hν : ∀ x, 0 ≤ ν x)
+    (hμsum : ∑ x, μ x = 1) (hνsum : ∑ x, ν x = 1) :
+    wasserstein1 d μ ν ≤ C := by
+  calc wasserstein1 d μ ν
+      ≤ ∑ x, ∑ y, μ x * ν y * d x y :=
+        wasserstein1_le_tensor_cost d μ ν hμ hν hμsum hνsum hd
+    _ ≤ ∑ x, ∑ y, μ x * ν y * C := by
+        refine Finset.sum_le_sum ?_
+        intros x _
+        refine Finset.sum_le_sum ?_
+        intros y _
+        have hμν : 0 ≤ μ x * ν y := mul_nonneg (hμ x) (hν y)
+        exact mul_le_mul_of_nonneg_left (hbound x y) hμν
+    _ = C := by
+        have step1 : ∀ x : X, (∑ y : X, μ x * ν y * C) = μ x * C := by
+          intros x
+          rw [show (∑ y, μ x * ν y * C) = (μ x * C) * ∑ y, ν y by
+            rw [Finset.mul_sum]
+            refine Finset.sum_congr rfl ?_
+            intros y _; ring]
+          rw [hνsum, mul_one]
+        rw [show (∑ x, ∑ y, μ x * ν y * C) = ∑ x, μ x * C from
+              Finset.sum_congr rfl (fun x _ => step1 x)]
+        rw [← Finset.sum_mul, hμsum, one_mul]
 
 end InfraFormalization
