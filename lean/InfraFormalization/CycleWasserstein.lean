@@ -100,4 +100,42 @@ theorem wasserstein1_cycleDelta_eq_hypergraphDist
   rw [wasserstein1_delta_eq_dist]
   rfl
 
+/-- **Cycle-metric diameter is at most `n`**: any two vertices of
+`cycleHypergraph n` are within `n` graph steps of each other. Weak but
+easy; tighter bound `⌊n/2⌋` uses the cycle's two-way connectivity. -/
+theorem cycleMetric_le_card (n : ℕ) [NeZero n] (i j : Fin n) :
+    cycleMetric n i j ≤ n := by
+  unfold cycleMetric Hypergraph.dist
+  by_cases hreach : ((cycleHypergraph n).toSimpleGraph).Reachable i j
+  · obtain ⟨p, hp⟩ := hreach.exists_walk_length_eq_dist
+    have hpath : p.toPath.1.length < Fintype.card (Fin n) :=
+      SimpleGraph.Walk.IsPath.length_lt p.toPath.2
+    have hle : ((cycleHypergraph n).toSimpleGraph).dist i j
+        ≤ p.toPath.1.length :=
+      SimpleGraph.dist_le _
+    have hcard : Fintype.card (Fin n) = n := Fintype.card_fin n
+    have : ((cycleHypergraph n).toSimpleGraph).dist i j < n := by
+      calc ((cycleHypergraph n).toSimpleGraph).dist i j
+          ≤ p.toPath.1.length := hle
+        _ < Fintype.card (Fin n) := hpath
+        _ = n := hcard
+    exact_mod_cast le_of_lt this
+  · -- Unreachable: SimpleGraph.dist is 0 ≤ n.
+    rw [SimpleGraph.dist_eq_zero_of_not_reachable hreach]
+    exact_mod_cast Nat.zero_le _
+
+/-- **W_1 between any two probability measures on `cycleHypergraph n`
+is bounded by `n`.** Concrete diameter bound applied to the
+cycle-hypergraph Wasserstein metric — hypergraph-anchored universal
+upper bound. -/
+theorem wasserstein1_cycleMetric_le_card
+    (n : ℕ) [NeZero n]
+    (μ ν : Fin n → ℝ)
+    (hμ : ∀ i, 0 ≤ μ i) (hν : ∀ i, 0 ≤ ν i)
+    (hμsum : ∑ i, μ i = 1) (hνsum : ∑ i, ν i = 1) :
+    wasserstein1 (cycleMetric n) μ ν ≤ n := by
+  refine wasserstein1_le_sup (cycleMetric n) n ?_
+    (cycleMetric_le_card n) (cycleMetric_nonneg n) μ ν hμ hν hμsum hνsum
+  exact_mod_cast Nat.zero_le _
+
 end InfraFormalization
