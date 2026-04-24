@@ -117,6 +117,7 @@ import InfraFormalization.ScaledTrajectoryLimit
 import InfraFormalization.CurvedRicciExtensions
 import InfraFormalization.WarpedDiag2C2
 import InfraFormalization.WassersteinFinite
+import InfraFormalization.CycleWasserstein
 import InfraFormalization.CandidateRuleCatalog
 import InfraFormalization.RiemannianManifold
 import InfraFormalization.CausalGraphType
