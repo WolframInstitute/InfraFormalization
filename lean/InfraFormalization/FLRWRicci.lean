@@ -737,5 +737,53 @@ theorem flrwEinstein_0_0 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
   field_simp
   ring
 
+/-- **Second Friedmann equation LHS** (vacuum side): the diagonal
+Einstein tensor's spatial-spatial component on FLRW is
+
+  `G_{ii}(x) = R_{ii}(x) - ½ R(x) · g_{ii}(x) = -(2 a a'' + (a')²)`
+
+for `i ∈ {1, 2, 3}` (with `g_{ii} = a²`). Dividing by `g_{ii} = a²`
+gives the standard form `-(2 a''/a + (a'/a)²)`. With perfect-fluid
+stress-energy `T_{ii} = p · a²`, the EFE `G_{ii} + Λ g_{ii} = 8π G
+T_{ii}` gives the second Friedmann equation
+`2 a''/a + (a'/a)² = -8π G p + Λ`. -/
+theorem flrwEinstein_1_1 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
+    (hv : FLRWValid a x) :
+    (flrwConnection a da dda).ricci x 1 1
+        - (1 / 2) * flrwScalarCurvatureClosed a da dda x * (a (x 0))^2
+      = -(2 * a (x 0) * dda (x 0) + (da (x 0))^2) := by
+  have ha_ne : a (x 0) ≠ 0 := hv
+  have ha_sq_ne : (a (x 0))^2 ≠ 0 := pow_ne_zero _ ha_ne
+  rw [flrwRicci_1_1 a da dda x hv]
+  unfold flrwScalarCurvatureClosed
+  field_simp
+  ring
+
+/-- **Spatial isotropy of `G_{ii}`** — by SO(3) symmetry, `G_{22}` and
+`G_{33}` have the same closed form as `G_{11}`. -/
+theorem flrwEinstein_2_2 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
+    (hv : FLRWValid a x) :
+    (flrwConnection a da dda).ricci x 2 2
+        - (1 / 2) * flrwScalarCurvatureClosed a da dda x * (a (x 0))^2
+      = -(2 * a (x 0) * dda (x 0) + (da (x 0))^2) := by
+  have ha_ne : a (x 0) ≠ 0 := hv
+  have ha_sq_ne : (a (x 0))^2 ≠ 0 := pow_ne_zero _ ha_ne
+  rw [flrwRicci_2_2 a da dda x hv]
+  unfold flrwScalarCurvatureClosed
+  field_simp
+  ring
+
+theorem flrwEinstein_3_3 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
+    (hv : FLRWValid a x) :
+    (flrwConnection a da dda).ricci x 3 3
+        - (1 / 2) * flrwScalarCurvatureClosed a da dda x * (a (x 0))^2
+      = -(2 * a (x 0) * dda (x 0) + (da (x 0))^2) := by
+  have ha_ne : a (x 0) ≠ 0 := hv
+  have ha_sq_ne : (a (x 0))^2 ≠ 0 := pow_ne_zero _ ha_ne
+  rw [flrwRicci_3_3 a da dda x hv]
+  unfold flrwScalarCurvatureClosed
+  field_simp
+  ring
+
 end Curvature
 end InfraFormalization
