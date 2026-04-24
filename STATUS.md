@@ -161,8 +161,12 @@ None of these are substantively finished:
   the underlying spectral convergences are real but the wrapper is
   cosmetic. Task #72 reopened.
 - **B10 Ricci symmetry for Levi-Civita** (`RicciSymmetry.lean`):
-  trivial flat-sector proof + conditional `intro h; exact h`-level
-  rewrite. Task #30 reopened.
+  **Non-flat witness landed**: `warpedDiag2_leviCivita_ricci_symm`
+  proves Ricci symmetry on the warped 2D Levi-Civita connection with
+  non-vanishing `R_{00}`, `R_{11}` (and zero off-diagonal) from the
+  closed-form components in `WarpedDiag2C2.lean`. General
+  Levi-Civita case (metric compatibility → pair-swap symmetry) still
+  pending. Task #30 in progress.
 - **B11 contracted 2nd Bianchi**: reused the pre-existing flat
   `flatConnection_einstein_divergence_zero`; no non-flat content.
   Task #32 reopened.

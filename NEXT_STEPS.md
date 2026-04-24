@@ -110,7 +110,7 @@ Every theorem above depends only on `{propext, Classical.choice, Quot.sound}`. N
 - [ ] **B7** — FLRW Ricci + Einstein equations with perfect fluid.
 - [x] **B8** — Reissner-Nordström metric: `rnPartial M Q : PartialMetricData 4` on exterior validity domain; attached origin-obligation `rn_from_hypergraph M Q` inhabited via `rn_from_hypergraph_proved`.
 - [ ] **B9** — Kerr metric.
-- [ ] **B10** — Ricci symmetry for Levi-Civita connection.
+- [~] **B10 (in progress)** — Ricci symmetry for Levi-Civita connection. Non-flat witness landed on `warpedDiag2` (`warpedDiag2_leviCivita_ricci_symm` / `warpedDiag2_ricci_symm`): diagonal terms are non-zero closed-form expressions, off-diagonal terms are two independently-computed zeros. Supersedes the flat-only cosmetic closure. General Levi-Civita case (metric compatibility + Riemann pair-swap symmetry) pending.
 - [ ] **B11** — second Bianchi identity `∇_μ G^{μν} = 0`.
 
 ### Bundle machinery (C-group; Mathlib gap)
