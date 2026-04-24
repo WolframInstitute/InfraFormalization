@@ -100,18 +100,6 @@ theorem wasserstein1_cycleDelta_eq_hypergraphDist
   rw [wasserstein1_delta_eq_dist]
   rfl
 
-/-- **Sharp scaled W_1 between two cycle Dirac deltas**:
-`W_1_scaled(δ_i, δ_j) = d(i,j) / n` on `cycleHypergraph n`, where `d`
-is the hypergraph graph distance. Combines the abstract δ identity
-with the `/n` scaling — the entire range `[0, ⌊n/2⌋/n]` of observed
-W_1_scaled values is indexed by hypergraph-graph distance. -/
-theorem wasserstein1_cycleDelta_scaled_eq
-    (n : ℕ) [NeZero n] (i j : Fin n) :
-    wasserstein1 (cycleMetricScaled n) (delta i) (delta j)
-      = ((cycleHypergraph n).dist i j : ℝ) / n := by
-  rw [wasserstein1_delta_eq_dist]
-  rfl
-
 /-- **Cycle-metric diameter is at most `n`**: any two vertices of
 `cycleHypergraph n` are within `n` graph steps of each other. Weak but
 easy; tighter bound `⌊n/2⌋` uses the cycle's two-way connectivity. -/
@@ -188,6 +176,18 @@ theorem wasserstein1_cycleMetricScaled_le_one
   wasserstein1_le_sup (cycleMetricScaled n) 1 zero_le_one
     (cycleMetricScaled_le_one n) (cycleMetricScaled_nonneg n)
     μ ν hμ hν hμsum hνsum
+
+/-- **Sharp scaled W_1 between two cycle Dirac deltas**:
+`W_1_scaled(δ_i, δ_j) = d(i,j) / n` on `cycleHypergraph n`, where `d`
+is the hypergraph graph distance. Combines the abstract δ identity
+with the `/n` scaling — the entire range `[0, ⌊n/2⌋/n]` of observed
+W_1_scaled values is indexed by hypergraph-graph distance. -/
+theorem wasserstein1_cycleDelta_scaled_eq
+    (n : ℕ) [NeZero n] (i j : Fin n) :
+    wasserstein1 (cycleMetricScaled n) (delta i) (delta j)
+      = ((cycleHypergraph n).dist i j : ℝ) / n := by
+  rw [wasserstein1_delta_eq_dist]
+  rfl
 
 /-! ## Sharp O(1/n) Wasserstein identity for adjacent Dirac measures -/
 
@@ -452,5 +452,38 @@ theorem wasserstein1_shiftIter_le (n : ℕ) [NeZero n] (hn : 2 ≤ n) :
         _ ≤ (k : ℝ) / n + 1 / n := by linarith
         _ = ((k : ℝ) + 1) / n := by rw [hsum_cast]
         _ = ((k + 1 : ℕ) : ℝ) / n := by push_cast; ring
+
+/-- **Physical-observable shift-rate corollary**: for any probability
+measure `μ` on the cycle and any `L`-Lipschitz observable `f` (against
+the scaled cycle metric), the change in expectation under `k` forward
+shifts is bounded by `L · k / n`. Combines `wasserstein1_lipschitz_bound`
+(KR one-direction) with `wasserstein1_shiftIter_le` (k-step shift rate).
+Every Lipschitz observable has expectation variation O(k/n) under k-step
+cyclic shifts — the sharpest expectation-level A7 statement currently
+in the library. -/
+theorem expectationDiff_shiftIter_le
+    (n : ℕ) [NeZero n] (hn : 2 ≤ n)
+    (μ : Fin n → ℝ) (hμ : ∀ i, 0 ≤ μ i) (hμsum : ∑ i, μ i = 1)
+    (k : ℕ) (f : Fin n → ℝ) (L : ℝ) (hL : 0 ≤ L)
+    (hfLip : ∀ i j, |f i - f j| ≤ L * cycleMetricScaled n i j) :
+    |(∑ i, μ i * f i) - (∑ i, shiftIter n μ k i * f i)|
+      ≤ L * (k : ℝ) / n := by
+  have hshift_nn : ∀ i, 0 ≤ shiftIter n μ k i := shiftIter_nonneg n μ hμ k
+  have hshift_sum : ∑ i, shiftIter n μ k i = 1 :=
+    shiftIter_total n μ hμsum k
+  have hkr := wasserstein1_lipschitz_bound (cycleMetricScaled n)
+    (cycleMetricScaled_nonneg n)
+    μ (shiftIter n μ k)
+    hμ hshift_nn hμsum hshift_sum
+    f L hL hfLip
+  have hshift_rate :
+      wasserstein1 (cycleMetricScaled n) μ (shiftIter n μ k)
+        ≤ (k : ℝ) / n :=
+    wasserstein1_shiftIter_le n hn k μ hμ hμsum
+  calc |(∑ i, μ i * f i) - (∑ i, shiftIter n μ k i * f i)|
+      ≤ L * wasserstein1 (cycleMetricScaled n) μ (shiftIter n μ k) := hkr
+    _ ≤ L * ((k : ℝ) / n) := by
+        exact mul_le_mul_of_nonneg_left hshift_rate hL
+    _ = L * (k : ℝ) / n := by ring
 
 end InfraFormalization
