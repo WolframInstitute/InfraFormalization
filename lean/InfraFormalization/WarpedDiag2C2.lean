@@ -185,5 +185,58 @@ theorem warpedDiag2_ricci_1_1 (x : Fin 2 → ℝ) :
       riemann_diag_zero warpedDiag2_C2.leviCivitaConnection x 1 1 1]
   ring
 
+/-- **Christoffel `Γ¹_{10}(x) = x₀ / (1 + x₀²)`** via lower-index
+symmetry of `Γ¹_{01}`. Auxiliary for `R^1_{010}`. -/
+theorem warpedDiag2_christoffel_1_1_0 (x : Fin 2 → ℝ) :
+    warpedDiag2.christoffel x 1 1 0 = x 0 / (1 + (x 0)^2) := by
+  rw [warpedDiag2.christoffel_symm x 1 1 0, warpedDiag2_christoffel_1_0_1]
+
+/-- **Christoffel `Γ⁰_{10}(x) = 0`** via lower-index symmetry of `Γ⁰_{01}`. -/
+theorem warpedDiag2_christoffel_0_1_0 (x : Fin 2 → ℝ) :
+    warpedDiag2.christoffel x 0 1 0 = 0 := by
+  rw [warpedDiag2.christoffel_symm x 0 1 0, warpedDiag2_christoffel_0_0_1]
+
+/-- **Riemann `R^1_{010}(x) = -1 / (1 + x₀²)²`**. Computed directly
+from the Christoffel closed forms + `dchristoffel_0_1_1_0 = (1 - x₀²)/(1 + x₀²)²`. -/
+theorem warpedDiag2_riemann_1_0_1_0 (x : Fin 2 → ℝ) :
+    warpedDiag2_C2.leviCivitaConnection.riemann x 1 0 1 0
+      = -1 / (1 + (x 0)^2)^2 := by
+  unfold ConnectionData.riemann
+  simp only [MetricDataC2.leviCivitaConnection]
+  have h_ne := one_plus_sq_ne_zero x
+  -- dΓ 1 x 1 0 0 = 0.
+  rw [show warpedDiag2_C2.dchristoffel 1 x 1 0 0 = 0 from
+        warpedDiag2_dchristoffel_1_1_0_0 x]
+  -- dΓ 0 x 1 1 0 = (1 - x₀²) / (1 + x₀²)².
+  rw [show warpedDiag2_C2.dchristoffel 0 x 1 1 0
+        = (1 - (x 0)^2) / (1 + (x 0)^2)^2 from
+        warpedDiag2_dchristoffel_0_1_1_0 x]
+  -- Quadratic terms.
+  simp only [Fin.sum_univ_two]
+  rw [show warpedDiag2_C2.toMetricData.christoffel x 0 0 0 = 0 from
+        warpedDiag2_christoffel_0_0_0 x]
+  rw [show warpedDiag2_C2.toMetricData.christoffel x 0 1 0 = 0 from
+        warpedDiag2_christoffel_0_1_0 x]
+  rw [show warpedDiag2_C2.toMetricData.christoffel x 1 0 0 = 0 from
+        warpedDiag2_christoffel_1_0_0 x]
+  rw [show warpedDiag2_C2.toMetricData.christoffel x 1 0 1 = x 0 / (1 + (x 0)^2)
+        from warpedDiag2_christoffel_1_0_1 x]
+  rw [show warpedDiag2_C2.toMetricData.christoffel x 1 1 0 = x 0 / (1 + (x 0)^2)
+        from warpedDiag2_christoffel_1_1_0 x]
+  rw [show warpedDiag2_C2.toMetricData.christoffel x 1 1 1 = 0 from
+        warpedDiag2_christoffel_1_1_1 x]
+  field_simp
+  ring
+
+/-- **Ricci `R_{00}(x) = -1 / (1 + x₀²)²`** on `warpedDiag2`. -/
+theorem warpedDiag2_ricci_0_0 (x : Fin 2 → ℝ) :
+    warpedDiag2_C2.leviCivitaConnection.ricci x 0 0
+      = -1 / (1 + (x 0)^2)^2 := by
+  unfold ConnectionData.ricci
+  rw [Fin.sum_univ_two]
+  rw [riemann_diag_zero warpedDiag2_C2.leviCivitaConnection x 0 0 0,
+      warpedDiag2_riemann_1_0_1_0 x]
+  ring
+
 end Curvature
 end InfraFormalization
