@@ -1,5 +1,6 @@
 Added or done since the 2026-04-23 weekly update (newest first):
 
+- **MASTER CLOSURE**: all_obligations_hold — bundles the 6 obligation-level closures: ScaleTrichotomy (IT6), DimensionCompatibility (ID6), FubiniStudyLimit (IQ6), EMEPersistence (IQ8), PathIntegral (IQ9), ReverseEngineeringObligationRefined (IR7). Zero remaining open obligations at this level.
 - **TASK CLOSED #144 ID6**: DimensionCompatibilityObligation holds. V(v, r) = 2r + 1 exactly on cycleHypergraph n for every n ≥ 3, r with 2r+1 ≤ n, v (dimensionCompatibilityObligation_holds, cycleHypergraph_ballVolume_exact). Upper bound via walk structural induction (cycleHypergraph_walk_in_shift) + composition lemmas (iterSucc_after_succ, iterPred_after_pred, iterPred_succ_after_succ, iterSucc_succ_after_pred). Lower bound via forward/backward shift Finsets. All axiom-clean. First substantial content-Prop ID closure at the ball-volume level.
 - **ID6 GENERAL LOWER BOUND CLOSED**: V(v, r) ≥ 2r + 1 on cycleHypergraph n for every n ≥ 2, r with 2r+1 ≤ n (cycleHypergraph_ballVolume_ge, dimensionCompatibilityObligation_lower_bound).
 - ID6 general-r: forward/backward families disjoint when i ≤ r, 1 ≤ j ≤ r, 2r+1 ≤ n (cycleHypergraph_iterSucc_ne_iterPred). Via .val formulas and ModEq cancellation.
