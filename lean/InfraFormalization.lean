@@ -98,6 +98,7 @@ import InfraFormalization.RuleDimensionBounds
 import InfraFormalization.FiberedGraph
 import InfraFormalization.HypergraphConnection
 import InfraFormalization.MultiwayCausalGraph
+import InfraFormalization.CandidateRuleCatalog
 import InfraFormalization.CausalGraphType
 import InfraFormalization.CausalFoliation
 import InfraFormalization.BranchialFinite

@@ -17,6 +17,7 @@ Never acceptable:
 import InfraFormalization.Demo
 import InfraFormalization.HypergraphConnection
 import InfraFormalization.MultiwayCausalGraph
+import InfraFormalization.CandidateRuleCatalog
 import InfraFormalization.Branchial
 import InfraFormalization.Growth
 import InfraFormalization.ParallelSchedule
@@ -729,3 +730,11 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.MultiwayCausalGraph.empty
 #print axioms InfraFormalization.MultiwayCausalGraph.empty_causalEdge
 #print axioms InfraFormalization.MultiwayCausalGraph.empty_s₀
+#print axioms InfraFormalization.CandidateCatalog.gorardNamedRule
+#print axioms InfraFormalization.CandidateCatalog.gorardNamedRule_isConservative
+#print axioms InfraFormalization.CandidateCatalog.edgeDoublingRule_not_conservative
+#print axioms InfraFormalization.CandidateCatalog.edgeAppendRule_not_conservative
+#print axioms InfraFormalization.CandidateCatalog.tripleExpansionRule_not_conservative
+#print axioms InfraFormalization.CandidateCatalog.trivialIdentityRule_isConservative
+#print axioms InfraFormalization.CandidateCatalog.catalog_conservative_rules
+#print axioms InfraFormalization.CandidateCatalog.catalog_non_conservative_rules
