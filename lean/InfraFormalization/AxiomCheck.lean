@@ -15,6 +15,7 @@ Never acceptable:
 -/
 
 import InfraFormalization.Demo
+import InfraFormalization.HypergraphConnection
 import InfraFormalization.Branchial
 import InfraFormalization.Growth
 import InfraFormalization.ParallelSchedule
@@ -719,3 +720,7 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.expectationValue_eigenvector
 #print axioms InfraFormalization.branchialAdjObservable
 #print axioms InfraFormalization.BranchialObservable.expectationValue_real
+#print axioms InfraFormalization.HypergraphConnection.flat
+#print axioms InfraFormalization.HypergraphConnection.flat_isSymmetric
+#print axioms InfraFormalization.HypergraphConnection.flat_transportWalk_eq_one
+#print axioms InfraFormalization.HypergraphConnection.flat_isFlat

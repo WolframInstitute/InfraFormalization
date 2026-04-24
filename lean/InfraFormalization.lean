@@ -96,6 +96,7 @@ import InfraFormalization.HypergraphDistance
 import InfraFormalization.HypergraphMeasure
 import InfraFormalization.RuleDimensionBounds
 import InfraFormalization.FiberedGraph
+import InfraFormalization.HypergraphConnection
 import InfraFormalization.CausalGraphType
 import InfraFormalization.CausalFoliation
 import InfraFormalization.BranchialFinite
