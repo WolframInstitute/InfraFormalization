@@ -238,5 +238,101 @@ theorem warpedDiag2_ricci_0_0 (x : Fin 2 → ℝ) :
       warpedDiag2_riemann_1_0_1_0 x]
   ring
 
+/-- **Riemann `R^0_{001}(x) = 0`**. The `σ = μ = 0` contraction in the
+`Γ ρ μ λ · Γ λ ν σ − Γ ρ ν λ · Γ λ μ σ` part cancels algebraically,
+while both `dΓ` terms vanish because the Christoffels involved
+(`Γ⁰_{00}` and `Γ⁰_{01}`) are identically zero. -/
+theorem warpedDiag2_riemann_0_0_0_1 (x : Fin 2 → ℝ) :
+    warpedDiag2_C2.leviCivitaConnection.riemann x 0 0 0 1 = 0 := by
+  unfold ConnectionData.riemann
+  simp only [MetricDataC2.leviCivitaConnection]
+  rw [show warpedDiag2_C2.dchristoffel 0 x 0 1 0 = 0 by
+        unfold MetricDataC2.dchristoffel
+        simp only [warpedDiag2_C2, warpedDiag2, Fin.sum_univ_two]; simp]
+  rw [show warpedDiag2_C2.dchristoffel 1 x 0 0 0 = 0 by
+        unfold MetricDataC2.dchristoffel
+        simp only [warpedDiag2_C2, warpedDiag2, Fin.sum_univ_two]; simp]
+  simp only [Fin.sum_univ_two]
+  rw [show warpedDiag2_C2.toMetricData.christoffel x 0 0 0 = 0 from
+        warpedDiag2_christoffel_0_0_0 x]
+  rw [show warpedDiag2_C2.toMetricData.christoffel x 0 1 1 = -(x 0) from
+        warpedDiag2_christoffel_0_1_1 x]
+  rw [show warpedDiag2_C2.toMetricData.christoffel x 0 1 0 = 0 from
+        warpedDiag2_christoffel_0_1_0 x]
+  rw [show warpedDiag2_C2.toMetricData.christoffel x 1 1 0 = x 0 / (1 + (x 0)^2)
+        from warpedDiag2_christoffel_1_1_0 x]
+  rw [show warpedDiag2_C2.toMetricData.christoffel x 0 0 1 = 0 from
+        warpedDiag2_christoffel_0_0_1 x]
+  rw [show warpedDiag2_C2.toMetricData.christoffel x 1 0 0 = 0 from
+        warpedDiag2_christoffel_1_0_0 x]
+  ring
+
+/-- **Ricci `R_{01}(x) = 0`** on `warpedDiag2` — off-diagonal Ricci
+vanishes as expected for a diagonal Einstein metric. -/
+theorem warpedDiag2_ricci_0_1 (x : Fin 2 → ℝ) :
+    warpedDiag2_C2.leviCivitaConnection.ricci x 0 1 = 0 := by
+  unfold ConnectionData.ricci
+  rw [Fin.sum_univ_two]
+  rw [warpedDiag2_riemann_0_0_0_1 x,
+      riemann_diag_zero warpedDiag2_C2.leviCivitaConnection x 1 0 1]
+  ring
+
+/-- **Riemann `R^1_{110}(x) = 0`**. -/
+theorem warpedDiag2_riemann_1_1_1_0 (x : Fin 2 → ℝ) :
+    warpedDiag2_C2.leviCivitaConnection.riemann x 1 1 1 0 = 0 := by
+  unfold ConnectionData.riemann
+  simp only [MetricDataC2.leviCivitaConnection]
+  rw [show warpedDiag2_C2.dchristoffel 1 x 1 0 1 = 0 by
+        unfold MetricDataC2.dchristoffel
+        simp only [warpedDiag2_C2, warpedDiag2, Fin.sum_univ_two]; simp]
+  rw [show warpedDiag2_C2.dchristoffel 0 x 1 1 1 = 0 by
+        unfold MetricDataC2.dchristoffel
+        simp only [warpedDiag2_C2, warpedDiag2, Fin.sum_univ_two]; simp]
+  simp only [Fin.sum_univ_two]
+  rw [show warpedDiag2_C2.toMetricData.christoffel x 1 1 0 = x 0 / (1 + (x 0)^2)
+        from warpedDiag2_christoffel_1_1_0 x]
+  rw [show warpedDiag2_C2.toMetricData.christoffel x 0 0 1 = 0 from
+        warpedDiag2_christoffel_0_0_1 x]
+  rw [show warpedDiag2_C2.toMetricData.christoffel x 1 1 1 = 0 from
+        warpedDiag2_christoffel_1_1_1 x]
+  rw [show warpedDiag2_C2.toMetricData.christoffel x 1 0 0 = 0 from
+        warpedDiag2_christoffel_1_0_0 x]
+  rw [show warpedDiag2_C2.toMetricData.christoffel x 0 1 1 = -(x 0) from
+        warpedDiag2_christoffel_0_1_1 x]
+  rw [show warpedDiag2_C2.toMetricData.christoffel x 1 0 1 = x 0 / (1 + (x 0)^2)
+        from warpedDiag2_christoffel_1_0_1 x]
+  ring
+
+/-- **Ricci `R_{10}(x) = 0`** on `warpedDiag2`. -/
+theorem warpedDiag2_ricci_1_0 (x : Fin 2 → ℝ) :
+    warpedDiag2_C2.leviCivitaConnection.ricci x 1 0 = 0 := by
+  unfold ConnectionData.ricci
+  rw [Fin.sum_univ_two]
+  rw [riemann_diag_zero warpedDiag2_C2.leviCivitaConnection x 0 1 0,
+      warpedDiag2_riemann_1_1_1_0 x]
+  ring
+
+/-- **Einstein-manifold identity on `warpedDiag2`**:
+`R_{μν}(x) = K(x) · g_{μν}(x)` with Gaussian curvature
+`K(x) = -1 / (1 + x₀²)²`. Every 2D manifold is Einstein — Ricci is
+proportional to the metric — and `warpedDiag2` realises this with a
+non-constant negative curvature. -/
+theorem warpedDiag2_einstein (x : Fin 2 → ℝ) (μ ν : Fin 2) :
+    warpedDiag2_C2.leviCivitaConnection.ricci x μ ν
+      = (-1 / (1 + (x 0)^2)^2) * warpedDiag2.g x μ ν := by
+  have h_ne := one_plus_sq_ne_zero x
+  have h_sq_ne : ((1 : ℝ) + (x 0)^2)^2 ≠ 0 := pow_ne_zero _ h_ne
+  match μ, ν with
+  | 0, 0 => rw [warpedDiag2_ricci_0_0 x]; simp [warpedDiag2]
+  | 0, 1 => rw [warpedDiag2_ricci_0_1 x]; simp [warpedDiag2]
+  | 1, 0 => rw [warpedDiag2_ricci_1_0 x]; simp [warpedDiag2]
+  | 1, 1 =>
+    rw [warpedDiag2_ricci_1_1 x]
+    show -1 / (1 + (x 0)^2) = -1 / (1 + (x 0)^2)^2 * warpedDiag2.g x 1 1
+    simp only [warpedDiag2]
+    simp only [show ((1 : Fin 2) = 0) = False from by decide,
+               false_and, and_true, if_false, if_true, true_and]
+    field_simp
+
 end Curvature
 end InfraFormalization
