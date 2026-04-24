@@ -487,3 +487,4 @@ theorem expectationDiff_shiftIter_le
     _ = L * (k : ℝ) / n := by ring
 
 end InfraFormalization
+
