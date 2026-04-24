@@ -100,6 +100,18 @@ theorem wasserstein1_cycleDelta_eq_hypergraphDist
   rw [wasserstein1_delta_eq_dist]
   rfl
 
+/-- **Sharp scaled W_1 between two cycle Dirac deltas**:
+`W_1_scaled(δ_i, δ_j) = d(i,j) / n` on `cycleHypergraph n`, where `d`
+is the hypergraph graph distance. Combines the abstract δ identity
+with the `/n` scaling — the entire range `[0, ⌊n/2⌋/n]` of observed
+W_1_scaled values is indexed by hypergraph-graph distance. -/
+theorem wasserstein1_cycleDelta_scaled_eq
+    (n : ℕ) [NeZero n] (i j : Fin n) :
+    wasserstein1 (cycleMetricScaled n) (delta i) (delta j)
+      = ((cycleHypergraph n).dist i j : ℝ) / n := by
+  rw [wasserstein1_delta_eq_dist]
+  rfl
+
 /-- **Cycle-metric diameter is at most `n`**: any two vertices of
 `cycleHypergraph n` are within `n` graph steps of each other. Weak but
 easy; tighter bound `⌊n/2⌋` uses the cycle's two-way connectivity. -/
