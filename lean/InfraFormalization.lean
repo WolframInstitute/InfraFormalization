@@ -104,6 +104,7 @@ import InfraFormalization.ScaledConnectionLimit
 import InfraFormalization.RicciSymmetry
 import InfraFormalization.DiscreteGaugeField
 import InfraFormalization.CausalSetComparison
+import InfraFormalization.RuleSignatureScreens
 import InfraFormalization.CandidateRuleCatalog
 import InfraFormalization.RiemannianManifold
 import InfraFormalization.CausalGraphType
