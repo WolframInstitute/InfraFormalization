@@ -168,5 +168,59 @@ theorem flrwG_lorentzian_pointwise (a : ℝ → ℝ) (x : Fin 4 → ℝ)
     unfold flrwG
     simp [h]
 
+/-- **Generic collapse helper for FLRW Christoffel sums.** Since
+`flrwGinv` is diagonal, the sum over `σ` collapses to the `σ = ρ`
+term. -/
+theorem flrwChristoffel_collapse (a da : ℝ → ℝ) (x : Fin 4 → ℝ)
+    (ρ μ ν : Fin 4) :
+    (flrwPartial a da).christoffel x ρ μ ν
+      = (1 / 2) * flrwGinv a x ρ ρ *
+          (flrwDg a da μ x ρ ν + flrwDg a da ν x ρ μ - flrwDg a da ρ x μ ν) := by
+  unfold PartialMetricData.christoffel
+  simp only [flrwPartial]
+  rw [Finset.sum_eq_single ρ]
+  · ring
+  · intros σ _ hσ
+    have : flrwGinv a x ρ σ = 0 := by
+      unfold flrwGinv
+      simp [Ne.symm hσ]
+    rw [this, zero_mul]
+  · intro hne
+    exact absurd (Finset.mem_univ _) hne
+
+/-- **FLRW Christoffel `Γ⁰_{11} = a(t) a'(t)`** — the classical
+"Hubble-like" time-index-from-spatial Christoffel. Non-vanishing
+whenever `a'(t) ≠ 0` (i.e. the universe is actually expanding or
+contracting). -/
+theorem flrwChristoffel_0_11 (a da : ℝ → ℝ) (x : Fin 4 → ℝ) :
+    (flrwPartial a da).christoffel x 0 1 1 = a (x 0) * da (x 0) := by
+  rw [flrwChristoffel_collapse]
+  -- ginv_00 = -1; dg terms: ∂_1 g_{01} + ∂_1 g_{01} - ∂_0 g_{11}
+  -- = 0 + 0 - 2 a da
+  unfold flrwGinv flrwDg
+  simp
+  ring
+
+/-- **FLRW Christoffel `Γ¹_{01} = a'(t)/a(t)`** = Hubble rate `H(t)`.
+The canonical FLRW Hubble-rate Christoffel, non-vanishing whenever
+`a'(t) ≠ 0` with `a(t) ≠ 0`. -/
+theorem flrwChristoffel_1_01 (a da : ℝ → ℝ) (x : Fin 4 → ℝ)
+    (hv : FLRWValid a x) :
+    (flrwPartial a da).christoffel x 1 0 1 = da (x 0) / a (x 0) := by
+  rw [flrwChristoffel_collapse]
+  unfold flrwGinv flrwDg
+  have ha_ne : a (x 0) ≠ 0 := hv
+  have ha_sq_ne : (a (x 0))^2 ≠ 0 := pow_ne_zero 2 ha_ne
+  simp
+  field_simp
+
+/-- **FLRW Christoffel `Γ¹_{11} = 0`** — pure spatial Christoffel for
+the spatially-flat FLRW vanishes (in comoving coordinates). -/
+theorem flrwChristoffel_1_11 (a da : ℝ → ℝ) (x : Fin 4 → ℝ) :
+    (flrwPartial a da).christoffel x 1 1 1 = 0 := by
+  rw [flrwChristoffel_collapse]
+  unfold flrwGinv flrwDg
+  simp
+
 end Curvature
 end InfraFormalization
