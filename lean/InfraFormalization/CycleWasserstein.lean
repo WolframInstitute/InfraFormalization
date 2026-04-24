@@ -214,4 +214,134 @@ theorem wasserstein1_cycleDelta_succ
   rw [wasserstein1_delta_eq_dist]
   exact cycleMetricScaled_succ_eq n hn v
 
+/-! ## Measure-level O(1/n) bound: shift plan for general probability measures -/
+
+/-- **Shift-forward measure** `shiftMeasure n μ j := μ (j + 1)`.
+Rotates the measure one step on the cycle. As `Fin n` addition is
+modular, this is a bijection-induced pushforward, preserving total
+mass. -/
+noncomputable def shiftMeasure (n : ℕ) [NeZero n] (μ : Fin n → ℝ) :
+    Fin n → ℝ :=
+  fun j => μ (j + 1)
+
+theorem shiftMeasure_nonneg (n : ℕ) [NeZero n]
+    {μ : Fin n → ℝ} (hμ : ∀ i, 0 ≤ μ i) (j : Fin n) :
+    0 ≤ shiftMeasure n μ j := hμ _
+
+/-- **Total mass is preserved** by `shiftMeasure` (reindexing via the
+bijection `j ↦ j + 1` on `Fin n`). -/
+theorem shiftMeasure_total (n : ℕ) [NeZero n] (μ : Fin n → ℝ) :
+    ∑ j : Fin n, shiftMeasure n μ j = ∑ i : Fin n, μ i := by
+  unfold shiftMeasure
+  exact Equiv.sum_comp (Equiv.addRight (1 : Fin n)) μ
+
+/-- **Shift plan** between `μ` and `shiftMeasure n μ` on
+`cycleHypergraph n`: puts mass `μ i` on the `(i, i-1)` slot and zero
+elsewhere. Row marginal at `i` picks up the `j = i - 1` slot only,
+giving `μ i`; column marginal at `j` picks up the `i = j + 1` slot
+only, giving `μ (j+1) = shiftMeasure μ j`. -/
+noncomputable def shiftPlan (n : ℕ) [NeZero n]
+    (μ : Fin n → ℝ) (hμ : ∀ i, 0 ≤ μ i) :
+    TransportPlan μ (shiftMeasure n μ) where
+  π := fun i j => if j + 1 = i then μ i else 0
+  nonneg := fun i j => by
+    by_cases h : j + 1 = i
+    · simp [h, hμ i]
+    · simp [h]
+  rowMarginal := fun i => by
+    rw [Finset.sum_eq_single (i - 1)]
+    · have : (i - 1) + 1 = i := by abel
+      simp [this]
+    · intros j _ hj
+      have : j + 1 ≠ i := by
+        intro heq
+        apply hj
+        have : j = i - 1 := by rw [← heq]; abel
+        exact this
+      simp [this]
+    · intro hne
+      exact absurd (Finset.mem_univ _) hne
+  colMarginal := fun j => by
+    rw [Finset.sum_eq_single (j + 1)]
+    · simp
+      rfl
+    · intros i _ hi
+      have : j + 1 ≠ i := fun heq => hi heq.symm
+      simp [this]
+    · intro hne
+      exact absurd (Finset.mem_univ _) hne
+
+/-- **Cost of the shift plan under `cycleMetric` is at most the
+total mass**: each unit of mass moves exactly one adjacent step
+(distance 1), so the total cost equals the sum of `μ`. -/
+theorem shiftPlan_cost_cycleMetric
+    (n : ℕ) [NeZero n] (hn : 2 ≤ n)
+    (μ : Fin n → ℝ) (hμ : ∀ i, 0 ≤ μ i) :
+    (shiftPlan n μ hμ).cost (cycleMetric n) = ∑ i, μ i := by
+  unfold TransportPlan.cost shiftPlan
+  simp only
+  refine Finset.sum_congr rfl ?_
+  intros i _
+  rw [Finset.sum_eq_single (i - 1)]
+  · have hsum : (i - 1) + 1 = i := by abel
+    have hadj : cycleMetric n i (i - 1) = 1 := by
+      have h1 : cycleMetric n (i - 1) ((i - 1) + 1) = 1 :=
+        cycleMetric_succ_eq_one n hn (i - 1)
+      rw [hsum] at h1
+      rw [cycleMetric_symm]
+      exact h1
+    rw [if_pos hsum, hadj, mul_one]
+  · intros j _ hj
+    have : j + 1 ≠ i := by
+      intro heq
+      apply hj
+      have : j = i - 1 := by rw [← heq]; abel
+      exact this
+    rw [if_neg this, zero_mul]
+  · intro hne
+    exact absurd (Finset.mem_univ _) hne
+
+/-- **Cost of the shift plan under `cycleMetric` is 1** for
+probability measures. -/
+theorem shiftPlan_cost_cycleMetric_one
+    (n : ℕ) [NeZero n] (hn : 2 ≤ n)
+    (μ : Fin n → ℝ) (hμ : ∀ i, 0 ≤ μ i) (hμsum : ∑ i, μ i = 1) :
+    (shiftPlan n μ hμ).cost (cycleMetric n) = 1 := by
+  rw [shiftPlan_cost_cycleMetric n hn μ hμ]
+  exact hμsum
+
+/-- **W_1 under the scaled cycle metric, between any probability
+measure and its shift, is at most `1/n`.** Full A7 measure-level
+O(1/n) rate: for any probability measure `μ`,
+`W_1_scaled(μ, μ ∘ (·+1)) ≤ 1/n`. Proof: instantiate the shift plan,
+compute cost = `1` unscaled = `1/n` scaled, apply `csInf_le`. -/
+theorem wasserstein1_shiftMeasure_le (n : ℕ) [NeZero n] (hn : 2 ≤ n)
+    (μ : Fin n → ℝ) (hμ : ∀ i, 0 ≤ μ i) (hμsum : ∑ i, μ i = 1) :
+    wasserstein1 (cycleMetricScaled n) μ (shiftMeasure n μ) ≤ 1 / n := by
+  unfold wasserstein1
+  refine csInf_le ⟨0, ?_⟩ ?_
+  · rintro c ⟨q, rfl⟩
+    exact q.cost_nonneg (cycleMetricScaled n) (cycleMetricScaled_nonneg n)
+  · refine ⟨shiftPlan n μ hμ, ?_⟩
+    -- cost_scaled = (1/n) · cost_unscaled = (1/n) · 1 = 1/n
+    unfold TransportPlan.cost cycleMetricScaled
+    -- ∑_i ∑_j π(i,j) * (d i j / n) = (∑_i ∑_j π(i,j) * d i j) / n
+    have h_unscaled : (shiftPlan n μ hμ).cost (cycleMetric n) = 1 :=
+      shiftPlan_cost_cycleMetric_one n hn μ hμ hμsum
+    have h_rewrite : (∑ i, ∑ j, (shiftPlan n μ hμ).π i j *
+        (cycleMetric n i j / n))
+        = (∑ i, ∑ j, (shiftPlan n μ hμ).π i j * cycleMetric n i j) / n := by
+      rw [Finset.sum_div]
+      refine Finset.sum_congr rfl ?_
+      intros i _
+      rw [Finset.sum_div]
+      refine Finset.sum_congr rfl ?_
+      intros j _
+      ring
+    rw [h_rewrite]
+    have : (∑ i, ∑ j, (shiftPlan n μ hμ).π i j * cycleMetric n i j) = 1 := by
+      show (shiftPlan n μ hμ).cost (cycleMetric n) = 1
+      exact h_unscaled
+    rw [this]
+
 end InfraFormalization
