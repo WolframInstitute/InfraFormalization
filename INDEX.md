@@ -1,6 +1,6 @@
 # Project index
 
-Complete navigation for `infra_formalization`. This file is hand-maintained; every document in the repo appears below with a one-line description. New readers: start at [`README.md`](README.md), then read sections in the order suggested.
+Complete navigation for `InfraFormalization`. This file is hand-maintained; every document in the repo appears below with a one-line description. New readers: start at [`README.md`](README.md), then read sections in the order suggested.
 
 ## Start here
 
