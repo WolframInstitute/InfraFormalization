@@ -185,5 +185,67 @@ theorem flatVectorBundleConnection_isTorsionFree (n : Nat) :
     (flatVectorBundleConnection n n).IsTorsionFree :=
   fun x μ a b => flatVectorBundleConnection_torsion_zero n x μ a b
 
+/-- **Bundle-Γ consistency with local-coordinate Γ** (C6 / #39).
+
+A torsion-free tangent-bundle `VectorBundleConnection n n` can be
+recast as a local-coordinate `ConnectionData n`. With the mapping
+`(ρ, μ, ν) ↦ V.Γ x μ ρ ν`, the local-coordinate lower-index symmetry
+`Γ x ρ μ ν = Γ x ρ ν μ` translates to `V.Γ x μ ρ ν = V.Γ x ν ρ μ`,
+which is delivered by torsion-freeness (both sides equal `V.Γ x ρ ν μ`
+= `V.Γ x ρ μ ν` after the appropriate swap). The analogous identity
+for `dΓ` is taken as hypothesis (we do not derive `dΓ` from `Γ`). -/
+noncomputable def VectorBundleConnection.toConnectionData {n : Nat}
+    (V : VectorBundleConnection n n)
+    (hV : V.IsTorsionFree)
+    (hdV : ∀ l x μ ρ ν, V.dΓ l x μ ρ ν = V.dΓ l x ν ρ μ) :
+    ConnectionData n where
+  Γ := fun x ρ μ ν => V.Γ x μ ρ ν
+  dΓ := fun l x ρ μ ν => V.dΓ l x μ ρ ν
+  Γ_symm := fun x ρ μ ν => by
+    have h1 := hV x μ ρ ν
+    have h2 := hV x ν ρ μ
+    unfold VectorBundleConnection.torsion at h1 h2
+    linarith
+  dΓ_symm := fun l x ρ μ ν => hdV l x μ ρ ν
+
+/-- **Round-trip through `ofConnectionData`**: starting from a
+`ConnectionData n`, lifting to a `VectorBundleConnection n n`, and
+projecting back via `toConnectionData` using the lifted
+torsion-freeness and the symmetry of `C.dΓ` — recovers the original
+`ConnectionData`. -/
+theorem VectorBundleConnection.toConnectionData_ofConnectionData
+    {n : Nat} (C : ConnectionData n) :
+    VectorBundleConnection.toConnectionData
+        (VectorBundleConnection.ofConnectionData C)
+        (VectorBundleConnection.ofConnectionData_isTorsionFree C)
+        (fun l x μ ρ ν => by
+          unfold VectorBundleConnection.ofConnectionData
+          exact C.dΓ_symm l x ρ μ ν)
+      = C := by
+  unfold VectorBundleConnection.toConnectionData VectorBundleConnection.ofConnectionData
+  rfl
+
+/-- **Consistency of the bundle and local-coordinate `Γ` data** on a
+torsion-free tangent-bundle connection: the `ConnectionData n` built
+via `toConnectionData` has Christoffel symbols matching the bundle's
+Γ with base indices swapped into the `(ρ, μ, ν)` local-coordinate
+order. -/
+theorem VectorBundleConnection.toConnectionData_Γ
+    {n : Nat} (V : VectorBundleConnection n n)
+    (hV : V.IsTorsionFree)
+    (hdV : ∀ l x μ ρ ν, V.dΓ l x μ ρ ν = V.dΓ l x ν ρ μ)
+    (x : Fin n → ℝ) (ρ μ ν : Fin n) :
+    (VectorBundleConnection.toConnectionData V hV hdV).Γ x ρ μ ν
+      = V.Γ x μ ρ ν := rfl
+
+/-- **Same consistency for `∂Γ`.** -/
+theorem VectorBundleConnection.toConnectionData_dΓ
+    {n : Nat} (V : VectorBundleConnection n n)
+    (hV : V.IsTorsionFree)
+    (hdV : ∀ l x μ ρ ν, V.dΓ l x μ ρ ν = V.dΓ l x ν ρ μ)
+    (l : Fin n) (x : Fin n → ℝ) (ρ μ ν : Fin n) :
+    (VectorBundleConnection.toConnectionData V hV hdV).dΓ l x ρ μ ν
+      = V.dΓ l x μ ρ ν := rfl
+
 end Curvature
 end InfraFormalization
