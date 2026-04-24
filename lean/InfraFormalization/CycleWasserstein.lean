@@ -344,4 +344,101 @@ theorem wasserstein1_shiftMeasure_le (n : ℕ) [NeZero n] (hn : 2 ≤ n)
       exact h_unscaled
     rw [this]
 
+/-- **`cycleMetric` triangle inequality** — inherited from the
+underlying hypergraph-distance triangle inequality
+(`cycleHypergraph_dist_triangle` for `n ≥ 2`). -/
+theorem cycleMetric_triangle (n : ℕ) [NeZero n] (hn : 2 ≤ n)
+    (i j k : Fin n) :
+    cycleMetric n i k ≤ cycleMetric n i j + cycleMetric n j k := by
+  unfold cycleMetric
+  have := cycleHypergraph_dist_triangle hn i j k
+  exact_mod_cast this
+
+/-- **`cycleMetricScaled` triangle inequality** — triangle inequality
+survives division by the positive constant `n`. -/
+theorem cycleMetricScaled_triangle (n : ℕ) [NeZero n] (hn : 2 ≤ n)
+    (i j k : Fin n) :
+    cycleMetricScaled n i k
+      ≤ cycleMetricScaled n i j + cycleMetricScaled n j k := by
+  unfold cycleMetricScaled
+  have htri := cycleMetric_triangle n hn i j k
+  have hnpos : 0 < (n : ℝ) := by
+    exact_mod_cast Nat.pos_of_ne_zero (NeZero.ne n)
+  rw [show cycleMetric n i j / (n : ℝ) + cycleMetric n j k / (n : ℝ)
+        = (cycleMetric n i j + cycleMetric n j k) / n by ring]
+  exact div_le_div_of_nonneg_right htri hnpos.le
+
+/-- **`cycleMetricScaled` self-distance is zero.** -/
+theorem cycleMetricScaled_self (n : ℕ) [NeZero n] (i : Fin n) :
+    cycleMetricScaled n i i = 0 := by
+  unfold cycleMetricScaled
+  rw [cycleMetric_self]
+  simp
+
+/-- **Iterated forward shift** on the cycle — `shiftIter n μ k j = μ(j+k)`.
+Iteratively applies `shiftMeasure` `k` times. -/
+noncomputable def shiftIter (n : ℕ) [NeZero n]
+    (μ : Fin n → ℝ) : ℕ → (Fin n → ℝ)
+  | 0 => μ
+  | k+1 => shiftMeasure n (shiftIter n μ k)
+
+theorem shiftIter_nonneg (n : ℕ) [NeZero n]
+    (μ : Fin n → ℝ) (hμ : ∀ i, 0 ≤ μ i) :
+    ∀ k (j : Fin n), 0 ≤ shiftIter n μ k j
+  | 0, j => hμ j
+  | k+1, j => by
+      unfold shiftIter
+      exact shiftMeasure_nonneg n (shiftIter_nonneg n μ hμ k) j
+
+theorem shiftIter_total (n : ℕ) [NeZero n]
+    (μ : Fin n → ℝ) (hμsum : ∑ i, μ i = 1) :
+    ∀ k, ∑ j, shiftIter n μ k j = 1
+  | 0 => hμsum
+  | k+1 => by
+      unfold shiftIter
+      rw [shiftMeasure_total]
+      exact shiftIter_total n μ hμsum k
+
+/-- **k-step shift rate**: for any probability measure `μ` on the
+cycle, `W_1_scaled(μ, μ ∘ (·+k)) ≤ k/n`. Proof by induction on `k`,
+using `wasserstein1_triangle` + the 1-step bound
+`wasserstein1_shiftMeasure_le`. -/
+theorem wasserstein1_shiftIter_le (n : ℕ) [NeZero n] (hn : 2 ≤ n) :
+    ∀ (k : ℕ) (μ : Fin n → ℝ) (hμ : ∀ i, 0 ≤ μ i)
+      (hμsum : ∑ i, μ i = 1),
+    wasserstein1 (cycleMetricScaled n) μ (shiftIter n μ k) ≤ (k : ℝ) / n
+  | 0, μ, hμ, hμsum => by
+      unfold shiftIter
+      simp only [Nat.cast_zero, zero_div]
+      exact (wasserstein1_self_eq_zero (cycleMetricScaled n)
+        (cycleMetricScaled_nonneg n) (fun x => cycleMetricScaled_self n x)
+        μ hμ).le
+  | k+1, μ, hμ, hμsum => by
+      unfold shiftIter
+      -- W_1(μ, shift(shift^k μ)) ≤ W_1(μ, shift^k μ) + W_1(shift^k μ, shift(shift^k μ))
+      -- ≤ k/n + 1/n = (k+1)/n
+      have hIH := wasserstein1_shiftIter_le n hn k μ hμ hμsum
+      have hν_nn : ∀ i, 0 ≤ shiftIter n μ k i := shiftIter_nonneg n μ hμ k
+      have hν_sum : ∑ i, shiftIter n μ k i = 1 :=
+        shiftIter_total n μ hμsum k
+      have hstep : wasserstein1 (cycleMetricScaled n)
+          (shiftIter n μ k) (shiftMeasure n (shiftIter n μ k)) ≤ 1 / n :=
+        wasserstein1_shiftMeasure_le n hn (shiftIter n μ k) hν_nn hν_sum
+      have htri := wasserstein1_triangle (cycleMetricScaled n)
+        (cycleMetricScaled_nonneg n)
+        (cycleMetricScaled_triangle n hn)
+        μ (shiftIter n μ k) (shiftMeasure n (shiftIter n μ k))
+        hμ hν_nn (fun j => shiftMeasure_nonneg n hν_nn j)
+        hμsum hν_sum (by rw [shiftMeasure_total]; exact hν_sum)
+      have hsum_cast : ((k : ℝ) + 1) / n = (k : ℝ) / n + 1 / n := by
+        ring
+      calc wasserstein1 (cycleMetricScaled n) μ
+            (shiftMeasure n (shiftIter n μ k))
+          ≤ wasserstein1 (cycleMetricScaled n) μ (shiftIter n μ k)
+            + wasserstein1 (cycleMetricScaled n) (shiftIter n μ k)
+              (shiftMeasure n (shiftIter n μ k)) := htri
+        _ ≤ (k : ℝ) / n + 1 / n := by linarith
+        _ = ((k : ℝ) + 1) / n := by rw [hsum_cast]
+        _ = ((k + 1 : ℕ) : ℝ) / n := by push_cast; ring
+
 end InfraFormalization
