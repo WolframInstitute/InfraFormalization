@@ -201,4 +201,67 @@ theorem wasserstein1_symm (d : X → X → ℝ) (hsym : ∀ x y, d x y = d y x)
   unfold wasserstein1
   rw [wasserstein1_costSet_eq d hsym μ ν]
 
+namespace TransportPlan
+
+variable {μ ν : X → ℝ}
+
+/-- **Scaling a transport plan** by a non-negative real `c` produces
+a plan between the scaled marginals `c • μ` and `c • ν`. -/
+def scale (p : TransportPlan μ ν) (c : ℝ) (hc : 0 ≤ c) :
+    TransportPlan (fun x => c * μ x) (fun x => c * ν x) where
+  π := fun x y => c * p.π x y
+  nonneg := fun x y => mul_nonneg hc (p.nonneg x y)
+  rowMarginal := fun x => by
+    rw [← Finset.mul_sum]
+    exact congrArg (c * ·) (p.rowMarginal x)
+  colMarginal := fun y => by
+    rw [← Finset.mul_sum]
+    exact congrArg (c * ·) (p.colMarginal y)
+
+/-- **Cost scales linearly** with the scalar. -/
+theorem cost_scale (p : TransportPlan μ ν) (c : ℝ) (hc : 0 ≤ c)
+    (d : X → X → ℝ) :
+    (p.scale c hc).cost d = c * p.cost d := by
+  unfold cost scale
+  simp only
+  rw [Finset.mul_sum]
+  refine Finset.sum_congr rfl ?_
+  intros x _
+  rw [Finset.mul_sum]
+  refine Finset.sum_congr rfl ?_
+  intros y _
+  ring
+
+/-- **Two plans on disjoint row-supports combine additively**: the
+sum of `π₁ + π₂` is a plan with marginals equal to the sums of the
+corresponding marginals. -/
+def add {μ₁ μ₂ ν₁ ν₂ : X → ℝ}
+    (p : TransportPlan μ₁ ν₁) (q : TransportPlan μ₂ ν₂) :
+    TransportPlan (fun x => μ₁ x + μ₂ x) (fun x => ν₁ x + ν₂ x) where
+  π := fun x y => p.π x y + q.π x y
+  nonneg := fun x y => add_nonneg (p.nonneg x y) (q.nonneg x y)
+  rowMarginal := fun x => by
+    rw [Finset.sum_add_distrib]
+    rw [p.rowMarginal x, q.rowMarginal x]
+  colMarginal := fun y => by
+    rw [Finset.sum_add_distrib]
+    rw [p.colMarginal y, q.colMarginal y]
+
+/-- **Cost is additive over plan sum.** -/
+theorem cost_add {μ₁ μ₂ ν₁ ν₂ : X → ℝ}
+    (p : TransportPlan μ₁ ν₁) (q : TransportPlan μ₂ ν₂)
+    (d : X → X → ℝ) :
+    (p.add q).cost d = p.cost d + q.cost d := by
+  unfold cost add
+  simp only
+  rw [← Finset.sum_add_distrib]
+  refine Finset.sum_congr rfl ?_
+  intros x _
+  rw [← Finset.sum_add_distrib]
+  refine Finset.sum_congr rfl ?_
+  intros y _
+  ring
+
+end TransportPlan
+
 end InfraFormalization
