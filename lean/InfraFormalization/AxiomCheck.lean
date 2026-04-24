@@ -18,6 +18,7 @@ import InfraFormalization.Demo
 import InfraFormalization.HypergraphConnection
 import InfraFormalization.MultiwayCausalGraph
 import InfraFormalization.CandidateRuleCatalog
+import InfraFormalization.RiemannianManifold
 import InfraFormalization.Branchial
 import InfraFormalization.Growth
 import InfraFormalization.ParallelSchedule
@@ -738,3 +739,8 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.CandidateCatalog.trivialIdentityRule_isConservative
 #print axioms InfraFormalization.CandidateCatalog.catalog_conservative_rules
 #print axioms InfraFormalization.CandidateCatalog.catalog_non_conservative_rules
+#print axioms InfraFormalization.Curvature.euclidean
+#print axioms InfraFormalization.Curvature.euclidean_diagRiemannian
+#print axioms InfraFormalization.Curvature.euclideanManifold
+#print axioms InfraFormalization.Curvature.DiagRiemannianMetric.g_ii_pos_of
+#print axioms InfraFormalization.Curvature.DiagRiemannianMetric.not_lorentzian_at_zero
