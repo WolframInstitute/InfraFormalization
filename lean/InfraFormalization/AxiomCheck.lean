@@ -650,6 +650,7 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.cycleHypergraph_ballVolume_exact
 #print axioms InfraFormalization.dimensionCompatibilityObligation_upper_bound
 #print axioms InfraFormalization.dimensionCompatibilityObligation_holds
+#print axioms InfraFormalization.all_obligations_hold
 #print axioms InfraFormalization.Hypergraph.hasDerivAt_heatKernel
 #print axioms InfraFormalization.Hypergraph.heatKernel_commute_laplacianMatrix
 #print axioms InfraFormalization.Hypergraph.hasDerivAt_heatKernel_mulVec
