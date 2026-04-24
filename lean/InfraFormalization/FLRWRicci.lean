@@ -188,5 +188,69 @@ values so the Riemann/Ricci computations stay readable. -/
   unfold flrwdΓ
   simp [hi]
 
+@[simp] theorem flrwdΓ_0_i_i0 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
+    (i : Fin 4) (hi : i ≠ 0) :
+    flrwdΓ a da dda 0 x i i 0
+      = (a (x 0) * dda (x 0) - (da (x 0))^2) / (a (x 0))^2 := by
+  unfold flrwdΓ
+  simp [hi]
+
+/-- **Sum over `Fin 4`** unfolds explicitly: `∑ l : Fin 4, f l = f 0 + f 1 + f 2 + f 3`. -/
+private theorem sumFin4 {β : Type*} [AddCommMonoid β] (f : Fin 4 → β) :
+    ∑ l : Fin 4, f l = f 0 + f 1 + f 2 + f 3 := by
+  show ∑ l ∈ (Finset.univ : Finset (Fin 4)), f l = f 0 + f 1 + f 2 + f 3
+  rw [show (Finset.univ : Finset (Fin 4)) = {0, 1, 2, 3} from by decide]
+  simp [Finset.sum_insert, Finset.mem_insert, Finset.mem_singleton, add_assoc]
+
+/-- All Γ entries with `μ = ν = 0` vanish. -/
+@[simp] theorem flrwΓ_l_00 (a da : ℝ → ℝ) (x : Fin 4 → ℝ) (l : Fin 4) :
+    flrwΓ a da x l 0 0 = 0 := by
+  by_cases hl : l = 0
+  · subst hl; rfl
+  · unfold flrwΓ
+    have h_ne_l : (0 : Fin 4) ≠ l := fun h => hl h.symm
+    simp [hl, h_ne_l]
+
+/-! ## Riemann components: time-time direction -/
+
+/-- **`R^1_{010}(x) = -a''(t)/a(t)`** on FLRW (assuming `a(t) ≠ 0`).
+The first non-vanishing Riemann component on a non-flat FLRW spacetime;
+each spatial direction `i ∈ {1,2,3}` gives the same value. -/
+theorem flrwRiemann_1_0_1_0 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
+    (hv : FLRWValid a x) :
+    (flrwConnection a da dda).riemann x 1 0 1 0 = -(dda (x 0) / a (x 0)) := by
+  have ha_ne : a (x 0) ≠ 0 := hv
+  have ha_sq_ne : (a (x 0))^2 ≠ 0 := pow_ne_zero _ ha_ne
+  unfold ConnectionData.riemann flrwConnection
+  simp only
+  rw [sumFin4 (fun l => flrwΓ a da x 1 1 l * flrwΓ a da x l 0 0),
+      sumFin4 (fun l => flrwΓ a da x 1 0 l * flrwΓ a da x l 1 0)]
+  -- Γ_x_l_0_0 vanishes for all l (handled by flrwΓ_l_00 simp).
+  -- Γ_x_1_0_l: non-zero iff l=1 (value a'/a), zero otherwise.
+  -- Γ_x_l_1_0: non-zero iff l=1 (value a'/a), zero otherwise.
+  -- Specifically:
+  have h10 : flrwΓ a da x 1 0 0 = 0 := flrwΓ_l_00 a da x 1
+  have h12 : flrwΓ a da x 1 0 2 = 0 := by unfold flrwΓ; simp
+  have h13 : flrwΓ a da x 1 0 3 = 0 := by unfold flrwΓ; simp
+  have h0_10 : flrwΓ a da x 0 1 0 = 0 :=
+    flrwΓ_0_diff a da x 1 0 (by decide)
+  have h2_10 : flrwΓ a da x 2 1 0 = 0 := by unfold flrwΓ; simp
+  have h3_10 : flrwΓ a da x 3 1 0 = 0 := by unfold flrwΓ; simp
+  have h_dΓ_1_1_0_0 : flrwdΓ a da dda 1 x 1 0 0 = 0 := by unfold flrwdΓ; simp
+  have h_dΓ_0_1_1_0 : flrwdΓ a da dda 0 x 1 1 0
+      = (a (x 0) * dda (x 0) - (da (x 0))^2) / (a (x 0))^2 :=
+    flrwdΓ_0_i_i0 a da dda x 1 (by decide)
+  have h_Γ_1_0_1 : flrwΓ a da x 1 0 1 = da (x 0) / a (x 0) :=
+    flrwΓ_i_0i a da x 1 (by decide)
+  have h_Γ_1_1_0 : flrwΓ a da x 1 1 0 = da (x 0) / a (x 0) :=
+    flrwΓ_i_i0 a da x 1 (by decide)
+  -- After sumFin4 + flrwΓ_l_00 simp, the goal collapses to:
+  --   0 - (a a'' - (a')²)/a² + 0 - (0*Γ_0_1_0 + (a'/a)*(a'/a) + Γ_1_0_2*Γ_2_1_0 + Γ_1_0_3*Γ_3_1_0)
+  -- Rewrite remaining Γ entries to zero/value, then field_simp.
+  simp only [h_dΓ_1_1_0_0, h_dΓ_0_1_1_0, h12, h13, h0_10, h2_10, h3_10,
+             h_Γ_1_0_1, h_Γ_1_1_0, flrwΓ_l_00, mul_zero, add_zero, zero_add]
+  field_simp
+  ring
+
 end Curvature
 end InfraFormalization
