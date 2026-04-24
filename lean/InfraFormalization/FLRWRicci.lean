@@ -314,6 +314,117 @@ theorem flrwRiemann_3_0_3_0 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
   field_simp
   ring
 
+/-! ## Riemann components: spatial-spatial direction (for `R_{ii}`) -/
+
+/-- **`R^0_{101}(x) = a(t) a''(t)`** on FLRW (assuming `a(t) ≠ 0`).
+Time-index Riemann component contributing to the spatial Ricci
+`R_{11}`. -/
+theorem flrwRiemann_0_1_0_1 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
+    (hv : FLRWValid a x) :
+    (flrwConnection a da dda).riemann x 0 1 0 1 = a (x 0) * dda (x 0) := by
+  have ha_ne : a (x 0) ≠ 0 := hv
+  unfold ConnectionData.riemann flrwConnection
+  simp only
+  rw [sumFin4 (fun l => flrwΓ a da x 0 0 l * flrwΓ a da x l 1 1),
+      sumFin4 (fun l => flrwΓ a da x 0 1 l * flrwΓ a da x l 0 1)]
+  -- Term 1: dΓ 0 x 0 1 1 = (da)² + a*dda.
+  have h_dΓ_t1 : flrwdΓ a da dda 0 x 0 1 1 = (da (x 0))^2 + a (x 0) * dda (x 0) :=
+    flrwdΓ_0_0_ii a da dda x 1 (by decide)
+  -- Term 2: dΓ 1 x 0 0 1 = 0 (l=1 ≠ 0).
+  have h_dΓ_t2 : flrwdΓ a da dda 1 x 0 0 1 = 0 := by unfold flrwdΓ; simp
+  -- Sum 1 entries: Γ_x_0_0_l = 0 (μ=0, ν=l with ρ=0: μ=ν only when l=0; off-diag else; and l=0 case Γ_0_0_0 = 0).
+  have hΓ_0_0_0 : flrwΓ a da x 0 0 0 = 0 := flrwΓ_0_00 a da x
+  have hΓ_0_0_1 : flrwΓ a da x 0 0 1 = 0 := flrwΓ_0_diff a da x 0 1 (by decide)
+  have hΓ_0_0_2 : flrwΓ a da x 0 0 2 = 0 := flrwΓ_0_diff a da x 0 2 (by decide)
+  have hΓ_0_0_3 : flrwΓ a da x 0 0 3 = 0 := flrwΓ_0_diff a da x 0 3 (by decide)
+  -- Sum 2 entries.
+  -- Γ_x_0_1_l: ρ=0, μ=1, ν=l. Non-zero iff μ=ν (l=1) and μ≠0 (1≠0 true). Value a*a' for l=1.
+  have hΓ_0_1_0 : flrwΓ a da x 0 1 0 = 0 :=
+    flrwΓ_0_diff a da x 1 0 (by decide)
+  have hΓ_0_1_1 : flrwΓ a da x 0 1 1 = a (x 0) * da (x 0) :=
+    flrwΓ_0_ii a da x 1 (by decide)
+  have hΓ_0_1_2 : flrwΓ a da x 0 1 2 = 0 :=
+    flrwΓ_0_diff a da x 1 2 (by decide)
+  have hΓ_0_1_3 : flrwΓ a da x 0 1 3 = 0 :=
+    flrwΓ_0_diff a da x 1 3 (by decide)
+  -- Γ_x_l_0_1: ρ=l. l=0: μ=0,ν=1, off-diag, 0. l=1: ρ=1, (μ=0∧ν=ρ=1)=T, value a'/a. l=2,3: conditions fail, 0.
+  have hΓ_0_0_1' : flrwΓ a da x 0 0 1 = 0 :=
+    flrwΓ_0_diff a da x 0 1 (by decide)
+  have hΓ_1_0_1 : flrwΓ a da x 1 0 1 = da (x 0) / a (x 0) :=
+    flrwΓ_i_0i a da x 1 (by decide)
+  have hΓ_2_0_1 : flrwΓ a da x 2 0 1 = 0 := by unfold flrwΓ; simp
+  have hΓ_3_0_1 : flrwΓ a da x 3 0 1 = 0 := by unfold flrwΓ; simp
+  simp only [h_dΓ_t1, h_dΓ_t2, hΓ_0_0_0, hΓ_0_0_1, hΓ_0_0_2, hΓ_0_0_3,
+             hΓ_0_1_0, hΓ_0_1_1, hΓ_0_1_2, hΓ_0_1_3,
+             hΓ_0_0_1', hΓ_1_0_1, hΓ_2_0_1, hΓ_3_0_1,
+             zero_mul, mul_zero, add_zero, zero_add, sub_zero]
+  field_simp
+  ring
+
+/-- **`R^2_{121}(x) = (a'(t))²`** on FLRW (assuming `a(t) ≠ 0`).
+Spatial-spatial Riemann component contributing to `R_{11}`. -/
+theorem flrwRiemann_2_1_2_1 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
+    (hv : FLRWValid a x) :
+    (flrwConnection a da dda).riemann x 2 1 2 1 = (da (x 0))^2 := by
+  have ha_ne : a (x 0) ≠ 0 := hv
+  unfold ConnectionData.riemann flrwConnection
+  simp only
+  rw [sumFin4 (fun l => flrwΓ a da x 2 2 l * flrwΓ a da x l 1 1),
+      sumFin4 (fun l => flrwΓ a da x 2 1 l * flrwΓ a da x l 2 1)]
+  -- Both ∂Γ terms vanish (l = 2 or 1, both ≠ 0 → flrwdΓ returns 0).
+  have h_dΓ_t1 : flrwdΓ a da dda 2 x 2 1 1 = 0 := by unfold flrwdΓ; simp
+  have h_dΓ_t2 : flrwdΓ a da dda 1 x 2 2 1 = 0 := by unfold flrwdΓ; simp
+  -- Sum 1 (Γ_2_2_l * Γ_l_1_1):
+  -- l=0: Γ_2_2_0 = a'/a, Γ_0_1_1 = a*a'. Product (a'/a)(a a') = (a')².
+  -- l=1: Γ_2_2_1 = 0 (ρ=2, μ=ν=2 fails l=1), Γ_1_1_1 = 0. 0.
+  -- l=2: Γ_2_2_2 = 0 (ρ=2, μ=ν=2: conditions need μ=0∨ν=0). 0.
+  -- l=3: Γ_2_2_3 = 0. 0.
+  have hΓ_2_2_0 : flrwΓ a da x 2 2 0 = da (x 0) / a (x 0) :=
+    flrwΓ_i_i0 a da x 2 (by decide)
+  have hΓ_0_1_1 : flrwΓ a da x 0 1 1 = a (x 0) * da (x 0) :=
+    flrwΓ_0_ii a da x 1 (by decide)
+  have hΓ_2_2_1 : flrwΓ a da x 2 2 1 = 0 := by unfold flrwΓ; simp
+  have hΓ_2_2_2 : flrwΓ a da x 2 2 2 = 0 := by unfold flrwΓ; simp
+  have hΓ_2_2_3 : flrwΓ a da x 2 2 3 = 0 := by unfold flrwΓ; simp
+  -- Sum 2 (Γ_2_1_l * Γ_l_2_1): all Γ_2_1_l = 0 (ρ=2, μ=1: only ν=0 or ν=2 matter, and (μ=0∨ν=ρ) needs μ=1=0 or ν=l=2; (μ=ρ∨ν=0) needs μ=1=2 or ν=l=0).
+  -- Specifically Γ_2_1_0 = 0, Γ_2_1_1 = 0, Γ_2_1_2 = 0 (μ=1, ν=2: conditions fail), Γ_2_1_3 = 0.
+  have hΓ_2_1_0 : flrwΓ a da x 2 1 0 = 0 := by unfold flrwΓ; simp
+  have hΓ_2_1_1 : flrwΓ a da x 2 1 1 = 0 := by unfold flrwΓ; simp
+  have hΓ_2_1_2 : flrwΓ a da x 2 1 2 = 0 := by unfold flrwΓ; simp
+  have hΓ_2_1_3 : flrwΓ a da x 2 1 3 = 0 := by unfold flrwΓ; simp
+  simp only [h_dΓ_t1, h_dΓ_t2, hΓ_2_2_0, hΓ_0_1_1, hΓ_2_2_1, hΓ_2_2_2, hΓ_2_2_3,
+             hΓ_2_1_0, hΓ_2_1_1, hΓ_2_1_2, hΓ_2_1_3,
+             zero_mul, mul_zero, add_zero, zero_add, sub_zero]
+  field_simp
+
+/-- **`R^3_{131}(x) = (a'(t))²`** on FLRW. By spatial isotropy, same
+form as `flrwRiemann_2_1_2_1`. -/
+theorem flrwRiemann_3_1_3_1 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
+    (hv : FLRWValid a x) :
+    (flrwConnection a da dda).riemann x 3 1 3 1 = (da (x 0))^2 := by
+  have ha_ne : a (x 0) ≠ 0 := hv
+  unfold ConnectionData.riemann flrwConnection
+  simp only
+  rw [sumFin4 (fun l => flrwΓ a da x 3 3 l * flrwΓ a da x l 1 1),
+      sumFin4 (fun l => flrwΓ a da x 3 1 l * flrwΓ a da x l 3 1)]
+  have h_dΓ_t1 : flrwdΓ a da dda 3 x 3 1 1 = 0 := by unfold flrwdΓ; simp
+  have h_dΓ_t2 : flrwdΓ a da dda 1 x 3 3 1 = 0 := by unfold flrwdΓ; simp
+  have hΓ_3_3_0 : flrwΓ a da x 3 3 0 = da (x 0) / a (x 0) :=
+    flrwΓ_i_i0 a da x 3 (by decide)
+  have hΓ_0_1_1 : flrwΓ a da x 0 1 1 = a (x 0) * da (x 0) :=
+    flrwΓ_0_ii a da x 1 (by decide)
+  have hΓ_3_3_1 : flrwΓ a da x 3 3 1 = 0 := by unfold flrwΓ; simp
+  have hΓ_3_3_2 : flrwΓ a da x 3 3 2 = 0 := by unfold flrwΓ; simp
+  have hΓ_3_3_3 : flrwΓ a da x 3 3 3 = 0 := by unfold flrwΓ; simp
+  have hΓ_3_1_0 : flrwΓ a da x 3 1 0 = 0 := by unfold flrwΓ; simp
+  have hΓ_3_1_1 : flrwΓ a da x 3 1 1 = 0 := by unfold flrwΓ; simp
+  have hΓ_3_1_2 : flrwΓ a da x 3 1 2 = 0 := by unfold flrwΓ; simp
+  have hΓ_3_1_3 : flrwΓ a da x 3 1 3 = 0 := by unfold flrwΓ; simp
+  simp only [h_dΓ_t1, h_dΓ_t2, hΓ_3_3_0, hΓ_0_1_1, hΓ_3_3_1, hΓ_3_3_2, hΓ_3_3_3,
+             hΓ_3_1_0, hΓ_3_1_1, hΓ_3_1_2, hΓ_3_1_3,
+             zero_mul, mul_zero, add_zero, zero_add, sub_zero]
+  field_simp
+
 /-! ## Ricci tensor: time-time component R_{00} = -3 a''/a -/
 
 /-- **`R_{00}(x) = -3 a''(t)/a(t)`** on FLRW (assuming `a(t) ≠ 0`).
@@ -337,6 +448,28 @@ theorem flrwRicci_0_0 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
       flrwRiemann_2_0_2_0 a da dda x hv,
       flrwRiemann_3_0_3_0 a da dda x hv]
   field_simp
+  ring
+
+/-- **`R_{11}(x) = a(t) a''(t) + 2 (a'(t))²`** on FLRW (assuming
+`a(t) ≠ 0`). The spatial Ricci component, sum of the time-index
+contribution `R^0_{101} = a a''` plus two identical spatial-index
+contributions `R^j_{1j1} = (a')²`. The vanishing `R^1_{111}` follows
+from antisymmetry. This is the textbook spatial-spatial Ricci entry
+that drives the **second Friedmann equation**. -/
+theorem flrwRicci_1_1 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
+    (hv : FLRWValid a x) :
+    (flrwConnection a da dda).ricci x 1 1
+      = a (x 0) * dda (x 0) + 2 * (da (x 0))^2 := by
+  unfold ConnectionData.ricci
+  rw [sumFin4 (fun ρ => (flrwConnection a da dda).riemann x ρ 1 ρ 1)]
+  -- ρ = 1: R^1_{111} = 0 (antisymmetric in (μ, ν) when μ = ν).
+  have h1 : (flrwConnection a da dda).riemann x 1 1 1 1 = 0 := by
+    have := (flrwConnection a da dda).riemann_antisymm x 1 1 1 1
+    linarith
+  rw [h1,
+      flrwRiemann_0_1_0_1 a da dda x hv,
+      flrwRiemann_2_1_2_1 a da dda x hv,
+      flrwRiemann_3_1_3_1 a da dda x hv]
   ring
 
 end Curvature
