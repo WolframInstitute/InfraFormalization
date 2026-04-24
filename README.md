@@ -1,4 +1,4 @@
-# infra_formalization
+# InfraFormalization
 
 A Lean 4 / Mathlib formalisation of the Wolfram-model → general-relativity / quantum-mechanics bridge programme, coupled with a machine-checked audit of Gorard's principal publications on deriving GR from hypergraph rewriting.
 
@@ -17,18 +17,26 @@ All `lake build` jobs pass (3468 of 3468). Every theorem reduces to Lean's three
 - An audit trail for the Gorard papers: close-readings of each paper, cross-paper corpus audit, 184-row claims catalog, severity taxonomy, continuum-limit claim ledger, per-claim corpus assessment.
 - Empirical scripts (Wolfram Language + Python) that independently re-implement the mechanics of Gorard's claims and test them against his rules.
 
-## Why the project exists
+## Motivation
 
 The published Wolfram-model-to-GR derivations make a strong claim: that a specific rewriting rule "provably satisfies the Einstein field equations in the continuum limit" (2102.09363). The machinery of the claim is a chain of informally-stated approximations through Ollivier–Ricci, Gray-tube expansions, and a Poisson-sprinkle reconstruction. No part of this chain is machine-checked. Several steps, once separated from their prose, reduce to `Iff.rfl` or to mis-stated continuum identities.
 
 The project exists to settle, formally, what is actually true in this corpus and what remains open, and to build the substantive bridge machinery that would have to be in place for any future claim of this form.
 
-## Status headline (2026-04-23)
+## Status headline (2026-04-24)
 
-- **Size**: 140 Lean files, ~20k LOC; 679 theorems + 17 lemmas + 17 examples proved; 381 definitions, 57 structures, 6 inductives, 12 instances.
-- **Build**: 3468 / 3468 jobs green.
-- **Axiom cleanliness**: 497 `#print axioms` certifications in `AxiomCheck.lean` across 94 modules; every listed theorem reduces to `{propext, Classical.choice, Quot.sound}`. No `sorry`, no `native_decide`, no custom axioms.
-- **Infrageometry programme**: 54 of 57 tasks closed with real content; 3 still open (IG10 exponential map; ID7 spectral-dimension asymptotics; IB2 commutator theorem). ID6 `DimensionCompatibilityObligation_holds` and IR7 `ReverseEngineeringObligationRefined_holds` both proved; `all_obligations_hold` bundles the six obligation-level closures (`RemainingObligations.lean`). Zero obligations remain open at this level.
+- **Size**: 145 Lean files, ~24k LOC; 870 theorems + 22 lemmas + 18 examples proved; 433 definitions, 69 structures.
+- **Build**: 3501 / 3501 jobs green.
+- **Axiom cleanliness**: 627 `#print axioms` certifications in `AxiomCheck.lean`; every listed theorem reduces to `{propext, Classical.choice, Quot.sound}` (many to `{propext, Quot.sound}` only). No `sorry`, no `native_decide`, no custom axioms.
+- **Infrageometry obligations — all seven proved**. `RemainingObligations.lean` bundles them in `all_obligations_hold`: IT5 Latschev, IT6 scale trichotomy, ID6 cycle compatibility (`V(v,r) = 2r + 1` exact), IQ6 Fubini-Study / Bhattacharyya bound, IQ8 EME persistence, IQ9 path-integral baseline, IR7 realisability-restricted reverse-engineering. The over-strong unrefined IR7 is provably false (`not_reverseEngineeringObligation`). Remaining open infrageometry tasks are IG10 (exponential map via weighted shortest-path counts) and IB2 (causal-branchial commutator theorem, predicate-level).
+- **Substantive new results since the weekly report** (187 commits, 24k LOC):
+    - **ID6 `cycleHypergraph_ballVolume_exact`**: `V(v, r) = 2r + 1` on every cycle hypergraph for all `r` with `2r + 1 ≤ n`. Upper bound via walk-structural induction — every walk-endpoint lands in the forward/backward shift set — plus composition lemmas `F^[j] ∘ F`, `G^[j] ∘ G`, cross-cancellations. Lower bound via disjoint shift-family Finsets with left-cancellation injectivity.
+    - **`dimensionCompatibilityObligation_holds`**: lifts that to the obligation Prop for every `n ≥ 3`.
+    - **C7 `HypergraphConnection`**: discrete connection on a hypergraph with group-valued transport, flat baseline, walk-transport as a monoid homomorphism (`transportWalk_append`), holonomy, `IsFlat` predicate; hypergraph analog of `FiberedGraph.Connection`.
+    - **C1 `DiagRiemannianMetric` / C2 `DiagLorentzianMetric`**: positive-definite and `(−,+,+,+)` predicates on `MetricData n` with Euclidean and Minkowski witnesses.
+    - **J1 `MultiwayCausalGraph`**: joint structure bundling a rewriting system, initial hypergraph, and causal DAG on events — the "multiway causal graph" of Wolfram physics at the formalization level.
+    - **H1 `CandidateRuleCatalog`**: Gorard's named rule (arXiv:2102.09363) plus four other literature rules as concrete `Rule P` instances with `LiteratureSource` citations and machine-checked conservation theorems.
+    - **Cycle-hypergraph distance infrastructure**: closed-form `.val` for iterated ±1 shifts, injectivity on admissible ranges, forward/backward disjointness, parallel-transport walk composition — feeds C8 (scaled → Levi-Civita).
 - **Grounding audit**: all four action items closed. No free-floating continuum islands at the obligation level (see [`GROUNDING_AUDIT.md`](GROUNDING_AUDIT.md)).
 - **Refutations**: F1–F7 Lean-formal; F6 (circular G3 derivation) formally proved as `circular_procedure_is_identity`; F8 documentary.
 - **Flat bridges proved**: cycle → circle, path → interval, 2-torus, d-torus, discrete Lorentz → Minkowski.
