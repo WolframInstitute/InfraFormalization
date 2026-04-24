@@ -28,7 +28,7 @@ The project exists to settle, formally, what is actually true in this corpus and
 - **Size**: 140 Lean files, ~20k LOC; 679 theorems + 17 lemmas + 17 examples proved; 381 definitions, 57 structures, 6 inductives, 12 instances.
 - **Build**: 3468 / 3468 jobs green.
 - **Axiom cleanliness**: 497 `#print axioms` certifications in `AxiomCheck.lean` across 94 modules; every listed theorem reduces to `{propext, Classical.choice, Quot.sound}`. No `sorry`, no `native_decide`, no custom axioms.
-- **Infrageometry programme**: 52 of 57 tasks closed with real content; 5 still open (IG10 exponential map; ID6 dimension compatibility; ID7 spectral-dimension asymptotics; IB2 commutator theorem; IR7 reverse-engineer rule from signature).
+- **Infrageometry programme**: 54 of 57 tasks closed with real content; 3 still open (IG10 exponential map; ID7 spectral-dimension asymptotics; IB2 commutator theorem). ID6 `DimensionCompatibilityObligation_holds` and IR7 `ReverseEngineeringObligationRefined_holds` both proved; `all_obligations_hold` bundles the six obligation-level closures (`RemainingObligations.lean`). Zero obligations remain open at this level.
 - **Grounding audit**: all four action items closed. No free-floating continuum islands at the obligation level (see [`GROUNDING_AUDIT.md`](GROUNDING_AUDIT.md)).
 - **Refutations**: F1–F7 Lean-formal; F6 (circular G3 derivation) formally proved as `circular_procedure_is_identity`; F8 documentary.
 - **Flat bridges proved**: cycle → circle, path → interval, 2-torus, d-torus, discrete Lorentz → Minkowski.
