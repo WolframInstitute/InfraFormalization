@@ -222,5 +222,47 @@ theorem flrwChristoffel_1_11 (a da : ℝ → ℝ) (x : Fin 4 → ℝ) :
   unfold flrwGinv flrwDg
   simp
 
+/-- **FLRW Christoffel `Γ⁰_{22} = a(t) a'(t)`** — same form as Γ^0_{11},
+by spatial isotropy. -/
+theorem flrwChristoffel_0_22 (a da : ℝ → ℝ) (x : Fin 4 → ℝ) :
+    (flrwPartial a da).christoffel x 0 2 2 = a (x 0) * da (x 0) := by
+  rw [flrwChristoffel_collapse]
+  unfold flrwGinv flrwDg
+  simp
+  ring
+
+/-- **FLRW Christoffel `Γ⁰_{33} = a(t) a'(t)`** — same form as Γ^0_{11}
+and Γ^0_{22}, by spatial isotropy. -/
+theorem flrwChristoffel_0_33 (a da : ℝ → ℝ) (x : Fin 4 → ℝ) :
+    (flrwPartial a da).christoffel x 0 3 3 = a (x 0) * da (x 0) := by
+  rw [flrwChristoffel_collapse]
+  unfold flrwGinv flrwDg
+  simp
+  ring
+
+/-- **FLRW Christoffel `Γ²_{02} = a'(t)/a(t)`** — Hubble rate on the
+y-axis. Same form as Γ^1_{01} by spatial isotropy. -/
+theorem flrwChristoffel_2_02 (a da : ℝ → ℝ) (x : Fin 4 → ℝ)
+    (hv : FLRWValid a x) :
+    (flrwPartial a da).christoffel x 2 0 2 = da (x 0) / a (x 0) := by
+  rw [flrwChristoffel_collapse]
+  unfold flrwGinv flrwDg
+  have ha_ne : a (x 0) ≠ 0 := hv
+  have ha_sq_ne : (a (x 0))^2 ≠ 0 := pow_ne_zero 2 ha_ne
+  simp
+  field_simp
+
+/-- **FLRW Christoffel `Γ³_{03} = a'(t)/a(t)`** — Hubble rate on the
+z-axis. -/
+theorem flrwChristoffel_3_03 (a da : ℝ → ℝ) (x : Fin 4 → ℝ)
+    (hv : FLRWValid a x) :
+    (flrwPartial a da).christoffel x 3 0 3 = da (x 0) / a (x 0) := by
+  rw [flrwChristoffel_collapse]
+  unfold flrwGinv flrwDg
+  have ha_ne : a (x 0) ≠ 0 := hv
+  have ha_sq_ne : (a (x 0))^2 ≠ 0 := pow_ne_zero 2 ha_ne
+  simp
+  field_simp
+
 end Curvature
 end InfraFormalization
