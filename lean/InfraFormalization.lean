@@ -194,6 +194,7 @@ import InfraFormalization.CovariantDerivative
 import InfraFormalization.LorentzianManifold
 import InfraFormalization.PartialMetricData
 import InfraFormalization.FLRW
+import InfraFormalization.FLRWRicci
 import InfraFormalization.ReissnerNordstrom
 import InfraFormalization.TwoSphere
 import InfraFormalization.DeSitter

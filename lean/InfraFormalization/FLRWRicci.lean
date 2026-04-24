@@ -472,5 +472,212 @@ theorem flrwRicci_1_1 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
       flrwRiemann_3_1_3_1 a da dda x hv]
   ring
 
+/-- **`R^0_{202}(x) = a(t) a''(t)`** on FLRW (assuming `a(t) ≠ 0`).
+Spatial-isotropy copy of `flrwRiemann_0_1_0_1`. -/
+theorem flrwRiemann_0_2_0_2 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
+    (hv : FLRWValid a x) :
+    (flrwConnection a da dda).riemann x 0 2 0 2 = a (x 0) * dda (x 0) := by
+  have ha_ne : a (x 0) ≠ 0 := hv
+  unfold ConnectionData.riemann flrwConnection
+  simp only
+  rw [sumFin4 (fun l => flrwΓ a da x 0 0 l * flrwΓ a da x l 2 2),
+      sumFin4 (fun l => flrwΓ a da x 0 2 l * flrwΓ a da x l 0 2)]
+  have h_dΓ_t1 : flrwdΓ a da dda 0 x 0 2 2 = (da (x 0))^2 + a (x 0) * dda (x 0) :=
+    flrwdΓ_0_0_ii a da dda x 2 (by decide)
+  have h_dΓ_t2 : flrwdΓ a da dda 2 x 0 0 2 = 0 := by unfold flrwdΓ; simp
+  have hΓ_0_0_0 : flrwΓ a da x 0 0 0 = 0 := flrwΓ_0_00 a da x
+  have hΓ_0_0_1 : flrwΓ a da x 0 0 1 = 0 := flrwΓ_0_diff a da x 0 1 (by decide)
+  have hΓ_0_0_2 : flrwΓ a da x 0 0 2 = 0 := flrwΓ_0_diff a da x 0 2 (by decide)
+  have hΓ_0_0_3 : flrwΓ a da x 0 0 3 = 0 := flrwΓ_0_diff a da x 0 3 (by decide)
+  have hΓ_0_2_0 : flrwΓ a da x 0 2 0 = 0 := flrwΓ_0_diff a da x 2 0 (by decide)
+  have hΓ_0_2_1 : flrwΓ a da x 0 2 1 = 0 := flrwΓ_0_diff a da x 2 1 (by decide)
+  have hΓ_0_2_2 : flrwΓ a da x 0 2 2 = a (x 0) * da (x 0) :=
+    flrwΓ_0_ii a da x 2 (by decide)
+  have hΓ_0_2_3 : flrwΓ a da x 0 2 3 = 0 := flrwΓ_0_diff a da x 2 3 (by decide)
+  have hΓ_2_0_2 : flrwΓ a da x 2 0 2 = da (x 0) / a (x 0) :=
+    flrwΓ_i_0i a da x 2 (by decide)
+  have hΓ_1_0_2 : flrwΓ a da x 1 0 2 = 0 := by unfold flrwΓ; simp
+  have hΓ_3_0_2 : flrwΓ a da x 3 0 2 = 0 := by unfold flrwΓ; simp
+  simp only [h_dΓ_t1, h_dΓ_t2, hΓ_0_0_0, hΓ_0_0_1, hΓ_0_0_2, hΓ_0_0_3,
+             hΓ_0_2_0, hΓ_0_2_1, hΓ_0_2_2, hΓ_0_2_3,
+             hΓ_2_0_2, hΓ_1_0_2, hΓ_3_0_2,
+             zero_mul, mul_zero, add_zero, zero_add, sub_zero]
+  field_simp
+  ring
+
+/-- **`R^1_{212}(x) = (a'(t))²`** on FLRW (assuming `a(t) ≠ 0`). -/
+theorem flrwRiemann_1_2_1_2 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
+    (hv : FLRWValid a x) :
+    (flrwConnection a da dda).riemann x 1 2 1 2 = (da (x 0))^2 := by
+  have ha_ne : a (x 0) ≠ 0 := hv
+  unfold ConnectionData.riemann flrwConnection
+  simp only
+  rw [sumFin4 (fun l => flrwΓ a da x 1 1 l * flrwΓ a da x l 2 2),
+      sumFin4 (fun l => flrwΓ a da x 1 2 l * flrwΓ a da x l 1 2)]
+  have h_dΓ_t1 : flrwdΓ a da dda 1 x 1 2 2 = 0 := by unfold flrwdΓ; simp
+  have h_dΓ_t2 : flrwdΓ a da dda 2 x 1 1 2 = 0 := by unfold flrwdΓ; simp
+  have hΓ_1_1_0 : flrwΓ a da x 1 1 0 = da (x 0) / a (x 0) :=
+    flrwΓ_i_i0 a da x 1 (by decide)
+  have hΓ_0_2_2 : flrwΓ a da x 0 2 2 = a (x 0) * da (x 0) :=
+    flrwΓ_0_ii a da x 2 (by decide)
+  have hΓ_1_1_1 : flrwΓ a da x 1 1 1 = 0 := by unfold flrwΓ; simp
+  have hΓ_1_1_2 : flrwΓ a da x 1 1 2 = 0 := by unfold flrwΓ; simp
+  have hΓ_1_1_3 : flrwΓ a da x 1 1 3 = 0 := by unfold flrwΓ; simp
+  have hΓ_1_2_0 : flrwΓ a da x 1 2 0 = 0 := by unfold flrwΓ; simp
+  have hΓ_1_2_1 : flrwΓ a da x 1 2 1 = 0 := by unfold flrwΓ; simp
+  have hΓ_1_2_2 : flrwΓ a da x 1 2 2 = 0 := by unfold flrwΓ; simp
+  have hΓ_1_2_3 : flrwΓ a da x 1 2 3 = 0 := by unfold flrwΓ; simp
+  simp only [h_dΓ_t1, h_dΓ_t2, hΓ_1_1_0, hΓ_0_2_2, hΓ_1_1_1, hΓ_1_1_2, hΓ_1_1_3,
+             hΓ_1_2_0, hΓ_1_2_1, hΓ_1_2_2, hΓ_1_2_3,
+             zero_mul, mul_zero, add_zero, zero_add, sub_zero]
+  field_simp
+
+/-- **`R^3_{232}(x) = (a'(t))²`** on FLRW (assuming `a(t) ≠ 0`). -/
+theorem flrwRiemann_3_2_3_2 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
+    (hv : FLRWValid a x) :
+    (flrwConnection a da dda).riemann x 3 2 3 2 = (da (x 0))^2 := by
+  have ha_ne : a (x 0) ≠ 0 := hv
+  unfold ConnectionData.riemann flrwConnection
+  simp only
+  rw [sumFin4 (fun l => flrwΓ a da x 3 3 l * flrwΓ a da x l 2 2),
+      sumFin4 (fun l => flrwΓ a da x 3 2 l * flrwΓ a da x l 3 2)]
+  have h_dΓ_t1 : flrwdΓ a da dda 3 x 3 2 2 = 0 := by unfold flrwdΓ; simp
+  have h_dΓ_t2 : flrwdΓ a da dda 2 x 3 3 2 = 0 := by unfold flrwdΓ; simp
+  have hΓ_3_3_0 : flrwΓ a da x 3 3 0 = da (x 0) / a (x 0) :=
+    flrwΓ_i_i0 a da x 3 (by decide)
+  have hΓ_0_2_2 : flrwΓ a da x 0 2 2 = a (x 0) * da (x 0) :=
+    flrwΓ_0_ii a da x 2 (by decide)
+  have hΓ_3_3_1 : flrwΓ a da x 3 3 1 = 0 := by unfold flrwΓ; simp
+  have hΓ_3_3_2 : flrwΓ a da x 3 3 2 = 0 := by unfold flrwΓ; simp
+  have hΓ_3_3_3 : flrwΓ a da x 3 3 3 = 0 := by unfold flrwΓ; simp
+  have hΓ_3_2_0 : flrwΓ a da x 3 2 0 = 0 := by unfold flrwΓ; simp
+  have hΓ_3_2_1 : flrwΓ a da x 3 2 1 = 0 := by unfold flrwΓ; simp
+  have hΓ_3_2_2 : flrwΓ a da x 3 2 2 = 0 := by unfold flrwΓ; simp
+  have hΓ_3_2_3 : flrwΓ a da x 3 2 3 = 0 := by unfold flrwΓ; simp
+  simp only [h_dΓ_t1, h_dΓ_t2, hΓ_3_3_0, hΓ_0_2_2, hΓ_3_3_1, hΓ_3_3_2, hΓ_3_3_3,
+             hΓ_3_2_0, hΓ_3_2_1, hΓ_3_2_2, hΓ_3_2_3,
+             zero_mul, mul_zero, add_zero, zero_add, sub_zero]
+  field_simp
+
+/-- **`R_{22}(x) = a(t) a''(t) + 2 (a'(t))²`** on FLRW. By spatial
+isotropy, identical to `R_{11}`. -/
+theorem flrwRicci_2_2 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
+    (hv : FLRWValid a x) :
+    (flrwConnection a da dda).ricci x 2 2
+      = a (x 0) * dda (x 0) + 2 * (da (x 0))^2 := by
+  unfold ConnectionData.ricci
+  rw [sumFin4 (fun ρ => (flrwConnection a da dda).riemann x ρ 2 ρ 2)]
+  have h2 : (flrwConnection a da dda).riemann x 2 2 2 2 = 0 := by
+    have := (flrwConnection a da dda).riemann_antisymm x 2 2 2 2
+    linarith
+  rw [h2,
+      flrwRiemann_0_2_0_2 a da dda x hv,
+      flrwRiemann_1_2_1_2 a da dda x hv,
+      flrwRiemann_3_2_3_2 a da dda x hv]
+  ring
+
+/-- **`R^0_{303}(x) = a(t) a''(t)`** on FLRW. -/
+theorem flrwRiemann_0_3_0_3 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
+    (hv : FLRWValid a x) :
+    (flrwConnection a da dda).riemann x 0 3 0 3 = a (x 0) * dda (x 0) := by
+  have ha_ne : a (x 0) ≠ 0 := hv
+  unfold ConnectionData.riemann flrwConnection
+  simp only
+  rw [sumFin4 (fun l => flrwΓ a da x 0 0 l * flrwΓ a da x l 3 3),
+      sumFin4 (fun l => flrwΓ a da x 0 3 l * flrwΓ a da x l 0 3)]
+  have h_dΓ_t1 : flrwdΓ a da dda 0 x 0 3 3 = (da (x 0))^2 + a (x 0) * dda (x 0) :=
+    flrwdΓ_0_0_ii a da dda x 3 (by decide)
+  have h_dΓ_t2 : flrwdΓ a da dda 3 x 0 0 3 = 0 := by unfold flrwdΓ; simp
+  have hΓ_0_0_0 : flrwΓ a da x 0 0 0 = 0 := flrwΓ_0_00 a da x
+  have hΓ_0_0_1 : flrwΓ a da x 0 0 1 = 0 := flrwΓ_0_diff a da x 0 1 (by decide)
+  have hΓ_0_0_2 : flrwΓ a da x 0 0 2 = 0 := flrwΓ_0_diff a da x 0 2 (by decide)
+  have hΓ_0_0_3 : flrwΓ a da x 0 0 3 = 0 := flrwΓ_0_diff a da x 0 3 (by decide)
+  have hΓ_0_3_0 : flrwΓ a da x 0 3 0 = 0 := flrwΓ_0_diff a da x 3 0 (by decide)
+  have hΓ_0_3_1 : flrwΓ a da x 0 3 1 = 0 := flrwΓ_0_diff a da x 3 1 (by decide)
+  have hΓ_0_3_2 : flrwΓ a da x 0 3 2 = 0 := flrwΓ_0_diff a da x 3 2 (by decide)
+  have hΓ_0_3_3 : flrwΓ a da x 0 3 3 = a (x 0) * da (x 0) :=
+    flrwΓ_0_ii a da x 3 (by decide)
+  have hΓ_3_0_3 : flrwΓ a da x 3 0 3 = da (x 0) / a (x 0) :=
+    flrwΓ_i_0i a da x 3 (by decide)
+  have hΓ_1_0_3 : flrwΓ a da x 1 0 3 = 0 := by unfold flrwΓ; simp
+  have hΓ_2_0_3 : flrwΓ a da x 2 0 3 = 0 := by unfold flrwΓ; simp
+  simp only [h_dΓ_t1, h_dΓ_t2, hΓ_0_0_0, hΓ_0_0_1, hΓ_0_0_2, hΓ_0_0_3,
+             hΓ_0_3_0, hΓ_0_3_1, hΓ_0_3_2, hΓ_0_3_3,
+             hΓ_3_0_3, hΓ_1_0_3, hΓ_2_0_3,
+             zero_mul, mul_zero, add_zero, zero_add, sub_zero]
+  field_simp
+  ring
+
+/-- **`R^1_{313}(x) = (a'(t))²`** on FLRW (assuming `a(t) ≠ 0`). -/
+theorem flrwRiemann_1_3_1_3 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
+    (hv : FLRWValid a x) :
+    (flrwConnection a da dda).riemann x 1 3 1 3 = (da (x 0))^2 := by
+  have ha_ne : a (x 0) ≠ 0 := hv
+  unfold ConnectionData.riemann flrwConnection
+  simp only
+  rw [sumFin4 (fun l => flrwΓ a da x 1 1 l * flrwΓ a da x l 3 3),
+      sumFin4 (fun l => flrwΓ a da x 1 3 l * flrwΓ a da x l 1 3)]
+  have h_dΓ_t1 : flrwdΓ a da dda 1 x 1 3 3 = 0 := by unfold flrwdΓ; simp
+  have h_dΓ_t2 : flrwdΓ a da dda 3 x 1 1 3 = 0 := by unfold flrwdΓ; simp
+  have hΓ_1_1_0 : flrwΓ a da x 1 1 0 = da (x 0) / a (x 0) :=
+    flrwΓ_i_i0 a da x 1 (by decide)
+  have hΓ_0_3_3 : flrwΓ a da x 0 3 3 = a (x 0) * da (x 0) :=
+    flrwΓ_0_ii a da x 3 (by decide)
+  have hΓ_1_1_1 : flrwΓ a da x 1 1 1 = 0 := by unfold flrwΓ; simp
+  have hΓ_1_1_2 : flrwΓ a da x 1 1 2 = 0 := by unfold flrwΓ; simp
+  have hΓ_1_1_3 : flrwΓ a da x 1 1 3 = 0 := by unfold flrwΓ; simp
+  have hΓ_1_3_0 : flrwΓ a da x 1 3 0 = 0 := by unfold flrwΓ; simp
+  have hΓ_1_3_1 : flrwΓ a da x 1 3 1 = 0 := by unfold flrwΓ; simp
+  have hΓ_1_3_2 : flrwΓ a da x 1 3 2 = 0 := by unfold flrwΓ; simp
+  have hΓ_1_3_3 : flrwΓ a da x 1 3 3 = 0 := by unfold flrwΓ; simp
+  simp only [h_dΓ_t1, h_dΓ_t2, hΓ_1_1_0, hΓ_0_3_3, hΓ_1_1_1, hΓ_1_1_2, hΓ_1_1_3,
+             hΓ_1_3_0, hΓ_1_3_1, hΓ_1_3_2, hΓ_1_3_3,
+             zero_mul, mul_zero, add_zero, zero_add, sub_zero]
+  field_simp
+
+/-- **`R^2_{323}(x) = (a'(t))²`** on FLRW (assuming `a(t) ≠ 0`). -/
+theorem flrwRiemann_2_3_2_3 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
+    (hv : FLRWValid a x) :
+    (flrwConnection a da dda).riemann x 2 3 2 3 = (da (x 0))^2 := by
+  have ha_ne : a (x 0) ≠ 0 := hv
+  unfold ConnectionData.riemann flrwConnection
+  simp only
+  rw [sumFin4 (fun l => flrwΓ a da x 2 2 l * flrwΓ a da x l 3 3),
+      sumFin4 (fun l => flrwΓ a da x 2 3 l * flrwΓ a da x l 2 3)]
+  have h_dΓ_t1 : flrwdΓ a da dda 2 x 2 3 3 = 0 := by unfold flrwdΓ; simp
+  have h_dΓ_t2 : flrwdΓ a da dda 3 x 2 2 3 = 0 := by unfold flrwdΓ; simp
+  have hΓ_2_2_0 : flrwΓ a da x 2 2 0 = da (x 0) / a (x 0) :=
+    flrwΓ_i_i0 a da x 2 (by decide)
+  have hΓ_0_3_3 : flrwΓ a da x 0 3 3 = a (x 0) * da (x 0) :=
+    flrwΓ_0_ii a da x 3 (by decide)
+  have hΓ_2_2_1 : flrwΓ a da x 2 2 1 = 0 := by unfold flrwΓ; simp
+  have hΓ_2_2_2 : flrwΓ a da x 2 2 2 = 0 := by unfold flrwΓ; simp
+  have hΓ_2_2_3 : flrwΓ a da x 2 2 3 = 0 := by unfold flrwΓ; simp
+  have hΓ_2_3_0 : flrwΓ a da x 2 3 0 = 0 := by unfold flrwΓ; simp
+  have hΓ_2_3_1 : flrwΓ a da x 2 3 1 = 0 := by unfold flrwΓ; simp
+  have hΓ_2_3_2 : flrwΓ a da x 2 3 2 = 0 := by unfold flrwΓ; simp
+  have hΓ_2_3_3 : flrwΓ a da x 2 3 3 = 0 := by unfold flrwΓ; simp
+  simp only [h_dΓ_t1, h_dΓ_t2, hΓ_2_2_0, hΓ_0_3_3, hΓ_2_2_1, hΓ_2_2_2, hΓ_2_2_3,
+             hΓ_2_3_0, hΓ_2_3_1, hΓ_2_3_2, hΓ_2_3_3,
+             zero_mul, mul_zero, add_zero, zero_add, sub_zero]
+  field_simp
+
+/-- **`R_{33}(x) = a(t) a''(t) + 2 (a'(t))²`** on FLRW. By spatial
+isotropy, identical to `R_{11}` and `R_{22}`. -/
+theorem flrwRicci_3_3 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
+    (hv : FLRWValid a x) :
+    (flrwConnection a da dda).ricci x 3 3
+      = a (x 0) * dda (x 0) + 2 * (da (x 0))^2 := by
+  unfold ConnectionData.ricci
+  rw [sumFin4 (fun ρ => (flrwConnection a da dda).riemann x ρ 3 ρ 3)]
+  have h3 : (flrwConnection a da dda).riemann x 3 3 3 3 = 0 := by
+    have := (flrwConnection a da dda).riemann_antisymm x 3 3 3 3
+    linarith
+  rw [h3,
+      flrwRiemann_0_3_0_3 a da dda x hv,
+      flrwRiemann_1_3_1_3 a da dda x hv,
+      flrwRiemann_2_3_2_3 a da dda x hv]
+  ring
+
 end Curvature
 end InfraFormalization
