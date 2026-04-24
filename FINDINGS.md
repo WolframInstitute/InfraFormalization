@@ -39,7 +39,7 @@ Each is a keystone of the §3.3 Einstein-equations "derivation" and none is resc
 | # | Verdict | Claim | Status in the literature |
 |---|---|---|---|
 | 10 | ○ | "$\sum d\mu_g R$ becomes $\int d^4x \sqrt{-g} R$ in the continuum limit." | Unproven even for causal-set theory (Sorkin–Benincasa–Dowker conjecture, partial numerical support from Cunningham 2018). |
-| 11 | ✗ | "Named rule provably satisfies EFE in continuum limit." | The "proof" reduces to Poisson-sprinkling the known target manifold and reconstructing it; the rule is empirically 1-dimensional (S5 #13). |
+| 11 | ✗ | "Named rule provably satisfies EFE in continuum limit." | The "proof" reduces to Poisson-sprinkling the known target manifold and reconstructing it; the rule is empirically 1-dimensional (S5). |
 | 12 | ○ | "Ollivier–Ricci scalar on directed hypergraphs converges to Ricci in continuum limit." | Asserted. Convergence theorems exist only for specific random-geometric-graph constructions (Trillos–Slepčev 2018), not for Wolfram-model-rewriting evolutions. |
 
 ## S5 — Refuted specific claims
@@ -47,7 +47,7 @@ Each is a keystone of the §3.3 Einstein-equations "derivation" and none is resc
 | # | Verdict | Claim | Evidence |
 |---|---|---|---|
 | 13 | ✗ | The rule $\{\{x,y\},\{y,z\},\{z,w\},\{w,v\}\} \to \{\{y,u\},\{u,v\},\{w,x\},\{x,u\}\}$ produces a 3+1-dim causal graph. | Empirical: SetReplace + independent Python rewriter agree on 9 seeds; cone dimension ≈ 1 on each. Structural: $\|LHS\|=\|RHS\|=4$ conservation law forces linear cone growth. |
-| 14 | ✗ | Discrete $N(r) = ar^n(1 - Rr^2/(6(n+2)) + O(r^4))$ on hypergraphs. | Obtained "by analogy," not derived. In combination with #5, #6, #1, the "curvatures" computed from hypergraphs are calibrated against a formula that is itself unjustified or wrong. |
+| 14 | ✗ | Discrete $N(r) = ar^n(1 - Rr^2/(6(n+2)) + O(r^4))$ on hypergraphs. | Obtained "by analogy," not derived. In combination with,,, the "curvatures" computed from hypergraphs are calibrated against a formula that is itself unjustified or wrong. |
 
 ## S6 — Claims in titles and abstracts not delivered in the body
 
@@ -82,9 +82,9 @@ These are Lean-formalisation targets (see [`lean/InfraFormalization/`](lean/Infr
 
 The headline claim — that general relativity is derived from hypergraph rewriting — is **unsupported in the corpus**. Specifically:
 
-- The main §3.3 argument of G1 uses undefined objects (S2 #3, #4) and a tautological definition (S3 #9).
-- The "concrete example" rule of G3 is empirically 1-dimensional (S5 #13).
-- The "provably satisfies EFE" claim reduces to a causal-set-theory conjecture applied to a Poisson sample of the target manifold (S4 #11).
-- The Riemannian identities used to calibrate hypergraph curvatures are mis-stated (S1 #1, #2) by non-trivial factors on simple test manifolds.
+- The main §3.3 argument of G1 uses undefined objects (S2) and a tautological definition (S3).
+- The "concrete example" rule of G3 is empirically 1-dimensional (S5).
+- The "provably satisfies EFE" claim reduces to a causal-set-theory conjecture applied to a Poisson sample of the target manifold (S4).
+- The Riemannian identities used to calibrate hypergraph curvatures are mis-stated (S1) by non-trivial factors on simple test manifolds.
 
 None of the errors is fabrication. All are public and checkable. The corpus is best described as *systematic overclaim with embedded mathematical errors*.

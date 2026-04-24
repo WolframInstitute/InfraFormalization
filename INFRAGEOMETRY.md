@@ -124,8 +124,8 @@ These are added as tasks (see next commit). Each group is ordered so that early 
 - IA3. De Rham complex on `Hypergraph V`: 1-form, 2-form, `d` operator, `d² = 0`.
 - IA4. Integration map forms → cochains on clique complex; `∫_γ ω` is cochain of γ.
 - IA5. Blowup / refinement operator as a `Hypergraph V → Hypergraph W` map; commutes with calculus up to `O(1/n)`.
-- IA6. Scaled second-difference → `f''` for `C²` functions (closes #13 / #33).
-- IA7. `C^k` uniform convergence on compacts (closes #14).
+- IA6. Scaled second-difference → `f''` for `C²` functions (closes /).
+- IA7. `C^k` uniform convergence on compacts (closes).
 
 ### Group IG — InfraGaugeTheory (port from Pavel Pokorny's paclet to Lean)
 - IG1. `FiberedGraph V W : Type` with projection `π : V → W` and type classes for fibers.
@@ -180,13 +180,13 @@ These are added as tasks (see next commit). Each group is ordered so that early 
 - IB7. Graded version.
 
 ### Group IQ — Branchial / quantum
-- IQ1. `BranchialGraph` type + `Fintype` instance for finite systems (closes #84).
-- IQ2. Branchial ℓ² Hilbert space (closes #87).
-- IQ3. Unitary evolution on branchial ℓ² (closes #88).
-- IQ4. Amplitudes and observables (closes #86, #89).
+- IQ1. `BranchialGraph` type + `Fintype` instance for finite systems (closes).
+- IQ2. Branchial ℓ² Hilbert space (closes).
+- IQ3. Unitary evolution on branchial ℓ² (closes).
+- IQ4. Amplitudes and observables (closes).
 - IQ5. Fisher metric on branchial graph.
 - IQ6. Fubini–Study metric as limit of Fisher metric on refined branchial graphs.
-- IQ7. Branchial continuum limit → Hilbert space (closes #91).
+- IQ7. Branchial continuum limit → Hilbert space (closes).
 - IQ8. EME-tracking: persistence of a vertex across multiway branches as a branchial observable.
 - IQ9. Path integral as a sum over singleway causal-graph classes.
 

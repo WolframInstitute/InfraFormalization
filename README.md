@@ -205,7 +205,7 @@ lean/
 - `severity_taxonomy.md` — S1–S6 taxonomy; "How the errors recur"
 - `corpus_audit.md` — cross-paper map of repeated errors
 - `claims_catalog.md` — 184-row G1 equation audit
-- `singleway_vs_multiway.md` — single-way vs multi-way + null-tetrad explainer
+- `singleway_vs_multiway.md` — single-way vs multi-way
 - `corpus_assessment.md` — synthesis verdict
 - `2004.14810_close_reading.md`, `2102.09363_close_reading.md`, `2303.07282_close_reading.md`
 - `null_tetrad_resolution.md`, `limit_toolkit.md`, `empirical_refutation.md`, `continuum_limit_claims.md`

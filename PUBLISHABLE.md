@@ -111,7 +111,7 @@ Grouped from most-immediate (parts already done) to most-ambitious.
 - [x] **`BenincasaDowkerConjecture`** explicitly flagged as an open `Prop`-level hypothesis.
 - [x] **Forman-Ricci → continuum Ricci** bridge on the cycle/circle (`RicciBridge.lean`) — first discrete-to-continuum curvature match.
 - [x] **`leviCivitaConnection : MetricDataC2 → ConnectionData`** — full local-coord curvature derivation.
-- [x] **Schwarzschild — all 8 Christoffel components** in the exterior (`Schwarzschild.lean`, B1 complete #20).
+- [x] **Schwarzschild — all 8 Christoffel components** in the exterior (`Schwarzschild.lean`, B1 complete).
 - [x] **Cycle spectrum → continuum circle spectrum** (`CycleSpectrum.lean` + `CycleEigenLimit.lean`): first concrete hypergraph-Laplacian → continuum-Laplacian spectral convergence.
 - [x] **EPS axioms + Marzke-Wheeler clock** (`EPSAxioms.lean`, `MarzkeWheeler.lean`; IC7/IC8): operational reconstruction of Lorentzian geometry from hypergraph-level light rays and observers.
 - [x] **Spatial reconstruction + causal foliation + proper time** (IC4/IC5).
@@ -130,15 +130,15 @@ Grouped from most-immediate (parts already done) to most-ambitious.
 
 **Sufficient conditions.**
 - [x] `Branchial.lean` — `BranchialRelated`, `NStep`, `BranchialSlice`. Basic structure.
-- [x] `BranchialFinite.lean` (I1 #84) — `branchialSliceFinite_of_successors_finite` (finite-dim groundwork).
-- [x] `FisherMetric.lean` (IQ5 #152) — Fisher metric on branchial distributions.
+- [x] `BranchialFinite.lean` (I1) — `branchialSliceFinite_of_successors_finite` (finite-dim groundwork).
+- [x] `FisherMetric.lean` (IQ5) — Fisher metric on branchial distributions.
 - [x] `SchrodingerEquation.lean` (D10) — discrete Schrödinger on `Hypergraph V` with proven unitarity / probability conservation.
 - [x] Formal `∧ False` obligations for IQ6 (Fubini-Study limit), IQ8 (EME persistence), IQ9 (path integral) in `RemainingObligations.lean` — no silent assumptions.
 - [ ] Complete S1–S6 audit of Gorard's QM paper (arXiv:2004.14808).
-- [x] Branchial measure: uniform probability on finite slices (I2 #85; `BranchialHilbert.lean` — `branchialUniformWeight` summing to 1 when nonempty).
-- [x] `ℓ²(slice)` Hilbert space (I4 #87 / R3 #178 partial; `BranchialHilbert.lean` — ℂ-Hilbert alias, ℂ-linear adjacency operator `branchialAdjLM`, self-adjointness for symmetric adjacency).
+- [x] Branchial measure: uniform probability on finite slices (I2; `BranchialHilbert.lean` — `branchialUniformWeight` summing to 1 when nonempty).
+- [x] `ℓ²(slice)` Hilbert space (I4 / R3 partial; `BranchialHilbert.lean` — ℂ-Hilbert alias, ℂ-linear adjacency operator `branchialAdjLM`, self-adjointness for symmetric adjacency).
 - [~] Branchial amplitudes + evolution as unitary (I3 ✅, I5 ✅, I8 pending). `BranchialHilbert.lean` defines `BranchialAmplitude` + Born rule; `BranchialSchrodinger.lean` proves `branchialSchrodinger_unitary_evolution` (total probability conservation for `i ∂_t ψ = A ψ` with adjacency `A`).
-- [ ] Fubini-Study limit under branchial refinement (IQ6 #153 in progress; currently obligation).
+- [ ] Fubini-Study limit under branchial refinement (IQ6 in progress; currently obligation).
 - [ ] Prove (or disprove) the branchial → QM bridge claim.
 
 **Audience.** arXiv quant-ph + math-ph.

@@ -119,7 +119,7 @@ Pending in this group: B2 Schwarzschild Riemann components, B3 `Ric = 0`, B4 vac
 
 ID-group status: **ID1 / ID2 / ID3 / ID4 / ID5 / ID6 closed with real content**. ID6 fully proved: `V(v, r) = 2r + 1` on cycle hypergraphs (`cycleHypergraph_ballVolume_exact`, `dimensionCompatibilityObligation_holds`). ID7 spectral dim via `Matrix.exp` small-`t` asymptotics still in progress.
 
-Adjacent open problem: **P20 Rodkey classification** (task #212) — characterise hypergraphs for which `localDimension v r` is constant across vertices; infrastructure in place (`Hypergraph.localDimension`, `wolframHausdorffDimension`, `plateauDimension`), classification theorem open. Partner with Pavel Hájek and Dugan Hammock. Current state (2026-04): Sufficient chain `AdjTransitive → DistTransitive → BallVolumeVertexUniform → LocalDimensionVertexUniform` fully proved in `RodkeyClassification.lean`. Necessary condition: `degree_uniform_of_ballVolumeVertexUniform` — on a connected hypergraph, ball-volume-uniformity forces uniform SimpleGraph degree (via `geodesicBallVolume v 1 = 1 + degree v`); contrapositive `not_ballVolumeVertexUniform_of_degree_ne` rules out non-regular graphs. **Local characterisation**: `ballVolumeOne_uniform_iff_regular` — on a connected hypergraph, the r=1 slice of BallVolumeVertexUniform is exactly `Regular` (all vertices same SimpleGraph degree). **Positive example**: `cycleHypergraph n` for `n ≥ 2` — full chain inhabited via rotation automorphism `cycleRotHom`, `Walk.map`, and dist-translation-invariance; `cycleHypergraph_regular` (= 2-regular for n ≥ 3). **Negative example**: `pathHypergraph n` for `n ≥ 3` (`pathHypergraph_not_ballVolumeVertexUniform`, `pathHypergraph_not_regular`) — endpoint `0 : Fin n` has degree 1, interior `1 : Fin n` has degree 2, so the path is ruled out at radius 1. Both separated structurally on Fin 3 by `rodkey_classification_nontrivial` and `regular_dichotomy_on_fin3`. Remaining open: d-torus positive example, general classification theorem (walk-regular vs vertex-transitive distinction).
+Adjacent open problem: **P20 Rodkey classification** — characterise hypergraphs for which `localDimension v r` is constant across vertices; infrastructure in place (`Hypergraph.localDimension`, `wolframHausdorffDimension`, `plateauDimension`), classification theorem open. Partner with Pavel Hájek and Dugan Hammock. Current state (2026-04): Sufficient chain `AdjTransitive → DistTransitive → BallVolumeVertexUniform → LocalDimensionVertexUniform` fully proved in `RodkeyClassification.lean`. Necessary condition: `degree_uniform_of_ballVolumeVertexUniform` — on a connected hypergraph, ball-volume-uniformity forces uniform SimpleGraph degree (via `geodesicBallVolume v 1 = 1 + degree v`); contrapositive `not_ballVolumeVertexUniform_of_degree_ne` rules out non-regular graphs. **Local characterisation**: `ballVolumeOne_uniform_iff_regular` — on a connected hypergraph, the r=1 slice of BallVolumeVertexUniform is exactly `Regular` (all vertices same SimpleGraph degree). **Positive example**: `cycleHypergraph n` for `n ≥ 2` — full chain inhabited via rotation automorphism `cycleRotHom`, `Walk.map`, and dist-translation-invariance; `cycleHypergraph_regular` (= 2-regular for n ≥ 3). **Negative example**: `pathHypergraph n` for `n ≥ 3` (`pathHypergraph_not_ballVolumeVertexUniform`, `pathHypergraph_not_regular`) — endpoint `0 : Fin n` has degree 1, interior `1 : Fin n` has degree 2, so the path is ruled out at radius 1. Both separated structurally on Fin 3 by `rodkey_classification_nontrivial` and `regular_dichotomy_on_fin3`. Remaining open: d-torus positive example, general classification theorem (walk-regular vs vertex-transitive distinction).
 
 ## 7b. Infragauge / Infracausality / Infratopology / Synthetic / Blowup / Ruliology
 
@@ -129,7 +129,7 @@ Adjacent open problem: **P20 Rodkey classification** (task #212) — characteris
 | `Holonomy.lean` | `IsHorizontalLift`; `ParallelTransportList`; `Holonomy`; `wilsonLoop`; `IsFlatConnection`; `flat_holonomy_all_fixed` | ✅ IG4 + IG5 + IG6 + IG7 |
 | `CausalGraphType.lean` | `CausalGraph V` TR-DAG; `causallyPrecedes` (refl+trans), `causalEdge_implies_precedes`; `ChainOfLength` observer chain; `DegenerateInterval`, `OnLightStepFrom` | ✅ IC1 + IC2 + IC3 |
 | `CausalFoliation.lean` | `IsAntichain`; `IsFoliation` (antichain+disjoint+covers); `FiniteSupportFoliation`; `HasProperTime`, `properTime_self_exists` | ✅ IC4 |
-| `BranchialFinite.lean` | `successors`, `BranchialSliceFinite`; `branchialSliceFinite_zero / _succ / _of_successors_finite` | ✅ I1 (#84) |
+| `BranchialFinite.lean` | `successors`, `BranchialSliceFinite`; `branchialSliceFinite_zero / _succ / _of_successors_finite` | ✅ I1 |
 | `VietorisRips.lean` | `VietorisRipsEdge`, `VietorisRipsSimplex` with mono / empty / singleton / mono_scale; `vietorisRipsGraph` as SimpleGraph; `vietorisRipsGraph_zero_no_edges_reachable` | ✅ IT1 |
 | `SyntheticGeometry.lean` | `SyntheticCircle`, `SyntheticBall`, `SyntheticLineSegment`, `SyntheticSphere`; `mem_syntheticCircle`, `syntheticCircle_zero`, `center_not_on_circle`, `syntheticCircle_subset_ball`, `syntheticCircle_disjoint`, `endpoints_on_segment` | ✅ IS1 |
 | `ElementaryBlowup.lean` | `ElementaryBlowup P` structure (single-hyperedge LHS); `headEdge`, `apply`, `rhsSize`, `Order` | ✅ IB1 |
@@ -138,7 +138,7 @@ Adjacent open problem: **P20 Rodkey classification** (task #212) — characteris
 
 ## 8. Groups from the full Infrageometry program
 
-From `INFRAGEOMETRY.md` — 9 groups (57 new tasks #109–#165). Status:
+From `INFRAGEOMETRY.md` — 9 groups (57 new tasks ). Status:
 
 | Group | Name | Addressed | Closed with real content |
 |---|---|---|---|
@@ -166,7 +166,7 @@ What remains open, concretely:
 - Schrödinger unitarity on Hypergraph V.
 - Conservation ⇒ size invariance along trajectory (IR2).
 
-**The real-work items tracked explicitly** (#176-#180, R1–R5):
+**The real-work items tracked explicitly** (, R1–R5):
 - ✅ **R1**: C² Taylor convergence for scaled second difference (`CTwoTaylor.lean`). Unlocks all non-polynomial bridges.
 - ✅ **R2**: `laplacianMatrix` + `heatKernel` via Matrix.exp (`LaplacianMatrix.lean`). Heat propagator as `exp(t · Δ)`, semigroup property, symmetry, row-sum zero, heat trace.
 - ✅ **R3 (closed)**: ℓ²(BranchialSlice) Hilbert space (`BranchialHilbert.lean` + `BranchialSchrodinger.lean`) — `BranchialHilbert S := EuclideanSpace ℂ S` finite-dim ℂ-Hilbert alias; `branchialAdjLM` ℂ-linear adjacency operator + `branchialAdjLM_inner` self-adjointness for symmetric adjacency; `branchialSchrodinger_unitary_evolution` proves the unitary branchial evolution (discrete Schrödinger on the slice conserves total probability `∑(u² + v²)`). Born rule + uniform measure + observables + expectation values also in place. Closes I2/I3/I4/I5/I6/I7/I9.
@@ -178,7 +178,7 @@ What remains open, concretely:
 - ✅ **D3**: heat semigroup via `Matrix.exp` — now captured by `heatKernel_add`.
 - ✅ Matrix eigenvalue equation packaging in `CycleMatrixSpectrum.lean`.
 
-**Colleague-work items added** (#166-#175, M1–M10):
+**Colleague-work items added** (, M1–M10):
 Ioana Milea (IG intern), Van Le (Fisher→FS), Hubert Kolcz (MBQC
 Lie-Poisson), Jan Pullman (IBL-∞/BV), Zapata-Ahmed (axiomatic
 relativity), Pokorny paclet parity, Ahmed EME-tracking, Pokorny
@@ -232,7 +232,7 @@ known. The refutation is structural, not notational.
 ## 11. QM target
 
 - Discrete side ✅: Schrödinger unitarity, self-adjoint `Δ_H`, conserved probability, ScalarField + KG.
-- **Missing**: Fintype BranchialSlice (#84), ℓ²(slice) Hilbert space (#87), branchial unitary evolution (#88), Fubini–Study limit (#153), path integral (#155), continuum Hilbert limit (#91).
+- **Missing**: Fintype BranchialSlice, ℓ²(slice) Hilbert space, branchial unitary evolution, Fubini–Study limit, path integral, continuum Hilbert limit.
 
 ## 12. Axiom-cleanliness
 

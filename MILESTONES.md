@@ -84,40 +84,40 @@ Grouped by phase (see [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md)). Each milestone ei
 - [x] **`polynomial_scaled_laplacian_eq_second_deriv`**: full polynomial-case bridge `scaledSecondDiff f n x = deriv (deriv f) x` for any quadratic, at any scale, any point. Now in the language of Mathlib's `deriv`, not just a numeric `2a`.
 - [x] **`HypergraphCalculus.lean`**: discrete exterior calculus (Hyperedge gradient/divergence, summation-by-parts / discrete Stokes). Task A1.
 - [x] **`HypergraphCycleBridge.lean`**: `cycleHypergraph n` (concrete Wolfram-model state), `laplacianHyper (cycleHypergraph n) = cycleLaplacian` (`laplacianHyper_cycleHypergraph`), end-to-end polynomial bridge `hypergraph_scaled_laplacian_eq_second_deriv`.
-- [x] **`CTwoTaylor.lean`** (R1 / A2; #176, #13): `scaledSecondDiff_tendsto_iteratedDeriv` — general C² Taylor convergence via Mathlib's `Real.taylor_tendsto` (Peano remainder). The central-second-difference ÷ h² → f''(x) for any `ContDiff ℝ 2 f`.
-- [x] **`ScaledDiffC2Bridge.lean`** (A3; #14): `scaledSecondDiff_tendsto_iteratedDeriv_C2` — R1 specialised to h = 1/n (integer-scale refinement) + `hypergraph_scaled_laplacian_eq_scaledSecondDiff` (end-to-end cycleHypergraph → scaledSecondDiff at interior indices). Rung-2 bridge now works for **all** C² test functions, not just polynomials.
-- [x] **`CycleSpectrum.lean`** (R5; #180): cycle Laplacian's closed-form eigenvalues/eigenvectors `λ_k = -4 sin²(πk/n)`, `f_k(j) = cos(2πkj/n)`; `cycleLaplacian_eigen_interior` (interior) + `cycleLaplacian_eigen` (full wrap-around using cos periodicity).
-- [x] **`CycleEigenLimit.lean`** (A4; #15): `cycleEigenvalue_scaled_tendsto` — `n² · λ_k → -(2πk)²` (scaled cycle eigenvalues converge to continuum circle-Laplacian spectrum); key helper `n_sin_pi_k_div_n_tendsto` via Mathlib's `Real.sinc`.
-- [x] **`LaplacianMatrix.lean`** (R2 / D3; #177, #44): `laplacianMatrix H : Matrix V V ℝ`, `laplacianMatrix_mulVec = laplacianHyper`, heat kernel via Mathlib's `Matrix.exp` (`heatKernel H t := exp(t • Δ_H)`), `heatKernel_zero = 1`, `heatKernel_add` (semigroup), `laplacianMatrix_symm`, `laplacianMatrix_row_sum`, `laplacianMatrix_mulVec_const`, `heatTrace`, `heatTrace_zero = |V|`. Rung-3 matrix/heat-kernel infrastructure.
+- [x] **`CTwoTaylor.lean`** (R1 / A2;): `scaledSecondDiff_tendsto_iteratedDeriv` — general C² Taylor convergence via Mathlib's `Real.taylor_tendsto` (Peano remainder). The central-second-difference ÷ h² → f''(x) for any `ContDiff ℝ 2 f`.
+- [x] **`ScaledDiffC2Bridge.lean`** (A3;): `scaledSecondDiff_tendsto_iteratedDeriv_C2` — R1 specialised to h = 1/n (integer-scale refinement) + `hypergraph_scaled_laplacian_eq_scaledSecondDiff` (end-to-end cycleHypergraph → scaledSecondDiff at interior indices). Rung-2 bridge now works for **all** C² test functions, not just polynomials.
+- [x] **`CycleSpectrum.lean`** (R5;): cycle Laplacian's closed-form eigenvalues/eigenvectors `λ_k = -4 sin²(πk/n)`, `f_k(j) = cos(2πkj/n)`; `cycleLaplacian_eigen_interior` (interior) + `cycleLaplacian_eigen` (full wrap-around using cos periodicity).
+- [x] **`CycleEigenLimit.lean`** (A4;): `cycleEigenvalue_scaled_tendsto` — `n² · λ_k → -(2πk)²` (scaled cycle eigenvalues converge to continuum circle-Laplacian spectrum); key helper `n_sin_pi_k_div_n_tendsto` via Mathlib's `Real.sinc`.
+- [x] **`LaplacianMatrix.lean`** (R2 / D3;): `laplacianMatrix H : Matrix V V ℝ`, `laplacianMatrix_mulVec = laplacianHyper`, heat kernel via Mathlib's `Matrix.exp` (`heatKernel H t := exp(t • Δ_H)`), `heatKernel_zero = 1`, `heatKernel_add` (semigroup), `laplacianMatrix_symm`, `laplacianMatrix_row_sum`, `laplacianMatrix_mulVec_const`, `heatTrace`, `heatTrace_zero = |V|`. Rung-3 matrix/heat-kernel infrastructure.
 - [x] **`CycleMatrixSpectrum.lean`**: `laplacianMatrix_cycleHypergraph_eigen` — matrix-level eigenvalue equation (cycle eigenvectors are genuine matrix eigenvectors of `laplacianMatrix (cycleHypergraph n)`).
 - [x] **`HeatKernelODE.lean`** (T1): ODE ↔ matrix heat kernel unification. `hasDerivAt_heatKernel` (d/dt = · · Δ), `heatKernel_commute_laplacianMatrix`, `hasDerivAt_heatKernel_mulVec`, **`heatKernel_isHeatSolution`** (the matrix heatKernel satisfies `HeatSolution H`). The two heat-equation definitions (ODE predicate + Matrix.exp propagator) are now linked.
 - [x] **`ExpEigenvector.lean`** (T2): matrix exp fixes eigenvectors. **`exp_mulVec_of_eigenvector`**: if `A.mulVec v = λ • v`, then `(NormedSpace.exp A).mulVec v = Real.exp λ • v`. Via `exp_eq_tsum_rat` + `ContinuousLinearMap.map_tsum` + `matrix_pow_mulVec_of_eigenvector` induction + `Real.summable_pow_div_factorial`.
 - [x] **`CycleHasEigenvalue.lean`** (T4): cycle spectrum in Mathlib `Module.End.HasEigenvalue` form. **`laplacianMatrix_cycleHypergraph_hasEigenvalue`** connects our pointwise eigenvalue theorem to Mathlib's spectral-theory API.
-- [~] **`PathHypergraph.lean`** (T5 partial; #185): `pathEdge n i = {i, i+1}` defines `pathHypergraph n` on `Fin n`. `pathHypergraph_edges_card_le` (|E| ≤ n−1). **Corrected spectrum to match the free-path Laplacian**: `pathEigenvalue n k = −4 sin²(kπ/(2n))` and `pathEigenvector n k j = cos(kπ(2j+1)/(2n))`. `pathEigenvalue_nonpos`. `pathEigenvalue_ground_zero` (k=0 eigenvalue = 0). `pathEigenvalue_one_neg` (first non-constant mode strictly negative for n ≥ 2). Axiom-clean. Path is the open-chain analog of the cycle; `T5 = path + cycle^d` is the d-torus factor picture.
-- [~] **`CurvedRicciBridge.lean`** (R4 partial; #179): `warpedDiag2 : MetricData 2` — warped 2-D metric with `g₁₁ = 1 + x₀²`. `warpedDiag2_christoffel_nonzero` (Γ¹_{01} ≠ 0 at `x 0 ≠ 0`). `curvedRicciBridgeObligation` — existence of non-flat continuum target; `threeRegular_formanRicci_nonzero` — every edge of a 3-regular graph has Forman-Ricci `−2`. The "beyond flat" witness half of R4. Axiom-clean.
-- [x] **IT5 Latschev (discrete-connectivity form) — PROVED** (`RemainingObligations.lean`; #137): `latschevObligation_holds` proves `LatschevObligation`. For every `n ≥ 2` and `u v : Fin n`, `(cycleHypergraph n).dist u v < n + 1`. Uses `SimpleGraph.Walk.IsPath.length_lt` (shortest path < card V = n) in the reachable branch and `dist_eq_zero_iff_eq_or_not_reachable` in the unreachable branch. Full GH-homotopy-equivalence form still needs more Mathlib. Axiom-clean.
-- [x] **IT6 Scale trichotomy (cycle endpoints) — PROVED** (`RemainingObligations.lean`; #138): `scaleTrichotomyObligation_holds` proves `ScaleTrichotomyObligation`. For every `n ≥ 3`: at `ε = 0` no non-trivial VR 1-simplex (distinct vertices have `dist > 0`); at `ε = n` every pair is a VR 1-simplex. Uses `Reachable.pos_dist_of_ne` + `SimpleGraph.Walk.IsPath.length_lt`. Meso-regime Betti-number matching still needs persistent-homology. Axiom-clean.
-- [x] **T6 COMPLETE — all seven obligations upgraded, five proved** (`RemainingObligations.lean`; #186): IQ8 `EMEPersistenceObligation` and IQ9 `PathIntegralObligation` — the last two `True ∧ False` stubs — upgraded to existence claims and proved via baseline witnesses (ψ = 0, α = 0). `no_stub_obligations_remain` bundles both proofs. Status: **7/7 upgraded, 5 proved** (IQ6, IT5, IT6, IQ8, IQ9); 2 open with real content (ID6, IR7). No stubs left. Axiom-clean.
-- [~] **ID6 partial — base cases r = 0 and r = 1 proved on cycle** (`HypergraphDistance.lean`, `RemainingObligations.lean`; #144): `cycleHypergraph_ballVolume_zero_exact` (ball volume 1 at r=0). `dimensionCompatibilityObligation_base_cases` bundles the r=0 and r=1 cases of the full `geodesicBallVolume v r = 2r+1` ID6 obligation. Also `cycleHypergraph_ballVolume_large` (r ≥ n gives full space = n). Full obligation needs general cycle-distance formula. Axiom-clean.
+- [~] **`PathHypergraph.lean`** (T5 partial;): `pathEdge n i = {i, i+1}` defines `pathHypergraph n` on `Fin n`. `pathHypergraph_edges_card_le` (|E| ≤ n−1). **Corrected spectrum to match the free-path Laplacian**: `pathEigenvalue n k = −4 sin²(kπ/(2n))` and `pathEigenvector n k j = cos(kπ(2j+1)/(2n))`. `pathEigenvalue_nonpos`. `pathEigenvalue_ground_zero` (k=0 eigenvalue = 0). `pathEigenvalue_one_neg` (first non-constant mode strictly negative for n ≥ 2). Axiom-clean. Path is the open-chain analog of the cycle; `T5 = path + cycle^d` is the d-torus factor picture.
+- [~] **`CurvedRicciBridge.lean`** (R4 partial;): `warpedDiag2 : MetricData 2` — warped 2-D metric with `g₁₁ = 1 + x₀²`. `warpedDiag2_christoffel_nonzero` (Γ¹_{01} ≠ 0 at `x 0 ≠ 0`). `curvedRicciBridgeObligation` — existence of non-flat continuum target; `threeRegular_formanRicci_nonzero` — every edge of a 3-regular graph has Forman-Ricci `−2`. The "beyond flat" witness half of R4. Axiom-clean.
+- [x] **IT5 Latschev (discrete-connectivity form) — PROVED** (`RemainingObligations.lean`;): `latschevObligation_holds` proves `LatschevObligation`. For every `n ≥ 2` and `u v : Fin n`, `(cycleHypergraph n).dist u v < n + 1`. Uses `SimpleGraph.Walk.IsPath.length_lt` (shortest path < card V = n) in the reachable branch and `dist_eq_zero_iff_eq_or_not_reachable` in the unreachable branch. Full GH-homotopy-equivalence form still needs more Mathlib. Axiom-clean.
+- [x] **IT6 Scale trichotomy (cycle endpoints) — PROVED** (`RemainingObligations.lean`;): `scaleTrichotomyObligation_holds` proves `ScaleTrichotomyObligation`. For every `n ≥ 3`: at `ε = 0` no non-trivial VR 1-simplex (distinct vertices have `dist > 0`); at `ε = n` every pair is a VR 1-simplex. Uses `Reachable.pos_dist_of_ne` + `SimpleGraph.Walk.IsPath.length_lt`. Meso-regime Betti-number matching still needs persistent-homology. Axiom-clean.
+- [x] **T6 COMPLETE — all seven obligations upgraded, five proved** (`RemainingObligations.lean`;): IQ8 `EMEPersistenceObligation` and IQ9 `PathIntegralObligation` — the last two `True ∧ False` stubs — upgraded to existence claims and proved via baseline witnesses (ψ = 0, α = 0). `no_stub_obligations_remain` bundles both proofs. Status: **7/7 upgraded, 5 proved** (IQ6, IT5, IT6, IQ8, IQ9); 2 open with real content (ID6, IR7). No stubs left. Axiom-clean.
+- [~] **ID6 partial — base cases r = 0 and r = 1 proved on cycle** (`HypergraphDistance.lean`, `RemainingObligations.lean`;): `cycleHypergraph_ballVolume_zero_exact` (ball volume 1 at r=0). `dimensionCompatibilityObligation_base_cases` bundles the r=0 and r=1 cases of the full `geodesicBallVolume v r = 2r+1` ID6 obligation. Also `cycleHypergraph_ballVolume_large` (r ≥ n gives full space = n). Full obligation needs general cycle-distance formula. Axiom-clean.
 - [x] **DiscreteWave + DiscreteSchrödinger continuum spectra PROVED** (`ContinuumLimitStatement.lean`): upgraded `DiscreteWaveToContinuumWave` and `DiscreteSchrodingerToContinuumSchrodinger` from `True` stubs to concrete spectral-convergence claims and proved. Wave: `n · 2 sin(πk/n) → 2πk`. Schrödinger: `n² · 4 sin²(πk/n) → (2πk)²` (negative of A4). Axiom-clean.
 - [x] **pde_spectrum_bridge_summary** (`ContinuumBridgeDemo.lean`): bundles the three PDE spectral convergences (heat, wave, Schrödinger) for each wavenumber k into a single theorem. Analog of `wolfram_physics_bridge_summary` for the PDE-to-PDE bridge. Axiom-clean.
 - [x] **Klein-Gordon continuum spectrum** (`ContinuumLimitStatement.lean` + `ContinuumBridgeDemo.lean`): `DiscreteKleinGordonSpectrum m` + `discreteKleinGordonSpectrum_holds` proves `n² · 4 sin²(πk/n) + m² → (2πk)² + m²`. `pde_spectrum_bridge_summary_with_mass` includes it in the bundled PDE bridge. Axiom-clean.
 - [x] **minkowski4Manifold_satisfies_vacuum_EFE**: Minkowski-as-DiagLorentzianManifold + flat-connection solves vacuum Einstein equations — bundles E1 + F3. Axiom-clean.
-- [x] **X1 / PartialMetricData refactor** (`PartialMetricData.lean`; #24): `PartialMetricData n` bundles g, ginv, dg with domain predicate `valid : (Fin n → ℝ) → Prop`. `MetricData.toPartial` + `christoffel_symm` on validity. `schwarzschildPartial_christoffel` ties back to explicit formulas. Axiom-clean.
+- [x] **X1 / PartialMetricData refactor** (`PartialMetricData.lean`;): `PartialMetricData n` bundles g, ginv, dg with domain predicate `valid : (Fin n → ℝ) → Prop`. `MetricData.toPartial` + `christoffel_symm` on validity. `schwarzschildPartial_christoffel` ties back to explicit formulas. Axiom-clean.
 - [x] **GrandTour.lean** — one-file headline-theorems tour; one-line examples for every major theorem. Axiom-clean.
 - [x] **Schwarzschild Lorentzian signature + B4 obligation** (`Schwarzschild.lean`): `sgg_lorentzian_pointwise` + `SchwarzschildVacuumObligation` statement form. Ricci = 0 (B3) remains open pending ∂²g.
 - [x] **gr_metric_zoo** (`GRMetricsDemo.lean`): single bundled theorem exhibiting all formalised GR targets (Minkowski, FLRW, Schwarzschild, RN, de Sitter, S²). Centrepiece for the continuum-target side. Axiom-clean.
 - [x] **de Sitter metric** (`DeSitter.lean`): `dsLapse`, `dsG`, `dsGinv`, `DSValid`, reduction-to-Minkowski at Λ=0, cosmological-horizon characterisation. Axiom-clean.
 - [x] **2-sphere S² metric** (`TwoSphere.lean`): round sphere as `PartialMetricData 2`, non-zero `Γ⁰_{11}` closed form — concrete curved target. Axiom-clean.
-- [x] **B8 / Reissner-Nordström metric components** (`ReissnerNordstrom.lean`; #28): `rnLapse`, `rnG`, `rnGinv` components + `RNValid` exterior predicate + reduction-to-Schwarzschild + horizon-positivity. Axiom-clean.
-- [x] **B6 / FLRW metric as PartialMetricData** (`FLRW.lean`; #26): `flrwG`, `flrwGinv`, `flrwDg` components, `flrwPartial a da : PartialMetricData 4` with FLRWValid (`a(t) ≠ 0`) excluding big-bang. `flrwChristoffel_0_00 = 0`. Axiom-clean.
-- [x] **B5 / Schwarzschild as PartialMetricData on exterior** (`Schwarzschild.lean`; #25): `schwarzschildPartial M` bundles Schwarzschild sgg/sginv/sdg + `SchwarzschildValid M` predicate into a `PartialMetricData 4`. Axioms are the existing Schwarzschild exterior theorems. Axiom-clean.
-- [x] **E1 / Lorentzian manifold structure** (`LorentzianManifold.lean`; #53): `DiagLorentzianMetric M` predicate (`g_00 < 0`, `g_ii > 0`, off-diagonal zero). `DiagLorentzianManifold n` bundled structure. `minkowski4_diagLorentzian` + `minkowski4Manifold`. Axiom-clean.
-- [x] **X2 / Covariant derivative on `ConnectionData`** (`CovariantDerivative.lean`; #31): `nabla_scalar`, `nabla_vector`, `nabla_covector`. Flat cases collapse to partials. ℝ-linearity additivity. Axiom-clean.
+- [x] **B8 / Reissner-Nordström metric components** (`ReissnerNordstrom.lean`;): `rnLapse`, `rnG`, `rnGinv` components + `RNValid` exterior predicate + reduction-to-Schwarzschild + horizon-positivity. Axiom-clean.
+- [x] **B6 / FLRW metric as PartialMetricData** (`FLRW.lean`;): `flrwG`, `flrwGinv`, `flrwDg` components, `flrwPartial a da : PartialMetricData 4` with FLRWValid (`a(t) ≠ 0`) excluding big-bang. `flrwChristoffel_0_00 = 0`. Axiom-clean.
+- [x] **B5 / Schwarzschild as PartialMetricData on exterior** (`Schwarzschild.lean`;): `schwarzschildPartial M` bundles Schwarzschild sgg/sginv/sdg + `SchwarzschildValid M` predicate into a `PartialMetricData 4`. Axioms are the existing Schwarzschild exterior theorems. Axiom-clean.
+- [x] **E1 / Lorentzian manifold structure** (`LorentzianManifold.lean`;): `DiagLorentzianMetric M` predicate (`g_00 < 0`, `g_ii > 0`, off-diagonal zero). `DiagLorentzianManifold n` bundled structure. `minkowski4_diagLorentzian` + `minkowski4Manifold`. Axiom-clean.
+- [x] **X2 / Covariant derivative on `ConnectionData`** (`CovariantDerivative.lean`;): `nabla_scalar`, `nabla_vector`, `nabla_covector`. Flat cases collapse to partials. ℝ-linearity additivity. Axiom-clean.
 - [~] **Second Bianchi (flat vacuum case)** (`EinsteinEquations.lean`): `flatConnection_einstein_divergence_zero` — vacuous flat form of ∇_μ G^{μν} = 0. Full B11 requires metric compatibility. Axiom-clean.
-- [x] **E5 / Discrete Cauchy foliation existence** (`CausalFoliation.lean`; #57): `time_monotone_causallyPrecedes`, `time_strict_monotone_strictCausallyPrecedes`, `timeLevelSet`, `timeLevelSet_isAntichain`, `timeLevelSet_disjoint`, `timeLevelSet_covers`, **`timeFunction_foliation`**, **`stablyCausal_hasFoliation`**. Every stably causal DAG admits a discrete Cauchy foliation. Axiom-clean.
-- [x] **F3 / Einstein field equations with Λ** (`EinsteinEquations.lean`; #62): `EinsteinEqLambda M C Λ κ T x` = `∀ μ ν, G_{μν}(x) + Λ·g_{μν}(x) = κ·T_{μν}(x)`. `minkowski4_satisfies_EFE_zero_lambda` (Minkowski + flat + Λ=0 + T=0). `einsteinEqLambda_vacuum_iff`. **`minkowski4_flat_vacuum_forces_lambda_zero`**: de Sitter/anti-de Sitter cannot live on Minkowski + flat connection. Axiom-clean.
-- [~] **T5 / Path Laplacian constant-mode eigenvalue equation** (`PathHypergraph.lean`; #185): `pathEigenvector_zero_eq_one` + `pathLaplacian_eigen_zero` — the `k=0` case of the path-Laplacian eigenvalue equation is proved. General k case remains future work.
+- [x] **E5 / Discrete Cauchy foliation existence** (`CausalFoliation.lean`;): `time_monotone_causallyPrecedes`, `time_strict_monotone_strictCausallyPrecedes`, `timeLevelSet`, `timeLevelSet_isAntichain`, `timeLevelSet_disjoint`, `timeLevelSet_covers`, **`timeFunction_foliation`**, **`stablyCausal_hasFoliation`**. Every stably causal DAG admits a discrete Cauchy foliation. Axiom-clean.
+- [x] **F3 / Einstein field equations with Λ** (`EinsteinEquations.lean`;): `EinsteinEqLambda M C Λ κ T x` = `∀ μ ν, G_{μν}(x) + Λ·g_{μν}(x) = κ·T_{μν}(x)`. `minkowski4_satisfies_EFE_zero_lambda` (Minkowski + flat + Λ=0 + T=0). `einsteinEqLambda_vacuum_iff`. **`minkowski4_flat_vacuum_forces_lambda_zero`**: de Sitter/anti-de Sitter cannot live on Minkowski + flat connection. Axiom-clean.
+- [~] **T5 / Path Laplacian constant-mode eigenvalue equation** (`PathHypergraph.lean`;): `pathEigenvector_zero_eq_one` + `pathLaplacian_eigen_zero` — the `k=0` case of the path-Laplacian eigenvalue equation is proved. General k case remains future work.
 - [x] **`HeatKernelDecay.lean`**: `heatKernel_cycleHypergraph_multi_mode_tendsto` — multi-mode D6 convergence. For any finite `S ⊆ {1,…,n−1}` of non-constant mode indices, `heatKernel t · (c·v_0 + Σ_{k∈S} d_k·v_k) → c·v_0` pointwise. Core spectral-theorem ingredient of D6 — once an eigenbasis decomposition is in place, every initial state converges to its spatial-average component under heat flow. Axiom-clean.
 
 ### Rung 5 — Riemann/Ricci/scalar curvature (local-coordinate route)
@@ -130,7 +130,7 @@ Grouped by phase (see [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md)). Each milestone ei
 - [x] `flatConnection`: `Γ ≡ 0`, with `flatConnection_riemann_zero`, `_ricci_zero`, `_scalar_zero`, `_einstein_zero`.
 - [x] **`minkowski4_satisfies_vacuum_EFE`**: `G_{μν} = 0` on Minkowski with the flat connection — the trivial flat-space EFE sanity check.
 - [x] **First (algebraic) Bianchi identity** `R^ρ_{σμν} + R^ρ_{μνσ} + R^ρ_{νσμ} = 0` for torsion-free connections (`CurvatureRiemann.lean`).
-- [x] Schwarzschild instance with non-trivial Christoffel symbols — **all 8 textbook Christoffel entries computed** (`Schwarzschild.lean`, task B1 #20 complete).
+- [x] Schwarzschild instance with non-trivial Christoffel symbols — **all 8 textbook Christoffel entries computed** (`Schwarzschild.lean`, task B1 complete).
 - [ ] Differential Bianchi `∇_μ G^{μν} = 0` (formal consequence; needs covariant derivative).
 - [x] **`MetricDataC2 n`** (`CurvatureRiemann.lean`): extends `MetricData` with second partial derivatives `ddg`, inverse-metric partials `dginv`, plus Clairaut/Schwarz symmetry axioms.
 - [x] **`dchristoffel`**: the partial derivative of the Christoffel symbol, explicit formula involving `ddg`, `dginv`, and the base metric data.
@@ -145,7 +145,7 @@ Grouped by phase (see [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md)). Each milestone ei
 - [x] **Hypergraph Laplacian** (`HypergraphLaplacian.lean`): `laplacianHyper H f v := ∑_{e ∈ H.edges} ∑_{w ∈ e.others v} (f(w) − f(v))`, defined directly on `Hypergraph V` (the actual Wolfram-model state type). Linearity + vanishes on constants + **discrete divergence theorem** `laplacianHyper_sum_zero`: `∑_v Δ_H f(v) = 0` (proved by Multiset induction + per-edge cancellation); sets up mass conservation for the hypergraph heat equation.
 - [x] **Hypergraph discrete exterior calculus** (`HypergraphCalculus.lean`): `Hyperedge.src`, `Hyperedge.dst`, `hyperedgeGradient f e := f(dst e) − f(src e)`, `hypergraphDiv`, linearity of both, and **`summation_by_parts`** — discrete Stokes' theorem `∑_v f(v) · div(g)(v) = ∑_e g(e) · grad(f)(e)`. Foundation for variational calculus on hypergraphs.
 - [x] **First bridge** (`RicciBridge.lean`): `forman_ricci_matches_continuum_on_cycle` and `forman_ricci_real_matches_continuum_on_cycle` — Forman-Ricci on a 2-regular graph equals continuum Ricci on the circle (both ≡ 0); explicit `circleMetric : MetricData 1` instance.
-- [ ] **Convergence theorem (general)**: scaled Forman-Ricci on lattice graphs → continuum Ricci of the GH-limit manifold (extending beyond the trivial 0 = 0 case to non-flat targets). (R4 / #179 pending.)
+- [ ] **Convergence theorem (general)**: scaled Forman-Ricci on lattice graphs → continuum Ricci of the GH-limit manifold (extending beyond the trivial 0 = 0 case to non-flat targets). (R4 / pending.)
 
 ### Discrete d'Alembertian (Benincasa-Dowker-style) on the trajectory causal DAG
 - [x] `openInterval τ j i` and `intervalSize τ j i` (`DiscreteDAlembertian.lean`).
@@ -169,29 +169,29 @@ Grouped by phase (see [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md)). Each milestone ei
 - [x] **`schwarzschildChristoffel M x ρ μ ν`** (`Schwarzschild.lean`): Christoffel formula specialised to Schwarzschild components.
 - [x] `schwarzschildChristoffel_symm`: lower-index symmetry.
 - [x] **`schwarzschildChristoffel_1_00`**: worked example `Γ^1_{00} = M(r − 2M)/r³` in the exterior — matches textbook value.
-- [x] **All non-zero Christoffel entries** (task B1 #20 complete): `schwarzschildChristoffel_0_01`, `_1_00`, `_1_11`, `_1_22`, `_1_33`, `_2_12`, `_2_33`, `_3_13`, `_3_23` — all 8 computed and axiom-clean.
+- [x] **All non-zero Christoffel entries** (task B1 complete): `schwarzschildChristoffel_0_01`, `_1_00`, `_1_11`, `_1_22`, `_1_33`, `_2_12`, `_2_33`, `_3_13`, `_3_23` — all 8 computed and axiom-clean.
 - [x] **`schwarzschild_christoffel_collapse`**: specialised Christoffel formula on Schwarzschild components.
-- [ ] Compute Riemann tensor components (B2 #21 pending).
-- [ ] Verify `Ric ≡ 0` (vacuum solution; B3 #22 pending).
-- [ ] Cross-check via `vacuumEFE` (B4 #23 pending).
+- [ ] Compute Riemann tensor components (B2 pending).
+- [ ] Verify `Ric ≡ 0` (vacuum solution; B3 pending).
+- [ ] Cross-check via `vacuumEFE` (B4 pending).
 
 ### Discrete heat equation on a hypergraph (Rung 6 entry)
-- [x] `HeatSolution H u` predicate via `HasDerivAt` (`HeatEquation.lean`, task D1 #42).
+- [x] `HeatSolution H u` predicate via `HasDerivAt` (`HeatEquation.lean`, task D1).
 - [x] Linearity of solutions (`heatSolution_zero`, `_add`, `_smul`).
-- [x] Mass conservation `∑ u(t) = ∑ u(0)` via `laplacian_sum_zero` (`heat_mass_conservation`, D4 #45).
-- [x] L² decay `‖u(t)‖² ≤ ‖u(0)‖²` via `laplacian_neg_psd` (`heat_L2_decay`, `heat_L2_antitone`, D5 #46).
-- [x] Wave equation on hypergraph (`WaveEquation.lean`, D8 #49) with energy conservation.
-- [x] Klein-Gordon equation on hypergraph (`KleinGordon.lean`, D9 #50) with energy conservation.
-- [x] Schrödinger equation on hypergraph (`SchrodingerEquation.lean`, D10 #51) with unitarity / probability conservation.
-- [x] Discrete scalar field Lagrangian + Euler-Lagrange (`ScalarField.lean`, G1 #68, G3 #70, G4 #71); `KG_EulerLagrange_iff_KleinGordonSolution`.
-- [x] Heat semigroup on a finite graph as `Matrix.exp` (`LaplacianMatrix.lean`, D3 #44 / R2 #177): `heatKernel H t := exp(t · laplacianMatrix H)`, `heatKernel_zero = 1`, `heatKernel_add` (semigroup).
+- [x] Mass conservation `∑ u(t) = ∑ u(0)` via `laplacian_sum_zero` (`heat_mass_conservation`, D4).
+- [x] L² decay `‖u(t)‖² ≤ ‖u(0)‖²` via `laplacian_neg_psd` (`heat_L2_decay`, `heat_L2_antitone`, D5).
+- [x] Wave equation on hypergraph (`WaveEquation.lean`, D8) with energy conservation.
+- [x] Klein-Gordon equation on hypergraph (`KleinGordon.lean`, D9) with energy conservation.
+- [x] Schrödinger equation on hypergraph (`SchrodingerEquation.lean`, D10) with unitarity / probability conservation.
+- [x] Discrete scalar field Lagrangian + Euler-Lagrange (`ScalarField.lean`, G1, G3, G4); `KG_EulerLagrange_iff_KleinGordonSolution`.
+- [x] Heat semigroup on a finite graph as `Matrix.exp` (`LaplacianMatrix.lean`, D3 / R2): `heatKernel H t := exp(t · laplacianMatrix H)`, `heatKernel_zero = 1`, `heatKernel_add` (semigroup).
 - [x] **ODE ↔ matrix heat kernel identification** (`HeatKernelODE.lean`, T1): `heatKernel_isHeatSolution` — the matrix propagator satisfies the `HeatSolution H` ODE predicate. Unifies the two heat-equation definitions.
 - [x] Scaled cycle Laplacian → 1D `d²/dx²` for all C² test functions (R1/A2/A3; `CTwoTaylor.lean` + `ScaledDiffC2Bridge.lean`).
-- [x] **Existence + forward-time uniqueness** (`HeatEquationUniqueness.lean`, D2 #43): `heat_exists` (via heatKernel T1), `heat_unique_forward` (via `heat_L2_antitone`), `heat_exists_unique_forward` package.
-- [~] Long-time convergence to uniform (D6 #47 partial; `HeatKernelDecay.lean` proves each non-constant eigenmode `1 ≤ k < n` decays coordinate-wise to 0 under heat flow, via strict negativity of `cycleEigenvalue n k` and `Real.tendsto_exp_atBot`; remaining: eigenbasis decomposition of arbitrary initial data).
-- [ ] Scaled discrete heat → continuous heat on GH-limit (D7 #48).
+- [x] **Existence + forward-time uniqueness** (`HeatEquationUniqueness.lean`, D2): `heat_exists` (via heatKernel T1), `heat_unique_forward` (via `heat_L2_antitone`), `heat_exists_unique_forward` package.
+- [~] Long-time convergence to uniform (D6 partial; `HeatKernelDecay.lean` proves each non-constant eigenmode `1 ≤ k < n` decays coordinate-wise to 0 under heat flow, via strict negativity of `cycleEigenvalue n k` and `Real.tendsto_exp_atBot`; remaining: eigenbasis decomposition of arbitrary initial data).
+- [ ] Scaled discrete heat → continuous heat on GH-limit (D7).
 - [ ] Ollivier-Ricci with full proof (currently statement-only in `Infra/OllivierStatement.lean`).
-- [ ] Choquet-Bruhat Einstein evolution (D11 #52).
+- [ ] Choquet-Bruhat Einstein evolution (D11).
 
 ### Discrete Lorentzian structure (first ingredient of GR bridge)
 - [x] Event type `Fin (d+1) → ℤ` on cubic lattice (`Infra/LorentzLattice.lean`)
@@ -226,115 +226,115 @@ Grouped by phase (see [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md)). Each milestone ei
 - [x] `NStep sys n a b`: iterated single-step reachability
 - [x] `BranchialSlice sys s₀ n`: the depth-`n` slice
 - [x] Slice recursion: depth-0 = `{s₀}`, depth-(n+1) = successors of depth-n
-- [x] Finite-slice cardinality bound under finite-successors assumption (`BranchialFinite.lean`, `branchialSliceFinite_of_successors_finite`, task I1 #84).
-- [x] Fisher metric on branchial probability distributions (`FisherMetric.lean`, task IQ5 #152).
-- [ ] Branchial measure: a probability assignment on each slice (I2 #85 pending).
-- [x] ℓ²(slice) Hilbert space (I4 #87 / R3 #178 partial; `BranchialHilbert.lean` — `BranchialHilbert S := EuclideanSpace ℂ S` with ℂ-linear adjacency operator `branchialAdjLM` and self-adjointness `branchialAdjLM_inner` for symmetric adj).
-- [x] Branchial amplitudes (I3 #86; `BranchialHilbert.lean` — `BranchialAmplitude S := BranchialHilbert S` + Born-rule `bornProbability ψ s := Complex.normSq (ψ s)`, sum = `‖ψ‖²`).
-- [x] Branchial measure (I2 #85; `BranchialHilbert.lean` — `branchialUniformWeight S s := 1/|S|`, sum = 1 when nonempty).
-- [x] Branchial Schrödinger evolution as unitary (I5 #88; `BranchialSchrodinger.lean` — `BranchialSchrodinger adj u v` structure, `branchialSchrodinger_unitary_evolution` proves total-probability conservation via self-adjointness of real adjacency operator).
-- [ ] Branchial amplitudes / evolution toward Hilbert-space limit (I3 #86, I5 #88, I8 #91 pending).
-- [ ] Fubini-Study limit under refinement (IQ6 #153 in progress).
-- [ ] EME persistence as branchial observable (IQ8 #154 in progress).
-- [ ] Path-integral over singleway causal graphs (IQ9 #155 in progress).
+- [x] Finite-slice cardinality bound under finite-successors assumption (`BranchialFinite.lean`, `branchialSliceFinite_of_successors_finite`, task I1).
+- [x] Fisher metric on branchial probability distributions (`FisherMetric.lean`, task IQ5).
+- [ ] Branchial measure: a probability assignment on each slice (I2 pending).
+- [x] ℓ²(slice) Hilbert space (I4 / R3 partial; `BranchialHilbert.lean` — `BranchialHilbert S := EuclideanSpace ℂ S` with ℂ-linear adjacency operator `branchialAdjLM` and self-adjointness `branchialAdjLM_inner` for symmetric adj).
+- [x] Branchial amplitudes (I3; `BranchialHilbert.lean` — `BranchialAmplitude S := BranchialHilbert S` + Born-rule `bornProbability ψ s := Complex.normSq (ψ s)`, sum = `‖ψ‖²`).
+- [x] Branchial measure (I2; `BranchialHilbert.lean` — `branchialUniformWeight S s := 1/|S|`, sum = 1 when nonempty).
+- [x] Branchial Schrödinger evolution as unitary (I5; `BranchialSchrodinger.lean` — `BranchialSchrodinger adj u v` structure, `branchialSchrodinger_unitary_evolution` proves total-probability conservation via self-adjointness of real adjacency operator).
+- [ ] Branchial amplitudes / evolution toward Hilbert-space limit (I3, I5, I8 pending).
+- [ ] Fubini-Study limit under refinement (IQ6 in progress).
+- [ ] EME persistence as branchial observable (IQ8 in progress).
+- [ ] Path-integral over singleway causal graphs (IQ9 in progress).
 
 ### Infrageometry program — 9 groups × 57 tasks (see [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md))
 
 Full collation of the post-phase-1 infrageometry programme. Each group is a coherent research direction; per-task status tracked in `COVERAGE_MAP.md` §8.
 
 #### IA — Infraanalysis / DAG calculus (5 tasks, all done)
-- [x] IA1 DAG-as-blowup-of-interval (`DagBlowup.lean`; #109).
-- [x] IA2 Calculus on coordinate DAGs (`DagCalculus.lean`; #110).
-- [x] IA3 de Rham complex on Hypergraph V (`DeRham.lean`; #111).
-- [x] IA4 Form → cochain integration map (`FormCochainIntegration.lean`; #112).
-- [x] IA5 Blowup / refinement operators (`BlowupOperations.lean`; #113).
+- [x] IA1 DAG-as-blowup-of-interval (`DagBlowup.lean`;).
+- [x] IA2 Calculus on coordinate DAGs (`DagCalculus.lean`;).
+- [x] IA3 de Rham complex on Hypergraph V (`DeRham.lean`;).
+- [x] IA4 Form → cochain integration map (`FormCochainIntegration.lean`;).
+- [x] IA5 Blowup / refinement operators (`BlowupOperations.lean`;).
 
 #### IG — InfraGaugeTheory (11 tasks, 10/11 done)
-- [x] IG1 FiberedGraph type + basic properties (`FiberedGraph.lean`; #114).
-- [x] IG2 Section structure + smoothness (#115).
-- [x] IG3 Connection on a FiberedGraph (#116).
-- [x] IG4 Parallel transport along a base path (`Holonomy.lean`; #117).
-- [x] IG5 HolonomyMatrix on a loop (#118).
-- [x] IG6 Wilson loop = trace of holonomy (#119).
-- [x] IG7 FlatConnection predicate + theorems (#120).
-- [x] IG8 FiberBundle predicate (`FiberBundle.lean`; #121).
-- [x] IG9 GraphTangentBundle construction (#122).
-- [x] IG11 Multi-fibered graph (`MultiFibrationProjection.lean`; #124).
-- [ ] IG10 Exponential map via weighted shortest-path counts (#123 pending).
+- [x] IG1 FiberedGraph type + basic properties (`FiberedGraph.lean`;).
+- [x] IG2 Section structure + smoothness.
+- [x] IG3 Connection on a FiberedGraph.
+- [x] IG4 Parallel transport along a base path (`Holonomy.lean`;).
+- [x] IG5 HolonomyMatrix on a loop.
+- [x] IG6 Wilson loop = trace of holonomy.
+- [x] IG7 FlatConnection predicate + theorems.
+- [x] IG8 FiberBundle predicate (`FiberBundle.lean`;).
+- [x] IG9 GraphTangentBundle construction.
+- [x] IG11 Multi-fibered graph (`MultiFibrationProjection.lean`;).
+- [ ] IG10 Exponential map via weighted shortest-path counts.
 
 #### IC — Infracausality (8 tasks, all done)
-- [x] IC1 Transitively-reduced causal graph type (`CausalGraphType.lean`; #125).
-- [x] IC2 ObserverChain (maximal chain; #126).
-- [x] IC3 LightRay as degenerate-interval subgraph (#127).
-- [x] IC4 Foliation = successive antichains, ProperTime (`CausalFoliation.lean`; #128).
-- [x] IC5 SpatiallyReconstructedHypergraph (`SpatialReconstruction.lean`; #129).
-- [x] IC6 Multi-fibration from non-unique shortest-path projection (#130).
-- [x] IC7 Ehlers-Pirani-Schild axioms as Props (`EPSAxioms.lean`; #131).
-- [x] IC8 Marzke-Wheeler clock construction (`MarzkeWheeler.lean`; #132).
+- [x] IC1 Transitively-reduced causal graph type (`CausalGraphType.lean`;).
+- [x] IC2 ObserverChain (maximal chain;).
+- [x] IC3 LightRay as degenerate-interval subgraph.
+- [x] IC4 Foliation = successive antichains, ProperTime (`CausalFoliation.lean`;).
+- [x] IC5 SpatiallyReconstructedHypergraph (`SpatialReconstruction.lean`;).
+- [x] IC6 Multi-fibration from non-unique shortest-path projection.
+- [x] IC7 Ehlers-Pirani-Schild axioms as Props (`EPSAxioms.lean`;).
+- [x] IC8 Marzke-Wheeler clock construction (`MarzkeWheeler.lean`;).
 
 #### IT — Infratopology / Vietoris-Rips (6 tasks, 3 proved + 3 obligation-level)
-- [x] IT1 Vietoris-Rips complex on a hypergraph (`VietorisRips.lean`; #133).
-- [x] IT2 Hodge Laplacian on VR-complex 0- and 1-forms (`HodgeVR.lean`; #134).
-- [x] IT4 Persistence diagram / barcode sentinel (#136).
-- [x] IT3 Spectrum of Hodge Laplacian as hypergraph invariant (#135; `HodgeLaplacianSpectrum.lean`: `vrHodge0_add`, `vrHodge0_smul`, `vrHodge0_symm` (ℓ² self-adjointness), `vrHodge0_has_zero_eigenvalue`, `vrHodge0_const_in_kernel` — finite-dim spectral theorem now applies).
-- [ ] IT5 Latschev theorem as Prop obligation + proof for cycles (#137 in progress).
-- [ ] IT6 Scale-dependence trichotomy theorem (#138 in progress).
+- [x] IT1 Vietoris-Rips complex on a hypergraph (`VietorisRips.lean`;).
+- [x] IT2 Hodge Laplacian on VR-complex 0- and 1-forms (`HodgeVR.lean`;).
+- [x] IT4 Persistence diagram / barcode sentinel.
+- [x] IT3 Spectrum of Hodge Laplacian as hypergraph invariant (`HodgeLaplacianSpectrum.lean`: `vrHodge0_add`, `vrHodge0_smul`, `vrHodge0_symm` (ℓ² self-adjointness), `vrHodge0_has_zero_eigenvalue`, `vrHodge0_const_in_kernel` — finite-dim spectral theorem now applies).
+- [ ] IT5 Latschev theorem as Prop obligation + proof for cycles.
+- [ ] IT6 Scale-dependence trichotomy theorem.
 
 #### ID — Infradimension (7 tasks, 5 proved + 2 obligation-level)
-- [x] ID1 Wolfram-Hausdorff dimension as function on hypergraphs (`HypergraphDistance.lean`; #139).
-- [x] ID2 Plateau-detection for Wolfram-Hausdorff dimension (`PlateauDimension.lean`; #140).
-- [x] ID3 Homology dimension from persistence (`HomologyDimension.lean`; #141).
-- [x] ID4 Coordinatization dimension via extremal orthogonal axes (`CoordinatizationDimension.lean`; #142).
-- [x] ID5 Causal-graph dimension from longest-antichain analysis (`CausalDimension.lean`; #143).
-- [ ] ID6 Compatibility theorem — all dimension notions agree on regular lattices (#144 in progress).
-- [ ] ID7 Spectral dimension via heat-kernel trace (#145 in progress; `heatTrace` already built).
+- [x] ID1 Wolfram-Hausdorff dimension as function on hypergraphs (`HypergraphDistance.lean`;).
+- [x] ID2 Plateau-detection for Wolfram-Hausdorff dimension (`PlateauDimension.lean`;).
+- [x] ID3 Homology dimension from persistence (`HomologyDimension.lean`;).
+- [x] ID4 Coordinatization dimension via extremal orthogonal axes (`CoordinatizationDimension.lean`;).
+- [x] ID5 Causal-graph dimension from longest-antichain analysis (`CausalDimension.lean`;).
+- [ ] ID6 Compatibility theorem — all dimension notions agree on regular lattices.
+- [ ] ID7 Spectral dimension via heat-kernel trace.
 
 #### IB — Infrablowup (6 tasks, 5/6 done)
-- [x] IB1 ElementaryBlowup (`ElementaryBlowup.lean`; #146).
-- [x] IB3 BlowupLieAlgebra structure (`BlowupLieAlgebra.lean`; #148).
-- [x] IB4 Insertion Lie algebra from unary blowups (#149).
-- [x] IB5 Poisson bracket on formal hypergraph functions (#150).
-- [x] IB6 Radial / laminar blowup operations (`RadialLaminarBlowup.lean`; #151).
-- [ ] IB2 Causal-branchial-trivial commutator theorem (#147 in progress).
+- [x] IB1 ElementaryBlowup (`ElementaryBlowup.lean`;).
+- [x] IB3 BlowupLieAlgebra structure (`BlowupLieAlgebra.lean`;).
+- [x] IB4 Insertion Lie algebra from unary blowups.
+- [x] IB5 Poisson bracket on formal hypergraph functions.
+- [x] IB6 Radial / laminar blowup operations (`RadialLaminarBlowup.lean`;).
+- [ ] IB2 Causal-branchial-trivial commutator theorem.
 
 #### IQ — Branchial / quantum (4 formal obligations + 1 real theorem)
-- [x] IQ5 Fisher metric on branchial graph (`FisherMetric.lean`; #152).
-- [ ] IQ6 Fubini-Study as limit of Fisher under refinement (#153 in progress; obligation).
-- [ ] IQ8 EME persistence as branchial observable (#154 in progress; obligation).
-- [ ] IQ9 Path integral over singleway causal graphs (#155 in progress; obligation).
+- [x] IQ5 Fisher metric on branchial graph (`FisherMetric.lean`;).
+- [ ] IQ6 Fubini-Study as limit of Fisher under refinement.
+- [ ] IQ8 EME persistence as branchial observable.
+- [ ] IQ9 Path integral over singleway causal graphs.
 
 #### IS — Synthetic axiomatic infrageometry (3 tasks, all done)
-- [x] IS1 Synthetic circle / line / sphere (`SyntheticGeometry.lean`; #156).
-- [x] IS2 InfrageometricScene — multi-construction scene type (`InfrageometricScene.lean`; #157).
-- [x] IS3 Axiomatic synthetic infrageometry, Euclid-style (`SyntheticAxiomatic.lean`; #158).
+- [x] IS1 Synthetic circle / line / sphere (`SyntheticGeometry.lean`;).
+- [x] IS2 InfrageometricScene — multi-construction scene type (`InfrageometricScene.lean`;).
+- [x] IS3 Axiomatic synthetic infrageometry, Euclid-style (`SyntheticAxiomatic.lean`;).
 
 #### IR — Ruliology / rule taxonomy (7 tasks, 6 proved + 1 obligation-level)
-- [x] IR1 RuleSignature functor (`RuleSignature.lean`; #159).
-- [x] IR2 Conservation theorem — |LHS|=|RHS| implies bounded dimension (`RuleDimensionBounds.lean`; #160).
-- [x] IR3 Tree-producing rules have log-branching dimension (`StructuralRuleBounds.lean`; #161).
-- [x] IR4 Planar rules have dim ≤ 2 (Euler formula; #162).
-- [x] IR5 Product rule dimension additivity (#163).
-- [x] IR6 Candidate-rule database + screening pipeline (`CandidateRuleDatabase.lean`; #164).
-- [ ] IR7 Reverse-engineer rule from target signature (#165 in progress; obligation).
+- [x] IR1 RuleSignature functor (`RuleSignature.lean`;).
+- [x] IR2 Conservation theorem — |LHS|=|RHS| implies bounded dimension (`RuleDimensionBounds.lean`;).
+- [x] IR3 Tree-producing rules have log-branching dimension (`StructuralRuleBounds.lean`;).
+- [x] IR4 Planar rules have dim ≤ 2 (Euler formula;).
+- [x] IR5 Product rule dimension additivity.
+- [x] IR6 Candidate-rule database + screening pipeline (`CandidateRuleDatabase.lean`;).
+- [ ] IR7 Reverse-engineer rule from target signature.
 
 ### R-series real-work items (5 tasks, 3.5/5 done)
-- [x] R1 C² Taylor convergence for scaled second difference (`CTwoTaylor.lean`; #176).
-- [x] R2 laplacianMatrix + heatKernel via Matrix.exp (`LaplacianMatrix.lean`; #177).
-- [x] R3 ℓ²(BranchialSlice) as Hilbert space with branchial adjacency operator (#178) — closed: `BranchialHilbert.lean` (Hilbert alias, ℂ-linear adjacency, Born rule, uniform measure, observables, expectation values) + `BranchialSchrodinger.lean` (unitary Schrödinger evolution) + `BranchialCanonical.lean` (canonical rewriting-system-grounded Hamiltonian — no islands).
-- [ ] R4 Curved discrete-Ricci convergence beyond flat (#179).
-- [x] R5 Cycle Laplacian spectrum closed form (`CycleSpectrum.lean`; #180).
+- [x] R1 C² Taylor convergence for scaled second difference (`CTwoTaylor.lean`;).
+- [x] R2 laplacianMatrix + heatKernel via Matrix.exp (`LaplacianMatrix.lean`;).
+- [x] R3 ℓ²(BranchialSlice) as Hilbert space with branchial adjacency operator — closed: `BranchialHilbert.lean` (Hilbert alias, ℂ-linear adjacency, Born rule, uniform measure, observables, expectation values) + `BranchialSchrodinger.lean` (unitary Schrödinger evolution) + `BranchialCanonical.lean` (canonical rewriting-system-grounded Hamiltonian — no islands).
+- [ ] R4 Curved discrete-Ricci convergence beyond flat.
+- [x] R5 Cycle Laplacian spectrum closed form (`CycleSpectrum.lean`;).
 
 ### M-series colleague-work items (10 tasks, all pending)
-- [ ] M1 Ioana Milea gauge-intern project coordination (#166).
-- [ ] M2 Van Le Fisher→Fubini-Study bridge (#167).
-- [ ] M3 Hubert Kolcz Lie-Poisson MBQC (#168).
-- [ ] M4 Jan Pullman IBL-∞ / BV formalism (#169).
-- [ ] M5 Carlos Zapata + Sara Ahmed axiomatic-relativity paper (#170).
-- [ ] M6 Pokorny Infrageometry paclet parity (#171).
-- [ ] M7 Ahmed EME-tracking community post (#172).
-- [ ] M8 Pokorny diffusion-geometry bridge (#173).
-- [ ] M9 Tropical-geometry synthetic infrageometry (#174).
-- [ ] M10 3BP / dynamical-systems dimension signature (#175).
+- [ ] M1 Ioana Milea gauge-intern project coordination.
+- [ ] M2 Van Le Fisher→Fubini-Study bridge.
+- [ ] M3 Hubert Kolcz Lie-Poisson MBQC.
+- [ ] M4 Jan Pullman IBL-∞ / BV formalism.
+- [ ] M5 Carlos Zapata + Sara Ahmed axiomatic-relativity paper.
+- [ ] M6 Pokorny Infrageometry paclet parity.
+- [ ] M7 Ahmed EME-tracking community post.
+- [ ] M8 Pokorny diffusion-geometry bridge.
+- [ ] M9 Tropical-geometry synthetic infrageometry.
+- [ ] M10 3BP / dynamical-systems dimension signature.
 
 ### Remaining-obligations module
 - [~] `RemainingObligations.lean`: **T6 partial upgrade (3/7 done)**. IR7 `ReverseEngineeringObligation`, ID6 `DimensionCompatibilityObligation`, and IQ6 `FubiniStudyLimitObligation` now state real mathematical content in Lean types (existence of rule producing target signature; exact ball-volume formula on the cycle; Cauchy-Schwarz/Bhattacharyya bound respectively). IQ6 is also proved via `fubiniStudyBhattacharyya_bound`. Four others (Latschev IT5, scale trichotomy IT6, EME persistence IQ8, path integral IQ9) remain at `True ∧ False` stub level pending additional Mathlib infrastructure; `four_stub_obligations_open` certifies those stubs are uninhabited.
@@ -376,7 +376,7 @@ Full collation of the post-phase-1 infrageometry programme. Each group is a cohe
 - [x] Benincasa–Dowker discrete d'Alembertian on a causal graph (`DiscreteDAlembertian.lean`): BD-4D operator, action, EL, F6 flagged as explicit Prop obligation.
 - [x] Vietoris-Rips complex + Hodge Laplacian on a hypergraph (`VietorisRips.lean`, `HodgeVR.lean`).
 - [x] Hypergraph Laplacian as a matrix (`LaplacianMatrix.lean`): symmetric matrix, kills constants, row-sum zero; heat kernel as `Matrix.exp`.
-- [x] **Counting measure on a hypergraph + pushforward** (`HypergraphMeasure.lean`, A5 #16): `countingMeasure`, `uniformProbability`, `pushforwardCounting`, `pushforwardUniform`; `countingMeasure_univ = |V|`, `uniformProbability_univ = 1`.
+- [x] **Counting measure on a hypergraph + pushforward** (`HypergraphMeasure.lean`, A5): `countingMeasure`, `uniformProbability`, `pushforwardCounting`, `pushforwardUniform`; `countingMeasure_univ = |V|`, `uniformProbability_univ = 1`.
 - [x] **Pseudo-metric axioms** proved: `dist_self`, `dist_comm`, **`dist_triangle`** (T3; `Connected` form + conditional `Reachable` forms). `PseudoMetricSpace` instance via ℕ→ℝ cast deferred but all axioms in hand.
 - [ ] Ollivier–Ricci on directed hyperedges, following Eidi–Jost 2019 (statement-only in `Infra/OllivierStatement.lean`).
 - [ ] Convergence results connecting discrete to continuum via random-geometric-graph / Poisson sampling.
@@ -410,11 +410,11 @@ Gorard's companion program (arXiv:2004.14808 and related) claims that the *branc
 - [x] Define the `RewritingSystem` / `Step` / `MultiStep` machinery in Lean (states = hypergraphs, edges = applications; full branching tree via `Branchial.lean`).
 - [x] Define `BranchialSlice` (states at a common evolution depth with shared ancestry; `Branchial.lean`, `BranchialFinite.lean`).
 - [x] Define `SchrodingerEquation` on `Hypergraph V` with proven unitarity (`SchrodingerEquation.lean`, task D10).
-- [x] Fisher metric on branchial distributions (`FisherMetric.lean`, IQ5 #152).
-- [ ] Integrate with `../efficient_rewriting_final/` multi-way engine for concrete examples (X4 #75 pending).
-- [ ] Define a measure / amplitude on branchial paths (I2 #85 pending).
-- [~] Branchial-amplitude / Hilbert-space limit (I3 #86, I5 #88, I8 #91 pending; I4 #87 / R3 #178 ℓ²(slice) ✅ partial via `BranchialHilbert.lean`).
-- [ ] Fubini-Study limit under branchial refinement (IQ6 #153 in progress).
+- [x] Fisher metric on branchial distributions (`FisherMetric.lean`, IQ5).
+- [ ] Integrate with `../efficient_rewriting_final/` multi-way engine for concrete examples (X4 pending).
+- [ ] Define a measure / amplitude on branchial paths (I2 pending).
+- [~] Branchial-amplitude / Hilbert-space limit (I3, I5, I8 pending; I4 / R3 ℓ²(slice) ✅ partial via `BranchialHilbert.lean`).
+- [ ] Fubini-Study limit under branchial refinement (IQ6 in progress).
 
 ## Multi-way engine integration
 

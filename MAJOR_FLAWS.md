@@ -35,7 +35,7 @@ None of these exists on a discrete hypergraph without extra choices. Gorard make
 
 **Status in docs.**
 - `notes/2004.14810_close_reading.md` §3.3 analysis.
-- `notes/severity_taxonomy.md` S2 #3.
+- `notes/severity_taxonomy.md` S2.
 - `FINDINGS.md` S2 table row 3.
 
 **Lean status.** Formalised in `lean/InfraFormalization/Refutations/F1NoMetric.lean`:
@@ -56,7 +56,7 @@ None of these exists on a discrete hypergraph without extra choices. Gorard make
 
 **What refutation looks like.** Lean-level proof that the assumption is *non-constructive*: no bilinear form on the hyperedge set renders every non-parallel pair orthonormal without additional choices.
 
-**Status.** Documented in `notes/severity_taxonomy.md` S2 #5, `notes/2004.14810_close_reading.md`.
+**Status.** Documented in `notes/severity_taxonomy.md` S2, `notes/2004.14810_close_reading.md`.
 
 **Lean status.** Formalised in `lean/InfraFormalization/Refutations/F2Orthonormality.lean`:
 - `Form E := E → E → ℝ`; `Orthonormal g e₁ e₂ := g e₁ e₁ = 1 ∧ g e₂ e₂ = 1 ∧ g e₁ e₂ = 0`.
@@ -77,7 +77,7 @@ and then concludes that conservative + asymptotically-dimensionality-preserving 
 
 **What refutation looks like.** Lean-level proof that, if we *define* "asymptotic dimensionality preservation" the way Gorard does, the "Einstein equations" claim follows by definitional unfolding alone — no combinatorial or geometric content. I.e., prove the implication is *logically trivial*.
 
-**Status.** Documented in `notes/severity_taxonomy.md` S3 #9, `notes/corpus_assessment.md`.
+**Status.** Documented in `notes/severity_taxonomy.md` S3, `notes/corpus_assessment.md`.
 
 **Lean status.** Formalised in `lean/InfraFormalization/Refutations/F3Tautology.lean`:
 - `gorard_dim_preservation_is_euler_lagrange : AsymptoticDimPreservation P g ↔ EulerLagrange P g := Iff.rfl` — the biconditional is definitional unfolding.
@@ -149,7 +149,7 @@ as "provably satisfying the Einstein field equations in the continuum limit." Ed
 
 **Statement.** Title promises discrete Raychaudhuri, discrete singularity theorems. Body contains: *no* discrete Raychaudhuri equation, *no* discrete expansion scalar, *no* discrete energy condition, *no* discrete stress-energy tensor; zero occurrences of "shear" or "vorticity". Paper's own conclusions explicitly mark these as open problems.
 
-**Status.** Documented in `notes/2303.07282_close_reading.md`, `FINDINGS.md` S6 #15.
+**Status.** Documented in `notes/2303.07282_close_reading.md`, `FINDINGS.md` S6.
 
 ## Summary table
 

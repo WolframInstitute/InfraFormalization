@@ -30,7 +30,7 @@ Definitions used throughout this project. Organized by topic. Terms Gorard uses 
 
 ★ **Confluence (Church–Rosser).** Standard ARS property: divergent rewrites reconverge. Necessary condition for causal invariance.
 
-★ **Asymptotic dimensionality preservation.** Gorard's condition (G1 §3.3): the "dimension anomaly" of the causal graph $\to 0$ as the graph grows. Defined by Gorard as $\delta S[g^{ab}] / \delta g^{ab} \to 0$. Our audit classifies this as tautological (S3 #9) because the definition is the Euler-Lagrange equation of the claimed action.
+★ **Asymptotic dimensionality preservation.** Gorard's condition (G1 §3.3): the "dimension anomaly" of the causal graph $\to 0$ as the graph grows. Defined by Gorard as $\delta S[g^{ab}] / \delta g^{ab} \to 0$. Our audit classifies this as tautological (S3) because the definition is the Euler-Lagrange equation of the claimed action.
 
 ## Continuum geometry
 
@@ -44,7 +44,7 @@ Definitions used throughout this project. Organized by topic. Terms Gorard uses 
 
 **Riemann tensor** $R_{abcd}$ / **Ricci tensor** $R_{ab} = R^c_{acb}$ / **scalar curvature** $R = g^{ab} R_{ab}$. Standard.
 
-**Directional Ricci** $\mathrm{Ric}(v, v) = R_{ab} v^a v^b$ for a unit vector $v$. *Not* the same as $R$ in general. The conflation of $\mathrm{Ric}(v,v)$ with $R$ is S1 #1 in our taxonomy.
+**Directional Ricci** $\mathrm{Ric}(v, v) = R_{ab} v^a v^b$ for a unit vector $v$. *Not* the same as $R$ in general. The conflation of $\mathrm{Ric}(v,v)$ with $R$ is S1 in our taxonomy.
 
 **Einstein field equations.** $R_{ab} - \tfrac{1}{2} R g_{ab} + \Lambda g_{ab} = 8\pi T_{ab}$.
 
@@ -64,7 +64,7 @@ Definitions used throughout this project. Organized by topic. Terms Gorard uses 
 
 **Ollivier–Ricci curvature** $\kappa(x,y) = 1 - W_1(m_x, m_y) / d(x,y)$ for a random walk $m$ on a metric space $(X, d)$. For a Riemannian manifold with uniform-ball random walk, Ollivier (JFA 2009, Example 7) proved $\kappa = \varepsilon^2 \mathrm{Ric}(v,v) / (2(d+2)) + O(\varepsilon^3)$ where $v$ = unit vector from $x$ to $y$.
 
-**Directional vs scalar Ollivier.** Ollivier's Riemannian identity yields $\kappa$ ∝ directional Ricci $\mathrm{Ric}(v,v)$. Gorard consistently writes scalar $R$ where $\mathrm{Ric}(v,v)$ should appear — S1 #1.
+**Directional vs scalar Ollivier.** Ollivier's Riemannian identity yields $\kappa$ ∝ directional Ricci $\mathrm{Ric}(v,v)$. Gorard consistently writes scalar $R$ where $\mathrm{Ric}(v,v)$ should appear — S1.
 
 **Benincasa–Dowker action.** A discrete counting functional $S_{BD}(C)$ on a causal set $C$, whose expectation under Poisson sampling in a continuum spacetime converges to (conjecturally) the Einstein–Hilbert action.
 
@@ -98,8 +98,8 @@ Definitions used throughout this project. Organized by topic. Terms Gorard uses 
 
 **Verdict status.** ✓ verified, ✗ refuted, ⚠ ill-defined, ⊘ tautology, ○ open.
 
-**Conservative rule.** $|LHS| = |RHS|$ — Wolfram-model-specific term (not Gorard's; ours). Central to the structural refutation of S5 #13.
+**Conservative rule.** $|LHS| = |RHS|$ — Wolfram-model-specific term (not Gorard's; ours). Central to the structural refutation of S5.
 
-**Directional Ricci conflation.** Our label for the S1 #1 error pattern — treating $\mathrm{Ric}(v,v)$ as if it were the scalar $R$.
+**Directional Ricci conflation.** Our label for the S1 error pattern — treating $\mathrm{Ric}(v,v)$ as if it were the scalar $R$.
 
 **Claim not delivered in the body.** S6 — a title or abstract states a result that the body does not deliver.
