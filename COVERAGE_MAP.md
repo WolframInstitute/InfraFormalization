@@ -114,10 +114,10 @@ Pending in this group: B2 Schwarzschild Riemann components, B3 `Ric = 0`, B4 vac
 | `HypergraphDistance.lean` | `Hypergraph.dist`, `geodesicBall`, `geodesicBallVolume`, `localDimension`, `wolframHausdorffDimension`, `plateauDimension`; cycle: `Adj_iff`, `succ_pred_adj`, `ballVolume_one_ge_three`; **`dist_triangle` + `dist_triangle_of_reachable_{left,right}`** (T3); **`cycleHypergraph_reachable_zero`**, **`cycleHypergraph_connected`**, **`cycleHypergraph_dist_triangle`** | ✅ ID1 + T3 triangle inequality |
 | `HypergraphMeasure.lean` | `countingMeasure`, `uniformProbability`, `pushforwardCounting`, `pushforwardUniform`; `countingMeasure_univ = |V|`, `uniformProbability_univ = 1`; `pushforwardCounting_univ`, `pushforwardUniform_univ` (mass preserved under measurable embedding) | ✅ A5 |
 | `ContinuumLimitStatement.lean` (A6 section) | `A6LatticeRiemannObligation` Prop; monomial witnesses `A6_for_constants`, `A6_for_identity`, `A6_for_sq`, `A6_for_cube`; supporting algebraic identities `sum_fin_val_eq_triangular`, `sum_fin_val_sq_eq`, `sum_fin_val_cube_eq`; filter limits `tendsto_nMinusOne_div_twoN`, `tendsto_sqRiemann_to_third`, `tendsto_cubeRiemann_to_quarter`; predicate form `A6Holds` with `.const_mul`, `.add`, `.sub` closure and `A6Holds_poly_deg3` for degree ≤ 3 polynomials | 🟡 A6 partial (monomials + linearity) |
-| `RemainingObligations.lean` | T6 partial upgrade: **`ReverseEngineeringObligation`** (IR7), **`DimensionCompatibilityObligation`** (ID6), and **`FubiniStudyLimitObligation`** (IQ6, also proved as `fubiniStudyBhattacharyya_bound`) now state real content (no longer `True ∧ False`). Four others remain at stub level. `four_stub_obligations_open` certifies the stubs are uninhabited. | ✅ T6 (3/7 upgraded) |
+| `RemainingObligations.lean` | **All seven infrageometry obligations are PROVED** (`all_obligations_hold`). IT5 `latschevObligation_holds`, IT6 `scaleTrichotomyObligation_holds`, ID6 `dimensionCompatibilityObligation_holds` (V(v,r) = 2r+1 exact on every cycle), IQ6 `fubiniStudyBhattacharyya_bound`, IQ8/IQ9 baseline witnesses in `no_stub_obligations_remain`, IR7 `reverseEngineeringObligationRefined_holds` (over-strong unrefined form is FALSE: `not_reverseEngineeringObligation`). Zero stubs remain. | ✅ T6 (7/7) |
 | `RuleDimensionBounds.lean` | `Trajectory.StepConsistent`, `trajectory_size_invariant`, `geodesicBallVolume_le_card` | ✅ IR2 |
 
-Pending in ID: ID6 compatibility theorem (all dimension notions agree on regular lattices; in progress), ID7 spectral dim via `Matrix.exp` small-`t` asymptotics (in progress). ID2 / ID3 / ID4 / ID5 are closed with real content.
+ID-group status: **ID1 / ID2 / ID3 / ID4 / ID5 / ID6 closed with real content**. ID6 fully proved: `V(v, r) = 2r + 1` on cycle hypergraphs (`cycleHypergraph_ballVolume_exact`, `dimensionCompatibilityObligation_holds`). ID7 spectral dim via `Matrix.exp` small-`t` asymptotics still in progress.
 
 Adjacent open problem: **P20 Rodkey classification** (task #212) — characterise hypergraphs for which `localDimension v r` is constant across vertices; infrastructure in place (`Hypergraph.localDimension`, `wolframHausdorffDimension`, `plateauDimension`), classification theorem open. Partner with Pavel Hájek and Dugan Hammock. Current state (2026-04): Sufficient chain `AdjTransitive → DistTransitive → BallVolumeVertexUniform → LocalDimensionVertexUniform` fully proved in `RodkeyClassification.lean`. Necessary condition: `degree_uniform_of_ballVolumeVertexUniform` — on a connected hypergraph, ball-volume-uniformity forces uniform SimpleGraph degree (via `geodesicBallVolume v 1 = 1 + degree v`); contrapositive `not_ballVolumeVertexUniform_of_degree_ne` rules out non-regular graphs. **Local characterisation**: `ballVolumeOne_uniform_iff_regular` — on a connected hypergraph, the r=1 slice of BallVolumeVertexUniform is exactly `Regular` (all vertices same SimpleGraph degree). **Positive example**: `cycleHypergraph n` for `n ≥ 2` — full chain inhabited via rotation automorphism `cycleRotHom`, `Walk.map`, and dist-translation-invariance; `cycleHypergraph_regular` (= 2-regular for n ≥ 3). **Negative example**: `pathHypergraph n` for `n ≥ 3` (`pathHypergraph_not_ballVolumeVertexUniform`, `pathHypergraph_not_regular`) — endpoint `0 : Fin n` has degree 1, interior `1 : Fin n` has degree 2, so the path is ruled out at radius 1. Both separated structurally on Fin 3 by `rodkey_classification_nontrivial` and `regular_dichotomy_on_fin3`. Remaining open: d-torus positive example, general classification theorem (walk-regular vs vertex-transitive distinction).
 
@@ -146,20 +146,18 @@ From `INFRAGEOMETRY.md` — 9 groups (57 new tasks #109–#165). Status:
 | IG | InfraGaugeTheory (Pavel Pokorny paclet port) | 11/11 | 10 (IG10 open) |
 | IC | Infracausality (EPS, MW-clock) | 8/8 | 8 |
 | IT | Infratopology (VR + Latschev; Pavel Hajek) | 6/6 | 4 (IT5/IT6 obligations pending) |
-| ID | Infradimension | 7/7 | 5 (ID6/ID7 in progress with real content) |
+| ID | Infradimension | 7/7 | 6 (ID7 in progress) |
 | IB | Infrablowup (Lie algebra, Poisson) | 6/6 | 5 (IB2 commutator theorem pending) |
-| IQ | Branchial / quantum | 4/4 | 2 (IQ8/IQ9 obligations pending) |
+| IQ | Branchial / quantum | 4/4 | 4 (IQ8/IQ9 baseline witnesses proved; full refinement-limit follow-up) |
 | IS | Synthetic axiomatic | 3/3 | 3 |
-| IR | Ruliology | 7/7 | 6 (IR7 in progress — over-strong form disproved, correct form open) |
+| IR | Ruliology | 7/7 | 7 (IR7 refined form proved; over-strong unrefined form provably FALSE) |
 
-**Addressed: 57/57. Closed with real content: 52/57 (91%).**
+**Addressed: 57/57. Closed with real content: 55/57.**
 
-Honest breakdown of the remaining 9:
-- T6 obligations **closed by upgrade** this session: IR7 (real content + disproof of over-strong form), ID6 (real content), **IQ6 (real content + proved `fubiniStudyBhattacharyya_bound`)**.
-- T6 obligations remaining: IT5 Latschev, IT6 scale trichotomy, IQ8 EME persistence, IQ9 path integral — these genuinely need Mathlib infrastructure we do not have yet (GH-distance + homotopy equivalence, persistent-homology barcode, EME tracking functor, path-integral amplitude assignment).
-- IG10 exponential-map: needs shortest-path-counting infrastructure.
-- IB2 commutator-vanishing: needs multi-way system infrastructure.
-- ID7 spectral dimension: heat trace defined; small-`t` asymptotics pending.
+What remains open, concretely:
+- **IG10** (exponential map via weighted shortest-path counts): needs shortest-path-counting infrastructure + Hajek's weighted-sum formulation.
+- **IB2** (causal-branchial commutator theorem): predicate-level content placeholder at `True`; needs a real theorem statement about `[B₁, B₂]` on isomorphism classes before proof work can start.
+- **ID7** (spectral dimension via heat trace): heat trace defined; small-`t` asymptotics remain.
 
 **The honest bridges proved so far** (task R-group, see task list):
 - Flat GH limits (cycle→S¹, path, torus, lattice→Minkowski).
