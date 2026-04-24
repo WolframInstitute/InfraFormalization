@@ -288,6 +288,18 @@ theorem tensor_cost (μ ν : X → ℝ)
 
 end TransportPlan
 
+/-- **W_1 is non-negative on probability measures** — the tensor plan
+provides the existence witness, so no additional plan hypothesis is
+required. -/
+theorem wasserstein1_nonneg
+    (d : X → X → ℝ) (hd : ∀ x y, 0 ≤ d x y)
+    (μ ν : X → ℝ)
+    (hμ : ∀ x, 0 ≤ μ x) (hν : ∀ x, 0 ≤ ν x)
+    (hμsum : ∑ x, μ x = 1) (hνsum : ∑ x, ν x = 1) :
+    0 ≤ wasserstein1 d μ ν :=
+  wasserstein1_nonneg_of_plan d hd μ ν
+    (TransportPlan.tensor μ ν hμ hν hμsum hνsum)
+
 /-! ## Dirac-delta measures and their Wasserstein distance -/
 
 /-- **Dirac-delta measure** at a point `x : X`: unit mass at `x`,
