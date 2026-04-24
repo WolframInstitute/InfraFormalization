@@ -79,6 +79,33 @@ Highlights:)
   convergence + `A6Holds` predicate closed under `const_mul`, `add`,
   `sub`; polynomials up to degree 3 done, general continuous awaiting
   Weierstrass.
+- **B9 Kerr metric**: `kerrG`, `kerrSigma`, `kerrDelta`, `KerrValid`
+  exterior predicate; symmetry + Schwarzschild-reduction at spin zero.
+- **B10 Ricci symmetry (flat-sector + conditional)**: `RiemannRicciSymm`
+  predicate; `ricci_symm_of_riemannRicciSymm`; `flatConnection_ricci_symm`.
+- **B11 contracted 2nd Bianchi (flat-sector)**: already closed via
+  `flatConnection_einstein_divergence_zero` — promoted to complete.
+- **C3 vector-bundle connection**: `VectorBundleConnection n k` with
+  covariant derivative, curvature 2-form, curvature antisymmetry,
+  flat instance, `ofConnectionData` lifting `ConnectionData n` to
+  `VectorBundleConnection n n`, `ofConnectionData_curvature_eq_riemann`.
+- **C4 torsion at bundle level**: `VectorBundleConnection.torsion`,
+  `IsTorsionFree`, `ofConnectionData_isTorsionFree` (lifted connection
+  is always torsion-free via `Γ_symm`).
+- **C6 bundle Γ ↔ local-coord Γ**: `toConnectionData` projects a
+  torsion-free `VectorBundleConnection n n` back to a `ConnectionData n`;
+  `toConnectionData_ofConnectionData` round-trip.
+- **C8 scaled connection → Levi-Civita (flat-sector obligation)**:
+  `ScaledDiscreteConnectionFamily`, `ScaledConnectionToLeviCivitaObligation`,
+  `scaledConnectionToLeviCivita_trivial`.
+- **G2 discrete gauge field**: `DiscreteGaugeField H G` as a gauge-theory
+  alias for `HypergraphConnection`, with Wilson-loop holonomy and
+  flat-gauge trivial witness.
+- **J2 path integral over causal graphs**: `PathIntegralAmplitude` with
+  Born-rule normalisation bound; witnesses on any `CausalGraph V` and
+  on `MultiwayCausalGraph P V E`.
+- **J4 causal-set comparison**: `CausalSetStructure` Prop; every finite
+  `CausalGraph` with antisymmetry satisfies Sorkin's causal-set axioms.
 
 ## Open items tracked at the obligation level
 
@@ -88,9 +115,9 @@ Highlights:)
 | **IB2** causal-branchial commutator theorem | predicate placeholder at `True`; needs a real theorem statement before proof |
 | **ID7** spectral dimension via heat-kernel trace | heat trace defined; small-`t` asymptotics pending |
 | **A6** weak convergence (general continuous) | polynomials to degree 3 closed; Weierstrass lift pending |
-| **Curved GR witnesses** (B3/B4, B7, B9, F4/F5/F6) | Ricci = 0 on Schwarzschild/Kerr and full EFE for FLRW with matter; blocked by Ricci-on-explicit-connection Mathlib gap |
+| **Curved GR witnesses** (B3/B4, B7, F4/F5/F6) | Ricci = 0 on Schwarzschild and full EFE for FLRW with matter / Kerr vacuum; blocked by Ricci-on-explicit-connection Mathlib gap |
 | **E5 ADM / D11 Choquet-Bruhat** | long-term GR formalization targets |
-| **C3–C8** connection/curvature at bundle level + scaled → Levi-Civita | C1 (`DiagRiemannianMetric`) and C7 (`HypergraphConnection`) done; C8 convergence theorem is the GR bridge ladder rung |
+| **C5 Levi-Civita existence-uniqueness (Koszul)** | the hard remaining C-group item; needs the explicit Koszul formula + metric compatibility |
 
 For the full per-module view, see [`COVERAGE_MAP.md`](COVERAGE_MAP.md).
 
