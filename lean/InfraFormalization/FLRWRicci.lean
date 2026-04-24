@@ -252,5 +252,92 @@ theorem flrwRiemann_1_0_1_0 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
   field_simp
   ring
 
+/-- **`R^2_{020}(x) = -a''(t)/a(t)`** on FLRW (assuming `a(t) ≠ 0`).
+By spatial isotropy, same form as `flrwRiemann_1_0_1_0`. -/
+theorem flrwRiemann_2_0_2_0 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
+    (hv : FLRWValid a x) :
+    (flrwConnection a da dda).riemann x 2 0 2 0 = -(dda (x 0) / a (x 0)) := by
+  have ha_ne : a (x 0) ≠ 0 := hv
+  have ha_sq_ne : (a (x 0))^2 ≠ 0 := pow_ne_zero _ ha_ne
+  unfold ConnectionData.riemann flrwConnection
+  simp only
+  rw [sumFin4 (fun l => flrwΓ a da x 2 2 l * flrwΓ a da x l 0 0),
+      sumFin4 (fun l => flrwΓ a da x 2 0 l * flrwΓ a da x l 2 0)]
+  have h20 : flrwΓ a da x 2 0 0 = 0 := flrwΓ_l_00 a da x 2
+  have h21 : flrwΓ a da x 2 0 1 = 0 := by unfold flrwΓ; simp
+  have h23 : flrwΓ a da x 2 0 3 = 0 := by unfold flrwΓ; simp
+  have h0_20 : flrwΓ a da x 0 2 0 = 0 :=
+    flrwΓ_0_diff a da x 2 0 (by decide)
+  have h1_20 : flrwΓ a da x 1 2 0 = 0 := by unfold flrwΓ; simp
+  have h3_20 : flrwΓ a da x 3 2 0 = 0 := by unfold flrwΓ; simp
+  have h_dΓ_2_2_0_0 : flrwdΓ a da dda 2 x 2 0 0 = 0 := by unfold flrwdΓ; simp
+  have h_dΓ_0_2_2_0 : flrwdΓ a da dda 0 x 2 2 0
+      = (a (x 0) * dda (x 0) - (da (x 0))^2) / (a (x 0))^2 :=
+    flrwdΓ_0_i_i0 a da dda x 2 (by decide)
+  have h_Γ_2_0_2 : flrwΓ a da x 2 0 2 = da (x 0) / a (x 0) :=
+    flrwΓ_i_0i a da x 2 (by decide)
+  have h_Γ_2_2_0 : flrwΓ a da x 2 2 0 = da (x 0) / a (x 0) :=
+    flrwΓ_i_i0 a da x 2 (by decide)
+  simp only [h_dΓ_2_2_0_0, h_dΓ_0_2_2_0, h21, h23, h0_20, h1_20, h3_20,
+             h_Γ_2_0_2, h_Γ_2_2_0, flrwΓ_l_00, mul_zero, add_zero, zero_add]
+  field_simp
+  ring
+
+/-- **`R^3_{030}(x) = -a''(t)/a(t)`** on FLRW (assuming `a(t) ≠ 0`).
+By spatial isotropy, same form as `flrwRiemann_1_0_1_0`. -/
+theorem flrwRiemann_3_0_3_0 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
+    (hv : FLRWValid a x) :
+    (flrwConnection a da dda).riemann x 3 0 3 0 = -(dda (x 0) / a (x 0)) := by
+  have ha_ne : a (x 0) ≠ 0 := hv
+  have ha_sq_ne : (a (x 0))^2 ≠ 0 := pow_ne_zero _ ha_ne
+  unfold ConnectionData.riemann flrwConnection
+  simp only
+  rw [sumFin4 (fun l => flrwΓ a da x 3 3 l * flrwΓ a da x l 0 0),
+      sumFin4 (fun l => flrwΓ a da x 3 0 l * flrwΓ a da x l 3 0)]
+  have h30 : flrwΓ a da x 3 0 0 = 0 := flrwΓ_l_00 a da x 3
+  have h31 : flrwΓ a da x 3 0 1 = 0 := by unfold flrwΓ; simp
+  have h32 : flrwΓ a da x 3 0 2 = 0 := by unfold flrwΓ; simp
+  have h0_30 : flrwΓ a da x 0 3 0 = 0 :=
+    flrwΓ_0_diff a da x 3 0 (by decide)
+  have h1_30 : flrwΓ a da x 1 3 0 = 0 := by unfold flrwΓ; simp
+  have h2_30 : flrwΓ a da x 2 3 0 = 0 := by unfold flrwΓ; simp
+  have h_dΓ_3_3_0_0 : flrwdΓ a da dda 3 x 3 0 0 = 0 := by unfold flrwdΓ; simp
+  have h_dΓ_0_3_3_0 : flrwdΓ a da dda 0 x 3 3 0
+      = (a (x 0) * dda (x 0) - (da (x 0))^2) / (a (x 0))^2 :=
+    flrwdΓ_0_i_i0 a da dda x 3 (by decide)
+  have h_Γ_3_0_3 : flrwΓ a da x 3 0 3 = da (x 0) / a (x 0) :=
+    flrwΓ_i_0i a da x 3 (by decide)
+  have h_Γ_3_3_0 : flrwΓ a da x 3 3 0 = da (x 0) / a (x 0) :=
+    flrwΓ_i_i0 a da x 3 (by decide)
+  simp only [h_dΓ_3_3_0_0, h_dΓ_0_3_3_0, h31, h32, h0_30, h1_30, h2_30,
+             h_Γ_3_0_3, h_Γ_3_3_0, flrwΓ_l_00, mul_zero, add_zero, zero_add]
+  field_simp
+  ring
+
+/-! ## Ricci tensor: time-time component R_{00} = -3 a''/a -/
+
+/-- **`R_{00}(x) = -3 a''(t)/a(t)`** on FLRW (assuming `a(t) ≠ 0`).
+The time-time Ricci component, sum of three identical spatial-direction
+Riemann components plus the vanishing `R^0_{000}` (by antisymmetry).
+This is the textbook FLRW Ricci diagonal-time entry that drives the
+**first Friedmann equation** when contracted against the inverse
+metric. -/
+theorem flrwRicci_0_0 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
+    (hv : FLRWValid a x) :
+    (flrwConnection a da dda).ricci x 0 0 = -3 * dda (x 0) / a (x 0) := by
+  have ha_ne : a (x 0) ≠ 0 := hv
+  unfold ConnectionData.ricci
+  rw [sumFin4 (fun ρ => (flrwConnection a da dda).riemann x ρ 0 ρ 0)]
+  -- ρ = 0: R^0_{000} = 0 by antisymmetry in (μ, ν).
+  have h0 : (flrwConnection a da dda).riemann x 0 0 0 0 = 0 := by
+    have := (flrwConnection a da dda).riemann_antisymm x 0 0 0 0
+    linarith
+  rw [h0,
+      flrwRiemann_1_0_1_0 a da dda x hv,
+      flrwRiemann_2_0_2_0 a da dda x hv,
+      flrwRiemann_3_0_3_0 a da dda x hv]
+  field_simp
+  ring
+
 end Curvature
 end InfraFormalization
