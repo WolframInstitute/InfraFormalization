@@ -106,6 +106,19 @@ Highlights:)
   on `MultiwayCausalGraph P V E`.
 - **J4 causal-set comparison**: `CausalSetStructure` Prop; every finite
   `CausalGraph` with antisymmetry satisfies Sorkin's causal-set axioms.
+- **I10 path-integral formulation**: closed via the same
+  `PathIntegralAmplitude` framework used for J2.
+- **H3 candidate rule passing signature screens**:
+  `signature_sameEdgeCount_of_conservative` + concrete
+  `gorardNamedRule_passes_sameEdgeCount_screen` witness
+  (gorardNamedRule from a 4-edge seed keeps `edgeCount = 4` forever).
+- **A7 Wasserstein-1 rate (obligation-level)**: `WassersteinRateObligation`
+  parameterised by a discrepancy function; zero-discrepancy witness
+  closes the baseline. Real Wasserstein bounds on the circle await
+  Mathlib optimal-transport API.
+- **A8 lift measure convergence to d-torus (obligation-level)**:
+  `MultiDimRateObligation` for each dimension `d`; reduction
+  `multiDimRateObligation_of_slices` from per-slice A7.
 
 ## Open items tracked at the obligation level
 
@@ -115,6 +128,7 @@ Highlights:)
 | **IB2** causal-branchial commutator theorem | predicate placeholder at `True`; needs a real theorem statement before proof |
 | **ID7** spectral dimension via heat-kernel trace | heat trace defined; small-`t` asymptotics pending |
 | **A6** weak convergence (general continuous) | polynomials to degree 3 closed; Weierstrass lift pending |
+| **A7 / A8** non-trivial Wasserstein bounds | obligation-level closure with zero-discrepancy witness; real `O(1/n)` rate awaits Mathlib optimal transport |
 | **Curved GR witnesses** (B3/B4, B7, F4/F5/F6) | Ricci = 0 on Schwarzschild and full EFE for FLRW with matter / Kerr vacuum; blocked by Ricci-on-explicit-connection Mathlib gap |
 | **E5 ADM / D11 Choquet-Bruhat** | long-term GR formalization targets |
 | **C5 Levi-Civita existence-uniqueness (Koszul)** | the hard remaining C-group item; needs the explicit Koszul formula + metric compatibility |
