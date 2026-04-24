@@ -8,7 +8,7 @@ The project runs on three parallel axes:
 2. **Audit of the Gorard corpus** — line-by-line formalisation of seven structural flaws (F1–F7), each converted to an axiom-clean Lean theorem with counter-example witnesses.
 3. **Infrageometry programme** — 57-task / 9-group research programme for the Wolfram Institute, covering colleagues' work (Pavel Hájek, Pavel Pokorny, Van Le, Hubert Kolcz, Jan Pullman, Carlos Zapata, Sara Ahmed, Ioana Milea).
 
-All `lake build` jobs pass (3468 of 3468). Every theorem reduces to Lean's three standard axioms `{propext, Classical.choice, Quot.sound}`. No `sorry`, no `native_decide`, no custom axioms.
+`lake build` is fully green. Every theorem reduces to Lean's three standard axioms `{propext, Classical.choice, Quot.sound}` — no `sorry`, no `native_decide`, no custom axioms, certified by `#print axioms` in `AxiomCheck.lean`.
 
 ## Contents
 
@@ -25,9 +25,8 @@ The project exists to settle, formally, what is actually true in this corpus and
 
 ## Status headline (2026-04-24)
 
-- **Size**: 145 Lean files, ~24k LOC; 870 theorems + 22 lemmas + 18 examples proved; 433 definitions, 69 structures.
-- **Build**: 3501 / 3501 jobs green.
-- **Axiom cleanliness**: 627 `#print axioms` certifications in `AxiomCheck.lean`; every listed theorem reduces to `{propext, Classical.choice, Quot.sound}` (many to `{propext, Quot.sound}` only). No `sorry`, no `native_decide`, no custom axioms.
+- **Size** (rough): ~145 Lean files, ~24k LOC; ~870 theorems, ~430 definitions, ~70 structures. Numbers move every session; build is fully green.
+- **Axiom cleanliness**: every `#print axioms`-certified theorem reduces to `{propext, Classical.choice, Quot.sound}` (many to `{propext, Quot.sound}` only). No `sorry`, no `native_decide`, no custom axioms.
 - **Infrageometry obligations — all seven proved**. `RemainingObligations.lean` bundles them in `all_obligations_hold`: IT5 Latschev, IT6 scale trichotomy, ID6 cycle compatibility (`V(v,r) = 2r + 1` exact), IQ6 Fubini-Study / Bhattacharyya bound, IQ8 EME persistence, IQ9 path-integral baseline, IR7 realisability-restricted reverse-engineering. The over-strong unrefined IR7 is provably false (`not_reverseEngineeringObligation`). Remaining open infrageometry tasks are IG10 (exponential map via weighted shortest-path counts) and IB2 (causal-branchial commutator theorem, predicate-level).
 - **Substantive new results since the weekly report** (187 commits, 24k LOC):
     - **ID6 `cycleHypergraph_ballVolume_exact`**: `V(v, r) = 2r + 1` on every cycle hypergraph for all `r` with `2r + 1 ≤ n`. Upper bound via walk-structural induction — every walk-endpoint lands in the forward/backward shift set — plus composition lemmas `F^[j] ∘ F`, `G^[j] ∘ G`, cross-cancellations. Lower bound via disjoint shift-family Finsets with left-cancellation injectivity.
