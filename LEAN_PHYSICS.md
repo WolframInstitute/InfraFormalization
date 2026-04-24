@@ -36,7 +36,7 @@ We will add citations here as specific pieces of each are used.
 
 ## Our conventions (derived)
 
-1. **Namespace.** All material in `InfraFormalization.*`. Sub-namespace `Infra` for the discrete-continuum bridge content. Future namespace `InfraFormalization.QM` for quantum-mechanical / branchial content.
+1. **Namespace.** All material in `InfraFormalization.*`. Sub-namespace `Infra` for the discrete-continuum bridge content. Quantum / branchial content lives alongside (`BranchialHilbert`, `BranchialSchrodinger`, `BranchialCanonical`, `FisherMetric`, etc.).
 
 2. **Axioms.** *Only* `propext`, `Classical.choice`, `Quot.sound`. `#print axioms` check runs as part of `AxiomCheck.lean`. No `sorry`, no `decide` / `native_decide`, no custom axioms. Commit hooks will enforce this if we set them up.
 
@@ -46,11 +46,11 @@ We will add citations here as specific pieces of each are used.
 
 5. **Tensors.** When we reach tensor content (Phase 4+), match Mathlib's current direction — likely abstract vector-bundle connections rather than index-gymnastics. Follow HepLean's lead where it exists.
 
-6. **Continuum types.** Prefer Mathlib's existing types (`ℝ`, `ℂ`, `ℝ × ℝ`, `EuclideanSpace`, `ℝ/ℤ` as an `AddCircle`) over hand-rolled alternatives. Our `circleDist` as a plain `ℝ × ℝ → ℝ` function is a concession to early-stage development; it should be promoted to a `PseudoMetricSpace` instance on `AddCircle ℝ 1` once that's workable.
+6. **Continuum types.** Prefer Mathlib's existing types (`ℝ`, `ℂ`, `ℝ × ℝ`, `EuclideanSpace`, `ℝ/ℤ` as an `AddCircle`) over hand-rolled alternatives. Continuum-target metric instances that we use directly (`Hypergraph.dist` `PseudoMetricSpace`, `BranchialHilbert` `InnerProductSpace`) are already bundled; auxiliary helpers (e.g. `circleDist` on `ℝ × ℝ`) are kept as plain functions only where that suffices.
 
 7. **Hypergraph side.** Directed multi-hyperedges as `List V` with nonempty-proof (our current `Hyperedge V`). Hypergraph = `Multiset (Hyperedge V)` (our current `Hypergraph V`). This aligns with the combinatorial base of Mathlib and avoids inventing new type hierarchies.
 
-8. **Multiway vs single-way.** `Trajectory` = single-way (what we have). Multi-way evolution will be a new type `MultiwayEvolution`, to be designed alongside the `../efficient_rewriting_final/` C++ engine's output format so that results from there can be directly consumed by our Lean library.
+8. **Multiway vs single-way.** `Trajectory` is the single-way evolution; `MultiwayCausalGraph` (`MultiwayCausalGraph.lean`) bundles a rewriting system with its causal DAG on events for the multiway side. Integration with the `../efficient_rewriting_final/` C++ engine's output format is ongoing so that multiway runs there can be consumed directly by the Lean library.
 
 9. **Documentation style.** Every major definition carries a doc-string. Every theorem has a `/--` comment explaining (a) what it says informally, (b) why it's the right statement, (c) what it depends on. Lean-file comments at the top of each file explain the file's purpose and its role in the programme.
 
