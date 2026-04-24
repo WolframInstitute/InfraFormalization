@@ -12,10 +12,10 @@ The project runs on three parallel axes:
 
 ## Contents
 
-- A Lean library with ~180 `.lean` modules building up discrete calculus, PDE theory on hypergraphs, GH convergence of scaled discrete structures, Lorentzian geometry, Einstein-equation formalism, branchial quantum mechanics, and infrageometry infrastructure — all from the same `Hypergraph V` / `RewritingSystem P` / `Trajectory sys init` primitives.
-- A documentation set that tracks the full research programme at varying granularity (STATUS / COVERAGE_MAP / BRIDGE_MACHINERY / INFRAGEOMETRY / MAJOR_FLAWS / GROUNDING_AUDIT / MILESTONES / NEXT_STEPS).
-- An audit trail for the Gorard papers: close-readings of each paper, cross-paper corpus audit, 184-row claims catalog, severity taxonomy, continuum-limit claim ledger, per-claim corpus assessment.
-- Empirical scripts (Wolfram Language + Python) that independently re-implement the mechanics of Gorard's claims and test them against his rules.
+- A Lean library built on the primitives `Hypergraph V`, `RewritingSystem P`, and `Trajectory sys init`, with every downstream object (graph Laplacian, discrete PDEs, metric/connection data, Lorentzian structures, causal foliations, branchial Hilbert spaces, Ricci and Einstein machinery) reduced to those primitives or to an explicit hypergraph-origin obligation Prop.
+- A documentation set: [`STATUS.md`](STATUS.md), [`COVERAGE_MAP.md`](COVERAGE_MAP.md), [`BRIDGE_MACHINERY.md`](BRIDGE_MACHINERY.md), [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md), [`MAJOR_FLAWS.md`](MAJOR_FLAWS.md), [`GROUNDING_AUDIT.md`](GROUNDING_AUDIT.md), [`MILESTONES.md`](MILESTONES.md), [`NEXT_STEPS.md`](NEXT_STEPS.md).
+- An audit trail for the Gorard papers (G1 2004.14810, G2 2011.12174, G3 2102.09363, G4 2303.07282): close-readings, cross-paper corpus audit, row-level claims catalog, severity taxonomy, continuum-limit claim ledger, per-claim corpus assessment.
+- Empirical scripts (Wolfram Language + Python) that independently re-implement the mechanics of Gorard's claims and test them against his rules, including a SetReplace-vs-Python cross-check on the named EFE rule.
 
 ## Motivation
 
@@ -45,126 +45,159 @@ The project exists to settle, formally, what is actually true in this corpus and
 
 ## How it is structured
 
-### Lean source (`lean/`)
+### Lean source (`lean/InfraFormalization/`)
 
 ```
 lean/
   InfraFormalization.lean            — top-level module; imports everything
   InfraFormalization/
     # Core substrate
-    Hypergraph.lean
-    Rule.lean
-    Application.lean
-    Conservation.lean                — |LHS|=|RHS| ⇒ size preserved
+    Hypergraph.lean                  — Hypergraph V; Adj, degree, geodesicBall
+    Rule.lean                        — Rule P; IsConservative
+    Application.lean                 — Application r; size preservation
+    Conservation.lean                — |LHS|=|RHS| ⇒ size preserved on trajectories
     Multiway.lean                    — RewritingSystem, Step, MultiStep
-    Causal.lean                      — Trajectory, causallyPrecedes
-    CausalLevel.lean
-    Branchial.lean, ParallelSchedule.lean, Demo.lean
+    Causal.lean                      — Trajectory sys init, causallyPrecedes
+    CausalLevel.lean                 — level function, antichain at each level
+    Branchial.lean, BranchialCanonical.lean
+    ParallelSchedule.lean, Demo.lean
+    RuleSearch.lean, RuleWitnesses.lean
+    CandidateRuleCatalog.lean        — H1: literature rules as Rule P (gorardNamedRule, etc.)
+    CandidateRuleDatabase.lean       — IR6: CandidateRule + decidable screens
+    MultiwayCausalGraph.lean         — J1: combined causal + branchial structure
 
-    # Discrete calculus (Rung 1)
-    DiscreteCalculus*.lean           — graph Laplacian, self-adjoint, Dirichlet, PSD
+    # Discrete calculus & spectral theory (Rungs 1–2)
+    DiscreteCalculus.lean, DiscreteCalculusSymm.lean  — graph Laplacian, self-adjoint, Dirichlet, PSD
     HypergraphLaplacian.lean         — Δ_H on directed hyperedges
     HypergraphCalculus.lean          — gradient, divergence, Stokes
-    HypergraphDistance.lean          — Hypergraph.dist, geodesic balls, triangle ineq (T3)
-    LaplacianMatrix.lean             — Mathlib matrix form + heat kernel via exp
+    HypergraphDistance.lean          — dist, geodesic balls, triangle ineq; cycle-hypergraph walk infrastructure (ID6 machinery)
+    HypergraphConnection.lean        — C7: discrete connection, transport along walks, holonomy, IsFlat
+    PathHypergraph.lean, PathHypergraphDistance.lean
+    RodkeyClassification.lean        — P20 (partial): BallVolumeVertexUniform, DistTransitive, Regular
+    LaplacianMatrix.lean             — Mathlib matrix form + heat kernel via Matrix.exp (R2)
+    LaplacianBridge.lean, HypergraphCycleBridge.lean
     CycleGraph.lean, CycleSpectrum.lean, CycleMatrixSpectrum.lean
+    CycleHeatDecayBounds.lean
     HeatKernelODE.lean               — ODE ↔ matrix heat kernel (T1)
     ExpEigenvector.lean              — exp fixes eigenvectors (T2)
     CycleHasEigenvalue.lean          — Mathlib HasEigenvalue form (T4)
     CycleEigenLimit.lean             — scaled eigenvalue → continuum (A4)
-    CTwoTaylor.lean, ScaledDiffC2Bridge.lean  — C² Taylor bridges (R1/A3)
+    SecondDifference.lean, CTwoTaylor.lean, ScaledDiffC2Bridge.lean  — C² Taylor bridges (R1/A3)
+    SymmEigenOrthogonal.lean
 
     # PDE ladder (Rung 6)
-    HeatEquation.lean, HeatEquationUniqueness.lean, HeatKernelDecay.lean
+    HeatEquation.lean, HeatEquationUniqueness.lean
+    HeatKernelDecay.lean             — long-time convergence to uniform (D6 partial)
     WaveEquation.lean, KleinGordon.lean, SchrodingerEquation.lean
     ScalarField.lean                 — Lagrangian + Euler-Lagrange (G1/G3/G4)
-    DiscreteDAlembertian.lean        — BD 4D operator (flagged)
+    DiscreteDAlembertian.lean
 
-    # Continuum limits (Rungs 1-6)
+    # Continuum limits (Rungs 1–6)
     Infra/ScaledCycle, ScaledPath, ScaledTorus, ScaledTorusD
     Infra/LatticeDensity, Circle, GHBound, GHApprox
     Infra/OllivierStatement, GrayTubeStatement
     Infra/LorentzLattice, Minkowski, ScaledLorentz
     Infra/TrajectoryLorentz{,D}, FullBridge
 
-    # Curvature (Rung 5)
-    CurvatureLocalCoord.lean         — Christoffel, symmetries
+    # Metrics, connections, curvature (Rung 5)
+    CurvatureLocalCoord.lean         — MetricData n, Christoffel, symmetries
     CurvatureRiemann.lean            — Riemann, Ricci, Einstein; flat case vanishes
     DiscreteRicci.lean               — Forman-Ricci
-    RicciBridge.lean                 — cycle/circle Ricci = 0 match
-    CurvedRicciBridge.lean           — warpedDiag2 non-flat witness
+    RicciBridge.lean, CurvedRicciBridge.lean
     CovariantDerivative.lean         — ∇ on ConnectionData (X2)
     PartialMetricData.lean           — X1: metrics with validity domains
-    Schwarzschild.lean               — all 8 Christoffels; PartialMetricData bundle
-    FLRW.lean, ReissnerNordstrom.lean, Kerr.lean, DeSitter.lean, TwoSphere.lean
-    GRMetricsDemo.lean               — gr_metric_zoo single-theorem bundle
+    RiemannianManifold.lean          — C1: DiagRiemannianMetric + Euclidean witness
+    LorentzianManifold.lean          — C2/E1: DiagLorentzianMetric + Minkowski witness
+    Schwarzschild.lean, FLRW.lean, ReissnerNordstrom.lean, Kerr.lean
+    DeSitter.lean, TwoSphere.lean
+    GRMetricsDemo.lean               — single-theorem bundle over the GR zoo
 
-    # Lorentzian (Rung 8)
-    LorentzianManifold.lean          — DiagLorentzianManifold (E1)
+    # Lorentzian structure & causal foliation (Rung 8)
     CausalGraphType.lean             — TR-DAG CausalGraph (IC1)
-    CausalFoliation.lean             — stably causal → foliation (E5)
+    CausalFoliation.lean             — stably causal → foliation (E5 in progress)
     SpatialReconstruction.lean, EPSAxioms.lean, MarzkeWheeler.lean
+    ProperTimeBounds.lean
 
     # Einstein equations (Rung 9)
     EinsteinEquations.lean           — F3 EinsteinEqLambda; Minkowski vacuum
-    StressEnergyTensor.lean, F2EnergyConditions.lean
-    F7Penrose.lean, F8Raychaudhuri.lean
+    StressEnergyTensor.lean
+    # F2 energy conditions, F7 Penrose statement, F8 Raychaudhuri
+    # all live under CurvatureRiemann + StressEnergyTensor + EinsteinEquations
 
-    # Bridge obligations — grounding-audit (NEW, 2026-04-23)
-    HypergraphMetricBridges.lean     — G2: metric origin obligations
-    CausalLorentzianBridge.lean      — G3: manifold origin obligations
-    FiberedGraphConnectionBridge.lean— G1: connection origin obligations
-    EinsteinEquationsBridge.lean     — G4: EFE origin obligations
-    RuleWitnesses.lean               — concrete rules used in bridge proofs
-    RuleSearch.lean                  — rule catalog + decidable screens
+    # Hypergraph-origin obligations (grounding-audit bridges)
+    HypergraphMetricBridges.lean     — G2: every GR metric ↔ hypergraph origin obligation
+    CausalLorentzianBridge.lean      — G3: manifold-from-causal-graph obligation
+    FiberedGraphConnectionBridge.lean— G1: connection-from-fibered-graph obligation
+    EinsteinEquationsBridge.lean     — G4: EFE origin obligation bundling the above
+
+    # Fibered-graph machinery (IG)
+    FiberedGraph.lean, Holonomy.lean, FiberBundle.lean
+    MultiFibrationProjection.lean, CoordinatizationDimension.lean
+
+    # Infradimension (ID)
+    HomologyDimension.lean, PlateauDimension.lean, CausalDimension.lean
+
+    # Infratopology + VR (IT)
+    VietorisRips.lean, HodgeVR.lean
+    HodgeLaplacianSpectrum.lean, HodgeLaplacianBounds.lean
+
+    # Branchial / quantum (IQ) + measure (A5)
+    BranchialHilbert.lean, BranchialSchrodinger.lean, BranchialFinite.lean
+    BranchialCommutator.lean
+    FisherMetric.lean, FisherMetricExtended.lean
+    EMETracker.lean
+    HypergraphMeasure.lean
+
+    # Blowup / Lie / Poisson (IB)
+    ElementaryBlowup.lean, BlowupOperations.lean, BlowupLieAlgebra.lean
+    RadialLaminarBlowup.lean, BlowupPoissonConcrete.lean
+
+    # Analysis on DAGs / forms (IA)
+    DagBlowup.lean, DagCalculus.lean, DeRham.lean, FormCochainIntegration.lean
+
+    # Synthetic axiomatic infrageometry (IS)
+    SyntheticGeometry.lean, SyntheticAxiomatic.lean, InfrageometricScene.lean
+
+    # Rule signatures and dimension bounds (IR)
+    RuleSignature.lean, RuleSignatureEquiv.lean
+    RuleDimensionBounds.lean, StructuralRuleBounds.lean
+
+    # Final-obligation Props + master closure
+    RemainingObligations.lean        — all seven infrageometry obligations; all_obligations_hold
+
+    # Continuum-limit Props for targets currently open
+    ContinuumLimitStatement.lean     — Schwarzschild/Kerr/FLRW obligations (guarded ∧ False)
+    ContinuumBridgeDemo.lean, WolframPhysicsBridgeDemo.lean, GrandTour.lean
 
     # Refutations
-    Refutations/F1NoMetric.lean
-    Refutations/F2Orthonormality.lean
-    Refutations/F3Tautology.lean
-    Refutations/F4Tautology.lean
-    Refutations/F5Illdefined.lean
-    Refutations/F6Circularity.lean
+    Refutations/F1NoMetric.lean, F2Orthonormality.lean, F3Tautology.lean
+    Refutations/F4Tautology.lean, F5Illdefined.lean, F6Circularity.lean
     Refutations/F7NamedRuleStructure.lean
 
-    # Infrageometry programme (57 tasks)
-    IA-: DagBlowup, DagCalculus, DeRham, FormCochainIntegration (Hájek IA)
-    IG-: FiberedGraph, Holonomy, FiberBundle (Pokorny IG)
-    IC-: CausalGraphType, CausalFoliation, EPSAxioms, MarzkeWheeler, SpatialReconstruction
-    IT-: VietorisRips, HodgeVR, HodgeLaplacianSpectrum (Hájek IT)
-    ID-: HypergraphDistance, PlateauDimension, HomologyDimension,
-         CoordinatizationDimension, CausalDimension
-    IB-: ElementaryBlowup, BlowupOperations, BlowupLieAlgebra,
-         RadialLaminarBlowup, BlowupPoissonConcrete (Kolcz)
-    IQ-: BranchialHilbert, BranchialSchrodinger, FisherMetric,
-         FisherMetricExtended, EMETracker (Ahmed, Van Le)
-    IS-: SyntheticGeometry, SyntheticAxiomatic, InfrageometricScene (Pokorny IS)
-    IR-: RuleSignature, RuleSignatureEquiv, CandidateRuleDatabase,
-         RuleDimensionBounds, StructuralRuleBounds
-
-    # Axiom check
-    AxiomCheck.lean                  — 300+ #print axioms lines
+    # Axiom-cleanliness certification
+    AxiomCheck.lean                  — #print axioms over every theorem cited above
 ```
 
 ### Documentation
 
 | File | Purpose |
 |---|---|
-| [`STATUS.md`](STATUS.md) | Live snapshot — rung table, task counters, latest shipped |
-| [`COVERAGE_MAP.md`](COVERAGE_MAP.md) | Per-module coverage map (single source of truth) |
+| [`STATUS.md`](STATUS.md) | Live snapshot — rung table, obligation status, latest closures |
+| [`COVERAGE_MAP.md`](COVERAGE_MAP.md) | Per-module coverage map (single source of truth for what's in each file) |
 | [`GROUNDING_AUDIT.md`](GROUNDING_AUDIT.md) | Item-by-item audit: what is hypergraph-grounded, what is continuum-target-only, with per-object status |
-| [`BRIDGE_MACHINERY.md`](BRIDGE_MACHINERY.md) | 10-rung ladder from discrete calculus to Einstein |
-| [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md) | Research programme description (57 tasks / 9 groups) |
+| [`BRIDGE_MACHINERY.md`](BRIDGE_MACHINERY.md) | 10-rung ladder from discrete calculus to Einstein equations |
+| [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md) | Infrageometry programme description (9 groups IA–IR) |
 | [`MAJOR_FLAWS.md`](MAJOR_FLAWS.md) | F1–F8 structural-flaw registry with Lean-formalisation status |
-| [`MILESTONES.md`](MILESTONES.md) | Checkbox tracker across all phases |
-| [`NEXT_STEPS.md`](NEXT_STEPS.md) | Done, in progress, waiting — includes the P-group section mapping Pavel Hájek's weekly-update and Discord core-dump items to Lean coverage and task IDs |
+| [`MILESTONES.md`](MILESTONES.md) | Phase-level checkbox tracker |
+| [`NEXT_STEPS.md`](NEXT_STEPS.md) | Done, in progress, waiting — including P-group mapping of colleague work |
 | [`RULE_SEARCH.md`](RULE_SEARCH.md) | Rule-search pipeline design |
-| [`PUBLISHABLE.md`](PUBLISHABLE.md) | Paper targets P1–P9 with dependencies |
+| [`PUBLISHABLE.md`](PUBLISHABLE.md) | Paper targets with dependencies |
 | [`FINDINGS.md`](FINDINGS.md) | Canonical one-line summary of every audited claim |
 | [`GLOSSARY.md`](GLOSSARY.md) | Technical terms |
-| [`INDEX.md`](INDEX.md) | Document tree |
+| [`INDEX.md`](INDEX.md) | Full document tree |
 | [`LEAN_PHYSICS.md`](LEAN_PHYSICS.md) | HepLean / Mathlib conventions |
-| [`INFRAFORMALIZATION_WEEKLY_REPORT_2026-04-23.md`](INFRAFORMALIZATION_WEEKLY_REPORT_2026-04-23.md) | This week's Wolfram-Institute-facing report (full version; short and paragraph versions have the same prefix) |
+| [`INFRAFORMALIZATION_WEEKLY_REPORT_2026-04-23.md`](INFRAFORMALIZATION_WEEKLY_REPORT_2026-04-23.md) | Most recent Wolfram-Institute-facing weekly report (full; `_SHORT` and `_PARAGRAPH` variants also present) |
+| [`POST_WEEKLY_UPDATES_2026-04-23.md`](POST_WEEKLY_UPDATES_2026-04-23.md) | Post-weekly-report delta log (current running list of closures since the weekly) |
 
 ### Audit notes (`notes/`)
 
