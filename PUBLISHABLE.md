@@ -67,7 +67,7 @@ Grouped from most-immediate (parts already done) to most-ambitious.
 - [x] **Matrix-level conservation laws**: `heatKernel_mulVec_const`, `heatKernel_mass_conservation`, `heatKernel_L2_decay`, `heatKernel_mulVec_add`.
 - [x] **Matrix exp fixes eigenvectors** (T2): `exp_mulVec_of_eigenvector`. Opens Mathlib `Module.End.HasEigenvalue` form of cycle spectrum (T4).
 - [x] **Counting-measure + pushforward** on Hypergraph V (A5, `HypergraphMeasure.lean`): foundation for A6 (weak convergence) and A7 (Wasserstein rate).
-- [~] **Project-own Wasserstein-1** (`WassersteinFinite.lean`, `CycleWasserstein.lean`): `TransportPlan μ ν`, `cost`, `wasserstein1 = sInf cost`, tensor plan + sup-norm bound, `wasserstein1_delta_eq_dist` (sharp). On cycleHypergraph: `wasserstein1_cycleDelta_succ` (W_1_scaled(δ_v, δ_{v+1}) = 1/n, sharp) and `wasserstein1_shiftMeasure_le` (measure-level O(1/n) shift rate).
+- [~] **Project-own Wasserstein-1 as a full pseudometric** (`WassersteinFinite.lean`, `CycleWasserstein.lean`): `TransportPlan μ ν`, `cost`, `wasserstein1 = sInf cost`, tensor plan + sup-norm bound, `wasserstein1_self_eq_zero`, `wasserstein1_symm`, **`wasserstein1_triangle`** (via `TransportPlan.glue` + `glue_cost_le`), `wasserstein1_delta_eq_dist` (sharp). On cycleHypergraph: `wasserstein1_cycleDelta_succ` (W_1_scaled(δ_v, δ_{v+1}) = 1/n, sharp) and `wasserstein1_shiftMeasure_le` (measure-level O(1/n) shift rate).
 - [x] **`Hypergraph.dist` triangle inequality + cycle connectivity** (T3).
 - [ ] 25-page paper with the Lean library as appendix
 
