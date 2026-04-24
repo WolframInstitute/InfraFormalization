@@ -349,5 +349,64 @@ theorem warpedDiag2_einstein (x : Fin 2 → ℝ) (μ ν : Fin 2) :
                false_and, and_true, if_false, if_true, true_and]
     field_simp
 
+/-- **Scalar curvature on `warpedDiag2`** — `R(x) = -2/(1+x₀²)²`,
+twice the Gaussian curvature `K(x) = -1/(1+x₀²)²`. Direct
+computation from the closed-form Ricci components. -/
+theorem warpedDiag2_scalarCurvature (x : Fin 2 → ℝ) :
+    ConnectionData.scalarCurvature warpedDiag2
+        warpedDiag2_C2.leviCivitaConnection x
+      = -2 / (1 + (x 0)^2)^2 := by
+  have h_ne := one_plus_sq_ne_zero x
+  have h_sq_ne : ((1 : ℝ) + (x 0)^2)^2 ≠ 0 := pow_ne_zero _ h_ne
+  unfold ConnectionData.scalarCurvature
+  rw [Fin.sum_univ_two, Fin.sum_univ_two, Fin.sum_univ_two]
+  rw [warpedDiag2_ricci_0_0 x, warpedDiag2_ricci_0_1 x,
+      warpedDiag2_ricci_1_0 x, warpedDiag2_ricci_1_1 x]
+  simp [warpedDiag2]
+  field_simp
+  ring
+
+/-- **Einstein tensor vanishes on `warpedDiag2`** — `G_{μν}(x) = 0`
+for all `μ ν` and all `x`. A direct consequence of the 2D
+Einstein identity `R_{μν} = K g_{μν}` and `R = 2K` (trace): the
+Einstein tensor `G = Ric − (1/2) R g = K g − K g = 0`. In 2D, every
+metric is Einstein and the Einstein tensor vanishes — this is the
+concrete non-flat witness for the vanishing of `G_{μν}` that
+supersedes the flat-only closure. -/
+theorem warpedDiag2_einsteinTensor_zero (x : Fin 2 → ℝ) (μ ν : Fin 2) :
+    ConnectionData.einsteinTensor warpedDiag2
+        warpedDiag2_C2.leviCivitaConnection x μ ν = 0 := by
+  have h_ne := one_plus_sq_ne_zero x
+  have h_sq_ne : ((1 : ℝ) + (x 0)^2)^2 ≠ 0 := pow_ne_zero _ h_ne
+  unfold ConnectionData.einsteinTensor
+  rw [warpedDiag2_scalarCurvature x, warpedDiag2_einstein x μ ν]
+  match μ, ν with
+  | 0, 0 => simp [warpedDiag2]; field_simp; ring
+  | 0, 1 => simp [warpedDiag2]
+  | 1, 0 => simp [warpedDiag2]
+  | 1, 1 =>
+    simp only [warpedDiag2]
+    simp only [show ((1 : Fin 2) = 0) = False from by decide,
+               false_and, if_false]
+    field_simp
+    ring
+
+/-- **Divergence of the Einstein tensor vanishes on `warpedDiag2`** —
+`∇_μ G^{μν} = 0` trivially, since `G_{μν} ≡ 0` (by
+`warpedDiag2_einsteinTensor_zero`). This is the non-flat
+realisation of the contracted second Bianchi identity:
+both the ordinary partials and any connection terms vanish because
+the Einstein tensor itself is identically zero. Supersedes the
+flat-trivial closure of task B11 / #32 with a genuinely curved
+metric (the 2D warped metric has non-zero Gaussian curvature
+everywhere). -/
+theorem warpedDiag2_einstein_divergence_zero (x : Fin 2 → ℝ) (ν : Fin 2) :
+    ∑ μ : Fin 2, warpedDiag2_C2.leviCivitaConnection.Γ x μ μ ν
+          * ConnectionData.einsteinTensor warpedDiag2
+              warpedDiag2_C2.leviCivitaConnection x μ ν = 0 := by
+  refine Finset.sum_eq_zero (fun μ _ => ?_)
+  rw [warpedDiag2_einsteinTensor_zero x μ ν]
+  ring
+
 end Curvature
 end InfraFormalization
