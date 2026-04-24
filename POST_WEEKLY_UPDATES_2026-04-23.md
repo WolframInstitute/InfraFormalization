@@ -1,6 +1,7 @@
 Added or done since the 2026-04-23 weekly update (newest first):
 
-- **ID6 GENERAL LOWER BOUND CLOSED**: V(v, r) ≥ 2r + 1 on cycleHypergraph n for every n ≥ 2, r with 2r+1 ≤ n (cycleHypergraph_ballVolume_ge, dimensionCompatibilityObligation_lower_bound). Builds {F^[0] v, ..., F^[r] v} ∪ {G^[1] v, ..., G^[r] v} as 2r+1 distinct ball members. This closes the LOWER bound of the cycle compatibility claim V(v, r) = 2r+1 at the obligation level; upper bound still needs general shortest-walk structural analysis.
+- **TASK CLOSED #144 ID6**: DimensionCompatibilityObligation holds. V(v, r) = 2r + 1 exactly on cycleHypergraph n for every n ≥ 3, r with 2r+1 ≤ n, v (dimensionCompatibilityObligation_holds, cycleHypergraph_ballVolume_exact). Upper bound via walk structural induction (cycleHypergraph_walk_in_shift) + composition lemmas (iterSucc_after_succ, iterPred_after_pred, iterPred_succ_after_succ, iterSucc_succ_after_pred). Lower bound via forward/backward shift Finsets. All axiom-clean. First substantial content-Prop ID closure at the ball-volume level.
+- **ID6 GENERAL LOWER BOUND CLOSED**: V(v, r) ≥ 2r + 1 on cycleHypergraph n for every n ≥ 2, r with 2r+1 ≤ n (cycleHypergraph_ballVolume_ge, dimensionCompatibilityObligation_lower_bound).
 - ID6 general-r: forward/backward families disjoint when i ≤ r, 1 ≤ j ≤ r, 2r+1 ≤ n (cycleHypergraph_iterSucc_ne_iterPred). Via .val formulas and ModEq cancellation.
 - ID6 general-r lower bound (one-sided): V(v, r) ≥ r + 1 for n ≥ 2 and 2r+1 ≤ n (cycleHypergraph_ballVolume_forward_ge). Forward-shift Finset-image cardinality + dist bound.
 - ID6 general-r injectivity (backward): iterPred_injOn via conjugation G^[k] v = -(F^[k] (-v)) + neg_injective (cycleHypergraph_iterPred_injOn, cycleHypergraph_iterPred_neg_iterSucc).
