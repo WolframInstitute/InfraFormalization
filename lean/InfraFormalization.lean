@@ -99,6 +99,7 @@ import InfraFormalization.RuleDimensionBounds
 import InfraFormalization.FiberedGraph
 import InfraFormalization.HypergraphConnection
 import InfraFormalization.MultiwayCausalGraph
+import InfraFormalization.PathIntegralCausalGraph
 import InfraFormalization.CandidateRuleCatalog
 import InfraFormalization.RiemannianManifold
 import InfraFormalization.CausalGraphType
