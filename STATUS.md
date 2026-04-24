@@ -107,6 +107,16 @@ Highlights:)
   `gorardNamedRule_passes_sameEdgeCount_screen` (gorardNamedRule from
   a 4-edge seed keeps `edgeCount = 4` forever, closing the 4-edge
   screen against any 4-edge target).
+- **R4 extension — warpedDiag2 curved Ricci closed form** (substantive;
+  `WarpedDiag2C2.lean`): `warpedDiag2_C2 : MetricDataC2 2`. Ricci tensor
+  computed end-to-end on a curved 2D Einstein manifold via
+  `leviCivitaConnection`: `R_{00}(x) = -1/(1+x₀²)²`,
+  `R_{11}(x) = -1/(1+x₀²)`, and along the way
+  `R^0_{101}(x) = -1/(1+x₀²)`, `R^1_{010}(x) = -1/(1+x₀²)²`. Generic
+  `riemann_diag_zero` lemma from `riemann_antisymm`. This is the
+  first real curved-case Ricci computation in the project; off-
+  diagonal Ricci + Einstein identity `R_{μν} = K(x) · g_{μν}` with
+  `K(x) = -1/(1+x₀²)²` are the follow-ups (task #217).
 
 ## Reopened: cosmetic closures that need substantive work
 
@@ -168,6 +178,27 @@ witnesses with real convergence / amplitude / curvature computations:
 - **#218** prove (or disprove) each curved-target discrete-Ricci
   convergence with a real hypergraph discretisation, not a baseline
   witness.
+- **#219** discrete Hamiltonian / momentum constraint residuals
+  on a causal foliation (extrinsic curvature K_{ab}-analogue
+  + L₁/L₂/L∞ reporting).
+- **#220** Ollivier-Ricci convergence on a concrete discretisation
+  (no such theorem exists yet; we have statement + disagreement only).
+- **#221** PDE solution-level convergence (not just eigenvalues):
+  discrete heat/wave/Schrödinger/KG solutions → continuum PDE
+  solutions in a function norm.
+- **#222** project-own pointed-GH and metric-measure-GH
+  infrastructure (pre-req for #213 Lorentzian-GH and for composing
+  with Wasserstein-1).
+- **#223** discrete stress-energy T_μν on a hypergraph (so EFE
+  origin obligations can be discharged with non-flat T).
+- **#224** per-trajectory curvature signature screener
+  (Forman/Ollivier signature curve vs. target manifold profile).
+- **#225** multi-way → continuum bridge (MultiwayCausalGraph
+  convergence theorem — replaces the cosmetic J-series closures).
+- **#154 / #155** IQ8 EME persistence and IQ9 path integral
+  reopened after reclassifying their zero-witness closures as
+  cosmetic (Prop too weak; real content needs a rule-derived
+  amplitude / EME).
 
 ## Open items tracked at the obligation level
 

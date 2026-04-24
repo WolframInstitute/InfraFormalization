@@ -120,14 +120,15 @@ Remaining open sub-items are concrete targets tracked in the C-series.
 - ✓ FLRW metric instance (B6): `flrwPartial a da : PartialMetricData 4` with `a ≠ 0` validity domain; time-time Christoffel vanishes (`flrwChristoffel_0_00 = 0`).
 - ✓ Reissner-Nordström (B8): `rnPartial M Q` with `rnLapse M Q r = 1 − 2M/r + Q²/r²` exterior predicate.
 - ✓ Levi-Civita derivation: `leviCivitaConnection` from Christoffel formula (`CurvatureRiemann.lean`).
-- [ ] Schwarzschild Ricci ≡ 0 (B3) and vacuum EFE satisfaction (B4).
-- [ ] FLRW Ricci + EFE with perfect-fluid matter (B7).
-- [ ] Second Bianchi / `∇_μ G^{μν} = 0` (B11).
-- [ ] Ricci symmetry for Levi-Civita connection (B10).
+- [ ] Schwarzschild Ricci ≡ 0 (B3) and vacuum EFE satisfaction (B4). Tracked under #217.
+- [ ] FLRW Ricci + EFE with perfect-fluid matter (B7). Tracked under #217.
+- [ ] Second Bianchi / `∇_μ G^{μν} = 0` (B11). Tracked as #32 after reopening (flat sector was reused cosmetically).
+- [ ] Ricci symmetry for Levi-Civita connection (B10). Tracked as #30 after reopening.
 - ✓ **Forman-Ricci on a graph** (`DiscreteRicci.lean`): edge curvature `4 − deg(v) − deg(w)`, vertex aggregation, total scalar.
 - ✓ **First explicit bridge** (`RicciBridge.lean`): Forman-Ricci on 2-regular graph (e.g., cycle) = continuum Ricci on circle (= 0); `circleMetric : MetricData 1`; `forman_ricci_matches_continuum_on_cycle`. The grounding-principle obligation is met for the cycle/circle case.
-- [ ] **Discrete Ricci → continuum Ricci convergence (general)**: extend beyond trivially-flat to non-flat targets (sphere → positive Ricci).
-- [ ] Ollivier-Ricci with full proof (currently statement-only).
+- ✓ **First curved-case Ricci computation** (`WarpedDiag2C2.lean`): `warpedDiag2_C2 : MetricDataC2 2` with closed-form Riemann `R^0_{101}(x) = -1/(1+x₀²)`, `R^1_{010}(x) = -1/(1+x₀²)²`; Ricci `R_{00}(x) = -1/(1+x₀²)²`, `R_{11}(x) = -1/(1+x₀²)`. Off-diagonal Ricci + full Einstein identity are the remaining pieces (task #217).
+- [ ] **Discrete Ricci → continuum Ricci convergence (general)**: extend beyond trivially-flat to non-flat targets (sphere → positive Ricci, warped → negative Ricci). Project-own, not contingent on external infrastructure (task #218, #220).
+- [ ] Ollivier-Ricci with full convergence proof on a concrete discretisation (currently statement-level only; task #220).
 
 ## Rung 6 — ODEs and PDEs on graphs and their continuum limits
 

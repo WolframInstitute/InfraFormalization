@@ -95,9 +95,10 @@ Grouped by phase (see [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md)). Each milestone ei
 - [x] **`CycleHasEigenvalue.lean`** (T4): cycle spectrum in Mathlib `Module.End.HasEigenvalue` form. **`laplacianMatrix_cycleHypergraph_hasEigenvalue`** connects our pointwise eigenvalue theorem to Mathlib's spectral-theory API.
 - [~] **`PathHypergraph.lean`** (T5 partial;): `pathEdge n i = {i, i+1}` defines `pathHypergraph n` on `Fin n`. `pathHypergraph_edges_card_le` (|E| ≤ n−1). **Corrected spectrum to match the free-path Laplacian**: `pathEigenvalue n k = −4 sin²(kπ/(2n))` and `pathEigenvector n k j = cos(kπ(2j+1)/(2n))`. `pathEigenvalue_nonpos`. `pathEigenvalue_ground_zero` (k=0 eigenvalue = 0). `pathEigenvalue_one_neg` (first non-constant mode strictly negative for n ≥ 2). Axiom-clean. Path is the open-chain analog of the cycle; `T5 = path + cycle^d` is the d-torus factor picture.
 - [~] **`CurvedRicciBridge.lean`** (R4 partial;): `warpedDiag2 : MetricData 2` — warped 2-D metric with `g₁₁ = 1 + x₀²`. `warpedDiag2_christoffel_nonzero` (Γ¹_{01} ≠ 0 at `x 0 ≠ 0`). `curvedRicciBridgeObligation` — existence of non-flat continuum target; `threeRegular_formanRicci_nonzero` — every edge of a 3-regular graph has Forman-Ricci `−2`. The "beyond flat" witness half of R4. Axiom-clean.
+- [~] **`WarpedDiag2C2.lean`** (R4 extension — real curved-Ricci closed form on a 2D Einstein manifold): `warpedDiag2_C2 : MetricDataC2 2` supplies second partials + inverse-metric derivatives. **Riemann `R^0_{101}(x) = -1 / (1 + x₀²)`** and **`R^1_{010}(x) = -1 / (1 + x₀²)²`** proved end-to-end via `leviCivitaConnection`. **Ricci `R_{00}(x) = -1 / (1 + x₀²)²`** and **`R_{11}(x) = -1 / (1 + x₀²)`**. `riemann_diag_zero` generic lemma: any `R^ρ_{σμμ} = 0` by `riemann_antisymm`. Off-diagonal Ricci + the Einstein identity `R_{μν} = K(x) · g_{μν}` with `K(x) = -1/(1+x₀²)²` are the follow-ups (task #217). Axiom-clean.
 - [x] **IT5 Latschev (discrete-connectivity form) — PROVED** (`RemainingObligations.lean`;): `latschevObligation_holds` proves `LatschevObligation`. For every `n ≥ 2` and `u v : Fin n`, `(cycleHypergraph n).dist u v < n + 1`. Uses `SimpleGraph.Walk.IsPath.length_lt` (shortest path < card V = n) in the reachable branch and `dist_eq_zero_iff_eq_or_not_reachable` in the unreachable branch. Full GH-homotopy-equivalence form still needs more Mathlib. Axiom-clean.
 - [x] **IT6 Scale trichotomy (cycle endpoints) — PROVED** (`RemainingObligations.lean`;): `scaleTrichotomyObligation_holds` proves `ScaleTrichotomyObligation`. For every `n ≥ 3`: at `ε = 0` no non-trivial VR 1-simplex (distinct vertices have `dist > 0`); at `ε = n` every pair is a VR 1-simplex. Uses `Reachable.pos_dist_of_ne` + `SimpleGraph.Walk.IsPath.length_lt`. Meso-regime Betti-number matching still needs persistent-homology. Axiom-clean.
-- [x] **T6 COMPLETE — all seven obligations upgraded, five proved** (`RemainingObligations.lean`;): IQ8 `EMEPersistenceObligation` and IQ9 `PathIntegralObligation` — the last two `True ∧ False` stubs — upgraded to existence claims and proved via baseline witnesses (ψ = 0, α = 0). `no_stub_obligations_remain` bundles both proofs. Status: **7/7 upgraded, 5 proved** (IQ6, IT5, IT6, IQ8, IQ9); 2 open with real content (ID6, IR7). No stubs left. Axiom-clean.
+- [~] **T6 partial — obligations upgraded from `True ∧ False` stubs to real Prop types; several discharged by zero witnesses (cosmetic)** (`RemainingObligations.lean`): IQ8 `EMEPersistenceObligation` (ψ = 0) and IQ9 `PathIntegralObligation` (α = 0) are satisfied trivially by zero witnesses — reopened as tasks #154 / #155 for real content. IT5 (cycle Latschev) and IT6 (cycle endpoints) are substantive. ID6 and IR7-refined are substantive. IQ6 is a genuine Cauchy-Schwarz bound. No `True ∧ False` stubs remain, but the cosmetic zero-witness obligations are tracked as open. Axiom-clean.
 - [~] **ID6 partial — base cases r = 0 and r = 1 proved on cycle** (`HypergraphDistance.lean`, `RemainingObligations.lean`;): `cycleHypergraph_ballVolume_zero_exact` (ball volume 1 at r=0). `dimensionCompatibilityObligation_base_cases` bundles the r=0 and r=1 cases of the full `geodesicBallVolume v r = 2r+1` ID6 obligation. Also `cycleHypergraph_ballVolume_large` (r ≥ n gives full space = n). Full obligation needs general cycle-distance formula. Axiom-clean.
 - [x] **DiscreteWave + DiscreteSchrödinger continuum spectra PROVED** (`ContinuumLimitStatement.lean`): upgraded `DiscreteWaveToContinuumWave` and `DiscreteSchrodingerToContinuumSchrodinger` from `True` stubs to concrete spectral-convergence claims and proved. Wave: `n · 2 sin(πk/n) → 2πk`. Schrödinger: `n² · 4 sin²(πk/n) → (2πk)²` (negative of A4). Axiom-clean.
 - [x] **pde_spectrum_bridge_summary** (`ContinuumBridgeDemo.lean`): bundles the three PDE spectral convergences (heat, wave, Schrödinger) for each wavenumber k into a single theorem. Analog of `wolfram_physics_bridge_summary` for the PDE-to-PDE bridge. Axiom-clean.
@@ -234,9 +235,9 @@ Grouped by phase (see [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md)). Each milestone ei
 - [x] Branchial measure (I2; `BranchialHilbert.lean` — `branchialUniformWeight S s := 1/|S|`, sum = 1 when nonempty).
 - [x] Branchial Schrödinger evolution as unitary (I5; `BranchialSchrodinger.lean` — `BranchialSchrodinger adj u v` structure, `branchialSchrodinger_unitary_evolution` proves total-probability conservation via self-adjointness of real adjacency operator).
 - [ ] Branchial amplitudes / evolution toward Hilbert-space limit (I3, I5, I8 pending).
-- [x] IQ6 Fubini-Study / Bhattacharyya bound proved (`fubiniStudyBhattacharyya_bound`).
-- [x] IQ8 EME persistence baseline proved (`no_stub_obligations_remain`).
-- [x] IQ9 Path-integral baseline proved (`no_stub_obligations_remain`).
+- [x] IQ6 Fubini-Study / Bhattacharyya bound proved (`fubiniStudyBhattacharyya_bound`) — substantive.
+- [~] IQ8 EME persistence: zero-witness baseline only; reopened as task #154 for real content.
+- [~] IQ9 Path-integral: α = 0 baseline only; reopened as task #155 for real content.
 
 ### Infrageometry program — 9 groups × 57 tasks (see [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md))
 
@@ -299,9 +300,9 @@ Full collation of the post-phase-1 infrageometry programme. Each group is a cohe
 
 #### IQ — Branchial / quantum (4 formal obligations + 1 real theorem)
 - [x] IQ5 Fisher metric on branchial graph (`FisherMetric.lean`;).
-- [x] IQ6 Fubini-Study / Bhattacharyya bound (`fubiniStudyBhattacharyya_bound`); full Fisher → FS refinement limit remains as a follow-up.
-- [x] IQ8 EME persistence baseline obligation (`no_stub_obligations_remain`).
-- [x] IQ9 Path-integral baseline obligation over singleway causal graphs (`no_stub_obligations_remain`).
+- [x] IQ6 Fubini-Study / Bhattacharyya bound (`fubiniStudyBhattacharyya_bound`) — substantive; full Fisher → FS refinement limit remains as a follow-up.
+- [~] IQ8 EME persistence: zero-witness baseline; reopened (task #154).
+- [~] IQ9 Path-integral over singleway causal graphs: zero-witness baseline; reopened (task #155).
 
 #### IS — Synthetic axiomatic infrageometry (3 tasks, all done)
 - [x] IS1 Synthetic circle / line / sphere (`SyntheticGeometry.lean`;).
@@ -337,7 +338,7 @@ Full collation of the post-phase-1 infrageometry programme. Each group is a cohe
 - [ ] M10 3BP / dynamical-systems dimension signature.
 
 ### Remaining-obligations module
-- [x] `RemainingObligations.lean`: **T6 COMPLETE — all seven infrageometry obligations proved**, bundled in `all_obligations_hold`. IT5 `latschevObligation_holds`, IT6 `scaleTrichotomyObligation_holds`, ID6 `dimensionCompatibilityObligation_holds` (V(v, r) = 2r+1 exact), IQ6 `fubiniStudyBhattacharyya_bound`, IQ8 + IQ9 baselines (`no_stub_obligations_remain`), IR7 `reverseEngineeringObligationRefined_holds`. Original unrefined IR7 is provably FALSE (`not_reverseEngineeringObligation`).
+- [~] `RemainingObligations.lean`: **T6 — obligations upgraded from True ∧ False to real Prop types**, bundled in `all_obligations_hold`. Substantive: IT5 `latschevObligation_holds`, IT6 `scaleTrichotomyObligation_holds`, ID6 `dimensionCompatibilityObligation_holds` (V(v, r) = 2r+1 exact), IQ6 `fubiniStudyBhattacharyya_bound`, IR7-refined `reverseEngineeringObligationRefined_holds`. Cosmetic zero-witness: IQ8 + IQ9 (baselines via `no_stub_obligations_remain`; reopened as tasks #154/#155). Original unrefined IR7 is provably FALSE (`not_reverseEngineeringObligation`).
 
 ## Phase 2 — Corrected continuum identities (Lean)
 
