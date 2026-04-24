@@ -113,6 +113,7 @@ import InfraFormalization.EmergentGravity
 import InfraFormalization.AdSCFTAnalog
 import InfraFormalization.LorentzianGH
 import InfraFormalization.CausalDAGContinuumLimit
+import InfraFormalization.ScaledTrajectoryLimit
 import InfraFormalization.CandidateRuleCatalog
 import InfraFormalization.RiemannianManifold
 import InfraFormalization.CausalGraphType
