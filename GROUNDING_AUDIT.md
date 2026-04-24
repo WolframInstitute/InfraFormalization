@@ -36,7 +36,7 @@ This file tracks the status of every major object, with a ruthless honesty mark:
 
 - `countingMeasure` on `Hypergraph V`. ✅.
 - `uniformProbability`, `pushforwardCounting`. ✅.
-- A6 `LatticeRiemannObligation`: stated + constants proved. ⚠ (identity case is not).
+- A6 `LatticeRiemannObligation`: proved for polynomials up to degree 3 (`A6_for_constants`, `A6_for_identity`, `A6_for_sq`, `A6_for_cube`) via `A6Holds` closure under `const_mul`, `add`, `sub`. ⚠ general continuous case (Weierstrass lift) still pending.
 - A7 Wasserstein rate: **not formalised**. ❌ pending.
 - A8 d-torus measure lift: **not formalised**. ❌ pending (needs A6).
 - GH bridges (cycle→circle, path→interval, torus, d-torus): `Infra/` modules. ✅.
@@ -157,8 +157,10 @@ form→cochain integration (IA4). All ✅.
 ### ID — Dimension — ✅ grounded
 
 Wolfram-Hausdorff (ID1), plateau (ID2), homology (ID3),
-coordinatization (ID4), causal (ID5), compatibility (ID6 partial).
-All ✅ on `Hypergraph V`.
+coordinatization (ID4), causal (ID5), compatibility (ID6 —
+`dimensionCompatibilityObligation_holds`: `V(v, r) = 2r + 1` exact on every
+cycle hypergraph for `2r + 1 ≤ n`). ID7 (heat-trace spectral dimension)
+still in progress. All ✅ on `Hypergraph V`.
 
 ## Summary of ungrounded items needing bridges
 

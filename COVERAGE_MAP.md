@@ -166,7 +166,7 @@ What remains open, concretely:
 - Schrödinger unitarity on Hypergraph V.
 - Conservation ⇒ size invariance along trajectory (IR2).
 
-**The real-work items tracked explicitly** (, R1–R5):
+**Cross-cutting real-work items (R-series)**:
 - ✅ **R1**: C² Taylor convergence for scaled second difference (`CTwoTaylor.lean`). Unlocks all non-polynomial bridges.
 - ✅ **R2**: `laplacianMatrix` + `heatKernel` via Matrix.exp (`LaplacianMatrix.lean`). Heat propagator as `exp(t · Δ)`, semigroup property, symmetry, row-sum zero, heat trace.
 - ✅ **R3 (closed)**: ℓ²(BranchialSlice) Hilbert space (`BranchialHilbert.lean` + `BranchialSchrodinger.lean`) — `BranchialHilbert S := EuclideanSpace ℂ S` finite-dim ℂ-Hilbert alias; `branchialAdjLM` ℂ-linear adjacency operator + `branchialAdjLM_inner` self-adjointness for symmetric adjacency; `branchialSchrodinger_unitary_evolution` proves the unitary branchial evolution (discrete Schrödinger on the slice conserves total probability `∑(u² + v²)`). Born rule + uniform measure + observables + expectation values also in place. Closes I2/I3/I4/I5/I6/I7/I9.
@@ -178,7 +178,7 @@ What remains open, concretely:
 - ✅ **D3**: heat semigroup via `Matrix.exp` — now captured by `heatKernel_add`.
 - ✅ Matrix eigenvalue equation packaging in `CycleMatrixSpectrum.lean`.
 
-**Colleague-work items added** (, M1–M10):
+**Colleague-work items (M-series)**:
 Ioana Milea (IG intern), Van Le (Fisher→FS), Hubert Kolcz (MBQC
 Lie-Poisson), Jan Pullman (IBL-∞/BV), Zapata-Ahmed (axiomatic
 relativity), Pokorny paclet parity, Ahmed EME-tracking, Pokorny
@@ -188,18 +188,18 @@ diffusion-geometry bridge, tropical geometry, 3BP dynamics.
 
 | Group | Purpose | Done | Open |
 |---|---|---|---|
-| A | Calculus foundations | 4 (A1, A2, A3, A4) | 4 |
-| B | Schwarzschild / curved metrics | 1 (B1) | 10 |
-| C | Bundles + Levi-Civita | 0 | 8 |
-| D | PDEs on Hypergraph V | 7 (D1,D3,D4,D5,D8,D9,D10) | 4 |
-| E | Lorentzian manifolds | 0 | 7 |
-| F | Einstein / stress-energy / energy conditions | 0 | 8 |
-| G | Scalar fields / Lagrangian | 4 (G1,G3,G4, partial G2–G6) | 2 |
-| H | BBH / numerical | 0 | 9 |
-| I | Branchial / QM | 0 | 10 |
-| J | Combined / emergent gravity / AdS/CFT | 0 | 6 |
-| K | Paper drafts | 0 | 9 |
-| X | Support (Taylor, multiway engine, etc.) | 0 | 4 |
+| A | Calculus foundations | A1–A5 | A6 (polys to deg 3), A7, A8 |
+| B | Schwarzschild / curved metrics | B1, B5, B6, B8 | B2, B3, B4, B7, B9, B10, B11 |
+| C | Bundles + Levi-Civita | C1 (`DiagRiemannianMetric`), C2 (`DiagLorentzianMetric`), C7 (`HypergraphConnection`) | C3, C4, C5, C6, C8 |
+| D | PDEs on Hypergraph V | D1, D2, D3, D4, D5, D6 (partial), D7, D8, D9, D10 | D11 |
+| E | Lorentzian manifolds | E1, E2, E3, E4 | E5 (in progress), E6, E7 |
+| F | Einstein / stress-energy / energy conditions | F1, F2, F3, F7, F8 | F4, F5, F6 |
+| G | Scalar fields / Lagrangian | G1, G3, G4 | G2, G5, G6 |
+| H | BBH / numerical | H1 (rule catalog) | H2–H9 |
+| I | Branchial / QM | I1–I7, I9 | I8, I10 |
+| J | Combined / emergent gravity / AdS/CFT | J1 (`MultiwayCausalGraph`) | J2–J6 |
+| K | Paper drafts | — | K1–K9 |
+| X | Support (Taylor, multiway engine, etc.) | X1, X2, X3 | X4 |
 
 ## 10. GR target (the hard open)
 
@@ -231,12 +231,12 @@ known. The refutation is structural, not notational.
 
 ## 11. QM target
 
-- Discrete side ✅: Schrödinger unitarity, self-adjoint `Δ_H`, conserved probability, ScalarField + KG.
-- **Missing**: Fintype BranchialSlice, ℓ²(slice) Hilbert space, branchial unitary evolution, Fubini–Study limit, path integral, continuum Hilbert limit.
+- **Proved**: Fintype `BranchialSlice` (I1), uniform measure (I2), ℂ amplitudes + Born rule (I3), ℓ²(slice) Hilbert space with ℂ-linear self-adjoint adjacency (I4), unitary branchial evolution (I5), Hermitian observables (I6), expectation values (I7), Schrödinger on branchial graph (I9); plus the Fubini-Study / Bhattacharyya bound (IQ6 `fubiniStudyBhattacharyya_bound`), EME persistence baseline (IQ8), path-integral baseline (IQ9), Fisher metric on branchial graph (IQ5).
+- **Missing**: I8 continuum Hilbert-space limit, I10 full path-integral formulation (sum over paths = unitary evolution equivalence).
 
 ## 12. Axiom-cleanliness
 
-Every single proved theorem above depends on axioms ⊆ `{propext, Classical.choice, Quot.sound}`. No `sorry`, no `native_decide`, no custom axioms. Verified by `AxiomCheck.lean` (100+ `#print axioms` lines).
+Every proved theorem above depends on axioms ⊆ `{propext, Classical.choice, Quot.sound}`. No `sorry`, no `native_decide`, no custom axioms. `AxiomCheck.lean` holds the `#print axioms` certifications.
 
 ## 13. What is NOT persisted
 

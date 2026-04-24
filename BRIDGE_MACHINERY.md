@@ -76,28 +76,29 @@ This is what differentiates the present work from Gorard's: he wrote `g_{ab}, R,
 **Decomposition (was previously punted; now an explicit roadmap):**
 
 ### 4.1 Bundle infrastructure
-- [ ] `RiemannianMetric M` for `M` a smooth manifold: smooth section of `Sym²(T*M)` with positive-definiteness.
-- [ ] Inverse metric as a smooth section.
-- [ ] Tangent-bundle frames; orthonormal frames.
+- ✓ `DiagRiemannianMetric` (C1, `RiemannianManifold.lean`): positive-definite + diagonal predicate on `MetricData n`; `DiagRiemannianManifold n` bundled; Euclidean witness.
+- ✓ `DiagLorentzianMetric` (C2, `LorentzianManifold.lean`): `(−,+,+,+)` signature; Minkowski witness.
+- [ ] Upgrade to Mathlib's full `ChartedSpace` + `VectorBundle` API for smooth-section form. Follow-up.
 
 ### 4.2 Connections (general)
-- [ ] `Connection (E : VectorBundle B)`: covariant derivative `∇ : Γ(E) → Γ(T*B ⊗ E)` on smooth sections.
-- [ ] Christoffel symbols of a connection in local coordinates (recovering our `CurvatureLocalCoord.christoffel`).
-- [ ] Torsion: `T(X, Y) := ∇_X Y − ∇_Y X − [X, Y]`.
-- [ ] Curvature operator: `R(X, Y) Z := ∇_X ∇_Y Z − ∇_Y ∇_X Z − ∇_{[X,Y]} Z`.
+- [ ] `Connection (E : VectorBundle B)` (C3): covariant derivative `∇ : Γ(E) → Γ(T*B ⊗ E)` on smooth sections.
+- ✓ Christoffel symbols on `MetricData n` in local coordinates (`CurvatureLocalCoord.christoffel`).
+- [ ] Torsion `T(X, Y) := ∇_X Y − ∇_Y X − [X, Y]` (C4).
+- ✓ Curvature operator (`CurvatureRiemann.riemann`), algebraic first Bianchi identity (`CurvatureRiemann.bianchi_first`).
 
 ### 4.3 Levi-Civita
-- [ ] Existence + uniqueness theorem (Koszul formula): given a Riemannian metric, there is a unique torsion-free metric-compatible connection.
-- [ ] Christoffel symbols from the metric: `Γ^ρ_{μν} = ½ g^{ρσ} (∂_μ g_{σν} + ∂_ν g_{σμ} − ∂_σ g_{μν})` (matching local-coord version).
-- [ ] Coordinate-change formula (tensor transformation law).
+- [ ] Existence + uniqueness theorem (Koszul formula) (C5).
+- ✓ Christoffel symbols from the metric (the local-coord `Γ^ρ_{μν} = ½ g^{ρσ} (∂_μ g_{σν} + ∂_ν g_{σμ} − ∂_σ g_{μν})` in `CurvatureLocalCoord.lean`).
+- [ ] Coordinate-change formula (tensor transformation law) (C6).
+- [ ] Scaled discrete connection → Levi-Civita convergence (C8).
 
 ### 4.4 Discrete connection on hypergraphs (the hypergraph anchor)
-- [ ] **`DiscreteConnection (H : Hypergraph V)`**: parallel-transport map from each `v` to each neighbour `w`; an element of `Aut(F_v → F_w)` for some discrete fibre.
-- [ ] **Forman-Ricci** as a curvature invariant of the discrete connection.
-- [ ] **Convergence theorem**: scaled discrete connection on lattice graphs converges to the Levi-Civita connection of the limit manifold (rate analysis).
-- [ ] Cyclic-lattice example with explicit computation.
+- ✓ **`HypergraphConnection H G`** (C7, `HypergraphConnection.lean`): parallel-transport assignment on adjacencies with values in a monoid/group `G`. Includes `flat`, `IsSymmetric`, `transportWalk`, `holonomy`, `IsFlat` predicate; `transportWalk_append` is the monoid-hom property. Hypergraph analog of `FiberedGraph.Connection`.
+- ✓ **Forman-Ricci** on graphs + hypergraphs (`DiscreteRicci.lean`) — sign-of-curvature theorems.
+- [ ] **Convergence theorem** (C8): scaled discrete connection on lattice graphs converges to the Levi-Civita connection of the GH-limit manifold.
+- ✓ Cycle example with explicit `transportWalk` + holonomy machinery.
 
-This rung is large, but every sub-task is a concrete formalisation target — no waving.
+Remaining open sub-items are concrete targets tracked in the C-series.
 
 ## Rung 5 — Riemann, Ricci, scalar curvature, Einstein tensor
 
@@ -115,12 +116,14 @@ This rung is large, but every sub-task is a concrete formalisation target — no
 - ✓ **First Bianchi identity** `R^ρ_{σμν} + R^ρ_{μνσ} + R^ρ_{νσμ} = 0`. (`CurvatureRiemann.lean`)
 - ✓ Ricci tensor; scalar curvature; Einstein tensor. (`CurvatureRiemann.lean`)
 - ✓ Flat connection + `minkowski4_satisfies_vacuum_EFE`. (`CurvatureRiemann.lean`)
-- [ ] Schwarzschild metric instance with explicit derivatives.
-- [ ] Levi-Civita derivation: `leviCivita : MetricDataC2 n → ConnectionData n` from the Christoffel formula.
-- [ ] Schwarzschild Christoffel computation.
-- [ ] Schwarzschild Ricci ≡ 0 (vacuum solution verification).
-- [ ] FLRW metric instance + non-zero Ricci computation.
-- [ ] Bianchi identity for ∇G^μν = 0 (needs covariant derivative).
+- ✓ Schwarzschild metric instance with explicit Christoffels (all 8) (`Schwarzschild.lean`, B1). `schwarzschildPartial` as `PartialMetricData 4` with exterior validity domain (B5).
+- ✓ FLRW metric instance (B6): `flrwPartial a da : PartialMetricData 4` with `a ≠ 0` validity domain; time-time Christoffel vanishes (`flrwChristoffel_0_00 = 0`).
+- ✓ Reissner-Nordström (B8): `rnPartial M Q` with `rnLapse M Q r = 1 − 2M/r + Q²/r²` exterior predicate.
+- ✓ Levi-Civita derivation: `leviCivitaConnection` from Christoffel formula (`CurvatureRiemann.lean`).
+- [ ] Schwarzschild Ricci ≡ 0 (B3) and vacuum EFE satisfaction (B4).
+- [ ] FLRW Ricci + EFE with perfect-fluid matter (B7).
+- [ ] Second Bianchi / `∇_μ G^{μν} = 0` (B11).
+- [ ] Ricci symmetry for Levi-Civita connection (B10).
 - ✓ **Forman-Ricci on a graph** (`DiscreteRicci.lean`): edge curvature `4 − deg(v) − deg(w)`, vertex aggregation, total scalar.
 - ✓ **First explicit bridge** (`RicciBridge.lean`): Forman-Ricci on 2-regular graph (e.g., cycle) = continuum Ricci on circle (= 0); `circleMetric : MetricData 1`; `forman_ricci_matches_continuum_on_cycle`. The grounding-principle obligation is met for the cycle/circle case.
 - [ ] **Discrete Ricci → continuum Ricci convergence (general)**: extend beyond trivially-flat to non-flat targets (sphere → positive Ricci).
@@ -131,28 +134,29 @@ This rung is large, but every sub-task is a concrete formalisation target — no
 **Connection to hypergraphs.** A `Trajectory sys init` is a discrete dynamical system; the discrete heat equation on a finite graph is a finite-dim ODE; its continuum limit on the GH-limit manifold is a PDE. Both ends and the bridge in our scope.
 
 **Decomposition:**
-- [ ] **Discrete heat equation** as a finite-dim linear ODE: `u'(t) = −Δ u(t)` on `(Fin n → ℝ)`.
-- [ ] Existence + uniqueness via finite-dim Cauchy-Lipschitz.
-- [ ] Heat-kernel matrix exponential `e^{-tΔ}`.
-- [ ] **Conservation of total mass** `d/dt ∑ u(t) = 0` (uses `laplacian_sum_zero`).
-- [ ] **L² decay** `‖u(t)‖² ≤ ‖u(0)‖²` (uses PSD).
-- [ ] **Convergence to uniform** as `t → ∞` (uses spectral gap once we have it).
-- [ ] **Continuum limit**: scaled discrete heat equation → continuous heat equation on the GH-limit manifold (combines Rungs 1, 2, 3, 6).
-- [ ] **Wave equation** `u'' = Δu` similarly on the cycle.
-- [ ] **Schrödinger equation** `i ψ' = −Δ ψ` (QM bridge).
-- [ ] **Cauchy problem for Einstein equations**: very long-term, follows Choquet-Bruhat 1952.
+- ✓ **Discrete heat equation** `u' = Δ_H u` on `Hypergraph V` (`HeatEquation.lean`, D1). Existence + forward uniqueness (`HeatEquationUniqueness.lean`, D2).
+- ✓ Heat-kernel matrix exponential `e^{tΔ}` (`LaplacianMatrix.lean`, R2/D3) + ODE ↔ matrix heat-kernel identification (`HeatKernelODE.lean`, T1).
+- ✓ **Conservation of total mass** `d/dt ∑ u(t) = 0` (D4).
+- ✓ **L² decay** (D5) and `heatKernel_mulVec_const` (heat kernel fixes constants).
+- ✓ **Long-time convergence** (D6 partial, `HeatKernelDecay.lean`): non-constant cycle eigenmodes decay exponentially to zero; `heatKernel_cycleHypergraph_multi_mode_tendsto` — heat flow of any finite eigen-combination converges to its constant component. Full convergence for arbitrary initial data still needs eigenbasis-spanning.
+- ✓ **Continuum limit** (D7): scaled discrete heat equation → continuous heat equation on the GH-limit manifold.
+- ✓ **Wave equation** `u'' = −Δ_H u` (`WaveEquation.lean`, D8) + energy conservation.
+- ✓ **Klein-Gordon** `u'' = Δ_H u − m² u` (`KleinGordon.lean`, D9).
+- ✓ **Schrödinger equation** `iψ' = −Δ_H ψ` (`SchrodingerEquation.lean`, D10) — unitary on `Hypergraph V` and on `BranchialSlice`.
+- [ ] **Cauchy problem for Einstein equations** (D11, long-term): Choquet-Bruhat 1952 local well-posedness.
 
 ## Rung 7 — Fields, Lagrangians, gauge theory
 
 **Connection to hypergraphs.** Fields on a hypergraph are functions `V → V_field`; gauge fields are connections (Rung 4); Lagrangian density is a function on the section space; Euler-Lagrange equations specialise to discrete update rules.
 
 **Decomposition:**
-- [ ] Discrete scalar field `φ : V → ℝ`.
-- [ ] Discrete gauge field as Rung 4 connection on a fibred-graph (G-bundle).
-- [ ] Discrete Lagrangian density `L(φ, ∇φ)`.
-- [ ] Discrete Euler-Lagrange equation as a stationary-action condition.
-- [ ] Continuous limits — Yang-Mills, Klein-Gordon, etc.
-- [ ] HepLean integration.
+- ✓ **Discrete scalar field** `φ : V → ℝ` (`ScalarField.lean`, G1).
+- [ ] **Discrete gauge field** as Rung 4 connection on a fibred-graph (G-bundle) (G2, pending).
+- ✓ **Discrete Lagrangian density** + Hamiltonian (`ScalarField.lean`, G3).
+- ✓ **Discrete Euler-Lagrange equation** (`ScalarField.lean`, G4), with `KG_EulerLagrange_iff_KleinGordonSolution` equivalence.
+- ✓ **Klein-Gordon continuum-limit spectrum** (`ContinuumLimitStatement.DiscreteKleinGordonSpectrum`): lattice KG dispersion `n² · 4 sin²(πk/n) + m²` converges to `(2πk)² + m²`.
+- [ ] General continuum limits — full Yang-Mills still needs the gauge-bundle connection (G5).
+- [ ] HepLean integration (G6).
 
 ## Rung 8 — Lorentzian geometry, causal theory
 
