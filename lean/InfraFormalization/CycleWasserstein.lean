@@ -138,4 +138,43 @@ theorem wasserstein1_cycleMetric_le_card
     (cycleMetric_le_card n) (cycleMetric_nonneg n) μ ν hμ hν hμsum hνsum
   exact_mod_cast Nat.zero_le _
 
+/-- **Scaled cycle metric**: the hypergraph distance divided by `n`,
+so that the unit cell has length `1/n` and the full cycle has
+"circumference" bounded by `1`. This is the metric under which
+`cycleHypergraph n → S¹` convergence can be quantified. -/
+noncomputable def cycleMetricScaled (n : ℕ) [NeZero n] (i j : Fin n) : ℝ :=
+  cycleMetric n i j / n
+
+theorem cycleMetricScaled_nonneg (n : ℕ) [NeZero n] (i j : Fin n) :
+    0 ≤ cycleMetricScaled n i j := by
+  unfold cycleMetricScaled
+  have hn : (0 : ℝ) ≤ n := by exact_mod_cast Nat.zero_le _
+  exact div_nonneg (cycleMetric_nonneg n i j) hn
+
+/-- **Scaled cycle diameter is ≤ 1**: under `cycleMetricScaled n`, any
+two vertices are within unit distance. Direct consequence of
+`cycleMetric_le_card` (the unscaled diameter is ≤ n). -/
+theorem cycleMetricScaled_le_one (n : ℕ) [NeZero n] (i j : Fin n) :
+    cycleMetricScaled n i j ≤ 1 := by
+  unfold cycleMetricScaled
+  have hn_pos : (0 : ℝ) < n := by
+    have : (0 : ℕ) < n := Nat.pos_of_ne_zero (NeZero.ne n)
+    exact_mod_cast this
+  rw [div_le_one hn_pos]
+  exact cycleMetric_le_card n i j
+
+/-- **W_1 under the scaled cycle metric is bounded by `1`.** Universal
+O(1) Wasserstein bound on the cycle hypergraph. Along with the delta
+identity (`wasserstein1_cycleDelta_eq_hypergraphDist`) this pins W_1
+to the range `[0, 1]` under scaling, matching the unit-circle limit. -/
+theorem wasserstein1_cycleMetricScaled_le_one
+    (n : ℕ) [NeZero n]
+    (μ ν : Fin n → ℝ)
+    (hμ : ∀ i, 0 ≤ μ i) (hν : ∀ i, 0 ≤ ν i)
+    (hμsum : ∑ i, μ i = 1) (hνsum : ∑ i, ν i = 1) :
+    wasserstein1 (cycleMetricScaled n) μ ν ≤ 1 :=
+  wasserstein1_le_sup (cycleMetricScaled n) 1 zero_le_one
+    (cycleMetricScaled_le_one n) (cycleMetricScaled_nonneg n)
+    μ ν hμ hν hμsum hνsum
+
 end InfraFormalization
