@@ -148,4 +148,57 @@ theorem wasserstein1_self_eq_zero (d : X → X → ℝ)
   · -- W_1(μ, μ) ≥ 0 by non-negativity.
     exact wasserstein1_nonneg_of_plan d hd μ μ (TransportPlan.identity μ hμ)
 
+namespace TransportPlan
+
+variable {μ ν : X → ℝ}
+
+/-- **Transpose of a transport plan**: swap roles of source and target. -/
+def transpose (p : TransportPlan μ ν) : TransportPlan ν μ where
+  π := fun x y => p.π y x
+  nonneg := fun x y => p.nonneg y x
+  rowMarginal := p.colMarginal
+  colMarginal := p.rowMarginal
+
+/-- **Cost of the transpose under a symmetric metric** equals the
+cost of the original plan. Uses `Finset.sum_comm` to swap the two
+sums. -/
+theorem cost_transpose_of_symm (p : TransportPlan μ ν) (d : X → X → ℝ)
+    (hsym : ∀ x y, d x y = d y x) :
+    (p.transpose).cost d = p.cost d := by
+  unfold cost transpose
+  rw [Finset.sum_comm]
+  refine Finset.sum_congr rfl ?_
+  intros x _
+  refine Finset.sum_congr rfl ?_
+  intros y _
+  rw [hsym]
+
+end TransportPlan
+
+/-- **The cost set is in bijection with its transpose-cost set** for
+a symmetric cost function: every plan's cost equals the transpose
+plan's cost, and transpose is an involution. Together, the two sets
+`{cost p | p ∈ Plans(μ, ν)}` and `{cost q | q ∈ Plans(ν, μ)}` are
+equal. -/
+theorem wasserstein1_costSet_eq (d : X → X → ℝ)
+    (hsym : ∀ x y, d x y = d y x) (μ ν : X → ℝ) :
+    {c : ℝ | ∃ p : TransportPlan μ ν, p.cost d = c}
+      = {c : ℝ | ∃ q : TransportPlan ν μ, q.cost d = c} := by
+  ext c
+  constructor
+  · rintro ⟨p, rfl⟩
+    refine ⟨p.transpose, ?_⟩
+    exact p.cost_transpose_of_symm d hsym
+  · rintro ⟨q, rfl⟩
+    refine ⟨q.transpose, ?_⟩
+    exact q.cost_transpose_of_symm d hsym
+
+/-- **Symmetry of W_1** under a symmetric cost function: transporting
+from `μ` to `ν` costs the same as transporting from `ν` to `μ`. The
+two coupling-cost sets are equal via plan transpose. -/
+theorem wasserstein1_symm (d : X → X → ℝ) (hsym : ∀ x y, d x y = d y x)
+    (μ ν : X → ℝ) : wasserstein1 d μ ν = wasserstein1 d ν μ := by
+  unfold wasserstein1
+  rw [wasserstein1_costSet_eq d hsym μ ν]
+
 end InfraFormalization
