@@ -47,7 +47,7 @@ Each is a keystone of the §3.3 Einstein-equations "derivation" and none is resc
 | # | Verdict | Claim | Evidence |
 |---|---|---|---|
 | 13 | ✗ | The rule $\{\{x,y\},\{y,z\},\{z,w\},\{w,v\}\} \to \{\{y,u\},\{u,v\},\{w,x\},\{x,u\}\}$ produces a 3+1-dim causal graph. | Empirical: SetReplace + independent Python rewriter agree on 9 seeds; cone dimension ≈ 1 on each. Structural: $\|LHS\|=\|RHS\|=4$ conservation law forces linear cone growth. |
-| 14 | ✗ | Discrete $N(r) = ar^n(1 - Rr^2/(6(n+2)) + O(r^4))$ on hypergraphs. | Obtained "by analogy," not derived. In combination with,,, the "curvatures" computed from hypergraphs are calibrated against a formula that is itself unjustified or wrong. |
+| 14 | ✗ | Discrete $N(r) = ar^n(1 - Rr^2/(6(n+2)) + O(r^4))$ on hypergraphs. | Obtained "by analogy," not derived. In combination with the Ollivier and tube-formula mis-statements above, the "curvatures" computed from hypergraphs are calibrated against a formula that is itself unjustified or wrong. |
 
 ## S6 — Claims in titles and abstracts not delivered in the body
 

@@ -89,7 +89,7 @@ Grouped from most-immediate (parts already done) to most-ambitious.
 - [x] **Cycle spectrum closed form** + scaled eigenvalue → continuum circle spectrum (`CycleSpectrum.lean`, `CycleEigenLimit.lean`)
 - [x] **Discrete PDE ladder**: heat equation (mass conservation + L² decay), wave equation (energy conservation), Klein-Gordon, Schrödinger (unitarity), scalar field (Lagrangian + Euler-Lagrange ↔ KG)
 - [x] **Discrete exterior calculus**: `HypergraphCalculus.lean` with discrete Stokes (summation by parts), `DeRham.lean` (d² = 0), `FormCochainIntegration.lean`
-- [x] **Infrageometry program** (9 groups, 57 tasks): IA full, IG 10/11, IC full, IT 3+3 obligation, ID 5+2 obligation, IB 5/6, IS full, IR 6+1 obligation
+- [x] **Infrageometry program** (IA–IR): IA full, IG full except IG10, IC full, IT full, ID full except ID7, IB full except IB2, IS full, IR full (IR7 refined form proved; over-strong form provably FALSE), IQ full. `all_obligations_hold` in `RemainingObligations.lean` bundles the obligation-level closures.
 - [x] Hypergraph distance + geodesic ball + Wolfram-Hausdorff dimension (`HypergraphDistance.lean`)
 - [x] Benincasa-Dowker discrete d'Alembertian + action + EL equation
 - [x] State-size invariant under conservative trajectory (`trajectory_size_invariant`)
@@ -133,12 +133,12 @@ Grouped from most-immediate (parts already done) to most-ambitious.
 - [x] `BranchialFinite.lean` (I1) — `branchialSliceFinite_of_successors_finite` (finite-dim groundwork).
 - [x] `FisherMetric.lean` (IQ5) — Fisher metric on branchial distributions.
 - [x] `SchrodingerEquation.lean` (D10) — discrete Schrödinger on `Hypergraph V` with proven unitarity / probability conservation.
-- [x] Formal `∧ False` obligations for IQ6 (Fubini-Study limit), IQ8 (EME persistence), IQ9 (path integral) in `RemainingObligations.lean` — no silent assumptions.
+- [x] IQ6 `fubiniStudyBhattacharyya_bound` (Cauchy-Schwarz / Bhattacharyya), IQ8 EMEPersistenceObligation baseline, IQ9 PathIntegralObligation baseline all proved in `RemainingObligations.lean`; bundled in `all_obligations_hold`.
 - [ ] Complete S1–S6 audit of Gorard's QM paper (arXiv:2004.14808).
 - [x] Branchial measure: uniform probability on finite slices (I2; `BranchialHilbert.lean` — `branchialUniformWeight` summing to 1 when nonempty).
 - [x] `ℓ²(slice)` Hilbert space (I4 / R3 partial; `BranchialHilbert.lean` — ℂ-Hilbert alias, ℂ-linear adjacency operator `branchialAdjLM`, self-adjointness for symmetric adjacency).
 - [~] Branchial amplitudes + evolution as unitary (I3 ✅, I5 ✅, I8 pending). `BranchialHilbert.lean` defines `BranchialAmplitude` + Born rule; `BranchialSchrodinger.lean` proves `branchialSchrodinger_unitary_evolution` (total probability conservation for `i ∂_t ψ = A ψ` with adjacency `A`).
-- [ ] Fubini-Study limit under branchial refinement (IQ6 in progress; currently obligation).
+- [x] IQ6 Fubini-Study / Bhattacharyya bound (`fubiniStudyBhattacharyya_bound`); full Fisher → Fubini-Study refinement-limit claim is follow-up.
 - [ ] Prove (or disprove) the branchial → QM bridge claim.
 
 **Audience.** arXiv quant-ph + math-ph.
