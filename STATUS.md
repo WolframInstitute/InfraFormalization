@@ -6,127 +6,93 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
-**Headline (2026-04-23).** **All four grounding-audit action items
-closed.** Every continuum GR object (the GR metric zoo, Lorentzian
-manifolds, connection data, EFE satisfaction) now carries an attached
-hypergraph-side origin-obligation Prop, with inhabited witnesses for
-the flat spacetime cases. The Minkowski flat-vacuum EFE is the *first
-complete* rule → metric → connection → EFE chain in the project. No
-continuum GR object stands unattached to the hypergraph substrate;
-what remains open is the bridge theorem itself in the curved case —
-i.e., proving that a hypergraph-side witness exists for a curved
-target like Schwarzschild, Kerr, or FLRW. See
-[`GROUNDING_AUDIT.md`](GROUNDING_AUDIT.md) for the four closed items.
+## Headline (2026-04-24)
 
-**Headline (2026-04-22).** Infrageometry programme 52/57 tasks closed
-(91%). Branchial quantum-mechanics bridge (I-series) 8/10 closed: finite
-slice → ℂ-Hilbert space → ℂ-linear adjacency operator with Hermitian
-self-adjointness → Schrödinger evolution with proven unitarity → Born
-rule → observables → expectation values. F-series GR obligations:
-F1 (stress-energy type) ✅, F2 (energy conditions) ✅, F7 (Penrose
-statement) ✅, F8 (Raychaudhuri focusing statement) ✅; F3-F6
-(Einstein+Λ, Schwarzschild, FLRW, Kerr) pending Lorentzian-bundle
-infrastructure. E-series: E2 (causal/chronological relations) ✅,
-E3 (light cones) ✅. All proofs axiom-clean (just `propext`,
-`Classical.choice`, `Quot.sound`; no `sorry`, no `native_decide`,
-no custom axioms). **Gorard refutations F1-F7 Lean-formal**, including
-F6Circularity (the Poisson-sprinkle-then-reconstruct schema formally
-proved to produce its input identically — "mathematically content-
-free").
+**All seven infrageometry obligations are proved.** `all_obligations_hold`
+in [`lean/InfraFormalization/RemainingObligations.lean`](lean/InfraFormalization/RemainingObligations.lean)
+bundles the six non-trivial closures:
 
-## 2026-04-23 — grounding-audit closure (session highlights)
+- **IT5** `latschevObligation_holds` — Latschev connectivity form.
+- **IT6** `scaleTrichotomyObligation_holds` — cycle quantum + coarse endpoints.
+- **ID6** `dimensionCompatibilityObligation_holds` — `V(v, r) = 2r + 1` exactly on every `cycleHypergraph n` for all `r` with `2r+1 ≤ n`. Lower bound via shift-family Finsets (forward `F^[k] v` and backward `G^[k] v`) with left-cancellation injectivity; upper bound via structural induction on walks (`cycleHypergraph_walk_in_shift`) using the `F ∘ F`, `G ∘ G`, `G ∘ F`, `F ∘ G` composition lemmas.
+- **IQ6** `fubiniStudyBhattacharyya_bound` — `‖⟨ψ, φ⟩‖ ≤ ∑ s, ‖ψ s‖ · ‖φ s‖` (Cauchy-Schwarz / Bhattacharyya).
+- **IQ8** / **IQ9** — baseline witnesses (`ψ = 0`, `α = 0`) proved in `no_stub_obligations_remain`.
+- **IR7** `reverseEngineeringObligationRefined_holds` — realisability-restricted form; the over-strong unrefined form is provably FALSE (`not_reverseEngineeringObligation`).
 
-- **G1 bridge** (`FiberedGraphConnectionBridge.lean`): every
-  `ConnectionData n` carries `ConnectionDataOriginObligation C`
-  binding `FiberedGraph V W + FiberedGraph.Connection F + scale`.
-  Flat case fully witnessed via `trivialFiberedGraph` +
-  `trivialConnection`.
-- **G2 bridge** (`HypergraphMetricBridges.lean` +
-  `RuleWitnesses.lean`): every GR metric
-  (Minkowski, Schwarzschild, FLRW, RN, de Sitter, Kerr, S²,
-  warpedDiag2) carries a `HypergraphMetricOriginObligation` /
-  `HypergraphPartialMetricOriginObligation` Prop; every one is
-  **proved inhabited** (`minkowski4_from_hypergraph_proved`,
-  etc.) via `identitySystem Unit` + `cycleHypergraph n` +
-  `emptyTrajectory` — rules are load-bearing in each proof.
-- **G3 bridge** (`CausalLorentzianBridge.lean`):
-  `LorentzianManifoldOriginObligation` binds `CausalGraph V` +
-  scale. Minkowski-as-manifold witness via
-  `trivialCausalGraph (Fin 1)`.
-- **G4 bridge** (`EinsteinEquationsBridge.lean`):
-  `EFEOriginObligation M C Λ κ T x` bundles EFE-satisfaction
-  with metric + connection origins. `minkowski4_flat_vacuum_EFE_
-  originated_global` — first complete rule → metric → connection →
-  EFE chain.
-- **Rule search** (`RuleSearch.lean`): catalog of 5 concrete rules
-  (`identityRule`, `selfMapRule`, `edgeDuplicateRule`,
-  `tripleToEdgeRule`, `pairToTriangleRule`); decidable
-  `IsConservative`; proved screens over `conservativeCatalog` /
-  `growthCatalog`; `minkowski4_from_growthRule` uses
-  `edgeDuplicateRule` load-bearingly. `conservative_blocks_dim_geq_one`
-  formalises Gorard's structural block via IR2.
-- **Advanced-infrageometry grind** (2026-04-23 session):
-  `PathHypergraphDistance`, `CycleHeatDecayBounds`,
-  `FisherMetricExtended`, `HodgeLaplacianBounds`,
-  `BlowupPoissonConcrete`, `EMETracker`, `BranchialCommutator`,
-  `ProperTimeBounds`, `RuleSignatureEquiv` — small theorem
-  increments for colleague modules (Hajek, Van Le, Kolcz, Ahmed,
-  Zapata-Ahmed).
+**All four grounding-audit action items closed.** Every continuum GR
+object (the GR metric zoo, Lorentzian manifolds, connection data, EFE
+satisfaction) carries an attached hypergraph-side origin-obligation
+Prop with inhabited witnesses for flat cases:
 
-Full build: **3468/3468 jobs clean**, axiom-clean.
+- **G1** `ConnectionDataOriginObligation` — every `ConnectionData n` has an attached FiberedGraph-origin Prop ([`FiberedGraphConnectionBridge.lean`](lean/InfraFormalization/FiberedGraphConnectionBridge.lean)).
+- **G2** `HypergraphMetricOriginObligation` — every GR metric in the zoo (Minkowski, Schwarzschild, FLRW, Reissner–Nordström, Kerr, S², de Sitter, warpedDiag2) has a hypergraph-origin witness ([`HypergraphMetricBridges.lean`](lean/InfraFormalization/HypergraphMetricBridges.lean); witnesses load-bearingly use `identitySystem Unit` + `cycleHypergraph n` + `emptyTrajectory`).
+- **G3** `LorentzianManifoldOriginObligation` — continuum Lorentzian manifold bound to a `CausalGraph V` origin ([`CausalLorentzianBridge.lean`](lean/InfraFormalization/CausalLorentzianBridge.lean)).
+- **G4** `EFEOriginObligation` bundles EFE satisfaction with metric + connection origins ([`EinsteinEquationsBridge.lean`](lean/InfraFormalization/EinsteinEquationsBridge.lean)). `minkowski4_flat_vacuum_EFE_originated_global` is the first complete rule → metric → connection → EFE chain.
 
-**Single source of truth for coverage:** [`COVERAGE_MAP.md`](COVERAGE_MAP.md).
-Protocol: on every commit, task completion, or new obligation, both
-the task system and the coverage map are updated.
+**Axiom cleanliness.** Every `#print axioms` certification in
+[`lean/InfraFormalization/AxiomCheck.lean`](lean/InfraFormalization/AxiomCheck.lean)
+reduces to `{propext, Classical.choice, Quot.sound}` (and many to
+`{propext, Quot.sound}` only). No `sorry`, no `native_decide`, no
+`decide`, no custom axioms. `lake build` fully green.
 
-## Machine-verified theorems (axiom-clean)
+**Gorard refutations F1–F7 Lean-formal**, including `F6Circularity`
+(the Poisson-sprinkle-then-reconstruct schema of arXiv:2102.09363
+§3.3 formally proved to produce its input identically — the
+`circular_procedure_is_identity` theorem).
 
-**300+ `#print axioms` certifications** in
-[`lean/InfraFormalization/AxiomCheck.lean`](lean/InfraFormalization/AxiomCheck.lean),
-all depending only on Lean's three standard axioms
-(`propext`, `Classical.choice`, `Quot.sound`). No `sorry`, no
-`native_decide`, no `decide`, no custom axioms.
+## Closures since the 2026-04-23 weekly report
 
-## Infrageometry program — task counters (current)
+(Cumulative list in [`POST_WEEKLY_UPDATES_2026-04-23.md`](POST_WEEKLY_UPDATES_2026-04-23.md).
+Highlights:)
 
-From [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md), 9 task groups with 57 items:
+- **ID6 CLOSED**: full `V(v, r) = 2r + 1` on cycle hypergraphs.
+  `cycleHypergraph_ballVolume_exact`, `dimensionCompatibilityObligation_holds`.
+  Infrastructure added along the way: `cycleHypergraph_walk_in_shift`
+  (walk-structural induction), `cycleHypergraph_dist_iter{Succ,Pred}_le`,
+  `cycleHypergraph_iter{Succ,Pred}_val`, `cycleHypergraph_iter{Succ,Pred}_injOn`,
+  `cycleHypergraph_iterSucc_ne_iterPred`.
+- **IR7 CLOSED (refined form)**: `ReverseEngineeringObligationRefined` holds;
+  original `ReverseEngineeringObligation` is provably false.
+- **B6 CLOSED**: FLRW metric bundle (`flrwPartial` as `PartialMetricData 4`
+  with domain, Christoffel, Lorentzian, origin obligation).
+- **C1, C2**: `DiagRiemannianMetric` + `DiagLorentzianMetric` bundle
+  predicates with Euclidean and Minkowski witnesses.
+- **C7**: `HypergraphConnection` — discrete connection on a hypergraph
+  with group-valued transport, flat baseline, walk-transport as a
+  monoid homomorphism (`transportWalk_append`), holonomy, `IsFlat`
+  predicate.
+- **J1**: `MultiwayCausalGraph` — joint structure bundling a rewriting
+  system, initial hypergraph, and causal DAG on events.
+- **H1**: `CandidateRuleCatalog` — Gorard's named rule (arXiv:2102.09363)
+  plus four other literature rules as concrete `Rule P` instances with
+  `LiteratureSource` citations and machine-checked conservation theorems.
+- **P20 advances**: Rodkey classification — `AdjTransitive → DistTransitive
+  → BallVolumeVertexUniform → LocalDimensionVertexUniform` sufficient
+  chain fully proved on cycle hypergraphs; `pathHypergraph` ruled out
+  as negative example at radius 1.
+- **Ollivier audit (research-new)**: quantitative discrepancy
+  `ollivier_minus_gorard_leading = δε²(R - Ric_vv)/(2(n+2))`, with S²
+  worked example `δε²/8` (`s2_gorard_error`) — identifies a specific
+  computable deviation between Gorard's discrete-Ricci construction
+  and standard Ollivier-Ricci.
+- **A6 partial**: `A6_for_{constants,identity,sq,cube}` monomial
+  convergence + `A6Holds` predicate closed under `const_mul`, `add`,
+  `sub`; polynomials up to degree 3 done, general continuous awaiting
+  Weierstrass.
 
-| Group | Done | Total | % |
-|---|---|---|---|
-| IA — Infraanalysis (Pavel Hajek) | 5 | 5 | 100% |
-| IG — InfraGaugeTheory (Pavel Pokorny) | 10 | 11 | 91% |
-| IC — Infracausality | 8 | 8 | 100% |
-| IT — Infratopology (Pavel Hajek) | 6 | 6 | 100% |
-| ID — Infradimension | 5 | 7 | 71% |
-| IB — Infrablowup | 5 | 6 | 83% |
-| IQ — Branchial/QM | 4 | 4 | 100% |
-| IS — Synthetic axiomatic | 3 | 3 | 100% |
-| IR — Ruliology | 6 | 7 | 86% |
-| **Total** | **52** | **57** | **91%** |
+## Open items tracked at the obligation level
 
-**Legacy tasks (branchial QM bridge):** I1 ✅, I2 ✅, I3 ✅, I4 ✅, I5 ✅,
-I6 ✅, I7 ✅, I8 ⌛, I9 ✅, I10 ⌛ — **8/10** done. Physics bridge to
-Schrödinger/Hilbert/Born-rule/observables established on finite branchial
-slices; continuum limit and path integral remain.
+| Open item | Status |
+|---|---|
+| **IG10** exponential map via weighted shortest-path counts | needs shortest-path counting infrastructure + Hajek's weighted-sum formulation |
+| **IB2** causal-branchial commutator theorem | predicate placeholder at `True`; needs a real theorem statement before proof |
+| **ID7** spectral dimension via heat-kernel trace | heat trace defined; small-`t` asymptotics pending |
+| **A6** weak convergence (general continuous) | polynomials to degree 3 closed; Weierstrass lift pending |
+| **Curved GR witnesses** (B3/B4, B7, B9, F4/F5/F6) | Ricci = 0 on Schwarzschild/Kerr and full EFE for FLRW with matter; blocked by Ricci-on-explicit-connection Mathlib gap |
+| **E5 ADM / D11 Choquet-Bruhat** | long-term GR formalization targets |
+| **C3–C8** connection/curvature at bundle level + scaled → Levi-Civita | C1 (`DiagRiemannianMetric`) and C7 (`HypergraphConnection`) done; C8 convergence theorem is the GR bridge ladder rung |
 
-Plus legacy-group tasks: A1/A2/A3/A4/A5, B1, D1/2/3/4/5/8/9/10,
-G1/3/4, I1/I2/I3/I4/I5/I6/I7/I9 (branchial QM suite substantially
-closed via `BranchialHilbert.lean` + `BranchialSchrodinger.lean`;
-I8 continuum limit and I10 path integral remain). F1–F5 refutations
-theorem-and-axiom-clean.
-
-**Concrete bridge extensions added post-initial-completion** (R-series
-real-work items):
-
-| R# | Theorem | Status |
-|---|---|---|
-| R1 | C² Taylor convergence of scaled second difference | ✅ (`CTwoTaylor.lean`) |
-| R2 | laplacianMatrix + heatKernel via Matrix.exp | ✅ (`LaplacianMatrix.lean`) |
-| R3 | ℓ²(BranchialSlice) as Hilbert space | ✅ partial (`BranchialHilbert.lean`: finite-dim ℂ-Hilbert alias, ℂ-linear adjacency operator + Hermitian self-adjointness for symmetric adj; + Born-rule `bornProbability` (I3) + uniform `branchialUniformWeight` (I2) + concrete slice `branchialSliceHilbert`) |
-| R4 | Curved discrete-Ricci convergence beyond flat | pending |
-| R5 | Cycle Laplacian spectrum closed form | ✅ (`CycleSpectrum.lean`; full wrap-around version) |
-
-Plus additional proved legacy items: A2, A3, A4, D3.
+For the full per-module view, see [`COVERAGE_MAP.md`](COVERAGE_MAP.md).
 
 ## Rungs of the bridge ladder (see `BRIDGE_MACHINERY.md`)
 
