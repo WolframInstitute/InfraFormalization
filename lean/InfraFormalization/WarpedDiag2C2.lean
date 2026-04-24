@@ -165,5 +165,25 @@ theorem warpedDiag2_riemann_0_1_0_1 (x : Fin 2 → ℝ) :
   field_simp
   ring
 
+/-- **Generic antisymmetry consequence**: any Riemann tensor with
+coinciding lower μν indices vanishes. Follows directly from
+`ConnectionData.riemann_antisymm`. -/
+theorem riemann_diag_zero {n : Nat} (C : ConnectionData n)
+    (x : Fin n → ℝ) (ρ σ μ : Fin n) : C.riemann x ρ σ μ μ = 0 := by
+  have h := C.riemann_antisymm x ρ σ μ μ
+  linarith
+
+/-- **Ricci `R_{11}(x) = -1 / (1 + x₀²)`** on `warpedDiag2`.
+Follows from R^0_{101} = -1/(1+x₀²) (warpedDiag2_riemann_0_1_0_1)
+and R^1_{111} = 0 (Riemann antisymmetry in last two indices). -/
+theorem warpedDiag2_ricci_1_1 (x : Fin 2 → ℝ) :
+    warpedDiag2_C2.leviCivitaConnection.ricci x 1 1
+      = -1 / (1 + (x 0)^2) := by
+  unfold ConnectionData.ricci
+  rw [Fin.sum_univ_two]
+  rw [warpedDiag2_riemann_0_1_0_1 x,
+      riemann_diag_zero warpedDiag2_C2.leviCivitaConnection x 1 1 1]
+  ring
+
 end Curvature
 end InfraFormalization
