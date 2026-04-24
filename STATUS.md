@@ -81,44 +81,93 @@ Highlights:)
   Weierstrass.
 - **B9 Kerr metric**: `kerrG`, `kerrSigma`, `kerrDelta`, `KerrValid`
   exterior predicate; symmetry + Schwarzschild-reduction at spin zero.
-- **B10 Ricci symmetry (flat-sector + conditional)**: `RiemannRicciSymm`
-  predicate; `ricci_symm_of_riemannRicciSymm`; `flatConnection_ricci_symm`.
-- **B11 contracted 2nd Bianchi (flat-sector)**: already closed via
-  `flatConnection_einstein_divergence_zero` — promoted to complete.
-- **C3 vector-bundle connection**: `VectorBundleConnection n k` with
-  covariant derivative, curvature 2-form, curvature antisymmetry,
+- **C3 vector-bundle connection** (substantive): `VectorBundleConnection n k`
+  with covariant derivative, curvature 2-form, curvature antisymmetry,
   flat instance, `ofConnectionData` lifting `ConnectionData n` to
-  `VectorBundleConnection n n`, `ofConnectionData_curvature_eq_riemann`.
-- **C4 torsion at bundle level**: `VectorBundleConnection.torsion`,
-  `IsTorsionFree`, `ofConnectionData_isTorsionFree` (lifted connection
-  is always torsion-free via `Γ_symm`).
-- **C6 bundle Γ ↔ local-coord Γ**: `toConnectionData` projects a
-  torsion-free `VectorBundleConnection n n` back to a `ConnectionData n`;
-  `toConnectionData_ofConnectionData` round-trip.
-- **C8 scaled connection → Levi-Civita (flat-sector obligation)**:
-  `ScaledDiscreteConnectionFamily`, `ScaledConnectionToLeviCivitaObligation`,
-  `scaledConnectionToLeviCivita_trivial`.
-- **G2 discrete gauge field**: `DiscreteGaugeField H G` as a gauge-theory
-  alias for `HypergraphConnection`, with Wilson-loop holonomy and
-  flat-gauge trivial witness.
-- **J2 path integral over causal graphs**: `PathIntegralAmplitude` with
-  Born-rule normalisation bound; witnesses on any `CausalGraph V` and
-  on `MultiwayCausalGraph P V E`.
-- **J4 causal-set comparison**: `CausalSetStructure` Prop; every finite
-  `CausalGraph` with antisymmetry satisfies Sorkin's causal-set axioms.
-- **I10 path-integral formulation**: closed via the same
-  `PathIntegralAmplitude` framework used for J2.
-- **H3 candidate rule passing signature screens**:
+  `VectorBundleConnection n n`, and `ofConnectionData_curvature_eq_riemann`
+  identifying the bundle curvature with the Riemann tensor on the
+  tangent bundle.
+- **C4 torsion at bundle level** (substantive): `VectorBundleConnection.torsion`,
+  `IsTorsionFree`, `ofConnectionData_isTorsionFree` (lifted tangent-bundle
+  connection is always torsion-free via `Γ_symm`).
+- **C6 bundle Γ ↔ local-coord Γ** (substantive): `toConnectionData`
+  projects a torsion-free `VectorBundleConnection n n` back to a
+  `ConnectionData n`; `toConnectionData_ofConnectionData` round-trip.
+- **G2 discrete gauge field** (substantive): `DiscreteGaugeField H G` as
+  a gauge-theory alias for `HypergraphConnection`, with Wilson-loop
+  holonomy and `gaugeHolonomy_append` using the `transportWalk`
+  monoid-homomorphism property.
+- **J4 causal-set comparison** (substantive, conditional on
+  antisymmetry): `CausalSetStructure` Prop; every finite `CausalGraph`
+  whose precedence is antisymmetric satisfies Sorkin's causal-set
+  axioms (reflexivity + antisymmetry + transitivity + local finiteness
+  on the finite carrier).
+- **H3 candidate rule passing signature screens** (substantive):
   `signature_sameEdgeCount_of_conservative` + concrete
-  `gorardNamedRule_passes_sameEdgeCount_screen` witness
-  (gorardNamedRule from a 4-edge seed keeps `edgeCount = 4` forever).
-- **A7 Wasserstein-1 rate (obligation-level)**: `WassersteinRateObligation`
-  parameterised by a discrepancy function; zero-discrepancy witness
-  closes the baseline. Real Wasserstein bounds on the circle await
-  Mathlib optimal-transport API.
-- **A8 lift measure convergence to d-torus (obligation-level)**:
-  `MultiDimRateObligation` for each dimension `d`; reduction
-  `multiDimRateObligation_of_slices` from per-slice A7.
+  `gorardNamedRule_passes_sameEdgeCount_screen` (gorardNamedRule from
+  a 4-edge seed keeps `edgeCount = 4` forever, closing the 4-edge
+  screen against any 4-edge target).
+
+## Reopened: cosmetic closures that need substantive work
+
+Several earlier closures in this session wrapped a Prop-type obligation
+around a zero-discrepancy / trivial witness. Those are now reopened
+and carry concrete descriptions of the real work still required.
+None of these are substantively finished:
+
+- **E6 Lorentzian-GH** (`LorentzianGH.lean`): obligation stated via a
+  supplied discrepancy function; no actual Lorentzian-GH distance defined.
+  Task #58 reopened; project-own Lorentzian-GH distance is task #213.
+- **E7 discrete-causal-DAG → continuum Lorentzian** (`CausalDAGContinuumLimit.lean`):
+  wrapper around E6's zero baseline. Task #59 reopened.
+- **H4 scaled trajectory → continuum manifold** (`ScaledTrajectoryLimit.lean`):
+  zero-discrepancy baseline. Task #78 reopened.
+- **H5 curved-target RicciBridge** (`CurvedRicciExtensions.lean`):
+  per-target obligations all discharged by the same zero-discrepancy
+  sequence. Task #79 reopened; #218 tracks per-target real
+  computations.
+- **A7 Wasserstein-1 O(1/n)** (`WassersteinRate.lean`): zero-discrepancy
+  baseline. Task #18 reopened; project-own Wasserstein-1 is task #214.
+- **A8 d-torus measure lift** (`MeasureTorusLift.lean`): d-indexed
+  zero-discrepancy. Task #19 reopened; #215 targets real `O(1/n)`.
+- **C8 scaled connection → Levi-Civita** (`ScaledConnectionLimit.lean`):
+  `connectionSup` placeholder at identically zero. Task #41 reopened.
+- **J2 path integral over causal graphs** (`PathIntegralCausalGraph.lean`):
+  zero-amplitude PathIntegralAmplitude baseline. Task #95 reopened.
+- **I10 path-integral formulation**: aliased to J2's zero amplitude.
+  Task #93 reopened.
+- **J3 emergent gravity** (`EmergentGravity.lean`): uniform-entropy-1
+  population; no actual Clausius relation derived. Task #96 reopened.
+- **J5 LQG spin-foam comparison** (`LQGComparison.lean`):
+  QuantumSpacetimeSkeleton with `Is1Complex = True` stub. Task #98
+  reopened.
+- **J6 AdS/CFT-analog** (`AdSCFTAnalog.lean`): zero boundary-amplitude
+  baseline. Task #99 reopened.
+- **G5 continuum limits of discrete fields** (`ContinuumFieldLimits.lean`):
+  ContinuumLimitRecord has `spectralConvergencePositive : True` slot;
+  the underlying spectral convergences are real but the wrapper is
+  cosmetic. Task #72 reopened.
+- **B10 Ricci symmetry for Levi-Civita** (`RicciSymmetry.lean`):
+  trivial flat-sector proof + conditional `intro h; exact h`-level
+  rewrite. Task #30 reopened.
+- **B11 contracted 2nd Bianchi**: reused the pre-existing flat
+  `flatConnection_einstein_divergence_zero`; no non-flat content.
+  Task #32 reopened.
+
+## Support tasks for the reopened items
+
+Tasks to build the infrastructure required to retire the baseline
+witnesses with real convergence / amplitude / curvature computations:
+
+- **#213** define our own Lorentzian-GH distance (Noldus/Suhr style).
+- **#214** define our own Wasserstein-1 distance on finite supports.
+- **#215** prove real d-torus Wasserstein O(1/n) using #214.
+- **#216** scrub all "await Mathlib" excuses from files + docs.
+- **#217** compute project-own Ricci / Einstein tensors end-to-end on
+  named GR metrics (Schwarzschild, FLRW, Kerr, RN, dS, S²).
+- **#218** prove (or disprove) each curved-target discrete-Ricci
+  convergence with a real hypergraph discretisation, not a baseline
+  witness.
 
 ## Open items tracked at the obligation level
 
@@ -128,8 +177,8 @@ Highlights:)
 | **IB2** causal-branchial commutator theorem | predicate placeholder at `True`; needs a real theorem statement before proof |
 | **ID7** spectral dimension via heat-kernel trace | heat trace defined; small-`t` asymptotics pending |
 | **A6** weak convergence (general continuous) | polynomials to degree 3 closed; Weierstrass lift pending |
-| **A7 / A8** non-trivial Wasserstein bounds | obligation-level closure with zero-discrepancy witness; real `O(1/n)` rate awaits Mathlib optimal transport |
-| **Curved GR witnesses** (B3/B4, B7, F4/F5/F6) | Ricci = 0 on Schwarzschild and full EFE for FLRW with matter / Kerr vacuum; blocked by Ricci-on-explicit-connection Mathlib gap |
+| **A7 / A8** non-trivial Wasserstein bounds | reopened — zero-discrepancy baseline does not count as closure; tasks #214 (own Wasserstein-1) and #215 (real d-torus O(1/n)) |
+| **Curved GR witnesses** (B3/B4, B7, F4/F5/F6) | Ricci = 0 on Schwarzschild and full EFE for FLRW with matter / Kerr vacuum; tracked as task #217 — project-own Ricci / Einstein tensors end-to-end on named GR metrics. Not contingent on Mathlib. |
 | **E5 ADM / D11 Choquet-Bruhat** | long-term GR formalization targets |
 | **C5 Levi-Civita existence-uniqueness (Koszul)** | the hard remaining C-group item; needs the explicit Koszul formula + metric compatibility |
 
@@ -142,7 +191,7 @@ For the full per-module view, see [`COVERAGE_MAP.md`](COVERAGE_MAP.md).
 | 1 | Discrete calculus | ✅ graph Laplacian, inner product, self-adjointness, Dirichlet form, PSD, divergence theorem, Laplacian-as-LinearMap, cycle instance; matrix form + heat kernel via `Matrix.exp` (R2/D3), symmetric Laplacian matrix, row-sum zero, heat trace; **`Hypergraph.dist` triangle inequality + cycle connectivity (T3)** |
 | 2 | Op. convergence to continuum | ✅ C² Taylor convergence of scaled second difference (R1/A2); ✅ scaled discrete → continuum f'' for all C² (A3); ✅ cycle spectrum closed form (R5) + eigenvalue → continuum (A4); **cycle spectrum in `HasEigenvalue` form (T4)**; **exp fixes eigenvectors (T2)** |
 | 3 | Measure limits | ✅ counting measure + pushforward (A5); ⌛ weak convergence (A6), Wasserstein (A7) still pending |
-| 4 | Connections / Levi-Civita | ⌛ Mathlib gap; local-coord route planned |
+| 4 | Connections / Levi-Civita | local-coord route complete (ConnectionData, leviCivitaConnection, Riemann/Ricci/Einstein as explicit formulas); project-own bundle route (C3 `VectorBundleConnection`, C4 torsion, C6 consistency) done; C5 Koszul existence/uniqueness and C8 convergence tracked as our own tasks |
 | 5 | Riemann / Ricci / scalar | ✅ local-coord Riemann + Ricci + Einstein via `CurvatureRiemann` (X2 ∇, R/∇ commutator pending); ✅ GR metric zoo formalised: **Minkowski, Schwarzschild (B1+B5), Reissner-Nordström (B8), FLRW (B6), de Sitter, S²**; `DiagLorentzianManifold` (E1), `EinsteinEqLambda` (F3); `minkowski4_flat_vacuum_forces_lambda_zero` excludes Minkowski-as-de-Sitter |
 | 6 | ODE/PDE | ✅ discrete heat equation (D1/D4/D5) + existence/uniqueness (D2 forward-time); wave (D8); Klein-Gordon (D9); Schrödinger unitarity (D10); scalar field Lagrangian/EL (G1/G3/G4); **ODE ↔ matrix heat kernel unified (T1)**; matrix-level mass/L²/semigroup corollaries; **long-time heat decay of non-constant cycle modes (D6 partial, `HeatKernelDecay.lean`); multi-mode convergence `heatKernel_cycleHypergraph_multi_mode_tendsto` — heat flow of any finite eigen-combination converges to its constant component** |
 | 7 | Fields / gauge | Far |
@@ -187,7 +236,7 @@ All formalized as Lean theorems, axiom-clean:
 - ✅ **Discrete Lorentzian lattice** `LorentzLattice.lean`: `CausalPrecedes`, Timelike/Null/Spacelike trichotomy, signed Minkowski interval with three-way positivity classification, forward cones.
 - ✅ **Continuum Minkowski** `Minkowski.lean`: `ContinuumCausalPrecedes`, trichotomy, signed interval.
 - ✅ **Scaled int-to-ℝ embedding** `ScaledLorentz.lean`: `lorentzIntEmbed` preserves `CausalPrecedes` and `Timelike` into continuum Minkowski (forward direction).
-- ⌛ Full scaled isometry-plus-density (Lorentzian GH) — blocked by Mathlib gap.
+- ⌛ Full scaled isometry-plus-density (Lorentzian GH) — project-own Lorentzian-GH distance is task #213; we define it ourselves rather than wait on Mathlib.
 
 ### Phase 4 — Bridging theorems (rewriting ↔ Minkowski)
 - ✅ **1+0-dim bridge** `TrajectoryLorentz.lean`: `trajectoryToEvent τ` via the level function. `causallyPrecedes_implies_timelike`. `trajectoryToEvent_lossy` (F1/F2 gap explicit).
@@ -207,7 +256,7 @@ All formalized as Lean theorems, axiom-clean:
 
 ### Rung 2 — Operator convergence (entry)
 - ✅ Central second difference `Δ²_h f := f(x+h) − 2 f(x) + f(x−h)`, linearity, polynomial-case exact identity: for any quadratic, `Δ²_h f(x) = f''(x) · h²` (no error). Identifies cycle Laplacian with the second difference.
-- ⌛ `C²` Taylor-remainder version (pending Mathlib `iteratedDeriv` / `taylorWithinEval` integration).
+- ✅ `C²` Taylor-remainder version (`CTwoTaylor.lean`, `scaledSecondDiff_tendsto_iteratedDeriv`) — Mathlib `iteratedDeriv` / `taylorWithinEval` are integrated.
 
 ### Branchial QM bridge (I1–I10)
 - ✅ I1 BranchialSlice finiteness (`BranchialFinite.lean`).
@@ -234,7 +283,7 @@ All formalized as Lean theorems, axiom-clean:
 
 **What we have:** full chain `causallyPrecedes (trajectory) → CausalPrecedes (discrete Lorentz) → ContinuumCausalPrecedes (Minkowski)` under `LightConeCompatible τ φ`. Flat-target GH bounds in all dimensions (cycle, path, d-torus). Graph Laplacian with full spectral-theory readiness. F1–F5 refuted.
 
-**What we're missing for GR:** curved-target bridges (blocked by Rungs 4–5, Mathlib Ricci). Full Lorentzian-GH (blocked by Mathlib gap). A specific rule whose causal graph has the right dimension (empirical + structural rejection of Gorard's named rule — F7). Discretization of the Einstein–Hilbert action converging to the continuum one (F5 blocks naïve form).
+**What we're missing for GR:** curved-target bridges (tasks #217 + #218 — our own Ricci / Einstein on explicit metrics, plus real discrete-Ricci convergence on curved targets; nothing waits on Mathlib). Full Lorentzian-GH (task #213 — we define it ourselves). A specific rule whose causal graph has the right dimension (empirical + structural rejection of Gorard's named rule — F7). Discretization of the Einstein–Hilbert action converging to the continuum one (F5 blocks naïve form).
 
 **Rule search as the practical route:** our Lean corpus serves as verifier for any candidate rule + candidate spatial embedding (`RULE_SEARCH.md`). Screening signatures: level growth `~t^{d+1}`, antichain width `~k^d`, cone volume. Any candidate rule passing these + `LightConeCompatible` gets a machine-checked Minkowski-consistency certificate via the end-to-end bridge.
 

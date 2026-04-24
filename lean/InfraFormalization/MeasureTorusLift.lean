@@ -15,8 +15,9 @@ We phrase A8 as an obligation: the d-dim discrepancy between the
 pushforward counting measure and Haar on the d-torus admits an
 O(1/n) bound uniformly in the dimension `d` (up to a `d`-dependent
 constant). The trivial zero-discrepancy witness closes A8 at the
-obligation level. Real d-dim Wasserstein bounds await Mathlib
-infrastructure.
+obligation level. Real d-dim Wasserstein bounds are to be built
+using our own Wasserstein-1 distance (task #214); task #215 then
+replaces the baseline witness with a proved `O(1/n)` bound.
 
 Grounded: discrete side is a d-lattice of cycle hypergraphs; continuum
 target is the d-torus `(ℝ/ℤ)^d`.

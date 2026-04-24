@@ -14,8 +14,10 @@ discretisation of a 1-dim manifold.
 We phrase the A7 obligation via a supplied discrepancy function
 `d : ℕ → ℝ` that a concrete Wasserstein bound would fill in. The
 trivial zero-discrepancy satisfies the `O(1/n)` bound, closing A7 at
-the obligation level. Real Wasserstein bounds on the circle await a
-Mathlib optimal-transport API.
+the obligation level. A concrete Wasserstein-1 distance on finite
+supports is to be defined *in this project* (task #214), not left
+to Mathlib; task #215 then discharges A7 / A8 with a real `O(1/n)`
+bound rather than the baseline witness below.
 
 Grounded: the discrete measure lives on the cycle hypergraph; the
 continuum target is the circle / torus.

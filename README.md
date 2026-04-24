@@ -235,10 +235,10 @@ Legend for the Status column:
 | 1 | Discrete calculus | Self-adjoint `Δ_H`, Dirichlet form, PSD, discrete Stokes | proved |
 | 2 | Operator convergence | `scaledSecondDiff → f''` for every C²; cycle-spectrum → circle-spectrum | proved |
 | 3 | Measure limits | Counting measure, pushforward proved; A6 weak convergence, A7 Wasserstein, A8 d-torus lift open | partial |
-| 4 | Connections | Local-coordinate Christoffel proved; bundle-theoretic formulation (C1–C8) blocked by missing Mathlib infrastructure | partial |
+| 4 | Connections | Local-coordinate Christoffel proved; project-own bundle formulation in `VectorBundleConnection.lean` — C1, C2, C3, C4, C6, C7 substantive; C5 (Koszul existence/uniqueness) and C8 (curved convergence) tracked as own open tasks | partial |
 | 5 | Riemann / Ricci | Riemann, Ricci, Einstein tensors; full GR metric zoo | proved |
 | 6 | ODE / PDE on Hypergraph V | Heat, wave, Klein-Gordon, Schrödinger unitary, Euler-Lagrange | proved |
-| 7 | Fields / gauge | Scalar field proved; discrete gauge field (G2) open | partial |
+| 7 | Fields / gauge | Scalar field proved; discrete gauge field (G2) substantive via `DiscreteGaugeField` + Wilson-loop holonomy | partial |
 | 8 | Lorentzian geometry | LorentzLattice, Minkowski, `DiagLorentzianManifold` (E1), discrete Cauchy foliation (E5); continuum Lorentzian Gromov-Hausdorff open | flat case proved; curved case open |
 | 9 | Einstein equations | `EinsteinEqLambda`; Minkowski + flat connection solves vacuum EFE; flat connection forces Λ = 0 | flat case proved; curved case open |
 | 10 | Hypergraph → GR | Flat bridges proved end-to-end (cycle → circle, path → interval, 2-torus, d-torus, lattice → Minkowski); every continuum GR target has an origin-obligation Prop; flat-case witnesses are inhabited; curved-case witnesses are not | flat case proved end-to-end; curved case has the obligation Prop attached but the curved bridge theorem is open |

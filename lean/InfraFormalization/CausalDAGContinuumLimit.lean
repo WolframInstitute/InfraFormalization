@@ -20,7 +20,8 @@ We state E7 at the obligation level:
 
 Baseline witness: the zero-discrepancy sequence, which satisfies
 `LorentzianGHObligation` (inherited from E6). Real curved-target
-Lorentzian-GH convergence awaits Mathlib Lorentzian-GH infrastructure.
+Lorentzian-GH convergence will be built on the project-own
+Lorentzian-GH distance (task #213).
 
 Grounded: the discrete side is a concrete
 `Trajectory sys init` — a rewriting-system output, never a continuum

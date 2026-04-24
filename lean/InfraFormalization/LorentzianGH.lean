@@ -27,8 +27,10 @@ sequence on the trivial 1+0-dim embedding (trajectory → Lorentz
 lattice), which is already a proven isometry (cf.
 `scaledLorentzEmbed_preserves_causal_iff` in `Infra/ScaledLorentz.lean`).
 
-Real Noldus / Suhr distance bounds await a Mathlib Lorentzian-GH
-API; tracked separately.
+Real Noldus / Suhr style Lorentzian-GH distances will be *defined
+in this project* (Lorentzian-GH is not Mathlib material); tracked
+as task #213. Concrete convergence theorems on specific rules will
+then replace the baseline witness here.
 -/
 
 namespace InfraFormalization

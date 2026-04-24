@@ -41,7 +41,7 @@ Once a candidate rule is found:
 
 - **Rule generation.** No enumeration, no evolutionary search, no physics-priors. A separate generator is required (`../efficient_rewriting_final/`, `SetReplace`, heuristic search).
 - **Canonical spatial embedding.** F1 rules this out structurally. The best we can offer is: "given this chosen embedding, Lean certifies Minkowski consistency." The embedding itself is a non-canonical choice.
-- **Curvature certification.** Pending Mathlib Ricci/Riemann infrastructure. Currently we have Ollivier and Gray *statements* only, plus proven disagreement of Gorard's forms on S² and S³.
+- **Curvature certification.** Currently at statement level for Ollivier and Gray, plus proven disagreement of Gorard's forms on S² and S³; the concrete Ricci / Einstein computation on named metrics is task #217.
 
 ## Practical pipeline
 
@@ -59,7 +59,7 @@ Steps 1–4 are engineering; step 5 is the payoff of our current Lean corpus.
 
 This pipeline *verifies* that a candidate rule has causal-graph structure consistent with a chosen Lorentzian target. It does not:
 - prove the rule's causal graph *converges* to Lorentzian spacetime (needs a scaled-trajectory GH theorem, not yet formalised);
-- produce curvature data (needs Mathlib Ricci, not yet landed);
+- produce curvature data (task #217 — project-own Ricci on named metrics);
 - prove the target is an *Einstein* manifold (needs the action convergence of F5, which is open).
 
 Those are the remaining structural gaps — tracked in `MILESTONES.md` under Phases 4, 5, and 6.

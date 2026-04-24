@@ -38,12 +38,12 @@ Grouped from most-immediate (parts already done) to most-ambitious.
 
 **One-line pitch.** The correct versions of the Ollivier–Ricci identity and the Gray tube formula, expressed as Lean definitions, with their disagreement with Gorard's forms machine-verified at concrete test manifolds.
 
-**Status.** Statement-level formalisation complete; proofs of the correct identities pending Mathlib's Riemannian + optimal-transport infrastructure.
+**Status.** Statement-level formalisation complete; proofs of the correct identities are tracked as project-own tasks (#217 project-own Ricci/Einstein on named metrics; #214 project-own Wasserstein-1) — not contingent on Mathlib.
 
 **Sufficient conditions.**
 - [x] `OllivierStatement.OllivierIdentityLeading` + `GorardMisstatedForm` + coincidence theorem
 - [x] `GrayTubeStatement.GrayTubeLeading` + `gray_vs_gorard_disagree_on_S2/S3`
-- [ ] Full proofs of the correct identities (Mathlib Ricci/Wasserstein dependency)
+- [ ] Full proofs of the correct identities — via project-own Ricci (task #217) and project-own Wasserstein-1 (task #214)
 
 **Audience.** arXiv math.DG + math-ph.
 
@@ -51,7 +51,7 @@ Grouped from most-immediate (parts already done) to most-ambitious.
 
 **One-line pitch.** A Lean library of discrete-to-continuum Gromov-Hausdorff bounds: cycle → circle, path → interval, (d+1)-lattice → (d+1)-torus, and int-lattice → Minkowski. Unified under a common `GHApproximation` structure.
 
-**Status.** Complete up to flat-space targets; curved-target extensions await Mathlib Ricci.
+**Status.** Complete up to flat-space targets; curved-target extensions are tracked as task #218 (per-target real computations using our own Ricci formulas from task #217). Not contingent on Mathlib.
 
 **Sufficient conditions.**
 - [x] `cycle_circle_gh_bound`
