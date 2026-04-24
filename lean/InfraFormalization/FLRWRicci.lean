@@ -785,5 +785,129 @@ theorem flrwEinstein_3_3 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
   field_simp
   ring
 
+/-! ## Perfect-fluid stress-energy and the Einstein equations on FLRW
+
+In the comoving frame, a perfect fluid with energy density `ρ(t)` and
+isotropic pressure `p(t)` has stress-energy components:
+  * `T_{00} = ρ(t)`
+  * `T_{ii} = p(t) · a²(t)` for `i ∈ {1, 2, 3}`
+  * off-diagonal = 0.
+Off-diagonal pieces vanish trivially (no shear in a comoving perfect
+fluid). With the FLRW Einstein tensor diagonal closed forms above,
+the EFE `G_{μν} + Λ g_{μν} = κ T_{μν}` reduces on the diagonal to
+the **Friedmann equations**. -/
+
+/-- **Perfect-fluid stress-energy on FLRW (comoving frame).** -/
+noncomputable def flrwPerfectFluidT (a ρ p : ℝ → ℝ) (x : Fin 4 → ℝ)
+    (μ ν : Fin 4) : ℝ :=
+  if μ ≠ ν then 0
+  else if μ = 0 then ρ (x 0)
+  else p (x 0) * (a (x 0))^2
+
+/-- **First Friedmann equation**: `3 H² = κ ρ + Λ`, where `H = a'/a`. -/
+def flrwFriedmann1 (a da : ℝ → ℝ) (ρ : ℝ → ℝ) (Λ κ : ℝ) (t : ℝ) : Prop :=
+  3 * (da t)^2 / (a t)^2 = κ * ρ t + Λ
+
+/-- **Second Friedmann equation**: `2 a''/a + (a'/a)² = -κ p + Λ`. -/
+def flrwFriedmann2 (a da dda : ℝ → ℝ) (p : ℝ → ℝ) (Λ κ : ℝ) (t : ℝ) : Prop :=
+  2 * dda t / a t + (da t)^2 / (a t)^2 = -(κ * p t) + Λ
+
+/-- **Diagonal FLRW Einstein equation (time-time)** ⟺ **first Friedmann
+equation**. Direct algebraic equivalence: under `a(t) ≠ 0`, the EFE
+component `G_{00}(x) + Λ g_{00}(x) = κ T_{00}(x)` (with `g_{00} = -1`,
+`T_{00} = ρ(t)`) is the same as `3 H² = κ ρ + Λ`. -/
+theorem flrwEinstein_00_iff_friedmann1
+    (a da dda ρ p : ℝ → ℝ) (Λ κ : ℝ) (x : Fin 4 → ℝ)
+    (hv : FLRWValid a x) :
+    ((flrwConnection a da dda).ricci x 0 0
+      - (1 / 2) * flrwScalarCurvatureClosed a da dda x * (-1 : ℝ)
+      + Λ * (-1 : ℝ)
+      = κ * flrwPerfectFluidT a ρ p x 0 0)
+    ↔ flrwFriedmann1 a da ρ Λ κ (x 0) := by
+  have ha_ne : a (x 0) ≠ 0 := hv
+  have ha_sq_ne : (a (x 0))^2 ≠ 0 := pow_ne_zero _ ha_ne
+  rw [flrwEinstein_0_0 a da dda x hv]
+  unfold flrwPerfectFluidT flrwFriedmann1
+  simp
+  constructor
+  · intro h; linarith
+  · intro h; linarith
+
+/-- **Diagonal FLRW Einstein equation (spatial-spatial, i = 1)** ⟺
+**second Friedmann equation**. Under `a(t) ≠ 0`, dividing through by
+`a²` recovers the standard form. -/
+theorem flrwEinstein_11_iff_friedmann2
+    (a da dda ρ p : ℝ → ℝ) (Λ κ : ℝ) (x : Fin 4 → ℝ)
+    (hv : FLRWValid a x) :
+    ((flrwConnection a da dda).ricci x 1 1
+      - (1 / 2) * flrwScalarCurvatureClosed a da dda x * (a (x 0))^2
+      + Λ * (a (x 0))^2
+      = κ * flrwPerfectFluidT a ρ p x 1 1)
+    ↔ flrwFriedmann2 a da dda p Λ κ (x 0) := by
+  have ha_ne : a (x 0) ≠ 0 := hv
+  have ha_sq_ne : (a (x 0))^2 ≠ 0 := pow_ne_zero _ ha_ne
+  have ha_sq_pos : 0 < (a (x 0))^2 := by positivity
+  rw [flrwEinstein_1_1 a da dda x hv]
+  unfold flrwPerfectFluidT flrwFriedmann2
+  -- The if-then-else simplifies to the spatial branch (μ = ν = 1).
+  show -(2 * a (x 0) * dda (x 0) + (da (x 0))^2) + Λ * (a (x 0))^2
+       = κ * (if (1 : Fin 4) ≠ 1 then 0
+              else if (1 : Fin 4) = 0 then ρ (x 0)
+              else p (x 0) * (a (x 0))^2)
+       ↔ 2 * dda (x 0) / a (x 0) + (da (x 0))^2 / (a (x 0))^2
+         = -(κ * p (x 0)) + Λ
+  simp only [show ((1 : Fin 4) ≠ 1) = False from by decide,
+             show ((1 : Fin 4) = 0) = False from by decide,
+             if_false]
+  -- Now goal is: -(2 a a'' + (a')²) + Λ a² = κ (p a²) ↔ 2 a''/a + (a')²/a² = -κ p + Λ.
+  -- Both sides are equivalent to: 2 a''/a + (a')²/a² + κ p = Λ.
+  constructor
+  · intro h
+    -- From h: -(2 a a'' + (a')²) + Λ a² = κ p a²
+    -- ⟹ 2 a a'' + (a')² = (Λ - κ p) a²
+    have hreorg : 2 * a (x 0) * dda (x 0) + (da (x 0))^2
+        = (Λ - κ * p (x 0)) * (a (x 0))^2 := by linarith
+    -- Divide by a²: (2 a a'' + (a')²)/a² = Λ - κ p.
+    have hdivd : (2 * a (x 0) * dda (x 0) + (da (x 0))^2) / (a (x 0))^2
+        = Λ - κ * p (x 0) := by
+      rw [hreorg]; field_simp
+    -- Split the fraction: 2 a a''/a² + (a')²/a² = 2 a''/a + (a')²/a².
+    have hsplit : (2 * a (x 0) * dda (x 0) + (da (x 0))^2) / (a (x 0))^2
+        = 2 * dda (x 0) / a (x 0) + (da (x 0))^2 / (a (x 0))^2 := by
+      field_simp
+    linarith
+  · intro h
+    -- From h: 2 a''/a + (a')²/a² = -κ p + Λ
+    -- Combine fractions: (2 a a'' + (a')²)/a² = Λ - κ p.
+    have hsplit : 2 * dda (x 0) / a (x 0) + (da (x 0))^2 / (a (x 0))^2
+        = (2 * a (x 0) * dda (x 0) + (da (x 0))^2) / (a (x 0))^2 := by
+      field_simp
+    have hcombined : (2 * a (x 0) * dda (x 0) + (da (x 0))^2) / (a (x 0))^2
+        = -(κ * p (x 0)) + Λ := by linarith
+    -- Multiply by a² ≠ 0.
+    have hmul : 2 * a (x 0) * dda (x 0) + (da (x 0))^2
+        = (-(κ * p (x 0)) + Λ) * (a (x 0))^2 := by
+      rw [← hcombined]; field_simp
+    linarith
+
+/-- **FLRW Einstein equations ⟺ Friedmann pair** (diagonal version).
+The diagonal components of the EFE on FLRW with perfect-fluid
+stress-energy are equivalent to the textbook Friedmann pair. -/
+theorem flrwEFE_diag_iff_friedmann
+    (a da dda ρ p : ℝ → ℝ) (Λ κ : ℝ) (x : Fin 4 → ℝ)
+    (hv : FLRWValid a x) :
+    ((flrwConnection a da dda).ricci x 0 0
+      - (1 / 2) * flrwScalarCurvatureClosed a da dda x * (-1 : ℝ)
+      + Λ * (-1 : ℝ)
+      = κ * flrwPerfectFluidT a ρ p x 0 0)
+    ∧ ((flrwConnection a da dda).ricci x 1 1
+      - (1 / 2) * flrwScalarCurvatureClosed a da dda x * (a (x 0))^2
+      + Λ * (a (x 0))^2
+      = κ * flrwPerfectFluidT a ρ p x 1 1)
+    ↔ flrwFriedmann1 a da ρ Λ κ (x 0)
+      ∧ flrwFriedmann2 a da dda p Λ κ (x 0) := by
+  rw [flrwEinstein_00_iff_friedmann1 a da dda ρ p Λ κ x hv,
+      flrwEinstein_11_iff_friedmann2 a da dda ρ p Λ κ x hv]
+
 end Curvature
 end InfraFormalization
