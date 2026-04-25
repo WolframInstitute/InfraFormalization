@@ -77,6 +77,71 @@ example :
       + ((multiwayEvolve tc1Sys tc1Seed 2).flatMap (multiwayStep tc1Sys)).length
       = 9 := by decide
 
+/-! ## TestCase2 from `TestCases.wl`
+
+Rule: `{{1, 2}, {2, 3}} → {{1, 2}, {2, 3}, {2, 4}}` (vertex 4 fresh).
+Seed: `{{1, 2}, {2, 3}}`.
+Reference step 1: NumStates=2 (cumulative: init + 1), NumEvents=1.
+-/
+
+private def tc2_lhs0 : Hyperedge (Fin 3) := ⟨[0, 1], by decide⟩
+private def tc2_lhs1 : Hyperedge (Fin 3) := ⟨[1, 2], by decide⟩
+private def tc2_rhs0 : Hyperedge (Fin 4) := ⟨[0, 1], by decide⟩
+private def tc2_rhs1 : Hyperedge (Fin 4) := ⟨[1, 2], by decide⟩
+private def tc2_rhs2 : Hyperedge (Fin 4) := ⟨[1, 3], by decide⟩
+
+def tc2Rule : ExecRule where
+  numBound := 3
+  numFresh := 1
+  lhs := [tc2_lhs0, tc2_lhs1]
+  rhs := [tc2_rhs0, tc2_rhs1, tc2_rhs2]
+
+def tc2Sys : ExecSystem := ⟨[tc2Rule]⟩
+
+def tc2Seed : ExecHG ℕ := [⟨[1, 2], by decide⟩, ⟨[2, 3], by decide⟩]
+
+/-- TC2 step 1: exactly 1 event (1 next state). Matches reference
+NumEvents=1. -/
+example :
+    (multiwayEvolve tc2Sys tc2Seed 1).length = 1 := by decide
+
+/-! ## TestCase3 from `TestCases.wl`
+
+Rule: `{{1, 2}, {2, 3}} → {{1, 2}, {2, 3}, {3, 1}, {2, 4}}`.
+Seed: `{{1, 2}, {2, 3}}`.
+Reference step 1: NumStates=2, NumEvents=1.
+-/
+
+private def tc3_rhs2 : Hyperedge (Fin 4) := ⟨[2, 0], by decide⟩
+private def tc3_rhs3 : Hyperedge (Fin 4) := ⟨[1, 3], by decide⟩
+
+def tc3Rule : ExecRule where
+  numBound := 3
+  numFresh := 1
+  lhs := [tc2_lhs0, tc2_lhs1]
+  rhs := [tc2_rhs0, tc2_rhs1, tc3_rhs2, tc3_rhs3]
+
+def tc3Sys : ExecSystem := ⟨[tc3Rule]⟩
+
+example :
+    (multiwayEvolve tc3Sys tc2Seed 1).length = 1 := by decide
+
+/-! ## TestCase6 from `TestCases.wl`
+
+Rule: `{{1, 2}} → {{1, 2}, {2, 3}}` (vertex 3 fresh).
+Seed: `{{1, 2}, {2, 1}}` (2-cycle: distinct edges, swapped indices).
+Reference step 1: NumStates=2, NumEvents=2 (two distinct bindings:
+(a=1, b=2) and (a=2, b=1)).
+-/
+
+def tc6Sys : ExecSystem := ⟨[tc1Rule]⟩  -- same rule as TC1
+
+def tc6Seed : ExecHG ℕ :=
+  [⟨[1, 2], by decide⟩, ⟨[2, 1], by decide⟩]
+
+example :
+    (multiwayEvolve tc6Sys tc6Seed 1).length = 2 := by decide
+
 end Test
 end MultiwayExec
 end InfraFormalization
