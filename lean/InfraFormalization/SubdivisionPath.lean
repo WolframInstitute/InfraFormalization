@@ -255,5 +255,30 @@ theorem singleWayEvolve_subdivision_zero :
     singleWayEvolve subdivisionSys subdSeed 0 = pathEdges (subdVerts 0) := by
   rfl
 
+/-! ## Remaining inductive step (#232 continuation)
+
+To close the equality
+  `singleWayEvolve subdivisionSys subdSeed n = pathEdges (subdVerts n)`
+the load-bearing single-step lemma is
+
+  `singleWayStep subdivisionSys (pathEdges vs)
+     = pathEdges (subdivideVerts vs (listMax vs + 1))`
+  for any `vs` `Nodup` with `2 ≤ vs.length`.
+
+This decomposes into:
+  1. `(allMatches subdivisionRule (pathEdges vs)).length = vs.length - 1`
+     (each consecutive `(vᵢ, vᵢ₊₁)` is a unique matching binding;
+     follows from `mem_pathEdges_flatMap` + `allFunctions` cardinality).
+  2. The match enumeration order coincides with the edge order in
+     `pathEdges vs` (follows from how `allFunctions` does the
+     outer-`vs`/inner-`vs` Cartesian flatMap).
+  3. The `foldl` in `singleWayStep` removes original edges and
+     appends fresh subdivisions in this order — yielding exactly
+     `pathEdges (subdivideVerts vs (listMax vs + 1))`.
+
+Steps 1–3 are large but tractable; the structural skeleton above
+(closed-form vertex sequence, length theorems, membership lemma,
+`vertexList`-length) is the foundation those proofs build on. -/
+
 end MultiwayExec
 end InfraFormalization
