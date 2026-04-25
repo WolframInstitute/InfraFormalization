@@ -1,0 +1,15 @@
+[submodule "resources/InfraGaugeTheory"]
+	path = resources/InfraGaugeTheory
+	url = git@github.com:WolframInstitute/InfraGaugeTheory.git
+[submodule "resources/InfraAnalysis"]
+	path = resources/InfraAnalysis
+	url = git@github.com:WolframInstitute/InfraAnalysis.git
+[submodule "resources/InfraCausality"]
+	path = resources/InfraCausality
+	url = git@github.com:WolframInstitute/InfraCausality.git
+[submodule "resources/Infrageometry"]
+	path = resources/Infrageometry
+	url = git@github.com:WolframInstitute/Infrageometry.git
+[submodule "resources/SyntheticInfrageometry"]
+	path = resources/SyntheticInfrageometry
+	url = git@github.com:WolframInstitute/SyntheticInfrageometry.git
