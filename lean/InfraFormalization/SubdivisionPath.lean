@@ -169,5 +169,74 @@ theorem subdVerts_length (n : ℕ) :
   rw [List.length_zipWith, List.length_tail]
   omega
 
+/-- Recursive shape of `pathEdges`. The case-split is on the head pair. -/
+@[simp] theorem pathEdges_nil : pathEdges ([] : List ℕ) = [] := rfl
+
+@[simp] theorem pathEdges_singleton (v : ℕ) : pathEdges [v] = [] := rfl
+
+@[simp] theorem pathEdges_cons_cons (v w : ℕ) (rest : List ℕ) :
+    pathEdges (v :: w :: rest) = consEdge v w :: pathEdges (w :: rest) := by
+  unfold pathEdges
+  rfl
+
+/-- `flatMap (·.verts)` of `pathEdges` is the "edge-traversal trace":
+the interior vertices appear twice each, endpoints once.
+For `vs = v :: w :: rest`, the trace decomposes as `v :: w :: trace (w :: rest)`. -/
+theorem pathEdges_flatMap_verts_cons_cons (v w : ℕ) (rest : List ℕ) :
+    (pathEdges (v :: w :: rest)).flatMap (·.verts)
+      = v :: w :: (pathEdges (w :: rest)).flatMap (·.verts) := by
+  rw [pathEdges_cons_cons]
+  simp [List.flatMap_cons, consEdge]
+
+@[simp] theorem pathEdges_flatMap_verts_singleton_pair (v w : ℕ) :
+    (pathEdges [v, w]).flatMap (·.verts) = [v, w] := by
+  simp [pathEdges, consEdge]
+
+/-- Membership in the flatMap of `pathEdges vs` is exactly membership in `vs`,
+when `vs` has at least two elements. -/
+theorem mem_pathEdges_flatMap (vs : List ℕ) (h : 2 ≤ vs.length) (x : ℕ) :
+    x ∈ (pathEdges vs).flatMap (·.verts) ↔ x ∈ vs := by
+  induction vs with
+  | nil => simp at h
+  | cons v rest ih =>
+    cases rest with
+    | nil => simp at h
+    | cons w rest' =>
+      cases rest' with
+      | nil =>
+        simp
+      | cons x' rest'' =>
+        rw [pathEdges_flatMap_verts_cons_cons]
+        have h_inner : 2 ≤ (w :: x' :: rest'').length := by simp
+        have ih' := ih h_inner
+        simp only [List.mem_cons, ih']
+        tauto
+
+/-! ## Edge-count theorem for `singleWayEvolve`
+
+Combining the closed-form `subdVerts n` (length `2^n + 1`) with the
+intent that `singleWayEvolve subdivisionSys subdSeed n` produces
+`pathEdges (subdVerts n)` gives `2^n` edges and `2^n + 1` vertices.
+The full inductive proof of the equality
+  `singleWayEvolve subdivisionSys subdSeed n = pathEdges (subdVerts n)`
+is the load-bearing remaining work for #232. The skeleton above sets
+up the closed-form vertex sequence; below is the goal statement and
+the verified base case. -/
+
+/-- The trajectory's path-vertex sequence has `2^n + 1` elements at
+step `n`; this is the count we want to read off from
+`singleWayEvolve subdivisionSys subdSeed n`. -/
+@[simp] theorem subdVerts_pathEdges_length (n : ℕ) :
+    (pathEdges (subdVerts n)).length = 2^n := by
+  rw [pathEdges_length, subdVerts_length]
+  have : 1 ≤ 2^n := Nat.one_le_two_pow
+  omega
+
+/-- Base case: `singleWayEvolve` at `n = 0` is the seed itself, which
+equals the path with vertex list `[1, 2]`. -/
+theorem singleWayEvolve_subdivision_zero :
+    singleWayEvolve subdivisionSys subdSeed 0 = pathEdges (subdVerts 0) := by
+  rfl
+
 end MultiwayExec
 end InfraFormalization
