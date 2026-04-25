@@ -890,6 +890,104 @@ theorem flrwEinstein_11_iff_friedmann2
       rw [← hcombined]; field_simp
     linarith
 
+/-! ## Off-diagonal Ricci vanishing
+
+For FLRW in comoving coordinates, the Ricci tensor is diagonal:
+`R_{μν}(x) = 0` whenever `μ ≠ ν`. Each entry expands to a sum of four
+Riemann components, each vanishing because the relevant Christoffel
+products either include `Γ^l_{00} = 0` (handled by `flrwΓ_l_00`) or
+involve mismatched index patterns. -/
+
+/-- **A useful Γ-vanishing lemma**: `flrwΓ a da x ρ ρ 1 = 0` always. -/
+private theorem flrwΓ_ρ_ρ_1 (a da : ℝ → ℝ) (x : Fin 4 → ℝ) (ρ : Fin 4) :
+    flrwΓ a da x ρ ρ 1 = 0 := by
+  fin_cases ρ <;> (unfold flrwΓ; simp)
+
+/-- **`flrwΓ a da x l 1 0 = 0` unless `l = 1`.** -/
+private theorem flrwΓ_l_1_0_zero (a da : ℝ → ℝ) (x : Fin 4 → ℝ)
+    (l : Fin 4) (h : l ≠ 1) :
+    flrwΓ a da x l 1 0 = 0 := by
+  fin_cases l
+  · unfold flrwΓ; simp
+  · exact absurd rfl h
+  · unfold flrwΓ; simp
+  · unfold flrwΓ; simp
+
+
+/-- **FLRW Riemann component R^0_{0 0 1} = 0.** -/
+private theorem flrwRiemann_0_0_0_1 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) :
+    (flrwConnection a da dda).riemann x 0 0 0 1 = 0 := by
+  unfold ConnectionData.riemann flrwConnection
+  simp only
+  rw [sumFin4 (fun l => flrwΓ a da x 0 0 l * flrwΓ a da x l 1 0),
+      sumFin4 (fun l => flrwΓ a da x 0 1 l * flrwΓ a da x l 0 0)]
+  -- All Γ_x_0_0_l vanish (μ=0, ν=l with ρ=0, condition False except diagonal which is also 0).
+  have h00_l : ∀ l : Fin 4, flrwΓ a da x 0 0 l = 0 := by
+    intro l; fin_cases l <;> (unfold flrwΓ; simp)
+  -- All Γ_x_l_0_0 vanish (handled by flrwΓ_l_00).
+  have d1 : flrwdΓ a da dda 0 x 0 1 0 = 0 := by unfold flrwdΓ; simp
+  have d2 : flrwdΓ a da dda 1 x 0 0 0 = 0 := by unfold flrwdΓ; simp
+  rw [d1, d2]
+  simp [h00_l, flrwΓ_l_00]
+
+/-- **FLRW Riemann component R^1_{0 1 1} = 0** by antisymmetry in (μ, ν). -/
+private theorem flrwRiemann_1_0_1_1 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) :
+    (flrwConnection a da dda).riemann x 1 0 1 1 = 0 := by
+  have := (flrwConnection a da dda).riemann_antisymm x 1 0 1 1
+  linarith
+
+/-- **FLRW Riemann component R^2_{0 2 1} = 0.** -/
+private theorem flrwRiemann_2_0_2_1 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) :
+    (flrwConnection a da dda).riemann x 2 0 2 1 = 0 := by
+  unfold ConnectionData.riemann flrwConnection
+  simp only
+  rw [sumFin4 (fun l => flrwΓ a da x 2 2 l * flrwΓ a da x l 1 0),
+      sumFin4 (fun l => flrwΓ a da x 2 1 l * flrwΓ a da x l 2 0)]
+  have d1 : flrwdΓ a da dda 2 x 2 1 0 = 0 := by unfold flrwdΓ; simp
+  have d2 : flrwdΓ a da dda 1 x 2 2 0 = 0 := by unfold flrwdΓ; simp
+  -- Γ_2_2_l: l=0 gives a'/a; l=1,2,3 give 0.
+  have h22_1 : flrwΓ a da x 2 2 1 = 0 := by unfold flrwΓ; simp
+  have h22_2 : flrwΓ a da x 2 2 2 = 0 := by unfold flrwΓ; simp
+  have h22_3 : flrwΓ a da x 2 2 3 = 0 := by unfold flrwΓ; simp
+  -- Γ_l_1_0: l=1 gives a'/a; l=0,2,3 give 0.
+  have h_l_1_0_0 : flrwΓ a da x 0 1 0 = 0 := flrwΓ_0_diff a da x 1 0 (by decide)
+  have h_l_1_0_2 : flrwΓ a da x 2 1 0 = 0 := by unfold flrwΓ; simp
+  have h_l_1_0_3 : flrwΓ a da x 3 1 0 = 0 := by unfold flrwΓ; simp
+  -- Γ_2_1_l: all vanish (ρ=2, μ=1, conditions need μ=0 or ν=0 with the right partner).
+  have h21_l : ∀ l : Fin 4, flrwΓ a da x 2 1 l = 0 := by
+    intro l; fin_cases l <;> (unfold flrwΓ; simp)
+  rw [d1, d2, h22_1, h22_2, h22_3, h_l_1_0_0, h_l_1_0_2, h_l_1_0_3]
+  simp [h21_l, flrwΓ_l_00]
+
+/-- **FLRW Riemann component R^3_{0 3 1} = 0.** -/
+private theorem flrwRiemann_3_0_3_1 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) :
+    (flrwConnection a da dda).riemann x 3 0 3 1 = 0 := by
+  unfold ConnectionData.riemann flrwConnection
+  simp only
+  rw [sumFin4 (fun l => flrwΓ a da x 3 3 l * flrwΓ a da x l 1 0),
+      sumFin4 (fun l => flrwΓ a da x 3 1 l * flrwΓ a da x l 3 0)]
+  have d1 : flrwdΓ a da dda 3 x 3 1 0 = 0 := by unfold flrwdΓ; simp
+  have d2 : flrwdΓ a da dda 1 x 3 3 0 = 0 := by unfold flrwdΓ; simp
+  have h33_1 : flrwΓ a da x 3 3 1 = 0 := by unfold flrwΓ; simp
+  have h33_2 : flrwΓ a da x 3 3 2 = 0 := by unfold flrwΓ; simp
+  have h33_3 : flrwΓ a da x 3 3 3 = 0 := by unfold flrwΓ; simp
+  have h_l_1_0_0 : flrwΓ a da x 0 1 0 = 0 := flrwΓ_0_diff a da x 1 0 (by decide)
+  have h_l_1_0_2 : flrwΓ a da x 2 1 0 = 0 := by unfold flrwΓ; simp
+  have h_l_1_0_3 : flrwΓ a da x 3 1 0 = 0 := by unfold flrwΓ; simp
+  have h31_l : ∀ l : Fin 4, flrwΓ a da x 3 1 l = 0 := by
+    intro l; fin_cases l <;> (unfold flrwΓ; simp)
+  rw [d1, d2, h33_1, h33_2, h33_3, h_l_1_0_0, h_l_1_0_2, h_l_1_0_3]
+  simp [h31_l, flrwΓ_l_00]
+
+/-- **FLRW Ricci off-diagonal `R_{01}(x) = 0`.** Time-spatial mixed
+component vanishes via the four Riemann summands. -/
+theorem flrwRicci_0_1 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) :
+    (flrwConnection a da dda).ricci x 0 1 = 0 := by
+  unfold ConnectionData.ricci
+  rw [sumFin4 (fun ρ => (flrwConnection a da dda).riemann x ρ 0 ρ 1)]
+  rw [flrwRiemann_0_0_0_1, flrwRiemann_1_0_1_1, flrwRiemann_2_0_2_1, flrwRiemann_3_0_3_1]
+  ring
+
 /-- **FLRW Einstein equations ⟺ Friedmann pair** (diagonal version).
 The diagonal components of the EFE on FLRW with perfect-fluid
 stress-energy are equivalent to the textbook Friedmann pair. -/
