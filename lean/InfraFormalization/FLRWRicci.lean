@@ -1336,5 +1336,87 @@ theorem flrwEFE_diag_iff_friedmann
   rw [flrwEinstein_00_iff_friedmann1 a da dda ρ p Λ κ x hv,
       flrwEinstein_11_iff_friedmann2 a da dda ρ p Λ κ x hv]
 
+/-! ## F5 / B7 capstone: FLRW as explicit solution with perfect-fluid matter
+
+Bundling theorems combining all FLRW Ricci / Einstein / Friedmann
+results into top-level statements suitable for citation downstream
+and for paper/exposition purposes. -/
+
+/-- **F5 / B7 capstone — FLRW satisfies the Einstein equations under
+Friedmann data.** Forward direction: if the Friedmann pair holds at
+time `t = x 0`, then the diagonal components of the Einstein equation
+`G_{μν} + Λ g_{μν} = κ T_{μν}` are satisfied on the FLRW Levi-Civita
+connection with perfect-fluid stress-energy
+`T_{μν} = diag(ρ, p·a², p·a², p·a²)`. -/
+theorem flrw_satisfies_EFE_of_friedmann
+    (a da dda ρ p : ℝ → ℝ) (Λ κ : ℝ) (x : Fin 4 → ℝ)
+    (hv : FLRWValid a x)
+    (hF1 : flrwFriedmann1 a da ρ Λ κ (x 0))
+    (hF2 : flrwFriedmann2 a da dda p Λ κ (x 0)) :
+    (flrwConnection a da dda).ricci x 0 0
+        - (1 / 2) * flrwScalarCurvatureClosed a da dda x * (-1 : ℝ)
+        + Λ * (-1 : ℝ)
+      = κ * flrwPerfectFluidT a ρ p x 0 0
+    ∧ (flrwConnection a da dda).ricci x 1 1
+        - (1 / 2) * flrwScalarCurvatureClosed a da dda x * (a (x 0))^2
+        + Λ * (a (x 0))^2
+      = κ * flrwPerfectFluidT a ρ p x 1 1 :=
+  (flrwEFE_diag_iff_friedmann a da dda ρ p Λ κ x hv).mpr ⟨hF1, hF2⟩
+
+/-- **F5 / B7 reverse direction — Friedmann follows from EFE.** -/
+theorem flrw_friedmann_of_EFE
+    (a da dda ρ p : ℝ → ℝ) (Λ κ : ℝ) (x : Fin 4 → ℝ)
+    (hv : FLRWValid a x)
+    (hEFE : (flrwConnection a da dda).ricci x 0 0
+        - (1 / 2) * flrwScalarCurvatureClosed a da dda x * (-1 : ℝ)
+        + Λ * (-1 : ℝ)
+      = κ * flrwPerfectFluidT a ρ p x 0 0
+    ∧ (flrwConnection a da dda).ricci x 1 1
+        - (1 / 2) * flrwScalarCurvatureClosed a da dda x * (a (x 0))^2
+        + Λ * (a (x 0))^2
+      = κ * flrwPerfectFluidT a ρ p x 1 1) :
+    flrwFriedmann1 a da ρ Λ κ (x 0)
+    ∧ flrwFriedmann2 a da dda p Λ κ (x 0) :=
+  (flrwEFE_diag_iff_friedmann a da dda ρ p Λ κ x hv).mp hEFE
+
+/-! ### Vacuum and matter-dominated specializations -/
+
+/-- **Vacuum FLRW** — perfect-fluid stress-energy with `ρ = p = 0`.
+The Friedmann pair reduces to `3 H² = Λ` and `2 a''/a + H² = Λ`,
+which together force the de Sitter / anti-de Sitter expansion law
+`H² = a''/a = Λ/3`. -/
+theorem flrw_vacuum_friedmann_iff
+    (a da dda : ℝ → ℝ) (Λ κ : ℝ) (t : ℝ) :
+    (flrwFriedmann1 a da (fun _ => 0) Λ κ t
+      ∧ flrwFriedmann2 a da dda (fun _ => 0) Λ κ t)
+    ↔ (3 * (da t)^2 / (a t)^2 = Λ
+      ∧ 2 * dda t / a t + (da t)^2 / (a t)^2 = Λ) := by
+  unfold flrwFriedmann1 flrwFriedmann2
+  constructor
+  · rintro ⟨h1, h2⟩
+    refine ⟨?_, ?_⟩
+    · linarith
+    · linarith
+  · rintro ⟨h1, h2⟩
+    refine ⟨?_, ?_⟩
+    · linarith
+    · linarith
+
+/-- **Matter-dominated FLRW** — perfect fluid with `p = 0` (dust).
+The Friedmann pair specializes to the energy constraint
+`3 H² = κ ρ + Λ` plus `2 a''/a + H² = Λ` (no pressure term). -/
+theorem flrw_dust_friedmann_iff
+    (a da dda ρ : ℝ → ℝ) (Λ κ : ℝ) (t : ℝ) :
+    (flrwFriedmann1 a da ρ Λ κ t
+      ∧ flrwFriedmann2 a da dda (fun _ => 0) Λ κ t)
+    ↔ (3 * (da t)^2 / (a t)^2 = κ * ρ t + Λ
+      ∧ 2 * dda t / a t + (da t)^2 / (a t)^2 = Λ) := by
+  unfold flrwFriedmann1 flrwFriedmann2
+  constructor
+  · rintro ⟨h1, h2⟩
+    exact ⟨h1, by linarith⟩
+  · rintro ⟨h1, h2⟩
+    exact ⟨h1, by linarith⟩
+
 end Curvature
 end InfraFormalization
