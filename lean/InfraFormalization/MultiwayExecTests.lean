@@ -142,6 +142,55 @@ def tc6Seed : ExecHG ℕ :=
 example :
     (multiwayEvolve tc6Sys tc6Seed 1).length = 2 := by decide
 
+/-! ## Single-way evolution: edge-subdivision rule
+
+Rule: `{{a, b}} → {{a, c}, {c, b}}` with `c` fresh — splits each edge
+into two by inserting a fresh midpoint. Starting from a single edge
+`{1, 2}`, single-way evolution gives a path on `2^n + 1` vertices
+with `2^n` edges at step `n` (each edge subdivides independently
+because matches are non-overlapping at the LHS level).
+
+This is the canonical inductive trajectory used to discharge
+hypergraph-anchored convergence obligations: at step `n` the state
+**is** an open chain whose graph metric agrees with the consumer-site
+`pathMetric` from `PathWasserstein.lean`. -/
+
+private def subdLhs : Hyperedge (Fin 2) := ⟨[0, 1], by decide⟩
+private def subdRhsL : Hyperedge (Fin 3) := ⟨[0, 2], by decide⟩
+private def subdRhsR : Hyperedge (Fin 3) := ⟨[2, 1], by decide⟩
+
+/-- The edge-subdivision rule: `{a,b} → {a,c}, {c,b}` with `c` fresh. -/
+def subdivisionRule : ExecRule where
+  numBound := 2
+  numFresh := 1
+  lhs := [subdLhs]
+  rhs := [subdRhsL, subdRhsR]
+
+def subdivisionSys : ExecSystem := ⟨[subdivisionRule]⟩
+
+/-- Seed: a single edge `{1, 2}`. -/
+def subdSeed : ExecHG ℕ := [⟨[1, 2], by decide⟩]
+
+/-- After 0 single-way steps, 1 edge and 2 vertices. -/
+example : hgEdgeCount   (singleWayEvolve subdivisionSys subdSeed 0) = 1 := by decide
+example : hgVertexCount (singleWayEvolve subdivisionSys subdSeed 0) = 2 := by decide
+
+/-- After 1 single-way step, 2 edges and 3 vertices (path `1—3—2`). -/
+example : hgEdgeCount   (singleWayEvolve subdivisionSys subdSeed 1) = 2 := by decide
+example : hgVertexCount (singleWayEvolve subdivisionSys subdSeed 1) = 3 := by decide
+
+/-- After 2 single-way steps, 4 edges and 5 vertices. -/
+example : hgEdgeCount   (singleWayEvolve subdivisionSys subdSeed 2) = 4 := by decide
+example : hgVertexCount (singleWayEvolve subdivisionSys subdSeed 2) = 5 := by decide
+
+/-- After 3 single-way steps, 8 edges and 9 vertices. -/
+example : hgEdgeCount   (singleWayEvolve subdivisionSys subdSeed 3) = 8 := by decide
+example : hgVertexCount (singleWayEvolve subdivisionSys subdSeed 3) = 9 := by decide
+
+/-- After 4 single-way steps, 16 edges and 17 vertices. -/
+example : hgEdgeCount   (singleWayEvolve subdivisionSys subdSeed 4) = 16 := by decide
+example : hgVertexCount (singleWayEvolve subdivisionSys subdSeed 4) = 17 := by decide
+
 end Test
 end MultiwayExec
 end InfraFormalization

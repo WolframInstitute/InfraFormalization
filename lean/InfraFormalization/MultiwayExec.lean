@@ -171,6 +171,45 @@ def multiwayEvolve (sys : ExecSystem) (H : ExecHG ℕ) :
   | 0 => [H]
   | n+1 => (multiwayEvolve sys H n).flatMap (multiwayStep sys)
 
+/-! ## Single-way evolution
+
+Wolfram's `WolframModel` (single-way) fires **all applicable matches
+simultaneously** in each step, producing one canonical successor
+state per step. For non-overlapping matches (e.g., the subdivision
+rule on a path: each edge subdivides independently) this is
+unambiguous; for overlapping matches it amounts to a "fire-everything"
+rule that's well-defined operationally even if it consumes the same
+edge multiple times.
+
+For inductive theorems about specific rule trajectories — e.g.,
+"`singleWayEvolve subdivisionRule {[1,2]} n = path of 2^n+1 vertices"
+— this deterministic per-step semantics is what we want. -/
+
+/-- One single-way step: enumerate all matches across all rules,
+remove the union-with-multiplicity of consumed edges, append the
+union-with-multiplicity of produced edges. Fresh `ℕ` vertices are
+allocated globally with a per-match offset so distinct matches never
+collide. -/
+def singleWayStep (sys : ExecSystem) (H : ExecHG ℕ) : ExecHG ℕ :=
+  let baseFresh := nextFresh H
+  let processed := sys.rules.foldl (fun (acc : ExecHG ℕ × Nat) r =>
+    (allMatches r H).foldl (fun (acc' : ExecHG ℕ × Nat) ρ =>
+      let (state, offset) := acc'
+      let consumed : ExecHG ℕ := mapPattern ρ r.lhs
+      let ρExt : Fin (r.numBound + r.numFresh) → ℕ := fun i =>
+        if h : i.val < r.numBound then ρ ⟨i.val, h⟩
+        else baseFresh + offset + (i.val - r.numBound)
+      let produced : ExecHG ℕ := mapPattern ρExt r.rhs
+      (removeEdges state consumed ++ produced, offset + r.numFresh)
+    ) acc
+  ) (H, 0)
+  processed.fst
+
+/-- Single-way evolution: deterministic per-step state. -/
+def singleWayEvolve (sys : ExecSystem) (H : ExecHG ℕ) : Nat → ExecHG ℕ
+  | 0 => H
+  | n+1 => singleWayStep sys (singleWayEvolve sys H n)
+
 /-! ## Signature trace: useful for cross-checking with external engines -/
 
 /-- Edge count of `H`. -/
