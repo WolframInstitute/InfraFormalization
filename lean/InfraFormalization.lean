@@ -35,6 +35,7 @@ import InfraFormalization.Rule
 import InfraFormalization.Application
 import InfraFormalization.Conservation
 import InfraFormalization.Multiway
+import InfraFormalization.MultiwayExec
 import InfraFormalization.Causal
 import InfraFormalization.CausalLevel
 import InfraFormalization.Branchial
