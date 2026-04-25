@@ -228,6 +228,53 @@ Every theorem above depends only on `{propext, Classical.choice, Quot.sound}`. N
 - [ ] X3 — Mathlib Taylor integration (partly used by R1; full uniform-`C^k` version still open).
 - [ ] X4 — Multi-way engine integration from `efficient_rewriting_final`.
 
+### Oliver Knill quantum-calculus formalisation (KN-group, added 2026-04-24)
+
+Source: `resources/Infrageometry/QuantumCalculus.md` + `resources/Infrageometry/Infrageometry/Kernel/QuantumCalculus.wl` (Mathematica counterpart). Knill's **strict-finitism** discrete-geometry program; bosonic vs fermionic invariants; McKean–Singer supersymmetry as the load-bearing identity. Each task corresponds to a Mathematica function we want a Lean counterpart of, with theorems proved.
+
+- [ ] **KN1** — Wave equation d'Alembert solution `u(t) = cos(D t) u₀ + t · sinc(D t) v₀` via matrix functions on the Dirac matrix. Builds on D8/D9.
+- [ ] **KN2** — Discrete-time wave step (leapfrog) + unitary wave propagator `exp(i D t)`. Energy preservation theorem.
+- [ ] **KN3** — Wu characteristic `ω_m(G) = ∑_{x_1 ∩ ⋯ ∩ x_m ≠ ∅} ω(x_1) ⋯ ω(x_m)` and Wu cohomology with fusion inequality (Knill 2018+).
+- [ ] **KN4** — Isospectral Lax-pair deformation `D' = [d − d*, D]` of the Dirac operator + diagonal mass term. Knill Sept 2025.
+- [ ] **KN5** — Connes spectral distance `d(x, y) = sup{|f(x) − f(y)| : ‖[D, f]‖ ≤ 1}`; bridge to `Hypergraph.dist`.
+- [ ] **KN6** — Dynamical connection matrix `L(T)` and Green function `g(T)`; unimodularity, energy theorem `∑ g(x, y) = χ(H)`, hydrogen operator. Knill Sept 2025.
+- [ ] **KN7** — Curvature generalisations: index expectation, sectional, form curvature, boundary curvature. Knill 1205.0306.
+- [ ] **KN8** — Dirac / Connection / Lefschetz zeta functions. Bridge to "elementary dyadic Riemann hypothesis" for circular graphs. Knill 1312.4239 / 1801.04639.
+- [ ] **KN9** — Analytic torsion `log T(H) = ½ ∑_k (−1)^{k+1} k · log det'(H_k)` + spectral monotonicity under barycentric refinement.
+- [ ] **KN10** — Wave-front exterior derivative + spherical-average non-local `d` (Knill 2501.14611, 2025).
+- [ ] **KN11** — Geodesic gas + cellular-automaton geodesic evolution on triangulated 2D lattices.
+- [ ] **KN12** — Delta sets / quivers — face-map exterior derivative + cohomology; full Gauss-Bonnet, Brouwer-Lefschetz, supersymmetry on delta sets.
+- [ ] **KN13** — Soft barycentric refinement (random subdivision) + Fisk-manifold predicate.
+- [ ] **KN14** — McKean-Singer supersymmetry `non-zero spec(D²|even) = non-zero spec(D²|odd)`; super-trace deformation derives Euler-Poincaré + Brouwer-Lefschetz. Knill 1301.1408. **Load-bearing for KN15/KN18.**
+- [ ] **KN15** — Atiyah-Singer / Atiyah-Bott analog in finite geometry: `index(D) = χ(H)`. Knill 1708.06070.
+- [ ] **KN16** — Cartan's magic formula `L_X = i_X d + d i_X` (discrete). Knill 1811.10125.
+- [ ] **KN17** — Bosonic / Fermionic distinction in the type system — separating order-blind from orientation-aware invariants.
+- [ ] **KN18** — Brouwer fixed-point for graph endomorphisms via Lefschetz number. Knill 1206.0782.
+- [ ] **KN19** — Deformed exterior derivatives `d_h` continuous family. Knill 1306.5597.
+- [ ] **KN20** — Level sets + Euler characteristic — discrete Morse-theory bridge. Knill 2401.07435.
+
+Critical path: **IGE1 first** (Lean port of `Infrageometry.wl` core — Dirac, Hodge, Euler, Fermi) unblocks everything else. Then KN14 supersymmetry → KN15/KN18 (cohomological consequences) → KN3/KN8 (cohomology applications) → KN10 (cutting-edge wave-front).
+
+### Infrageometry Mathematica → Lean ports (IGE-group, added 2026-04-24)
+
+Module-by-module port of `resources/Infrageometry/Infrageometry/Kernel/*.wl`. Each module gets a Lean counterpart so the upstream Mathematica functions become provable Lean definitions.
+
+- [ ] **IGE1** — `Infrageometry.wl` core (351 lines): `complexClosure`, Euler/Fermi characteristics, `simplexUnitSphere/Star/Core`, incidence + Dirac/Hodge matrices, connection + Green function, Betti vector, Lefschetz number/curvature, simplicial maps, polynomials, Dehn-Sommerville check, barycentric refinement, super-trace/determinant, complex join/dual. **Foundation for the whole KN-track.**
+- [ ] **IGE2** — `SimplicialSet.wl` (315 lines): face/degeneracy maps + delta-complex morphisms. Bridges KN12 + IA1–IA5.
+- [ ] **IGE3** — `TDA.wl` (242 lines): VR / Čech / persistence on infrageometry hypergraphs. Aligns with IT1–IT4.
+- [ ] **IGE4** — `Mesh.wl` (248 lines): mesh-generation primitives + chain-of-meshes refinement.
+- [ ] **IGE5** — `Chains.wl` (63 lines): formal chain complex underlying cohomology computations.
+
+### Synthetic-infrageometry concrete tasks (SIG-group, added 2026-04-24)
+
+Lean ports of `resources/SyntheticInfrageometry/SyntheticInfrageometry/Kernel/*.wl` plus the branching-stability research questions from the upstream README.
+
+- [ ] **SIG1** — `Tools.wl` Lean port — primitive constructions (`Line`, `Ray`, `Segment`, `Perpendicular`, `Parallel`) each branching to a multi-set of `InfrageometricScene` (IS2).
+- [ ] **SIG2** — `Postulates.wl` Lean port — Euclid-style axioms as `Prop`s on a hypergraph + scene; ruliological study: which postulates hold on which rule outputs?
+- [ ] **SIG3** — `Predicates.wl` Lean port — `collinear`, `concyclic`, `perpendicular`, `congruentSegment`, `betweenness`; decidable for finite hypergraphs.
+- [ ] **SIG4** — `Coordinatization.wl` Lean port — analytisation via shortest-path counts / Cayley-style embedding. Bridges ID4 + IGE1.
+- [ ] **SIG5** — Branching-construction stability: `SceneDistance` via #214 W_1 + `ConstructionStability` under refinement. First instance: subdivision rule (#234) on path/cycle.
+
 ### Pavel Hájek planning items (P-group)
 
 From Pavel Hájek's weekly update and Discord "core dump" (entries dated 2025-10-06 through 2026-04-14). Each item cross-referenced below with existing Lean coverage where applicable; items without existing coverage are tracked as new tasks.

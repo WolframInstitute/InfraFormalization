@@ -246,6 +246,20 @@ The papers themselves are under [`papers/`](papers/) — PDFs plus extracted TeX
 | `papers/gorard_2102.09363.pdf` + `papers/tex_2102/` | G3 — Hypergraph Discretization of the Cauchy Problem |
 | `papers/gorard_2303.07282.pdf` + `papers/tex_2303/` | G4 — Non-Vacuum Solutions, Gravitational Collapse, Discrete Singularity Theorems |
 
+## Upstream Mathematica paclets (read-only via git submodules)
+
+Five Wolfram-Institute Mathematica paclets are tracked as git submodules in [`resources/`](resources/). Each is the reference Wolfram-Language implementation of one infrageometric subprogram; the corresponding Lean formalisation lives in `lean/InfraFormalization/` and is tracked in [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md) by group letter.
+
+| Submodule | Upstream | Lean group |
+|---|---|---|
+| [`resources/Infrageometry/`](resources/Infrageometry/) | [WolframInstitute/Infrageometry](https://github.com/WolframInstitute/Infrageometry) | **IGE** (this paclet's modules being ported), **KN** (Oliver Knill quantum-calculus track derived from `QuantumCalculus.md`); also IT (TDA), IA (Chains), ID (dimension) |
+| [`resources/SyntheticInfrageometry/`](resources/SyntheticInfrageometry/) | [WolframInstitute/SyntheticInfrageometry](https://github.com/WolframInstitute/SyntheticInfrageometry) | **SIG** (Tools, Postulates, Predicates, Coordinatization, branching-construction stability), IS (existing scenes/axioms) |
+| [`resources/InfraGaugeTheory/`](resources/InfraGaugeTheory/) | [WolframInstitute/InfraGaugeTheory](https://github.com/WolframInstitute/InfraGaugeTheory) | IG (FiberedGraph + Connection + Holonomy + Wilson + Bundle); M1 Ioana Milea coord. |
+| [`resources/InfraAnalysis/`](resources/InfraAnalysis/) | [WolframInstitute/InfraAnalysis](https://github.com/WolframInstitute/InfraAnalysis) | IA (DAG-as-blowup, calculus, de Rham, blowup operators) |
+| [`resources/InfraCausality/`](resources/InfraCausality/) | [WolframInstitute/InfraCausality](https://github.com/WolframInstitute/InfraCausality) | IC (CausalGraph, ObserverChain, LightRay, Foliation, EPS, Marzke-Wheeler); M5 Zapata-Ahmed paper. |
+
+The [`resources/Infrageometry/QuantumCalculus.md`](resources/Infrageometry/QuantumCalculus.md) note (~378 lines) is the **definitive map from Oliver Knill's discrete-geometry program to our Mathematica + Lean implementations**, with section-by-section adaptation targets for the KN1–KN20 Lean tasks.
+
 ## Suggested reading paths
 
 **"I want the 5-minute verdict."**

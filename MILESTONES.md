@@ -417,6 +417,67 @@ Gorard's companion program (arXiv:2004.14808 and related) claims that the *branc
 - [~] Branchial-amplitude / Hilbert-space limit (I3, I5, I8 pending; I4 / R3 ℓ²(slice) ✅ partial via `BranchialHilbert.lean`).
 - [~] Fisher → Fubini-Study as branchial refinement limit — Bhattacharyya bound `fubiniStudyBhattacharyya_bound` proved; full refinement-limit claim still open.
 
+## Phase 8 — Oliver Knill quantum-calculus formalisation (KN-group, added 2026-04-24)
+
+Lean formalisation of Oliver Knill's discrete-geometry program (Harvard).
+Source: [`resources/Infrageometry/QuantumCalculus.md`](resources/Infrageometry/QuantumCalculus.md)
++ Mathematica counterpart `resources/Infrageometry/Infrageometry/Kernel/QuantumCalculus.wl`.
+
+Knill's program is **strict finitism applied to differential geometry**: every
+continuum concept (curvature, cohomology, wave equation, geodesic flow) gets a
+purely combinatorial counterpart on finite simplicial complexes / delta sets.
+McKean-Singer supersymmetry between even/odd forms is the load-bearing single
+identity that derives both Euler-Poincaré and Brouwer-Lefschetz.
+
+Critical path: **IGE1 first** unblocks everything (Lean port of `Infrageometry.wl`
+core gives us `complexClosure`, Euler/Fermi, Dirac/Hodge, connection/Green,
+Betti/Lefschetz/super-trace primitives). Then KN14 supersymmetry → KN15/KN18
+cohomological consequences → KN3/KN8 cohomology applications → KN10 cutting-edge
+wave-front calculus.
+
+- [ ] **IGE1** — Lean port of `Infrageometry.wl` core (351 lines): foundation for the whole KN-track.
+- [ ] **IGE2** — `SimplicialSet.wl` Lean port — face/degeneracy maps + delta-complex morphisms; bridges KN12 + IA1–IA5.
+- [ ] **IGE3** — `TDA.wl` Lean port — VR / Čech / persistence; aligns with IT1–IT4.
+- [ ] **IGE4** — `Mesh.wl` Lean port — mesh-generation primitives.
+- [ ] **IGE5** — `Chains.wl` Lean port — formal chain complex.
+
+Knill items (KN1–KN20) — see [`INFRAGEOMETRY.md §5 Group KN`](INFRAGEOMETRY.md) and [`NEXT_STEPS.md`](NEXT_STEPS.md) for full descriptions:
+
+- [ ] **KN1** — Wave equation `u(t) = cos(D t) u₀ + t · sinc(D t) v₀`.
+- [ ] **KN2** — Discrete-time wave step + unitary wave propagator.
+- [ ] **KN3** — Wu characteristic + Wu cohomology + fusion inequality.
+- [ ] **KN4** — Isospectral Lax-pair deformation `D' = [d − d*, D]`.
+- [ ] **KN5** — Connes spectral distance ↔ `Hypergraph.dist` bridge.
+- [ ] **KN6** — Dynamical connection matrix `L(T)` + Green function `g(T)`; unimodularity, energy theorem.
+- [ ] **KN7** — Curvature generalisations (index expectation, sectional, form, boundary).
+- [ ] **KN8** — Dirac / Connection / Lefschetz zeta functions.
+- [ ] **KN9** — Analytic torsion + spectral monotonicity under barycentric refinement.
+- [ ] **KN10** — Wave-front exterior derivative + spherical-average non-local `d` (Knill 2025–2026).
+- [ ] **KN11** — Geodesic gas + cellular-automaton geodesics.
+- [ ] **KN12** — Delta sets / quivers — face-map exterior derivative + cohomology.
+- [ ] **KN13** — Soft barycentric refinement + Fisk-manifold predicate.
+- [ ] **KN14** — McKean-Singer supersymmetry. **Load-bearing for KN15 / KN18.**
+- [ ] **KN15** — Atiyah-Singer / Atiyah-Bott analog in finite geometry.
+- [ ] **KN16** — Cartan's magic formula `L_X = i_X d + d i_X` (discrete).
+- [ ] **KN17** — Bosonic / Fermionic distinction in the type system.
+- [ ] **KN18** — Brouwer fixed-point for graph endomorphisms (via Lefschetz).
+- [ ] **KN19** — Deformed exterior derivatives `d_h` family.
+- [ ] **KN20** — Level sets + Euler characteristic — discrete Morse-theory bridge.
+
+## Phase 9 — Synthetic Infrageometry concrete tasks (SIG-group, added 2026-04-24)
+
+Lean ports of [`resources/SyntheticInfrageometry/SyntheticInfrageometry/Kernel/*.wl`](resources/SyntheticInfrageometry/SyntheticInfrageometry/Kernel/)
+plus the branching-stability research questions from the upstream README:
+"Constructions in the discrete world are notoriously **ambiguous**, so the same
+infra-geometric construction may branch at every step, producing several valid
+final infrageometric scenes."
+
+- [ ] **SIG1** — `Tools.wl` Lean port — primitive constructions (`Line`, `Ray`, `Segment`, `Perpendicular`, `Parallel`).
+- [ ] **SIG2** — `Postulates.wl` Lean port — Euclid-style axioms; ruliological study (which postulates hold on which rule outputs?).
+- [ ] **SIG3** — `Predicates.wl` Lean port — `collinear`, `concyclic`, `perpendicular`, `congruentSegment`, `betweenness`.
+- [ ] **SIG4** — `Coordinatization.wl` Lean port — analytisation via shortest-path counts / Cayley-style embedding. Bridges ID4 + IGE1.
+- [ ] **SIG5** — Branching-construction stability: `SceneDistance` via #214 W_1 + `ConstructionStability` under refinement.
+
 ## Multi-way engine integration
 
 The `../efficient_rewriting_final/` repo is a high-performance C++ multi-way hypergraph-rewriting engine with a Mathematica paclet interface. Single-way SetReplace cannot verify causal invariance or explore branchial structure; this engine can.

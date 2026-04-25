@@ -213,6 +213,85 @@ These are added as tasks (see next commit). Each group is ordered so that early 
 - IR6. Product rules `R₁ × R₂` → dimension additivity (under confluence).
 - IR7. Computable hypergraph invariants → Lean-verifiable check list.
 
+### Group KN — Oliver Knill quantum-calculus track (#237–#256, added 2026-04-24)
+
+Formalisation in Lean of Knill's discrete-geometry program as catalogued in
+[`resources/Infrageometry/QuantumCalculus.md`](resources/Infrageometry/QuantumCalculus.md).
+Each task has an upstream Mathematica counterpart in
+[`resources/Infrageometry/Infrageometry/Kernel/QuantumCalculus.wl`](resources/Infrageometry/Infrageometry/Kernel/QuantumCalculus.wl)
+(290 lines; functions `WaveEquationSolution`, `WuCharacteristic`,
+`IsospectralDeformation`, `DiracZetaFunction`, `IndexExpectationCurvature`, …).
+
+Knill's program is **strict finitism applied to differential geometry**:
+every continuum concept gets a purely combinatorial counterpart on finite
+abstract simplicial complexes (or delta sets / quivers). Bosonic vs Fermionic
+invariants (volumes order-blind vs cohomology orientation-aware) are tracked
+separately. The McKean–Singer supersymmetry of `H = D²` between even / odd
+forms underwrites both Euler–Poincaré and Brouwer–Lefschetz.
+
+- KN1. Wave equation d'Alembert solution `u(t) = cos(D t) u₀ + t · sinc(D t) v₀` via matrix functions on the Dirac matrix.
+- KN2. Discrete-time wave step (leapfrog) + unitary wave propagator `exp(i D t)`.
+- KN3. Wu characteristic `ω_m(G) = ∑_{x_1 ∩ ⋯ ∩ x_m ≠ ∅} ω(x_1) ⋯ ω(x_m)` and Wu cohomology with fusion inequality.
+- KN4. Isospectral Lax-pair deformation `D' = [d − d*, D]` of the Dirac operator + extracted diagonal mass term.
+- KN5. Connes spectral distance `d(x, y) = sup{|f(x) − f(y)| : ‖[D, f]‖ ≤ 1}`; bridge to `Hypergraph.dist`.
+- KN6. Dynamical connection matrix `L(T)` and Green function `g(T) = L(T)⁻¹` under graph automorphism; unimodularity `det(L) = ±1` (Fermi); energy theorem `∑ g(x, y) = χ(H)`; hydrogen operator `L − L⁻¹` for 1D.
+- KN7. Curvature generalisations — index expectation (`K(x) = E[i_f(x)]`), sectional, form curvature (curvature on k-forms), boundary curvature.
+- KN8. Dirac / Connection / Lefschetz zeta functions; bridge to "elementary dyadic Riemann hypothesis" for circular graphs.
+- KN9. Analytic torsion `log T(H) = ½ ∑_k (−1)^{k+1} k · log det'(H_k)` + spectral monotonicity under barycentric refinement.
+- KN10. Wave-front exterior derivative + spherical-average non-local `d` (Knill 2025–2026 wave-front calculus).
+- KN11. Geodesic gas + cellular-automaton geodesic evolution on triangulated 2D lattices (Hopf–Rinow workaround on finite complexes).
+- KN12. Delta sets / quivers — face-map exterior derivative + cohomology; Gauss–Bonnet, Brouwer–Lefschetz, supersymmetry on delta sets.
+- KN13. Soft barycentric refinement (random subdivision) + Fisk-manifold predicate (every codim-2 face has even number of top-dim faces).
+- KN14. McKean–Singer supersymmetry: non-zero spectrum even↔odd forms equal; super-trace deformation derives Euler–Poincaré + Brouwer–Lefschetz from one fact.
+- KN15. Atiyah-Singer / Atiyah-Bott analog in finite geometry (Knill 1708.06070): `index(D) = χ(H)`; isolated-fixed-points `L(T) = ∑ ω(x)`.
+- KN16. Cartan's magic formula `L_X = i_X d + d i_X` (discrete) — Knill 1811.10125.
+- KN17. Bosonic / Fermionic distinction in the type system — separating order-blind from orientation-aware invariants.
+- KN18. Brouwer fixed-point for graph endomorphisms via Lefschetz-number computation (Knill 1206.0782).
+- KN19. Deformed exterior derivatives `d_h` continuous family for `h ∈ ℝ` (Knill 1306.5597).
+- KN20. Level sets + Euler characteristic — discrete Morse-theory bridge (Knill 2401.07435).
+
+**Key Knill papers** (catalogue in `QuantumCalculus.md §5`):
+
+| arXiv | Year | Topic |
+|---|---|---|
+| [1206.0782](https://arxiv.org/abs/1206.0782) | 2012 | Brouwer fixed-point (KN18) |
+| [1205.0306](https://arxiv.org/abs/1205.0306) | 2012 | Index expectation curvature (KN7a) |
+| [1301.1408](https://arxiv.org/abs/1301.1408) | 2013 | Discrete supersymmetry / McKean-Singer (KN14) |
+| [1306.5597](https://arxiv.org/abs/1306.5597) | 2013 | Deformed exterior derivatives (KN19) |
+| [1312.4239](https://arxiv.org/abs/1312.4239) | 2013 | Zeta functions of circular graphs (KN8) |
+| [1708.06070](https://arxiv.org/abs/1708.06070) | 2017 | Atiyah-Singer/Atiyah-Bott in finite geometry (KN15) |
+| [1801.04639](https://arxiv.org/abs/1801.04639) | 2018 | Elementary dyadic Riemann hypothesis (KN8) |
+| [1811.10125](https://arxiv.org/abs/1811.10125) | 2018 | Cartan's magic formula, discrete (KN16) |
+| [2205.14097](https://arxiv.org/abs/2205.14097) | 2022 | Graphs, groups and geometry |
+| [2401.07435](https://arxiv.org/abs/2401.07435) | 2024 | Level sets and Euler characteristic (KN20) |
+| [2501.14611](https://arxiv.org/abs/2501.14611) | 2025 | Wave front density conjectures (KN10) |
+
+### Group IGE — Lean port of upstream `Infrageometry` Mathematica paclet (#257–#261)
+
+The `resources/Infrageometry/Infrageometry/` paclet is the reference Wolfram-Language
+implementation of the Knill / quantum-calculus + infrageometry toolkit. The IGE
+group ports it **module by module** to Lean so that every Mathematica function
+has a Lean counterpart we can prove theorems about (and so KN-tasks have stable
+foundations).
+
+- IGE1. Lean port of `Infrageometry.wl` core (351 lines): `complexClosure`, `simplexCardinalities`, `complexEulerCharacteristic`, `complexFermiCharacteristic`, `simplexUnitSphere`, `simplexStar`, `simplexCore`, `complexIncidenceMatrix`, `connectionMatrix L`, `greenFunctionMatrix g = L⁻¹`, `diracHodgeMatrix D = d + d*`, `hodgeMatrix H = D²`, `bettiVector`, `lefschetzNumber`, `lefschetzCurvature`, `simplicialMap`, `complexPolynomial`, `dehnSommervilleQ`, `barycentricRefinement`, `faceGraph`, `superTrace`, `superDeterminant`, `pseudoDeterminant`, `complexJoin`, `complexDual`. Foundation for the whole KN-track.
+- IGE2. `SimplicialSet.wl` Lean port (315 lines): face/degeneracy maps + delta-complex morphisms; bridges KN12 + IA1–IA5.
+- IGE3. `TDA.wl` Lean port (242 lines): VR / Čech / persistence on infrageometry hypergraphs; aligns with IT1–IT4.
+- IGE4. `Mesh.wl` Lean port (248 lines): mesh-generation primitives + chain-of-meshes refinement; geometric realisation of a hypergraph + coordinatisation as a mesh.
+- IGE5. `Chains.wl` Lean port (63 lines): formal chain complex (integer-coefficient combinations of simplices, boundary, sum, scaling) underlying cohomology computations.
+
+### Group SIG — Synthetic infrageometry, expanded (#262–#266)
+
+Parallel to IS1–IS6 above, the SIG group adds module-level Lean ports of the
+[`resources/SyntheticInfrageometry/`](resources/SyntheticInfrageometry/) paclet
+plus the branching-stability research questions from its README.
+
+- SIG1. `Tools.wl` Lean port — primitive constructions (`Line`, `Ray`, `Segment`, `Perpendicular`, `Parallel`) the infra-observer can use, each branching to a multi-set of `InfrageometricScene` (existing IS2). Foundation for SIG2/SIG3.
+- SIG2. `Postulates.wl` Lean port — Euclid-style axioms (5 postulates + common notions) as `Prop`s on a hypergraph + scene; enables ruliological study `for each rule r: which postulates hold on every state of singleWayEvolve r seed n?`. Bridges to existing IS3 axiomatic infrageometry. **Empirical question**: does the parallel postulate hold on regular tilings? On Wolfram-rule outputs?
+- SIG3. `Predicates.wl` Lean port — geometric predicates (`collinear`, `concyclic`, `perpendicular`, `congruentSegment`, `betweenness`); decidable for finite hypergraphs; used by SIG2 to check axioms.
+- SIG4. `Coordinatization.wl` Lean port — analytisation/algebraisation of synthetic infrageometry via shortest-path counts / Cayley-style embedding; bridges ID4 (CoordinatizationDimension) and IGE1 (Cayley-graph structure).
+- SIG5. **Branching-construction stability** (per SyntheticInfrageometry README): `SceneDistance s₁ s₂ : ℝ` (Wasserstein-style distance between scenes via #214), and `ConstructionStability c r := tendency of branching scenes from construction c on rule-r outputs to converge under refinement`. First concrete instance: subdivision rule (#234) on path/cycle.
+
 ## 6. How this relates to the Gorard-refutation track
 
 The refutation work in `Refutations/F1–F5` + `MAJOR_FLAWS.md` is **not** subsumed — it becomes one arm of a larger program:
