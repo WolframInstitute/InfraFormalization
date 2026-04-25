@@ -28,6 +28,7 @@ the `removeEdges`/`++ produced` foldl in `singleWayStep`.
 -/
 
 import InfraFormalization.MultiwayExec
+import Mathlib.Data.Finset.Card
 
 namespace InfraFormalization
 namespace MultiwayExec
@@ -222,6 +223,22 @@ The full inductive proof of the equality
 is the load-bearing remaining work for #232. The skeleton above sets
 up the closed-form vertex sequence; below is the goal statement and
 the verified base case. -/
+
+/-- `vertexList` of `pathEdges vs` has the same length as `vs`, when
+`vs` is `Nodup` with at least two elements. The actual list is a
+permutation of `vs` (Mathlib's `dedup` keeps the last occurrence;
+order may differ from `vs`). -/
+theorem vertexList_pathEdges_length (vs : List ℕ)
+    (h : 2 ≤ vs.length) (h_nodup : vs.Nodup) :
+    (vertexList (pathEdges vs)).length = vs.length := by
+  show ((pathEdges vs).flatMap (·.verts)).dedup.length = vs.length
+  have h_mem : ∀ x, x ∈ (pathEdges vs).flatMap (·.verts) ↔ x ∈ vs :=
+    fun x => mem_pathEdges_flatMap vs h x
+  have h_toFinset :
+      ((pathEdges vs).flatMap (·.verts)).toFinset = vs.toFinset := by
+    ext x
+    simp [List.mem_toFinset, h_mem]
+  rw [← List.card_toFinset, h_toFinset, List.toFinset_card_of_nodup h_nodup]
 
 /-- The trajectory's path-vertex sequence has `2^n + 1` elements at
 step `n`; this is the count we want to read off from
