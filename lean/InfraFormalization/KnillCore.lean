@@ -268,5 +268,46 @@ theorem wuCharacteristic₂_singleton (s : Simplex V) (hs : s.Nonempty) :
   rw [h_filt]
   simp
 
+/-! ## Codim-1 face relation (incidence-matrix prerequisite)
+
+`isFace x y` holds when `y` is a codimension-1 face of `x`: a
+proper subset with one fewer vertex. This is the index-set of the
+non-zero entries of the (unsigned) incidence matrix; the *signed*
+boundary operator (Dirac `d`) is a follow-up commit that requires
+a `LinearOrder V` to fix orientation. -/
+
+/-- **Codim-1 face**: `y ⊆ x` with `|x| = |y| + 1`. Equivalently, `y`
+is obtained from `x` by removing exactly one vertex. -/
+def isFace (x y : Simplex V) : Prop :=
+  y ⊆ x ∧ x.card = y.card + 1
+
+instance (x y : Simplex V) : Decidable (isFace x y) := by
+  unfold isFace; infer_instance
+
+/-- **Removing a vertex gives a codim-1 face.** -/
+theorem isFace_erase {x : Simplex V} {v : V} (hv : v ∈ x) :
+    isFace x (x.erase v) := by
+  refine ⟨Finset.erase_subset _ _, ?_⟩
+  rw [Finset.card_erase_of_mem hv]
+  have : 1 ≤ x.card := Finset.card_pos.mpr ⟨v, hv⟩
+  omega
+
+/-- **Set difference of a codim-1 face has cardinality 1.** -/
+theorem isFace_diff_card {x y : Simplex V} (h : isFace x y) :
+    (x \ y).card = 1 := by
+  obtain ⟨hyx, hcard⟩ := h
+  have h1 : (x \ y).card + y.card = x.card :=
+    Finset.card_sdiff_add_card_eq_card hyx
+  omega
+
+/-- **There exists a unique vertex `v ∈ x \ y` for any codim-1 face `y` of `x`**. -/
+theorem isFace_exists_diff_vertex {x y : Simplex V} (h : isFace x y) :
+    ∃ v, v ∈ x ∧ v ∉ y := by
+  have hcard := isFace_diff_card h
+  have hne : (x \ y).Nonempty := Finset.card_pos.mp (by rw [hcard]; omega)
+  obtain ⟨v, hv⟩ := hne
+  rw [Finset.mem_sdiff] at hv
+  exact ⟨v, hv.1, hv.2⟩
+
 end Knill
 end InfraFormalization
