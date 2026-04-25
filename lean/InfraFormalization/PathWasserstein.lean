@@ -162,4 +162,51 @@ theorem wasserstein1_pathDelta_scaled_eq
   rw [wasserstein1_delta_eq_dist]
   rfl
 
+/-! ## Adjacent-vertex sharp identities
+
+For consecutive path vertices `i.val + 1 = j.val`, the graph distance
+is exactly `1`, so the unscaled W_1 between Diracs is `1` and the
+scaled W_1 is `1/n`. Mirrors `wasserstein1_cycleDelta_succ` /
+`cycleMetric_succ_eq_one`. -/
+
+/-- **Distance between adjacent path vertices is exactly `1`** (when
+`val + 1 = j.val`). Direct from `pathHypergraph_Adj_iff` +
+`SimpleGraph.dist_eq_one_iff_adj`. -/
+theorem pathMetric_succ_eq_one (n : ℕ) [NeZero n] (i j : Fin n)
+    (hij : i.val + 1 = j.val) :
+    pathMetric n i j = 1 := by
+  unfold pathMetric Hypergraph.dist
+  have hne : i ≠ j := by
+    intro h; subst h; omega
+  have hadj : (pathHypergraph n).Adj i j :=
+    (pathHypergraph_Adj_iff n i j).mpr ⟨hne, Or.inl hij⟩
+  rw [SimpleGraph.dist_eq_one_iff_adj.mpr hadj, Nat.cast_one]
+
+/-- **Scaled distance between adjacent path vertices is `1/n`**. -/
+theorem pathMetricScaled_succ_eq (n : ℕ) [NeZero n] (i j : Fin n)
+    (hij : i.val + 1 = j.val) :
+    pathMetricScaled n i j = 1 / n := by
+  unfold pathMetricScaled
+  rw [pathMetric_succ_eq_one n i j hij]
+
+/-- **W_1 between adjacent path Diracs is exactly `1`**. The bound
+`pathMetric n = 1` saturates between adjacent vertices, and the
+δ-to-δ identity makes `wasserstein1` agree exactly. -/
+theorem wasserstein1_pathDelta_succ
+    (n : ℕ) [NeZero n] (i j : Fin n) (hij : i.val + 1 = j.val) :
+    wasserstein1 (pathMetric n) (delta i) (delta j) = 1 := by
+  rw [wasserstein1_delta_eq_dist]
+  show pathMetric n i j = 1
+  exact pathMetric_succ_eq_one n i j hij
+
+/-- **Scaled W_1 between adjacent path Diracs is `1/n`**. The
+discrete unit cell shrinks under `pathMetricScaled` to `1/n`,
+matching the spacing of the `[0, 1]`-interval limit. -/
+theorem wasserstein1_pathDelta_scaled_succ
+    (n : ℕ) [NeZero n] (i j : Fin n) (hij : i.val + 1 = j.val) :
+    wasserstein1 (pathMetricScaled n) (delta i) (delta j) = 1 / n := by
+  rw [wasserstein1_delta_eq_dist]
+  show pathMetricScaled n i j = 1 / n
+  exact pathMetricScaled_succ_eq n i j hij
+
 end InfraFormalization
