@@ -988,6 +988,335 @@ theorem flrwRicci_0_1 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) :
   rw [flrwRiemann_0_0_0_1, flrwRiemann_1_0_1_1, flrwRiemann_2_0_2_1, flrwRiemann_3_0_3_1]
   ring
 
+/-! Each remaining off-diagonal Ricci component follows the same
+4-Riemann-summand decomposition as `flrwRicci_0_1`. We handle them
+individually since the index-substitution patterns differ slightly. -/
+
+/-- **Riemann R^ρ_{σ ρ ν} = 0 when σ = 0 and ν ∈ {2, 3}, ρ ∈ off-pattern**:
+mirror of `flrwRiemann_0_0_0_1` but with ν = 2.  -/
+private theorem flrwRiemann_0_0_0_2 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) :
+    (flrwConnection a da dda).riemann x 0 0 0 2 = 0 := by
+  unfold ConnectionData.riemann flrwConnection
+  simp only
+  rw [sumFin4 (fun l => flrwΓ a da x 0 0 l * flrwΓ a da x l 2 0),
+      sumFin4 (fun l => flrwΓ a da x 0 2 l * flrwΓ a da x l 0 0)]
+  have h00_l : ∀ l : Fin 4, flrwΓ a da x 0 0 l = 0 := by
+    intro l; fin_cases l <;> (unfold flrwΓ; simp)
+  have d1 : flrwdΓ a da dda 0 x 0 2 0 = 0 := by unfold flrwdΓ; simp
+  have d2 : flrwdΓ a da dda 2 x 0 0 0 = 0 := by unfold flrwdΓ; simp
+  rw [d1, d2]
+  simp [h00_l, flrwΓ_l_00]
+
+private theorem flrwRiemann_0_0_0_3 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) :
+    (flrwConnection a da dda).riemann x 0 0 0 3 = 0 := by
+  unfold ConnectionData.riemann flrwConnection
+  simp only
+  rw [sumFin4 (fun l => flrwΓ a da x 0 0 l * flrwΓ a da x l 3 0),
+      sumFin4 (fun l => flrwΓ a da x 0 3 l * flrwΓ a da x l 0 0)]
+  have h00_l : ∀ l : Fin 4, flrwΓ a da x 0 0 l = 0 := by
+    intro l; fin_cases l <;> (unfold flrwΓ; simp)
+  have d1 : flrwdΓ a da dda 0 x 0 3 0 = 0 := by unfold flrwdΓ; simp
+  have d2 : flrwdΓ a da dda 3 x 0 0 0 = 0 := by unfold flrwdΓ; simp
+  rw [d1, d2]
+  simp [h00_l, flrwΓ_l_00]
+
+private theorem flrwRiemann_1_0_1_2 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) :
+    (flrwConnection a da dda).riemann x 1 0 1 2 = 0 := by
+  unfold ConnectionData.riemann flrwConnection
+  simp only
+  rw [sumFin4 (fun l => flrwΓ a da x 1 1 l * flrwΓ a da x l 2 0),
+      sumFin4 (fun l => flrwΓ a da x 1 2 l * flrwΓ a da x l 1 0)]
+  have d1 : flrwdΓ a da dda 1 x 1 2 0 = 0 := by unfold flrwdΓ; simp
+  have d2 : flrwdΓ a da dda 2 x 1 1 0 = 0 := by unfold flrwdΓ; simp
+  have h12_l : ∀ l : Fin 4, flrwΓ a da x 1 2 l = 0 := by
+    intro l; fin_cases l <;> (unfold flrwΓ; simp)
+  -- Sum 1 entries: Γ_1_1_l for l = 0 → a'/a (i_i0); l = 1, 2, 3 → 0.
+  have h11_1 : flrwΓ a da x 1 1 1 = 0 := by unfold flrwΓ; simp
+  have h11_2 : flrwΓ a da x 1 1 2 = 0 := by unfold flrwΓ; simp
+  have h11_3 : flrwΓ a da x 1 1 3 = 0 := by unfold flrwΓ; simp
+  -- Γ_l_2_0: l=0 → 0; l=1 → 0; l=2 → a'/a; l=3 → 0.
+  have h_0_2_0 : flrwΓ a da x 0 2 0 = 0 := flrwΓ_0_diff a da x 2 0 (by decide)
+  have h_1_2_0 : flrwΓ a da x 1 2 0 = 0 := by unfold flrwΓ; simp
+  have h_3_2_0 : flrwΓ a da x 3 2 0 = 0 := by unfold flrwΓ; simp
+  rw [d1, d2, h11_1, h11_2, h11_3, h_0_2_0, h_1_2_0, h_3_2_0]
+  simp [h12_l, flrwΓ_l_00]
+
+private theorem flrwRiemann_2_0_2_2 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) :
+    (flrwConnection a da dda).riemann x 2 0 2 2 = 0 := by
+  have := (flrwConnection a da dda).riemann_antisymm x 2 0 2 2
+  linarith
+
+private theorem flrwRiemann_3_0_3_2 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) :
+    (flrwConnection a da dda).riemann x 3 0 3 2 = 0 := by
+  unfold ConnectionData.riemann flrwConnection
+  simp only
+  rw [sumFin4 (fun l => flrwΓ a da x 3 3 l * flrwΓ a da x l 2 0),
+      sumFin4 (fun l => flrwΓ a da x 3 2 l * flrwΓ a da x l 3 0)]
+  have d1 : flrwdΓ a da dda 3 x 3 2 0 = 0 := by unfold flrwdΓ; simp
+  have d2 : flrwdΓ a da dda 2 x 3 3 0 = 0 := by unfold flrwdΓ; simp
+  have h32_l : ∀ l : Fin 4, flrwΓ a da x 3 2 l = 0 := by
+    intro l; fin_cases l <;> (unfold flrwΓ; simp)
+  have h33_1 : flrwΓ a da x 3 3 1 = 0 := by unfold flrwΓ; simp
+  have h33_2 : flrwΓ a da x 3 3 2 = 0 := by unfold flrwΓ; simp
+  have h33_3 : flrwΓ a da x 3 3 3 = 0 := by unfold flrwΓ; simp
+  have h_0_2_0 : flrwΓ a da x 0 2 0 = 0 := flrwΓ_0_diff a da x 2 0 (by decide)
+  have h_1_2_0 : flrwΓ a da x 1 2 0 = 0 := by unfold flrwΓ; simp
+  have h_3_2_0 : flrwΓ a da x 3 2 0 = 0 := by unfold flrwΓ; simp
+  rw [d1, d2, h33_1, h33_2, h33_3, h_0_2_0, h_1_2_0, h_3_2_0]
+  simp [h32_l, flrwΓ_l_00]
+
+/-- **FLRW Ricci off-diagonal `R_{02}(x) = 0`.** -/
+theorem flrwRicci_0_2 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) :
+    (flrwConnection a da dda).ricci x 0 2 = 0 := by
+  unfold ConnectionData.ricci
+  rw [sumFin4 (fun ρ => (flrwConnection a da dda).riemann x ρ 0 ρ 2)]
+  rw [flrwRiemann_0_0_0_2, flrwRiemann_1_0_1_2, flrwRiemann_2_0_2_2, flrwRiemann_3_0_3_2]
+  ring
+
+private theorem flrwRiemann_1_0_1_3 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) :
+    (flrwConnection a da dda).riemann x 1 0 1 3 = 0 := by
+  unfold ConnectionData.riemann flrwConnection
+  simp only
+  rw [sumFin4 (fun l => flrwΓ a da x 1 1 l * flrwΓ a da x l 3 0),
+      sumFin4 (fun l => flrwΓ a da x 1 3 l * flrwΓ a da x l 1 0)]
+  have d1 : flrwdΓ a da dda 1 x 1 3 0 = 0 := by unfold flrwdΓ; simp
+  have d2 : flrwdΓ a da dda 3 x 1 1 0 = 0 := by unfold flrwdΓ; simp
+  have h13_l : ∀ l : Fin 4, flrwΓ a da x 1 3 l = 0 := by
+    intro l; fin_cases l <;> (unfold flrwΓ; simp)
+  have h11_1 : flrwΓ a da x 1 1 1 = 0 := by unfold flrwΓ; simp
+  have h11_2 : flrwΓ a da x 1 1 2 = 0 := by unfold flrwΓ; simp
+  have h11_3 : flrwΓ a da x 1 1 3 = 0 := by unfold flrwΓ; simp
+  have h_0_3_0 : flrwΓ a da x 0 3 0 = 0 := flrwΓ_0_diff a da x 3 0 (by decide)
+  have h_1_3_0 : flrwΓ a da x 1 3 0 = 0 := by unfold flrwΓ; simp
+  have h_2_3_0 : flrwΓ a da x 2 3 0 = 0 := by unfold flrwΓ; simp
+  rw [d1, d2, h11_1, h11_2, h11_3, h_0_3_0, h_1_3_0, h_2_3_0]
+  simp [h13_l, flrwΓ_l_00]
+
+private theorem flrwRiemann_2_0_2_3 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) :
+    (flrwConnection a da dda).riemann x 2 0 2 3 = 0 := by
+  unfold ConnectionData.riemann flrwConnection
+  simp only
+  rw [sumFin4 (fun l => flrwΓ a da x 2 2 l * flrwΓ a da x l 3 0),
+      sumFin4 (fun l => flrwΓ a da x 2 3 l * flrwΓ a da x l 2 0)]
+  have d1 : flrwdΓ a da dda 2 x 2 3 0 = 0 := by unfold flrwdΓ; simp
+  have d2 : flrwdΓ a da dda 3 x 2 2 0 = 0 := by unfold flrwdΓ; simp
+  have h23_l : ∀ l : Fin 4, flrwΓ a da x 2 3 l = 0 := by
+    intro l; fin_cases l <;> (unfold flrwΓ; simp)
+  have h22_1 : flrwΓ a da x 2 2 1 = 0 := by unfold flrwΓ; simp
+  have h22_2 : flrwΓ a da x 2 2 2 = 0 := by unfold flrwΓ; simp
+  have h22_3 : flrwΓ a da x 2 2 3 = 0 := by unfold flrwΓ; simp
+  have h_0_3_0 : flrwΓ a da x 0 3 0 = 0 := flrwΓ_0_diff a da x 3 0 (by decide)
+  have h_1_3_0 : flrwΓ a da x 1 3 0 = 0 := by unfold flrwΓ; simp
+  have h_2_3_0 : flrwΓ a da x 2 3 0 = 0 := by unfold flrwΓ; simp
+  rw [d1, d2, h22_1, h22_2, h22_3, h_0_3_0, h_1_3_0, h_2_3_0]
+  simp [h23_l, flrwΓ_l_00]
+
+private theorem flrwRiemann_3_0_3_3 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) :
+    (flrwConnection a da dda).riemann x 3 0 3 3 = 0 := by
+  have := (flrwConnection a da dda).riemann_antisymm x 3 0 3 3
+  linarith
+
+/-- **FLRW Ricci off-diagonal `R_{03}(x) = 0`.** -/
+theorem flrwRicci_0_3 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) :
+    (flrwConnection a da dda).ricci x 0 3 = 0 := by
+  unfold ConnectionData.ricci
+  rw [sumFin4 (fun ρ => (flrwConnection a da dda).riemann x ρ 0 ρ 3)]
+  rw [flrwRiemann_0_0_0_3, flrwRiemann_1_0_1_3, flrwRiemann_2_0_2_3, flrwRiemann_3_0_3_3]
+  ring
+
+private theorem flrwRiemann_0_1_0_2 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) :
+    (flrwConnection a da dda).riemann x 0 1 0 2 = 0 := by
+  unfold ConnectionData.riemann flrwConnection
+  simp only
+  rw [sumFin4 (fun l => flrwΓ a da x 0 0 l * flrwΓ a da x l 2 1),
+      sumFin4 (fun l => flrwΓ a da x 0 2 l * flrwΓ a da x l 0 1)]
+  have h00_l : ∀ l : Fin 4, flrwΓ a da x 0 0 l = 0 := by
+    intro l; fin_cases l <;> (unfold flrwΓ; simp)
+  -- Γ_x_l_0_1 = 0 for all l (l=0: μ=0,ν=1,off-diag=0; l=i≥1: ρ=l, μ=0, ν=1: condition needs ν=l, but ν=1≠l for l=2,3; for l=1 we get value a'/a if (μ=0∧ν=ρ)=(0=0∧1=1)=T; so non-zero!).
+  -- Wait, Γ_x_1_0_1 = a'/a (the standard Hubble Christoffel). So this sum is non-trivial.
+  -- But it's multiplied by Γ_x_0_2_l. Γ_x_0_2_l: ρ=0, μ=2, ν=l. Only l=2 gives a*a' (μ=ν=2, μ≠0); others 0.
+  have h_0_2_0 : flrwΓ a da x 0 2 0 = 0 := flrwΓ_0_diff a da x 2 0 (by decide)
+  have h_0_2_1 : flrwΓ a da x 0 2 1 = 0 := flrwΓ_0_diff a da x 2 1 (by decide)
+  have h_0_2_2 : flrwΓ a da x 0 2 2 = a (x 0) * da (x 0) := flrwΓ_0_ii a da x 2 (by decide)
+  have h_0_2_3 : flrwΓ a da x 0 2 3 = 0 := flrwΓ_0_diff a da x 2 3 (by decide)
+  -- Γ_x_2_0_1 (l=2 case in Sum 2): ρ=2, μ=0, ν=1: condition (μ=0∧ν=ρ)=(0=0∧1=2)=F; (μ=ρ∧ν=0)=(0=2∧1=0)=F. So 0.
+  have h_2_0_1 : flrwΓ a da x 2 0 1 = 0 := by unfold flrwΓ; simp
+  have d1 : flrwdΓ a da dda 0 x 0 2 1 = 0 := by unfold flrwdΓ; simp
+  have d2 : flrwdΓ a da dda 2 x 0 0 1 = 0 := by unfold flrwdΓ; simp
+  rw [d1, d2, h_0_2_0, h_0_2_1, h_0_2_2, h_0_2_3, h_2_0_1]
+  simp [h00_l]
+
+private theorem flrwRiemann_1_1_1_2 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) :
+    (flrwConnection a da dda).riemann x 1 1 1 2 = 0 := by
+  unfold ConnectionData.riemann flrwConnection
+  simp only
+  rw [sumFin4 (fun l => flrwΓ a da x 1 1 l * flrwΓ a da x l 2 1),
+      sumFin4 (fun l => flrwΓ a da x 1 2 l * flrwΓ a da x l 1 1)]
+  -- All Γ_x_l_2_1 = 0.
+  have hl21 : ∀ l : Fin 4, flrwΓ a da x l 2 1 = 0 := by
+    intro l; fin_cases l <;> (unfold flrwΓ; simp)
+  -- All Γ_x_1_2_l = 0 (ρ=1, μ=2, conditions fail).
+  have h12_l : ∀ l : Fin 4, flrwΓ a da x 1 2 l = 0 := by
+    intro l; fin_cases l <;> (unfold flrwΓ; simp)
+  have d1 : flrwdΓ a da dda 1 x 1 2 1 = 0 := by unfold flrwdΓ; simp
+  have d2 : flrwdΓ a da dda 2 x 1 1 1 = 0 := by unfold flrwdΓ; simp
+  rw [d1, d2]
+  simp [hl21, h12_l]
+
+private theorem flrwRiemann_2_1_2_2 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) :
+    (flrwConnection a da dda).riemann x 2 1 2 2 = 0 := by
+  have := (flrwConnection a da dda).riemann_antisymm x 2 1 2 2
+  linarith
+
+private theorem flrwRiemann_3_1_3_2 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) :
+    (flrwConnection a da dda).riemann x 3 1 3 2 = 0 := by
+  unfold ConnectionData.riemann flrwConnection
+  simp only
+  rw [sumFin4 (fun l => flrwΓ a da x 3 3 l * flrwΓ a da x l 2 1),
+      sumFin4 (fun l => flrwΓ a da x 3 2 l * flrwΓ a da x l 3 1)]
+  have hl21 : ∀ l : Fin 4, flrwΓ a da x l 2 1 = 0 := by
+    intro l; fin_cases l <;> (unfold flrwΓ; simp)
+  have hl31 : ∀ l : Fin 4, flrwΓ a da x l 3 1 = 0 := by
+    intro l; fin_cases l <;> (unfold flrwΓ; simp)
+  have h32_l : ∀ l : Fin 4, flrwΓ a da x 3 2 l = 0 := by
+    intro l; fin_cases l <;> (unfold flrwΓ; simp)
+  have d1 : flrwdΓ a da dda 3 x 3 2 1 = 0 := by unfold flrwdΓ; simp
+  have d2 : flrwdΓ a da dda 2 x 3 3 1 = 0 := by unfold flrwdΓ; simp
+  rw [d1, d2]
+  simp [hl21, hl31, h32_l]
+
+/-- **FLRW Ricci off-diagonal `R_{12}(x) = 0`.** -/
+theorem flrwRicci_1_2 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) :
+    (flrwConnection a da dda).ricci x 1 2 = 0 := by
+  unfold ConnectionData.ricci
+  rw [sumFin4 (fun ρ => (flrwConnection a da dda).riemann x ρ 1 ρ 2)]
+  rw [flrwRiemann_0_1_0_2, flrwRiemann_1_1_1_2, flrwRiemann_2_1_2_2, flrwRiemann_3_1_3_2]
+  ring
+
+private theorem flrwRiemann_0_1_0_3 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) :
+    (flrwConnection a da dda).riemann x 0 1 0 3 = 0 := by
+  unfold ConnectionData.riemann flrwConnection
+  simp only
+  rw [sumFin4 (fun l => flrwΓ a da x 0 0 l * flrwΓ a da x l 3 1),
+      sumFin4 (fun l => flrwΓ a da x 0 3 l * flrwΓ a da x l 0 1)]
+  have h00_l : ∀ l : Fin 4, flrwΓ a da x 0 0 l = 0 := by
+    intro l; fin_cases l <;> (unfold flrwΓ; simp)
+  have h_0_3_0 : flrwΓ a da x 0 3 0 = 0 := flrwΓ_0_diff a da x 3 0 (by decide)
+  have h_0_3_1 : flrwΓ a da x 0 3 1 = 0 := flrwΓ_0_diff a da x 3 1 (by decide)
+  have h_0_3_2 : flrwΓ a da x 0 3 2 = 0 := flrwΓ_0_diff a da x 3 2 (by decide)
+  have h_0_3_3 : flrwΓ a da x 0 3 3 = a (x 0) * da (x 0) := flrwΓ_0_ii a da x 3 (by decide)
+  have h_3_0_1 : flrwΓ a da x 3 0 1 = 0 := by unfold flrwΓ; simp
+  have d1 : flrwdΓ a da dda 0 x 0 3 1 = 0 := by unfold flrwdΓ; simp
+  have d2 : flrwdΓ a da dda 3 x 0 0 1 = 0 := by unfold flrwdΓ; simp
+  rw [d1, d2, h_0_3_0, h_0_3_1, h_0_3_2, h_0_3_3, h_3_0_1]
+  simp [h00_l]
+
+private theorem flrwRiemann_1_1_1_3 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) :
+    (flrwConnection a da dda).riemann x 1 1 1 3 = 0 := by
+  unfold ConnectionData.riemann flrwConnection
+  simp only
+  rw [sumFin4 (fun l => flrwΓ a da x 1 1 l * flrwΓ a da x l 3 1),
+      sumFin4 (fun l => flrwΓ a da x 1 3 l * flrwΓ a da x l 1 1)]
+  have hl31 : ∀ l : Fin 4, flrwΓ a da x l 3 1 = 0 := by
+    intro l; fin_cases l <;> (unfold flrwΓ; simp)
+  have h13_l : ∀ l : Fin 4, flrwΓ a da x 1 3 l = 0 := by
+    intro l; fin_cases l <;> (unfold flrwΓ; simp)
+  have d1 : flrwdΓ a da dda 1 x 1 3 1 = 0 := by unfold flrwdΓ; simp
+  have d2 : flrwdΓ a da dda 3 x 1 1 1 = 0 := by unfold flrwdΓ; simp
+  rw [d1, d2]
+  simp [hl31, h13_l]
+
+private theorem flrwRiemann_2_1_2_3 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) :
+    (flrwConnection a da dda).riemann x 2 1 2 3 = 0 := by
+  unfold ConnectionData.riemann flrwConnection
+  simp only
+  rw [sumFin4 (fun l => flrwΓ a da x 2 2 l * flrwΓ a da x l 3 1),
+      sumFin4 (fun l => flrwΓ a da x 2 3 l * flrwΓ a da x l 2 1)]
+  have hl31 : ∀ l : Fin 4, flrwΓ a da x l 3 1 = 0 := by
+    intro l; fin_cases l <;> (unfold flrwΓ; simp)
+  have hl21 : ∀ l : Fin 4, flrwΓ a da x l 2 1 = 0 := by
+    intro l; fin_cases l <;> (unfold flrwΓ; simp)
+  have h23_l : ∀ l : Fin 4, flrwΓ a da x 2 3 l = 0 := by
+    intro l; fin_cases l <;> (unfold flrwΓ; simp)
+  have d1 : flrwdΓ a da dda 2 x 2 3 1 = 0 := by unfold flrwdΓ; simp
+  have d2 : flrwdΓ a da dda 3 x 2 2 1 = 0 := by unfold flrwdΓ; simp
+  rw [d1, d2]
+  simp [hl31, hl21, h23_l]
+
+private theorem flrwRiemann_3_1_3_3 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) :
+    (flrwConnection a da dda).riemann x 3 1 3 3 = 0 := by
+  have := (flrwConnection a da dda).riemann_antisymm x 3 1 3 3
+  linarith
+
+/-- **FLRW Ricci off-diagonal `R_{13}(x) = 0`.** -/
+theorem flrwRicci_1_3 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) :
+    (flrwConnection a da dda).ricci x 1 3 = 0 := by
+  unfold ConnectionData.ricci
+  rw [sumFin4 (fun ρ => (flrwConnection a da dda).riemann x ρ 1 ρ 3)]
+  rw [flrwRiemann_0_1_0_3, flrwRiemann_1_1_1_3, flrwRiemann_2_1_2_3, flrwRiemann_3_1_3_3]
+  ring
+
+private theorem flrwRiemann_0_2_0_3 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) :
+    (flrwConnection a da dda).riemann x 0 2 0 3 = 0 := by
+  unfold ConnectionData.riemann flrwConnection
+  simp only
+  rw [sumFin4 (fun l => flrwΓ a da x 0 0 l * flrwΓ a da x l 3 2),
+      sumFin4 (fun l => flrwΓ a da x 0 3 l * flrwΓ a da x l 0 2)]
+  have h00_l : ∀ l : Fin 4, flrwΓ a da x 0 0 l = 0 := by
+    intro l; fin_cases l <;> (unfold flrwΓ; simp)
+  have h_0_3_0 : flrwΓ a da x 0 3 0 = 0 := flrwΓ_0_diff a da x 3 0 (by decide)
+  have h_0_3_1 : flrwΓ a da x 0 3 1 = 0 := flrwΓ_0_diff a da x 3 1 (by decide)
+  have h_0_3_2 : flrwΓ a da x 0 3 2 = 0 := flrwΓ_0_diff a da x 3 2 (by decide)
+  have h_0_3_3 : flrwΓ a da x 0 3 3 = a (x 0) * da (x 0) := flrwΓ_0_ii a da x 3 (by decide)
+  have h_3_0_2 : flrwΓ a da x 3 0 2 = 0 := by unfold flrwΓ; simp
+  have d1 : flrwdΓ a da dda 0 x 0 3 2 = 0 := by unfold flrwdΓ; simp
+  have d2 : flrwdΓ a da dda 3 x 0 0 2 = 0 := by unfold flrwdΓ; simp
+  rw [d1, d2, h_0_3_0, h_0_3_1, h_0_3_2, h_0_3_3, h_3_0_2]
+  simp [h00_l]
+
+private theorem flrwRiemann_1_2_1_3 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) :
+    (flrwConnection a da dda).riemann x 1 2 1 3 = 0 := by
+  unfold ConnectionData.riemann flrwConnection
+  simp only
+  rw [sumFin4 (fun l => flrwΓ a da x 1 1 l * flrwΓ a da x l 3 2),
+      sumFin4 (fun l => flrwΓ a da x 1 3 l * flrwΓ a da x l 1 2)]
+  have hl32 : ∀ l : Fin 4, flrwΓ a da x l 3 2 = 0 := by
+    intro l; fin_cases l <;> (unfold flrwΓ; simp)
+  have h13_l : ∀ l : Fin 4, flrwΓ a da x 1 3 l = 0 := by
+    intro l; fin_cases l <;> (unfold flrwΓ; simp)
+  have d1 : flrwdΓ a da dda 1 x 1 3 2 = 0 := by unfold flrwdΓ; simp
+  have d2 : flrwdΓ a da dda 3 x 1 1 2 = 0 := by unfold flrwdΓ; simp
+  rw [d1, d2]
+  simp [hl32, h13_l]
+
+private theorem flrwRiemann_2_2_2_3 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) :
+    (flrwConnection a da dda).riemann x 2 2 2 3 = 0 := by
+  unfold ConnectionData.riemann flrwConnection
+  simp only
+  rw [sumFin4 (fun l => flrwΓ a da x 2 2 l * flrwΓ a da x l 3 2),
+      sumFin4 (fun l => flrwΓ a da x 2 3 l * flrwΓ a da x l 2 2)]
+  have hl32 : ∀ l : Fin 4, flrwΓ a da x l 3 2 = 0 := by
+    intro l; fin_cases l <;> (unfold flrwΓ; simp)
+  have h23_l : ∀ l : Fin 4, flrwΓ a da x 2 3 l = 0 := by
+    intro l; fin_cases l <;> (unfold flrwΓ; simp)
+  have d1 : flrwdΓ a da dda 2 x 2 3 2 = 0 := by unfold flrwdΓ; simp
+  have d2 : flrwdΓ a da dda 3 x 2 2 2 = 0 := by unfold flrwdΓ; simp
+  rw [d1, d2]
+  simp [hl32, h23_l]
+
+private theorem flrwRiemann_3_2_3_3 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) :
+    (flrwConnection a da dda).riemann x 3 2 3 3 = 0 := by
+  have := (flrwConnection a da dda).riemann_antisymm x 3 2 3 3
+  linarith
+
+/-- **FLRW Ricci off-diagonal `R_{23}(x) = 0`.** -/
+theorem flrwRicci_2_3 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) :
+    (flrwConnection a da dda).ricci x 2 3 = 0 := by
+  unfold ConnectionData.ricci
+  rw [sumFin4 (fun ρ => (flrwConnection a da dda).riemann x ρ 2 ρ 3)]
+  rw [flrwRiemann_0_2_0_3, flrwRiemann_1_2_1_3, flrwRiemann_2_2_2_3, flrwRiemann_3_2_3_3]
+  ring
+
 /-- **FLRW Einstein equations ⟺ Friedmann pair** (diagonal version).
 The diagonal components of the EFE on FLRW with perfect-fluid
 stress-energy are equivalent to the textbook Friedmann pair. -/
