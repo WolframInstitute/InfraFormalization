@@ -218,5 +218,55 @@ def complexVertexList (G : SimplexSet V) : Finset V :=
     v ∈ complexVertexList G ↔ ∃ s ∈ G, v ∈ s := by
   simp [complexVertexList]
 
+/-! ## Wu characteristic (KN3 entry point)
+
+The **Wu characteristic** generalises Euler characteristic by summing
+the product of weights over m-tuples of pairwise-intersecting
+simplices. For m = 1 it reduces to Euler characteristic; for m = 2 it
+is the *quadratic characteristic* used in Knill 2018+.
+
+For m = 2: `ω₂(G) = ∑_{(x, y) ∈ G × G, x ∩ y ≠ ∅} ω(x) · ω(y)`.
+
+This is the m = 1, 2 case directly. The general
+`m ≥ 3` case requires iterated `Finset.product` and is staged for a
+follow-up commit closing the rest of KN3 (Wu cohomology + fusion
+inequality). -/
+
+/-- **Wu characteristic at m = 1**: equals `eulerCharacteristic`. The
+single-simplex sum. -/
+def wuCharacteristic₁ (G : SimplexSet V) : ℤ :=
+  eulerCharacteristic G
+
+@[simp] theorem wuCharacteristic₁_eq_euler (G : SimplexSet V) :
+    wuCharacteristic₁ G = eulerCharacteristic G := rfl
+
+/-- **Wu characteristic at m = 2** (quadratic characteristic):
+`ω₂(G) = ∑_{(x, y) ∈ G × G, x ∩ y ≠ ∅} ω(x) · ω(y)`. -/
+def wuCharacteristic₂ (G : SimplexSet V) : ℤ :=
+  ((G.product G).filter (fun p => (p.1 ∩ p.2).Nonempty)).sum
+    (fun p => simplexWeight p.1 * simplexWeight p.2)
+
+@[simp] theorem wuCharacteristic₂_empty :
+    wuCharacteristic₂ (∅ : SimplexSet V) = 0 := by
+  simp [wuCharacteristic₂]
+
+/-- **Wu characteristic at m = 2 of a singleton complex**: a single
+simplex `s` with `s ∩ s = s ≠ ∅` (when `s ≠ ∅`) gives `ω(s)²`. -/
+theorem wuCharacteristic₂_singleton (s : Simplex V) (hs : s.Nonempty) :
+    wuCharacteristic₂ ({s} : SimplexSet V) = simplexWeight s * simplexWeight s := by
+  unfold wuCharacteristic₂
+  have h_inter : (s ∩ s).Nonempty := by rw [Finset.inter_self]; exact hs
+  have h_filt : (({s} ×ˢ {s} : Finset (Simplex V × Simplex V)).filter
+      (fun p => (p.1 ∩ p.2).Nonempty)) = {(s, s)} := by
+    ext ⟨a, b⟩
+    simp only [Finset.mem_filter, Finset.mem_product, Finset.mem_singleton,
+               Prod.mk.injEq]
+    refine ⟨fun ⟨⟨ha, hb⟩, _⟩ => ⟨ha, hb⟩, fun ⟨ha, hb⟩ => ?_⟩
+    refine ⟨⟨ha, hb⟩, ?_⟩
+    rw [ha, hb]; exact h_inter
+  show ((({s} : SimplexSet V) ×ˢ ({s} : SimplexSet V)).filter _).sum _ = _
+  rw [h_filt]
+  simp
+
 end Knill
 end InfraFormalization
