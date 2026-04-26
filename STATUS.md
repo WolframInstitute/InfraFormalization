@@ -6,6 +6,14 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-04-26 — late, post-d²=0)
+
+**Post-`d² = 0` push: `(d*)² = 0` codual landed + Phase 2 structural helpers stood up.**
+
+- **`KnillCore.dStarSquared_eq_zero`**: codual cochain-complex axiom — `∑_{y ⊆ z} incidence(y, x) · incidence(z, y) = 0`. One-page corollary of `dSquared_eq_zero` by transposing indices. Together with `d² = 0`, this gives the full chain-complex structure (d, d*) needed for Hodge decomposition `H = d·d* + d*·d` (KN14 McKean-Singer).
+
+- **`SubdivisionPath.lean` structural helpers (#280–#283)** preparing for #232 Phase 2 (#267 simulation lemma) and #268 Route C fallback. `mem_subdivideVerts_imp` characterises elements (vs-vertex or fresh midpoint ≥ b). `subdivideVerts_nodup` proves Nodup preservation under freshness condition `b > listMax vs`. `subdVerts_nodup` (every iterate `subdVerts n` is Nodup). `nextFresh_pathEdges` bridges the engine's fresh-vertex allocator (`(vertexList H).foldr max 0 + 1`) to the path's natural midpoint counter (`listMax vs + 1`). Supporting `listMax_le_iff` + `listMax_eq_of_mem_iff` + `mem_le_listMax`. All axiom-clean.
+
 ## Headline (2026-04-26 — late)
 
 **`d ∘ d = 0` complete.** The cochain-complex axiom `d ∘ d = 0` for the signed boundary on oriented simplices is closed in full generality as `KnillCore.dSquared_eq_zero`. Three trivial cases plus the main sign-cancellation case all proved, axiom-clean. Architecture:

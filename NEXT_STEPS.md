@@ -4,6 +4,10 @@ Lives next to [`README.md`](README.md) / [`INDEX.md`](INDEX.md) / [`FINDINGS.md`
 
 ## Recently shipped (selected highlights)
 
+- **`d ∘ d = 0` cochain-complex axiom CLOSED + structural helpers + `(d*)² = 0` (2026-04-26 — late)** —
+  - **`KnillCore.dStarSquared_eq_zero`**: codual cochain-complex axiom `(d*)² = 0` falls out as a one-page corollary of `dSquared_eq_zero` by transposing indices. Pairs with `d² = 0` for the full Hodge decomposition `H = d·d* + d*·d` (KN14 McKean-Singer).
+  - **`SubdivisionPath.lean` structural helpers (#280–#283)** for #232 Phase 2 and #234: `mem_subdivideVerts_imp` (entries are vs-vertices or fresh midpoints ≥ b), `subdivideVerts_nodup` (Nodup preserved when b > listMax vs), `subdVerts_nodup` (every iterate is Nodup), `nextFresh_pathEdges` (engine's `nextFresh` matches the path's `listMax + 1`). Supporting lemmas `mem_le_listMax`, `listMax_le_iff`, `listMax_eq_of_mem_iff`. Build the foundation for either the simulation-lemma proof (#267) or the existential Route C fallback (#268). Axiom-clean.
+
 - **`d ∘ d = 0` cochain-complex axiom CLOSED (2026-04-26 — late)** — `KnillCore.dSquared_eq_zero` now proves the full identity `(d²)(x, z) = ∑_{y ⊆ x} d(x, y) · d(y, z) = 0` for all simplices `x, z` on `[LinearOrder V]`. Five new public theorems beyond #275/#276 already shipped:
   - **#278 `Finset.sort_erase`**: `(s.erase w).sort r = (s.sort r).erase w`. Both sides sorted with same multiset (`s.val.erase w`); closed via `List.Perm.eq_of_pairwise'`.
   - **#279 `List.idxOf_erase_of_idxOf_lt/gt`**: erase-aware `idxOf` shift formulas — when `u`'s position is below `w`'s, erase preserves it; when above, erase shifts it down by 1. Inductive proofs over the list with explicit `BEq` head-case splits and `beq_eq_false_iff_ne` to dodge the `Decidable`-motive obstruction.
