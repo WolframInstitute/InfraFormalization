@@ -515,7 +515,7 @@ variable [LinearOrder V]
 
 /-- **Signed incidence** `d(x, y) := (-1)^i` if `y = x \ {v_i}` for
 the i-th vertex of `x` in sorted order; 0 otherwise. -/
-noncomputable def incidence (x y : Simplex V) : ℤ :=
+def incidence (x y : Simplex V) : ℤ :=
   if h : isFace x y then
     have h_card : (x \ y).card = 1 := isFace_diff_card h
     have h_ne : (x \ y).Nonempty :=
@@ -590,7 +590,7 @@ Counterpart Mathematica: `DiracHodgeMatrix[G_]` / `HodgeMatrix[G_]`
 in `Infrageometry.wl`. -/
 
 /-- **Dirac matrix entry** `D(x, y) := d(x, y) + d(y, x)`. -/
-noncomputable def dirac (x y : Simplex V) : ℤ :=
+def dirac (x y : Simplex V) : ℤ :=
   incidence x y + incidence y x
 
 /-- **Self-adjointness**: `D(x, y) = D(y, x)`. Symmetry follows from
@@ -618,7 +618,7 @@ theorem dirac_eq_zero_of_no_face {x y : Simplex V}
 `H(x, y) := (D · D) (x, y) = ∑_{z ∈ G} D(x, z) · D(z, y)`.
 
 Matrix product of `D` with itself, restricted to indices in `G`. -/
-noncomputable def hodgeOnG (G : SimplexSet V) (x y : Simplex V) : ℤ :=
+def hodgeOnG (G : SimplexSet V) (x y : Simplex V) : ℤ :=
   G.sum (fun z => dirac x z * dirac z y)
 
 /-- **Self-adjointness of Hodge**: `H(x, y) = H(y, x)` for every
@@ -656,7 +656,7 @@ and `d² = 0` separates exact / co-exact components). -/
 /-- **`d ∘ d` operator**: `(d²)(x, z) := ∑_{y ⊆ x} d(x, y) · d(y, z)`.
 The sum is over `x.powerset` because non-zero contributions require
 `y ⊆ x`. -/
-noncomputable def dSquared (x z : Simplex V) : ℤ :=
+def dSquared (x z : Simplex V) : ℤ :=
   x.powerset.sum (fun y => incidence x y * incidence y z)
 
 /-- **Trivial cardinality vanishing**: `(d²)(x, z) = 0` when

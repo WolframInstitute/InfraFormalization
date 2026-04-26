@@ -116,6 +116,77 @@ example : superTrace edge (fun _ _ => 1) = eulerCharacteristic edge := by
 /-- **`wuCharacteristic₁ triangle = χ(triangle) = 1`**. -/
 example : wuCharacteristic₁ triangle = 1 := by decide
 
+/-! ## Incidence operator d (signed boundary)
+
+Sanity checks using `[LinearOrder (Fin 3)]` (the canonical order).
+-/
+
+/-- **`d({0, 1}, {0}) = (-1)^position-of-1-in-{0,1}`**. After
+removing `1`, position of `1` in sorted `{0, 1}` is `1`, so
+`d = (-1)^1 = -1`. -/
+example : incidence ({0, 1} : Simplex (Fin 3)) {0} = -1 := by native_decide
+
+/-- **`d({0, 1}, {1}) = (-1)^position-of-0-in-{0,1}`**. After
+removing `0`, position of `0` in sorted `{0, 1}` is `0`, so
+`d = (-1)^0 = 1`. -/
+example : incidence ({0, 1} : Simplex (Fin 3)) {1} = 1 := by native_decide
+
+/-- **`d({0,1,2}, {0,1}) = (-1)^position-of-2 = (-1)^2 = 1`**. -/
+example : incidence ({0, 1, 2} : Simplex (Fin 3)) {0, 1} = 1 := by native_decide
+
+/-- **`d({0,1,2}, {0,2}) = (-1)^position-of-1 = (-1)^1 = -1`**. -/
+example : incidence ({0, 1, 2} : Simplex (Fin 3)) {0, 2} = -1 := by native_decide
+
+/-- **`d({0,1,2}, {1,2}) = (-1)^position-of-0 = (-1)^0 = 1`**. -/
+example : incidence ({0, 1, 2} : Simplex (Fin 3)) {1, 2} = 1 := by native_decide
+
+/-- **Off-support: `d({0,1}, {2}) = 0`** (`{2}` is not a face of
+`{0, 1}`). -/
+example : incidence ({0, 1} : Simplex (Fin 3)) {2} = 0 := by native_decide
+
+/-! ## Dirac matrix D = d + d* -/
+
+/-- **`D({0}, {0,1}) = d({0}, {0,1}) + d({0,1}, {0})
+                    = 0 + (-1) = -1`**. -/
+example : dirac ({0} : Simplex (Fin 3)) {0, 1} = -1 := by native_decide
+
+/-- **Self-adjointness witness**: `D({0,1}, {0}) = D({0}, {0,1})`. -/
+example : dirac ({0, 1} : Simplex (Fin 3)) {0} =
+          dirac ({0} : Simplex (Fin 3)) {0, 1} := by
+  rw [dirac_symm]
+
+/-! ## d² = 0 — concrete sign-cancellation witnesses
+
+Concrete instances of `d ∘ d = 0` on the triangle, verifying the
+sign cancellation. -/
+
+/-- **`(d²)({0,1,2}, {0}) = 0`**: removing one of the two extra
+vertices first then the other gives cancelling signs. The two
+non-zero summands are `d({0,1,2}, {0,1}) · d({0,1}, {0}) +
+d({0,1,2}, {0,2}) · d({0,2}, {0}) = 1 · (-1) + (-1) · 1 = -1 - 1`...
+
+Actually the sum has FOUR codim-1 faces of `{0,1,2}` ({0,1}, {0,2},
+{1,2}) plus the empty/full subsets — but only `{0,1}` and `{0,2}`
+have `{0}` as a codim-1 face. The sum is:
+  d({0,1,2}, {0,1}) · d({0,1}, {0}) + d({0,1,2}, {0,2}) · d({0,2}, {0})
+= 1 · (-1) + (-1) · 1 = -2
+
+Hmm — that's not zero! Wait, let me recompute. `d({0, 2}, {0})`:
+removing `2`, position of `2` in sorted `{0, 2}` is `1`, so
+`d = (-1)^1 = -1`. So:
+
+  1 · (-1) + (-1) · (-1) = -1 + 1 = 0 ✓
+
+The sign cancellation is correct. Verifying via `decide`:
+-/
+example : dSquared ({0, 1, 2} : Simplex (Fin 3)) {0} = 0 := by native_decide
+
+/-- **`(d²)({0,1,2}, {1}) = 0`** by the same mechanism. -/
+example : dSquared ({0, 1, 2} : Simplex (Fin 3)) {1} = 0 := by native_decide
+
+/-- **`(d²)({0,1,2}, {2}) = 0`**. -/
+example : dSquared ({0, 1, 2} : Simplex (Fin 3)) {2} = 0 := by native_decide
+
 end Examples
 end Knill
 end InfraFormalization
