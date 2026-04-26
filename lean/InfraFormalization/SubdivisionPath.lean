@@ -140,6 +140,74 @@ theorem subdVerts_succ (n : ℕ) :
     subdVerts (n+1) = subdivideVerts (subdVerts n) (listMax (subdVerts n) + 1) :=
   rfl
 
+/-! ## listMax helpers -/
+
+/-- Every element of a `ℕ` list is at most `listMax`. -/
+theorem mem_le_listMax (vs : List ℕ) {x : ℕ} (hx : x ∈ vs) : x ≤ listMax vs := by
+  induction vs with
+  | nil => simp at hx
+  | cons v rest ih =>
+    rcases List.mem_cons.mp hx with hxv | hx_rest
+    · subst hxv
+      exact Nat.le_max_left x (listMax rest)
+    · exact (ih hx_rest).trans (Nat.le_max_right v (listMax rest))
+
+/-- Tail-listMax bound: `listMax rest ≤ listMax (v :: rest)`. -/
+theorem listMax_le_cons (v : ℕ) (rest : List ℕ) :
+    listMax rest ≤ listMax (v :: rest) := Nat.le_max_right v (listMax rest)
+
+/-! ## Membership and Nodup for `subdivideVerts` (#280, #281) -/
+
+/-- **Element classification** (#280): every entry of `subdivideVerts vs b`
+is either an original vertex of `vs` or a fresh midpoint `≥ b`. -/
+theorem mem_subdivideVerts_imp : ∀ (vs : List ℕ) (b : ℕ) {x : ℕ},
+    x ∈ subdivideVerts vs b → x ∈ vs ∨ b ≤ x
+  | [], b, x, hx => by simp [subdivideVerts] at hx
+  | [v], b, x, hx => by
+      rw [subdivideVerts_singleton] at hx
+      rcases List.mem_singleton.mp hx with rfl
+      exact Or.inl List.mem_cons_self
+  | v :: w :: rest', b, x, hx => by
+      rw [subdivideVerts_cons_cons] at hx
+      simp only [List.mem_cons] at hx
+      rcases hx with rfl | rfl | hx_rest
+      · exact Or.inl List.mem_cons_self
+      · exact Or.inr (Nat.le_refl _)
+      · rcases mem_subdivideVerts_imp (w :: rest') (b + 1) hx_rest with hin_rest | hb1
+        · exact Or.inl (List.mem_cons_of_mem _ hin_rest)
+        · exact Or.inr (by omega)
+
+/-- **Nodup preservation** (#281): if `vs.Nodup` and `b > listMax vs`,
+then `(subdivideVerts vs b).Nodup`. The freshness condition `b > listMax vs`
+guarantees the inserted midpoints don't collide with any vs entries; the
+midpoints are themselves consecutive, so distinct. -/
+theorem subdivideVerts_nodup : ∀ (vs : List ℕ) (b : ℕ),
+    vs.Nodup → listMax vs < b → (subdivideVerts vs b).Nodup
+  | [], b, _, _ => by simp [subdivideVerts]
+  | [v], b, _, _ => by simp [subdivideVerts]
+  | v :: w :: rest', b, h_nodup, h_fresh => by
+      rw [subdivideVerts_cons_cons]
+      have h_v_le : v ≤ listMax (v :: w :: rest') :=
+        mem_le_listMax _ List.mem_cons_self
+      have h_inner_max : listMax (w :: rest') ≤ listMax (v :: w :: rest') :=
+        listMax_le_cons _ _
+      have h_listmax_inner : listMax (w :: rest') < b + 1 := by omega
+      have h_nodup_tail : (w :: rest').Nodup := h_nodup.of_cons
+      have ih' := subdivideVerts_nodup (w :: rest') (b + 1) h_nodup_tail h_listmax_inner
+      refine List.nodup_cons.mpr ⟨?_, ?_⟩
+      · intro hv
+        rcases List.mem_cons.mp hv with hvb | hin
+        · omega
+        · rcases mem_subdivideVerts_imp _ _ hin with hv_in_rest | hv_ge
+          · exact (List.nodup_cons.mp h_nodup).1 hv_in_rest
+          · omega
+      · refine List.nodup_cons.mpr ⟨?_, ih'⟩
+        intro hb_in
+        rcases mem_subdivideVerts_imp _ _ hb_in with hb_rest | hb_ge
+        · have h_b_le : b ≤ listMax (w :: rest') := mem_le_listMax _ hb_rest
+          omega
+        · omega
+
 /-! ## Vertex-count theorem (closed form, proved by induction) -/
 
 /-- `subdVerts n` always has length ≥ 2. -/
@@ -149,6 +217,36 @@ theorem subdVerts_length_ge_two (n : ℕ) : 2 ≤ (subdVerts n).length := by
   | succ n ih =>
     rw [subdVerts_succ, subdivideVerts_length _ (by omega)]
     omega
+
+/-- **`subdVerts n` is `Nodup` for every `n`** (#282): induct on `n`,
+applying #281 with `b := listMax (subdVerts n) + 1` (always strictly
+greater than `listMax`, so freshness condition holds). -/
+theorem subdVerts_nodup (n : ℕ) : (subdVerts n).Nodup := by
+  induction n with
+  | zero => decide
+  | succ n ih =>
+    rw [subdVerts_succ]
+    exact subdivideVerts_nodup _ _ ih (by omega)
+
+/-! ## `listMax` LE characterization (consumed by #283 below) -/
+
+/-- **`listMax`-LE characterization**: `listMax vs ≤ M ↔ ∀ x ∈ vs, x ≤ M`. -/
+theorem listMax_le_iff (vs : List ℕ) (M : ℕ) :
+    listMax vs ≤ M ↔ ∀ x ∈ vs, x ≤ M := by
+  induction vs with
+  | nil => simp [listMax]
+  | cons v rest ih =>
+    simp only [listMax_cons, Nat.max_le, ih, List.mem_cons, forall_eq_or_imp]
+
+/-- **`listMax` invariant under same-membership**: two lists with
+identical membership predicates have the same `listMax`. -/
+theorem listMax_eq_of_mem_iff (l₁ l₂ : List ℕ) (h : ∀ x, x ∈ l₁ ↔ x ∈ l₂) :
+    listMax l₁ = listMax l₂ := by
+  apply Nat.le_antisymm
+  · rw [listMax_le_iff]; intro x hx
+    exact mem_le_listMax l₂ ((h x).mp hx)
+  · rw [listMax_le_iff]; intro x hx
+    exact mem_le_listMax l₁ ((h x).mpr hx)
 
 /-- `subdVerts n` has exactly `2^n + 1` vertices. -/
 theorem subdVerts_length (n : ℕ) :
@@ -212,6 +310,21 @@ theorem mem_pathEdges_flatMap (vs : List ℕ) (h : 2 ≤ vs.length) (x : ℕ) :
         have ih' := ih h_inner
         simp only [List.mem_cons, ih']
         tauto
+
+/-- **`nextFresh` of a path equals `listMax + 1`** (#283): bridges the
+engine's fresh-vertex allocation (`(vertexList H).foldr max 0 + 1`) to
+the path's natural midpoint counter (`listMax vs + 1`). The argument
+is membership-invariance of `listMax`: every vertex in `vertexList`
+is in `vs` and vice-versa, so the maxes match. -/
+theorem nextFresh_pathEdges (vs : List ℕ) (h : 2 ≤ vs.length) :
+    nextFresh (pathEdges vs) = listMax vs + 1 := by
+  show (vertexList (pathEdges vs)).foldr Nat.max 0 + 1 = listMax vs + 1
+  congr 1
+  apply listMax_eq_of_mem_iff
+  intro x
+  show x ∈ ((pathEdges vs).flatMap (·.verts)).dedup ↔ x ∈ vs
+  rw [List.mem_dedup]
+  exact mem_pathEdges_flatMap vs h x
 
 /-! ## Edge-count theorem for `singleWayEvolve`
 
