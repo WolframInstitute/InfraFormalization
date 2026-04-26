@@ -4,6 +4,14 @@ Lives next to [`README.md`](README.md) / [`INDEX.md`](INDEX.md) / [`FINDINGS.md`
 
 ## Recently shipped (selected highlights)
 
+- **`d ∘ d = 0` cochain-complex axiom CLOSED (2026-04-26 — late)** — `KnillCore.dSquared_eq_zero` now proves the full identity `(d²)(x, z) = ∑_{y ⊆ x} d(x, y) · d(y, z) = 0` for all simplices `x, z` on `[LinearOrder V]`. Five new public theorems beyond #275/#276 already shipped:
+  - **#278 `Finset.sort_erase`**: `(s.erase w).sort r = (s.sort r).erase w`. Both sides sorted with same multiset (`s.val.erase w`); closed via `List.Perm.eq_of_pairwise'`.
+  - **#279 `List.idxOf_erase_of_idxOf_lt/gt`**: erase-aware `idxOf` shift formulas — when `u`'s position is below `w`'s, erase preserves it; when above, erase shifts it down by 1. Inductive proofs over the list with explicit `BEq` head-case splits and `beq_eq_false_iff_ne` to dodge the `Decidable`-motive obstruction.
+  - **#277 `dSquared_eq_sum_diff`**: powerset-sum reduces to `(x \ z).sum (fun w => d(x, x.erase w) · d(x.erase w, z))` via `Finset.sum_image` (injectivity of `w ↦ x.erase w` on `x \ z`) + `Finset.sum_subset` (other powerset elements vanish by #276).
+  - **#277 `dSquared_eq_zero`**: full theorem. Trivial cases `_of_card_ne` / `_of_not_subset` discharge first; main case uses `card_eq_two` to write `x \ z = {a, b}`, computes `incidence_erase` + `missingVertex_eq_of_sdiff_eq_singleton` (giving `missingVertex (x.erase a) z = b` and dually), reduces sort-of-erase to erase-of-sort via #278, applies #279 with `lt_or_gt_of_ne` to get the index-shift identities (`L.erase a` shifts b's idx down by 1 when i < j), then closes by `ring` on `(-1)^i · (-1)^p + (-1)^(p+1) · (-1)^i = 0`.
+  - General witness in `KnillExamples.lean`: `example (x z : Simplex (Fin 3)) : dSquared x z = 0 := dSquared_eq_zero x z`. Original `native_decide` witnesses on the triangle preserved.
+  - **Foundation for KN14** (McKean-Singer supersymmetry: `H = D²` decomposes via `D = d + d*`, and `d² = 0` separates exact / co-exact components), **KN15** (Atiyah-Singer/Atiyah-Bott analog), **KN16** (Cartan magic formula `L_X = i_X d + d i_X`), **KN18** (Brouwer-Lefschetz). All axiom-clean.
+
 - **Knill quantum-calculus stack stood up (2026-04-26)** — `KnillCore.lean` lands the first major slice of the IGE1 / KN-track:
   - **Combinatorial primitives**: simplex / complex types, dimension, f-vector, `simplexWeight`, Euler / Fermi characteristic with insert recursions, star / core / unit sphere, complex closure + `IsClosed` + idempotency, vertex extraction, Wu characteristic m=1 + m=2.
   - **Codim-1 face infrastructure**: `isFace`, `isFace_erase`, `isFace_diff_card`, `isFace_exists_diff_vertex` (incidence prerequisite).

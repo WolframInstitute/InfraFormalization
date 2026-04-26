@@ -8,12 +8,15 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 
 ## Headline (2026-04-26 — late)
 
-**`d ∘ d = 0` two-of-three landed.** Continuing the Knill spectral-track push, two of the three sub-theorems for the cochain-complex axiom now closed in `KnillCore.lean`:
+**`d ∘ d = 0` complete.** The cochain-complex axiom `d ∘ d = 0` for the signed boundary on oriented simplices is closed in full generality as `KnillCore.dSquared_eq_zero`. Three trivial cases plus the main sign-cancellation case all proved, axiom-clean. Architecture:
 
-- **#275 Approach A — `missingVertex` refactor**: pulls the missing-vertex extraction out of `incidence`'s `dif_pos` body. Adds `missingVertex {x y} (h : isFace x y) : V`, `missingVertex_mem_sdiff`, `missingVertex_eq_of_sdiff_eq_singleton`, `missingVertex_erase`. With this, `incidence_erase` becomes a one-liner via `simp`. Overcomes the structural obstacle where nested `let`/`have` proof terms inside `dif_pos` resisted `congr`/`rewrite` motives. Computability + `KnillExamples` `native_decide` baseline preserved.
-- **#276 summand characterization**: `dSquared_summand_zero_unless` — for `z ⊆ x` and `y ⊆ x` with non-zero `incidence x y · incidence y z`, `y = x.erase v` for some `v ∈ x \ z`. Pins down the contributing summands as exactly the codim-1 faces of `x` containing `z`.
+- **#275 Approach A — `missingVertex` refactor**: pulls the missing-vertex extraction out of `incidence`'s `dif_pos` body. Adds `missingVertex {x y} (h : isFace x y) : V`, `missingVertex_mem_sdiff`, `missingVertex_eq_of_sdiff_eq_singleton`, `missingVertex_erase`. With this, `incidence_erase` becomes a one-liner via `simp`. Overcomes the structural obstacle where nested `let`/`have` proof terms inside `dif_pos` resisted `congr`/`rewrite` motives.
+- **#276 summand characterization**: `dSquared_summand_zero_unless` — for `z ⊆ x` and `y ⊆ x` with non-zero `incidence x y · incidence y z`, `y = x.erase v` for some `v ∈ x \ z`.
+- **#278 sort/erase commutation**: `Finset.sort_erase` — `(s.erase w).sort r = (s.sort r).erase w`, via `Perm.eq_of_pairwise'` with both sides sorted and same multiset.
+- **#279 position-arithmetic helpers**: `List.idxOf_erase_of_idxOf_lt`, `List.idxOf_erase_of_idxOf_gt` — erase-aware `idxOf` shift formulas (smaller index unchanged, larger index shifts down by 1). Inductive proofs over the list with `BEq` head-case splits.
+- **#277 sum-restriction + sign-cancellation main case**: `dSquared_eq_sum_diff` reduces the powerset sum to a sum over `(x \ z)` via `sum_image` + `sum_subset`, then for `x \ z = {a, b}` the two-element sum `(-1)^i · (-1)^idx_{(sort x).erase a}(b) + (-1)^j · (-1)^idx_{(sort x).erase b}(a)` cancels by `(-1)^i · (-1)^p + (-1)^(p+1) · (-1)^i = 0` via `ring`.
 
-Combined with the trivial sides (`_of_card_ne` for cardinality mismatch, `_of_not_subset` for `z ⊄ x`) already proved, only the **sign-cancellation main case (#277)** remains — the two contributions from `y₁ = x.erase a, y₂ = x.erase b` for `{a, b} = x \ z` cancel. Path chosen: **D-fallback via `Equiv.Perm.sign`** — refactor `incidence` to compute the boundary sign as a permutation sign, picking up Mathlib's `sign_mul`/`sign_swap` cancellation theory and aligned infrastructure for downstream KN15 (Atiyah-Singer), KN16 (Cartan), KN18 (Brouwer-Lefschetz).
+Foundation now in place for KN14 McKean-Singer (decomposition of `H = D²` via `D = d + d*`), KN15 Atiyah-Singer/Atiyah-Bott analog, KN16 Cartan magic formula, KN18 Brouwer-Lefschetz. Verified on concrete data via `KnillExamples` (general `dSquared x z = 0` for `Fin 3` simplices, plus the original `native_decide` witnesses).
 
 ## Headline (2026-04-26)
 
