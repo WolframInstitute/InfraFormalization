@@ -4,6 +4,18 @@ Lives next to [`README.md`](README.md) / [`INDEX.md`](INDEX.md) / [`FINDINGS.md`
 
 ## Recently shipped (selected highlights)
 
+- **Knill quantum-calculus stack stood up (2026-04-26)** — `KnillCore.lean` lands the first major slice of the IGE1 / KN-track:
+  - **Combinatorial primitives**: simplex / complex types, dimension, f-vector, `simplexWeight`, Euler / Fermi characteristic with insert recursions, star / core / unit sphere, complex closure + `IsClosed` + idempotency, vertex extraction, Wu characteristic m=1 + m=2.
+  - **Codim-1 face infrastructure**: `isFace`, `isFace_erase`, `isFace_diff_card`, `isFace_exists_diff_vertex` (incidence prerequisite).
+  - **Matrix layer (sign-free)**: connection matrix `L(x,y) := χ(core(x) ∩ core(y))` (#270), Green function `g(x,y) := ω(x)·ω(y)·χ(star(x) ∩ star(y))` (#271) with `simplexWeight_sq` (`ω² = 1`) and simplified diagonal `g(x,x) = χ(star(x))`.
+  - **Spectral entry point**: super-trace `Str[X] := ∑ ω(x)·X(x,x)` with `superTrace_diag_one = χ(G)` (#273 partial).
+  - **Signed boundary (`[LinearOrder V]`)**: `incidence x y := (-1)^i if y = x \ {vᵢ}` else 0 (#269), with `incidence_self = 0` and `incidence_sq` (squared entry is 1 iff codim-1 face).
+  - **Dirac + Hodge**: `dirac x y := incidence x y + incidence y x` (= D, self-adjoint via `dirac_symm`); `hodgeOnG G x y := ∑_z dirac x z · dirac z y` (= D², self-adjoint via `hodgeOnG_symm`) (#272). **Foundation for KN1, KN3, KN4, KN8, KN14, KN15, KN18, KN19**.
+  - **Worked-example sanity checks** in `KnillExamples.lean`: vertex, edge, triangle, triangle-boundary on `Fin 3`; `decide`-proves `χ(triangle) = 1`, `χ(triangleBoundary) = 0` (= S¹), connection-matrix entries on the triangle, super-trace identities. Verifies Mathematica/Lean semantics agreement.
+  - All axiom-clean. Source-of-truth catalogue: `resources/Infrageometry/QuantumCalculus.md`.
+
+- **#232 Phase 1 closed (2026-04-26)** — `subdivideAll = pathEdges ∘ subdivideVerts` math identity proved in `SubdivisionPath.lean`, axiom-clean (just `propext`). Plus five `decide`-proven witnesses of the full closed form `singleWayEvolve subdivisionSys subdSeed n = pathEdges (subdVerts n)` at `n = 0..4`. Phase 2 simulation lemma (engine-side) staged at `notes/232_subdivision_path_plan.md` with Route C fallback authorized.
+
 - **Grounding-audit closure (2026-04-23)**: **all four action items closed**. Every continuum GR object now carries an attached hypergraph-side origin-obligation Prop, with provably-inhabited witnesses for the flat cases.
   - `HypergraphMetricBridges.lean` + `RuleWitnesses.lean` (G2) — every metric in the zoo has a `HypergraphMetricOriginObligation` / `HypergraphPartialMetricOriginObligation` Prop; all **proved inhabited** using `identitySystem Unit` + `cycleHypergraph` + `emptyTrajectory` (the identity rule is load-bearing in each proof).
   - `CausalLorentzianBridge.lean` (G3) — `LorentzianManifoldOriginObligation` binds `CausalGraph V` + scale; witnessed via `trivialCausalGraph`.
