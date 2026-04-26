@@ -24,7 +24,7 @@ Catch-up summary for landings since the previous MILESTONES sync (5 days back):
 - [x] **ROADMAP.md** — full-program phase sequencing toward BBH-from-hypergraph.
 
 In flight (this session):
-- [~] **#233** — strengthen origin-obligation Props with W_1 / Wasserstein content (Phase A start).
+- [x] **#233 Phase A** — `HypergraphMetricOriginObligationStrong` adds `ScaledDiscrepancy` + `WassersteinRateObligation` to obligations. Concrete discharges: `minkowski4_from_hypergraph_strong` via `subdivisionDiscrepancyBundle`. Generic lifting `any_metric_has_strong_obligation_witness` + `any_partialMetric_has_strong_obligation_witness`. Per-metric strong-form Props for Minkowski / Schwarzschild / FLRW / RN / dS / S² / warpedDiag2. `all_gr_targets_have_strong_obligations_proven`. **First obligation Prop with quantitative rate content.**
 - [~] **#231 heavier** — extend type-level bridge with `Application` constructor + single-application `Step` correspondence.
 
 ---

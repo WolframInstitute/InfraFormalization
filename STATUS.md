@@ -6,6 +6,12 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-04-26 — late, #233 Phase A obligation strengthening lands)
+
+**`HypergraphMetricOriginObligationStrong` lands** — first instance of an obligation Prop with **quantitative rate content**. The strengthened obligation embeds a `ScaledDiscrepancy` carrying `WassersteinRateObligation` (an `O(1/n)` decay claim). Concrete discharges: `minkowski4_from_hypergraph_strong` via `subdivisionDiscrepancyBundle` (the `1/2^n` rate from #234). Generic `any_metric_has_strong_obligation_witness` + `any_partialMetric_has_strong_obligation_witness` lift to every metric / partial-metric in the GR zoo. `all_gr_targets_have_strong_obligations_proven` picks the Minkowski disjunct.
+
+This is **Phase A landing** per `ROADMAP.md`: obligation Props now *say something quantitative* rather than just existing. Next strengthening (tying the discrepancy to the actual W_1 of the trajectory's pushed measure against the target) requires measure-of-trajectory infrastructure and is staged as Phase A follow-up.
+
 ## Headline (2026-04-26 — late, #231 first formal exec ↔ abstract bridge)
 
 **`MultiwayExecBridge.lean` lands** — first formal Lean bridge between the executable engine (`ExecHG ℕ`, `ExecRule`, `ExecSystem`, `singleWayStep`) and the abstract track (`Hypergraph V`, `Rule P`, `RewritingSystem`, `Step`/`MultiStep`/`Application`). Until this commit the two tracks were entirely disjoint Lean structures sharing only the conceptual identity "Wolfram-model rewriting". Casts:

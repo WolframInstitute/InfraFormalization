@@ -11,6 +11,7 @@ Recent landings affecting the bridge ladder:
 - **Canonical subdivision trajectory** (#284, Route D) — `pathEdges (subdVerts n)` defined directly, decoupled from the engine. Affects **Rung 10** (specific bridges): provides the first end-to-end rule → continuum-target convergence certificate.
 - **Exec ↔ abstract bridge** (`MultiwayExecBridge.lean`, #231) — `ExecRule.toRule`, `Fin.embedSuffix`, single-rule `ExecSystem` cast. First formal correspondence between the executable `MultiwayExec` and abstract `Step`/`MultiStep`. Closes the architectural gap noted in the anchoring audit (#235).
 - **Wu inclusion-exclusion + Euler-Poincaré** (KN3 / KN8) — `wuCharacteristic₂_eq_chi_sq_sub_disjoint` and `eulerCharacteristic_eq_alt_sum_kSkeleton`. Build the Knill spectral track on the d²=0 foundation.
+- **#233 Phase A — strengthened obligations** (`HypergraphMetricOriginObligationStrong`) — embeds a `ScaledDiscrepancy + WassersteinRateObligation` into the existential, giving obligations quantitative rate content. Concrete discharge `minkowski4_from_hypergraph_strong` via `subdivisionDiscrepancyBundle`; lifting to every GR-zoo metric via generic witness theorems. Affects **Rung 10** (specific bridges): the obligation Props are no longer purely existential at statement level.
 
 See [`ROADMAP.md`](ROADMAP.md) for full-program sequencing toward the BBH-from-hypergraph end-state (Phase A → B → C → D).
 

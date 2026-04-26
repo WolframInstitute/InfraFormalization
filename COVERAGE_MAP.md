@@ -14,7 +14,7 @@ Legend: ✅ proved, axiom-clean. 🟡 partial. 🔲 open. 🚫 uninhabited forma
 - ✅ **`KnillCore.wuCharacteristic₂_eq_chi_sq_sub_disjoint` (KN3)** — Wu inclusion-exclusion identity.
 - ✅ **`KnillCore.eulerCharacteristic_eq_alt_sum_kSkeleton` + `_fintype` corollary (KN8)** — Euler-Poincaré f-vector identity.
 - ✅ **#280–#283** — structural helpers `mem_subdivideVerts_imp`, `subdivideVerts_nodup`, `subdVerts_nodup`, `nextFresh_pathEdges`.
-- 🟡 **#233** — strengthen origin-obligation Props with W_1 content (Phase A in flight).
+- ✅ **#233 Phase A** — `HypergraphMetricOriginObligationStrong` lands with `ScaledDiscrepancy + WassersteinRateObligation`; concrete discharge `minkowski4_from_hypergraph_strong` via `subdivisionDiscrepancyBundle`; generic lifting + per-metric Props (Schwarzschild / FLRW / RN / dS / S² / warpedDiag2). First obligation Prop with quantitative rate content.
 
 ## 1. Core rewriting substrate
 
