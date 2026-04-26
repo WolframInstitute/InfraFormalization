@@ -6,6 +6,15 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-04-26 — late)
+
+**`d ∘ d = 0` two-of-three landed.** Continuing the Knill spectral-track push, two of the three sub-theorems for the cochain-complex axiom now closed in `KnillCore.lean`:
+
+- **#275 Approach A — `missingVertex` refactor**: pulls the missing-vertex extraction out of `incidence`'s `dif_pos` body. Adds `missingVertex {x y} (h : isFace x y) : V`, `missingVertex_mem_sdiff`, `missingVertex_eq_of_sdiff_eq_singleton`, `missingVertex_erase`. With this, `incidence_erase` becomes a one-liner via `simp`. Overcomes the structural obstacle where nested `let`/`have` proof terms inside `dif_pos` resisted `congr`/`rewrite` motives. Computability + `KnillExamples` `native_decide` baseline preserved.
+- **#276 summand characterization**: `dSquared_summand_zero_unless` — for `z ⊆ x` and `y ⊆ x` with non-zero `incidence x y · incidence y z`, `y = x.erase v` for some `v ∈ x \ z`. Pins down the contributing summands as exactly the codim-1 faces of `x` containing `z`.
+
+Combined with the trivial sides (`_of_card_ne` for cardinality mismatch, `_of_not_subset` for `z ⊄ x`) already proved, only the **sign-cancellation main case (#277)** remains — the two contributions from `y₁ = x.erase a, y₂ = x.erase b` for `{a, b} = x \ z` cancel. Path chosen: **D-fallback via `Equiv.Perm.sign`** — refactor `incidence` to compute the boundary sign as a permutation sign, picking up Mathlib's `sign_mul`/`sign_swap` cancellation theory and aligned infrastructure for downstream KN15 (Atiyah-Singer), KN16 (Cartan), KN18 (Brouwer-Lefschetz).
+
 ## Headline (2026-04-26)
 
 **Oliver Knill quantum-calculus track stood up + edge-subdivision rule's math side closed.** Two major streams landed since 2026-04-24:
