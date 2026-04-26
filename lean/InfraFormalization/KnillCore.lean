@@ -140,6 +140,93 @@ theorem eulerCharacteristic_insert {G : SimplexSet V} {s : Simplex V}
     eulerCharacteristic (insert s G) = simplexWeight s + eulerCharacteristic G := by
   simp [eulerCharacteristic, Finset.sum_insert h]
 
+/-- **Empty-simplex weight**: `ω(∅) = -1`. (Knill's convention; the
+empty set has cardinality 0, so `ω(∅) = -(-1)^0 = -1`.) -/
+@[simp] theorem simplexWeight_empty :
+    simplexWeight (∅ : Simplex V) = -1 := by
+  simp [simplexWeight]
+
+/-- **Weight of a `(k+1)`-cardinality simplex** (KN-style indexing):
+for `σ.card = k + 1`, `ω(σ) = (-1)^k`. The convention `k = σ.card - 1`
+is the dimension (vertex = dim 0, edge = dim 1, etc.). -/
+theorem simplexWeight_eq_neg_one_pow_dim {σ : Simplex V} {k : ℕ} (h : σ.card = k + 1) :
+    simplexWeight σ = (-1)^k := by
+  unfold simplexWeight
+  rw [h, pow_succ]
+  ring
+
+/-! ## f-vector / Euler-Poincaré identity (KN8 / KN3 entry) -/
+
+/-- **f-vector partition**: `G` decomposes into the disjoint union of its
+`k`-skeletons `kSkeleton G k` (cardinality-`k+1` slices). When `∅ ∉ G`,
+every simplex `σ ∈ G` has `σ.card ≥ 1`, so it lies in `kSkeleton G (σ.card - 1)`. -/
+def kSkeleton (G : SimplexSet V) (k : ℕ) : SimplexSet V :=
+  G.filter (fun s => s.card = k + 1)
+
+@[simp] theorem mem_kSkeleton (G : SimplexSet V) (k : ℕ) (σ : Simplex V) :
+    σ ∈ kSkeleton G k ↔ σ ∈ G ∧ σ.card = k + 1 := by
+  unfold kSkeleton
+  simp [Finset.mem_filter]
+
+theorem kSkeleton_subset (G : SimplexSet V) (k : ℕ) :
+    kSkeleton G k ⊆ G := Finset.filter_subset _ _
+
+/-- **f-vector via `kSkeleton`**: `simplexCardinality G k = (kSkeleton G k).card`.
+Both count `k`-dimensional simplices (those with cardinality `k + 1`). -/
+theorem simplexCardinality_eq_kSkeleton_card (G : SimplexSet V) (k : ℕ) :
+    simplexCardinality G k = (kSkeleton G k).card := rfl
+
+/-- **Euler-Poincaré identity** (KN8 / f-vector form): for a complex `G`
+with no empty simplex, `χ(G) = ∑_{k < N} (-1)^k · |kSkeleton G k|` where
+`N` is any cardinality bound. The integer sign `(-1)^k` matches
+`simplexWeight` for `k`-skeletons (vertex = dim 0, edge = dim 1, …). -/
+theorem eulerCharacteristic_eq_alt_sum_kSkeleton
+    (G : SimplexSet V) (h_no_empty : ∅ ∉ G) (N : ℕ)
+    (h_bound : ∀ σ ∈ G, σ.card < N + 1) :
+    eulerCharacteristic G =
+      (Finset.range N).sum (fun k => (-1 : ℤ)^k * ((kSkeleton G k).card : ℤ)) := by
+  -- Step A: G partitions as biUnion of its kSkeletons (for k < N).
+  have h_partition : G = (Finset.range N).biUnion (kSkeleton G) := by
+    apply Finset.Subset.antisymm
+    · intros σ hσ
+      rw [Finset.mem_biUnion]
+      have h_card_pos : σ.card ≥ 1 := by
+        rcases Nat.eq_zero_or_pos σ.card with h0 | hpos
+        · exact absurd (Finset.card_eq_zero.mp h0 ▸ hσ) h_no_empty
+        · exact hpos
+      refine ⟨σ.card - 1, ?_, ?_⟩
+      · rw [Finset.mem_range]
+        have := h_bound σ hσ
+        omega
+      · rw [mem_kSkeleton]
+        refine ⟨hσ, ?_⟩
+        omega
+    · intros σ hσ
+      rw [Finset.mem_biUnion] at hσ
+      obtain ⟨k, _, hσ_in⟩ := hσ
+      exact ((mem_kSkeleton G k σ).mp hσ_in).1
+  -- Step B: kSkeletons are pairwise disjoint, so sum_biUnion applies.
+  have h_disj : Set.PairwiseDisjoint (↑(Finset.range N)) (kSkeleton G) := by
+    intros i _ j _ hij
+    rw [Function.onFun, Finset.disjoint_left]
+    intros σ h_i h_j
+    rw [mem_kSkeleton] at h_i h_j
+    have : i + 1 = j + 1 := h_i.2 ▸ h_j.2
+    exact hij (by omega)
+  -- Now expand and conclude.
+  unfold eulerCharacteristic
+  conv_lhs => rw [h_partition]
+  rw [Finset.sum_biUnion h_disj]
+  apply Finset.sum_congr rfl
+  intros k _
+  rw [show (kSkeleton G k).sum simplexWeight
+        = (kSkeleton G k).sum (fun _ => (-1 : ℤ)^k) from by
+      apply Finset.sum_congr rfl
+      intros σ hσ
+      have h_card : σ.card = k + 1 := ((mem_kSkeleton G k σ).mp hσ).2
+      exact simplexWeight_eq_neg_one_pow_dim h_card]
+  rw [Finset.sum_const, nsmul_eq_mul, mul_comm]
+
 /-- **Fermi characteristic** `Fermi(G) = ∏_{x ∈ G} ω(x)`. -/
 def fermiCharacteristic (G : SimplexSet V) : ℤ :=
   G.prod simplexWeight
