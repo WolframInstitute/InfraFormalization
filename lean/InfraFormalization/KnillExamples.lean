@@ -116,6 +116,20 @@ example : superTrace edge (fun _ _ => 1) = eulerCharacteristic edge := by
 /-- **`wuCharacteristic₁ triangle = χ(triangle) = 1`**. -/
 example : wuCharacteristic₁ triangle = 1 := by decide
 
+/-- **`wuCharacteristic₂ vertex = 1`** — single simplex contributes `ω({0})² = 1`. -/
+example : wuCharacteristic₂ vertex = 1 := by decide
+
+/-- **`wuCharacteristic₂ edge = -1`** — matches `fermiCharacteristic edge` here. -/
+example : wuCharacteristic₂ edge = -1 := by decide
+
+/-- **`wuCharacteristic₂ triangle = 1 = χ(triangle)`** — Wu m=2 agrees with
+Euler on the contractible 2-simplex closure. -/
+example : wuCharacteristic₂ triangle = 1 := by decide
+
+/-- **`wuCharacteristic₂ triangleBoundary = 0 = χ(S¹)`** — Wu m=2 agrees with
+Euler on the circle. -/
+example : wuCharacteristic₂ triangleBoundary = 0 := by decide
+
 /-! ## Incidence operator d (signed boundary)
 
 Sanity checks using `[LinearOrder (Fin 3)]` (the canonical order).

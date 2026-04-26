@@ -274,6 +274,28 @@ theorem wuCharacteristic₂_singleton (s : Simplex V) (hs : s.Nonempty) :
   rw [h_filt]
   simp
 
+/-- **Wu inclusion-exclusion** (#239 / KN3): `wu₂(G) = χ(G)² - ∑_{x ∩ y = ∅} ω(x)·ω(y)`,
+where the disjoint-pair sum ranges over `(x, y) ∈ G × G` with `x ∩ y = ∅`.
+Splits the full Cartesian-product sum `(∑_{(x,y) ∈ G×G} ω(x)·ω(y)) = χ²(G)`
+into the intersecting-pair part (= `wu₂`) and the disjoint-pair complement. -/
+theorem wuCharacteristic₂_eq_chi_sq_sub_disjoint (G : SimplexSet V) :
+    wuCharacteristic₂ G = (eulerCharacteristic G)^2 -
+      ((G.product G).filter (fun p => ¬ (p.1 ∩ p.2).Nonempty)).sum
+        (fun p => simplexWeight p.1 * simplexWeight p.2) := by
+  -- χ(G)² = (∑_x ω(x))² = ∑_{(x,y) ∈ G×G} ω(x) · ω(y)
+  have h_sq : (eulerCharacteristic G)^2 =
+      (G.product G).sum (fun p => simplexWeight p.1 * simplexWeight p.2) := by
+    unfold eulerCharacteristic
+    rw [sq, Finset.sum_mul_sum, Finset.product_eq_sprod, ← Finset.sum_product']
+  rw [h_sq]
+  -- Now: wu₂ G = (full sum) - (disjoint-pair sum)
+  -- ↔ (full sum) = (intersecting sum) + (disjoint sum) = wu₂ G + (disjoint sum)
+  unfold wuCharacteristic₂
+  have h_split := Finset.sum_filter_add_sum_filter_not (G.product G)
+    (fun p : Simplex V × Simplex V => (p.1 ∩ p.2).Nonempty)
+    (fun p => simplexWeight p.1 * simplexWeight p.2)
+  linarith
+
 /-! ## Codim-1 face relation (incidence-matrix prerequisite)
 
 `isFace x y` holds when `y` is a codimension-1 face of `x`: a
