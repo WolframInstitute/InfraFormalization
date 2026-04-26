@@ -43,6 +43,9 @@ import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Finset.Max
 import Mathlib.Data.Finset.Sort
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+import Mathlib.Algebra.BigOperators.Group.Finset.Sigma
+import Mathlib.Algebra.BigOperators.Ring.Finset
+import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Tactic.Ring
 import Mathlib.Tactic.Linarith
 
@@ -651,6 +654,48 @@ theorem hodgeOnG_symm (G : SimplexSet V) (x y : Simplex V) :
   intros z _
   rw [dirac_symm x z, dirac_symm z y]
   ring
+
+/-- **Hodge double-sum decomposes as sum of squares**: for any function
+`f : Simplex V → ℤ`, the Dirichlet form `∑_{x,y ∈ G} f(x) · H(x,y) · f(y)`
+equals `∑_{z ∈ G} (∑_{x ∈ G} f(x) · dirac(x, z))²`. Direct from
+`H = D · D^T` (matrix product) and `dirac` symmetry. -/
+theorem hodgeOnG_double_sum_eq_sum_squares (G : SimplexSet V) (f : Simplex V → ℤ) :
+    G.sum (fun x => f x * G.sum (fun y => hodgeOnG G x y * f y))
+      = G.sum (fun z => (G.sum (fun x => f x * dirac x z))^2) := by
+    -- LHS triple sum: ∑_x f x · ∑_y H(x,y) · f y = ∑_x ∑_y ∑_z f x · D(x,z) · D(z,y) · f y
+    -- Swap to put z outermost, then refactor as (∑_x ...)·(∑_y ...) and use D symmetry.
+    calc G.sum (fun x => f x * G.sum (fun y => hodgeOnG G x y * f y))
+        = G.sum (fun x => G.sum (fun y => G.sum (fun z =>
+              f x * dirac x z * dirac z y * f y))) := by
+          apply Finset.sum_congr rfl; intros x _
+          rw [Finset.mul_sum]
+          apply Finset.sum_congr rfl; intros y _
+          unfold hodgeOnG
+          rw [Finset.sum_mul, Finset.mul_sum]
+          apply Finset.sum_congr rfl; intros z _
+          ring
+      _ = G.sum (fun x => G.sum (fun z => G.sum (fun y =>
+              f x * dirac x z * dirac z y * f y))) := by
+          apply Finset.sum_congr rfl; intros x _
+          exact Finset.sum_comm
+      _ = G.sum (fun z => G.sum (fun x => G.sum (fun y =>
+              f x * dirac x z * dirac z y * f y))) := Finset.sum_comm
+      _ = G.sum (fun z => (G.sum (fun x => f x * dirac x z))^2) := by
+          apply Finset.sum_congr rfl; intros z _
+          rw [sq, Finset.sum_mul_sum]
+          apply Finset.sum_congr rfl; intros x _
+          apply Finset.sum_congr rfl; intros y _
+          rw [dirac_symm z y]; ring
+
+/-- **Hodge is positive semi-definite** (`H ⪰ 0`): the Dirichlet form
+`∑_{x,y ∈ G} f(x) · H(x,y) · f(y) ≥ 0` for any `f : Simplex V → ℤ`.
+Direct corollary of the sum-of-squares decomposition. Foundational
+for the spectral theorem (eigenvalues of `H` are non-negative reals)
+and the Hodge isomorphism (kernel of `H` ≅ harmonic forms). -/
+theorem hodgeOnG_psd (G : SimplexSet V) (f : Simplex V → ℤ) :
+    0 ≤ G.sum (fun x => f x * G.sum (fun y => hodgeOnG G x y * f y)) := by
+  rw [hodgeOnG_double_sum_eq_sum_squares]
+  exact Finset.sum_nonneg (fun _ _ => sq_nonneg _)
 
 /-! ## d² = 0 — cochain-complex identity (#272 follow-up)
 
