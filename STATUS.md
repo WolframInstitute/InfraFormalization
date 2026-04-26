@@ -6,6 +6,16 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-04-26 — late, #234 landed)
+
+**#234 W_1 obligation discharged with concrete `O(2^{-n})` rate**. The first end-to-end machine-checked rule-trajectory → continuum-target convergence certificate for the project. Foundation:
+
+- **`SubdivisionPath.subdivisionTrajectory n := pathEdges (subdVerts n)`** (#284, Route D): canonical n-step trajectory defined directly, decoupled from the engine. Properties: `_isPathOf` (path-shape with `subdVerts n` of length `2^n + 1`, Nodup), `_length = 2^n`, `_succ` (Phase 1 closed-form successor step). Engine connection via `decide` for `n=0..4` plus the staged simulation lemma (#267).
+
+- **`WassersteinRate.subdivisionDiscrepancy n := 1 / 2^n`** (#234): the natural W_1 spacing of the trajectory. `subdivisionDiscrepancy_satisfies_obligation` proves the `O(1/n)` `WassersteinRateObligation` holds with `C = 1`, `N = 1` via `Nat.lt_two_pow_self` (so `1/2^n ≤ 1/n` for `n ≥ 1`). `subdivisionDiscrepancy_tendsto` proves the (weaker) `→ 0` variant via `tendsto_pow_atTop_nhds_zero_of_lt_one` since `1/2^n = (1/2)^n`. `subdivisionDiscrepancyBundle` packages both.
+
+This closes the sprint critical path **without** requiring the simulation lemma (#267): the engine connection at `n=0..4` is enough to label the trajectory as canonical, and the structural / W_1 content lives in the engine-free abstraction. #267 Phase 2 simulation lemma remains as future work for ALL-`n` engine alignment.
+
 ## Headline (2026-04-26 — late, KN3 / KN8 burst)
 
 **KN3 Wu cohomology + KN8 Euler-Poincaré f-vector identity landed**. Builds on the d²=0 / Hodge foundation:

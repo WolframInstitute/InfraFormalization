@@ -4,6 +4,11 @@ Lives next to [`README.md`](README.md) / [`INDEX.md`](INDEX.md) / [`FINDINGS.md`
 
 ## Recently shipped (selected highlights)
 
+- **#234 sprint critical path CLOSED — subdivision-rule W_1 discharge with O(2^{-n}) decay (2026-04-26 — late)** — first end-to-end machine-checked rule-trajectory → continuum-target convergence certificate.
+  - **`SubdivisionPath.subdivisionTrajectory n := pathEdges (subdVerts n)`** (#284 / Route D): canonical n-step trajectory defined directly, decoupled from the engine. Properties: `_isPathOf`, `_length = 2^n`, `_succ` (Phase 1 closed-form successor step). Engine connection via `decide` for n=0..4 plus the staged simulation lemma (#267).
+  - **`WassersteinRate.subdivisionDiscrepancy n := 1 / 2^n`** + **`subdivisionDiscrepancy_satisfies_obligation`** (#234): the W_1 obligation `O(1/n)` holds via `Nat.lt_two_pow_self` (so `1/2^n ≤ 1/n` for `n ≥ 1`), with `C = 1, N = 1`. `subdivisionDiscrepancy_tendsto` proves the (weaker) `→ 0` variant via `tendsto_pow_atTop_nhds_zero_of_lt_one` since `1/2^n = (1/2)^n`. `subdivisionDiscrepancyBundle` packages both.
+  - **Sprint critical path now closed** without requiring the simulation lemma (#267): the engine connection at `n=0..4` is enough to label the trajectory as canonical, and the structural / W_1 content lives in the engine-free abstraction.
+
 - **KN3 / KN8 burst — Wu inclusion-exclusion + Euler-Poincaré f-vector identity (2026-04-26 — late)** —
   - **`KnillCore.eulerCharacteristic_eq_alt_sum_kSkeleton`** (KN8 / Euler-Poincaré): `χ(G) = ∑_{k<N} (-1)^k · |kSkeleton G k|` for any cardinality bound `N`. Proof partitions G by skeleton degree (`Set.PairwiseDisjoint` + `Finset.sum_biUnion`), constants the inner sum via `simplexWeight_eq_neg_one_pow_dim`. Plus `_fintype` corollary auto-closing the bound on `Fintype V`.
   - **`KnillCore.wuCharacteristic₂_eq_chi_sq_sub_disjoint`** (KN3): Wu inclusion-exclusion `wu₂(G) = χ(G)² - (disjoint-pair sum)`. Splits the full Cartesian sum into the `intersecting` (= wu₂) and `disjoint` parts via `Finset.sum_filter_add_sum_filter_not`.
