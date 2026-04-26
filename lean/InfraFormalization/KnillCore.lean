@@ -42,6 +42,8 @@ import Mathlib.Data.Finset.Powerset
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Finset.Max
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+import Mathlib.Tactic.Ring
+import Mathlib.Tactic.Linarith
 
 namespace InfraFormalization
 namespace Knill
@@ -374,6 +376,72 @@ theorem sum_simplexWeight_connectionEntry_diag (G : SimplexSet V) :
   apply Finset.sum_congr rfl
   intros x _
   rw [connectionEntry_self]
+
+/-! ## Green function (#271)
+
+Knill's **Green function** matrix `g`, the matrix inverse of `L`:
+
+  `g(x, y) := ω(x) · ω(y) · χ(simplexStar G x ∩ simplexStar G y)`
+
+with `ω` the simplex weight `-(-1)^|x|`. Two key identities:
+  * `Inverse[L] = Transpose[g]` (matrix inverse of L is transpose of g)
+  * **Energy theorem**: `∑_{x, y} g(x, y) = χ(G)`
+
+Counterpart Mathematica: `GreenFunctionMatrix[G_]` /
+`g[G, T]` (dynamical version) in `Infrageometry.wl` /
+`QuantumCalculus.wl`. -/
+
+/-- **Green-function entry**:
+`g(x, y) := ω(x) · ω(y) · χ(star(x) ∩ star(y))`. Weighted Euler
+characteristic of the simplices that contain both `x` and `y`. -/
+def greenEntry (G : SimplexSet V) (x y : Simplex V) : ℤ :=
+  simplexWeight x * simplexWeight y *
+    eulerCharacteristic (simplexStar G x ∩ simplexStar G y)
+
+/-- **Symmetry**: `g(x, y) = g(y, x)`. -/
+theorem greenEntry_symm (G : SimplexSet V) (x y : Simplex V) :
+    greenEntry G x y = greenEntry G y x := by
+  unfold greenEntry
+  rw [Finset.inter_comm, mul_comm (simplexWeight x) (simplexWeight y)]
+
+/-- **Diagonal**: `g(x, x) = ω(x)² · χ(star(x))`. Note `ω(x)² = 1`
+for any simplex (since `ω(x) = ±1`), so this simplifies further:
+`g(x, x) = χ(star(x))`. We state the unsimplified form first. -/
+theorem greenEntry_self (G : SimplexSet V) (x : Simplex V) :
+    greenEntry G x x =
+      simplexWeight x * simplexWeight x *
+        eulerCharacteristic (simplexStar G x) := by
+  unfold greenEntry
+  rw [Finset.inter_self]
+
+/-- **Off-support vanishing**: when no simplex of `G` contains both
+`x` and `y` (no common super-simplex), `g(x, y) = 0`. -/
+theorem greenEntry_eq_zero_of_no_common_supersimplex
+    (G : SimplexSet V) (x y : Simplex V)
+    (h : ∀ s ∈ G, ¬ (x ⊆ s ∧ y ⊆ s)) :
+    greenEntry G x y = 0 := by
+  unfold greenEntry
+  have h_inter_empty : simplexStar G x ∩ simplexStar G y = ∅ := by
+    rw [Finset.eq_empty_iff_forall_notMem]
+    intro s hs
+    rw [Finset.mem_inter, mem_simplexStar, mem_simplexStar] at hs
+    obtain ⟨⟨hsG, hsx⟩, _, hsy⟩ := hs
+    exact h s hsG ⟨hsx, hsy⟩
+  rw [h_inter_empty, eulerCharacteristic_empty]
+  ring
+
+/-- **Weight squared identity**: `ω(x)² = 1` for any simplex. -/
+theorem simplexWeight_sq (s : Simplex V) :
+    simplexWeight s * simplexWeight s = 1 := by
+  unfold simplexWeight
+  rw [neg_mul_neg, ← pow_add]
+  rw [show s.card + s.card = 2 * s.card from by ring, pow_mul]
+  norm_num
+
+/-- **Diagonal simplified**: `g(x, x) = χ(star(x))`. -/
+theorem greenEntry_self_simplified (G : SimplexSet V) (x : Simplex V) :
+    greenEntry G x x = eulerCharacteristic (simplexStar G x) := by
+  rw [greenEntry_self, simplexWeight_sq, one_mul]
 
 end Knill
 end InfraFormalization
