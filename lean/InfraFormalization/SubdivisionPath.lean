@@ -326,7 +326,32 @@ theorem subdivideAll_pathEdges (vs : List ℕ) (h : 2 ≤ vs.length) (b : ℕ) :
 The *simulation lemma* `singleWayStep subdivisionSys H = subdivideAll H (nextFresh H)`
 for path-shape `H` bridges the engine to Phase 1's math side. Three
 sub-lemmas (S1 match-count, S2 match-order, S3 foldl invariant) per
-`notes/232_subdivision_path_plan.md` §3. -/
+`notes/232_subdivision_path_plan.md` §3.
+
+In the meantime, `decide` certifies the full closed form
+`singleWayEvolve subdivisionSys subdSeed n = pathEdges (subdVerts n)`
+for small `n`, leveraging Phase 1's `subdivideAll_pathEdges` plus the
+fact that both sides are concrete computable `ExecHG ℕ` lists. -/
+
+/-- **Closed form, n=0**: `singleWayEvolve … 0 = pathEdges (subdVerts 0)`. -/
+example : singleWayEvolve subdivisionSys subdSeed 0 = pathEdges (subdVerts 0) := by
+  decide
+
+/-- **Closed form, n=1**: `singleWayEvolve … 1 = pathEdges (subdVerts 1)`. -/
+example : singleWayEvolve subdivisionSys subdSeed 1 = pathEdges (subdVerts 1) := by
+  decide
+
+/-- **Closed form, n=2**: `singleWayEvolve … 2 = pathEdges (subdVerts 2)`. -/
+example : singleWayEvolve subdivisionSys subdSeed 2 = pathEdges (subdVerts 2) := by
+  decide
+
+/-- **Closed form, n=3**: `singleWayEvolve … 3 = pathEdges (subdVerts 3)`. -/
+example : singleWayEvolve subdivisionSys subdSeed 3 = pathEdges (subdVerts 3) := by
+  decide
+
+/-- **Closed form, n=4**: `singleWayEvolve … 4 = pathEdges (subdVerts 4)`. -/
+example : singleWayEvolve subdivisionSys subdSeed 4 = pathEdges (subdVerts 4) := by
+  decide
 
 end MultiwayExec
 end InfraFormalization
