@@ -697,6 +697,23 @@ theorem hodgeOnG_psd (G : SimplexSet V) (f : Simplex V → ℤ) :
   rw [hodgeOnG_double_sum_eq_sum_squares]
   exact Finset.sum_nonneg (fun _ _ => sq_nonneg _)
 
+/-- **Hodge Dirichlet form vanishes iff `f` is in the kernel of `D` on `G`**:
+the Dirichlet form `⟨f, H · f⟩ = 0` iff every "dirac vector"
+`(D · f)(z) := ∑_x f(x) · dirac(x, z)` vanishes for `z ∈ G`. The forward
+direction follows from "sum of squares = 0 ⇒ each square = 0"; the
+backward direction is the same sum-of-squares decomposition. This is
+the harmonic-forms characterization: `f` is **harmonic** (in `ker H`)
+iff it's in the **dirac kernel** (`D · f = 0`). -/
+theorem hodgeOnG_dirichlet_zero_iff_dirac_kernel
+    (G : SimplexSet V) (f : Simplex V → ℤ) :
+    G.sum (fun x => f x * G.sum (fun y => hodgeOnG G x y * f y)) = 0
+      ↔ ∀ z ∈ G, G.sum (fun x => f x * dirac x z) = 0 := by
+  rw [hodgeOnG_double_sum_eq_sum_squares]
+  rw [Finset.sum_eq_zero_iff_of_nonneg (fun _ _ => sq_nonneg _)]
+  refine ⟨fun h z hz => ?_, fun h z hz => ?_⟩
+  · exact sq_eq_zero_iff.mp (h z hz)
+  · rw [h z hz]; ring
+
 /-! ## d² = 0 — cochain-complex identity (#272 follow-up)
 
 The fundamental identity `d ∘ d = 0` makes `(C_•, d)` a chain
