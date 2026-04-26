@@ -796,14 +796,21 @@ theorem dSquared_summand_zero_unless (x z : Simplex V)
     · rw [incidence_eq_zero_of_not_isFace hyz, mul_zero]
   · rw [incidence_eq_zero_of_not_isFace hxy, zero_mul]
 
-/-! **Status (sign-cancellation #277)**: With #275 (clean
-`missingVertex`) and #276 (summand characterization) landed, the
-main case of `d ∘ d = 0` reduces to: the two contributions from
-`y₁ = x.erase a, y₂ = x.erase b` (where `{a, b} = x \ z`) cancel.
-Each contribution is `(-1)^i · (-1)^(idxOf-after-erase)`. The
-position-arithmetic on `(x.sort ·≤·).erase w` is the remaining
-piece; staged with the `D-fallback` (permutation-sign reformulation)
-authorised if direct position arithmetic proves intractable. -/
+/-! ### Sort/erase position-arithmetic — staged (#277 Path 2 building blocks)
+
+The d²=0 sign cancellation needs `(s.erase w).sort r = (s.sort r).erase w`
+plus position-arithmetic on `idxOf` after `erase`. Mathlib's
+`List.eq_of_perm_of_sorted` (alias `Perm.eq_of_pairwise`) and
+`Finset.sort_perm_toList` provide the building blocks but the proof
+still requires a `(List.perm_erase _).symm.trans` argument that's
+non-trivial to wire up without dedicated `Finset.sort_erase` lemma
+upstream. Path 2 (`Equiv.Perm.sign` reformulation) sidesteps this by
+using Mathlib's permutation-sign cancellation theory directly via
+`sign_swap`/`sign_mul`. Both paths estimated ~150-200 lines total.
+
+The mathematical proof is settled (sign-cancellation as documented
+above); only the Lean infrastructure work remains. Concrete n=3
+witnesses still pass via `native_decide` in `KnillExamples`. -/
 
 end Knill
 end InfraFormalization
