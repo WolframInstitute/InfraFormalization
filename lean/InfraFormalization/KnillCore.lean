@@ -631,5 +631,52 @@ theorem hodgeOnG_symm (G : SimplexSet V) (x y : Simplex V) :
   rw [dirac_symm x z, dirac_symm z y]
   ring
 
+/-! ## d² = 0 — cochain-complex identity (#272 follow-up)
+
+The fundamental identity `d ∘ d = 0` makes `(C_•, d)` a chain
+complex. For incidence on oriented simplices:
+
+  `(d ∘ d)(x, z) := ∑_{y ⊆ x} incidence x y · incidence y z = 0`
+
+Mathematically: for `|x| = |z| + 2` and `z ⊂ x`, the codim-1 faces
+`y` between them are exactly `y₁ = z ∪ {a}` and `y₂ = z ∪ {b}`
+where `{a, b} = x \ z`. The two contributions cancel by sign
+(`(-1)^(i+j) + (-1)^(i+j-1) = 0` where `i, j` are the positions of
+`a, b` in sorted `x`).
+
+Sum is over `x.powerset` rather than the universe (the only
+non-zero contributors satisfy `y ⊆ x`). Definition first; full
+sign-cancellation proof staged.
+
+Counterpart: this is the standard chain-complex axiom on oriented
+simplicial complexes; foundational for KN14 McKean-Singer
+supersymmetry (the Hodge `H = D²` decomposes via `D = d + d*`,
+and `d² = 0` separates exact / co-exact components). -/
+
+/-- **`d ∘ d` operator**: `(d²)(x, z) := ∑_{y ⊆ x} d(x, y) · d(y, z)`.
+The sum is over `x.powerset` because non-zero contributions require
+`y ⊆ x`. -/
+noncomputable def dSquared (x z : Simplex V) : ℤ :=
+  x.powerset.sum (fun y => incidence x y * incidence y z)
+
+/-- **Trivial cardinality vanishing**: `(d²)(x, z) = 0` when
+`|x| ≠ |z| + 2`. The intermediate `y` would need `|x| = |y| + 1`
+and `|y| = |z| + 1`, forcing `|x| = |z| + 2`. -/
+theorem dSquared_eq_zero_of_card_ne {x z : Simplex V}
+    (h_ne : x.card ≠ z.card + 2) :
+    dSquared x z = 0 := by
+  unfold dSquared
+  apply Finset.sum_eq_zero
+  intros y hy
+  rw [Finset.mem_powerset] at hy
+  -- For incidence x y * incidence y z ≠ 0, need isFace x y and isFace y z.
+  by_cases hxy : isFace x y
+  · by_cases hyz : isFace y z
+    · obtain ⟨_, hcxy⟩ := hxy
+      obtain ⟨_, hcyz⟩ := hyz
+      exfalso; apply h_ne; omega
+    · rw [incidence_eq_zero_of_not_isFace hyz, mul_zero]
+  · rw [incidence_eq_zero_of_not_isFace hxy, zero_mul]
+
 end Knill
 end InfraFormalization
