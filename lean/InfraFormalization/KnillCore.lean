@@ -227,6 +227,20 @@ theorem eulerCharacteristic_eq_alt_sum_kSkeleton
       exact simplexWeight_eq_neg_one_pow_dim h_card]
   rw [Finset.sum_const, nsmul_eq_mul, mul_comm]
 
+/-- **Euler-Poincaré on a `Fintype V`** (KN8 corollary): closes the
+cardinality bound by `Fintype.card V`. -/
+theorem eulerCharacteristic_eq_alt_sum_fintype [Fintype V]
+    (G : SimplexSet V) (h_no_empty : ∅ ∉ G) :
+    eulerCharacteristic G =
+      (Finset.range (Fintype.card V)).sum
+        (fun k => (-1 : ℤ)^k * ((kSkeleton G k).card : ℤ)) := by
+  apply eulerCharacteristic_eq_alt_sum_kSkeleton _ h_no_empty
+  intros σ _
+  have h_subset : σ ⊆ Finset.univ := σ.subset_univ
+  have h_card_le : σ.card ≤ Finset.univ.card := Finset.card_le_card h_subset
+  rw [Finset.card_univ] at h_card_le
+  omega
+
 /-- **Fermi characteristic** `Fermi(G) = ∏_{x ∈ G} ω(x)`. -/
 def fermiCharacteristic (G : SimplexSet V) : ℤ :=
   G.prod simplexWeight

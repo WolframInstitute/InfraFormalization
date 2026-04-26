@@ -221,6 +221,26 @@ example (G : SimplexSet (Fin 3)) (x : Simplex (Fin 3)) :
     0 ≤ hodgeOnG G x x :=
   hodgeOnG_diag_nonneg G x
 
+/-! ## Euler-Poincaré f-vector identity (KN8 / KN3)
+
+Worked decomposition `χ(G) = ∑_k (-1)^k · |k-skeleton|` for the
+triangle: 3 vertices, 3 edges, 1 triangle gives `3 - 3 + 1 = 1`. -/
+
+/-- **`kSkeleton triangle 0`** = the three vertex simplices. -/
+example : (kSkeleton triangle 0).card = 3 := by decide
+
+/-- **`kSkeleton triangle 1`** = the three edges. -/
+example : (kSkeleton triangle 1).card = 3 := by decide
+
+/-- **`kSkeleton triangle 2`** = the top 2-simplex. -/
+example : (kSkeleton triangle 2).card = 1 := by decide
+
+/-- **Euler-Poincaré on triangle**: `χ = 3 - 3 + 1 = 1` matches the
+alternating-sum-over-skeletons formula. -/
+example : eulerCharacteristic triangle =
+    (Finset.range 3).sum (fun k => (-1 : ℤ)^k * ((kSkeleton triangle k).card : ℤ)) :=
+  eulerCharacteristic_eq_alt_sum_kSkeleton triangle (by decide) 3 (by decide)
+
 end Examples
 end Knill
 end InfraFormalization
