@@ -6,6 +6,81 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-04-26 — late, topology-before-metric layer + cellular-sheaf framework + Stephen's structural sequence)
+
+**The full pre-metric topology layer is now logged** as a coherent task family. Stephen's structural insight: topological information should be available BEFORE metric / volume / region structure. The hypergraph has a natural layered topology hierarchy that doesn't need `Hypergraph.dist` or `geodesicBallVolume`. In dependency order:
+
+- **PATH1 (#300)** — native `Hypergraph.SimplePath u v` (Stephen's "non-overlapping path"); **PATH2 (#301)** — equivalence to clique-expansion `dist`.
+- **POLY1 (#316)** — generalised polygon (cycle-of-segments with arbitrary intersection sequences; recovers Euclidean as singleton-intersection case).
+- **POLY2 (#317)** — full categorical generalisation: cellular k-chain in Δ-complex with sheaf coefficients (subsumes POLY1 + CELL1 + P4 + P5 + P19 + IGE2).
+- **POLY3 (#318)** — spin networks / spin foams (LQG primitive + knot-invariant home via Witten/Reshetikhin-Turaev).
+- **CELL1 (#315)** — cellular sheaves on Hypergraph V — Pavel's "string theory on the graph" framework. Cycles-with-common-points = equalizer at common-stalk.
+- **AT-W (#319)** — sheaf-angle (14th flavour-column in the angle tower): `cos θ = ⟨r₁, r₂⟩_{F(common)} / (‖r₁‖·‖r₂‖)` for restriction maps; generalises Knill/Connes spectral angle to sheaves.
+- **CONTRACT1 (#329)** — contractibility predicate (binary, scale-indexed via VR-complex; persistence-barcode death-time IS the contractibility scale).
+- **DEFORM1 (#330)** — elementary path deformations (Tietze/Whitehead/Reidemeister-style generating set: backtrack, 2-cell substitution, hyperedge-transit substitution).
+- **DEFORM2 (#331)** — elementary path extensions (forward/backward edge or hyperedge-transit append/prepend); together with DEFORM1 generates the full fundamental category.
+- **HOM1 (#332)** — path-homotopy = `EqvGen` of DEFORM1.
+- **HOM2 (#333)** — fundamental groupoid Π_1(H).
+- **TOP1 (#323)** — first Betti `b_1` (combinatorial cycle rank).
+- **TOP2 (#324)** — higher Betti `b_k` via Hodge decomposition.
+- **TOP3 (#325)** — fundamental group π_1.
+- **TOP4 (#326)** — connected components `b_0`.
+- **TOP5 (#327)** — higher homotopy π_k.
+- **TOP6 (#328)** — genus / crossing number.
+- **KNOT1 (#320)** — linking number / Borromean detection.
+- **KNOT2 (#321)** — Massey products / higher-linking invariants.
+- **KNOT3 (#322)** — Yamada / Jones polynomial via spin-network Chern-Simons evaluation.
+
+**Pavel's "string theory on the graph" framing**: the cellular-sheaf framework IS string field theory. Closed strings = 1-cycles, interaction vertices = common-stalk equalizers, worldsheets = cellular k-chains, string amplitudes = sheaf-cohomology. Translation table in INFRAGEOMETRY.md §5d.
+
+**Stephen's structural sequence** (the Tietze/Whitehead style — moves are the data, topology is the consequence):
+PATH1 → POLY1 → CONTRACT1 → DEFORM1/DEFORM2 → HOM1/HOM2 → TOP3 (π_1) → TOP1 (b_1).
+Each layer needs only the previous; the whole hierarchy lives below the metric layer.
+
+For Phase D BBH specifically: black-hole horizon = non-contractible cycle; merger event = moment cycle becomes contractible (a new 2-cell fills the previously-non-contractible region). KNOT-cobordism between linked → unlinked configurations. Cellular-sheaf cohomology change at the merger is the topological signature.
+
+**Stephen's program statement: "we're going to get all the way to differential geometry"**. The 25-step constructive route from elementary connectedness to BBH-from-hypergraph is now logged in INFRAGEOMETRY.md §5f. Each step is one short Lean def on top of the previous.
+
+**Hyperplane / polytope / inside-outside / bounded primitives (Pavel + Stephen):**
+- HYPER1 (#338) vertex separator (Pavel's pre-metric "graph separation"); HYPER2 (#339) perpendicular bisector (metric hyperplane); HYPER3 (#340) Voronoi decomposition; HYPER4 (#341) — equidistant-set vs separator equivalence (3 strengths, finite-vs-infinite hyperplane distinction recovers in continuum limit).
+- MIDPT1 (#342) midpoint (multivalued, possibly empty).
+- POLYTOPE1 (#343) polytope as cell of hyperplane arrangement.
+- INOUT1 (#344) inside-outside / Jordan separator on cycles — *not automatic*, four "which side is inside" criteria (contractibility, volume, orientation, causal-future).
+- BOUND1 (#345) bounded / diameter (4 flavours: spatial, causal, branchial, rewriting); MEMBER1 (#346) decidable membership; COMPACT1 (#347) limit-only compactness.
+- SPHERE1–4 (#334–#337) infra-sphere / infra-disk / topology / surface-area extraction.
+
+**The Bachmann route to Lie theory:** reflections through perpendicular bisectors → translations and rotations → isometry group → Coxeter / Weyl group → Lie algebra (IB5 #150). The constructive route to the full Lie-theoretic isometry structure of differential geometry.
+
+**Surface / manifold detection (Stephen's "what is a surface")** — SURFACE1 (#348) Knill/Fisk recursive manifold predicate: `IsFiskManifold n H` iff every vertex's unit sphere is `IsFiskManifold (n-1)` AND every unit ball is contractible. **Diagnostic on a tree**: shell at any positive radius is disconnected (one component per branch) — fails Knill at every positive dim. Empirical screener for "rule produces manifold-like hypergraph". Subsumes / sharpens KN13 (#249).
+
+**Formal-topology layer (Stephen + Pavel pivoting)** — OPEN1 (#349) multiple natural topologies on a hypergraph (discrete / Alexandrov / metric / cellular-star / VR-scale-indexed / causal — each yields different compactness/continuity theorems); NBHD1 (#350) neighbourhood basis at each vertex (Stephen's "locally has neighbourhoods" intuition for surfaces).
+
+## Headline (2026-04-26 — late, angle tower + units observation + path-vs-walk gap identified)
+
+**Full angle-tower taxonomy logged** as `AT0`–`AT27` (#285–#314, 28 tasks across 13 flavour-columns × multiple abstraction levels). Plus `PATH1`/`PATH2` (#300/#301) for Stephen's non-overlapping-path requirement at the substrate level.
+
+**Three structural observations that emerged:**
+
+1. **Y2 / AT18 — Projective Cayley-Klein angle is more elementary than M0 / AT0 — Stephen's chord-ratio.** Cross-ratio reads off from `Between` + `dist` ratios; works on hypergraphs WITHOUT requiring `GeodesicallyUnique`. Sidesteps Stephen's "no angle without straight lines" objection. Possibly the right starting point for non-geodesically-unique hypergraphs.
+
+2. **K1 / AT23 — Conformal structure IS pure-angle data.** Angles alone define conformal geometry; lengths are extra structure beyond conformal. A "pure infrageometric angle theory" IS conformal geometry; Riemannian = angles + length scale. Lorentzian = rapidities + light cones (this is GR). Kähler = angles + complex structure.
+
+3. **H2 / AT20 — Regge deficit angle is THE numerical-GR variable for Phase D BBH.** Phase D BBH = Regge calculus on a triangulated 4-manifold; sum of deficit angles around each 2-face = stress-energy. This is gating, not optional, for the ultimate BBH-from-hypergraph result.
+
+**Units-emergence observation (AT11 / #296)**: in the hypergraph, both `r` (geodesic distance, step count) and `V(r)` (vertex count) are `ℕ`-valued counts — same kind of thing. Units `[L]`, `[L^d]`, `[L^{-2}]` etc. are *artifacts of continuum rescaling* `a → 0`, not properties of the underlying object. Every dimensional physical quantity is `a^k · (count-level quantity)` for an integer `k` set by the Taylor-order at which the quantity sits in the `r`-expansion of `V(r)`. The "−2" in `[R] = L^{-2}` is intrinsic — second-order Taylor coefficient. Bishop-Gromov gives the discrete recipe `R_disc(v, r) := (6(d+2)/r²)·[V_flat(d, r) − V(v, r)] / V_flat(d, r)` (AT9 / #294). **Background-independence: no clock, no ruler assumed; geometry derived from rewriting structure. Dimension itself is emergent, not chosen.**
+
+**Path-vs-walk gap (PATH1 / PATH2)**: per Stephen's "we need non-overlapping paths, not just walks". Currently `Hypergraph.dist := H.toSimpleGraph.dist` uses Mathlib's clique-expansion which: (a) treats ≥3-arity hyperedges as `K_n` (any pair-step inside a hyperedge is one step); (b) silently drops self-loops via `loopless`; (c) collapses multi-edges in the `Multiset`. We have `SubdivisionPath.IsPathOf` for `ExecHG ℕ` (correct `Nodup` semantics, but ExecHG-specific), and Mathlib `SimpleGraph.Walk.IsPath` after the lossy reflection. **Missing: a native `Hypergraph.SimplePath u v` first-class type carrying both `Nodup` vertex list AND the actual hyperedge sequence (so multi-arity structure isn't collapsed).** Numerically `dist` is right (Mathlib's shortest walk is auto-simple); structurally we're losing "which hyperedge was rewritten at step i" — important for #228 / #229 causal/branchial extraction. PATH1 is prerequisite for AT3 (Toponogov), AT8 (GeodesicallyUnique), AT26 (multivalued angle).
+
+## Headline (2026-04-26 — late, Phase B opens: #224 RuleSignatureScreener)
+
+**`RuleSignatureScreener.lean` lands** — Phase B opens. Per-slice signature trajectory `signatureTrajectory τ : ℕ → RuleSignature V` (saturating outside trajectory length); real-valued projections `edgeCountTrajectory`, `vertexCountTrajectory`, `formanRicciTrajectory`. Curvature-deviation discrepancy `formanRicciDeviation τ κ n := |formanRicciTrajectory τ n − κ|` plugs directly into the generic `ConvergenceRateObligation` framework via `FormanRicciScreener τ κ r := ConvergenceRateObligation (formanRicciDeviation τ κ) r`. Compound `MultiScreener` combines edge-count and curvature discharge.
+
+**Conservative discharge**: `edgeCountTrajectory_const_of_conservative` lifts `RuleSignature.edgeCount_invariant_of_conservative` to the trajectory projection; `edgeCountTrajectory_satisfies_any_rate_of_conservative` shows conservative rules pass the edge-count screener trivially with any non-negative rate. `multiScreener_self_of_conservative_initial` discharges the multi-screener at length 1 against the initial-state target.
+
+**Negative discharge** (rule disqualification): `formanRicciScreener_fails_of_persistent_gap` — if the Forman-Ricci deviation has a uniform positive lower bound `δ > 0` on a cofinal subset, no rate function eventually less than `δ` can witness the screener — the rule **fails** at the curvature target. This is the structural form of a rule-search elimination criterion.
+
+This is Phase B's foundation: per-slice metrics that can validate / reject rules against curved-target obligations. Next Phase B steps: `RuleSignatureSchema` (JSON interchange + Lean validator), then #190 wolframscript driver.
+
 ## Headline (2026-04-26 — late, Phase A follow-up: generic ConvergenceRateObligation)
 
 **`ConvergenceRateObligation` generic family lands** (Phase A follow-up #1). Refactors the W_1-specific `WassersteinRateObligation` into a generic predicate `ConvergenceRateObligation d r` taking *any* rate function `r : ℕ → ℝ`. Concrete rates: `rateOneOverN` (1/n), `rateOneOverNSquared` (1/n²), `rateGeometric c` (c^n for 0 < c < 1). Bidirectional bridge `convergenceRateObligation_oneOverN_of_wasserstein` + `wassersteinRateObligation_of_convergenceRate_oneOverN` between old and new forms. Subdivision-rule discharge gets stronger characterization: `subdivisionDiscrepancy_satisfies_geometric` (the natural geometric `(1/2)^n` rate, strictly faster than any polynomial). Generic `convergenceRateObligation_zero` for trivial witness.
@@ -280,7 +355,7 @@ witnesses with real convergence / amplitude / curvature computations:
   with Wasserstein-1).
 - **#223** discrete stress-energy T_μν on a hypergraph (so EFE
   origin obligations can be discharged with non-flat T).
-- **#224** per-trajectory curvature signature screener
+- **#224** per-trajectory curvature signature screener — **landed**: `RuleSignatureScreener.lean` (`signatureTrajectory`, `formanRicciTrajectory`, `formanRicciDeviation`, `FormanRicciScreener`, `MultiScreener`, conservative-discharge + persistent-gap-failure theorems). Phase B opens; next: `RuleSignatureSchema` interchange.
   (Forman/Ollivier signature curve vs. target manifold profile).
 - **#225** multi-way → continuum bridge (MultiwayCausalGraph
   convergence theorem — replaces the cosmetic J-series closures).
