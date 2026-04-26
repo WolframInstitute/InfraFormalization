@@ -466,5 +466,62 @@ example : singleWayEvolve subdivisionSys subdSeed 3 = pathEdges (subdVerts 3) :=
 example : singleWayEvolve subdivisionSys subdSeed 4 = pathEdges (subdVerts 4) := by
   decide
 
+/-! ## Canonical subdivision-rule trajectory (Route D) — bypasses the engine
+
+The **canonical** trajectory of the subdivision rule, defined directly
+as `pathEdges (subdVerts n)`. This is mathematically the n-th iterate
+of subdivision, characterised by:
+  * vertex count `2^n + 1`
+  * edge count `2^n`
+  * vertex list Nodup (no collisions across iterations)
+  * IsPathOf shape (with `subdVerts n` as the natural vertex sequence)
+
+The connection to the engine `singleWayEvolve subdivisionSys subdSeed`
+holds by `decide` for `n = 0..4` (witnesses above) and is conjecturally
+the `subdivisionSys` output for arbitrary `n` (proven via the simulation
+lemma #267, currently staged). For W_1 / Wasserstein consumers (#234)
+that only need the canonical trajectory's structural properties, this
+abstraction is sufficient regardless of the simulation lemma's status. -/
+
+/-- **Canonical subdivision trajectory** at step `n`, defined directly
+without engine semantics. The connection to the engine is via decide
+witnesses (n=0..4) and the simulation lemma (staged, #267). -/
+@[reducible] def subdivisionTrajectory (n : ℕ) : ExecHG ℕ :=
+  pathEdges (subdVerts n)
+
+/-- **Vertex count**: `subdivisionTrajectory n` has `2^n` edges. -/
+@[simp] theorem subdivisionTrajectory_length (n : ℕ) :
+    (subdivisionTrajectory n).length = 2^n :=
+  subdVerts_pathEdges_length n
+
+/-- **Path-shape predicate**: `subdivisionTrajectory n` is the path with
+vertex list `subdVerts n` of length `2^n + 1`. Combines `subdVerts_length`
+with the trivial reflexivity. -/
+theorem subdivisionTrajectory_isPathOf (n : ℕ) :
+    IsPathOf (subdivisionTrajectory n) (subdVerts n) := by
+  refine ⟨?_, subdVerts_nodup n, rfl⟩
+  rw [subdVerts_length]
+  have : 1 ≤ 2^n := Nat.one_le_two_pow
+  omega
+
+/-- **Successor step**: the trajectory at `n+1` is obtained by subdividing
+each edge of the trajectory at `n`, allocating fresh midpoints starting
+from `listMax + 1`. Direct from `subdivideAll_pathEdges` (Phase 1 closed
+form). This is the engine-free analogue of "single-way step on the path". -/
+theorem subdivisionTrajectory_succ (n : ℕ) :
+    subdivisionTrajectory (n + 1) =
+      subdivideAll (subdivisionTrajectory n) (listMax (subdVerts n) + 1) := by
+  unfold subdivisionTrajectory
+  rw [subdVerts_succ]
+  rw [subdivideAll_pathEdges _ (subdVerts_length_ge_two n)]
+
+/-- **Engine equality, certified for small n** (n=0..4 via `decide`):
+the canonical subdivision trajectory matches the engine's output. The
+simulation lemma `singleWayStep_subdivisionSys_eq_subdivideAll` (#267)
+would extend this to all `n`. -/
+theorem subdivisionTrajectory_eq_engine_at_zero :
+    subdivisionTrajectory 0 = singleWayEvolve subdivisionSys subdSeed 0 := by
+  rfl
+
 end MultiwayExec
 end InfraFormalization
