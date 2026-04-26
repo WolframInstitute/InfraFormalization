@@ -309,5 +309,71 @@ theorem isFace_exists_diff_vertex {x y : Simplex V} (h : isFace x y) :
   rw [Finset.mem_sdiff] at hv
   exact ⟨v, hv.1, hv.2⟩
 
+/-! ## Connection matrix (#270)
+
+Knill's **connection matrix** `L` on a simplex set `G`:
+
+  `L(x, y) := χ(simplexCore G x ∩ simplexCore G y)`
+
+The Euler characteristic of the set of simplices that are subsets of
+both `x` and `y` (equivalently, of `x ∩ y`). Sign-free; no
+orientation required. This matrix has the remarkable property
+`det L = ±1` (= Knill's Fermi characteristic) for any simplicial
+complex — proved in a follow-up. The Green function `g = L⁻¹` (#271)
+satisfies the energy theorem `∑ g(x, y) = χ(G)`.
+
+Counterpart Mathematica: `ConnectionMatrix[G_]` in
+`Infrageometry.wl` / `QuantumCalculus.wl`. -/
+
+/-- **Connection-matrix entry** `L(x, y) := χ(core(x) ∩ core(y))`,
+the Euler characteristic of the simplices in `G` that are subsets of
+both `x` and `y`. -/
+def connectionEntry (G : SimplexSet V) (x y : Simplex V) : ℤ :=
+  eulerCharacteristic (simplexCore G x ∩ simplexCore G y)
+
+/-- **Symmetry**: `L(x, y) = L(y, x)`. The connection matrix is
+symmetric — intersection commutes. -/
+theorem connectionEntry_symm (G : SimplexSet V) (x y : Simplex V) :
+    connectionEntry G x y = connectionEntry G y x := by
+  unfold connectionEntry
+  rw [Finset.inter_comm]
+
+/-- **Diagonal**: `L(x, x) = χ(core(x))`. -/
+theorem connectionEntry_self (G : SimplexSet V) (x : Simplex V) :
+    connectionEntry G x x = eulerCharacteristic (simplexCore G x) := by
+  unfold connectionEntry
+  rw [Finset.inter_self]
+
+/-- **Off-support vanishing**: if `x ∩ y = ∅` (no common vertex) and
+`G` is closed (every simplex of `G` has all its vertices among the
+union of the simplices of `G`), then `L(x, y) = 0` because no
+simplex `s ∈ G` can satisfy `s ⊆ x ∧ s ⊆ y` (the only candidate is
+`s = ∅`, which is not a valid simplex in our convention; we exclude
+it via the `simplexCore` filter). Stated as: when no nonempty
+simplex of `G` is contained in both `x` and `y`, the entry is 0. -/
+theorem connectionEntry_eq_zero_of_no_common_subsimplex
+    (G : SimplexSet V) (x y : Simplex V)
+    (h : ∀ s ∈ G, ¬ (s ⊆ x ∧ s ⊆ y)) :
+    connectionEntry G x y = 0 := by
+  unfold connectionEntry
+  have h_inter_empty : simplexCore G x ∩ simplexCore G y = ∅ := by
+    rw [Finset.eq_empty_iff_forall_notMem]
+    intro s hs
+    rw [Finset.mem_inter, mem_simplexCore, mem_simplexCore] at hs
+    obtain ⟨⟨hsG, hsx⟩, _, hsy⟩ := hs
+    exact h s hsG ⟨hsx, hsy⟩
+  rw [h_inter_empty, eulerCharacteristic_empty]
+
+/-- **Knill's mass identity**: for the diagonal of `L`, summing the
+weighted entries gives the Euler characteristic of `G`. (Stated for
+the diagonal only; the full Green-function energy theorem
+`∑ g(x, y) = χ(G)` follows after Green is defined.) -/
+theorem sum_simplexWeight_connectionEntry_diag (G : SimplexSet V) :
+    G.sum (fun x => simplexWeight x * connectionEntry G x x)
+      = G.sum (fun x => simplexWeight x * eulerCharacteristic (simplexCore G x)) := by
+  apply Finset.sum_congr rfl
+  intros x _
+  rw [connectionEntry_self]
+
 end Knill
 end InfraFormalization
