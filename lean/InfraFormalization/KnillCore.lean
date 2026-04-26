@@ -600,6 +600,19 @@ theorem incidence_self (x : Simplex V) : incidence x x = 0 := by
   obtain ⟨_, hcard⟩ := h
   omega
 
+/-- **`d(x, y) ≠ 0 ↔ isFace x y`**: incidence is non-zero exactly on
+codim-1 face pairs. The forward direction is the contrapositive of
+`incidence_eq_zero_of_not_isFace`; the backward direction uses the
+`(-1)^k` representation of the non-zero case. -/
+theorem incidence_ne_zero_iff_isFace (x y : Simplex V) :
+    incidence x y ≠ 0 ↔ isFace x y := by
+  refine ⟨fun h_ne => ?_, fun h_isFace => ?_⟩
+  · by_contra h_not
+    exact h_ne (incidence_eq_zero_of_not_isFace h_not)
+  · unfold incidence
+    rw [dif_pos h_isFace]
+    exact pow_ne_zero _ (by norm_num)
+
 /-- **Sign is a unit**: `d(x, y) ∈ {-1, 0, 1}` always. Specifically,
 `(d(x, y))² = 0` if `¬ isFace x y`, else `1`. -/
 theorem incidence_sq (x y : Simplex V) :
