@@ -6,6 +6,17 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-04-26 — late, #231 first formal exec ↔ abstract bridge)
+
+**`MultiwayExecBridge.lean` lands** — first formal Lean bridge between the executable engine (`ExecHG ℕ`, `ExecRule`, `ExecSystem`, `singleWayStep`) and the abstract track (`Hypergraph V`, `Rule P`, `RewritingSystem`, `Step`/`MultiStep`/`Application`). Until this commit the two tracks were entirely disjoint Lean structures sharing only the conceptual identity "Wolfram-model rewriting". Casts:
+- **`ExecHG.toHypergraph`** (already existed): list → multiset state cast.
+- **`Fin.embedSuffix`**: `Fin numBound → Fin (numBound + numFresh)` natural inclusion.
+- **`ExecRule.toRule`**: executable rule → abstract `Rule (Fin (numBound + numFresh))`, with LHS embedded via `Fin.embedSuffix` so both sides share pattern type.
+- **`ExecSystem.toRewritingSystem_single`**: single-rule case (general case needs a sum / heterogeneous pattern type since rules can have different `numBound + numFresh`).
+- Theorems: `consumed_toMultiset`, `exec_lifts_well_formed`, `ExecHG.toHypergraph_nil`/`_cons`.
+
+Type-level bridge complete; heavier theorems (full `singleWayStep` ↔ `MultiStep` simulation, plus `Application` constructions from executable matches) staged as follow-up (couples with #267 simulation lemma).
+
 ## Headline (2026-04-26 — late, #234 landed)
 
 **#234 W_1 obligation discharged with concrete `O(2^{-n})` rate**. The first end-to-end machine-checked rule-trajectory → continuum-target convergence certificate for the project. Foundation:
