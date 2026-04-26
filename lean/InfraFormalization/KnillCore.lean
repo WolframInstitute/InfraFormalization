@@ -443,5 +443,54 @@ theorem greenEntry_self_simplified (G : SimplexSet V) (x : Simplex V) :
     greenEntry G x x = eulerCharacteristic (simplexStar G x) := by
   rw [greenEntry_self, simplexWeight_sq, one_mul]
 
+/-! ## Super-trace (#273)
+
+**Super-trace** of a simplex-indexed function: the signed sum
+`Str[X] := ∑_{x ∈ G} ω(x) · X(x, x)`. The signing distinguishes
+even-dimensional simplices (positive contribution) from odd-
+dimensional (negative). Knill's super-symmetry between even/odd
+forms (KN14) is articulated through the super-trace identity
+`Str[H] = χ(G)` for the Hodge Laplacian `H = D²`.
+
+Counterpart Mathematica: `SuperTrace[G_, X_]` in `Infrageometry.wl`
+/ `QuantumCalculus.wl`.
+
+Pseudo-determinant and super-determinant — which need eigenvalue
+machinery — are staged for follow-up commits closing the rest of
+#273. -/
+
+/-- **Super-trace** of a simplex-indexed function.
+`superTrace G X := ∑_{x ∈ G} ω(x) · X x x`. -/
+def superTrace (G : SimplexSet V) (X : Simplex V → Simplex V → ℤ) : ℤ :=
+  G.sum (fun x => simplexWeight x * X x x)
+
+@[simp] theorem superTrace_empty (X : Simplex V → Simplex V → ℤ) :
+    superTrace (∅ : SimplexSet V) X = 0 := by
+  simp [superTrace]
+
+theorem superTrace_insert {G : SimplexSet V} {s : Simplex V}
+    (h : s ∉ G) (X : Simplex V → Simplex V → ℤ) :
+    superTrace (insert s G) X = simplexWeight s * X s s + superTrace G X := by
+  simp [superTrace, Finset.sum_insert h]
+
+/-- **Super-trace of a sum** is additive in `X`. -/
+theorem superTrace_add (G : SimplexSet V) (X Y : Simplex V → Simplex V → ℤ) :
+    superTrace G (fun x y => X x y + Y x y)
+      = superTrace G X + superTrace G Y := by
+  unfold superTrace
+  rw [← Finset.sum_add_distrib]
+  apply Finset.sum_congr rfl
+  intros x _
+  ring
+
+/-- **Super-trace of the constant `δ_{xy}` matrix** equals
+`eulerCharacteristic G` (since `X x x = 1` for all x). -/
+theorem superTrace_diag_one (G : SimplexSet V) :
+    superTrace G (fun _ _ => (1 : ℤ)) = eulerCharacteristic G := by
+  unfold superTrace eulerCharacteristic
+  apply Finset.sum_congr rfl
+  intros x _
+  ring
+
 end Knill
 end InfraFormalization
