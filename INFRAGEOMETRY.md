@@ -643,6 +643,40 @@ Stephen: "we're going to get all the way to differential geometry". The full bot
 
 Each step is one short Lean definition or one bridge theorem on top of the previous. Nothing is hand-waved; every layer has a corresponding task. **This IS the constructive route Stephen is calling out: "all the way to differential geometry".** And on past it to GR, QM, and the BBH merger that motivates the program.
 
+## 5g. Cross-reference with Murzin "Geometry on Combinatorial Objects" (2026-04-26)
+
+Nikolay Murzin's 11-page paper *"Geometry on Combinatorial Objects: From Angle Defect to Cellular Sheaves"* (Wolfram Cloud, dated today, almost certainly the in-progress write-up of the Stephen-Pavel-Nik meeting we tracked) provides an external classification we should align against.
+
+**Coverage alignment (~60-70% of the document maps to existing tasks):**
+
+| Murzin section | Our coverage |
+|---|---|
+| §2.1 Descartes / Gauss-Bonnet defect; Regge action | AT2 (#287); AT20 (#307); KnillCore Euler-char ✓ |
+| §2.2 Knill recursive `K(v) = Σ(−1)^k V_{k-1}(v)/(k+1)` | KN13 (#249), SURFACE1 (#348) ✓ |
+| §3.1 Forman-Ricci `F(e) = 4 − deg(u) − deg(v) + 3·#triangles` | `DiscreteRicci.formanRicciHypergraph` ✓ |
+| §3.2 Ollivier-Ricci | #220 ✓, AT12 (#297) ✓ |
+| §3.4 Bishop-Gromov ball-growth | AT9 (#294), SPHERE4 (#337) ✓ |
+| §4 DEC (cochains, coboundary, δ² = 0, Hodge decomp) | KnillCore d, d*, D, H = D²; #277 ✓ |
+| §4 Lim's Hodge Laplacians on graphs | IT3, HodgeLaplacianBounds, HodgeVR ✓ |
+| §6 Cellular sheaves | CELL1 (#315) ✓ logged |
+| §6.3 Lattice gauge sheaf example | IG3-IG7, DiscreteGaugeField ✓ (but not in sheaf framing — see SHEAF-CHOICE6 #356) |
+
+**Gaps logged as new tasks (#351–#368):**
+
+- **§7 — Choosing-restriction-maps classification** (the document's structural payoff): SHEAF-CHOICE1–7 (#351–#357) for constant / Hodge / `S_k`-equivariant / diffusion / order / gauge / tensor-contraction sheaves; SHEAF-CLASSIFICATION (#358) for the meta-table mapping structural commitments to canonical sheaf-types.
+- **§3.3 Effective-resistance curvature** (Devriendt-Lambiotte 2022) — EFFRES1 (#359) — third independent curvature notion between Forman and Ollivier on the trade-off curve.
+- **§4 explicit Hodge star ⋆** between primal/dual cochains — DEC1 (#360).
+- **§4 explicit wedge product ∧** on cochains — DEC2 (#361) — required for AT22 Cartan structure equations.
+- **§5 Closure problem** (downward / clique / nerve as explicit choices) — CLOSURE1 (#362).
+- **§6 Hansen-Ghrist sheaf-Cheeger inequalities** — CHEEGER1 (#363).
+- **§2.1 Christiansen 2024 distributional → smooth scalar curvature** in Regge — REGGE-CONV1 (#364).
+- **§2.2 CDT** (Causal Dynamical Triangulations) — CDT1 (#365).
+- **§2.2 Stone's discrete Myers** — MYERS1 (#366).
+- **§2.2 Higuchi planar-graph curvature** — HIGUCHI1 (#367).
+- **§3.2 Ollivier-Ricci hypergraph multi-marginal** (Eidi-Jost 2020) — OLLIVIER-HG (#368).
+
+**The document's central thesis** — *"every geometric construction on a combinatorial object corresponds to a specific structural commitment, and cellular sheaves make this commitment explicit"* — IS exactly the synthesis Stephen and Pavel converged on in the meeting we tracked. The §6.3 lattice-gauge-sheaf example IS Pavel's "string theory on the graph"; the §7 restriction-map classification IS the categorical-organisation layer that makes all our angle / curvature / topology choices explicit. **Our task list now subsumes the document's full coverage** — every concept it identifies has either a corresponding existing infrastructure or a logged task.
+
 ## 6. How this relates to the Gorard-refutation track
 
 The refutation work in `Refutations/F1–F5` + `MAJOR_FLAWS.md` is **not** subsumed — it becomes one arm of a larger program:

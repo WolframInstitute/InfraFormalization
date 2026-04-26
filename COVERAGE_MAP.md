@@ -24,7 +24,14 @@ Legend: ✅ proved, axiom-clean. 🟡 partial. 🔲 open. 🚫 uninhabited forma
 - 📋 **Surface / manifold-detection layer** — SURFACE1 (#348) Knill/Fisk recursive manifold predicate (`IsFiskManifold n H` iff every vertex's unit sphere is (n-1)-manifold AND every unit ball is contractible); subsumes / sharpens KN13 (#249). **Diagnostic on a tree**: shell disconnected at every positive radius → fails Knill at every positive dim → tree is NOT manifold-like. Empirical screener for "rule produces manifold-like hypergraph".
 - 📋 **Formal-topology layer** — OPEN1 (#349) multiple natural topologies on a hypergraph (discrete / Alexandrov / metric / cellular-star / VR-scale-indexed / causal); NBHD1 (#350) neighbourhood basis at each vertex (Stephen's "locally has neighbourhoods" intuition for surfaces — manifold-like = neighbourhood basis stabilises to disk-shapes).
 
-For full taxonomy + connectedness flavour analysis + units-emergence + path-vs-walk + contractibility-via-persistence + 25-step diff-geo route, see INFRAGEOMETRY.md §2, §2.5, §3, §5b–§5f.
+For full taxonomy + connectedness flavour analysis + units-emergence + path-vs-walk + contractibility-via-persistence + 25-step diff-geo route + Murzin coverage cross-reference, see INFRAGEOMETRY.md §2, §2.5, §3, §5b–§5g.
+- 📋 **Murzin "Geometry on Combinatorial Objects" cross-reference** (2026-04-26) — Nik Murzin's 11-page Wolfram Cloud write-up of the Stephen-Pavel meeting. ~60-70% subsumed by existing tasks; 18 new gap-tasks (#351–#368) cover the residue:
+  - **§7 cellular-sheaf restriction-map classification**: SHEAF-CHOICE1–7 (#351–#357) + SHEAF-CLASSIFICATION (#358) — constant / Hodge / `S_k`-equivariant / diffusion / order / gauge / tensor-contraction sheaves, plus the meta-table mapping structural commitments to canonical sheaf-types. The document's structural payoff.
+  - **EFFRES1 (#359)** effective-resistance curvature (Devriendt-Lambiotte 2022) — third independent curvature notion between Forman and Ollivier.
+  - **DEC1 (#360)** explicit Hodge star ⋆ between primal/dual; **DEC2 (#361)** wedge product on cochains.
+  - **CLOSURE1 (#362)** three closure responses (downward / clique / nerve) as explicit Lean choices.
+  - **CHEEGER1 (#363)** Hansen-Ghrist sheaf-Cheeger inequalities.
+  - **REGGE-CONV1 (#364)** Christiansen 2024 distributional → smooth scalar curvature convergence; **CDT1 (#365)** causal dynamical triangulations; **MYERS1 (#366)** Stone discrete Myers theorem; **HIGUCHI1 (#367)** Higuchi planar-graph curvature; **OLLIVIER-HG (#368)** Ollivier-Ricci hypergraph multi-marginal extension (Eidi-Jost 2020).
 
 ## 1. Core rewriting substrate
 
