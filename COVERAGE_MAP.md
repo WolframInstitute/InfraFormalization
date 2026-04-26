@@ -1,8 +1,20 @@
 # Coverage map — done / in-progress / open
 
-**Single source of truth for project posture.** Updated whenever a Lean file is added, a task is completed, or a research direction is opened. Complements `INFRAGEOMETRY.md` (program description) and the task system (atomic items).
+**Single source of truth for project posture.** Updated whenever a Lean file is added, a task is completed, or a research direction is opened. Complements `INFRAGEOMETRY.md` (program description), [`ROADMAP.md`](ROADMAP.md) (phase-sorted full-program sequencing toward BBH-from-hypergraph), and the task system (atomic items).
 
 Legend: ✅ proved, axiom-clean. 🟡 partial. 🔲 open. 🚫 uninhabited formal obligation.
+
+## 0. Recent landings (2026-04-26 — late, catch-up sync)
+
+- ✅ **`KnillCore.dSquared_eq_zero` (#277)** — cochain-complex axiom for signed boundary on oriented simplices, axiom-clean. Plus `dStarSquared_eq_zero` codual.
+- ✅ **`KnillCore.hodgeOnG_psd`** — Hodge laplacian PSD as bilinear form via sum-of-squares decomposition. Plus `hodgeOnG_dirichlet_zero_iff_isDiracKernel` (kernel-side Hodge isomorphism), `hodgeOnG_diag_eq_sum_dirac_sq`.
+- ✅ **`SubdivisionPath.subdivisionTrajectory n` (#284, Route D)** — canonical n-step trajectory `pathEdges (subdVerts n)` defined directly, with `_isPathOf`, `_length = 2^n`, `_succ`. Decoupled from engine simulation lemma.
+- ✅ **`WassersteinRate.subdivisionDiscrepancy` (#234)** — `1/2^n` discharges `WassersteinRateObligation` with `O(1/n)` rate. First end-to-end machine-checked rule-trajectory → continuum-target convergence certificate.
+- ✅ **`MultiwayExecBridge.lean` (#231)** — first formal exec ↔ abstract bridge: `ExecRule.toRule`, `Fin.embedSuffix`, single-rule `ExecSystem` cast, `consumed_toMultiset`. Closes the architectural anchoring gap.
+- ✅ **`KnillCore.wuCharacteristic₂_eq_chi_sq_sub_disjoint` (KN3)** — Wu inclusion-exclusion identity.
+- ✅ **`KnillCore.eulerCharacteristic_eq_alt_sum_kSkeleton` + `_fintype` corollary (KN8)** — Euler-Poincaré f-vector identity.
+- ✅ **#280–#283** — structural helpers `mem_subdivideVerts_imp`, `subdivideVerts_nodup`, `subdVerts_nodup`, `nextFresh_pathEdges`.
+- 🟡 **#233** — strengthen origin-obligation Props with W_1 content (Phase A in flight).
 
 ## 1. Core rewriting substrate
 

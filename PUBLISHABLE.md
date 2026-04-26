@@ -68,6 +68,7 @@ Grouped from most-immediate (parts already done) to most-ambitious.
 - [x] **Matrix exp fixes eigenvectors** (T2): `exp_mulVec_of_eigenvector`. Opens Mathlib `Module.End.HasEigenvalue` form of cycle spectrum (T4).
 - [x] **Counting-measure + pushforward** on Hypergraph V (A5, `HypergraphMeasure.lean`): foundation for A6 (weak convergence) and A7 (Wasserstein rate).
 - [~] **Project-own Wasserstein-1 as a full pseudometric + Kantorovich-Rubinstein** (`WassersteinFinite.lean`, `CycleWasserstein.lean`): `TransportPlan μ ν`, `cost`, `wasserstein1 = sInf cost`, tensor plan + sup-norm bound, `wasserstein1_self_eq_zero`, `wasserstein1_symm`, `wasserstein1_triangle`, `wasserstein1_delta_eq_dist` (sharp). **`wasserstein1_lipschitz_bound`**: the KR one-direction `|E_μ[f] − E_ν[f]| ≤ L · W_1(μ, ν)` for any L-Lipschitz test function f. On cycleHypergraph: `wasserstein1_cycleDelta_succ = 1/n` (sharp), `wasserstein1_shiftMeasure_le ≤ 1/n` (1-step), and `wasserstein1_shiftIter_le : W_1_scaled(μ, shift^k μ) ≤ k/n` (k-step O(k/n) via triangle inequality induction).
+- [x] **First end-to-end W_1 obligation discharge** (#234, `WassersteinRate.subdivisionDiscrepancy_satisfies_obligation`): `1/2^n ≤ 1/n` via `Nat.lt_two_pow_self`. Concrete `O(2^{-n})` decay rate for the canonical subdivision-rule trajectory `pathEdges (subdVerts n)` (`SubdivisionPath.subdivisionTrajectory`, #284 / Route D). Engine alignment by `decide` for n=0..4. First machine-checked rule-trajectory → continuum-target convergence certificate.
 - [x] **`Hypergraph.dist` triangle inequality + cycle connectivity** (T3).
 - [ ] 25-page paper with the Lean library as appendix
 
@@ -90,6 +91,10 @@ Grouped from most-immediate (parts already done) to most-ambitious.
 - [x] **Cycle spectrum closed form** + scaled eigenvalue → continuum circle spectrum (`CycleSpectrum.lean`, `CycleEigenLimit.lean`)
 - [x] **Discrete PDE ladder**: heat equation (mass conservation + L² decay), wave equation (energy conservation), Klein-Gordon, Schrödinger (unitarity), scalar field (Lagrangian + Euler-Lagrange ↔ KG)
 - [x] **Discrete exterior calculus**: `HypergraphCalculus.lean` with discrete Stokes (summation by parts), `DeRham.lean` (d² = 0), `FormCochainIntegration.lean`
+- [x] **`d ∘ d = 0` cochain-complex axiom on oriented simplices** (`KnillCore.dSquared_eq_zero`, #277): full theorem for the signed-boundary operator on `Simplex V` with `[LinearOrder V]`, axiom-clean. Plus `dStarSquared_eq_zero` codual, `hodgeOnG_psd` (Hodge laplacian PSD), `hodgeOnG_dirichlet_zero_iff_isDiracKernel` (kernel-side Hodge isomorphism). Foundation for KN14 / KN15 / KN16 / KN18.
+- [x] **Wu inclusion-exclusion** (`KnillCore.wuCharacteristic₂_eq_chi_sq_sub_disjoint`, #239 / KN3): `wu₂(G) = χ(G)² - (disjoint-pair sum)`.
+- [x] **Euler-Poincaré f-vector identity** (`KnillCore.eulerCharacteristic_eq_alt_sum_kSkeleton` + `_fintype` corollary, #239 / KN8): `χ(G) = ∑_{k<N} (-1)^k · |kSkeleton G k|` for any cardinality bound.
+- [x] **First formal exec ↔ abstract bridge** (`MultiwayExecBridge.lean`, #231): `ExecRule.toRule`, `Fin.embedSuffix`, single-rule `ExecSystem` cast. Closes the architectural anchoring gap between executable engine and abstract `Step`/`MultiStep`.
 - [x] **Infrageometry program** (IA–IR): IA full, IG full except IG10, IC full, IT full, ID full except ID7, IB full except IB2, IS full, IR full (IR7 refined form proved; over-strong form provably FALSE), IQ full. `all_obligations_hold` in `RemainingObligations.lean` bundles the obligation-level closures.
 - [x] Hypergraph distance + geodesic ball + Wolfram-Hausdorff dimension (`HypergraphDistance.lean`)
 - [x] Benincasa-Dowker discrete d'Alembertian + action + EL equation
@@ -118,8 +123,9 @@ Grouped from most-immediate (parts already done) to most-ambitious.
 - [x] **Spatial reconstruction + causal foliation + proper time** (IC4/IC5).
 - [x] **Candidate rule database + screening pipeline** (`CandidateRuleDatabase.lean`; IR6).
 - [x] **Conservation ⇒ bounded dimension** structural theorem (`RuleDimensionBounds.lean`; IR2).
-- [ ] At least one candidate rule identified (or engineered).
-- [ ] Convergence theorem for that rule.
+- [x] **First end-to-end machine-checked rule-trajectory → continuum-target convergence certificate** (#234, Phase A trigger). The canonical edge-subdivision-rule trajectory `subdivisionTrajectory n := pathEdges (subdVerts n)` (#284 / Route D) discharges `WassersteinRateObligation` with explicit `O(2^{-n})` decay (`subdivisionDiscrepancy n := 1/2^n`, `subdivisionDiscrepancyBundle`). Engine alignment for n=0..4 by `decide`; Phase 2 simulation lemma (#267) is the staged residual. **First instance of "Wolfram rule → continuum geometry" with rigorous rate.**
+- [ ] At least one *curved* candidate rule identified (or engineered) — the Phase C target per [`ROADMAP.md`](ROADMAP.md).
+- [ ] Convergence theorem for that rule on a curved Lorentzian metric (Phase C #218 + #236).
 
 **Audience.** arXiv gr-qc + math-ph (*Physical Review D* / *Classical and Quantum Gravity* / *Foundations of Physics*). This would be the headline result.
 

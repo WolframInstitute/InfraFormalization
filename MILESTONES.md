@@ -4,6 +4,29 @@ Canonical progress tracker for the whole programme. All tasks have explicit chec
 
 Grouped by phase (see [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md)). Each milestone either ships something verifiable (a Lean theorem, a numerical experiment, a written analytical refutation) or is broken into sub-milestones that do.
 
+For full-program sequencing across phases (Phase A → B → C → D toward BBH-from-hypergraph), see [`ROADMAP.md`](ROADMAP.md).
+
+---
+
+## Recent landings (2026-04-26 — late)
+
+Catch-up summary for landings since the previous MILESTONES sync (5 days back):
+
+- [x] **`d ∘ d = 0`** (`KnillCore.dSquared_eq_zero`, #277) — cochain-complex axiom for signed boundary on oriented simplices, axiom-clean. Plus `dStarSquared_eq_zero` codual, `hodgeOnG_psd` (Hodge laplacian PSD as bilinear form), `hodgeOnG_dirichlet_zero_iff_isDiracKernel` (kernel-side Hodge isomorphism), `hodgeOnG_diag_eq_sum_dirac_sq`. Foundation for KN14 / KN15 / KN16 / KN18.
+- [x] **#234 / W_1 obligation discharged** — `subdivisionDiscrepancy n := 1/2^n` discharges `WassersteinRateObligation` with `O(1/n)` rate via `Nat.lt_two_pow_self`. First end-to-end machine-checked rule-trajectory → continuum-target convergence certificate.
+- [x] **#284 / Route D — canonical subdivision trajectory** bypasses engine simulation lemma; engine connection at n=0..4 by `decide`.
+- [x] **#231 / first formal exec ↔ abstract bridge** — `MultiwayExecBridge.lean`. `ExecRule.toRule`, `Fin.embedSuffix`, single-rule `ExecSystem` cast, `consumed_toMultiset`, `ExecHG.toHypergraph_nil`/`_cons`. Closes the architectural gap between executable engine and abstract `Step`/`MultiStep`.
+- [x] **#232 / edge-subdivision rule + n-step path-shape theorem** — closed via `subdivisionTrajectory_isPathOf` (canonical trajectory has IsPathOf shape with subdVerts of length 2^n + 1, Nodup). Engine alignment for all n is residual #267.
+- [x] **#239 / KN3 partial** — `wuCharacteristic₂_eq_chi_sq_sub_disjoint` (Wu inclusion-exclusion).
+- [x] **KN8 partial** — `eulerCharacteristic_eq_alt_sum_kSkeleton` + `_fintype` corollary (Euler-Poincaré f-vector identity).
+- [x] **#280–#283** — structural helpers for #232 Phase 2 (`mem_subdivideVerts_imp`, `subdivideVerts_nodup`, `subdVerts_nodup`, `nextFresh_pathEdges`).
+- [x] **Synthetic-geometry framing** for SIG2/SIG3 added to INFRAGEOMETRY.md (Tarski reduction, spectral angles, parallel postulate as branching characterization, Bachmann motions, class-of-graphs trichotomy).
+- [x] **ROADMAP.md** — full-program phase sequencing toward BBH-from-hypergraph.
+
+In flight (this session):
+- [~] **#233** — strengthen origin-obligation Props with W_1 / Wasserstein content (Phase A start).
+- [~] **#231 heavier** — extend type-level bridge with `Application` constructor + single-application `Step` correspondence.
+
 ---
 
 ## Phase 0 — Audit of the Gorard corpus
