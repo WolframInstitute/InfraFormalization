@@ -41,6 +41,7 @@ is a downstream construction in `KnillVR.lean`).
 import Mathlib.Data.Finset.Powerset
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Finset.Max
+import Mathlib.Data.Finset.Sort
 import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 import Mathlib.Tactic.Ring
 import Mathlib.Tactic.Linarith
@@ -491,6 +492,80 @@ theorem superTrace_diag_one (G : SimplexSet V) :
   apply Finset.sum_congr rfl
   intros x _
   ring
+
+/-! ## Signed incidence operator `d` (#269)
+
+For an ordered vertex type (`[LinearOrder V]`), each simplex acquires
+a canonical orientation via the sorted list of its vertices. The
+**signed incidence** `incidence x y : ℤ` is `(-1)^i` when `y` is the
+codim-1 face of `x` obtained by removing the i-th vertex (in sorted
+order); zero otherwise.
+
+This is the **boundary operator** on oriented simplices. The
+fundamental property `d ∘ d = 0` (cochain-complex condition) follows
+from a sign-cancellation argument on codim-2 faces; staged for a
+follow-up commit.
+
+Counterpart Mathematica: `s[x_, y_]` in `Infrageometry.wl` /
+`QuantumCalculus.wl`. Foundation for KN1 (wave equation), KN4
+(isospectral deformation), KN8 (Dirac zeta), KN14 (McKean-Singer
+supersymmetry). -/
+
+variable [LinearOrder V]
+
+/-- **Signed incidence** `d(x, y) := (-1)^i` if `y = x \ {v_i}` for
+the i-th vertex of `x` in sorted order; 0 otherwise. -/
+noncomputable def incidence (x y : Simplex V) : ℤ :=
+  if h : isFace x y then
+    have h_card : (x \ y).card = 1 := isFace_diff_card h
+    have h_ne : (x \ y).Nonempty :=
+      Finset.card_pos.mp (by rw [h_card]; omega)
+    let v := (x \ y).min' h_ne
+    let pos := (x.sort (· ≤ ·)).idxOf v
+    (-1 : ℤ) ^ pos
+  else 0
+
+/-- **Off-support vanishing**: `d(x, y) = 0` when `y` is not a codim-1
+face of `x`. -/
+theorem incidence_eq_zero_of_not_isFace {x y : Simplex V}
+    (h : ¬ isFace x y) :
+    incidence x y = 0 := by
+  unfold incidence
+  rw [dif_neg h]
+
+/-- **Self-incidence is zero**: `d(x, x) = 0` because `x` is not a
+codim-1 face of itself (the cardinalities don't differ by 1). -/
+theorem incidence_self (x : Simplex V) : incidence x x = 0 := by
+  apply incidence_eq_zero_of_not_isFace
+  intro h
+  obtain ⟨_, hcard⟩ := h
+  omega
+
+/-- **Sign is a unit**: `d(x, y) ∈ {-1, 0, 1}` always. Specifically,
+`(d(x, y))² = 0` if `¬ isFace x y`, else `1`. -/
+theorem incidence_sq (x y : Simplex V) :
+    incidence x y * incidence x y =
+      if isFace x y then 1 else 0 := by
+  unfold incidence
+  by_cases h : isFace x y
+  · rw [dif_pos h]
+    simp only [if_pos h]
+    -- ((-1)^pos)² = 1
+    rw [← pow_add]
+    rw [show ((x.sort (· ≤ ·)).idxOf
+              ((x \ y).min' (Finset.card_pos.mp
+                (by rw [isFace_diff_card h]; omega))))
+            + ((x.sort (· ≤ ·)).idxOf
+              ((x \ y).min' (Finset.card_pos.mp
+                (by rw [isFace_diff_card h]; omega))))
+        = 2 * ((x.sort (· ≤ ·)).idxOf
+              ((x \ y).min' (Finset.card_pos.mp
+                (by rw [isFace_diff_card h]; omega))))
+        from by ring]
+    rw [pow_mul]
+    norm_num
+  · rw [dif_neg h]
+    simp [if_neg h]
 
 end Knill
 end InfraFormalization
