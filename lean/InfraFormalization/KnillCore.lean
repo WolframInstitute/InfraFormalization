@@ -513,16 +513,50 @@ supersymmetry). -/
 
 variable [LinearOrder V]
 
+/-- **Missing vertex of a codim-1 face**: given `isFace x y`, the
+unique vertex of `x` not in `y`. Pulled out as its own definition to
+keep `incidence`'s `dif_pos` body free of nested `let`/`have` proof
+terms (which obstructed `congr` and `rewrite` motives). -/
+def missingVertex {x y : Simplex V} (h : isFace x y) : V :=
+  (x \ y).min'
+    (Finset.card_pos.mp (by rw [isFace_diff_card h]; omega))
+
+/-- **`missingVertex` lies in `x \ y`**: the extracted vertex is in
+`x` and not in `y`. -/
+theorem missingVertex_mem_sdiff {x y : Simplex V} (h : isFace x y) :
+    missingVertex h ∈ x \ y := by
+  unfold missingVertex
+  exact Finset.min'_mem _ _
+
+/-- **Singleton-extraction**: when `x \ y = {v}`, `missingVertex h = v`. -/
+theorem missingVertex_eq_of_sdiff_eq_singleton
+    {x y : Simplex V} (h : isFace x y) {v : V}
+    (h_eq : x \ y = {v}) :
+    missingVertex h = v := by
+  have h_mem : missingVertex h ∈ ({v} : Finset V) := by
+    rw [← h_eq]; exact missingVertex_mem_sdiff h
+  exact Finset.mem_singleton.mp h_mem
+
+/-- **`missingVertex` of `x.erase w` is `w`**: removing a vertex `w`
+from `x` and asking which vertex went missing returns `w`. -/
+theorem missingVertex_erase {x : Simplex V} {w : V} (hw : w ∈ x) :
+    missingVertex (isFace_erase hw) = w := by
+  apply missingVertex_eq_of_sdiff_eq_singleton
+  ext v
+  simp only [Finset.mem_sdiff, Finset.mem_erase, Finset.mem_singleton]
+  constructor
+  · rintro ⟨hvx, hve⟩
+    by_contra hne
+    exact hve ⟨hne, hvx⟩
+  · rintro rfl
+    exact ⟨hw, fun h => h.1 rfl⟩
+
 /-- **Signed incidence** `d(x, y) := (-1)^i` if `y = x \ {v_i}` for
-the i-th vertex of `x` in sorted order; 0 otherwise. -/
+the i-th vertex of `x` in sorted order; 0 otherwise. The missing
+vertex is extracted via the `missingVertex` helper above. -/
 def incidence (x y : Simplex V) : ℤ :=
   if h : isFace x y then
-    have h_card : (x \ y).card = 1 := isFace_diff_card h
-    have h_ne : (x \ y).Nonempty :=
-      Finset.card_pos.mp (by rw [h_card]; omega)
-    let v := (x \ y).min' h_ne
-    let pos := (x.sort (· ≤ ·)).idxOf v
-    (-1 : ℤ) ^ pos
+    (-1 : ℤ) ^ (x.sort (· ≤ ·)).idxOf (missingVertex h)
   else 0
 
 /-- **Off-support vanishing**: `d(x, y) = 0` when `y` is not a codim-1
@@ -548,24 +582,11 @@ theorem incidence_sq (x y : Simplex V) :
       if isFace x y then 1 else 0 := by
   unfold incidence
   by_cases h : isFace x y
-  · rw [dif_pos h]
-    simp only [if_pos h]
-    -- ((-1)^pos)² = 1
-    rw [← pow_add]
-    rw [show ((x.sort (· ≤ ·)).idxOf
-              ((x \ y).min' (Finset.card_pos.mp
-                (by rw [isFace_diff_card h]; omega))))
-            + ((x.sort (· ≤ ·)).idxOf
-              ((x \ y).min' (Finset.card_pos.mp
-                (by rw [isFace_diff_card h]; omega))))
-        = 2 * ((x.sort (· ≤ ·)).idxOf
-              ((x \ y).min' (Finset.card_pos.mp
-                (by rw [isFace_diff_card h]; omega))))
-        from by ring]
-    rw [pow_mul]
+  · rw [dif_pos h, if_pos h, ← pow_add]
+    set k := (x.sort (· ≤ ·)).idxOf (missingVertex h)
+    rw [show k + k = 2 * k from by ring, pow_mul]
     norm_num
-  · rw [dif_neg h]
-    simp [if_neg h]
+  · rw [dif_neg h, if_neg h, mul_zero]
 
 /-! ## Dirac and Hodge matrices (#272)
 
@@ -691,6 +712,14 @@ theorem dSquared_eq_zero_of_not_subset {x z : Simplex V}
   · obtain ⟨hzy, _⟩ := hyz
     exact absurd (hzy.trans hy) h_not_sub
   · rw [incidence_eq_zero_of_not_isFace hyz, mul_zero]
+
+/-- **Incidence on an `erase`** (clean version): for `w ∈ x`,
+`incidence x (x.erase w) = (-1)^(idxOf w in sort x)`. Trivial after
+the `missingVertex` refactor — the body becomes a single `simp`. -/
+theorem incidence_erase (x : Simplex V) (w : V) (hw : w ∈ x) :
+    incidence x (x.erase w) = (-1 : ℤ) ^ (x.sort (· ≤ ·)).idxOf w := by
+  unfold incidence
+  rw [dif_pos (isFace_erase hw), missingVertex_erase hw]
 
 /-! ### General `d ∘ d = 0` — staged
 
