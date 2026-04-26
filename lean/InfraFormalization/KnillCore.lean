@@ -1025,5 +1025,29 @@ theorem dSquared_eq_zero (x z : Simplex V) : dSquared x z = 0 := by
     rw [hi_eq]
     ring
 
+/-! ### `(d*)² = 0` — codual cochain-complex identity
+
+`d* (transpose / coboundary)` operates as `d* x y := incidence y x`. The
+adjoint cochain-complex axiom `(d*)² = 0` is a direct corollary of
+`d² = 0` by transposing the indices: the sum
+`∑_{y ⊇ x} incidence(y, x) · incidence(z, y)` is the same sum as
+`∑_{y ⊆ z} incidence(y, x) · incidence(z, y)` after re-indexing,
+which equals `dSquared z x = 0` once we show the support of contributions
+matches `z.powerset`. -/
+
+/-- **`d* ∘ d* = 0`** (codual cochain-complex axiom): the transpose
+boundary squares to zero. By symmetry, this is the rotated version
+of `dSquared_eq_zero`. -/
+theorem dStarSquared_eq_zero (x z : Simplex V) :
+    (z.powerset.sum (fun y => incidence y x * incidence z y)) = 0 := by
+  -- Reindex: this equals dSquared z x = 0.
+  have : z.powerset.sum (fun y => incidence y x * incidence z y)
+       = z.powerset.sum (fun y => incidence z y * incidence y x) := by
+    apply Finset.sum_congr rfl
+    intros y _
+    ring
+  rw [this]
+  exact dSquared_eq_zero z x
+
 end Knill
 end InfraFormalization
