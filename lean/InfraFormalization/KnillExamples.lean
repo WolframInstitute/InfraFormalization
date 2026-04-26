@@ -181,6 +181,32 @@ that the theorem applies to any pair of simplices. -/
 example (x z : Simplex (Fin 3)) : dSquared x z = 0 :=
   dSquared_eq_zero x z
 
+/-! ## Hodge laplacian on the triangle
+
+Concrete entries of `H = D²` on the triangle complex, plus diagonal
+non-negativity certificates.  -/
+
+/-- **`H({0}, {0}) = ∑_z d({0},z)² = d({0},{0,1})² + d({0},{0,2})²
+= 1 + 1 = 2`** — degree of `{0}` in the triangle's edge graph. -/
+example : hodgeOnG triangle ({0} : Simplex (Fin 3)) {0} = 2 := by native_decide
+
+/-- **`H({0,1}, {0,1})` on the triangle**: the diagonal Hodge entry
+on the edge `{0,1}`. The triangle is the boundary 2-simplex, so the
+Hodge eigenvalue on edges sums incidences from `{0}, {1}, {0,1,2}`. -/
+example : hodgeOnG triangle ({0, 1} : Simplex (Fin 3)) {0, 1} = 3 := by
+  native_decide
+
+/-- **`H({0,1,2}, {0,1,2}) = 3`**: the diagonal entry on the top
+2-simplex (incidences from its three boundary edges, each squared). -/
+example : hodgeOnG triangle ({0, 1, 2} : Simplex (Fin 3)) {0, 1, 2} = 3 := by
+  native_decide
+
+/-- **General Hodge diagonal non-negativity**: `H(x, x) ≥ 0` for any
+simplex on `Fin 3`. -/
+example (G : SimplexSet (Fin 3)) (x : Simplex (Fin 3)) :
+    0 ≤ hodgeOnG G x x :=
+  hodgeOnG_diag_nonneg G x
+
 end Examples
 end Knill
 end InfraFormalization
