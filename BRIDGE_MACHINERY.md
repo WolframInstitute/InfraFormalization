@@ -2,6 +2,18 @@
 
 What Lean infrastructure is needed to connect the Wolfram-model rewriting side (causal graphs, branchial structure, discrete events) to continuous mathematical physics (Riemannian/Lorentzian manifolds, ODEs, PDEs, fields, gauge theory).
 
+## Headline (2026-04-26 — late, post #234 + #231 + d²=0)
+
+Recent landings affecting the bridge ladder:
+
+- **`d ∘ d = 0`** (`KnillCore.dSquared_eq_zero`, #277) — cochain-complex axiom for signed boundary on oriented simplices, axiom-clean. Plus `(d*)² = 0` codual, `hodgeOnG_psd` (Hodge laplacian PSD), Hodge ↔ Dirac kernel iff (`isDiracKernel`). Foundation for KN14 (McKean-Singer), KN15 (Atiyah-Singer), KN16 (Cartan magic formula), KN18 (Brouwer-Lefschetz). Affects **Rung 1** (discrete calculus): `d²=0` is the cochain-complex axiom on the simplicial side.
+- **First W_1 obligation discharge** (#234) — `subdivisionDiscrepancy n := 1/2^n` discharges `WassersteinRateObligation` via `Nat.lt_two_pow_self`. Affects **Rung 3** (measure-theoretic limits): first concrete `O(1/n)` rate certificate from a Wolfram rule trajectory.
+- **Canonical subdivision trajectory** (#284, Route D) — `pathEdges (subdVerts n)` defined directly, decoupled from the engine. Affects **Rung 10** (specific bridges): provides the first end-to-end rule → continuum-target convergence certificate.
+- **Exec ↔ abstract bridge** (`MultiwayExecBridge.lean`, #231) — `ExecRule.toRule`, `Fin.embedSuffix`, single-rule `ExecSystem` cast. First formal correspondence between the executable `MultiwayExec` and abstract `Step`/`MultiStep`. Closes the architectural gap noted in the anchoring audit (#235).
+- **Wu inclusion-exclusion + Euler-Poincaré** (KN3 / KN8) — `wuCharacteristic₂_eq_chi_sq_sub_disjoint` and `eulerCharacteristic_eq_alt_sum_kSkeleton`. Build the Knill spectral track on the d²=0 foundation.
+
+See [`ROADMAP.md`](ROADMAP.md) for full-program sequencing toward the BBH-from-hypergraph end-state (Phase A → B → C → D).
+
 ## Grounding principle (non-negotiable)
 
 **Every continuous structure in this corpus must be reachable from hypergraph rewriting** via a continuum-limit theorem or a discrete-approximation construction. We do not import or define continuous mathematical objects as standalone islands. Each rung of the ladder either:

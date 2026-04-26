@@ -13,7 +13,7 @@ The project runs on three parallel axes:
 ## Contents
 
 - A Lean library built on the primitives `Hypergraph V`, `RewritingSystem P`, and `Trajectory sys init`, with every downstream object (graph Laplacian, discrete PDEs, metric/connection data, Lorentzian structures, causal foliations, branchial Hilbert spaces, Ricci and Einstein machinery) reduced to those primitives or to an explicit hypergraph-origin obligation Prop.
-- A documentation set: [`STATUS.md`](STATUS.md), [`COVERAGE_MAP.md`](COVERAGE_MAP.md), [`BRIDGE_MACHINERY.md`](BRIDGE_MACHINERY.md), [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md), [`MAJOR_FLAWS.md`](MAJOR_FLAWS.md), [`GROUNDING_AUDIT.md`](GROUNDING_AUDIT.md), [`MILESTONES.md`](MILESTONES.md), [`NEXT_STEPS.md`](NEXT_STEPS.md).
+- A documentation set: [`ROADMAP.md`](ROADMAP.md) (phase-sorted full-program sequencing), [`STATUS.md`](STATUS.md), [`NEXT_STEPS.md`](NEXT_STEPS.md), [`INDEX.md`](INDEX.md), [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md), [`COVERAGE_MAP.md`](COVERAGE_MAP.md), [`BRIDGE_MACHINERY.md`](BRIDGE_MACHINERY.md), [`MAJOR_FLAWS.md`](MAJOR_FLAWS.md), [`GROUNDING_AUDIT.md`](GROUNDING_AUDIT.md), [`MILESTONES.md`](MILESTONES.md).
 - An audit trail for the Gorard papers (G1 2004.14810, G2 2011.12174, G3 2102.09363, G4 2303.07282): close-readings, cross-paper corpus audit, row-level claims catalog, severity taxonomy, continuum-limit claim ledger, per-claim corpus assessment.
 - Empirical scripts (Wolfram Language + Python) that independently re-implement the mechanics of Gorard's claims and test them against his rules, including a SetReplace-vs-Python cross-check on the named EFE rule.
 
@@ -23,9 +23,18 @@ The published Wolfram-model-to-GR derivations make a strong claim: that a specif
 
 The project exists to settle, formally, what is actually true in this corpus and what remains open, and to build the substantive bridge machinery that would have to be in place for any future claim of this form.
 
-## Status headline (2026-04-24)
+## Status headline (2026-04-26 — late)
 
-- **Size** (rough): ~145 Lean files, ~24k LOC; ~870 theorems, ~430 definitions, ~70 structures. Numbers move every session; build is fully green.
+**Sprint critical path closed (`#234` W_1 obligation discharged) + first formal exec ↔ abstract bridge (`#231`) + d²=0 cochain-complex axiom + Hodge PSD foundation.** Headline landings since the previous status:
+
+- **`d ∘ d = 0`** — `KnillCore.dSquared_eq_zero` proves the cochain-complex axiom for the signed boundary on oriented simplices, axiom-clean (#277). Plus `(d*)² = 0` codual, Hodge PSD (`hodgeOnG_psd`), Hodge ↔ Dirac kernel iff (`isDiracKernel`), Hodge diagonal sum-of-squares. Foundation for KN14 McKean-Singer, KN15 Atiyah-Singer, KN16 Cartan, KN18 Brouwer-Lefschetz.
+- **First W_1 obligation discharge** — `#234` `subdivisionDiscrepancy n := 1/2^n ≤ 1/n` discharges `WassersteinRateObligation` for the canonical subdivision-rule trajectory (`#284 / Route D`). First end-to-end machine-checked rule-trajectory → continuum-target convergence certificate.
+- **First formal exec ↔ abstract bridge** — `MultiwayExecBridge.lean` (#231): `ExecRule.toRule`, `Fin.embedSuffix`, single-rule `ExecSystem` cast. Closes the architectural gap between the executable engine (`MultiwayExec`) and the abstract `Rule P` / `Step` / `MultiStep` track.
+- **KN3/KN8** — Wu inclusion-exclusion identity + Euler-Poincaré f-vector identity proven in `KnillCore.lean`.
+- **Synthetic-geometry framing** — INFRAGEOMETRY.md gains a Tarski-reduction / spectral-angles / parallel-postulate-as-branching framing for SIG2/SIG3.
+- **ROADMAP.md** — full-program sequencing (Phase A → B → C → D → BBH merger from hypergraph IC).
+
+- **Size** (rough): ~150 Lean files, ~25k LOC; ~900 theorems, ~440 definitions. Numbers move every session; build is fully green (3526 jobs).
 - **Axiom cleanliness**: every `#print axioms`-certified theorem reduces to `{propext, Classical.choice, Quot.sound}` (many to `{propext, Quot.sound}` only). No `sorry`, no `native_decide`, no custom axioms.
 - **Infrageometry obligations — all seven proved**. `RemainingObligations.lean` bundles them in `all_obligations_hold`: IT5 Latschev, IT6 scale trichotomy, ID6 cycle compatibility (`V(v,r) = 2r + 1` exact), IQ6 Fubini-Study / Bhattacharyya bound, IQ8 EME persistence, IQ9 path-integral baseline, IR7 realisability-restricted reverse-engineering. The over-strong unrefined IR7 is provably false (`not_reverseEngineeringObligation`). Remaining open infrageometry tasks are IG10 (exponential map via weighted shortest-path counts) and IB2 (causal-branchial commutator theorem, predicate-level).
 - **Substantive new results since the weekly report** (187 commits, 24k LOC):
