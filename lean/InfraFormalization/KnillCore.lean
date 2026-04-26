@@ -796,21 +796,234 @@ theorem dSquared_summand_zero_unless (x z : Simplex V)
     · rw [incidence_eq_zero_of_not_isFace hyz, mul_zero]
   · rw [incidence_eq_zero_of_not_isFace hxy, zero_mul]
 
-/-! ### Sort/erase position-arithmetic — staged (#277 Path 2 building blocks)
+/-! ### Sort/erase position-arithmetic helpers (#278, #279) -/
 
-The d²=0 sign cancellation needs `(s.erase w).sort r = (s.sort r).erase w`
-plus position-arithmetic on `idxOf` after `erase`. Mathlib's
-`List.eq_of_perm_of_sorted` (alias `Perm.eq_of_pairwise`) and
-`Finset.sort_perm_toList` provide the building blocks but the proof
-still requires a `(List.perm_erase _).symm.trans` argument that's
-non-trivial to wire up without dedicated `Finset.sort_erase` lemma
-upstream. Path 2 (`Equiv.Perm.sign` reformulation) sidesteps this by
-using Mathlib's permutation-sign cancellation theory directly via
-`sign_swap`/`sign_mul`. Both paths estimated ~150-200 lines total.
+/-- **`sort` commutes with `erase`** (#278): removing a vertex from a
+finset and then sorting equals sorting and then removing the (unique)
+occurrence as a list. The key bridge lemma for position arithmetic
+on signed boundaries — both LHS and RHS have the same multiset of
+elements (`s.val.erase w`) and both are sorted, so by
+`List.Perm.eq_of_pairwise'` they're equal. -/
+theorem Finset.sort_erase (s : Finset V) (w : V) :
+    (s.erase w).sort (· ≤ ·) = (s.sort (· ≤ ·)).erase w := by
+  have h_sub : List.Sublist ((s.sort (· ≤ ·)).erase w) (s.sort (· ≤ ·)) :=
+    List.erase_sublist
+  have h_pair_l : List.Pairwise (· ≤ ·) ((s.erase w).sort (· ≤ ·)) :=
+    Finset.pairwise_sort _ _
+  have h_pair_r : List.Pairwise (· ≤ ·) ((s.sort (· ≤ ·)).erase w) :=
+    (Finset.pairwise_sort _ _).sublist h_sub
+  have h_perm : ((s.erase w).sort (· ≤ ·)).Perm ((s.sort (· ≤ ·)).erase w) := by
+    rw [← Multiset.coe_eq_coe, Finset.sort_eq, Finset.erase_val,
+        ← Multiset.coe_erase, Finset.sort_eq]
+  exact List.Perm.eq_of_pairwise' h_pair_l h_pair_r h_perm
 
-The mathematical proof is settled (sign-cancellation as documented
-above); only the Lean infrastructure work remains. Concrete n=3
-witnesses still pass via `native_decide` in `KnillExamples`. -/
+/-- **`idxOf` after erase, smaller-index case** (#279): if `u`'s position
+in `l` is strictly less than `w`'s, then erasing `w` does not shift `u`'s
+position. Proved by induction on `l`, splitting on whether the head is
+`u`, `w`, or neither. -/
+theorem List.idxOf_erase_of_idxOf_lt {α : Type*} [DecidableEq α]
+    {l : List α} {w u : α} (h : l.idxOf u < l.idxOf w) :
+    (l.erase w).idxOf u = l.idxOf u := by
+  induction l with
+  | nil => simp [List.idxOf] at h
+  | cons head tail ih =>
+    by_cases h_hu : head = u
+    · subst h_hu
+      have h_ne_w : head ≠ w := by
+        intro he; subst he; simp at h
+      have h_beq_w : (head == w) = false := beq_eq_false_iff_ne.mpr h_ne_w
+      simp [List.erase_cons, h_beq_w]
+    · by_cases h_hw : head = w
+      · subst h_hw
+        have h_beq_u : (head == u) = false := beq_eq_false_iff_ne.mpr h_hu
+        simp [List.idxOf_cons, h_beq_u] at h
+      · have h_beq_u : (head == u) = false := beq_eq_false_iff_ne.mpr h_hu
+        have h_beq_w : (head == w) = false := beq_eq_false_iff_ne.mpr h_hw
+        simp [List.erase_cons, h_beq_w, List.idxOf_cons, h_beq_u]
+        simp [List.idxOf_cons, h_beq_u, h_beq_w] at h
+        exact ih (by omega)
+
+/-- **`idxOf` after erase, larger-index case** (#279): if `w`'s position
+in `l` is strictly less than `u`'s, then erasing `w` shifts `u`'s
+position down by one (`+ 1` form to avoid `Nat` subtraction). -/
+theorem List.idxOf_erase_of_idxOf_gt {α : Type*} [DecidableEq α]
+    {l : List α} {w u : α} (h : l.idxOf w < l.idxOf u) :
+    (l.erase w).idxOf u + 1 = l.idxOf u := by
+  induction l with
+  | nil => simp [List.idxOf] at h
+  | cons head tail ih =>
+    by_cases h_hw : head = w
+    · subst h_hw
+      have h_ne_u : head ≠ u := by
+        intro he; subst he; simp at h
+      have h_beq_u : (head == u) = false := beq_eq_false_iff_ne.mpr h_ne_u
+      simp [List.erase_cons_head, List.idxOf_cons, h_beq_u]
+    · by_cases h_hu : head = u
+      · subst h_hu
+        have h_beq_w : (head == w) = false := beq_eq_false_iff_ne.mpr h_hw
+        simp [List.idxOf_cons, h_beq_w] at h
+      · have h_beq_u : (head == u) = false := beq_eq_false_iff_ne.mpr h_hu
+        have h_beq_w : (head == w) = false := beq_eq_false_iff_ne.mpr h_hw
+        simp [List.erase_cons, h_beq_w, List.idxOf_cons, h_beq_u]
+        simp [List.idxOf_cons, h_beq_u, h_beq_w] at h
+        have ih' : (tail.erase w).idxOf u + 1 = tail.idxOf u := ih (by omega)
+        omega
+
+/-! ### Sum-restriction bridge to (x \ z) -/
+
+/-- **Sum restriction** (#277 helper): `dSquared x z = ∑_{w ∈ x \ z}
+incidence x (x.erase w) · incidence (x.erase w) z`. Reduces the
+powerset sum to a sum over the two missing vertices, using the
+summand characterization (#276) and `sum_image` injectivity
+(injectivity of `w ↦ x.erase w` on `x \ z ⊆ x`). -/
+theorem dSquared_eq_sum_diff (x z : Simplex V) (hsub : z ⊆ x) :
+    dSquared x z = (x \ z).sum
+      (fun w => incidence x (x.erase w) * incidence (x.erase w) z) := by
+  unfold dSquared
+  have h_inj : Set.InjOn (fun w => x.erase w) (x \ z : Finset V) := by
+    intro w₁ hw₁ w₂ _ heq
+    by_contra hne
+    have h_mem_x : w₁ ∈ x := by
+      simp only [Finset.coe_sdiff, Set.mem_diff, Finset.mem_coe] at hw₁
+      exact hw₁.1
+    have hw₁_in : w₁ ∈ x.erase w₂ := Finset.mem_erase.mpr ⟨hne, h_mem_x⟩
+    have heq' : x.erase w₁ = x.erase w₂ := heq
+    rw [← heq'] at hw₁_in
+    exact (Finset.notMem_erase w₁ x) hw₁_in
+  have h_image_sub : (x \ z).image (fun w => x.erase w) ⊆ x.powerset := by
+    intro y hy
+    rw [Finset.mem_image] at hy
+    obtain ⟨w, _, rfl⟩ := hy
+    rw [Finset.mem_powerset]
+    exact Finset.erase_subset _ _
+  rw [← Finset.sum_image (s := x \ z) (g := fun w => x.erase w)
+        (f := fun y => incidence x y * incidence y z) h_inj]
+  symm
+  apply Finset.sum_subset h_image_sub
+  intro y hy_pow hy_notin
+  rw [Finset.mem_powerset] at hy_pow
+  apply dSquared_summand_zero_unless x z hsub y hy_pow
+  intro ⟨w, hw_diff, h_y_eq⟩
+  apply hy_notin
+  rw [Finset.mem_image]
+  exact ⟨w, hw_diff, h_y_eq.symm⟩
+
+/-! ### `d² = 0` — main theorem -/
+
+/-- **Cochain-complex axiom `d ∘ d = 0`** (#277): the signed boundary
+operator squares to zero. Combines the trivial card / subset cases,
+`dSquared_eq_sum_diff` reduction, the two-element decomposition of
+`x \ z`, and the position-arithmetic sign cancellation
+`(-1)^(i+j-1) + (-1)^(i+j) = 0`. -/
+theorem dSquared_eq_zero (x z : Simplex V) : dSquared x z = 0 := by
+  by_cases hsub : z ⊆ x
+  swap
+  · exact dSquared_eq_zero_of_not_subset hsub
+  by_cases hcard : x.card = z.card + 2
+  swap
+  · exact dSquared_eq_zero_of_card_ne hcard
+  -- Main case: z ⊆ x and |x| = |z| + 2
+  rw [dSquared_eq_sum_diff x z hsub]
+  have h_diff_card : (x \ z).card = 2 := by
+    rw [Finset.card_sdiff_of_subset hsub, hcard]; omega
+  obtain ⟨a, b, hab, h_xz_eq⟩ := Finset.card_eq_two.mp h_diff_card
+  rw [h_xz_eq, Finset.sum_pair hab]
+  -- Membership facts
+  have ha_mem : a ∈ x \ z := by rw [h_xz_eq]; simp
+  have hb_mem : b ∈ x \ z := by rw [h_xz_eq]; simp
+  have ha_x : a ∈ x := (Finset.mem_sdiff.mp ha_mem).1
+  have ha_nz : a ∉ z := (Finset.mem_sdiff.mp ha_mem).2
+  have hb_x : b ∈ x := (Finset.mem_sdiff.mp hb_mem).1
+  have hb_nz : b ∉ z := (Finset.mem_sdiff.mp hb_mem).2
+  -- isFace facts and missingVertex computations
+  have h_face_a : isFace (x.erase a) z := by
+    refine ⟨fun v hv => ?_, ?_⟩
+    · rw [Finset.mem_erase]
+      refine ⟨fun hva => ?_, hsub hv⟩
+      subst hva; exact ha_nz hv
+    · rw [Finset.card_erase_of_mem ha_x, hcard]; omega
+  have h_face_b : isFace (x.erase b) z := by
+    refine ⟨fun v hv => ?_, ?_⟩
+    · rw [Finset.mem_erase]
+      refine ⟨fun hvb => ?_, hsub hv⟩
+      subst hvb; exact hb_nz hv
+    · rw [Finset.card_erase_of_mem hb_x, hcard]; omega
+  have h_mv_a : missingVertex h_face_a = b := by
+    apply missingVertex_eq_of_sdiff_eq_singleton
+    ext v
+    simp only [Finset.mem_sdiff, Finset.mem_erase, Finset.mem_singleton]
+    constructor
+    · rintro ⟨⟨hva, hvx⟩, hvz⟩
+      have hvxz : v ∈ x \ z := Finset.mem_sdiff.mpr ⟨hvx, hvz⟩
+      rw [h_xz_eq] at hvxz
+      rcases Finset.mem_insert.mp hvxz with rfl | hvb_eq
+      · exact absurd rfl hva
+      · exact Finset.mem_singleton.mp hvb_eq
+    · rintro rfl
+      exact ⟨⟨Ne.symm hab, hb_x⟩, hb_nz⟩
+  have h_mv_b : missingVertex h_face_b = a := by
+    apply missingVertex_eq_of_sdiff_eq_singleton
+    ext v
+    simp only [Finset.mem_sdiff, Finset.mem_erase, Finset.mem_singleton]
+    constructor
+    · rintro ⟨⟨hvb, hvx⟩, hvz⟩
+      have hvxz : v ∈ x \ z := Finset.mem_sdiff.mpr ⟨hvx, hvz⟩
+      rw [h_xz_eq] at hvxz
+      rcases Finset.mem_insert.mp hvxz with rfl | hva_eq
+      · rfl
+      · rw [Finset.mem_singleton] at hva_eq
+        subst hva_eq
+        exact absurd rfl hvb
+    · rintro rfl
+      exact ⟨⟨hab, ha_x⟩, ha_nz⟩
+  -- Compute incidence x (x.erase a/b)
+  rw [incidence_erase x a ha_x, incidence_erase x b hb_x]
+  -- Unfold incidence (x.erase a/b) z
+  unfold incidence
+  rw [dif_pos h_face_a, dif_pos h_face_b]
+  rw [h_mv_a, h_mv_b]
+  -- Reduce sort of erase to erase of sort
+  rw [Finset.sort_erase, Finset.sort_erase]
+  -- Now: (-1)^idx_x(a) * (-1)^idx_{(sort x).erase a}(b)
+  --    + (-1)^idx_x(b) * (-1)^idx_{(sort x).erase b}(a) = 0
+  set L := x.sort (· ≤ ·) with hL_def
+  set i := L.idxOf a with hi_def
+  set j := L.idxOf b with hj_def
+  -- a ∈ L and b ∈ L since a, b ∈ x and L is sort x
+  have hL_a : a ∈ L := by rw [hL_def, Finset.mem_sort]; exact ha_x
+  have hL_b : b ∈ L := by rw [hL_def, Finset.mem_sort]; exact hb_x
+  have h_inj : i ≠ j := by
+    intro h_eq
+    have : a = b := (List.idxOf_inj hL_a).mp (by rw [← hi_def, ← hj_def]; exact h_eq)
+    exact hab this
+  rcases lt_or_gt_of_ne h_inj with h_lt | h_gt
+  · -- i < j: (L.erase a).idxOf b + 1 = j;  (L.erase b).idxOf a = i
+    have h_b_pos : (L.erase a).idxOf b + 1 = j :=
+      List.idxOf_erase_of_idxOf_gt (by rw [← hi_def, ← hj_def]; exact h_lt)
+    have h_a_pos : (L.erase b).idxOf a = i :=
+      List.idxOf_erase_of_idxOf_lt (by rw [← hi_def, ← hj_def]; exact h_lt)
+    rw [h_a_pos]
+    set p := (L.erase a).idxOf b with hp_def
+    -- Goal: (-1)^i * (-1)^p + (-1)^j * (-1)^i = 0
+    -- with p + 1 = j, i.e., j = p + 1
+    have hj_eq : j = p + 1 := h_b_pos.symm
+    rw [hj_eq]
+    -- (-1)^i * (-1)^p + (-1)^(p+1) * (-1)^i
+    -- = (-1)^i * (-1)^p + (-1)^p * (-1) * (-1)^i
+    -- = (-1)^i * (-1)^p - (-1)^i * (-1)^p
+    -- = 0
+    ring
+  · -- i > j: by symmetry. Actually use the same structure with a↔b swapped.
+    -- (L.erase a).idxOf b = j;  (L.erase b).idxOf a + 1 = i
+    have h_b_pos : (L.erase a).idxOf b = j :=
+      List.idxOf_erase_of_idxOf_lt (by rw [← hi_def, ← hj_def]; exact h_gt)
+    have h_a_pos : (L.erase b).idxOf a + 1 = i :=
+      List.idxOf_erase_of_idxOf_gt (by rw [← hi_def, ← hj_def]; exact h_gt)
+    rw [h_b_pos]
+    set q := (L.erase b).idxOf a with hq_def
+    have hi_eq : i = q + 1 := h_a_pos.symm
+    rw [hi_eq]
+    ring
 
 end Knill
 end InfraFormalization

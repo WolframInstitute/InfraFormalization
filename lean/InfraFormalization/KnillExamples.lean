@@ -163,22 +163,7 @@ sign cancellation. -/
 /-- **`(d²)({0,1,2}, {0}) = 0`**: removing one of the two extra
 vertices first then the other gives cancelling signs. The two
 non-zero summands are `d({0,1,2}, {0,1}) · d({0,1}, {0}) +
-d({0,1,2}, {0,2}) · d({0,2}, {0}) = 1 · (-1) + (-1) · 1 = -1 - 1`...
-
-Actually the sum has FOUR codim-1 faces of `{0,1,2}` ({0,1}, {0,2},
-{1,2}) plus the empty/full subsets — but only `{0,1}` and `{0,2}`
-have `{0}` as a codim-1 face. The sum is:
-  d({0,1,2}, {0,1}) · d({0,1}, {0}) + d({0,1,2}, {0,2}) · d({0,2}, {0})
-= 1 · (-1) + (-1) · 1 = -2
-
-Hmm — that's not zero! Wait, let me recompute. `d({0, 2}, {0})`:
-removing `2`, position of `2` in sorted `{0, 2}` is `1`, so
-`d = (-1)^1 = -1`. So:
-
-  1 · (-1) + (-1) · (-1) = -1 + 1 = 0 ✓
-
-The sign cancellation is correct. Verifying via `decide`:
--/
+d({0,1,2}, {0,2}) · d({0,2}, {0}) = 1 · (-1) + (-1) · (-1) = 0`. -/
 example : dSquared ({0, 1, 2} : Simplex (Fin 3)) {0} = 0 := by native_decide
 
 /-- **`(d²)({0,1,2}, {1}) = 0`** by the same mechanism. -/
@@ -186,6 +171,15 @@ example : dSquared ({0, 1, 2} : Simplex (Fin 3)) {1} = 0 := by native_decide
 
 /-- **`(d²)({0,1,2}, {2}) = 0`**. -/
 example : dSquared ({0, 1, 2} : Simplex (Fin 3)) {2} = 0 := by native_decide
+
+/-! ## d² = 0 — general theorem
+
+The cochain-complex axiom `d ∘ d = 0`, proved in full generality
+in `KnillCore.dSquared_eq_zero`. Cited here as a sanity check
+that the theorem applies to any pair of simplices. -/
+
+example (x z : Simplex (Fin 3)) : dSquared x z = 0 :=
+  dSquared_eq_zero x z
 
 end Examples
 end Knill
