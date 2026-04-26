@@ -292,6 +292,53 @@ plus the branching-stability research questions from its README.
 - SIG4. `Coordinatization.wl` Lean port — analytisation/algebraisation of synthetic infrageometry via shortest-path counts / Cayley-style embedding; bridges ID4 (CoordinatizationDimension) and IGE1 (Cayley-graph structure).
 - SIG5. **Branching-construction stability** (per SyntheticInfrageometry README): `SceneDistance s₁ s₂ : ℝ` (Wasserstein-style distance between scenes via #214), and `ConstructionStability c r := tendency of branching scenes from construction c on rule-r outputs to converge under refinement`. First concrete instance: subdivision rule (#234) on path/cycle.
 
+#### Conceptual framing for SIG2/SIG3 (synthetic geometry → graph theory bridge)
+
+The SIG2/SIG3 ports should *not* be a line-by-line transcription of the Mathematica paclet. They should implement the following **research-level framing** that connects axiomatic synthetic geometry to graph-theoretic primitives we already have. Adding this here so the eventual Lean implementation lands the right way the first time.
+
+**1. Tarski reduction to two predicates.** Tarski's axiomatisation of Euclidean geometry uses only two primitive predicates: **betweenness** `B(a, b, c)` and **equidistance** `Cong(ab, cd)`. With `Hypergraph.dist` in hand (which we have, `HypergraphDistance.lean`), both become 1-line graph-theoretic definitions:
+```
+def Tarski.Between (H : Hypergraph V) (a b c : V) : Prop :=
+  H.dist a b + H.dist b c = H.dist a c
+def Tarski.Cong (H : Hypergraph V) (a b c d : V) : Prop :=
+  H.dist a b = H.dist c d
+```
+Once these are stated, **Tarski's first 8 axioms (T1–T8 — incidence + congruence + segment construction) are universally quantified Props on `Hypergraph.dist`**, decidable for any finite hypergraph. SIG2 should *implement these directly* rather than chase the 5-postulate / common-notion structure of Euclid's Elements (which is harder to bound and entangles definitions with theorems).
+
+**2. The angle problem.** Tarski's first 8 axioms cover incidence + congruence + extension. Beyond that — angles, perpendicularity, parallel uniqueness — graph theory **stops being enough**. Two routes:
+   - **Spectral angles** (Knill / Connes): `cos θ_v(f, g) := ⟨∇f_v, ∇g_v⟩ / ‖∇f_v‖ ‖∇g_v‖` where `∇f_v` is the discrete gradient at vertex `v` (a vector indexed by neighbours). Right angles are spectral-orthogonality. Requires the Hodge / `d² = 0` infrastructure (which we have, `KnillCore.lean`).
+   - **Discrete curvature angles** (Forman / Ollivier / combinatorial Gauss-Bonnet): angle deficit at a vertex measures local curvature; right angles are angle-deficit-zero edges. Builds on existing `OllivierRicci`-style infrastructure (#220).
+
+SIG3's `perpendicular` predicate should pick one of these (probably spectral, given our Hodge investment) and document the choice. The other becomes a separate predicate for cross-validation.
+
+**3. Postulate V (parallel uniqueness) → branching characterization.** In continuum geometry the parallel postulate says exactly one line through a non-incident point is parallel to a given line. On a hypergraph, "lines" are maximal geodesics, and **branching geodesics give multiple parallels through a point by default** — Postulate V *fails generically*. The interesting research question is: **for which rule trajectories does the limit satisfy Postulate V**? That's exactly the characterisation of "Euclidean / flat" rules. Concrete Lean predicate:
+```
+def ParallelUniqueAtRule (sys : RewritingSystem P) (s₀ : Hypergraph V) : Prop :=
+  Filter.Tendsto (fun n => parallelMultiplicity (singleWayEvolve sys s₀ n)) atTop (𝓝 1)
+```
+where `parallelMultiplicity H` counts the worst-case number of geodesic-parallels through a non-incident point in `H`. A rule is "asymptotically Euclidean" iff this multiplicity tends to 1.
+
+**4. Postulate II (segment extension) → boundary obstruction.** Postulate II says segments can be extended indefinitely. On a finite hypergraph this *fails* at boundary vertices (geodesics terminate). On the inverse / refinement limit it can hold. Lean predicate: `def SegmentExtensionAtRule (sys, s₀) := ∀ n, ∀ geodesic γ in singleWayEvolve sys s₀ n, ∃ extension γ' in singleWayEvolve sys s₀ (n+k) for some k`. Closed under the subdivision rule (#234) by construction; fails for finite cycle hypergraphs.
+
+**5. Bachmann's group-of-motions framing.** Synthetic geometry can also be axiomatised via a group of "motions" (= isometries, Bachmann 1959). For graphs, motions = `Aut(graph)` acting on vertices. A **synthetic geometry** is a graph plus a designated reflection-generated subgroup of automorphisms (Coxeter-style). This is an alternative SIG implementation path: instead of T1–T11 Props, define a `GroupOfMotions H` predicate. Pairs naturally with **IG (FiberedGraph)** infrastructure since `Aut(graph)` is a discrete gauge group.
+
+**6. Class-of-graphs trichotomy** (the structural research target for SIG2). For each graph class, identify which Tarski/Hilbert axioms hold:
+   - **Path-shape hypergraphs** (e.g. `pathHypergraph n`, `subdivisionTrajectory n`): T1–T8 hold; T11 (parallel uniqueness) trivially holds because there's only one geodesic between any two points; T9 (Pasch) holds; segment-extension (T2-style) fails at endpoints, recovers in the refinement limit.
+   - **Cycle / lattice hypergraphs** (`cycleHypergraph n`, d-torus): T1–T10 hold; T11 holds for n large enough; uniformly Euclidean in the limit.
+   - **Branching / random hypergraphs** (Wolfram-rule outputs generally): T1–T8 hold; T11 fails (multiple parallels); convergence to Euclidean is a *non-trivial* convergence property of the rule.
+
+The trichotomy itself is the research deliverable: identifying *which structural property of the rule* corresponds to *which Tarski axiom holding in the limit* would give a Wolfram-side classification of "geometricity" rules.
+
+**7. Connection to existing infrastructure.** SIG2/SIG3 should consume:
+   - `Hypergraph.dist` (`HypergraphDistance.lean`) for `Between` / `Cong`.
+   - `Hodge laplacian` (`KnillCore.lean`) for spectral-angle perpendicularity.
+   - `geodesicBall` (existing) for circles.
+   - `IsPathOf` (`SubdivisionPath.lean`) for segments.
+   - `InfrageometricScene` (IS2) + `MultiwayCausalGraph` (J1) for branching scenes.
+
+The **research handle** for the SIG track:
+> Synthetic geometry is what survives in the asymptotic regime where graph distance approximates a Riemannian metric and angles emerge from spectral data. Knill's "infrageometry" = the regime where this approximation is happening.
+
 ## 6. How this relates to the Gorard-refutation track
 
 The refutation work in `Refutations/F1–F5` + `MAJOR_FLAWS.md` is **not** subsumed — it becomes one arm of a larger program:
