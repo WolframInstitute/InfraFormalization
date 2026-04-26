@@ -567,5 +567,69 @@ theorem incidence_sq (x y : Simplex V) :
   · rw [dif_neg h]
     simp [if_neg h]
 
+/-! ## Dirac and Hodge matrices (#272)
+
+The **Dirac matrix** `D = d + d*` is the symmetrised sum of the
+incidence operator and its transpose:
+
+  `dirac x y := incidence x y + incidence y x`
+
+It's self-adjoint by construction (`dirac x y = dirac y x`). The
+**Hodge matrix** `H = D²` is its square; on a finite simplex set `G`
+this is a matrix product indexed over `G`:
+
+  `hodgeOnG G x y := ∑_{z ∈ G} dirac x z · dirac z y`
+
+These are the load-bearing operators for the entire Knill spectral
+program: KN1 (wave eq via `cos(D t)`), KN4 (Lax pair `D' = [B, D]`),
+KN8 (Dirac zeta `str(|D|^{-s})`), KN14 (McKean-Singer supersymmetry
+between even/odd-form spectra of `H`), KN9 (analytic torsion via
+Hodge block determinants).
+
+Counterpart Mathematica: `DiracHodgeMatrix[G_]` / `HodgeMatrix[G_]`
+in `Infrageometry.wl`. -/
+
+/-- **Dirac matrix entry** `D(x, y) := d(x, y) + d(y, x)`. -/
+noncomputable def dirac (x y : Simplex V) : ℤ :=
+  incidence x y + incidence y x
+
+/-- **Self-adjointness**: `D(x, y) = D(y, x)`. Symmetry follows from
+the symmetric definition. -/
+theorem dirac_symm (x y : Simplex V) : dirac x y = dirac y x := by
+  unfold dirac; ring
+
+/-- **Diagonal vanishes**: `D(x, x) = 0` since `d(x, x) = 0`. -/
+@[simp] theorem dirac_self (x : Simplex V) : dirac x x = 0 := by
+  unfold dirac
+  rw [incidence_self]
+  ring
+
+/-- **Off-support vanishing**: `D(x, y) = 0` when `x` and `y` are
+neither codim-1 faces of each other (no incidence either way). -/
+theorem dirac_eq_zero_of_no_face {x y : Simplex V}
+    (hxy : ¬ isFace x y) (hyx : ¬ isFace y x) :
+    dirac x y = 0 := by
+  unfold dirac
+  rw [incidence_eq_zero_of_not_isFace hxy,
+      incidence_eq_zero_of_not_isFace hyx]
+  ring
+
+/-- **Hodge Laplacian on a simplex set**:
+`H(x, y) := (D · D) (x, y) = ∑_{z ∈ G} D(x, z) · D(z, y)`.
+
+Matrix product of `D` with itself, restricted to indices in `G`. -/
+noncomputable def hodgeOnG (G : SimplexSet V) (x y : Simplex V) : ℤ :=
+  G.sum (fun z => dirac x z * dirac z y)
+
+/-- **Self-adjointness of Hodge**: `H(x, y) = H(y, x)` for every
+finite simplex set `G`. Follows from `dirac_symm`. -/
+theorem hodgeOnG_symm (G : SimplexSet V) (x y : Simplex V) :
+    hodgeOnG G x y = hodgeOnG G y x := by
+  unfold hodgeOnG
+  apply Finset.sum_congr rfl
+  intros z _
+  rw [dirac_symm x z, dirac_symm z y]
+  ring
+
 end Knill
 end InfraFormalization
