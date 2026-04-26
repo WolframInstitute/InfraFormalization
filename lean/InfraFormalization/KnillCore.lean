@@ -714,6 +714,13 @@ theorem hodgeOnG_diag_nonneg (G : SimplexSet V) (x : Simplex V) :
   rw [hodgeOnG_diag_eq_sum_dirac_sq]
   exact Finset.sum_nonneg (fun _ _ => sq_nonneg _)
 
+/-- **Dirac kernel predicate**: `f` is in the kernel of the Dirac
+operator restricted to `G` if every "dirac vector"
+`(D · f)(z) := ∑_x f(x) · dirac(x, z)` vanishes for `z ∈ G`. This
+is the **harmonic-forms** condition. -/
+def isDiracKernel (G : SimplexSet V) (f : Simplex V → ℤ) : Prop :=
+  ∀ z ∈ G, G.sum (fun x => f x * dirac x z) = 0
+
 /-- **Hodge Dirichlet form vanishes iff `f` is in the kernel of `D` on `G`**:
 the Dirichlet form `⟨f, H · f⟩ = 0` iff every "dirac vector"
 `(D · f)(z) := ∑_x f(x) · dirac(x, z)` vanishes for `z ∈ G`. The forward
@@ -721,15 +728,24 @@ direction follows from "sum of squares = 0 ⇒ each square = 0"; the
 backward direction is the same sum-of-squares decomposition. This is
 the harmonic-forms characterization: `f` is **harmonic** (in `ker H`)
 iff it's in the **dirac kernel** (`D · f = 0`). -/
-theorem hodgeOnG_dirichlet_zero_iff_dirac_kernel
+theorem hodgeOnG_dirichlet_zero_iff_isDiracKernel
     (G : SimplexSet V) (f : Simplex V → ℤ) :
     G.sum (fun x => f x * G.sum (fun y => hodgeOnG G x y * f y)) = 0
-      ↔ ∀ z ∈ G, G.sum (fun x => f x * dirac x z) = 0 := by
+      ↔ isDiracKernel G f := by
+  unfold isDiracKernel
   rw [hodgeOnG_double_sum_eq_sum_squares]
   rw [Finset.sum_eq_zero_iff_of_nonneg (fun _ _ => sq_nonneg _)]
   refine ⟨fun h z hz => ?_, fun h z hz => ?_⟩
   · exact sq_eq_zero_iff.mp (h z hz)
   · rw [h z hz]; ring
+
+/-- **Bridge to harmonic-forms description**: alias for backward
+compatibility. -/
+theorem hodgeOnG_dirichlet_zero_iff_dirac_kernel
+    (G : SimplexSet V) (f : Simplex V → ℤ) :
+    G.sum (fun x => f x * G.sum (fun y => hodgeOnG G x y * f y)) = 0
+      ↔ ∀ z ∈ G, G.sum (fun x => f x * dirac x z) = 0 :=
+  hodgeOnG_dirichlet_zero_iff_isDiracKernel G f
 
 /-! ## d² = 0 — cochain-complex identity (#272 follow-up)
 
