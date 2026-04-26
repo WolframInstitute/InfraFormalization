@@ -25,6 +25,7 @@ Catch-up summary for landings since the previous MILESTONES sync (5 days back):
 
 In flight (this session):
 - [x] **#233 Phase A** — `HypergraphMetricOriginObligationStrong` adds `ScaledDiscrepancy` + `WassersteinRateObligation` to obligations. Concrete discharges: `minkowski4_from_hypergraph_strong` via `subdivisionDiscrepancyBundle`. Generic lifting `any_metric_has_strong_obligation_witness` + `any_partialMetric_has_strong_obligation_witness`. Per-metric strong-form Props for Minkowski / Schwarzschild / FLRW / RN / dS / S² / warpedDiag2. `all_gr_targets_have_strong_obligations_proven`. **First obligation Prop with quantitative rate content.**
+- [x] **#233 Phase A follow-up** — generic `ConvergenceRateObligation d r` admits any rate function `r : ℕ → ℝ`. Rates: `rateOneOverN`, `rateOneOverNSquared`, `rateGeometric c`. Bidirectional bridge to `WassersteinRateObligation`. `subdivisionDiscrepancy_satisfies_geometric` (natural `(1/2)^n`). Phase B precondition.
 - [~] **#231 heavier** — extend type-level bridge with `Application` constructor + single-application `Step` correspondence.
 
 ---

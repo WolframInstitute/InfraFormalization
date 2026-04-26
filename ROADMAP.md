@@ -25,7 +25,7 @@ flat targets.
 | # | Task | Deps | Payoff |
 |---|---|---|---|
 | 233 ✓ | Strengthen origin-obligation Props with W_1 / Wasserstein content | #234 ✓ | Obligations gain quantitative teeth — `HypergraphMetricOriginObligationStrong` lands |
-| — | **NEXT**: Refactor `WassersteinRateObligation` → generic `ConvergenceRateObligation` family | #233 ✓ | Admits non-W_1 metrics (Forman-Ricci, GH, spectral) — Phase A follow-up |
+| ✓ | Refactor `WassersteinRateObligation` → generic `ConvergenceRateObligation` family | #233 ✓ | Admits non-W_1 metrics (Forman-Ricci, GH, spectral). Lands with `rateOneOverN`, `rateOneOverNSquared`, `rateGeometric c`, bidirectional bridge to `WassersteinRateObligation`, `subdivisionDiscrepancy_satisfies_geometric` |
 | 233 ✓ | Re-discharge Minkowski targets with subdivisionDiscrepancyBundle | #233 ✓ | `minkowski4_from_hypergraph_strong` proven; `any_metric_has_strong_obligation_witness` lifts to all GR-zoo metrics |
 | — | **NEXT**: Tie discrepancy to actual W_1 of trajectory's pushed measure | #233 ✓ + measure-of-trajectory infra | Strong obligation becomes load-bearing not just statement-level |
 
@@ -224,7 +224,7 @@ Phase D (D11 + KN1/KN2 + H6 + H7 + H8 + H9)
 END: BBH merger from hypergraph IC, K5 + K7 papers.
 ```
 
-**Currently sitting at: #233 lands — Phase A entry done. Two Phase A follow-ups (refactor `WassersteinRateObligation` → generic family; tie discrepancy to actual trajectory W_1) staged. Phase B unlocked.**
+**Currently sitting at: #233 + generic `ConvergenceRateObligation` lands. Phase A 2-of-3 done. One Phase A follow-up (tie discrepancy to actual trajectory W_1, requires measure-of-trajectory infra) staged. Phase B unlocked — start with #224 screener metrics using the new `ConvergenceRateObligation` framework.**
 
 Active streams in parallel (will keep landing as opportunities arise):
 KN14/16/18 (Hodge consequences), SIG3 partial (Tarski quick win),

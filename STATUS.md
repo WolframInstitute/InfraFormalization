@@ -6,6 +6,12 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-04-26 — late, Phase A follow-up: generic ConvergenceRateObligation)
+
+**`ConvergenceRateObligation` generic family lands** (Phase A follow-up #1). Refactors the W_1-specific `WassersteinRateObligation` into a generic predicate `ConvergenceRateObligation d r` taking *any* rate function `r : ℕ → ℝ`. Concrete rates: `rateOneOverN` (1/n), `rateOneOverNSquared` (1/n²), `rateGeometric c` (c^n for 0 < c < 1). Bidirectional bridge `convergenceRateObligation_oneOverN_of_wasserstein` + `wassersteinRateObligation_of_convergenceRate_oneOverN` between old and new forms. Subdivision-rule discharge gets stronger characterization: `subdivisionDiscrepancy_satisfies_geometric` (the natural geometric `(1/2)^n` rate, strictly faster than any polynomial). Generic `convergenceRateObligation_zero` for trivial witness.
+
+This is the **second Phase A landing**: the obligation framework now admits non-W_1 discrepancies (Forman-Ricci curvature deviation, Gromov-Hausdorff distance, spectral gap) which is the precondition for Phase B's screener metrics.
+
 ## Headline (2026-04-26 — late, #233 Phase A obligation strengthening lands)
 
 **`HypergraphMetricOriginObligationStrong` lands** — first instance of an obligation Prop with **quantitative rate content**. The strengthened obligation embeds a `ScaledDiscrepancy` carrying `WassersteinRateObligation` (an `O(1/n)` decay claim). Concrete discharges: `minkowski4_from_hypergraph_strong` via `subdivisionDiscrepancyBundle` (the `1/2^n` rate from #234). Generic `any_metric_has_strong_obligation_witness` + `any_partialMetric_has_strong_obligation_witness` lift to every metric / partial-metric in the GR zoo. `all_gr_targets_have_strong_obligations_proven` picks the Minkowski disjunct.

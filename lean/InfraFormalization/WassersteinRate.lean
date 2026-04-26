@@ -113,4 +113,94 @@ theorem subdivisionDiscrepancyBundle :
     ∧ WassersteinRateTendsto subdivisionDiscrepancy :=
   ⟨subdivisionDiscrepancy_satisfies_obligation, subdivisionDiscrepancy_tendsto⟩
 
+/-! ## Generic convergence-rate obligation (#233 Phase A follow-up)
+
+The `WassersteinRateObligation` form above hard-codes the `1/n` rate.
+For a general framework, we admit any non-negative rate function
+`r : ℕ → ℝ` (e.g. `1/n`, `1/n²`, geometric `c^n`, exponential decay).
+This generalizes the obligation system to discrepancies measured by
+metrics other than W_1 — e.g. Forman-Ricci curvature deviation,
+Gromov-Hausdorff distance, spectral gap, etc.
+
+Concrete rate functions provided: `rateOneOverN`, `rateOneOverNSquared`,
+`rateGeometric c` (for `0 < c < 1`). -/
+
+/-- **Generic convergence-rate obligation**: discrepancy `d` satisfies
+`d n ≤ C * r n` for some `C > 0` and all `n ≥ N`. The rate function
+`r` controls the asymptotic decay shape. -/
+def ConvergenceRateObligation (d : ScaledDiscrepancy) (r : ℕ → ℝ) : Prop :=
+  ∃ (C : ℝ) (_ : 0 < C) (N : ℕ), ∀ n, N ≤ n → d n ≤ C * r n
+
+/-- **Standard `O(1/n)` rate function**: `r n = 1/n`. -/
+noncomputable def rateOneOverN : ℕ → ℝ := fun n => 1 / (n : ℝ)
+
+/-- **Standard `O(1/n²)` rate function**: `r n = 1/n²`. -/
+noncomputable def rateOneOverNSquared : ℕ → ℝ := fun n => 1 / ((n : ℝ)^2)
+
+/-- **Geometric `O(c^n)` rate function** for `0 < c < 1`. -/
+noncomputable def rateGeometric (c : ℝ) : ℕ → ℝ := fun n => c^n
+
+/-- **`WassersteinRateObligation` is the special case `r = 1/n`** (with
+the `n ≥ 1` constraint encoded by the implicit nonzero-N requirement).
+Forward direction: a `WassersteinRateObligation` witness gives a
+`ConvergenceRateObligation _ rateOneOverN` witness with N := max N 1. -/
+theorem convergenceRateObligation_oneOverN_of_wasserstein
+    (d : ScaledDiscrepancy) (h : WassersteinRateObligation d) :
+    ConvergenceRateObligation d rateOneOverN := by
+  obtain ⟨C, hC_pos, N, hN⟩ := h
+  refine ⟨C, hC_pos, max N 1, ?_⟩
+  intros n hn
+  have h_N_le : N ≤ n := le_of_max_le_left hn
+  have h_one_le : 1 ≤ n := le_of_max_le_right hn
+  have := hN n h_N_le h_one_le
+  unfold rateOneOverN
+  rw [mul_one_div]
+  exact this
+
+/-- **Reverse direction**: a `ConvergenceRateObligation _ rateOneOverN`
+witness gives a `WassersteinRateObligation` witness with the same
+`C, N`. The `1 ≤ n` constraint is folded into the rate-function
+denominator (vanishing safely when `n = 0` because `1/0 = 0` in `ℝ`). -/
+theorem wassersteinRateObligation_of_convergenceRate_oneOverN
+    (d : ScaledDiscrepancy)
+    (h : ConvergenceRateObligation d rateOneOverN) :
+    WassersteinRateObligation d := by
+  obtain ⟨C, hC_pos, N, hN⟩ := h
+  refine ⟨C, hC_pos, N, ?_⟩
+  intros n h_N_le _h_one_le
+  have := hN n h_N_le
+  unfold rateOneOverN at this
+  rw [mul_one_div] at this
+  exact this
+
+/-- **Subdivision-discrepancy as a generic geometric rate**: `1/2^n`
+satisfies the `rateGeometric (1/2)` obligation with `C = 1, N = 0`.
+Geometric decay is strictly faster than any polynomial `O(1/n^k)`,
+so this is the strongest natural rate-statement for the subdivision
+trajectory. -/
+theorem subdivisionDiscrepancy_satisfies_geometric :
+    ConvergenceRateObligation subdivisionDiscrepancy (rateGeometric (1/2)) := by
+  refine ⟨1, one_pos, 0, ?_⟩
+  intros n _
+  unfold subdivisionDiscrepancy rateGeometric
+  rw [one_mul, div_pow, one_pow]
+
+/-- **Subdivision discrepancy via the generic O(1/n) form**: shows the
+existing `subdivisionDiscrepancy_satisfies_obligation` lifts to the
+generic `ConvergenceRateObligation _ rateOneOverN` framework. -/
+theorem subdivisionDiscrepancy_satisfies_oneOverN :
+    ConvergenceRateObligation subdivisionDiscrepancy rateOneOverN :=
+  convergenceRateObligation_oneOverN_of_wasserstein _
+    subdivisionDiscrepancy_satisfies_obligation
+
+/-- **Trivial witness**: the zero discrepancy satisfies any
+`ConvergenceRateObligation _ r` with `C = 1, N = 0`, provided `r n ≥ 0`. -/
+theorem convergenceRateObligation_zero (r : ℕ → ℝ)
+    (hr_nonneg : ∀ n, 0 ≤ r n) :
+    ConvergenceRateObligation (fun _ => 0) r := by
+  refine ⟨1, one_pos, 0, ?_⟩
+  intros n _
+  rw [one_mul]
+  exact hr_nonneg n
+
 end InfraFormalization
