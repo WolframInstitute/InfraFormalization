@@ -692,7 +692,7 @@ theorem dSquared_eq_zero_of_not_subset {x z : Simplex V}
     exact absurd (hzy.trans hy) h_not_sub
   · rw [incidence_eq_zero_of_not_isFace hyz, mul_zero]
 
-/-! ### General `d ∘ d = 0`
+/-! ### General `d ∘ d = 0` — staged
 
 For `|x| = |z| + 2` and `z ⊆ x`, the only y's contributing non-zero
 summands are the two `x.erase w` for `w ∈ x \ z`. The two
@@ -709,9 +709,18 @@ contributions cancel by sign:
 
 Sum = `(-1)^(i+j-1) + (-1)^(i+j) = 0`.
 
-The full proof requires position-arithmetic on sorted lists; staged
-incrementally. The `_of_card_ne` and `_of_not_subset` cases above
-already cover the trivial sides. -/
+**Status**: Trivial sides (`_of_card_ne` for cardinality mismatch,
+`_of_not_subset` for `z ⊄ x`) are proved above. The main case
+requires position-arithmetic on sorted lists (specifically, how
+`Finset.sort (·≤·)` interacts with `Finset.erase`) plus the
+summand-characterization argument that pins down the exactly-two
+contributing y's. Both helpers are non-trivial in Lean because the
+`incidence` definition uses `let`-bindings inside a `dif_pos`
+branch, which `congr` does not transparently unfold.
+
+Concrete `(d²)({0,1,2}, {i}) = 0` instances at `i = 0, 1, 2` are
+already discharged by `native_decide` in `KnillExamples.lean`. Full
+general proof staged for a focused follow-up commit. -/
 
 end Knill
 end InfraFormalization
