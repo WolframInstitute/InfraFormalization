@@ -6,6 +6,16 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-04-26)
+
+**Oliver Knill quantum-calculus track stood up + edge-subdivision rule's math side closed.** Two major streams landed since 2026-04-24:
+
+- **`KnillCore.lean`** ([new module](lean/InfraFormalization/KnillCore.lean), task #257 / IGE1 substantive port of the upstream `resources/Infrageometry/Infrageometry/Kernel/Infrageometry.wl`): full first slice of Knill's discrete-geometry program on `SimplexSet V := Finset (Finset V)`. Lands the combinatorial primitives (`simplexDimension`, `simplexCardinality`, `simplexWeight ω(x) = -(-1)^|x|`, `eulerCharacteristic`, `fermiCharacteristic`, `simplexStar/Core/UnitSphere`, `complexClosure`/`IsClosed`, `complexVertexList`, `wuCharacteristic₁`/`₂`), the codim-1 face infrastructure (`isFace`, `isFace_erase`, `isFace_diff_card`, `isFace_exists_diff_vertex`), the matrix layer (#270 `connectionEntry L`, #271 `greenEntry g` with `simplexWeight_sq` showing `ω² = 1`), the spectral-invariant entry point (#273 partial `superTrace`), the **signed incidence operator `d`** (#269) on `[LinearOrder V]` simplices via sorted-vertex orientation, and the load-bearing **Dirac `D = d + d*` + Hodge `H = D²`** (#272) with self-adjointness proofs. **All axiom-clean**. Unblocks 8 KN-tasks downstream (KN1 wave eq, KN3 Wu cohomology, KN4 Lax, KN8 Dirac zeta, KN14 McKean-Singer, KN15 Atiyah-Singer/Atiyah-Bott, KN18 Brouwer, KN19 deformed `d_h`). Source-of-truth catalogue at [`resources/Infrageometry/QuantumCalculus.md`](resources/Infrageometry/QuantumCalculus.md).
+
+- **#232 Phase 1: `subdivideAll = pathEdges ∘ subdivideVerts`** ([`SubdivisionPath.lean`](lean/InfraFormalization/SubdivisionPath.lean)): the closed-form math content of the n-step path-shape theorem. Defines `subdivideAll : ExecHG ℕ → ℕ → ExecHG ℕ` (subdivide each edge with consecutive midpoints) and proves it equals `pathEdges ∘ subdivideVerts` on path-shape inputs, by direct induction. **Axiom-clean (just `propext`)**. Plus five `decide`-proven witnesses of the full closed form `singleWayEvolve subdivisionSys subdSeed n = pathEdges (subdVerts n)` at `n = 0..4`. Phase 2 (the engine-side simulation lemma) is the remaining piece; planning artefact at [`notes/232_subdivision_path_plan.md`](notes/232_subdivision_path_plan.md) documents Route B + C-fallback.
+
+**Sprint critical path now** (2026-04-26 → 2026-04-27): close #232 Phase 2 (simulation lemma) or Route C (existential weakening) → discharge #234 cycle/path origin obligations as concrete `O(2^{-n})` Wasserstein convergence certificates → strengthen #233 origin-obligation Props with the resulting real convergence content. End-state: **first complete machine-checked rule-trajectory → continuum-target convergence certificate** for the project.
+
 ## Headline (2026-04-24)
 
 **All seven infrageometry obligations are proved.** `all_obligations_hold`
