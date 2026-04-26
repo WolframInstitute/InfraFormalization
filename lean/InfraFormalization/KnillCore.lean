@@ -678,5 +678,40 @@ theorem dSquared_eq_zero_of_card_ne {x z : Simplex V}
     · rw [incidence_eq_zero_of_not_isFace hyz, mul_zero]
   · rw [incidence_eq_zero_of_not_isFace hxy, zero_mul]
 
+/-- **Trivial subset vanishing**: `(d²)(x, z) = 0` when `z ⊄ x`. Any
+`y ∈ x.powerset` would need `z ⊆ y ⊆ x`, contradicting `z ⊄ x`. -/
+theorem dSquared_eq_zero_of_not_subset {x z : Simplex V}
+    (h_not_sub : ¬ z ⊆ x) :
+    dSquared x z = 0 := by
+  unfold dSquared
+  apply Finset.sum_eq_zero
+  intros y hy
+  rw [Finset.mem_powerset] at hy
+  by_cases hyz : isFace y z
+  · obtain ⟨hzy, _⟩ := hyz
+    exact absurd (hzy.trans hy) h_not_sub
+  · rw [incidence_eq_zero_of_not_isFace hyz, mul_zero]
+
+/-! ### General `d ∘ d = 0`
+
+For `|x| = |z| + 2` and `z ⊆ x`, the only y's contributing non-zero
+summands are the two `x.erase w` for `w ∈ x \ z`. The two
+contributions cancel by sign:
+
+  * For `w = a` (smaller of the two missing vertices, position `i`
+    in sorted `x`): contribution `(-1)^i · (-1)^(j-1)` where `j` is
+    the position of the larger missing vertex `b` in sorted `x`. In
+    sorted `(x.erase a)`, `b` is at position `j-1` because removing
+    a vertex earlier than `b` shifts `b`'s index down by 1.
+  * For `w = b` (larger): contribution `(-1)^j · (-1)^i` because in
+    sorted `(x.erase b)`, `a` is still at position `i` (removing a
+    later vertex doesn't shift `a`).
+
+Sum = `(-1)^(i+j-1) + (-1)^(i+j) = 0`.
+
+The full proof requires position-arithmetic on sorted lists; staged
+incrementally. The `_of_card_ne` and `_of_not_subset` cases above
+already cover the trivial sides. -/
+
 end Knill
 end InfraFormalization
