@@ -255,30 +255,78 @@ theorem singleWayEvolve_subdivision_zero :
     singleWayEvolve subdivisionSys subdSeed 0 = pathEdges (subdVerts 0) := by
   rfl
 
-/-! ## Remaining inductive step (#232 continuation)
+/-! ## Phase 1 of #232 — `subdivideAll = pathEdges ∘ subdivideVerts` (math side)
 
-To close the equality
-  `singleWayEvolve subdivisionSys subdSeed n = pathEdges (subdVerts n)`
-the load-bearing single-step lemma is
+We introduce a *parallel* definition `subdivideAll` that subdivides
+each edge of a hypergraph independently — bypassing the engine's
+`allMatches` / `foldl` machinery. This phase proves
+`subdivideAll (pathEdges vs) b = pathEdges (subdivideVerts vs b)`,
+the closed-form math content of #232's theorem.
 
-  `singleWayStep subdivisionSys (pathEdges vs)
-     = pathEdges (subdivideVerts vs (listMax vs + 1))`
-  for any `vs` `Nodup` with `2 ≤ vs.length`.
+Phase 2 (the *simulation lemma* connecting `singleWayStep` to
+`subdivideAll`) is staged separately. See
+[`notes/232_subdivision_path_plan.md`](../../notes/232_subdivision_path_plan.md). -/
 
-This decomposes into:
-  1. `(allMatches subdivisionRule (pathEdges vs)).length = vs.length - 1`
-     (each consecutive `(vᵢ, vᵢ₊₁)` is a unique matching binding;
-     follows from `mem_pathEdges_flatMap` + `allFunctions` cardinality).
-  2. The match enumeration order coincides with the edge order in
-     `pathEdges vs` (follows from how `allFunctions` does the
-     outer-`vs`/inner-`vs` Cartesian flatMap).
-  3. The `foldl` in `singleWayStep` removes original edges and
-     appends fresh subdivisions in this order — yielding exactly
-     `pathEdges (subdivideVerts vs (listMax vs + 1))`.
+/-- **Edge subdivision**: replace a 2-edge `[a, b]` with the pair
+`[a, c], [c, b]`. Non-2-edges are left unchanged (this case never
+occurs in the path-shape input we consume). -/
+def subdivideEdge (e : Hyperedge ℕ) (c : ℕ) : ExecHG ℕ :=
+  match e.verts with
+  | [a, b] => [consEdge a c, consEdge c b]
+  | _ => [e]
 
-Steps 1–3 are large but tractable; the structural skeleton above
-(closed-form vertex sequence, length theorems, membership lemma,
-`vertexList`-length) is the foundation those proofs build on. -/
+@[simp] theorem subdivideEdge_consEdge (a b c : ℕ) :
+    subdivideEdge (consEdge a b) c = [consEdge a c, consEdge c b] := by
+  unfold subdivideEdge consEdge; simp
+
+/-- **Subdivide each edge**: walk the edge list, replacing the i-th
+edge `[a, b]` with `[a, baseFresh + i], [baseFresh + i, b]`. Manual
+recursion on the edge list (cleaner than `zipIdx + flatMap` because
+the index offset shifts naturally with the recursion). -/
+def subdivideAll : ExecHG ℕ → ℕ → ExecHG ℕ
+  | [], _ => []
+  | e :: rest, baseFresh => subdivideEdge e baseFresh ++ subdivideAll rest (baseFresh + 1)
+
+@[simp] theorem subdivideAll_nil (b : ℕ) : subdivideAll [] b = [] := rfl
+
+@[simp] theorem subdivideAll_cons (e : Hyperedge ℕ) (rest : ExecHG ℕ) (b : ℕ) :
+    subdivideAll (e :: rest) b = subdivideEdge e b ++ subdivideAll rest (b + 1) := rfl
+
+/-- **Math-side equality**: subdividing each edge of `pathEdges vs`
+with consecutive midpoints starting at `b` yields `pathEdges` of the
+interleaved vertex sequence. Pure list combinatorics — no engine
+semantics involved. -/
+theorem subdivideAll_pathEdges (vs : List ℕ) (h : 2 ≤ vs.length) (b : ℕ) :
+    subdivideAll (pathEdges vs) b = pathEdges (subdivideVerts vs b) := by
+  induction vs generalizing b with
+  | nil => simp at h
+  | cons v rest ih =>
+    cases rest with
+    | nil => simp at h
+    | cons w rest' =>
+      cases rest' with
+      | nil =>
+        -- Base: vs = [v, w]
+        show subdivideAll [consEdge v w] b = pathEdges [v, b, w]
+        rfl
+      | cons x rest'' =>
+        -- Step: vs = v :: w :: x :: rest''. Use IH on (w :: x :: rest'').
+        rw [pathEdges_cons_cons, subdivideVerts_cons_cons,
+            subdivideAll_cons]
+        have h_inner : 2 ≤ (w :: x :: rest'').length := by simp
+        rw [ih h_inner (b + 1)]
+        rw [show subdivideVerts (w :: x :: rest'') (b+1)
+              = w :: (b+1) :: subdivideVerts (x :: rest'') (b+2) from rfl]
+        rw [subdivideEdge_consEdge]
+        rw [pathEdges_cons_cons, pathEdges_cons_cons, pathEdges_cons_cons]
+        rfl
+
+/-! ## Remaining inductive step (Phase 2 of #232 — staged)
+
+The *simulation lemma* `singleWayStep subdivisionSys H = subdivideAll H (nextFresh H)`
+for path-shape `H` bridges the engine to Phase 1's math side. Three
+sub-lemmas (S1 match-count, S2 match-order, S3 foldl invariant) per
+`notes/232_subdivision_path_plan.md` §3. -/
 
 end MultiwayExec
 end InfraFormalization
