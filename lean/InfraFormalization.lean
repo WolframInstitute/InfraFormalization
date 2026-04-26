@@ -37,6 +37,7 @@ import InfraFormalization.Conservation
 import InfraFormalization.Multiway
 import InfraFormalization.MultiwayExec
 import InfraFormalization.MultiwayExecTests
+import InfraFormalization.MultiwayExecBridge
 import InfraFormalization.Causal
 import InfraFormalization.CausalLevel
 import InfraFormalization.Branchial
