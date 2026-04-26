@@ -8,7 +8,9 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 
 ## Headline (2026-04-26 — late, post-d²=0)
 
-**Post-`d² = 0` push: `(d*)² = 0` codual landed + Phase 2 structural helpers stood up.**
+**Post-`d² = 0` push: codual axiom landed, Hodge PSD landed, and Phase 2 structural helpers stood up.**
+
+- **`KnillCore.hodgeOnG_psd` + `hodgeOnG_double_sum_eq_sum_squares`**: the Hodge laplacian is positive semi-definite as a bilinear form. The Dirichlet form decomposes as `∑_{z ∈ G} (∑_{x ∈ G} f(x) · dirac(x, z))²` (via `H = D · D^T` and dirac symmetry), so it's automatically `≥ 0`. Foundational for spectral theory (eigenvalues are non-negative reals) and the Hodge isomorphism (kernel ≅ harmonic forms ≅ homology).
 
 - **`KnillCore.dStarSquared_eq_zero`**: codual cochain-complex axiom — `∑_{y ⊆ z} incidence(y, x) · incidence(z, y) = 0`. One-page corollary of `dSquared_eq_zero` by transposing indices. Together with `d² = 0`, this gives the full chain-complex structure (d, d*) needed for Hodge decomposition `H = d·d* + d*·d` (KN14 McKean-Singer).
 

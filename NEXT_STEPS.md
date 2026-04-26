@@ -4,7 +4,8 @@ Lives next to [`README.md`](README.md) / [`INDEX.md`](INDEX.md) / [`FINDINGS.md`
 
 ## Recently shipped (selected highlights)
 
-- **`d ∘ d = 0` cochain-complex axiom CLOSED + structural helpers + `(d*)² = 0` (2026-04-26 — late)** —
+- **`d ∘ d = 0` cochain-complex axiom CLOSED + Hodge PSD + structural helpers + `(d*)² = 0` (2026-04-26 — late)** —
+  - **`KnillCore.hodgeOnG_psd`**: Hodge laplacian is positive semi-definite as a bilinear form. Direct corollary of the sum-of-squares decomposition `∑_{x,y ∈ G} f(x) · H(x,y) · f(y) = ∑_{z ∈ G} (∑_x f(x) · D(x,z))²` (`hodgeOnG_double_sum_eq_sum_squares`), itself from `H = D · D^T` and dirac symmetry. Foundational for spectral theory (eigenvalues non-negative) and Hodge isomorphism (kernel ≅ harmonic forms ≅ homology).
   - **`KnillCore.dStarSquared_eq_zero`**: codual cochain-complex axiom `(d*)² = 0` falls out as a one-page corollary of `dSquared_eq_zero` by transposing indices. Pairs with `d² = 0` for the full Hodge decomposition `H = d·d* + d*·d` (KN14 McKean-Singer).
   - **`SubdivisionPath.lean` structural helpers (#280–#283)** for #232 Phase 2 and #234: `mem_subdivideVerts_imp` (entries are vs-vertices or fresh midpoints ≥ b), `subdivideVerts_nodup` (Nodup preserved when b > listMax vs), `subdVerts_nodup` (every iterate is Nodup), `nextFresh_pathEdges` (engine's `nextFresh` matches the path's `listMax + 1`). Supporting lemmas `mem_le_listMax`, `listMax_le_iff`, `listMax_eq_of_mem_iff`. Build the foundation for either the simulation-lemma proof (#267) or the existential Route C fallback (#268). Axiom-clean.
 
