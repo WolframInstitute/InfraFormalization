@@ -6,6 +6,18 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-04-26 — late, KN3 / KN8 burst)
+
+**KN3 Wu cohomology + KN8 Euler-Poincaré f-vector identity landed**. Builds on the d²=0 / Hodge foundation:
+
+- **`KnillCore.eulerCharacteristic_eq_alt_sum_kSkeleton` + `_fintype` corollary**: the Euler-Poincaré identity `χ(G) = ∑_{k<N} (-1)^k · |kSkeleton G k|` for any cardinality bound N (auto-closed on `Fintype V`). Proof partitions G by skeleton degree (`Set.PairwiseDisjoint` + `Finset.sum_biUnion`), then constants the inner sum via `simplexWeight_eq_neg_one_pow_dim`. Foundation for KN8 (zeta functions over the f-vector).
+
+- **`KnillCore.wuCharacteristic₂_eq_chi_sq_sub_disjoint`** (KN3): the Wu inclusion-exclusion identity `wu₂(G) = χ(G)² - ∑_{x ∩ y = ∅} ω(x)·ω(y)`. Splits the full Cartesian sum into the intersecting-pair (= wu₂) and disjoint-pair parts via `Finset.sum_filter_add_sum_filter_not`.
+
+- **`KnillCore.incidence_ne_zero_iff_isFace`**: clean iff structure for incidence's support — `d(x, y) ≠ 0 ↔ isFace x y`. Cleaner than dispatching on isFace at use sites.
+
+- **`KnillExamples`**: worked `wu₂` values on every test complex (vertex = 1, edge = -1, triangle = 1, triangleBoundary = 0); skeleton cardinalities for triangle (`3, 3, 1`); end-to-end Euler-Poincaré decomposition example `χ(triangle) = 3 - 3 + 1`.
+
 ## Headline (2026-04-26 — late, post-d²=0)
 
 **Post-`d² = 0` push: codual axiom landed, Hodge PSD landed, and Phase 2 structural helpers stood up.**

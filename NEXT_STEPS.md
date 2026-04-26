@@ -4,6 +4,13 @@ Lives next to [`README.md`](README.md) / [`INDEX.md`](INDEX.md) / [`FINDINGS.md`
 
 ## Recently shipped (selected highlights)
 
+- **KN3 / KN8 burst — Wu inclusion-exclusion + Euler-Poincaré f-vector identity (2026-04-26 — late)** —
+  - **`KnillCore.eulerCharacteristic_eq_alt_sum_kSkeleton`** (KN8 / Euler-Poincaré): `χ(G) = ∑_{k<N} (-1)^k · |kSkeleton G k|` for any cardinality bound `N`. Proof partitions G by skeleton degree (`Set.PairwiseDisjoint` + `Finset.sum_biUnion`), constants the inner sum via `simplexWeight_eq_neg_one_pow_dim`. Plus `_fintype` corollary auto-closing the bound on `Fintype V`.
+  - **`KnillCore.wuCharacteristic₂_eq_chi_sq_sub_disjoint`** (KN3): Wu inclusion-exclusion `wu₂(G) = χ(G)² - (disjoint-pair sum)`. Splits the full Cartesian sum into the `intersecting` (= wu₂) and `disjoint` parts via `Finset.sum_filter_add_sum_filter_not`.
+  - **`KnillCore.incidence_ne_zero_iff_isFace`**: clean iff for incidence's support — `d(x, y) ≠ 0 ↔ isFace x y`.
+  - **Skeleton infrastructure**: `kSkeleton G k`, `mem_kSkeleton`, `kSkeleton_subset`, `simplexCardinality_eq_kSkeleton_card`. Plus `simplexWeight_empty`, `simplexWeight_eq_neg_one_pow_dim`.
+  - **`KnillExamples` validations**: wu₂ on vertex/edge/triangle/triangleBoundary; skeleton cardinalities on triangle (3, 3, 1); end-to-end `χ(triangle) = 3 - 3 + 1` via Euler-Poincaré.
+
 - **`d ∘ d = 0` cochain-complex axiom CLOSED + Hodge PSD + structural helpers + `(d*)² = 0` (2026-04-26 — late)** —
   - **`KnillCore.hodgeOnG_psd`**: Hodge laplacian is positive semi-definite as a bilinear form. Direct corollary of the sum-of-squares decomposition `∑_{x,y ∈ G} f(x) · H(x,y) · f(y) = ∑_{z ∈ G} (∑_x f(x) · D(x,z))²` (`hodgeOnG_double_sum_eq_sum_squares`), itself from `H = D · D^T` and dirac symmetry. Foundational for spectral theory (eigenvalues non-negative) and Hodge isomorphism (kernel ≅ harmonic forms ≅ homology). Plus: `hodgeOnG_diag_eq_sum_dirac_sq` + `hodgeOnG_diag_nonneg` (diagonal-PSD specialisation as sum of squared dirac entries), `isDiracKernel` (harmonic-forms predicate), and `hodgeOnG_dirichlet_zero_iff_isDiracKernel` (`⟨f, H · f⟩ = 0 ↔ D · f = 0` — kernel side of Hodge isomorphism). Concrete `native_decide` Hodge diagonal entries on the triangle in `KnillExamples`.
   - **`KnillCore.dStarSquared_eq_zero`**: codual cochain-complex axiom `(d*)² = 0` falls out as a one-page corollary of `dSquared_eq_zero` by transposing indices. Pairs with `d² = 0` for the full Hodge decomposition `H = d·d* + d*·d` (KN14 McKean-Singer).
