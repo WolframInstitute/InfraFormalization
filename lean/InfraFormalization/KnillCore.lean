@@ -697,6 +697,23 @@ theorem hodgeOnG_psd (G : SimplexSet V) (f : Simplex V → ℤ) :
   rw [hodgeOnG_double_sum_eq_sum_squares]
   exact Finset.sum_nonneg (fun _ _ => sq_nonneg _)
 
+/-- **Hodge diagonal as sum of squared `dirac` entries**: `H(x, x) = ∑_z dirac(x, z)²`.
+Direct from `H = D · D^T` and `dirac` symmetry. In particular `H(x, x) ≥ 0`,
+the diagonal-PSD specialization. -/
+theorem hodgeOnG_diag_eq_sum_dirac_sq (G : SimplexSet V) (x : Simplex V) :
+    hodgeOnG G x x = G.sum (fun z => (dirac x z)^2) := by
+  unfold hodgeOnG
+  apply Finset.sum_congr rfl
+  intros z _
+  rw [dirac_symm z x, sq]
+
+/-- **Hodge diagonal is non-negative**: `H(x, x) ≥ 0`. Direct from
+`hodgeOnG_diag_eq_sum_dirac_sq` and non-negativity of squares. -/
+theorem hodgeOnG_diag_nonneg (G : SimplexSet V) (x : Simplex V) :
+    0 ≤ hodgeOnG G x x := by
+  rw [hodgeOnG_diag_eq_sum_dirac_sq]
+  exact Finset.sum_nonneg (fun _ _ => sq_nonneg _)
+
 /-- **Hodge Dirichlet form vanishes iff `f` is in the kernel of `D` on `G`**:
 the Dirichlet form `⟨f, H · f⟩ = 0` iff every "dirac vector"
 `(D · f)(z) := ∑_x f(x) · dirac(x, z)` vanishes for `z ∈ G`. The forward
