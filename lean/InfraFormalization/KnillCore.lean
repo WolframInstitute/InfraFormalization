@@ -721,7 +721,7 @@ theorem incidence_erase (x : Simplex V) (w : V) (hw : w ∈ x) :
   unfold incidence
   rw [dif_pos (isFace_erase hw), missingVertex_erase hw]
 
-/-! ### General `d ∘ d = 0` — staged
+/-! ### General `d ∘ d = 0`
 
 For `|x| = |z| + 2` and `z ⊆ x`, the only y's contributing non-zero
 summands are the two `x.erase w` for `w ∈ x \ z`. The two
@@ -736,20 +736,74 @@ contributions cancel by sign:
     sorted `(x.erase b)`, `a` is still at position `i` (removing a
     later vertex doesn't shift `a`).
 
-Sum = `(-1)^(i+j-1) + (-1)^(i+j) = 0`.
+Sum = `(-1)^(i+j-1) + (-1)^(i+j) = 0`. -/
 
-**Status**: Trivial sides (`_of_card_ne` for cardinality mismatch,
-`_of_not_subset` for `z ⊄ x`) are proved above. The main case
-requires position-arithmetic on sorted lists (specifically, how
-`Finset.sort (·≤·)` interacts with `Finset.erase`) plus the
-summand-characterization argument that pins down the exactly-two
-contributing y's. Both helpers are non-trivial in Lean because the
-`incidence` definition uses `let`-bindings inside a `dif_pos`
-branch, which `congr` does not transparently unfold.
+/-- **Summand characterization (#276)**: for `z ⊆ x` and
+`|x| = |z| + 2`, the only `y ⊆ x` with non-zero
+`incidence x y · incidence y z` are those of the form `x.erase w`
+for `w ∈ x \ z`. -/
+theorem dSquared_summand_zero_unless (x z : Simplex V)
+    (hsub : z ⊆ x) (y : Simplex V) (hy : y ⊆ x)
+    (h_not : ¬ ∃ w, w ∈ x \ z ∧ y = x.erase w) :
+    incidence x y * incidence y z = 0 := by
+  by_cases hxy : isFace x y
+  · by_cases hyz : isFace y z
+    · -- Derive y = x.erase (missingVertex hxy), then missingVertex ∈ x \ z
+      exfalso
+      apply h_not
+      set v := missingVertex hxy with hv_def
+      have hv_mem : v ∈ x \ y := missingVertex_mem_sdiff hxy
+      rw [Finset.mem_sdiff] at hv_mem
+      have hv_x : v ∈ x := hv_mem.1
+      have hv_ny : v ∉ y := hv_mem.2
+      -- v ∉ z because z ⊆ y and v ∉ y
+      have hv_nz : v ∉ z := fun hvz => hv_ny (hyz.1 hvz)
+      refine ⟨v, Finset.mem_sdiff.mpr ⟨hv_x, hv_nz⟩, ?_⟩
+      -- y = x.erase v: from |x \ y| = 1 + v ∈ x \ y forces x \ y = {v}
+      have h_diff_card : (x \ y).card = 1 := isFace_diff_card hxy
+      have h_xy_singleton : x \ y = {v} := by
+        apply Finset.eq_singleton_iff_unique_mem.mpr
+        refine ⟨Finset.mem_sdiff.mpr ⟨hv_x, hv_ny⟩, fun u hu => ?_⟩
+        by_contra hne
+        have h_two_subset : ({v, u} : Finset V) ⊆ x \ y := by
+          intro w hw
+          rcases Finset.mem_insert.mp hw with rfl | hw'
+          · exact Finset.mem_sdiff.mpr ⟨hv_x, hv_ny⟩
+          · rw [Finset.mem_singleton] at hw'
+            subst hw'
+            exact hu
+        have h_card_two : ({v, u} : Finset V).card = 2 := by
+          rw [Finset.card_insert_of_notMem]
+          · simp
+          · simpa [Finset.mem_singleton] using fun h => hne h.symm
+        have h_le := Finset.card_le_card h_two_subset
+        rw [h_card_two, h_diff_card] at h_le
+        omega
+      -- Now use h_xy_singleton to show y = x.erase v
+      ext u
+      simp only [Finset.mem_erase]
+      constructor
+      · intro hu
+        refine ⟨?_, hy hu⟩
+        intro huv
+        subst huv
+        exact hv_ny hu
+      · rintro ⟨hne, hux⟩
+        by_contra hny
+        have h_in_diff : u ∈ x \ y := Finset.mem_sdiff.mpr ⟨hux, hny⟩
+        rw [h_xy_singleton, Finset.mem_singleton] at h_in_diff
+        exact hne h_in_diff
+    · rw [incidence_eq_zero_of_not_isFace hyz, mul_zero]
+  · rw [incidence_eq_zero_of_not_isFace hxy, zero_mul]
 
-Concrete `(d²)({0,1,2}, {i}) = 0` instances at `i = 0, 1, 2` are
-already discharged by `native_decide` in `KnillExamples.lean`. Full
-general proof staged for a focused follow-up commit. -/
+/-! **Status (sign-cancellation #277)**: With #275 (clean
+`missingVertex`) and #276 (summand characterization) landed, the
+main case of `d ∘ d = 0` reduces to: the two contributions from
+`y₁ = x.erase a, y₂ = x.erase b` (where `{a, b} = x \ z`) cancel.
+Each contribution is `(-1)^i · (-1)^(idxOf-after-erase)`. The
+position-arithmetic on `(x.sort ·≤·).erase w` is the remaining
+piece; staged with the `D-fallback` (permutation-sign reformulation)
+authorised if direct position arithmetic proves intractable. -/
 
 end Knill
 end InfraFormalization
