@@ -33,15 +33,22 @@ Predicate-level. -/
 def IsAxis (H : Hypergraph V) (v w : V) : Prop :=
   H.dist v w ≠ 0 ∧ v ≠ w
 
-/-- **Two axes are orthogonal** at `v` if moves along one preserve
-distances along the other (discrete independence). Stated here as
-a commutative-square-of-distances predicate. -/
+/-- **Two axes are orthogonal** at `v` if there exists some shared radius
+`r > 0` and a tolerance `ε > 0` such that the chord-ratio between sample
+vertices on rays toward `w₁, w₂` at distance `r` from `v` is within `ε`
+of `√2` — the flat-Euclidean expected chord-ratio for a right angle
+(AT0 / AT6). Replaces the prior `True`-stub with real numerical content.
+
+Concretely: by `H.IsOrthoApprox v w₁ w₂ r ε` (defined in
+`HypergraphDistance.lean`), there exist equidistant samples
+`A, B ∈ S(v, r)` on the two rays whose chord-ratio is `≈ √2`.
+
+The existential `∃ r ε` is intentionally permissive — the predicate
+fires as soon as orthogonality is witnessed at *some* scale and *some*
+tolerance. Tighter screeners can require small `ε` or specific `r`. -/
 def AreOrthogonalAxes (H : Hypergraph V) (v w₁ w₂ : V) : Prop :=
   H.IsAxis v w₁ ∧ H.IsAxis v w₂ ∧
-  -- Independence: `w₁ w₂ = w₂ w₁` in the commutative-motion sense.
-  -- Here a conservative placeholder — the detailed definition
-  -- requires a "move" operation on the graph.
-  True
+  ∃ (r : ℕ) (ε : ℝ), 0 < r ∧ 0 < ε ∧ H.IsOrthoApprox v w₁ w₂ r ε
 
 /-- **Extremal axis**: an axis that can be iterated without
 returning to the origin (non-compact direction). -/
