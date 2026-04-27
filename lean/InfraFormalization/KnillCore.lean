@@ -1280,5 +1280,71 @@ theorem dStarSquared_eq_zero (x z : Simplex V) :
   rw [this]
   exact dSquared_eq_zero z x
 
+/-! ## Forman vertex angle defect (AT2 substrate)
+
+For a Knill simplex set `G` (intended interpretation: triangulated
+2-surface), the **angle defect at vertex `x`** is `6 − T(x)` where
+`T(x)` is the number of triangles in `G` containing `x` as a face. The
+factor `π/3` rescales this to the geometric angle defect (each
+equilateral-triangle interior angle is `π/3`):
+
+  `K(x) = (6 − T(x)) · π/3`     [Higuchi 2001 / Knill 2011 form]
+
+The full discrete Gauss-Bonnet identity
+`Σ_{x ∈ V} (6 − T(x)) = 6·|V| − 3·|triangles|` (which on a closed
+2-manifold gives `2π χ` after `π/3` rescaling) is staged as a
+follow-up — its proof requires a double-counting / sum-swap argument
+on the incidence pair set `{(x, s) | x ∈ s, s ∈ triangles}` that's
+delicate in Mathlib's `Finset` API.
+
+What lands here: the *substrate* — `vertexStarTriangles`,
+`vertexTriangleCount`, `formanAngleDefectZ` — plus characterisation
+and a basic bound. The full sum identity stays as a TODO obligation
+on this substrate.
+-/
+
+/-- **Star of a vertex `x`, restricted to triangles** — triangles in
+`G` containing the singleton `x` as a face. -/
+def vertexStarTriangles (G : SimplexSet V) (x : V) : SimplexSet V :=
+  G.filter (fun s => s.card = 3 ∧ x ∈ s)
+
+/-- **Vertex triangle count** `T(x)` — number of triangles in `G`
+incident to vertex `x`. -/
+def vertexTriangleCount (G : SimplexSet V) (x : V) : ℕ :=
+  (vertexStarTriangles G x).card
+
+/-- **Forman vertex angle defect (integer form)** — `6 − T(x)` where
+`T(x) = vertexTriangleCount G x`. To recover the geometric angle
+defect multiply by `π/3`: `K(x) = (6 − T(x)) · π/3`. Equilateral-
+simplex convention (Knill / Higuchi). -/
+def formanAngleDefectZ (G : SimplexSet V) (x : V) : ℤ :=
+  6 - (vertexTriangleCount G x : ℤ)
+
+/-- **Triangle membership iff `x` is a face of a 3-element simplex**. -/
+@[simp] theorem mem_vertexStarTriangles (G : SimplexSet V) (x : V)
+    (s : Simplex V) :
+    s ∈ vertexStarTriangles G x ↔ s ∈ G ∧ s.card = 3 ∧ x ∈ s := by
+  simp [vertexStarTriangles]
+
+/-- **Triangle count is bounded by total triangle count** — `T(x) ≤
+|triangles|` for every vertex `x`. Trivially: every triangle in the
+star is also a triangle of `G`. -/
+theorem vertexTriangleCount_le (G : SimplexSet V) (x : V) :
+    vertexTriangleCount G x ≤ simplexCardinality G 2 := by
+  unfold vertexTriangleCount vertexStarTriangles simplexCardinality
+  apply Finset.card_le_card
+  intros s hs
+  rw [Finset.mem_filter] at hs ⊢
+  exact ⟨hs.1, by omega⟩
+
+/-- **Vertex angle defect bounded above by 6** — when `T(x) = 0`,
+`formanAngleDefectZ = 6`. Captures the maximally-positive curvature
+case (isolated vertex, no incident triangles). -/
+theorem formanAngleDefectZ_le_six (G : SimplexSet V) (x : V) :
+    formanAngleDefectZ G x ≤ 6 := by
+  unfold formanAngleDefectZ
+  have : (0 : ℤ) ≤ (vertexTriangleCount G x : ℤ) := Int.natCast_nonneg _
+  linarith
+
 end Knill
 end InfraFormalization

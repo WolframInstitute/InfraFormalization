@@ -6,6 +6,16 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-04-27, late — AT2 Forman angle defect substrate)
+
+`KnillCore.lean` extension lands AT2 substrate (#287, partial — definitions + characterisation + bounds; full Gauss-Bonnet sum identity deferred):
+- `vertexStarTriangles G x` — triangles in G incident to vertex `x`.
+- `vertexTriangleCount G x` — `T(x) := |vertexStarTriangles G x|`.
+- `formanAngleDefectZ G x := 6 − T(x)` (ℤ; rescale by `π/3` for geometric reading per Higuchi 2001 / Knill 2011 equilateral convention).
+- `mem_vertexStarTriangles` characterisation; `vertexTriangleCount_le` (≤ #triangles); `formanAngleDefectZ_le_six` (defect ≤ 6).
+
+The full sum identity `∑_x (6 − T(x)) = 6·|V| − 3·|triangles|` (which on a closed 2-manifold gives `6 χ(G)`, matching continuum `2π χ` after `π/3` rescaling — discrete Gauss-Bonnet) needs a careful double-counting proof in Mathlib's `Finset.sum_comm` API; staged as the residual on this substrate.
+
 ## Headline (2026-04-27, late — MEMBER1 + BOUND1 spatial)
 
 `HypergraphTopology.lean` extension lands MEMBER1 (#346) and BOUND1 spatial flavour (#345):
