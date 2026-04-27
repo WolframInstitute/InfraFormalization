@@ -6,6 +6,16 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-04-27, late — MEMBER1 + BOUND1 spatial)
+
+`HypergraphTopology.lean` extension lands MEMBER1 (#346) and BOUND1 spatial flavour (#345):
+- `IsInRegion v R := v ∈ R` uniform alias surfacing Stephen's foundational topological membership predicate. Decidable for free via `Finset.decidableMem`.
+- `isInRegion_infraDisk_iff`, `isInRegion_infraSphere_iff`, `isInRegion_perpBisector_iff`: characterisation lemmas through the alias.
+- `Hypergraph.spatialDiameter := sup_{u, v} dist u v`; `dist_le_spatialDiameter`.
+- `Hypergraph.IsBounded R := ∃ k, ∀ u v ∈ R, dist u v ≤ k`; `isBounded_of_finite` (every region of a finite hypergraph is bounded).
+
+The four-flavour BOUND1 (causal / branchial / rewriting-reachable diameters) remains pending; spatial flavour suffices to surface the substrate.
+
 ## Headline (2026-04-27, late — pre-metric topology + curvature/hyperplane substrate land)
 
 **12 tasks closed in 7 commits this push** (`c1447bc` → `683633c`). The full angle / curvature / topology / hyperplane substrate that Stephen and Pavel discussed across three meetings is now sorry-free, build-clean Lean code at 3532 jobs:

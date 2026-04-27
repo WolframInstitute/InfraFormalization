@@ -128,5 +128,88 @@ theorem spatialB0_pos_of_nonempty [Nonempty V] (H : Hypergraph V) :
   -- nonempty quotient when source is nonempty
   exact Fintype.card_pos
 
+/-! ## Decidable membership in regions (MEMBER1)
+
+Stephen's "whether a point is a member of the set of points in a region"
+— the foundational topological primitive. For `Finset V` regions
+membership is decidable for free (Mathlib's `Finset.decidableMem`); we
+expose a uniform `IsInRegion` alias so all subsequent topology code
+talks to the same predicate name.
+
+The predicate-defined regions in `HypergraphDistance.lean` (`infraSphere`,
+`infraDisk`, `perpBisector`, `voronoiCell`, etc.) are all `Finset V`
+values built from `Finset.univ.filter`. Because `Hypergraph.dist` is
+`noncomputable` (it uses Mathlib's `SimpleGraph.dist`), membership
+decidability for these regions reduces to the standard
+`Finset.decidableMem` via classical decidability — already available
+without needing extra instances here. -/
+
+/-- **`v ∈ R` for `R : Finset V`** — uniform alias surfacing the
+foundational topological membership predicate Stephen called out as the
+most elementary primitive. Decidable for free via `Finset.decidableMem`. -/
+abbrev IsInRegion (v : V) (R : Finset V) : Prop := v ∈ R
+
+instance (v : V) (R : Finset V) : Decidable (IsInRegion v R) :=
+  inferInstanceAs (Decidable (v ∈ R))
+
+/-- **`v` is in the infra-disk iff its distance to the centre is at
+most `r`** — restating the `Finset.mem_filter` characterisation through
+the `IsInRegion` alias. -/
+theorem isInRegion_infraDisk_iff (H : Hypergraph V) (v O : V) (r : ℕ) :
+    IsInRegion v (H.infraDisk O r) ↔ H.dist O v ≤ r := by
+  unfold IsInRegion Hypergraph.infraDisk Hypergraph.geodesicBall
+  simp [Finset.mem_filter]
+
+/-- **`v` is in the infra-sphere iff its distance to the centre equals `r`**. -/
+theorem isInRegion_infraSphere_iff (H : Hypergraph V) (v O : V) (r : ℕ) :
+    IsInRegion v (H.infraSphere O r) ↔ H.dist O v = r := by
+  unfold IsInRegion Hypergraph.infraSphere
+  simp [Finset.mem_filter]
+
+/-- **`v` is in the perpendicular bisector iff equidistant from the
+endpoints** — Stephen's "all points equidistant from two given points". -/
+theorem isInRegion_perpBisector_iff (H : Hypergraph V) (v A B : V) :
+    IsInRegion v (H.perpBisector A B) ↔ H.dist A v = H.dist B v := by
+  unfold IsInRegion
+  exact H.mem_perpBisector A B v
+
+/-! ## bounded / diameter (BOUND1, spatial flavour)
+
+Stephen's bounded/unbounded distinction. Trivial on `[Fintype V]`, but
+the *value* of `spatialDiameter` is the relevant invariant for
+refinement-limit / continuum-limit questions. -/
+
+/-- **Spatial diameter** of a hypergraph: the maximum geodesic distance
+between any two vertices. Trivially bounded on a finite vertex type;
+the *value* is what matters for refinement-limit analysis (BOUND1's
+\"under refinement, does the diameter stay bounded?\"). -/
+noncomputable def spatialDiameter (H : Hypergraph V) : ℕ :=
+  Finset.univ.sup (fun u : V => Finset.univ.sup (fun v : V => H.dist u v))
+
+/-- **Every pair has distance bounded by the diameter**. -/
+theorem dist_le_spatialDiameter (H : Hypergraph V) (u v : V) :
+    H.dist u v ≤ H.spatialDiameter := by
+  unfold spatialDiameter
+  calc H.dist u v
+      ≤ Finset.univ.sup (fun v' : V => H.dist u v') :=
+        Finset.le_sup (f := fun v' => H.dist u v') (Finset.mem_univ v)
+    _ ≤ Finset.univ.sup (fun u' : V => Finset.univ.sup (fun v' => H.dist u' v')) :=
+        Finset.le_sup (f := fun u' => Finset.univ.sup (fun v' => H.dist u' v'))
+          (Finset.mem_univ u)
+
+/-- **`IsBounded` predicate for a region `R ⊆ V`** — there exists a
+uniform distance bound between any two vertices in `R`. On a finite
+hypergraph every subset is bounded (by the diameter); the predicate is
+non-trivial only at limit / refinement scales. -/
+def IsBounded (H : Hypergraph V) (R : Finset V) : Prop :=
+  ∃ k : ℕ, ∀ u ∈ R, ∀ v ∈ R, H.dist u v ≤ k
+
+/-- **Every region of a finite hypergraph is bounded** by the diameter. -/
+theorem isBounded_of_finite (H : Hypergraph V) (R : Finset V) :
+    H.IsBounded R := by
+  refine ⟨H.spatialDiameter, ?_⟩
+  intros u _ v _
+  exact H.dist_le_spatialDiameter u v
+
 end Hypergraph
 end InfraFormalization
