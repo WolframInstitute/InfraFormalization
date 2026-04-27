@@ -168,6 +168,75 @@ noncomputable def Hypergraph.geodesicBallVolume (H : Hypergraph V)
     (v : V) (r : ℕ) : ℕ :=
   (H.geodesicBall v r).card
 
+/-! ## Infra-sphere and infra-disk (SPHERE1)
+
+Stephen's "all points with an equal distance to a point" — the discrete
+sphere `S(O, r) := {v | H.dist O v = r}`. The **infra-disk** is the
+closed ball (alias for `geodesicBall`); the **infra-sphere** is its
+boundary level-set. Together they're the local-geometric primitive that
+Stephen's chord-ratio AT0 (`elementaryAngle`) and Bishop-Gromov scalar
+curvature AT9 (`scalarCurvatureAt`) both ride on. -/
+
+/-- **Infra-disk** — closed ball of radius `r` around `v`. Alias for
+`geodesicBall` exposing the Stephen-vocabulary terminology. -/
+noncomputable def Hypergraph.infraDisk (H : Hypergraph V) (v : V) (r : ℕ) :
+    Finset V :=
+  H.geodesicBall v r
+
+/-- **Infra-sphere** — vertices at exactly distance `r` from `v`. The
+boundary level-set of the infra-disk. Stephen's "all points with equal
+distance to a point". -/
+noncomputable def Hypergraph.infraSphere (H : Hypergraph V) (v : V) (r : ℕ) :
+    Finset V :=
+  Finset.univ.filter (fun u => H.dist v u = r)
+
+/-- **Infra-sphere is a subset of the infra-disk** (sphere ⊆ disk by
+`= r ≤ r`). -/
+theorem Hypergraph.infraSphere_subset_infraDisk (H : Hypergraph V) (v : V)
+    (r : ℕ) :
+    H.infraSphere v r ⊆ H.infraDisk v r := by
+  unfold Hypergraph.infraSphere Hypergraph.infraDisk Hypergraph.geodesicBall
+  intros u hu
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hu ⊢
+  rw [hu]
+
+/-- **Infra-sphere of radius 0 around `v` is exactly `{v}`** on a
+connected hypergraph (or any hypergraph where `v` is reachable from
+itself, which is always — `dist_self`). The ball-level statement is
+weaker because unreachable vertices have junk-value 0 too. We surface
+the inclusion `{v} ⊆ infraSphere v 0`. -/
+theorem Hypergraph.self_mem_infraSphere_zero (H : Hypergraph V) (v : V) :
+    v ∈ H.infraSphere v 0 := by
+  unfold Hypergraph.infraSphere
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+  exact Hypergraph.dist_self H v
+
+/-- **Infra-spheres at distinct radii are disjoint** (a vertex can't
+have two different distances from `v`). -/
+theorem Hypergraph.infraSphere_disjoint_of_ne (H : Hypergraph V) (v : V)
+    {r s : ℕ} (hrs : r ≠ s) :
+    Disjoint (H.infraSphere v r) (H.infraSphere v s) := by
+  rw [Finset.disjoint_left]
+  intros u hur hus
+  unfold Hypergraph.infraSphere at hur hus
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hur hus
+  exact hrs (hur.symm.trans hus)
+
+/-- **Infra-sphere volume** — the cardinality of the sphere; the discrete
+surface area. For Bishop-Gromov / SPHERE4 use. -/
+noncomputable def Hypergraph.infraSphereVolume (H : Hypergraph V) (v : V)
+    (r : ℕ) : ℕ :=
+  (H.infraSphere v r).card
+
+/-- **Infra-sphere volume bounded by Fintype.card V**. -/
+theorem Hypergraph.infraSphereVolume_le_card (H : Hypergraph V) (v : V)
+    (r : ℕ) :
+    H.infraSphereVolume v r ≤ Fintype.card V := by
+  unfold Hypergraph.infraSphereVolume Hypergraph.infraSphere
+  calc (Finset.univ.filter (fun u => H.dist v u = r)).card
+      ≤ Finset.univ.card := Finset.card_le_card (Finset.filter_subset _ _)
+    _ = Fintype.card V := Finset.card_univ
+
 /-- **Ball at radius 0** contains exactly `v` on reachable vertices.
 Unreachable vertices `u` also satisfy `dist v u = 0` (junk value) and
 so appear in the ball; however, this is usually avoided by working
