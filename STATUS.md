@@ -6,6 +6,16 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-04-27, late — CONTRACT1 substrate)
+
+`HypergraphDistance.lean` extension lands CONTRACT1 substrate (#329, partial — disk-contractibility version; full DEFORM1-based contractibility deferred):
+- `Hypergraph.IsTrivialCycle γ := γ.length = 0` — baseline.
+- `Hypergraph.IsDiskContractible γ w r := ∀ x ∈ γ.support, x ∈ geodesicBall w r` — sufficient condition for contractibility on manifold-like hypergraphs (cycle fits inside a small disk and bounds it).
+- `Hypergraph.IsContractibleAtScale γ r := ∃ w, IsDiskContractible γ w r` — persistence-barcode death-time ↔ minimum such r.
+- `isTrivialCycle_isDiskContractible`, `diskContractible_zero_support` lemmas.
+
+For BBH (Phase D): event horizon = non-disk-contractible cycle (vertices on the horizon span larger than any unit disk because they bound the singularity); merger event = cycle becomes disk-contractible (the new 2-cell from rewriting fills in). Full DEFORM1-based contractibility (γ reducible to `Walk.nil` via elementary moves) is the structural follow-up, deferred until DEFORM1 lands.
+
 ## Headline (2026-04-27, late — OPEN1 + NBHD1 formal-topology layer)
 
 `HypergraphTopology.lean` extension lands OPEN1 (#349) + NBHD1 (#350):

@@ -1790,6 +1790,76 @@ def Hypergraph.CycleSeparates (H : Hypergraph V)
     H.toSimpleGraph.Reachable a b ∧
     ∀ (p : H.toSimpleGraph.Walk a b), ∃ x ∈ p.support, x ∈ γ.support
 
+/-! ## Contractibility predicates (CONTRACT1 substrate)
+
+Stephen's "once we have a cycle we have the notion of a contractable
+cycle". The full Knill-Fisk recursive contractibility (γ is reducible
+to `Walk.nil` via DEFORM1 elementary moves) needs the cellular machinery
+that hasn't landed yet. Substrate landed here:
+
+- **Trivially contractible**: cycle of length 0 (just `Walk.nil`).
+- **Disk-contractible at `w`**: every vertex on the cycle's support lies
+  in the unit ball `B(w, 1)` — sufficient condition for contractibility
+  on manifold-like hypergraphs (the cycle fits inside a "small disk").
+- **Scale-indexed contractibility (`IsContractibleAtScale γ r`)**: every
+  vertex of γ.support lies within distance `r` of some basepoint.
+  Persistence-barcode death-time (IT4) is the scale at which γ becomes
+  contractible — the same intuition.
+
+For BBH (Phase D): event horizon = non-disk-contractible cycle (vertices
+on the horizon span larger than any unit disk because they bound the
+singularity). Merger event = cycle becomes disk-contractible (the new
+2-cell from rewriting fills in). -/
+
+/-- **Trivially contractible** — closed walk has length 0 (just
+`Walk.nil`). Baseline. -/
+def Hypergraph.IsTrivialCycle (H : Hypergraph V) {v : V}
+    (γ : H.toSimpleGraph.Walk v v) : Prop :=
+  γ.length = 0
+
+/-- **Disk-contractible at basepoint `w` of radius `r`** — every vertex
+on the cycle's support lies in the geodesic ball of radius `r` around
+`w`. Sufficient condition for contractibility on a manifold-like
+hypergraph: the cycle fits inside a small disk and bounds it. -/
+def Hypergraph.IsDiskContractible (H : Hypergraph V) {v : V}
+    (γ : H.toSimpleGraph.Walk v v) (w : V) (r : ℕ) : Prop :=
+  ∀ x ∈ γ.support, x ∈ H.geodesicBall w r
+
+/-- **Scale-indexed contractibility predicate** — `γ` is contractible at
+scale `r` iff there exists a basepoint `w` such that γ is disk-
+contractible inside `B(w, r)`. Persistence-barcode death-time ↔ minimum
+such `r`. -/
+def Hypergraph.IsContractibleAtScale (H : Hypergraph V) {v : V}
+    (γ : H.toSimpleGraph.Walk v v) (r : ℕ) : Prop :=
+  ∃ (w : V), H.IsDiskContractible γ w r
+
+/-- **Trivial cycle is disk-contractible at the basepoint, radius 0** —
+`Walk.nil` has support `[v]`, and `v ∈ B(v, 0)` via `dist_self`. -/
+theorem Hypergraph.isTrivialCycle_isDiskContractible (H : Hypergraph V)
+    {v : V} (γ : H.toSimpleGraph.Walk v v) (htriv : H.IsTrivialCycle γ) :
+    H.IsDiskContractible γ v 0 := by
+  intros x hx
+  -- A length-0 walk is `Walk.nil`, whose support is `[v]`.
+  have h_eq : γ = SimpleGraph.Walk.nil := by
+    match γ, htriv with
+    | SimpleGraph.Walk.nil, _ => rfl
+  rw [h_eq] at hx
+  simp only [SimpleGraph.Walk.support_nil, List.mem_singleton] at hx
+  rw [hx]
+  exact H.self_mem_geodesicBall v 0
+
+/-- **Disk-contractibility at scale 0 implies the cycle's support is
+exactly `{w}` (or a subset of unreachable junk-value vertices)**. -/
+theorem Hypergraph.diskContractible_zero_support (H : Hypergraph V) {v : V}
+    (γ : H.toSimpleGraph.Walk v v) (w : V)
+    (h : H.IsDiskContractible γ w 0) :
+    ∀ x ∈ γ.support, H.dist w x = 0 := by
+  intros x hx
+  have := h x hx
+  unfold Hypergraph.geodesicBall at this
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and] at this
+  omega
+
 /-! ## Perpendicular bisector + midpoint + Voronoi (HYPER2 / MIDPT1 / HYPER3)
 
 Stephen's "set of points equidistant from two given points" + Pavel's
