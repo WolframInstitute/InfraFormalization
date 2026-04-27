@@ -309,4 +309,78 @@ theorem Hypergraph.scalarCurvatureAt_pos_iff {V : Type*}
       rw [div_lt_one hflat_pos]; exact h
     linarith
 
+/-! ## Surface-area Bishop-Gromov curvature extraction (SPHERE4)
+
+Companion to AT9 (`scalarCurvatureAt`, ball-volume Bishop-Gromov). For a
+sphere `S(O, r)` of radius `r` in `d`-dim Euclidean space:
+
+  `|S(O, r)| = S_d · r^(d-1) · [1 − R(O) · r²/(6d) + O(r⁴)]`
+
+where `S_d = d · Ω_d` is the `(d-1)`-volume of the unit `(d-1)`-sphere
+(boundary of the unit `d`-ball). Inverting gives a *sphere-side*
+curvature extractor:
+
+  `R_surface(O, r) := (6d/r²) · [1 − |S(O, r)| / S_flat(d, r)]`
+
+where `S_flat(d, r) := S_d · r^(d-1)`. This is one Taylor-order higher
+than AT9 (the surface picks up curvature at `r^(d-1) · r² = r^(d+1)`
+versus the ball at `r^d · r² = r^(d+2)`); independent extraction —
+cross-checks AT9.
+
+For `d = 0`: `S_d = 0` (sphere is empty); `S_flat = 0`; extraction is
+degenerate. For `d = 1`: `S_1 = 2`, `S_flat = 2`. For `d = 2`: `S_2 =
+2π`, `S_flat = 2π r`. For `d = 3`: `S_3 = 4π`, `S_flat = 4π r²`.
+
+**Independent cross-check of AT9.** Both should agree on `R(O)` in the
+continuum limit; deviation between them at finite scale measures the
+discrete-geometry error term.
+-/
+
+/-- **Unit-sphere area** (`(d-1)`-volume of the unit `(d-1)`-sphere) in
+`d`-dim Euclidean space: `S_d = d · Ω_d`. Closed form
+`S_d = 2 π^{d/2} / Γ(d/2)`. We expose small-`d` cases by literal
+value; higher `d` defers to the same `Real.Gamma` follow-up as
+`unitBallVolumeEuclidean`. -/
+noncomputable def unitSphereAreaEuclidean : ℕ → ℝ
+  | 0 => 0  -- the (-1)-sphere is empty
+  | 1 => 2  -- two endpoints of the interval
+  | 2 => 2 * Real.pi
+  | 3 => 4 * Real.pi
+  | _ => 1  -- placeholder; closed form via Real.Gamma
+
+/-- **Flat-baseline sphere area** in `d`-dim Euclidean space:
+`S_flat(d, r) := S_d · r^(d-1)`. Note: for `d = 0` this is degenerate
+(`S_d = 0`); for `r = 0` it's `0` for `d ≥ 2` (a point's surface area
+is zero). -/
+noncomputable def flatSphereArea (d : ℕ) (r : ℕ) : ℝ :=
+  unitSphereAreaEuclidean d * (r : ℝ)^(d - 1)
+
+/-- **Surface-area Bishop-Gromov scalar curvature extractor** at vertex
+`v`, dimension `d`, radius `r > 0`:
+
+  `R_surface(v, r) := (6d/r²) · (1 − |S(v, r)| / S_flat(d, r))`
+
+Independent of AT9's `scalarCurvatureAt` (which uses ball volume); the
+two should agree on `R(v)` in the continuum limit. Cross-check tool. -/
+noncomputable def Hypergraph.surfaceCurvatureAt {V : Type*}
+    [Fintype V] [DecidableEq V]
+    (H : Hypergraph V) (v : V) (d : ℕ) (r : ℕ) : ℝ :=
+  if 0 < r then
+    (6 * (d : ℝ) / ((r : ℝ)^2)) *
+      (1 - (H.infraSphereVolume v r : ℝ) / flatSphereArea d r)
+  else 0
+
+/-- **Curvature is zero when the surface area matches the flat
+baseline** at scale `r` — discrete analog of "flat space has zero
+sphere-side Ricci". -/
+theorem Hypergraph.surfaceCurvatureAt_zero_of_match {V : Type*}
+    [Fintype V] [DecidableEq V]
+    (H : Hypergraph V) (v : V) (d : ℕ) (r : ℕ)
+    (hr : 0 < r)
+    (hmatch : (H.infraSphereVolume v r : ℝ) = flatSphereArea d r)
+    (hflat_pos : 0 < flatSphereArea d r) :
+    H.surfaceCurvatureAt v d r = 0 := by
+  unfold Hypergraph.surfaceCurvatureAt
+  rw [if_pos hr, hmatch, div_self (ne_of_gt hflat_pos), sub_self, mul_zero]
+
 end InfraFormalization

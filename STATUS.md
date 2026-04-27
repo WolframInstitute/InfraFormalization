@@ -6,6 +6,16 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-04-27, late — SPHERE4 surface-area Bishop-Gromov)
+
+`DiscreteRicci.lean` extension lands SPHERE4 (#337) — sphere-side Bishop-Gromov scalar curvature extractor:
+- `unitSphereAreaEuclidean d : ℝ` — `S_d = d · Ω_d` (small-d closed forms, d ≥ 4 placeholder).
+- `flatSphereArea d r := S_d · r^(d-1)` — flat baseline sphere area.
+- `Hypergraph.surfaceCurvatureAt v d r := (6d/r²) · (1 − |S(v, r)| / S_flat(d, r))` for `r > 0`. Sphere-side Bishop-Gromov: curvature picks up at one Taylor-order higher than the ball-side AT9 extraction. **Independent cross-check of AT9.**
+- `surfaceCurvatureAt_zero_of_match`: matched sphere area ↔ R = 0.
+
+Two scalar-curvature extractors (AT9 ball-side + SPHERE4 sphere-side) now ride on the same `infraSphere`/`infraDisk` substrate. Continuum limit: both should agree on R(v); finite-scale deviation between them measures discrete-geometry error.
+
 ## Headline (2026-04-27, late — CONTRACT1 substrate)
 
 `HypergraphDistance.lean` extension lands CONTRACT1 substrate (#329, partial — disk-contractibility version; full DEFORM1-based contractibility deferred):
