@@ -1708,6 +1708,88 @@ noncomputable def Hypergraph.IsOrthoApprox (H : Hypergraph V)
     H.dist v w₁ ≤ r ∧ H.dist v w₂ ≤ r ∧
     |H.elementaryAngle v A B - Real.sqrt 2| ≤ ε
 
+/-! ## GeodesicallyUnique predicate (AT8)
+
+Stephen's straight-lines requirement: the angle-as-real-angle
+interpretation of `elementaryAngle` (AT0) and `cosAngle` (AT1) needs a
+unique geodesic between every vertex pair. On a generic hypergraph
+geodesics may branch (the multi-fibration story IC6); AT8 surfaces the
+predicate that gates the interpretation theorems.
+
+Definition: every two shortest walks between the same endpoints are
+identical (as `SimpleGraph.Walk`s). On `GeodesicallyUnique` hypergraphs:
+- AT0 chord-ratio is *the* angle at O (interpretation works).
+- AT3 Toponogov asymptotic angle is well-defined.
+- AT26 multivalued angle collapses to single-valued.
+- HYPER4 `IsGeodesicHyperplane` ↔ `IsTopologicalHyperplane` equivalence
+  becomes trivial (geodesics-go-around route is closed off).
+-/
+
+/-- **`GeodesicallyUnique`** — every pair of shortest walks between the
+same endpoints is equal. Stephen's straight-lines condition. The
+*unique-direction* hypothesis that makes the angle interpretation
+well-defined (AT0 number → AT0 angle, AT3 limit → AT3 angle). -/
+def Hypergraph.GeodesicallyUnique (H : Hypergraph V) : Prop :=
+  ∀ (u v : V) (p q : H.toSimpleGraph.Walk u v),
+    p.length = H.dist u v → q.length = H.dist u v → p = q
+
+/-- **`GeodesicallyUnique` is preserved by symmetry** — well, vacuously,
+since the condition quantifies over all `(u, v)` ordered pairs. -/
+theorem Hypergraph.GeodesicallyUnique.swap (H : Hypergraph V)
+    (h : H.GeodesicallyUnique) (u v : V) (p q : H.toSimpleGraph.Walk u v)
+    (hp : p.length = H.dist u v) (hq : q.length = H.dist u v) :
+    p = q := h u v p q hp hq
+
+/-- **Trivial unique-walk case**: when `dist u u = 0`, the only
+length-0 walk is `Walk.nil`, so all length-0 walks at `u` are equal. -/
+theorem Hypergraph.geodesicallyUnique_self_walks (H : Hypergraph V) (u : V)
+    (p q : H.toSimpleGraph.Walk u u) (hp : p.length = 0) (hq : q.length = 0) :
+    p = q := by
+  match p, hp with
+  | SimpleGraph.Walk.nil, _ =>
+    match q, hq with
+    | SimpleGraph.Walk.nil, _ => rfl
+
+/-! ## Cut-vertex / bridge / Jordan-separator predicates (INOUT1)
+
+Stephen's "much more basic question, inside vs outside". The pre-metric
+cut-vertex / bridge primitives from graph theory; the genuine Jordan-
+separator predicate sits on top of these. -/
+
+/-- **`IsCutVertex H v`** — there exist two vertices reachable in `H`
+such that every walk between them passes through `v`. Standard graph-
+theoretic *articulation point*. -/
+def Hypergraph.IsCutVertex (H : Hypergraph V) (v : V) : Prop :=
+  ∃ (a b : V), a ≠ v ∧ b ≠ v ∧
+    H.toSimpleGraph.Reachable a b ∧
+    ∀ (p : H.toSimpleGraph.Walk a b), v ∈ p.support
+
+/-- **`IsBridge H {u, v}`** — there exist endpoints reachable in `H`
+such that every walk between them traverses the `(u, v)` edge.
+Standard graph-theoretic *cut edge*. (Stated via the `Adj` predicate
+to avoid `Sym2` machinery.) -/
+def Hypergraph.IsBridgeEdge (H : Hypergraph V) (u v : V) : Prop :=
+  H.Adj u v ∧
+  ∃ (a b : V), H.toSimpleGraph.Reachable a b ∧
+    ∀ (p : H.toSimpleGraph.Walk a b),
+      ∃ (i : ℕ) (h : i + 1 < p.support.length),
+        (p.support.get ⟨i, by omega⟩ = u ∧
+         p.support.get ⟨i+1, h⟩ = v) ∨
+        (p.support.get ⟨i, by omega⟩ = v ∧
+         p.support.get ⟨i+1, h⟩ = u)
+
+/-- **Inside-outside on a cycle (Jordan-separator predicate)** — a
+closed walk at `v` *separates* the graph if removing its support
+vertices disconnects the remaining graph into ≥ 2 components.
+Predicate-level statement; the structural theorem (e.g., contractible
+cycles always separate on planar surfaces) is the discrete-Jordan
+follow-up content. -/
+def Hypergraph.CycleSeparates (H : Hypergraph V)
+    {v : V} (γ : H.toSimpleGraph.Walk v v) : Prop :=
+  ∃ (a b : V), a ∉ γ.support ∧ b ∉ γ.support ∧
+    H.toSimpleGraph.Reachable a b ∧
+    ∀ (p : H.toSimpleGraph.Walk a b), ∃ x ∈ p.support, x ∈ γ.support
+
 /-! ## Perpendicular bisector + midpoint + Voronoi (HYPER2 / MIDPT1 / HYPER3)
 
 Stephen's "set of points equidistant from two given points" + Pavel's

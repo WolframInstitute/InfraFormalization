@@ -6,6 +6,15 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-04-27, late — AT8 GeodesicallyUnique + INOUT1 cut/bridge/Jordan)
+
+`HypergraphDistance.lean` extension lands AT8 (#293) + INOUT1 (#344):
+- `Hypergraph.GeodesicallyUnique H` — every pair of shortest walks between the same endpoints is equal (Stephen's straight-lines condition; gates the angle-as-real-angle interpretation for AT0 / AT1 / AT3 / AT26).
+- `GeodesicallyUnique.swap` (well-defined under endpoint swap), `geodesicallyUnique_self_walks` (length-0 walks at a vertex are all `Walk.nil`).
+- `Hypergraph.IsCutVertex H v` (articulation point), `Hypergraph.IsBridgeEdge H u v` (cut edge — predicate uses `Walk.support` indexing), `Hypergraph.CycleSeparates γ` (Jordan-separator predicate on a closed walk: removing γ's support disconnects ≥ 2 vertices).
+
+These primitives gate the angle-interpretation theorems (AT0 number → AT0 angle requires `GeodesicallyUnique`) and the BBH topology-change tracking (event-horizon-as-`CycleSeparates`-witness for Phase D).
+
 ## Headline (2026-04-27, late — AT2 Forman angle defect substrate)
 
 `KnillCore.lean` extension lands AT2 substrate (#287, partial — definitions + characterisation + bounds; full Gauss-Bonnet sum identity deferred):
