@@ -1708,4 +1708,125 @@ noncomputable def Hypergraph.IsOrthoApprox (H : Hypergraph V)
     H.dist v w₁ ≤ r ∧ H.dist v w₂ ≤ r ∧
     |H.elementaryAngle v A B - Real.sqrt 2| ≤ ε
 
+/-! ## Perpendicular bisector + midpoint + Voronoi (HYPER2 / MIDPT1 / HYPER3)
+
+Stephen's "set of points equidistant from two given points" + Pavel's
+graph-separator framing + the Voronoi generalisation. All sit directly
+on `dist` and are pure-`Finset` constructions. -/
+
+/-- **Perpendicular bisector** (HYPER2 / metric hyperplane): the set of
+vertices equidistant from `A` and `B`. Stephen's "all points equidistant
+from two given points". On a finite hypergraph this is a `Finset V`,
+*always* computable. The pre-metric "graph-separator" hyperplane (HYPER1)
+asks whether removing this set disconnects `A` from `B` — see
+`HasTopologicalHyperplane` below.
+
+The bisector partitions `V` into three regions: closer-to-`A`,
+equidistant (the bisector itself), closer-to-`B`. -/
+noncomputable def Hypergraph.perpBisector (H : Hypergraph V) (A B : V) :
+    Finset V :=
+  Finset.univ.filter (fun M => H.dist A M = H.dist B M)
+
+/-- **Closer-to-`A` half-space** of the (perpBisector A B). -/
+noncomputable def Hypergraph.closerHalf (H : Hypergraph V) (A B : V) :
+    Finset V :=
+  Finset.univ.filter (fun v => H.dist A v < H.dist B v)
+
+/-- **Bisector membership iff equidistant from the two endpoints**. -/
+@[simp] theorem Hypergraph.mem_perpBisector (H : Hypergraph V) (A B M : V) :
+    M ∈ H.perpBisector A B ↔ H.dist A M = H.dist B M := by
+  unfold Hypergraph.perpBisector
+  simp [Finset.mem_filter]
+
+/-- **Bisector is symmetric in its two endpoints**: `perpBisector A B =
+perpBisector B A`. -/
+theorem Hypergraph.perpBisector_symm (H : Hypergraph V) (A B : V) :
+    H.perpBisector A B = H.perpBisector B A := by
+  ext M
+  simp [Hypergraph.mem_perpBisector, eq_comm]
+
+/-- **Pre-metric "topological hyperplane" predicate** (HYPER1 / HYPER4):
+removing the perpendicular bisector vertices disconnects `A` from `B`
+in the clique-expansion graph. Stephen's "if you remove all points of
+the hyperplane do you separate the two points". This is *strictly
+stronger* than just being equidistant — it's the genuine separator
+condition (Pavel's framing). -/
+def Hypergraph.HasTopologicalHyperplane (H : Hypergraph V) (A B : V) : Prop :=
+  A ∉ H.perpBisector A B ∧ B ∉ H.perpBisector A B ∧
+  ¬ H.toSimpleGraph.Reachable A B  -- placeholder: needs subgraph
+  -- The full content (removing the bisector disconnects) requires
+  -- subgraph-deletion machinery; we surface the predicate name here so
+  -- HYPER4 + the Bachmann motion-group track can refer to it.
+
+/-! ## Midpoint (MIDPT1)
+
+Equidistant *and* on-segment-between-endpoints — the bisector ∩ segment. -/
+
+/-- **Midpoint set** of `A, B`: the bisector ∩ "between" predicate. May
+be empty (typical for odd `dist A B`), unique (Euclidean-like), or
+multivalued (branching). -/
+noncomputable def Hypergraph.midpoint (H : Hypergraph V) (A B : V) :
+    Finset V :=
+  Finset.univ.filter (fun M =>
+    H.dist A M = H.dist B M ∧ H.dist A M + H.dist B M = H.dist A B)
+
+/-- **Near-midpoint set** (for odd `dist A B = 2k+1`): vertices `M` with
+`|dist A M − dist B M| = 1` and `dist A M + dist B M = dist A B`. -/
+noncomputable def Hypergraph.nearMidpoint (H : Hypergraph V) (A B : V) :
+    Finset V :=
+  Finset.univ.filter (fun M =>
+    H.dist A M + H.dist B M = H.dist A B ∧
+    (H.dist A M = H.dist B M + 1 ∨ H.dist B M = H.dist A M + 1))
+
+/-- **Midpoint-set membership characterisation**. -/
+@[simp] theorem Hypergraph.mem_midpoint (H : Hypergraph V) (A B M : V) :
+    M ∈ H.midpoint A B ↔
+      H.dist A M = H.dist B M ∧ H.dist A M + H.dist B M = H.dist A B := by
+  unfold Hypergraph.midpoint
+  simp [Finset.mem_filter]
+
+/-- **Midpoint is symmetric in endpoints**. -/
+theorem Hypergraph.midpoint_symm (H : Hypergraph V) (A B : V) :
+    H.midpoint A B = H.midpoint B A := by
+  ext M
+  simp only [Hypergraph.mem_midpoint, H.dist_comm B A, H.dist_comm B M]
+  constructor
+  · rintro ⟨h_eq, h_sum⟩
+    refine ⟨h_eq.symm, ?_⟩
+    rw [add_comm] at h_sum; exact h_sum
+  · rintro ⟨h_eq, h_sum⟩
+    refine ⟨h_eq.symm, ?_⟩
+    rw [add_comm] at h_sum; exact h_sum
+
+/-! ## Voronoi decomposition (HYPER3)
+
+Generalises HYPER2 to k seed points: each cell is the set of vertices
+closest to a given seed. Cell-boundaries are the perpendicular bisectors
+between adjacent seeds (intersection of `closerHalf`s). -/
+
+/-- **Voronoi cell** for seed `i` in a `Fin k`-indexed seed list `seeds`:
+the set of vertices `v` such that `seeds[i]` is at least as close as
+every other seed. -/
+noncomputable def Hypergraph.voronoiCell (H : Hypergraph V) {k : ℕ}
+    (seeds : Fin k → V) (i : Fin k) : Finset V :=
+  Finset.univ.filter (fun v => ∀ j : Fin k, H.dist (seeds i) v ≤ H.dist (seeds j) v)
+
+/-- **Voronoi cell membership characterisation**. -/
+@[simp] theorem Hypergraph.mem_voronoiCell (H : Hypergraph V) {k : ℕ}
+    (seeds : Fin k → V) (i : Fin k) (v : V) :
+    v ∈ H.voronoiCell seeds i ↔
+      ∀ j : Fin k, H.dist (seeds i) v ≤ H.dist (seeds j) v := by
+  unfold Hypergraph.voronoiCell
+  simp [Finset.mem_filter]
+
+/-- **Each seed belongs to its own Voronoi cell** (since `dist self = 0`
+is the minimum). -/
+theorem Hypergraph.seed_mem_own_voronoiCell (H : Hypergraph V) {k : ℕ}
+    (seeds : Fin k → V) (i : Fin k) :
+    seeds i ∈ H.voronoiCell seeds i := by
+  rw [H.mem_voronoiCell]
+  intro j
+  rw [H.dist_self]
+  exact Nat.zero_le _
+
 end InfraFormalization
