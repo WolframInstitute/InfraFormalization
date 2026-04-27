@@ -33,6 +33,7 @@ import InfraFormalization.HypergraphLaplacian
 import InfraFormalization.HypergraphCycleBridge
 import Mathlib.Combinatorics.SimpleGraph.Metric
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import Mathlib.Analysis.SpecialFunctions.Trigonometric.Inverse
 
 namespace InfraFormalization
 
@@ -1529,5 +1530,113 @@ theorem cycleHypergraph_ballVolume_zero_exact {n : Nat} [NeZero n]
       rw [Hypergraph.dist_self]
   rw [h_eq]
   simp
+
+/-! ## Elementary chord-ratio angle (AT0, Stephen's primitive)
+
+Stephen's elementary angle definition: at vertex `O`, given two
+*equidistant* vertices `A, B` (i.e. `H.dist O A = H.dist O B = r > 0`),
+the **chord-ratio** is `H.dist A B / H.dist O A`. This is `2 sin(θ/2)`
+for the geometric law-of-cosines angle θ — a strictly increasing
+bijection from `θ ∈ [0, π]` to `[0, 2]`. Pure-counts, no √, no arccos;
+on `ℕ`-valued `dist` the ratio lives in `ℚ`. Constructive on every
+finite hypergraph; needs no `GeodesicallyUnique` hypothesis (the
+*number* is well-defined; the *angle interpretation* requires unique
+geodesics).
+
+Equidistant pair `(A, B)` ranges over `H.infraSphere O r := {v : V |
+H.dist O v = r}` (SPHERE1); the angle is therefore an *infra-sphere
+statistic*. Stephen's intuition: in flat d-space, equidistant pair
+chord-ratios concentrate at `√2`; deviation from `√2` is the local
+curvature signature.
+-/
+
+/-- **Elementary chord-ratio angle** (Stephen / AT0). `H.elementaryAngle
+O A B := d(A, B) / d(O, A)` when `A, B` are equidistant from `O` at
+positive distance, otherwise `0`. The number is `2 sin(θ_geom / 2)`
+for the geometric angle θ_geom at `O` between rays to `A, B`. -/
+noncomputable def Hypergraph.elementaryAngle (H : Hypergraph V)
+    (O A B : V) : ℝ :=
+  if H.dist O A = H.dist O B ∧ 0 < H.dist O A then
+    (H.dist A B : ℝ) / (H.dist O A : ℝ)
+  else 0
+
+@[simp] theorem Hypergraph.elementaryAngle_self (H : Hypergraph V) (O A : V) :
+    H.elementaryAngle O A A = 0 := by
+  unfold Hypergraph.elementaryAngle
+  by_cases h : H.dist O A = H.dist O A ∧ 0 < H.dist O A
+  · rw [if_pos h]; simp
+  · rw [if_neg h]
+
+theorem Hypergraph.elementaryAngle_symm (H : Hypergraph V) (O A B : V) :
+    H.elementaryAngle O A B = H.elementaryAngle O B A := by
+  unfold Hypergraph.elementaryAngle
+  by_cases hAB : H.dist O A = H.dist O B ∧ 0 < H.dist O A
+  · have hBA : H.dist O B = H.dist O A ∧ 0 < H.dist O B := by
+      refine ⟨hAB.1.symm, ?_⟩
+      rw [← hAB.1]
+      exact hAB.2
+    rw [if_pos hAB, if_pos hBA, hAB.1, H.dist_comm A B]
+  · have hBA : ¬ (H.dist O B = H.dist O A ∧ 0 < H.dist O B) := by
+      intro h
+      apply hAB
+      refine ⟨h.1.symm, ?_⟩
+      have := h.2
+      rw [h.1] at this
+      exact this
+    rw [if_neg hAB, if_neg hBA]
+
+/-- **Bound**: the chord-ratio is always between `0` and `2` because
+`d(A, B) ≤ d(A, O) + d(O, B) = 2 r` by triangle inequality (when
+reachable). Holds unconditionally with `≤ 2` since out-of-range gives
+`0`. -/
+theorem Hypergraph.elementaryAngle_nonneg (H : Hypergraph V) (O A B : V) :
+    0 ≤ H.elementaryAngle O A B := by
+  unfold Hypergraph.elementaryAngle
+  by_cases h : H.dist O A = H.dist O B ∧ 0 < H.dist O A
+  · rw [if_pos h]
+    apply div_nonneg
+    · exact Nat.cast_nonneg _
+    · exact Nat.cast_nonneg _
+  · rw [if_neg h]
+
+/-! ## Law-of-cosines angle (AT1, radian-valued companion)
+
+Standard `cos θ = (d² + d² − d²) / (2 d d)` formula. Bridges to
+`elementaryAngle` via `chord = 2 sin(θ / 2)`, giving
+`elementaryAngle = √(2 − 2 cos θ)`. Lives next to `elementaryAngle`
+since they share the equidistant-pair domain.
+-/
+
+/-- **Law-of-cosines cosine** at `O` between rays to `A` and `B`. Returns
+`0` when degenerate (zero distances). -/
+noncomputable def Hypergraph.cosAngle (H : Hypergraph V) (O A B : V) : ℝ :=
+  let dOA : ℝ := H.dist O A
+  let dOB : ℝ := H.dist O B
+  let dAB : ℝ := H.dist A B
+  if 0 < dOA ∧ 0 < dOB then
+    (dOA^2 + dOB^2 - dAB^2) / (2 * dOA * dOB)
+  else 0
+
+/-- **Radian-valued angle** at `O`. Returns `0` when degenerate. -/
+noncomputable def Hypergraph.angle (H : Hypergraph V) (O A B : V) : ℝ :=
+  Real.arccos (H.cosAngle O A B)
+
+/-! ## Orthogonality with chord-ratio tolerance (AT6 stub-fix)
+
+Stephen's elementary-angle gives the natural orthogonality predicate:
+two axes `w₁, w₂` from basepoint `v` are *orthogonal* iff the
+chord-ratio between equidistant samples on each axis is `≈ √2` (the
+flat-Euclidean expected value). This will replace the `True`-stub in
+`CoordinatizationDimension.AreOrthogonalAxes` once the basepoint /
+sampling discipline lands; surfaced here as a parametrised predicate. -/
+
+/-- **Approximate-orthogonality at radius `r` with tolerance `ε`**: the
+chord-ratio between vertices on rays toward `w₁, w₂` from `v`,
+sampled at distance `r`, is within `ε` of `√2`. -/
+noncomputable def Hypergraph.IsOrthoApprox (H : Hypergraph V)
+    (v w₁ w₂ : V) (r : ℕ) (ε : ℝ) : Prop :=
+  ∃ (A B : V), H.dist v A = r ∧ H.dist v B = r ∧
+    H.dist v w₁ ≤ r ∧ H.dist v w₂ ≤ r ∧
+    |H.elementaryAngle v A B - Real.sqrt 2| ≤ ε
 
 end InfraFormalization

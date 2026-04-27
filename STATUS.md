@@ -6,6 +6,17 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-04-27, MILESTONE statements + AT0/AT1 angle primitives land)
+
+**`Milestone.lean` lands** (#369, #370, #371) — concrete Lean signatures for the program-completion theorems:
+- `Milestone.GR_emerges_from_hypergraph (target : Curvature.MetricData n) : Prop` with six structural conjuncts (W₁ measure-rate via existing `HypergraphMetricOriginObligationStrong`, plus placeholders for distance / connection / Riemann / EFE-preservation / discrete-stress-energy convergence — each tied to a named layer-task).
+- Specialisations: `GR_emerges_from_hypergraph_minkowski` (closest milestone), `_schwarzschild`, `_flrw`, `GR_emerges_from_some_hypergraph` (existential disjunction).
+- `QM_emerges_from_hypergraph` (branchial Hilbert + unitary + Born).
+- `BBH_emerges_from_hypergraph` (Phase D / K7 paper headline).
+- All compile as `Prop`s; placeholders are `True`-typed so NO axiom is introduced at the milestone-statement level (`#print axioms` clean). Three Lean-verifiable signals of completion (no `sorry` / clean `#print axioms` / term-witnessed existential) explicitly documented.
+
+**AT0 + AT1 angle primitives land** (#285, #286 → completed) — `Hypergraph.elementaryAngle O A B` (Stephen's chord-ratio `d(A,B)/d(O,A)` for equidistant pairs, equals `2 sin(θ/2)`); `Hypergraph.cosAngle O A B` (law-of-cosines); `Hypergraph.angle O A B := Real.arccos cosAngle`; `Hypergraph.IsOrthoApprox` (chord-ratio `≈ √2` orthogonality predicate, AT6 substrate). All in `HypergraphDistance.lean` next to `dist`. Symmetry, non-negativity, self = 0 lemmas. **Foundation of the angle tower; AT9 Bishop-Gromov scalar curvature now sits naturally on top.**
+
 ## Headline (2026-04-26 — late, topology-before-metric layer + cellular-sheaf framework + Stephen's structural sequence)
 
 **The full pre-metric topology layer is now logged** as a coherent task family. Stephen's structural insight: topological information should be available BEFORE metric / volume / region structure. The hypergraph has a natural layered topology hierarchy that doesn't need `Hypergraph.dist` or `geodesicBallVolume`. In dependency order:
