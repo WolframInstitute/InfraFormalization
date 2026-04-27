@@ -289,4 +289,84 @@ theorem formanRicciScreener_fails_of_persistent_gap
   have h_d_lt : formanRicciDeviation τ κ n < δ := lt_of_le_of_lt h_d_le h_Cr_lt
   exact absurd h_gap (not_le.mpr h_d_lt)
 
+/-! ## Angular-deviation screener (AT7)
+
+Parallel to `formanRicciDeviation` / `FormanRicciScreener` above.
+Each trajectory state has an *elementary angle profile* at a chosen
+basepoint and radius (AT0): pick equidistant `A, B ∈ S(O, r)` and read
+off `H.elementaryAngle O A B`. The screener: does the trajectory's
+angle deviation from a target angle `κ_ang` decay at a given rate?
+
+Lives next to the Forman-Ricci screener so a multi-screener can stack
+both curvature and angular obligations.
+-/
+
+/-- **Per-step angular sample**: at trajectory state `n`, pick the
+*first* witnessing equidistant pair `(A, B)` at radius `r` from a
+fixed basepoint `O` (whichever the underlying decidability finds first;
+out-of-range states fall back to the initial state). Returns `0` if no
+equidistant pair exists at radius `r` in the given state. -/
+noncomputable def elementaryAngleSample {sys : RewritingSystem P} {init : Hypergraph V}
+    (τ : Trajectory sys init) (O : V) (r : ℕ) (n : ℕ) : ℝ :=
+  let H : Hypergraph V :=
+    if h : n < τ.states.length then τ.states.get ⟨n, h⟩ else init
+  -- Sum of elementary angles over all equidistant pairs at radius r
+  -- (a one-vertex-pair witness is enough, but summing is a stable
+  -- aggregator that matches Bishop-Gromov style accumulation).
+  let sphere : Finset V := Finset.univ.filter (fun v => H.dist O v = r)
+  ∑ A ∈ sphere, ∑ B ∈ sphere, H.elementaryAngle O A B
+
+/-- **Angular-deviation discrepancy**: pointwise distance between the
+trajectory's per-step angle sample at `(O, r)` and a target angle
+aggregate `κ_ang`. Plugs into `ConvergenceRateObligation` to express
+"this rule's angular profile converges to `κ_ang` at rate `r`". -/
+noncomputable def angularDeviation {sys : RewritingSystem P} {init : Hypergraph V}
+    (τ : Trajectory sys init) (O : V) (r : ℕ) (κ_ang : ℝ) : ScaledDiscrepancy :=
+  fun n => |elementaryAngleSample τ O r n - κ_ang|
+
+/-- **Angular-deviation screener obligation**: the trajectory's angular
+profile at basepoint `O`, radius `r`, converges to target `κ_ang` at
+convergence rate `rate`. -/
+def AngularScreener {sys : RewritingSystem P} {init : Hypergraph V}
+    (τ : Trajectory sys init) (O : V) (r : ℕ) (κ_ang : ℝ) (rate : ℕ → ℝ) : Prop :=
+  ConvergenceRateObligation (angularDeviation τ O r κ_ang) rate
+
+/-! ## Combined curvature + angular multi-screener -/
+
+/-- **Multi-screener: edge-count + Forman-Ricci + angular**. A trajectory
+passes the combined screener iff (a) its edge-count discrepancy from
+`target_edgeCount` satisfies `rate`; (b) its Forman-Ricci converges to
+`target_κ_curv` at `rate`; (c) its angular profile at `(O, r)`
+converges to `target_κ_ang` at `rate`. The combined-discharge form is
+the structurally minimal "rule produces correct geometry" obligation. -/
+def CombinedScreener {sys : RewritingSystem P} {init : Hypergraph V}
+    (τ : Trajectory sys init)
+    (target_edgeCount : ℝ) (target_κ_curv : ℝ)
+    (O : V) (r : ℕ) (target_κ_ang : ℝ) (rate : ℕ → ℝ) : Prop :=
+  ConvergenceRateObligation
+    (fun n => |edgeCountTrajectory τ n - target_edgeCount|) rate
+  ∧ FormanRicciScreener τ target_κ_curv rate
+  ∧ AngularScreener τ O r target_κ_ang rate
+
+/-- **Negative discharge** for the angular screener: persistent gap from
+target `κ_ang` rules out any rate function eventually less than `δ`.
+Sibling of `formanRicciScreener_fails_of_persistent_gap`. -/
+theorem angularScreener_fails_of_persistent_gap
+    {sys : RewritingSystem P} {init : Hypergraph V}
+    (τ : Trajectory sys init) (O : V) (r : ℕ) (κ_ang : ℝ)
+    (δ : ℝ) (_hδ : 0 < δ)
+    (hgap : ∀ N, ∃ n, N ≤ n ∧ δ ≤ angularDeviation τ O r κ_ang n)
+    (rate : ℕ → ℝ)
+    (hC : ∀ C : ℝ, 0 < C → ∃ N₀, ∀ n, N₀ ≤ n → C * rate n < δ) :
+    ¬ AngularScreener τ O r κ_ang rate := by
+  intro ⟨C, hC_pos, N, hN⟩
+  obtain ⟨N₀, hN₀⟩ := hC C hC_pos
+  obtain ⟨n, h_Nmax, h_gap⟩ := hgap (max N N₀)
+  have h_N_le : N ≤ n := le_of_max_le_left h_Nmax
+  have h_N₀_le : N₀ ≤ n := le_of_max_le_right h_Nmax
+  have h_d_le : angularDeviation τ O r κ_ang n ≤ C * rate n := hN n h_N_le
+  have h_Cr_lt : C * rate n < δ := hN₀ n h_N₀_le
+  have h_d_lt : angularDeviation τ O r κ_ang n < δ := lt_of_le_of_lt h_d_le h_Cr_lt
+  exact absurd h_gap (not_le.mpr h_d_lt)
+
 end InfraFormalization
