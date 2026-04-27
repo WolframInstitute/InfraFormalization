@@ -6,6 +6,14 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-04-27, late — OPEN1 + NBHD1 formal-topology layer)
+
+`HypergraphTopology.lean` extension lands OPEN1 (#349) + NBHD1 (#350):
+- **OPEN1** — predicate-level definitions for the four canonical topologies on a hypergraph: `IsDiscreteOpen` (trivial), `IsAlexandrovOpen` (closed under one-step neighbour expansion, useful for posets / causal-DAGs), `IsCellularStarOpen` (open star of every vertex it contains), `IsVRScaleOpen r` (closed under r-neighbourhoods, scale-indexed). Plus `isAlexandrovOpen_univ`, `isVRScaleOpen_univ` (`Finset.univ` is always open).
+- **NBHD1** — `nbhdBasis v r := H.geodesicBall v r`, the decreasing-radius family generating the local topology at vertex `v`. Plus `nbhdBasis_mono`, `self_mem_nbhdBasis`, `nbhdBasis_zero_eq`.
+
+Stephen + Pavel's pivot to formal topology now has its substrate. Each topology yields different compactness/continuity theorems; the corresponding `TopologicalSpace V` instances (closure under arbitrary union + finite intersection) are deferred. Stephen's "locally has neighbourhoods" intuition for surfaces becomes "neighbourhood basis stabilises to disk-shapes" — precise diagnostic for SURFACE1 manifold-detection.
+
 ## Headline (2026-04-27, late — AT8 GeodesicallyUnique + INOUT1 cut/bridge/Jordan)
 
 `HypergraphDistance.lean` extension lands AT8 (#293) + INOUT1 (#344):

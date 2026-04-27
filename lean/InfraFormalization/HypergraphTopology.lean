@@ -211,5 +211,98 @@ theorem isBounded_of_finite (H : Hypergraph V) (R : Finset V) :
   intros u _ v _
   exact H.dist_le_spatialDiameter u v
 
+/-! ## Open-set topologies (OPEN1)
+
+Stephen + Pavel pivot to formal topology. **Multiple natural topologies
+on the same hypergraph**, each yielding different compactness /
+continuity theorems. We surface predicate-level definitions for the
+five canonical choices; the corresponding `TopologicalSpace V`
+instances are deferred (each generates a topology by closure under
+arbitrary union and finite intersection — additional Mathlib API). -/
+
+/-- **Discrete-topology open** — every subset is open. Trivial; useful
+only as a baseline / sanity check. -/
+def IsDiscreteOpen (_H : Hypergraph V) (_R : Finset V) : Prop := True
+
+/-- **Alexandrov-topology open** — `R` is closed under one-step
+neighbour expansion (every neighbour of a vertex in `R` is also in
+`R`). Useful for posets / causal-DAGs and for *closed* sets in the
+Alexandrov sense. The dual notion ("open = closed under decreasing
+predecessors") is the standard *Alexandrov topology* on the
+specialization preorder. -/
+def IsAlexandrovOpen (H : Hypergraph V) (R : Finset V) : Prop :=
+  ∀ (u v : V), u ∈ R → H.Adj u v → v ∈ R
+
+/-- **Cellular / star open** at a vertex — the union of stars of all
+vertices in `R`, restricted to the cellular structure of the
+hypergraph's clique complex. Predicate form: `R` contains the open
+star of every vertex it contains. -/
+def IsCellularStarOpen (H : Hypergraph V) (R : Finset V) : Prop :=
+  ∀ (v : V), v ∈ R → ∀ (u : V), H.Adj v u → u ∈ R
+
+/-- **VR-scale open at scale `r`** — `R` is closed under
+`r`-neighbourhoods: every vertex within distance `r` of any vertex in
+`R` is also in `R`. Scale-indexed family of topologies. -/
+def IsVRScaleOpen (H : Hypergraph V) (r : ℕ) (R : Finset V) : Prop :=
+  ∀ (u v : V), u ∈ R → H.dist u v ≤ r → v ∈ R
+
+/-- **Everything is discrete-open**, trivially. -/
+theorem isDiscreteOpen_all (H : Hypergraph V) (R : Finset V) :
+    H.IsDiscreteOpen R := trivial
+
+/-- **`Finset.univ` is Alexandrov-open** trivially: every vertex is
+already in the universe. -/
+theorem isAlexandrovOpen_univ (H : Hypergraph V) :
+    H.IsAlexandrovOpen Finset.univ := by
+  intros u v _ _
+  exact Finset.mem_univ _
+
+/-- **`Finset.univ` is VR-scale-open at every `r`** trivially. -/
+theorem isVRScaleOpen_univ (H : Hypergraph V) (r : ℕ) :
+    H.IsVRScaleOpen r Finset.univ := by
+  intros u v _ _
+  exact Finset.mem_univ _
+
+/-! ## Neighbourhood basis (NBHD1)
+
+Stephen's "locally has neighbourhoods" intuition for surfaces — the
+basis of geodesic balls around each vertex generates the local
+topology. We expose the basis as a function `r ↦ geodesicBall v r` and
+the membership-stability characterisation. -/
+
+/-- **Geodesic-ball neighbourhood basis at vertex `v`** — the
+decreasing-radius family `{geodesicBall v r}_{r ∈ ℕ}`. -/
+noncomputable def nbhdBasis (H : Hypergraph V) (v : V) : ℕ → Finset V :=
+  fun r => H.geodesicBall v r
+
+/-- **The basis is monotone in radius** — `nbhdBasis v r ⊆ nbhdBasis v s`
+for `r ≤ s`. Lifts `geodesicBall_mono` to the basis API. -/
+theorem nbhdBasis_mono (H : Hypergraph V) (v : V) {r s : ℕ} (hrs : r ≤ s) :
+    H.nbhdBasis v r ⊆ H.nbhdBasis v s := by
+  intros u hu
+  unfold nbhdBasis Hypergraph.geodesicBall at hu ⊢
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hu ⊢
+  exact le_trans hu hrs
+
+/-- **The basepoint lies in every basis element** (since `dist v v = 0 ≤ r`). -/
+theorem self_mem_nbhdBasis (H : Hypergraph V) (v : V) (r : ℕ) :
+    v ∈ H.nbhdBasis v r := by
+  unfold nbhdBasis Hypergraph.geodesicBall
+  simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+  rw [Hypergraph.dist_self]
+  exact Nat.zero_le _
+
+/-- **`r = 0` basis element contains exactly the basepoint plus any
+unreachable junk-value vertices** — precise content depends on
+reachability; on a connected hypergraph it's just `{v}`. We surface
+the equivalence with the strict-equality filter: a vertex is at
+distance ≤ 0 iff its distance is 0. -/
+theorem nbhdBasis_zero_eq (H : Hypergraph V) (v : V) :
+    H.nbhdBasis v 0 = Finset.univ.filter (fun u => H.dist v u = 0) := by
+  unfold nbhdBasis Hypergraph.geodesicBall
+  apply Finset.filter_congr
+  intros u _
+  exact ⟨fun h => Nat.le_zero.mp h, fun h => h ▸ Nat.le.refl⟩
+
 end Hypergraph
 end InfraFormalization
