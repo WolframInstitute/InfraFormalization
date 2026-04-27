@@ -4,6 +4,22 @@ Lives next to [`README.md`](README.md) / [`INDEX.md`](INDEX.md) / [`FINDINGS.md`
 
 ## Recently shipped (selected highlights)
 
+- **MILESTONE-GR / -QM / -BBH (#369–#371, 2026-04-27)** — `Milestone.lean` lands. Concrete Lean signatures answering "how do we know we got to GR / QM / BBH". `GR_emerges_from_hypergraph` six-conjunct Prop (W₁ rate concrete, layers 2–6 placeholders); specialisations `_minkowski` / `_schwarzschild` / `_flrw` / `_some_hypergraph`; `QM_emerges_from_hypergraph`; `BBH_emerges_from_hypergraph`. **Three Lean-verifiable signals of completion** (no `sorry` / clean `#print axioms` / term-witnessed existential).
+
+- **AT0 + AT1 angle primitives (#285, #286, 2026-04-27)** — `Hypergraph.elementaryAngle O A B` (Stephen's chord-ratio = `2 sin(θ/2)`), `cosAngle`, `angle := Real.arccos cosAngle`, `IsOrthoApprox` orthogonality predicate. In `HypergraphDistance.lean`. Foundation of the 14-column angle tower.
+
+- **AT6 orthogonality stub-replacement (#291, 2026-04-27)** — `CoordinatizationDimension.AreOrthogonalAxes` `True`-stub replaced with `IsOrthoApprox`-based chord-ratio ≈ √2 condition.
+
+- **AT7 angular-deviation screener (#292, 2026-04-27)** — `RuleSignatureScreener` extension: `elementaryAngleSample`, `angularDeviation`, `AngularScreener`, `CombinedScreener` (edge-count + Forman-Ricci + angular triple), persistent-gap negative discharge. **Phase B screener pipeline complete on both curvature and angular sides.**
+
+- **AT9 Bishop-Gromov scalar curvature (#294, 2026-04-27)** — `Hypergraph.scalarCurvatureAt v d r` in `DiscreteRicci.lean`. `unitBallVolumeEuclidean d`, `flatBallVolume d r`, sign theorems. Cross-checks Forman-Ricci.
+
+- **TOP1 first Betti + TOP4 connected components (#323, #326, 2026-04-27)** — new `HypergraphTopology.lean`: `spatialB0`, `IsSpatiallyConnected`, `firstBettiZ`, bound theorems. **Stephen's "is every point reachable from every other"** + first non-trivial topological invariant after b_0.
+
+- **SPHERE1 infra-sphere/disk (#334, 2026-04-27)** — `Hypergraph.infraSphere`, `infraDisk`, `infraSphereVolume` + boundary inclusion / disjointness / cardinality bound. Stephen's "all points equidistant from a point".
+
+- **HYPER2 / HYPER3 / MIDPT1 (#339, #340, #342, 2026-04-27)** — `perpBisector`, `closerHalf`, `HasTopologicalHyperplane` stub, `midpoint`, `nearMidpoint`, `voronoiCell` + characterisations + symmetry lemmas. **Bachmann motion-group substrate.**
+
 - **#233 Phase A follow-up — generic `ConvergenceRateObligation` family (2026-04-26 — late)** — refactors the W_1-specific `WassersteinRateObligation` into `ConvergenceRateObligation d r` taking *any* rate function `r : ℕ → ℝ`. Rates: `rateOneOverN` (1/n), `rateOneOverNSquared` (1/n²), `rateGeometric c` (c^n for 0 < c < 1). Bidirectional bridge `convergenceRateObligation_oneOverN_of_wasserstein` + `wassersteinRateObligation_of_convergenceRate_oneOverN`. `subdivisionDiscrepancy_satisfies_geometric` characterises the subdivision rule's natural `(1/2)^n` rate (strictly faster than any polynomial `O(1/n^k)`). Generic `convergenceRateObligation_zero` for trivial witness. Admits non-W_1 discrepancies (Forman-Ricci, GH, spectral) which is the precondition for Phase B's screener metrics.
 
 - **#233 Phase A — strengthened origin obligations with W_1 rate content (2026-04-26 — late)** — `HypergraphMetricOriginObligationStrong` adds an explicit `ScaledDiscrepancy` carrying `WassersteinRateObligation` (an `O(1/n)` bound) to the existing existential. Concrete discharges: `minkowski4_from_hypergraph_strong` via `subdivisionDiscrepancyBundle` (the `1/2^n` rate from #234); `any_metric_has_strong_obligation_witness` + `any_partialMetric_has_strong_obligation_witness` lift to every metric / partial-metric in the GR zoo; `all_gr_targets_have_strong_obligations_proven` picks the Minkowski disjunct. Per-metric strong-form Props `*_from_hypergraph_strong` for Minkowski / Schwarzschild / FLRW / RN / dS / S² / warpedDiag2. **First instance of an obligation Prop with quantitative rate content.** Phase A entry per ROADMAP. Next strengthening (tying d to the trajectory's actual W_1) requires measure-of-trajectory infrastructure, staged as Phase A follow-up.

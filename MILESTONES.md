@@ -8,6 +8,22 @@ For full-program sequencing across phases (Phase A → B → C → D toward BBH-
 
 ---
 
+## Recent landings (2026-04-27, late)
+
+**12 tasks closed in 7 commits this push** (`c1447bc` → `683633c`):
+
+- [x] **MILESTONE-GR / -QM / -BBH (#369, #370, #371)** — `Milestone.lean` lands. Closed Lean signatures `GR_emerges_from_hypergraph` (six conjuncts), specialisations `_minkowski`/`_schwarzschild`/`_flrw`/`_some`, `QM_emerges_from_hypergraph`, `BBH_emerges_from_hypergraph`. Placeholders `True`-typed so no axiom is introduced; `#print axioms` clean. **Three Lean-verifiable signals of completion** documented.
+- [x] **AT0 (#285)** — `Hypergraph.elementaryAngle O A B` Stephen's chord-ratio + lemmas (`elementaryAngle_self`, `_symm`, `_nonneg`).
+- [x] **AT1 (#286)** — `Hypergraph.cosAngle`, `Hypergraph.angle := arccos cosAngle`.
+- [x] **AT6 (#291)** — `CoordinatizationDimension.AreOrthogonalAxes` `True`-stub replaced with `IsOrthoApprox` chord-ratio ≈ √2.
+- [x] **AT7 (#292)** — `RuleSignatureScreener` extension: `elementaryAngleSample`, `angularDeviation`, `AngularScreener`, `CombinedScreener` (curvature + angular triple), persistent-gap negative discharge. **Phase B screener pipeline complete.**
+- [x] **AT9 (#294)** — `Hypergraph.scalarCurvatureAt v d r` Bishop-Gromov scalar curvature in `DiscreteRicci.lean`. `unitBallVolumeEuclidean d`, `flatBallVolume d r`. Sign theorems `_zero_of_match`, `_pos_iff`. **Cross-checks Forman-Ricci.**
+- [x] **TOP1 (#323) + TOP4 (#326)** — new `HypergraphTopology.lean`: `spatialB0`, `IsSpatiallyConnected`, `firstBettiZ` (cycle rank, ℤ-arithmetic), `spatialB0_le_card`, `spatialB0_pos_of_nonempty`, `firstBettiZ_lower_bound`. **Pre-metric topology surfaced as first-class.**
+- [x] **SPHERE1 (#334)** — `Hypergraph.infraSphere`, `infraDisk`, `infraSphereVolume` + boundary inclusion / disjointness / cardinality bound lemmas.
+- [x] **HYPER2 (#339) + HYPER3 (#340) + MIDPT1 (#342)** — `perpBisector`, `closerHalf`, `HasTopologicalHyperplane` stub, `midpoint`, `nearMidpoint`, `voronoiCell` + `mem_*` characterisations + symmetry. **Bachmann motion-group substrate.**
+
+84 new tasks logged this session (#285–#368) covering the full angle / topology / cellular-sheaf / knot framework + the Murzin "Geometry on Combinatorial Objects" cross-reference + 18 gap-tasks. Plus 3 milestone-tasks #369–#371. Total: 84 tasks logged, 11 closed in this push (12 if counting the AT0-substrate split).
+
 ## Recent landings (2026-04-26 — late)
 
 Catch-up summary for landings since the previous MILESTONES sync (5 days back):

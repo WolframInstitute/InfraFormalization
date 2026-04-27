@@ -2,6 +2,19 @@
 
 What Lean infrastructure is needed to connect the Wolfram-model rewriting side (causal graphs, branchial structure, discrete events) to continuous mathematical physics (Riemannian/Lorentzian manifolds, ODEs, PDEs, fields, gauge theory).
 
+## Headline (2026-04-27, late, post angle/topology/hyperplane/MILESTONE substrate)
+
+**12 tasks closed in 7 commits** affecting the bridge ladder:
+
+- **MILESTONE-GR / -QM / -BBH** (`Milestone.lean`, #369–#371) — concrete Lean signatures for the program-completion theorems. `GR_emerges_from_hypergraph` six-conjunct closed Prop with the W₁ measure-rate conjunct (Layer 1) already discharged via `HypergraphMetricOriginObligationStrong`. Affects **all rungs** structurally — gives every layer-task a named output it must contribute to.
+- **AT0 / AT1 angle primitives** (`HypergraphDistance.lean`, #285/#286) — `Hypergraph.elementaryAngle` (Stephen's chord-ratio = `2 sin(θ/2)`), `cosAngle`, `angle := arccos cosAngle`. Foundation of the 14-column angle tower. Affects **Rung 5** (Riemann curvature) — angles are the bilinear-form precursor to the metric tensor (AT21).
+- **AT6 orthogonality replacement** (`CoordinatizationDimension.lean`, #291) — `True`-stub replaced with `IsOrthoApprox` chord-ratio ≈ √2. Affects **Rung 5** + **Group ID** (coordinatization dimension): the dim-extraction now has real geometric content.
+- **AT7 angular-deviation screener** (`RuleSignatureScreener.lean`, #292) — `AngularScreener`, `CombinedScreener` (curvature + angular triple). Affects **Phase B**: screener pipeline complete on both curvature and angular sides.
+- **AT9 Bishop-Gromov scalar curvature** (`DiscreteRicci.lean`, #294) — `Hypergraph.scalarCurvatureAt v d r := (6(d+2)/r²)·(1 − V/V_flat)`. Affects **Rung 5** (Riemann/Ricci/scalar curvature): cross-checks Forman-Ricci with an independent route from `geodesicBallVolume`.
+- **TOP1 first Betti + TOP4 connected components** (`HypergraphTopology.lean`, #323/#326) — `firstBettiZ`, `spatialB0`, `IsSpatiallyConnected`. Affects **Rung 0** (pre-metric topology): explicit cycle rank + component count surfaced as first-class invariants. **Stephen's "is every point reachable" formalised.**
+- **SPHERE1 infra-sphere/disk** (`HypergraphDistance.lean`, #334) — `Hypergraph.infraSphere`, `infraDisk`, `infraSphereVolume`. Affects **Rung 5** + **Rung 3**: local-geometric primitive AT0/AT9 ride on; infra-sphere cardinality = surface-area Bishop-Gromov target (SPHERE4).
+- **HYPER2 / HYPER3 / MIDPT1** (`HypergraphDistance.lean`, #339/#340/#342) — `perpBisector`, `voronoiCell`, `midpoint`, `nearMidpoint`, `HasTopologicalHyperplane` stub, with `mem_*` and `_symm` lemmas. Affects **Rung 4** + **Rung 5** (Bachmann motion-group substrate): reflections through perpendicular bisectors → translations → rotations → isometry group → Coxeter / Lie. The constructive route to differential geometry's Lie structure.
+
 ## Headline (2026-04-26 — late, post #234 + #231 + d²=0)
 
 Recent landings affecting the bridge ladder:

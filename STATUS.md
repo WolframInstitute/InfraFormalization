@@ -6,6 +6,21 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-04-27, late — pre-metric topology + curvature/hyperplane substrate land)
+
+**12 tasks closed in 7 commits this push** (`c1447bc` → `683633c`). The full angle / curvature / topology / hyperplane substrate that Stephen and Pavel discussed across three meetings is now sorry-free, build-clean Lean code at 3532 jobs:
+
+- **AT9 (#294)** — `Hypergraph.scalarCurvatureAt v d r` — Bishop-Gromov scalar curvature `(6(d+2)/r²)·(1 − V/V_flat)` from `geodesicBallVolume` + flat baseline (`unitBallVolumeEuclidean d`, `flatBallVolume d r`). Sign theorems: `_zero_of_match` (flat ↔ R = 0), `_pos_iff` (R > 0 ↔ sub-flat = spherical-like). In `DiscreteRicci.lean`.
+- **AT6 (#291)** — `AreOrthogonalAxes` `True`-stub replaced with `IsOrthoApprox`-based chord-ratio condition `≈ √2`. In `CoordinatizationDimension.lean`.
+- **AT7 (#292)** — `elementaryAngleSample`, `angularDeviation`, `AngularScreener`, `CombinedScreener` (edge-count + Forman-Ricci + angular triple), `angularScreener_fails_of_persistent_gap`. **Phase B screener pipeline complete on both curvature and angular sides.** In `RuleSignatureScreener.lean`.
+- **TOP1 (#323) + TOP4 (#326)** — `Hypergraph.spatialB0` (Stephen's "is every point reachable from every other"), `IsSpatiallyConnected`, `firstBettiZ` (cycle rank `#hyperedges − #V + b_0` over ℤ), `spatialB0_le_card`, `spatialB0_pos_of_nonempty`, `firstBettiZ_lower_bound`. New file `HypergraphTopology.lean`. **Pre-metric topological invariants surface as first-class objects.**
+- **SPHERE1 (#334)** — `Hypergraph.infraSphere`, `infraDisk`, `infraSphereVolume`, sphere-disk inclusion, distinct-radii disjointness, `self_mem_infraSphere_zero`. In `HypergraphDistance.lean`. Stephen's "all points equidistant from a point".
+- **HYPER2 (#339) + HYPER3 (#340) + MIDPT1 (#342)** — `Hypergraph.perpBisector` (metric hyperplane), `closerHalf`, `HasTopologicalHyperplane` (Pavel's separator stub), `midpoint`, `nearMidpoint`, `voronoiCell`, with `mem_*` characterisations and `*_symm` symmetry lemmas. In `HypergraphDistance.lean`. **Bachmann motion-group substrate now in place.**
+
+**The 25-step constructive route to differential geometry** (INFRAGEOMETRY.md §5f) now has concrete code at layers 1 (PATH1 staged), 7 (TOP1/TOP4), 13 (metric → spheres SPHERE1, Voronoi HYPER3), 14 (angles AT0/AT1), 15 (Bishop-Gromov scalar curvature AT9). The Bachmann route from reflections through perpendicular bisectors → Coxeter / Lie has its substrate (HYPER2 + MIDPT1).
+
+**MILESTONE-GR layer-1 conjunct** (W₁ measure rate) was already discharged via `subdivisionDiscrepancyBundle`; now AT9 provides the curvature scalar that the Layer-4 Riemann-tensor convergence will eventually consume. The MILESTONE statement in `Milestone.lean` remains a closed Lean target whose proof becomes term-instantiable as the layer-tasks complete.
+
 ## Headline (2026-04-27, MILESTONE statements + AT0/AT1 angle primitives land)
 
 **`Milestone.lean` lands** (#369, #370, #371) — concrete Lean signatures for the program-completion theorems:

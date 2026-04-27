@@ -23,7 +23,22 @@ The published Wolfram-model-to-GR derivations make a strong claim: that a specif
 
 The project exists to settle, formally, what is actually true in this corpus and what remains open, and to build the substantive bridge machinery that would have to be in place for any future claim of this form.
 
-## Status headline (2026-04-26 — late)
+## Status headline (2026-04-27, late)
+
+**Pre-metric topology + curvature/hyperplane substrate + MILESTONE statements land.** 12 tasks closed in 7 commits this push (`c1447bc` → `683633c`):
+
+- **MILESTONE-GR / -QM / -BBH (#369–#371)** — `Milestone.lean`: closed Lean signatures for the program-completion theorems. `GR_emerges_from_hypergraph` six-conjunct Prop; specialisations `_minkowski`/`_schwarzschild`/`_flrw`/`_some`. **Three Lean-verifiable signals of completion** documented (no `sorry` / clean `#print axioms` / term-witnessed existential). Anyone reading the file can see exactly what "got to GR" means in the formal-proof sense.
+- **AT0 / AT1 angle primitives (#285, #286)** — `Hypergraph.elementaryAngle` (Stephen's chord-ratio = `2 sin(θ/2)`), `cosAngle`, `angle := Real.arccos cosAngle`, `IsOrthoApprox`. Foundation of the 14-column angle tower.
+- **AT6 (#291)** — `CoordinatizationDimension.AreOrthogonalAxes` `True`-stub replaced with `IsOrthoApprox` chord-ratio ≈ √2.
+- **AT7 (#292)** — angular-deviation screener, `CombinedScreener` triple. **Phase B screener pipeline complete on both curvature and angular sides.**
+- **AT9 (#294)** — `Hypergraph.scalarCurvatureAt v d r` Bishop-Gromov scalar curvature. Cross-checks Forman-Ricci.
+- **TOP1 / TOP4 (#323, #326)** — new `HypergraphTopology.lean`: `firstBettiZ` cycle rank, `spatialB0` (Stephen's "is every point reachable from every other"), `IsSpatiallyConnected`. **Pre-metric topology surfaced as first-class.**
+- **SPHERE1 (#334)** — `infraSphere`, `infraDisk`, `infraSphereVolume`. Stephen's "all points equidistant from a point".
+- **HYPER2 / HYPER3 / MIDPT1 (#339, #340, #342)** — `perpBisector`, `voronoiCell`, `midpoint`, `nearMidpoint`, `HasTopologicalHyperplane` stub. **Bachmann motion-group substrate for the constructive route to differential geometry's Lie structure.**
+
+84 new tasks logged this session (#285–#368) covering the full angle / topology / cellular-sheaf / knot framework + the Murzin "Geometry on Combinatorial Objects" cross-reference + 18 gap-tasks. Plus 3 milestone-tasks #369–#371. Build clean (3532 jobs).
+
+Previous landings (2026-04-26, late):
 
 **Sprint critical path closed (`#234` W_1 obligation discharged) + first formal exec ↔ abstract bridge (`#231`) + d²=0 cochain-complex axiom + Hodge PSD foundation.** Headline landings since the previous status:
 
