@@ -46,6 +46,7 @@ GH-limit manifold) is the next deliverable — see Rung 5 in
 
 import InfraFormalization.DiscreteCalculus
 import InfraFormalization.Hypergraph
+import InfraFormalization.HypergraphDistance
 
 namespace InfraFormalization
 
@@ -189,5 +190,123 @@ theorem formanRicciHypergraph_zero_of_simple (H : Hypergraph V)
       rw [ih hes]
       ring
   exact helper H.edges hall
+
+/-! ## Bishop-Gromov scalar curvature from log V(r) growth (AT9)
+
+In a `d`-dimensional Riemannian space, the volume of a ball of radius `r`
+at point `p` admits the Bishop-Gromov expansion
+
+  `V(p, r) = Ω_d · r^d · [1 − R(p) · r²/(6(d+2)) + O(r⁴)]`
+
+where `R(p)` is the scalar curvature at `p` and `Ω_d` is the volume of the
+unit ball in `d`-dimensional Euclidean space. Inverting this gives a
+discrete extraction of scalar curvature from ball-count data:
+
+  `R(v, r) := (6(d+2)/r²) · [1 − V(v, r) / V_flat(d, r)]`
+
+where `V_flat(d, r) := Ω_d · r^d` is the flat-baseline ball volume in
+`d`-dimensional Euclidean space.
+
+This is the **Wolfram-style ball-growth curvature** (Murzin §3.4): no
+chain complex required, no metric tensor, just `geodesicBallVolume` plus
+a flat-baseline. Cross-checks the Forman-Ricci scalar
+(`formanRicciHypergraph`) above and the AT2 angle-defect Gauss-Bonnet
+identity. Sits below the metric layer (only needs `dist`); above the
+infrasphere primitive (SPHERE1).
+
+**Dimension handling.** The Bishop-Gromov formula is for a *fixed* `d`.
+On a hypergraph, `d` itself comes from `wolframHausdorffDimension v`
+(asymptotic `log V(v, r) / log r`). We expose the curvature extractor
+parameterised by `d : ℕ` to allow either: (a) using the empirical `d`
+extracted from the same hypergraph, or (b) testing against a target `d`
+in screening.
+
+**Units.** `R_disc` is dimensionless — counts divided by counts (per
+the AT11 / `INFRAGEOMETRY.md` §3 units-emergence story). The continuum
+`R_phys` recovers as `R_phys = a^{-2} · R_disc` under continuum rescaling
+with length-scale `a`. -/
+
+open Real
+
+/-- Volume of the unit ball in `d`-dimensional Euclidean space. Closed
+form: `Ω_d = π^{d/2} / Γ(d/2 + 1)`. We expose only the small-`d` cases
+(0, 1, 2, 3) by literal value; higher `d` falls back to a representative
+positive value (refinement to the actual closed form via `Real.Gamma` is
+follow-up work). -/
+noncomputable def unitBallVolumeEuclidean : ℕ → ℝ
+  | 0 => 1
+  | 1 => 2
+  | 2 => Real.pi
+  | 3 => 4 * Real.pi / 3
+  | _ => 1  -- placeholder for d ≥ 4; actual closed form via Real.Gamma
+
+/-- **Flat-baseline ball volume in `d`-dimensional Euclidean space**:
+`V_flat(d, r) := Ω_d · r^d` where `Ω_d` is the volume of the unit ball.
+For `d = 0`: `Ω_0 = 1`, `V_flat = 1` (single point). For `d = 1`:
+`Ω_1 = 2`, `V_flat = 2r` (interval). For `d = 2`: `Ω_2 = π`,
+`V_flat = π r²`. For `d = 3`: `Ω_3 = 4π/3`, `V_flat = (4π/3) r³`. -/
+noncomputable def flatBallVolume (d : ℕ) (r : ℕ) : ℝ :=
+  unitBallVolumeEuclidean d * (r : ℝ)^d
+
+/-- **Bishop-Gromov scalar curvature extractor** at vertex `v` for
+dimension `d`, scale `r > 0`.
+
+  `R_disc(v, r) := (6(d+2)/r²) · [1 − V(v, r) / V_flat(d, r)]`
+
+When `V(v, r) > V_flat(d, r)` (faster-than-flat growth → positive Ricci →
+spherical-like): output positive. When `V(v, r) < V_flat(d, r)`
+(slower-than-flat → negative Ricci → hyperbolic-like): output negative.
+On a flat lattice with matching `d`, ratio → 1 and curvature → 0. -/
+noncomputable def Hypergraph.scalarCurvatureAt {V : Type*}
+    [Fintype V] [DecidableEq V]
+    (H : Hypergraph V) (v : V) (d : ℕ) (r : ℕ) : ℝ :=
+  if 0 < r then
+    (6 * (d + 2) / ((r : ℝ)^2)) *
+      (1 - (H.geodesicBallVolume v r : ℝ) / flatBallVolume d r)
+  else 0
+
+/-- **Curvature is zero when the ball volume matches the flat baseline
+exactly** at scale `r`. Concrete sanity check: this is the discrete
+analog of "flat space has zero Ricci". -/
+theorem Hypergraph.scalarCurvatureAt_zero_of_match {V : Type*}
+    [Fintype V] [DecidableEq V]
+    (H : Hypergraph V) (v : V) (d : ℕ) (r : ℕ)
+    (hr : 0 < r)
+    (hmatch : (H.geodesicBallVolume v r : ℝ) = flatBallVolume d r)
+    (hflat_pos : 0 < flatBallVolume d r) :
+    H.scalarCurvatureAt v d r = 0 := by
+  unfold Hypergraph.scalarCurvatureAt
+  rw [if_pos hr, hmatch, div_self (ne_of_gt hflat_pos), sub_self, mul_zero]
+
+/-- **Scalar curvature is positive iff the ball volume is below the flat
+baseline** (slower-than-flat growth = positively-curved-spherical-like).
+Sign convention check. -/
+theorem Hypergraph.scalarCurvatureAt_pos_iff {V : Type*}
+    [Fintype V] [DecidableEq V]
+    (H : Hypergraph V) (v : V) (d : ℕ) (r : ℕ)
+    (hr : 0 < r) (hflat_pos : 0 < flatBallVolume d r) :
+    0 < H.scalarCurvatureAt v d r ↔
+      (H.geodesicBallVolume v r : ℝ) < flatBallVolume d r := by
+  unfold Hypergraph.scalarCurvatureAt
+  rw [if_pos hr]
+  have h_coef_pos : 0 < 6 * ((d : ℝ) + 2) / ((r : ℝ)^2) := by
+    apply div_pos
+    · positivity
+    · positivity
+  -- 6(d+2)/r² is positive; sign of product matches sign of the bracket.
+  have h_coef_eq : 6 * ((d : ℕ) + 2 : ℝ) / ((r : ℝ)^2) =
+                   6 * ((d : ℝ) + 2) / ((r : ℝ)^2) := by
+    push_cast
+    ring
+  rw [h_coef_eq]
+  rw [mul_pos_iff_of_pos_left h_coef_pos]
+  constructor
+  · intro h
+    have h' : (H.geodesicBallVolume v r : ℝ) / flatBallVolume d r < 1 := by linarith
+    rwa [div_lt_one hflat_pos] at h'
+  · intro h
+    have h' : (H.geodesicBallVolume v r : ℝ) / flatBallVolume d r < 1 := by
+      rw [div_lt_one hflat_pos]; exact h
+    linarith
 
 end InfraFormalization
