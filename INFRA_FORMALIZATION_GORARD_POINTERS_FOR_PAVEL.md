@@ -30,31 +30,119 @@ Lean refutation `circular_procedure_is_identity` makes this precise.
 This is not a minor error; it is the load-bearing argument of the
 paper, and it is vacuous.
 
-**(2) Genuinely novel claims — essentially none in the formal core.**
-What's there is summary of pre-existing discrete-GR literature
-(causal sets, Forman-Ricci, Ollivier-Ricci, Regge calculus) re-asserted
-on a hypergraph substrate, plus one hand-picked rule.  Where Gorard
-*deviates* from the cited literature, he is *wrong*: G3 Eq 344 uses
-scalar `R` where Ollivier's cited JFA 2009 theorem has directional
-`Ric(v,v)` (off by factor 2 on S²); G3 Eq 342 has the wrong tube-volume
-coefficient (off by factor 2 on S², factor 6 on S³). Verdicts in
-`results/phase2_continuum/eq344_verdict.md` and `eq342_verdict.md`,
-each with four-rail refutation (analytical + numerical +
-alternative-derivation + Lean).
+**(2) Genuinely novel claims in Gorard's corpus — essentially none of
+the substantive technical content is novel-to-Gorard.** Cataloguing
+what's there:
 
-**(3) The named-rule simulation does NOT demonstrate GR.** The named
-rule (G2 §3, `({x,y},{x,z}) → ({x,z},{x,w},{y,w},{z,w})`) **provably
-produces a 1-dimensional spacetime** on every tested seed. Structurally
-blocked by `|LHS| = |RHS|` ⇒ size-conservation ⇒ bounded ball-volume
-growth ⇒ Wolfram-Hausdorff dimension 0 (or constant) on a fixed finite
-vertex set. Formal version:
-`RuleDimensionBounds.trajectory_size_invariant`. Empirical version:
-`wolframscript`-driven causal-dim measurements via the
-`efficient_rewriting_final` engine, every tested seed gives causal
-dim = 1.  **Once causal dim = 1 is structural, every claim about 4D
-GR continuum-limit emergence on this rule is necessarily false.** The
-"agreement" with continuum manifolds in the corpus is asserted, not
-measured.
+- *The hypergraph-rewriting substrate itself* is not his — it is the
+  Wolfram physics project's framing, and even that is a re-presentation
+  of causal-set / pregeometry programs going back to Bombelli-Lee-Meyer
+  -Sorkin (1987) and Penrose's spin networks (1971).
+- *Discrete Forman-Ricci, Ollivier-Ricci, Wolfram-Hausdorff dimension,
+  Regge calculus, causal-set theory* — all cited from prior literature
+  (Forman 2003, Ollivier 2009, Bombelli et al, Regge 1961, Sorkin
+  1991). The hypergraph re-statement adds nothing new; the underlying
+  theorems and identities all belong to those sources.
+- *The specific named rule* (G2 §3) is a particular hand-picked
+  candidate. Picking a rule is novel as an action but produces
+  1-dimensional spacetime structurally, so it does not demonstrate
+  anything novel about geometric emergence.
+- *The end-to-end "derivation of EFE from hypergraph rewriting"* (G3
+  §5) would be genuinely novel if it worked. **It does not work:** the
+  derivation is circular — the continuum metric is Poisson-sprinkled
+  from the *target manifold*, then the procedure runs `manifold →
+  sprinkled-points → bin → reconstruct manifold`. This is `F6Circularity.lean`.
+  The novelty being claimed is therefore not actually present.
+- *Where Gorard *deviates* from cited literature, he is wrong:* G3
+  Eq 344 uses scalar `R` where Ollivier's cited JFA 2009 theorem has
+  directional `Ric(v,v)` (off by factor 2 on S²); G3 Eq 342 has the
+  wrong tube-volume coefficient (off by factor 2 on S², factor 6 on
+  S³). These are not novel results — they are mis-statements of cited
+  theorems. Verdicts: `results/phase2_continuum/eq344_verdict.md` and
+  `eq342_verdict.md`.
+- *Headline structural claims* — "causal invariance ⇒ general
+  covariance", "asymptotic dimensionality preservation ⇒ general
+  covariance" — are tautological as stated (`F3Tautology.lean`,
+  `F4Tautology.lean`). A tautology can be stated for the first time
+  by anyone; that does not make it a non-trivial novel claim.
+- *G4's discrete singularity theorem* — title and body do not match;
+  the body does not prove the theorem the title states. Documentary
+  flaw F8.
+
+**Summary:** the substantive technical content is either (a) cited
+prior literature, (b) wrong restatements of cited literature, (c)
+tautological, or (d) circular. The *attempt* at an end-to-end
+derivation is novel as an attempt but failed; the *named-rule
+simulation* is novel as a choice but produces 1D spacetime so does
+not demonstrate the claimed agreement. **There is no point in the
+corpus where Gorard establishes a non-trivial novel claim about
+emergence of GR (or QM) from hypergraph rewriting that survives
+audit.**
+
+**(3) Beyond summary + named-rule simulation — Gorard's corpus
+contains *claims* of more, but no substantive content of more.**
+Cataloguing what is actually in the papers, the only material beyond
+(a) summary of discrete-GR / Wolfram-physics literature and (b)
+the hand-picked named-rule simulation is:
+
+- *G3 §5 — claimed end-to-end derivation of the Einstein field
+  equations* by varying a "discrete Einstein-Hilbert action" with
+  respect to a "discrete metric tensor". This is the *only*
+  substantive piece in the corpus that would qualify as "beyond
+  summary + simulation" if it worked. It does not work: the metric
+  components are never defined (F1), the variation is performed on
+  an undefined object, and the procedure is structurally circular —
+  the continuum metric is Poisson-sprinkled from the target manifold
+  before the "derivation" begins (F6 `circular_procedure_is_identity`).
+  Pavel's GR postdoc can verify this herself by reading G3 §5 alongside
+  `Refutations/F6Circularity.lean`.
+- *G4 — claimed "discrete singularity theorems".* Title states a
+  theorem; body does not prove the stated theorem. Documentary flaw
+  F8 in `MAJOR_FLAWS.md`.
+- *Structural arguments* — "causal invariance ⇒ general covariance",
+  "asymptotic dimensionality preservation ⇒ general covariance" —
+  presented as substantive bridges from rule-properties to physical
+  symmetries. Both tautological as stated (F3, F4).
+
+**On the simulation:** Gorard's papers contain pictures of the
+named-rule trajectory's causal graph and multiway evolution, plus
+assertions that they "look like" or "approximate" Lorentzian /
+Riemannian manifolds. **What he does *not* do** in the corpus:
+
+- Compute a Gromov-Hausdorff distance between the discrete trajectory
+  and any continuum manifold.
+- Compute a Wasserstein distance between rule-induced measures and
+  any continuum target.
+- Extract a discrete Riemann tensor / Ricci tensor / scalar curvature
+  from the rule's trajectory and compare to a continuum target.
+- Show convergence rates of any kind.
+- Demonstrate any quantitative match to any observable (Schwarzschild
+  perihelion precession, FLRW expansion rate, gravitational waveform,
+  anything).
+
+What the corpus presents as evidence of "match" is qualitative —
+pictures of the multiway graph, dimension estimates from ball-volume
+growth (which we have shown saturate at 1 for the named rule because
+of `|LHS| = |RHS|` size-conservation), and assertions that the limit
+"is" Lorentzian. None of this rises to a quantitative comparison.
+
+**The structural blocker:** the named rule has `|LHS| = |RHS|`, so
+state size is invariant along every trajectory; ball volume is
+therefore bounded by `Fintype.card V`; Wolfram-Hausdorff dimension
+collapses to a constant. Causal dimension comes out as 1 on every
+seed we tested. **Once causal dim = 1 is structural, every claim
+about 4D GR continuum-limit emergence on this rule is necessarily
+false** — independent of any arithmetic correction elsewhere in the
+corpus. Formal version: `RuleDimensionBounds.trajectory_size_invariant`.
+Empirical version: `wolframscript`-driven causal-dim measurements via
+the `efficient_rewriting_final` engine. Both reproducible offline.
+
+**Direct answer to Pavel's question:** Gorard does not do anything of
+substance beyond summary + the failed named-rule simulation; the
+animation does not match continuum GR in any meaningful way (no
+quantitative comparison is presented in the corpus, and the
+qualitative assertion is structurally false because the rule produces
+1D spacetime).
 
 **Editorial note.** The pattern recurs across the corpus: the papers
 state results with more certainty than their arguments establish, and
