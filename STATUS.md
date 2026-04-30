@@ -6,6 +6,20 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-04-30 — RuleSignatureSchema lands; correctness contract closed)
+
+`RuleSignatureSchema.lean` lands (#372) with the strong correctness theorem (#377). This is the WL-paclet-to-Lean trust boundary, sealed.
+
+- **`Dossier { rule, seed, states }`** — Lean-internal data model for the JSON interchange used by Pokorny's `Infrageometry` paclet (#374). The dossier is the *trajectory*, not the *verdict*.
+- **`isConsistent : Bool`** — decidable check that `Hᵢ₊₁ = singleWayStep ⟨[d.rule]⟩ Hᵢ` for every step plus `states[0] = seed`. Computed from the dossier alone — no external trust.
+- **`canonicalDossier rule seed n`** — reference dossier built by running `singleWayEvolve` directly. `canonicalDossier_isConsistent` proves the Lean executor itself produces a consistent dossier (soundness).
+- **#377 `consistent_dossier_eq_canonical`** — *every* consistent dossier IS the canonical Lean-executor trajectory. The WL paclet cannot smuggle a non-canonical trajectory past `isConsistent`. Combined with `canonicalDossier_isConsistent`, the consistency check is both sound and characterising.
+- **Concrete tests**: subdivision-rule 4-step canonical dossier passes `seedConsistent`; edge-count trace = `[1, 2, 4, 8, 16]`; vertex-count trace = `[2, 3, 5, 9, 17]`. TC1 1-step canonical dossier passes consistency. All `decide`-proven.
+
+The architecture is now: WL is the heuristic, Lean is the judge. WL emits dossiers in the schema; Lean re-runs `singleWayStep` and confirms the trajectory is exactly what its own executor produces. WL becomes a precomputed cache, not a source of new claims.
+
+Push order alignment (2026-04-29 in task tracker): #372 + #377 land first; #373 (Lean-only end-to-end pipeline on H1 catalog) is the on-ramp; paclet hookup (#374 emitter request, #375 validator) is the at-scale accelerator for #190 only — *not* on the critical path for K1 / K3 papers.
+
 ## Headline (2026-04-27, late — SPHERE4 surface-area Bishop-Gromov)
 
 `DiscreteRicci.lean` extension lands SPHERE4 (#337) — sphere-side Bishop-Gromov scalar curvature extractor:

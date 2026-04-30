@@ -6,6 +6,9 @@ Legend: ✅ proved, axiom-clean. 🟡 partial. 🔲 open. 🚫 uninhabited forma
 
 ## 0. Recent landings (2026-04-26 — late, catch-up sync)
 
+- ✅ **#372 + #377 — `RuleSignatureSchema.lean`**. `Dossier { rule, seed, states }` data model for the WL-paclet ↔ Lean trajectory interchange. `isConsistent : Bool` decidable check (each Hᵢ₊₁ = singleWayStep ⟨[d.rule]⟩ Hᵢ; states[0] = seed). `canonicalDossier` reference dossier built via recursive `evolveTrace`. **Soundness `canonicalDossier_isConsistent`** + **strong correctness #377 `consistent_dossier_eq_canonical`** (every consistent dossier IS the Lean executor's canonical trajectory). Concrete `decide`-tests on subdivision rule (`[1,2,4,8,16]` edge counts; `[2,3,5,9,17]` vertex counts) and TC1. **The trust boundary is now sealed**: WL is the search heuristic; Lean is the judge; WL emissions become precomputed caches, not new claims. Push order alignment (2026-04-29): #373 Lean-only end-to-end pipeline on H1 catalog is the on-ramp; #374 paclet emitter request + #375 paclet hookup is the at-scale accelerator for #190 only — *not* on the critical path for K1 / K3.
+
+
 - ✅ **`KnillCore.dSquared_eq_zero` (#277)** — cochain-complex axiom for signed boundary on oriented simplices, axiom-clean. Plus `dStarSquared_eq_zero` codual.
 - ✅ **`KnillCore.hodgeOnG_psd`** — Hodge laplacian PSD as bilinear form via sum-of-squares decomposition. Plus `hodgeOnG_dirichlet_zero_iff_isDiracKernel` (kernel-side Hodge isomorphism), `hodgeOnG_diag_eq_sum_dirac_sq`.
 - ✅ **`SubdivisionPath.subdivisionTrajectory n` (#284, Route D)** — canonical n-step trajectory `pathEdges (subdVerts n)` defined directly, with `_isPathOf`, `_length = 2^n`, `_succ`. Decoupled from engine simulation lemma.

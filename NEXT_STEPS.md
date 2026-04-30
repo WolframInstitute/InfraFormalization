@@ -4,6 +4,8 @@ Lives next to [`README.md`](README.md) / [`INDEX.md`](INDEX.md) / [`FINDINGS.md`
 
 ## Recently shipped (selected highlights)
 
+- **#372 + #377 — `RuleSignatureSchema.lean` (2026-04-30)** — WL-paclet ↔ Lean trajectory-interchange data model with strong correctness. `Dossier { rule, seed, states }`, decidable `isConsistent`, `canonicalDossier` reference, `canonicalDossier_isConsistent` (soundness), **`consistent_dossier_eq_canonical`** (#377: every consistent dossier IS the Lean executor's canonical trajectory). Concrete `decide`-tests on subdivision rule and TC1. **Trust boundary sealed**: WL is the heuristic, Lean is the judge; WL emissions become precomputed caches, not new claims.
+
 - **MILESTONE-GR / -QM / -BBH (#369–#371, 2026-04-27)** — `Milestone.lean` lands. Concrete Lean signatures answering "how do we know we got to GR / QM / BBH". `GR_emerges_from_hypergraph` six-conjunct Prop (W₁ rate concrete, layers 2–6 placeholders); specialisations `_minkowski` / `_schwarzschild` / `_flrw` / `_some_hypergraph`; `QM_emerges_from_hypergraph`; `BBH_emerges_from_hypergraph`. **Three Lean-verifiable signals of completion** (no `sorry` / clean `#print axioms` / term-witnessed existential).
 
 - **AT0 + AT1 angle primitives (#285, #286, 2026-04-27)** — `Hypergraph.elementaryAngle O A B` (Stephen's chord-ratio = `2 sin(θ/2)`), `cosAngle`, `angle := Real.arccos cosAngle`, `IsOrthoApprox` orthogonality predicate. In `HypergraphDistance.lean`. Foundation of the 14-column angle tower.
