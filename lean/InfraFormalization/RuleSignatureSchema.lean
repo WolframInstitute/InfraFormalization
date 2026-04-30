@@ -96,6 +96,25 @@ def vertexCountTrace : List Nat := d.states.map hgVertexCount
 /-- The state at step `i`, with default seed if out-of-range. Total. -/
 def stateAt (i : Nat) : ExecHG ℕ := (d.states[i]?).getD d.seed
 
+/-! ## Constancy predicates (decidable screener verdicts)
+
+These are the simplest screener obligations: edge-count constant
+across the trajectory (the conservation screener), vertex-count
+constant. Both are `Bool`-valued and decidable; given a concrete
+canonical dossier, `decide` produces an axiom-clean verdict. -/
+
+/-- All entries of a `List Nat` equal the head (or list is empty). -/
+def listAllEqHead : List Nat → Bool
+  | []      => true
+  | x :: rs => rs.all (decide <| · = x)
+
+/-- Edge-count is constant across the dossier's trajectory. The
+ExecHG-side analogue of `RuleSignatureScreener.edgeCountTrajectory_const`. -/
+def edgeCountConstant : Bool := listAllEqHead d.edgeCountTrace
+
+/-- Vertex-count is constant across the dossier's trajectory. -/
+def vertexCountConstant : Bool := listAllEqHead d.vertexCountTrace
+
 end Dossier
 
 /-! ## Canonical (Lean-internal) reference dossier

@@ -6,6 +6,17 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-04-30 — H1 corpus end-to-end Lean-internal screening (#373))
+
+`RuleSignatureExecCorpus.lean` lands the on-ramp. The closed H1 candidate-rule corpus is screened end-to-end inside Lean — `MultiwayExec.singleWayEvolve` produces canonical dossiers, the dossier carries `edgeCountTrace` / `edgeCountConstant`, and `decide` / `native_decide` produce axiom-clean verdicts. **No paclet round-trip.** The trust boundary is internal to Lean.
+
+- **Five H1 rules ported**: `trivialIdentityExecRule`, `edgeDoublingExecRule`, `edgeAppendExecRule`, `tripleExpansionExecRule`, `gorardNamedExecRule`. Each gets concrete seeds and canonical dossiers.
+- **`Dossier.edgeCountConstant : Bool`** + `vertexCountConstant` added to `RuleSignatureSchema.lean` — the screener verdicts as decidable Bool predicates over the ExecHG-side trajectory.
+- **Headline theorem `h1_corpus_edgeCount_screener_verdict`**: trivialIdentity passes (constant 1), Gorard path-seed passes (constant 4 after 1 step), edgeDoubling/edgeAppend/tripleExpansion fail. All `decide` / `native_decide`-checked.
+- **Cycle-seed observation**: Gorard's rule + 4-cycle seed *fails* edge-count constancy under `singleWayStep`. Four overlapping matches around the cycle each emit a 4-edge RHS while consumed edges have already been removed by earlier matches — engine-level non-conservation despite abstract-side `Rule.IsConservative`. Documented as a useful negative test, not a bug.
+
+This closes the on-ramp end of the rule-search pipeline. The paclet hookup (#374 / #375) accelerates open enumeration only; for the closed H1 corpus, Lean executor end-to-end is sufficient and stronger.
+
 ## Headline (2026-04-30 — RuleSignatureSchema lands; correctness contract closed)
 
 `RuleSignatureSchema.lean` lands (#372) with the strong correctness theorem (#377). This is the WL-paclet-to-Lean trust boundary, sealed.
