@@ -1,0 +1,79 @@
+Direct contacts with our project — Kronheimer–Mrowka,
+"Tait colorings, and an instanton homology for webs and foams"
+(in order of relevance):
+
+1. §8.3 combinatorial counterpart `J^♭` is a TQFT-style local-evaluation
+   rule on closed pre-foams: sphere-with-2-dots → 1; torus → 1;
+   theta-foam(0,1,2) → 1; non-bipartite seam graph → 0; non-trivial
+   monodromy on a seam circle → 0; else 0. Conjectured equal to `J^♯`
+   (Conj 8.10). This *is* a spin-foam evaluation rule — exactly the
+   structural shape that POLY3 (#318 spin-network/spin-foam on
+   `Hypergraph V`) and J5 (#98 LQG spin-foam comparison) target. The
+   axioms are short and directly portable: a Lean predicate
+   `JFlat : Foam → 𝔽₂` checking the five rules is a small first
+   formalisation that gives us the spin-foam category in concrete form.
+
+2. §8.5 cube of resolutions / spectral sequence
+   `E_1 = J^♯(K) ⊗ Gr` abutting to `I^♯(K)`, with
+   `E_0 = ⊕_{A ⊆ {1,…,n}} C^♯(K)_A` indexed by the Boolean lattice and
+   differentials `D^{A,B} = U_{B\A}` given by Steenrod ⌣₁ reduced cup
+   products. This is the multiway-tree structure as a categorified
+   differential: cube vertices are states, cube edges are operators,
+   the abutment `→ I^♯(K)` is the "branchial → final invariant"
+   projection. It is the cleanest categorical analogue I have seen of
+   our `Trajectory → MultiScreener` pipeline. The abutment is on the
+   same shape as the multiway-causal-graph collapse in #225.
+
+3. §6 web-move relations prove explicit invariance / direct-sum
+   behaviour of `J^♯` under bigon collapse (`dim` halves), triangle
+   move (isomorphism), and square move
+   (`J^♯(K) = J^♯(K') ⊕ J^♯(K'')`). §6.5 then shows
+   `dim J^♯(K) = τ(K)` for any web reducible to unlinks via these
+   moves. These are precisely the DEFORM1 / DEFORM2 elementary
+   path/cycle deformations in our task list, with a fully worked
+   example of "screener invariant under elementary moves". A natural
+   target: define a Lean-side functor on hypergraphs invariant under
+   our DEFORM1 moves and prove the analogues of Propositions 6.5–6.8.
+
+4. §8.6 SU(3) variant `L^♯`: replacing SO(3) by SU(3) gives
+   `dim L^♯(K; 𝔽) = τ(K)` for *any* web in 3-space — independent of
+   the spatial embedding. So `L^♯` is a combinatorial invariant of the
+   abstract trivalent graph alone. This is the right shape for KNOT3
+   (#322 Yamada/Jones via spin-network Chern–Simons): a graph-only
+   invariant defined via gauge-theoretic data on the embedding's
+   complement.
+
+5. §3.3 `d² = 0 mod 2`. The Floer differential satisfies `d² = 0 mod 2`
+   because each vertex of the web contributes 4 ends to `M̄_2(α,α)`
+   (the cone on `V_4`), and 4 is even mod 2. Same axiom we have
+   proved over ℤ in `KnillCore.dSquared_eq_zero` (#277), with a
+   similar pairing-cancellation flavour — the difference being that
+   ours uses the `(-1)^i + (-1)^{i+1}` sign-pair on the simplicial
+   cochain complex while theirs uses a 4-fold codim-2 vertex-bubbling
+   cancellation in the instanton moduli. Different setting, same
+   axiom; their argument is a useful comparison case for future
+   generalisations of our `d² = 0` to richer chain complexes.
+
+6. §2.6 index formula
+   `d(E,A) = 8κ − 3(1 − b¹(X) + b⁺(X)) + χ(Σ) + ½ Σ·Σ − ½|τ|`
+   mixes gauge-theoretic terms (`κ` = action, `b⁺`) with purely
+   combinatorial ones (`χ(Σ)` Euler characteristic of the foam, `|τ|`
+   tetrahedral-point count, `Σ·Σ` self-intersection). Same flavour as
+   discrete Gauss-Bonnet — the AT2 Forman-defect /
+   Knill-Euler-Poincaré identity in our IGE1 / KN8 modules.
+
+7. §8.4 gradings via bipartiteness — `J(Y,K;μ)` admits a ℤ/d grading
+   iff the abstract graph is bipartite (else only ℤ/2). The action `κ`
+   lies in `N/8 mod (1/4)ℤ` where `N` is the count of "Type II"
+   vertices defined by an `η(e) ∈ {0,1}` pairing data on edges. Graph
+   bipartiteness is a basic combinatorial property our hypergraph
+   predicates already track; the obstruction-class structure
+   (`w_2`-pulled-back) is something we would need for a serious Lean
+   port.
+
+8. §7 sutured-manifold non-vanishing chain. The proof that
+   `J^♯(K) ≠ 0 ↔ no embedded bridge` runs through: excise vertices →
+   connected sum with `S¹×S²` summands → meridional sutured manifold
+   `(M, γ)` → tautness → Gabai's hierarchy theorem. Sutured-manifold
+   theory is not in Mathlib and would be a major formalisation
+   enterprise of its own; not on our path.
