@@ -1,6 +1,6 @@
 # Weekly report — 2026-04-23 (short version)
 
-**Project.** `infra_formalization` — Lean 4 / Mathlib formalisation of the Wolfram-model → GR / QM bridge programme, plus a machine-checked audit of Gorard's published derivation claims (arXiv 2004.14810, 2011.12174, 2102.09363, 2303.07282). Comprehensive version attached.
+**Project.** `infra_formalization` — Lean 4 / Mathlib formalisation of the Wolfram-model → GR / QM bridge programme, plus a machine-checked audit of JGORARD's published derivation claims (arXiv 2004.14810, 2011.12174, 2102.09363, 2303.07282). Comprehensive version attached.
 
 ## Numbers
 
@@ -10,9 +10,9 @@
 - Infrageometry programme: 52 of 57 tasks closed with real content; 5 still open (IG10 exponential map; ID6 dimension compatibility; ID7 spectral dimension asymptotics; IB2 commutator theorem; IR7 reverse-engineer rule from signature).
 - Grounding audit: 4 of 4 action items closed (no free-floating continuum objects at the obligation level).
 
-## Why (audit of the Gorard corpus)
+## Why (audit of the JGORARD corpus)
 
-Gorard's headline claim: a specific hypergraph rewriting rule "provably satisfies the Einstein field equations in the continuum limit" (G3 abstract). Load-bearing flaws:
+JGORARD's headline claim: a specific hypergraph rewriting rule "provably satisfies the Einstein field equations in the continuum limit" (G3 abstract). Load-bearing flaws:
 
 - **F1** — the discrete metric `g^{ab}` used in G1 §3.3 is never constructed, and any construction built from the hypergraph alone is non-canonical. Formalised in Lean as `Refutations/F1NoMetric.lean`.
 - **F2** — "non-parallel hyperedges are orthonormal" declares a property of an unconstructed bilinear form. Formalised in `Refutations/F2Orthonormality.lean`.
@@ -63,8 +63,8 @@ Every item below is an active task; full per-task breakdown in [`NEXT_STEPS.md`]
 - **Infrageometry programme open tasks.** IG10 exponential map via weighted shortest-path counts (pending); ID6 dimension compatibility on regular lattices (in progress); ID7 spectral-dimension small-`t` asymptotics (in progress); IB2 causal-branchial-trivial commutator (in progress); IR7 reverse-engineer rule from target signature (in progress). Separately, several infrageometry tasks are marked closed at a baseline but have substantive full forms still open as future work: IT5 Latschev GH-form, IT6 scale-trichotomy bulk, IQ6 Fubini-Study refinement limit, IQ8 EME-tracking functor, IQ9 path-integral amplitudes. T5 (path and d-torus Laplacian spectrum closed forms, in progress) sits outside the infrageometry programme but in the same spirit.
 - **Rule search.** Large-scale empirical enumeration via `wolframscript` / SetReplace (task #190); Lean-side `RuleSearch.lean` catalog infrastructure in place.
 - **Support (X-series).** X3 Mathlib Taylor integration (uniform C^k-on-compacts), X4 multi-way engine integration from `efficient_rewriting_final`.
-- **Colleague-work (M-series).** M1 Ioana Milea IG-intern coordination, M3 Kolcz Lie-Poisson MBQC, M4 Pullman IBL-∞ / BV, M6 Pokorny paclet parity, M7 Ahmed EME community post, M8 Pokorny diffusion-geometry bridge, M9 tropical geometry, M10 3BP / dynamical-systems dimension signature.
-- **Pavel Hájek planning items (P-series, P1–P19).** Simplicial machinery, cup product, discrete Chern-Simons amplitude, ribbon graphs + Whitehead moves, sheaves on hypergraphs, Koszul signs, homotopy colimit, filtrations of multiway systems, action principle, n-Lie extension of insertion bracket, interaction diagrams from causal graphs, chaos theory, Utkarsh twisted-difference operators, RG flow, observability tools, Knill geodesics, homotopy algebra scaffold, holography / Unruh, (1-skeleton, clique-cochain) decomposition. Mapping in [`NEXT_STEPS.md`](NEXT_STEPS.md) § "Pavel Hájek planning items (P-group)".
+- **Colleague-work (M-series).** M1 IMILEA IG-intern coordination, M3 HKOLCZ Lie-Poisson MBQC, M4 JPULLMAN IBL-∞ / BV, M6 PPOKORNY paclet parity, M7 SAHMED EME community post, M8 PPOKORNY diffusion-geometry bridge, M9 tropical geometry, M10 3BP / dynamical-systems dimension signature.
+- **PHAJEK planning items (P-series, P1–P19).** Simplicial machinery, cup product, discrete Chern-Simons amplitude, ribbon graphs + Whitehead moves, sheaves on hypergraphs, Koszul signs, homotopy colimit, filtrations of multiway systems, action principle, n-Lie extension of insertion bracket, interaction diagrams from causal graphs, chaos theory, UBAJAJ twisted-difference operators, RG flow, observability tools, Knill geodesics, homotopy algebra scaffold, holography / Unruh, (1-skeleton, clique-cochain) decomposition. Mapping in [`NEXT_STEPS.md`](NEXT_STEPS.md) § "PHAJEK planning items (P-group)".
 - **Paper drafts (K-series).** K1 audit paper, K2 corrected identities, K3 infrageometry continuum-limits, K4 structural library, K5 Wolfram → GR bridge, K6 branchial QM audit, K7 BBH via hypergraph, K8 discrete d'Alembertian + BD flag, K9 refutation-chain.
 
 ## Near-term priorities

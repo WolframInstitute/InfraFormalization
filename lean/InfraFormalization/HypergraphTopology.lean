@@ -3,7 +3,7 @@
 
 The two most elementary topological invariants on a hypergraph, requiring
 neither metric nor measure structure:
-- `b_0` = number of connected components — Stephen's "is every point
+- `b_0` = number of connected components — SWOLF's "is every point
   reachable from every other" — the partition every other invariant sits
   inside.
 - `b_1` = first Betti number / cycle rank — `#hyperedges − #vertices +
@@ -45,7 +45,7 @@ noncomputable abbrev SpatialConnectedComponent (H : Hypergraph V) : Type _ :=
 
 /-- **`b_0` (spatial flavour)** — number of connected components in the
 clique-expansion graph. The most elementary topological invariant.
-Stephen's "is every point reachable from every other" reduces to
+SWOLF's "is every point reachable from every other" reduces to
 `b_0 = 1`. -/
 noncomputable def spatialB0 (H : Hypergraph V) : ℕ :=
   Fintype.card H.SpatialConnectedComponent
@@ -85,7 +85,7 @@ distinct invariant (lives on the graph CLOSURE1 #362 chooses).
 -/
 
 /-- **First Betti number / cycle rank (hyperedge-counted, integer
-arithmetic)** — `#hyperedges − #vertices + #components`. Stephen's most
+arithmetic)** — `#hyperedges − #vertices + #components`. SWOLF's most
 elementary non-trivial invariant after `b_0`. -/
 noncomputable def firstBettiZ (H : Hypergraph V) : ℤ :=
   (H.size : ℤ) - (Fintype.card V : ℤ) + (H.spatialB0 : ℤ)
@@ -117,7 +117,7 @@ def HasBetti (H : Hypergraph V) (k : ℕ) (_n : ℕ) : Prop :=
 
 /-! ## Connection to MILESTONE / topology-before-metric layering -/
 
-/-- **`spatiallyConnected_implies_b0_pos`** — if Stephen's "every point
+/-- **`spatiallyConnected_implies_b0_pos`** — if SWOLF's "every point
 reachable from every other" holds, there is at least one connected
 component. (The converse direction needs the unique-class characterisation
 which lives in Mathlib follow-up; we surface the forward implication
@@ -130,7 +130,7 @@ theorem spatialB0_pos_of_nonempty [Nonempty V] (H : Hypergraph V) :
 
 /-! ## Decidable membership in regions (MEMBER1)
 
-Stephen's "whether a point is a member of the set of points in a region"
+SWOLF's "whether a point is a member of the set of points in a region"
 — the foundational topological primitive. For `Finset V` regions
 membership is decidable for free (Mathlib's `Finset.decidableMem`); we
 expose a uniform `IsInRegion` alias so all subsequent topology code
@@ -145,7 +145,7 @@ decidability for these regions reduces to the standard
 without needing extra instances here. -/
 
 /-- **`v ∈ R` for `R : Finset V`** — uniform alias surfacing the
-foundational topological membership predicate Stephen called out as the
+foundational topological membership predicate SWOLF called out as the
 most elementary primitive. Decidable for free via `Finset.decidableMem`. -/
 abbrev IsInRegion (v : V) (R : Finset V) : Prop := v ∈ R
 
@@ -167,7 +167,7 @@ theorem isInRegion_infraSphere_iff (H : Hypergraph V) (v O : V) (r : ℕ) :
   simp [Finset.mem_filter]
 
 /-- **`v` is in the perpendicular bisector iff equidistant from the
-endpoints** — Stephen's "all points equidistant from two given points". -/
+endpoints** — SWOLF's "all points equidistant from two given points". -/
 theorem isInRegion_perpBisector_iff (H : Hypergraph V) (v A B : V) :
     IsInRegion v (H.perpBisector A B) ↔ H.dist A v = H.dist B v := by
   unfold IsInRegion
@@ -175,7 +175,7 @@ theorem isInRegion_perpBisector_iff (H : Hypergraph V) (v A B : V) :
 
 /-! ## bounded / diameter (BOUND1, spatial flavour)
 
-Stephen's bounded/unbounded distinction. Trivial on `[Fintype V]`, but
+SWOLF's bounded/unbounded distinction. Trivial on `[Fintype V]`, but
 the *value* of `spatialDiameter` is the relevant invariant for
 refinement-limit / continuum-limit questions. -/
 
@@ -213,7 +213,7 @@ theorem isBounded_of_finite (H : Hypergraph V) (R : Finset V) :
 
 /-! ## Open-set topologies (OPEN1)
 
-Stephen + Pavel pivot to formal topology. **Multiple natural topologies
+SWOLF + PHAJEK pivot to formal topology. **Multiple natural topologies
 on the same hypergraph**, each yielding different compactness /
 continuity theorems. We surface predicate-level definitions for the
 five canonical choices; the corresponding `TopologicalSpace V`
@@ -265,7 +265,7 @@ theorem isVRScaleOpen_univ (H : Hypergraph V) (r : ℕ) :
 
 /-! ## Neighbourhood basis (NBHD1)
 
-Stephen's "locally has neighbourhoods" intuition for surfaces — the
+SWOLF's "locally has neighbourhoods" intuition for surfaces — the
 basis of geodesic balls around each vertex generates the local
 topology. We expose the basis as a function `r ↦ geodesicBall v r` and
 the membership-stability characterisation. -/

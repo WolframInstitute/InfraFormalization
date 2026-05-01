@@ -8,7 +8,7 @@ Our infrageometry Lean corpus can be used as a **verifier** and **screener** in 
 
 | Mechanism | Lean primitive | What it rules out |
 |---|---|---|
-| Conservation forces constant state size | `Application.size_result_of_conservative` | Rules where the causal graph can grow in density; places an upper bound on cone dimension. Refutes Gorard's named rule (F7). |
+| Conservation forces constant state size | `Application.size_result_of_conservative` | Rules where the causal graph can grow in density; places an upper bound on cone dimension. Refutes JGORARD's named rule (F7). |
 | Same-level antichain | `same_level_ordered_antichain`, `no_causal_edge_within_level` | Rules whose causal DAG lacks consistent level structure (shouldn't happen for well-formed trajectories, but the formal invariant is available). |
 | Linear cone growth empirically | (combinatorial; driven by level and causal-precedence counts) | Rules with cone dimension 1 on any seed — cannot support 3+1-dim Minkowski. |
 
@@ -41,7 +41,7 @@ Once a candidate rule is found:
 
 - **Rule generation.** No enumeration, no evolutionary search, no physics-priors. A separate generator is required (`../efficient_rewriting_final/`, `SetReplace`, heuristic search).
 - **Canonical spatial embedding.** F1 rules this out structurally. The best we can offer is: "given this chosen embedding, Lean certifies Minkowski consistency." The embedding itself is a non-canonical choice.
-- **Curvature certification.** Currently at statement level for Ollivier and Gray, plus proven disagreement of Gorard's forms on S² and S³; the concrete Ricci / Einstein computation on named metrics is task #217.
+- **Curvature certification.** Currently at statement level for Ollivier and Gray, plus proven disagreement of JGORARD's forms on S² and S³; the concrete Ricci / Einstein computation on named metrics is task #217.
 
 ## Practical pipeline
 
@@ -69,5 +69,5 @@ Those are the remaining structural gaps — tracked in `MILESTONES.md` under Pha
 - `lean/InfraFormalization/CausalLevel.lean` — level function + monotonicity + antichain.
 - `lean/InfraFormalization/Infra/TrajectoryLorentz.lean` — 1+0-dim bridging.
 - `lean/InfraFormalization/Infra/LorentzLattice.lean` — `CausalPrecedes`, `Timelike`, `Null`, `Spacelike`, `minkowskiIntervalSq`.
-- `results/phase1_selfaudit/` — empirical cone-dimension rejection of Gorard's named rule.
+- `results/phase1_selfaudit/` — empirical cone-dimension rejection of JGORARD's named rule.
 - `MAJOR_FLAWS.md` — F1 (no canonical metric), F2 (fiat orthonormality), F5 (ill-defined limit).

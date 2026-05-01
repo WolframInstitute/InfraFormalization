@@ -5,7 +5,7 @@ A `Hypergraph V` is a finite multiset of directed hyperedges, where each
 hyperedge is a nonempty ordered tuple of vertices from `V`. We use
 ordered tuples (not unordered subsets) because:
 
-  * Gorard's later machinery (the Ollivier-Ricci construction in §3.1 of
+  * JGORARD's later machinery (the Ollivier-Ricci construction in §3.1 of
     arXiv:2004.14810 and in arXiv:2102.09363 §5) requires a notion of
     "tail" and "head" of an edge, i.e. direction;
   * "outgoing hyperedges" (Def 3, arXiv:2004.14810) is only well-defined

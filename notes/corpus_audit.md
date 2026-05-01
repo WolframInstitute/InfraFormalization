@@ -1,6 +1,6 @@
-# Corpus audit: repeated errors across Gorard's Wolfram-physics papers
+# Corpus audit: repeated errors across JGORARD's Wolfram-physics papers
 
-This document maps errors across the four principal Gorard papers on the Wolfram-model/GR program, so that the repetition of each error is visible.
+This document maps errors across the four principal JGORARD papers on the Wolfram-model/GR program, so that the repetition of each error is visible.
 
 ## The corpus
 
@@ -15,7 +15,7 @@ This document maps errors across the four principal Gorard papers on the Wolfram
 
 ### Error 1 — "Ollivier–Ricci scalar κ(p,q) reduces to Ricci scalar R(p,q)"
 
-The directional-vs-scalar Ricci conflation. Ollivier's JFA 2009 theorem gives **$\mathrm{Ric}(v,v)$** (directional along $v=(q-p)/|q-p|$), Gorard writes **scalar $R$**.
+The directional-vs-scalar Ricci conflation. Ollivier's JFA 2009 theorem gives **$\mathrm{Ric}(v,v)$** (directional along $v=(q-p)/|q-p|$), JGORARD writes **scalar $R$**.
 
 | Paper | Location | Quote |
 |---|---|---|
@@ -61,7 +61,7 @@ Verdict **⚠ ill-defined / ○ open**. The overall conclusion (Einstein field e
 
 ### Error 4 — "Asymptotic dimensionality preservation" is tautological
 
-Gorard defines this condition by Eq 87 (G1), which is "$\delta S/\delta g^{ab} \to 0$" — the very equation needed to derive Einstein's equations by calculus of variations. This is not a verifiable physical/combinatorial condition; it's a pre-written conclusion.
+JGORARD defines this condition by Eq 87 (G1), which is "$\delta S/\delta g^{ab} \to 0$" — the very equation needed to derive Einstein's equations by calculus of variations. This is not a verifiable physical/combinatorial condition; it's a pre-written conclusion.
 
 Appears in G1 (line 890), G2 (§5), G3 (§5). **All three papers.**
 

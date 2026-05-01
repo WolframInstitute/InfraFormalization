@@ -1,8 +1,8 @@
 /-
-**Branchial structure theorems** (IB2, M5 Ahmed-Zapata).
+**Branchial structure theorems** (IB2, M5 SAHMED-CZAPATA).
 
 Extends `Branchial.lean` with concrete consequences for the
-Ahmed-Zapata axiomatic-relativity programme (M5).
+SAHMED-CZAPATA axiomatic-relativity programme (M5).
 
 Grounded: everything on `Hypergraph V` + `RewritingSystem` + `Step`.
 -/

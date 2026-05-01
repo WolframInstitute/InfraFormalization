@@ -13,7 +13,7 @@ For full-program sequencing across phases (Phase A → B → C → D toward BBH-
 **12 tasks closed in 7 commits this push** (`c1447bc` → `683633c`):
 
 - [x] **MILESTONE-GR / -QM / -BBH (#369, #370, #371)** — `Milestone.lean` lands. Closed Lean signatures `GR_emerges_from_hypergraph` (six conjuncts), specialisations `_minkowski`/`_schwarzschild`/`_flrw`/`_some`, `QM_emerges_from_hypergraph`, `BBH_emerges_from_hypergraph`. Placeholders `True`-typed so no axiom is introduced; `#print axioms` clean. **Three Lean-verifiable signals of completion** documented.
-- [x] **AT0 (#285)** — `Hypergraph.elementaryAngle O A B` Stephen's chord-ratio + lemmas (`elementaryAngle_self`, `_symm`, `_nonneg`).
+- [x] **AT0 (#285)** — `Hypergraph.elementaryAngle O A B` SWOLF's chord-ratio + lemmas (`elementaryAngle_self`, `_symm`, `_nonneg`).
 - [x] **AT1 (#286)** — `Hypergraph.cosAngle`, `Hypergraph.angle := arccos cosAngle`.
 - [x] **AT6 (#291)** — `CoordinatizationDimension.AreOrthogonalAxes` `True`-stub replaced with `IsOrthoApprox` chord-ratio ≈ √2.
 - [x] **AT7 (#292)** — `RuleSignatureScreener` extension: `elementaryAngleSample`, `angularDeviation`, `AngularScreener`, `CombinedScreener` (curvature + angular triple), persistent-gap negative discharge. **Phase B screener pipeline complete.**
@@ -22,7 +22,7 @@ For full-program sequencing across phases (Phase A → B → C → D toward BBH-
 - [x] **SPHERE1 (#334)** — `Hypergraph.infraSphere`, `infraDisk`, `infraSphereVolume` + boundary inclusion / disjointness / cardinality bound lemmas.
 - [x] **HYPER2 (#339) + HYPER3 (#340) + MIDPT1 (#342)** — `perpBisector`, `closerHalf`, `HasTopologicalHyperplane` stub, `midpoint`, `nearMidpoint`, `voronoiCell` + `mem_*` characterisations + symmetry. **Bachmann motion-group substrate.**
 
-84 new tasks logged this session (#285–#368) covering the full angle / topology / cellular-sheaf / knot framework + the Murzin "Geometry on Combinatorial Objects" cross-reference + 18 gap-tasks. Plus 3 milestone-tasks #369–#371. Total: 84 tasks logged, 11 closed in this push (12 if counting the AT0-substrate split).
+84 new tasks logged this session (#285–#368) covering the full angle / topology / cellular-sheaf / knot framework + the NMURZIN "Geometry on Combinatorial Objects" cross-reference + 18 gap-tasks. Plus 3 milestone-tasks #369–#371. Total: 84 tasks logged, 11 closed in this push (12 if counting the AT0-substrate split).
 
 ## Recent landings (2026-04-26 — late)
 
@@ -46,7 +46,7 @@ In flight (this session):
 
 ---
 
-## Phase 0 — Audit of the Gorard corpus
+## Phase 0 — Audit of the JGORARD corpus
 
 - [x] G1 (2004.14810) close-reading ([notes/2004.14810_close_reading.md](notes/2004.14810_close_reading.md))
 - [x] G2 (2011.12174) partial close-reading (cross-paper audit)
@@ -198,7 +198,7 @@ In flight (this session):
 - [x] **`BenincasaDowkerConjecture`** structure: explicit `Prop`-level placeholder for the unproven `B_ρ → □ − ½R` continuum limit; `gorardF6_carries_BD_assumption` makes the F6 dependency machine-checkable.
 - [ ] General-dimension BD operator (coefficients indexed by `d`; 2D = `(1, -2, 1)`, 3D, etc.).
 - [x] **Discrete action** `S[φ] := ∑_{i < N} φ(i) · B[φ](i)` (`discreteAction`); homogeneous of degree 2 (`discreteAction_smul`).
-- [x] **Discrete EL equation** `discreteEL τ φ ↔ ∀ i, B[φ](i) = 0` — the discrete Euler-Lagrange (analog of Gorard's `δS/δg^{ab} = 0`).
+- [x] **Discrete EL equation** `discreteEL τ φ ↔ ∀ i, B[φ](i) = 0` — the discrete Euler-Lagrange (analog of JGORARD's `δS/δg^{ab} = 0`).
 - [ ] Action expansion under perturbation: `S[φ + h] − S[φ]` to first order in `h`, recovering `discreteEL` from stationarity.
 
 ### Schwarzschild curved-metric sanity check (Rung 5)
@@ -366,14 +366,14 @@ Full collation of the post-phase-1 infrageometry programme. Each group is a cohe
 - [x] R5 Cycle Laplacian spectrum closed form (`CycleSpectrum.lean`;).
 
 ### M-series colleague-work items (10 tasks, all pending)
-- [ ] M1 Ioana Milea gauge-intern project coordination.
-- [ ] M2 Van Le Fisher→Fubini-Study bridge.
-- [ ] M3 Hubert Kolcz Lie-Poisson MBQC.
-- [ ] M4 Jan Pullman IBL-∞ / BV formalism.
-- [ ] M5 Carlos Zapata + Sara Ahmed axiomatic-relativity paper.
-- [ ] M6 Pokorny Infrageometry paclet parity.
-- [ ] M7 Ahmed EME-tracking community post.
-- [ ] M8 Pokorny diffusion-geometry bridge.
+- [ ] M1 IMILEA gauge-intern project coordination.
+- [ ] M2 HVLE Fisher→Fubini-Study bridge.
+- [ ] M3 HKOLCZ Lie-Poisson MBQC.
+- [ ] M4 JPULLMAN IBL-∞ / BV formalism.
+- [ ] M5 CZAPATA + SAHMED axiomatic-relativity paper.
+- [ ] M6 NMURZIN `Infrageometry` paclet — Lean port parity (NMURZIN is Creator + principal committer; the previous "PPOKORNY Infrageometry paclet parity" wording conflated PPOKORNY with the `Infrageometry` paclet — see `CONTRIBUTORS.md`).
+- [ ] M7 SAHMED EME-tracking community post.
+- [ ] M8 Diffusion-geometry bridge — attribution under review (previously credited PPOKORNY without verified evidence; see `CONTRIBUTORS.md`).
 - [ ] M9 Tropical-geometry synthetic infrageometry.
 - [ ] M10 3BP / dynamical-systems dimension signature.
 
@@ -384,7 +384,7 @@ Full collation of the post-phase-1 infrageometry programme. Each group is a cohe
 
 ### Stated correctly (statement-only, no Mathlib Ricci yet)
 - [x] Correct Ollivier identity as `OllivierIdentityLeading` (T27)
-- [x] Gorard's form and coincidence condition (T28)
+- [x] JGORARD's form and coincidence condition (T28)
 - [x] Correct Gray tube formula as `GrayTubeLeading` (T29)
 - [x] Concrete disagreement on $S^2$: 1/6 ≠ 1/3 (T30)
 - [x] Concrete disagreement on $S^3$: 1/3 ≠ 2 (T31)
@@ -407,7 +407,7 @@ Full collation of the post-phase-1 infrageometry programme. Each group is a cohe
 - [x] Scaled $d$-dim lattice → flat $d$-torus, any $d$ (`Infra/ScaledTorusD.lean`, `dTorus_gh_bound`).
 - [x] Discrete → continuum Minkowski bridge for any $d$ (`Infra/ScaledLorentz.lean` + `Infra/FullBridge.lean`): exact isometry + iff causal preservation + density.
 - [ ] Scaled Cayley graph of a finitely-generated group → its asymptotic cone.
-- [ ] Random geometric graph on a Riemannian manifold → the manifold (the positive analogue of Gorard's §3).
+- [ ] Random geometric graph on a Riemannian manifold → the manifold (the positive analogue of JGORARD's §3).
 - [ ] Causal-set Poisson sample of a Lorentzian spacetime → the spacetime (Lorentzian-GH, contingent on Mathlib infrastructure).
 
 ## Phase 4 — Discrete geometric structures library (Lean)
@@ -445,9 +445,9 @@ Full collation of the post-phase-1 infrageometry programme. Each group is a cohe
 
 ## Phase 7 — Quantum-mechanical bridge (multiway / branchial)
 
-Gorard's companion program (arXiv:2004.14808 and related) claims that the *branchial* structure of the multiway evolution graph recovers quantum mechanics. This is its own research line and has not been adequately audited yet; included here because quantum-mechanical content is the *only* plausible first-principles bridge between Wolfram rewriting and observed physics (since GR emerges only statistically / in the continuum limit).
+JGORARD's companion program (arXiv:2004.14808 and related) claims that the *branchial* structure of the multiway evolution graph recovers quantum mechanics. This is its own research line and has not been adequately audited yet; included here because quantum-mechanical content is the *only* plausible first-principles bridge between Wolfram rewriting and observed physics (since GR emerges only statistically / in the continuum limit).
 
-- [ ] Audit Gorard's QM paper with same S1–S6 methodology.
+- [ ] Audit JGORARD's QM paper with same S1–S6 methodology.
 - [x] Define the `RewritingSystem` / `Step` / `MultiStep` machinery in Lean (states = hypergraphs, edges = applications; full branching tree via `Branchial.lean`).
 - [x] Define `BranchialSlice` (states at a common evolution depth with shared ancestry; `Branchial.lean`, `BranchialFinite.lean`).
 - [x] Define `SchrodingerEquation` on `Hypergraph V` with proven unitarity (`SchrodingerEquation.lean`, task D10).
@@ -536,7 +536,7 @@ The `../efficient_rewriting_final/` repo is a high-performance C++ multi-way hyp
 
 ## Output targets (see also [`PUBLISHABLE.md`](PUBLISHABLE.md))
 
-- [ ] Publishable audit note: the Gorard-corpus refutation with Lean backing
+- [ ] Publishable audit note: the JGORARD-corpus refutation with Lean backing
 - [ ] Publishable constructive note: correct Ollivier + Gray identities formalised
 - [ ] Publishable infrageometry paper: our Phase-3 continuum-limit theorems + abstraction
 - [ ] Publishable research paper: the first provable Wolfram-to-GR rule (Phase 5 milestone)

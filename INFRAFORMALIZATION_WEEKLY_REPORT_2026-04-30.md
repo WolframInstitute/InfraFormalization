@@ -1,6 +1,6 @@
 # Weekly report — 2026-04-30 (full)
 
-**Project.** `infra_formalization` — Lean 4 / Mathlib formalisation of the Wolfram-model → GR / QM bridge programme, plus a machine-checked audit of Gorard's published derivation claims (arXiv 2004.14810, 2011.12174, 2102.09363, 2303.07282).
+**Project.** `infra_formalization` — Lean 4 / Mathlib formalisation of the Wolfram-model → GR / QM bridge programme, plus a machine-checked audit of JGORARD's published derivation claims (arXiv 2004.14810, 2011.12174, 2102.09363, 2303.07282).
 
 **This report is the delta over the 2026-04-23 baseline.** Items here are *new this week* — implementations, additions, improvements, theorem closures since 2026-04-24 02:05 UTC. Items already present in the previous weekly are not repeated unless they were materially extended this week.
 
@@ -290,7 +290,7 @@ After Phase B opened, a 65-task framework expansion logged the full angle / topo
 ### 5.1 Angle tower foundations (AT0 / AT1 / AT6 / AT7 / AT9)
 
 `HypergraphDistance.lean`:
-- `AT0 elementaryAngle O A B := d(A,B) / d(O,A)` for equidistant pairs (Stephen's chord-ratio = `2 sin(θ/2)` for the geometric angle).
+- `AT0 elementaryAngle O A B := d(A,B) / d(O,A)` for equidistant pairs (SWOLF's chord-ratio = `2 sin(θ/2)` for the geometric angle).
 - `AT1 cosAngle`, `angle := Real.arccos cosAngle`.
 - `AT6 IsOrthoApprox v w₁ w₂ r ε`: chord-ratio ≈ √2 to within ε.
 - `elementaryAngle_self`, `elementaryAngle_symm`, `elementaryAngle_nonneg` lemmas.
@@ -310,7 +310,7 @@ After Phase B opened, a 65-task framework expansion logged the full angle / topo
 ### 5.2 Pre-metric topology (TOP1 / TOP4 / SPHERE1 / SPHERE4)
 
 New `HypergraphTopology.lean`:
-- `TOP4 spatialB0 := Fintype.card SpatialConnectedComponent` (Stephen's "is every point reachable from every other").
+- `TOP4 spatialB0 := Fintype.card SpatialConnectedComponent` (SWOLF's "is every point reachable from every other").
 - `IsSpatiallyConnected H := H.toSimpleGraph.Connected`.
 - `TOP1 firstBettiZ := H.size − Fintype.card V + spatialB0` (cycle rank, ℤ-valued to avoid `ℕ`-underflow).
 - `spatialB0_le_card`, `spatialB0_pos_of_nonempty`, `firstBettiZ_lower_bound`.
@@ -331,7 +331,7 @@ New `HypergraphTopology.lean`:
 `HypergraphDistance.lean` extension:
 - `HYPER2 perpBisector A B := {M | dist A M = dist B M}` (metric hyperplane).
 - `closerHalf A B := {v | dist A v < dist B v}`.
-- `HasTopologicalHyperplane A B` (Pavel's separator condition stub).
+- `HasTopologicalHyperplane A B` (PHAJEK's separator condition stub).
 - `HYPER3 voronoiCell seeds i := {v | ∀ j ≠ i, dist (seeds i) v ≤ dist (seeds j) v}` (k-seed Voronoi decomposition).
 - `MIDPT1 midpoint A B := {M | Between A B M ∧ dist A M = dist B M}`; `nearMidpoint A B` for odd `dist A B`.
 - `mem_perpBisector`, `perpBisector_symm`, `mem_midpoint`, `midpoint_symm`, `mem_voronoiCell`, `seed_mem_own_voronoiCell`.
@@ -339,7 +339,7 @@ New `HypergraphTopology.lean`:
 ### 5.4 Path / cycle / contractibility predicates (AT8 / INOUT1 / CONTRACT1)
 
 `HypergraphDistance.lean` extension:
-- `AT8 GeodesicallyUnique H := ∀ u v, ∀ p q : Walk u v, p.length = dist u v → q.length = dist u v → p = q`. Stephen's straight-lines condition.
+- `AT8 GeodesicallyUnique H := ∀ u v, ∀ p q : Walk u v, p.length = dist u v → q.length = dist u v → p = q`. SWOLF's straight-lines condition.
 - `GeodesicallyUnique.swap`, `geodesicallyUnique_self_walks`.
 - `INOUT1 IsCutVertex H v` (articulation point), `IsBridgeEdge H u v` (cut edge), `CycleSeparates γ` (Jordan-separator predicate).
 - `CONTRACT1 IsTrivialCycle γ`, `IsDiskContractible γ w r`, `IsContractibleAtScale γ r := ∃ w, IsDiskContractible γ w r`.
@@ -387,17 +387,17 @@ Closed-form path-vertex sequence + counts. `pathEdges` recursion + `flatMap` mem
 ### 7.1 New top-level docs
 
 - **`ROADMAP.md`** — full-program phase sequencing toward BBH-from-hypergraph endgame. Phase A (obligation Props with rate content) → B (rule-search infrastructure) → C (curved-target discharge) → D (BBH).
-- **`INFRA_FORMALIZATION_GORARD_POINTERS_FOR_PAVEL.md`** — standalone reading guide for Pavel and his GR postdoc, answering Pavel's three questions about the Gorard corpus (false claims with severity classification; no surviving non-trivial novel claims; no substantive content beyond summary + the failed named-rule simulation), with pointers to Lean refutations F1–F7 (axiom-clean), the discharged-obligation chain, the MILESTONE-GR formalised completion criterion, and a recommended reading order.
+- **`INFRA_FORMALIZATION_JGORARD_POINTERS_FOR_PHAJEK.md`** — standalone reading guide for PHAJEK and his GR postdoc, answering PHAJEK's three questions about the JGORARD corpus (false claims with severity classification; no surviving non-trivial novel claims; no substantive content beyond summary + the failed named-rule simulation), with pointers to Lean refutations F1–F7 (axiom-clean), the discharged-obligation chain, the MILESTONE-GR formalised completion criterion, and a recommended reading order.
 
 ### 7.2 INFRAGEOMETRY.md (substantial expansion)
 
 New sections §5b–§5g:
-- **§5b — Topology before metric** (Stephen's structural insight). 9-layer hierarchy with connectedness at Layer −1, paths at Layer 1, polygons at Layer 2, cellular sheaves at Layer 3, contractibility at Layer 4, path moves at Layer 5, equivalence at Layer 6, topological invariants at Layer 7, knot/link at Layer 8, surface at Layer 8b, open sets at Layer 8c.
+- **§5b — Topology before metric** (SWOLF's structural insight). 9-layer hierarchy with connectedness at Layer −1, paths at Layer 1, polygons at Layer 2, cellular sheaves at Layer 3, contractibility at Layer 4, path moves at Layer 5, equivalence at Layer 6, topological invariants at Layer 7, knot/link at Layer 8, surface at Layer 8b, open sets at Layer 8c.
 - **§5c — Full angle tower** (14 flavour-columns × multiple abstraction levels). Metric (M0-M4: chord-ratio, law-of-cosines, Forman defect, Toponogov asymptotic, Gromov product); Spectral (S1-S3: Knill/Connes, heat-kernel scale-resolved, cycle/cocycle); Synthetic (Y0-Y2: Tarski Cong, AngleCong via SAS, projective Cayley-Klein cross-ratio); Transport (T1-T2: Ollivier-W_1, OT-map); Branchial / QM (Q1-Q3: Hilbert/Bures, Maslov/symplectic, Kähler); Lorentzian (L1-L3: rapidity, causal cone-axis, Lorentzian-GH); Gauge / fibre (G1-G4: holonomy, Wilson-loop, connection 1-form, curvature 2-form); Information-geometric (I1-I3: Fisher, Bregman, KL); Higher-dim (H1-H3: solid angle, Regge deficit, dihedral); Conformal (K1-K3); Higher-form (F1-F3); Non-standard (N1-N3); Scale-spectrum (C1-C2); Multivalued (U1-U2). **AT20 Regge deficit identified as THE numerical-GR variable** for Phase D.
-- **§5d — Stephen's straight-lines + path-vs-walk distinction** (PATH1 / PATH2). `Hypergraph.dist := H.toSimpleGraph.dist` uses Mathlib's clique-expansion which silently drops self-loops via `loopless`, collapses multi-edges, treats ≥3-arity hyperedges as `K_n`. PATH1 substrate is the native first-class `SimplePath` substitute carrying both `Nodup` vertex list AND hyperedge sequence.
+- **§5d — SWOLF's straight-lines + path-vs-walk distinction** (PATH1 / PATH2). `Hypergraph.dist := H.toSimpleGraph.dist` uses Mathlib's clique-expansion which silently drops self-loops via `loopless`, collapses multi-edges, treats ≥3-arity hyperedges as `K_n`. PATH1 substrate is the native first-class `SimplePath` substitute carrying both `Nodup` vertex list AND hyperedge sequence.
 - **§5e — Units-emergence under continuum rescaling**. The hypergraph is units-free by construction; `r_phys = a · r_count`, `V_phys = a^d · V_count`, `R_phys = a^{−2} · R_count` — units are artefacts of the rescaling map `a → 0`, not properties of the underlying object. The `−2` exponent on scalar curvature is the second-order Taylor coefficient — intrinsic, not arbitrary. Background-independence is structural: even *dimension* is emergent from `V(r)/r^d` plateau.
 - **§5f — 25-step constructive route to differential geometry**. From elementary connectedness through Bachmann motions / Lie theory to Riemann tensor, GR, QM, and BBH-from-hypergraph as the endgame. PATH → POLY → CONTRACT → DEFORM → HOM → π_1 → b_1 → ... → Bachmann → Lie → Riemann → metric → GR → BBH. Each step is one Lean def on top of the previous.
-- **§5g — Cross-reference with Murzin "Geometry on Combinatorial Objects" (2026-04-26)**. Nik Murzin's 11-page Wolfram Cloud paper (write-up of the Stephen-Pavel meeting we tracked); ~60-70% subsumed by existing tasks, 18 gap-tasks logged (#351–#368) covering the residue. Document central thesis — *"every geometric construction on a combinatorial object corresponds to a specific structural commitment, and cellular sheaves make this commitment explicit"* — IS the synthesis Stephen + Pavel converged on.
+- **§5g — Cross-reference with NMURZIN "Geometry on Combinatorial Objects" (2026-04-26)**. NMURZIN's 11-page Wolfram Cloud paper (write-up of the SWOLF-PHAJEK meeting we tracked); ~60-70% subsumed by existing tasks, 18 gap-tasks logged (#351–#368) covering the residue. Document central thesis — *"every geometric construction on a combinatorial object corresponds to a specific structural commitment, and cellular sheaves make this commitment explicit"* — IS the synthesis SWOLF + PHAJEK converged on.
 
 ### 7.3 Synthetic-geometry framing for SIG2/SIG3
 
@@ -464,7 +464,7 @@ In-progress (descriptions amplified): MILESTONE-GR / -QM / -AXIOM-CHECK signatur
 - **Infrageometry programme open tasks.** IG10 exponential map; ID7 spectral dimension; IB2 commutator theorem; IR7 reverse-engineer rule; T5 path/d-torus Laplacian spectrum (in progress).
 - **Rule search.** Large-scale wolframscript enumeration (#190).
 - **Colleague-work (M-series).** M1, M3, M4, M6, M7, M8, M9, M10.
-- **Pavel Hájek planning items (P1–P19).**
+- **PHAJEK planning items (P1–P19).**
 - **Paper drafts (K1–K9).**
 
 ### 9.2 New open items this week
@@ -475,18 +475,18 @@ In-progress (descriptions amplified): MILESTONE-GR / -QM / -AXIOM-CHECK signatur
 - **Pointed-GH** (#222) and **Lorentzian-GH** (#213) project-own definitions — required for MILESTONE-GR layer-2 conjunct discharge.
 - **R4 extensions** (#179 / #218) — per-metric Ricci convergence.
 - **Cellular-sheaf framework** (CELL1 #315, sharpens P5) and seven SHEAF-CHOICE restriction-map specialisations (#351–#357 + #358 meta-classification).
-- **Murzin-paper-driven gap-tasks** (#359–#368): EFFRES1 effective-resistance curvature; DEC1 Hodge star; DEC2 wedge product; CLOSURE1 closure-choice infrastructure; CHEEGER1 Hansen-Ghrist sheaf-Cheeger; REGGE-CONV1 Christiansen 2024 distributional convergence; CDT1 causal dynamical triangulations; MYERS1 Stone discrete Myers; HIGUCHI1 Higuchi planar curvature; OLLIVIER-HG Ollivier-Ricci hypergraph multi-marginal extension.
+- **NMURZIN-paper-driven gap-tasks** (#359–#368): EFFRES1 effective-resistance curvature; DEC1 Hodge star; DEC2 wedge product; CLOSURE1 closure-choice infrastructure; CHEEGER1 Hansen-Ghrist sheaf-Cheeger; REGGE-CONV1 Christiansen 2024 distributional convergence; CDT1 causal dynamical triangulations; MYERS1 Stone discrete Myers; HIGUCHI1 Higuchi planar curvature; OLLIVIER-HG Ollivier-Ricci hypergraph multi-marginal extension.
 - **Polygon framework**: POLY1 generalised polygon (extended-intersection); POLY2 cellular k-chain in Δ-complex; POLY3 spin networks/foams.
 - **Knot/link**: KNOT1 linking number / Borromean; KNOT2 Massey products; KNOT3 Yamada/Jones via Chern-Simons.
 - **Higher topology**: TOP2 higher Betti via Hodge; TOP3 fundamental group π_1; TOP5 higher π_k; TOP6 genus / crossing number.
 - **Path moves and equivalence**: DEFORM1 elementary deformations; DEFORM2 elementary extensions; HOM1 path-homotopy as `EqvGen DEFORM1`; HOM2 fundamental groupoid.
 - **Sphere extensions**: SPHERE2 sphere topology; SPHERE3 contractibility-of-infra-sphere.
-- **Hyperplane completion**: HYPER1 vertex separator (Pavel pre-metric); HYPER4 equidistant-set vs separator equivalence (3-strength).
+- **Hyperplane completion**: HYPER1 vertex separator (PHAJEK pre-metric); HYPER4 equidistant-set vs separator equivalence (3-strength).
 - **POLYTOPE1** polytope as cell of hyperplane arrangement.
 - **COMPACT1** limit-only compactness.
 - **SURFACE1** Knill/Fisk recursive manifold predicate.
 - **PATH1 / PATH2** — native first-class `Hypergraph.SimplePath u v` type carrying `Nodup` vertex list AND hyperedge sequence; equivalence vs clique-expansion `Hypergraph.dist`.
-- **AT remaining**: AT3 Toponogov; AT4 Knill/Connes spectral; AT5 Tarski-style angle congruence; AT10 strict Tarski Cong; AT11 dimensionless ↔ dimensional bridge; AT12 Ollivier-Wasserstein; AT13 Bures angle; AT14 rapidity; AT15 holonomy angle; AT16 Fisher angle; AT17 heat-kernel scale-resolved; AT18 projective Cayley-Klein; AT19 solid angle; AT20 Regge deficit (THE numerical-GR variable for Phase D); AT21 discrete metric tensor; AT22 connection 1-form + curvature 2-form (Cartan); AT23 conformal structure; AT24 Maslov / symplectic; AT25 scale-spectrum; AT26 multivalued angle; AT27 tropical / max-plus; AT-W (sheaf angle, Pavel's "string theory on the graph" angular content).
+- **AT remaining**: AT3 Toponogov; AT4 Knill/Connes spectral; AT5 Tarski-style angle congruence; AT10 strict Tarski Cong; AT11 dimensionless ↔ dimensional bridge; AT12 Ollivier-Wasserstein; AT13 Bures angle; AT14 rapidity; AT15 holonomy angle; AT16 Fisher angle; AT17 heat-kernel scale-resolved; AT18 projective Cayley-Klein; AT19 solid angle; AT20 Regge deficit (THE numerical-GR variable for Phase D); AT21 discrete metric tensor; AT22 connection 1-form + curvature 2-form (Cartan); AT23 conformal structure; AT24 Maslov / symplectic; AT25 scale-spectrum; AT26 multivalued angle; AT27 tropical / max-plus; AT-W (sheaf angle, PHAJEK's "string theory on the graph" angular content).
 
 ---
 
@@ -495,10 +495,10 @@ In-progress (descriptions amplified): MILESTONE-GR / -QM / -AXIOM-CHECK signatur
 1. **MILESTONE-GR_minkowski layer-2**: project-own pointed-GH (#222). Replaces the `True`-typed `DistConvergesTo` placeholder in `Milestone.lean`.
 2. **MILESTONE-GR_minkowski layer-4**: AT22 Cartan structure equations (`Ω = dω + ω∧ω`); per-metric Ricci convergence (#218 first instance).
 3. **Phase B follow-up**: `RuleSignatureSchema` (JSON interchange + Lean validator); #190 `wolframscript` driver to feed empirical rule signatures into the screener.
-4. **K1 audit paper draft**. Ingredients: `MAJOR_FLAWS.md`, `FINDINGS.md`, Refutations/F1–F7 (axiom-clean), `INFRA_FORMALIZATION_GORARD_POINTERS_FOR_PAVEL.md`, `eq342_verdict.md`, `eq344_verdict.md`. Assembly into paper form.
+4. **K1 audit paper draft**. Ingredients: `MAJOR_FLAWS.md`, `FINDINGS.md`, Refutations/F1–F7 (axiom-clean), `INFRA_FORMALIZATION_JGORARD_POINTERS_FOR_PHAJEK.md`, `eq342_verdict.md`, `eq344_verdict.md`. Assembly into paper form.
 5. **K3 paper** (infrageometry continuum-limits). Technical core: R1 / R2 / R5 / A3 / A4 already proved; `INFRAGEOMETRY.md` §5f provides the conceptual frame. Needs assembly.
-6. **Cellular-sheaf cluster**: CELL1 + at least SHEAF-CHOICE2 (Hodge sheaves, recovers DEC) + SHEAF-CHOICE5 (order sheaves on multiway, curvature = failure of confluence) + the Pavel-aligned restriction-map classification (Murzin §7.8 meta-table, #358).
-7. **PATH1**: native first-class `Hypergraph.SimplePath u v` type — prerequisite for AT3 (Toponogov), AT26 (multivalued angle), and Stephen's "non-overlapping paths" structural framing.
+6. **Cellular-sheaf cluster**: CELL1 + at least SHEAF-CHOICE2 (Hodge sheaves, recovers DEC) + SHEAF-CHOICE5 (order sheaves on multiway, curvature = failure of confluence) + the PHAJEK-aligned restriction-map classification (NMURZIN §7.8 meta-table, #358).
+7. **PATH1**: native first-class `Hypergraph.SimplePath u v` type — prerequisite for AT3 (Toponogov), AT26 (multivalued angle), and SWOLF's "non-overlapping paths" structural framing.
 8. **AT2 full Gauss-Bonnet sum identity** — the `Finset.sum_comm` double-counting `Σ_x ∑_{s ∈ G} [s.card=3 ∧ x ∈ s] = 3·|triangles|`; substrate landed; proof staged.
 9. **DEFORM1** elementary deformations + **CONTRACT1 upgrade** to full Knill-Fisk contractibility via DEFORM1 moves.
 10. **AT9 / SPHERE4 cross-check** — prove that the ball-side and sphere-side Bishop-Gromov scalar-curvature extractors agree on the cycle / lattice baselines.

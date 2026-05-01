@@ -58,7 +58,7 @@ Each is a keystone of the §3.3 Einstein-equations "derivation" and none is resc
 
 ## Verified correct (✓)
 
-The standard continuum material quoted in Gorard's papers is correct. Specifically:
+The standard continuum material quoted in JGORARD's papers is correct. Specifically:
 
 - All Riemannian ball-volume expansion formulas (Eq 47 / 343 of G3): match Gray 1973.
 - All metric/Christoffel/Riemann/Ricci definitions: match standard GR textbooks (MTW, Hawking–Ellis, Wald).
@@ -76,7 +76,7 @@ These are Lean-formalisation targets (see [`lean/InfraFormalization/`](lean/Infr
 | P1 | `\|LHS\| = \|RHS\|` rule ⇒ state size is conserved along any evolution. | **✅ Machine-verified in Lean 4 + Mathlib 4.29.1.** Theorem `Application.size_result_of_conservative` + trajectory corollary `size_preserved_by_applications` in [`lean/InfraFormalization/Conservation.lean`](lean/InfraFormalization/Conservation.lean). Full `lake build` passes (1687 jobs). |
 | P2a | `\|LHS\| = \|RHS\|` rule ⇒ in any parallel-schedule decomposition of the causal DAG, each layer has ≤ ⌊N/k⌋ events. | Provable cleanly (substantial proof but elementary). Lean implementation pending. |
 | P2b | `\|LHS\| = \|RHS\|` rule ⇒ causal graph has *linear* BFS-cone growth (dimension ≤ 1). | **Empirically true on every tested seed** (9 seeds, two implementations agree). **NOT a direct consequence of P2a** — events in a BFS cone can have arbitrarily high parallel-level via long alternate paths. The proof for the specific named rule + tested seeds is rule-and-seed-specific analysis, not a structural fact about all conservative rules. |
-| P3 | Gorard's §3.3 dimension-$n$ argument cannot apply to the named rule on the tested seeds. | Empirical, reproducible across two implementations. Formal Lean proof would require a rule-specific induction. |
+| P3 | JGORARD's §3.3 dimension-$n$ argument cannot apply to the named rule on the tested seeds. | Empirical, reproducible across two implementations. Formal Lean proof would require a rule-specific induction. |
 
 ## Where this leaves the headline claim
 

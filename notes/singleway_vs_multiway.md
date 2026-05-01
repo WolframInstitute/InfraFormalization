@@ -1,6 +1,6 @@
-# Single-way vs multi-way evolution — what it means, what Gorard does, where our refutations stand
+# Single-way vs multi-way evolution — what it means, what JGORARD does, where our refutations stand
 
-Written for a reader who knows the Wolfram Physics framework (causal graph, multiway evolution graph, branchial slices) but wants a precise account of *why* Gorard's papers are usually single-way, *when* the multiway view actually matters, and *whether* our refutations survive the distinction.
+Written for a reader who knows the Wolfram Physics framework (causal graph, multiway evolution graph, branchial slices) but wants a precise account of *why* JGORARD's papers are usually single-way, *when* the multiway view actually matters, and *whether* our refutations survive the distinction.
 
 ## 1. Precise definitions
 
@@ -10,11 +10,11 @@ Fix a rewriting system: rules $R = \{r_1, \ldots, r_k\}$, initial state $s_0$ (a
 
 **Multiway evolution graph (MWEG).** A directed acyclic graph whose nodes are states. From each state $s$, draw an edge to *every* state $s'$ reachable from $s$ by applying *any* legal rule at *any* legal match. The full tree/DAG of possibilities. In the MWEG every path from $s_0$ is a legal single-way evolution.
 
-**Branchial structure.** Within one "time step" of the MWEG, two states that share a common ancestor are *branchially connected*. The branchial graph records this. The branchial distance is supposed to play the role of quantum distance in Gorard's program.
+**Branchial structure.** Within one "time step" of the MWEG, two states that share a common ancestor are *branchially connected*. The branchial graph records this. The branchial distance is supposed to play the role of quantum distance in JGORARD's program.
 
 **Causal graph of the MWEG.** Not a single causal graph — a family. Each single-way path through the MWEG gives its own causal graph.
 
-## 2. Where Gorard actually works in single-way mode
+## 2. Where JGORARD actually works in single-way mode
 
 Scanning his four main papers:
 
@@ -42,7 +42,7 @@ Causal invariance means "all updating orders produce isomorphic causal graphs." 
 
 Once you have causal invariance, it ceases to matter which path you pick — every path gives the same causal graph. From that point on, single-way reasoning is rigorous. But you have to *first* verify causal invariance, which requires enumeration of paths.
 
-**Gorard never verifies causal invariance** for any of his "derivation" rules — it is asserted, sometimes as a hypothesis of a claim ("for any causal-invariant rule …") and sometimes as a fact. Without verification, single-way reasoning about invariants is incomplete.
+**JGORARD never verifies causal invariance** for any of his "derivation" rules — it is asserted, sometimes as a hypothesis of a claim ("for any causal-invariant rule …") and sometimes as a fact. Without verification, single-way reasoning about invariants is incomplete.
 
 **This is why it is strange he uses single-way throughout:** either he is relying on the yet-unverified hypothesis that his rules are causal-invariant (making his reasoning conditional on an unproven premise), or he is implicitly conflating single-way and multi-way behaviour (making his conclusions unsupported).
 
@@ -107,13 +107,13 @@ Candidates (none worked out rigorously):
 - **Orthogonal-frame bundle approximation** — if a hypergraph has a well-defined continuum limit as a smooth manifold (big IF — see §4 above), the limiting frame bundle could be inferred. But this requires the convergence theorems in `notes/limit_toolkit.md` that are not in the literature.
 - **Null-direction-as-light-cone-edge** — the causal graph's directed edges *are* in some sense "null" (light-cone-like). One could call certain pairs of edges "orthogonal null pairs." This is a rhetorical choice, not a constructive one.
 
-No author has produced a definitive construction. Our refutation of Gorard's tube formula (S1 #2) strikes at the nearest thing to a "hypergraph analog of a Riemannian tube," where he does attempt a discrete-continuum bridge — and gets the coefficient wrong.
+No author has produced a definitive construction. Our refutation of JGORARD's tube formula (S1 #2) strikes at the nearest thing to a "hypergraph analog of a Riemannian tube," where he does attempt a discrete-continuum bridge — and gets the coefficient wrong.
 
 ### 5e. The broader GR machinery (connection, curvature tensor, Jacobi fields)
 
 Same pattern as the tetrad:
 - **Connection** needs a tangent space — not available on hypergraphs.
-- **Parallel transport** Gorard *does* attempt in G1 §3.2 by "declaring non-parallel edges orthonormal" (S2 #5) — this is the fiat orthonormality move, not a construction.
+- **Parallel transport** JGORARD *does* attempt in G1 §3.2 by "declaring non-parallel edges orthonormal" (S2 #5) — this is the fiat orthonormality move, not a construction.
 - **Riemann curvature tensor** needs the connection — same obstacle.
 - **Jacobi fields** need the connection and the tangent bundle — same obstacle.
 
@@ -121,7 +121,7 @@ Same pattern as the tetrad:
 
 ## 6. What would a genuine multi-way formalization require?
 
-If we wanted to rescue Gorard's framework in a way that a skeptical reader would accept:
+If we wanted to rescue JGORARD's framework in a way that a skeptical reader would accept:
 
 1. **Define the discrete metric $g$ on the causal graph.** Not just declare it exists; specify its components $g_{ab}$ as functions of the causal-graph structure. Until this is done, every use of $g$ is ill-defined.
 2. **Define $\delta/\delta g^{ab}$ on a discrete state.** Specify a notion of "varying a component of the discrete metric" that reduces to the continuum functional derivative in an appropriate limit. Γ-convergence of discrete-to-continuum variational problems (Braides; Alicandro–Cicalese) is the right machinery.
@@ -134,11 +134,11 @@ Items 1 and 4 are the most serious. Each is a research project, not a paper-revi
 
 ## 7. Bottom line for a new reader
 
-- Gorard's *definitions* of causal invariance and general covariance are multi-way, but his *arguments* are almost always single-way, and causal invariance is never verified for any specific rule.
+- JGORARD's *definitions* of causal invariance and general covariance are multi-way, but his *arguments* are almost always single-way, and causal invariance is never verified for any specific rule.
 - Multi-way machinery (MWEG, branchial graph) is present in the corpus as a feature-set, but not deployed where the load-bearing arguments are made.
 - **Our empirical refutation (the named rule is 1-dim) uses a single-way SetReplace run + a single-way Python re-implementation, and the result is multi-way-robust because it is structural**: $|LHS| = |RHS|$ ⇒ conservation law ⇒ bounded cone growth.
-- **Our continuum-side refutations (S1 errors) are independent of single-way vs multi-way entirely**; they are bugs in Gorard's statement of Riemannian-geometry theorems.
-- **The null tetrad, connection, parallel transport, curvature tensor — none live on a hypergraph**; Gorard's claims on them pertain either to an ambient continuum metric (G3 §6) or to hypergraph surrogates that fail the needed properties (S2 #5 fiat orthonormality).
-- A genuine hypergraph-to-GR derivation would require §6's six items — none of which Gorard's corpus provides.
+- **Our continuum-side refutations (S1 errors) are independent of single-way vs multi-way entirely**; they are bugs in JGORARD's statement of Riemannian-geometry theorems.
+- **The null tetrad, connection, parallel transport, curvature tensor — none live on a hypergraph**; JGORARD's claims on them pertain either to an ambient continuum metric (G3 §6) or to hypergraph surrogates that fail the needed properties (S2 #5 fiat orthonormality).
+- A genuine hypergraph-to-GR derivation would require §6's six items — none of which JGORARD's corpus provides.
 
 If the user's multi-way engine (`efficient_rewriting_final/`) is used for a future pass, the verifications it *adds* are causal-invariance checks for specific rules, branchial-structure computations, and enumeration of inequivalent causal graphs. None of these changes the refutations we already have.

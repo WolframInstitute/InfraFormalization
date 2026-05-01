@@ -19,7 +19,7 @@ with hypergraph rules via convergence bridges is the open programme.
 
 **Connection to hypergraphs.** None of these is *produced* by a
 hypergraph rule in this project. That's the open direction (and the
-Gorard claim under critique). The formalisation here says: *when*
+JGORARD claim under critique). The formalisation here says: *when*
 someone produces a rule, this is the concrete formal target they
 must converge to.
 -/

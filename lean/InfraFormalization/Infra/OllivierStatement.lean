@@ -11,7 +11,7 @@ differential geometry.
 Until those pieces land, we state Ollivier's identity as an abstract
 proposition parameterised by the pieces it depends on. The point is
 to have a canonical Lean-level record of the correct statement (as
-distinguished from the incorrect form found throughout the Gorard
+distinguished from the incorrect form found throughout the JGORARD
 corpus, which substitutes the scalar curvature `R` for the directional
 Ricci `Ric(v, v)`).
 
@@ -30,7 +30,7 @@ Riemannian + optimal-transport infrastructure matures):**
   where Ric(v, v) is the directional Ricci curvature along v, and W₁
   is the 1-Wasserstein distance.
 
-This is the statement that — verbatim in Gorard (arXiv:2004.14810 Eq
+This is the statement that — verbatim in JGORARD (arXiv:2004.14810 Eq
 48, arXiv:2011.12174 Eqs 1668 / 1882, arXiv:2102.09363 Eq 344) — is
 mis-stated with scalar curvature R in place of Ric(v, v). On S² the
 two differ by factor 2; in general they are independent. The full
@@ -61,15 +61,15 @@ def OllivierIdentityLeading
     (n : Nat) (δ ε Ric_vv W1 : ℝ) (error : ℝ) : Prop :=
   W1 = δ * (1 - ε^2 * Ric_vv / (2 * (n + 2))) + error
 
-/-- **Gorard's mis-stated form** (as published, using scalar `R` in
+/-- **JGORARD's mis-stated form** (as published, using scalar `R` in
 place of `Ric(v, v)`). We include this only for explicit contrast
 with the correct version above. -/
 def GorardMisstatedForm
     (n : Nat) (δ ε R W : ℝ) (error : ℝ) : Prop :=
   W = δ * (1 - ε^2 * R / (2 * (n + 2))) + error
 
-/-- **The correct and Gorard forms coincide iff `R = Ric(v, v)`** (and
-error terms match). This is why Gorard's form is correct on Einstein
+/-- **The correct and JGORARD forms coincide iff `R = Ric(v, v)`** (and
+error terms match). This is why JGORARD's form is correct on Einstein
 manifolds (where `Ric = (R/n) · g`, so `Ric(v,v) = R/n`, giving
 equality only at `R = R/n` i.e. `R = 0` or `n = 1`), but incorrect on
 generic Riemannian manifolds — including constant-curvature spheres.
@@ -85,10 +85,10 @@ theorem ollivier_vs_gorard_equivalence_requires_ric_eq_scalar
   unfold GorardMisstatedForm at h2
   linarith
 
-/-- **Quantitative discrepancy**: the Gorard Riemannian leading term
+/-- **Quantitative discrepancy**: the JGORARD Riemannian leading term
 differs from the Ollivier leading term by exactly
 `δ · ε² · (Ric_vv − R) / (2(n+2))`. Once `δ, ε > 0`, the discrepancy
-vanishes iff `Ric_vv = R`. This is the precise gap Gorard's papers
+vanishes iff `Ric_vv = R`. This is the precise gap JGORARD's papers
 silently drop when they substitute scalar for directional Ricci. -/
 theorem ollivier_minus_gorard_leading
     (n : Nat) (δ ε R Ric_vv : ℝ) :
@@ -99,11 +99,11 @@ theorem ollivier_minus_gorard_leading
 
 /-- **Discrepancy is zero iff scalar = directional Ricci**
 (at `δ, ε ≠ 0`, `n + 2 ≠ 0`). This is the precise algebraic condition
-under which Gorard's substitution is innocuous — essentially only
+under which JGORARD's substitution is innocuous — essentially only
 Einstein manifolds with `Ric_vv` happening to equal `R`, i.e.
 `n = 1` or trivial-curvature cases. On a generic Riemannian manifold
 (e.g. `S²` where `R = 2` but `Ric_vv = 1`), the leading terms differ
-and Gorard's prediction is off. -/
+and JGORARD's prediction is off. -/
 theorem ollivier_gorard_agree_iff (n : Nat) (δ ε R Ric_vv : ℝ)
     (hδ : δ ≠ 0) (hε : ε ≠ 0) :
     δ * (1 - ε^2 * Ric_vv / (2 * (n + 2)))
@@ -132,7 +132,7 @@ theorem ollivier_gorard_agree_iff (n : Nat) (δ ε R Ric_vv : ℝ)
     rw [h]
 
 /-- **Worked example: unit 2-sphere S²**. Scalar curvature `R = 2`,
-directional Ricci `Ric(v,v) = 1` at every unit tangent vector. Gorard's
+directional Ricci `Ric(v,v) = 1` at every unit tangent vector. JGORARD's
 substitution makes a leading-term error of exactly `δ · ε² / 8` on S². -/
 theorem s2_gorard_error (δ ε : ℝ) :
     δ * (1 - ε^2 * 1 / (2 * (2 + 2)))
@@ -141,7 +141,7 @@ theorem s2_gorard_error (δ ε : ℝ) :
   ring
 
 /-- **S² discrepancy is strictly positive** for every positive `δ, ε`.
-Rules out Gorard's substitution on the 2-sphere at every smallness
+Rules out JGORARD's substitution on the 2-sphere at every smallness
 scale. -/
 theorem s2_gorard_error_pos (δ ε : ℝ) (hδ : 0 < δ) (hε : 0 < ε) :
     0 < δ * ε^2 / 8 := by

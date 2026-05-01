@@ -1,4 +1,4 @@
-# Major structural flaws in the Gorard corpus
+# Major structural flaws in the JGORARD corpus
 
 Distinguishes the *arithmetic errors* (minor — patchable by substituting correct formulas) from the *structural/conceptual flaws* (major — cannot be fixed by arithmetic). The major ones need to be exposed, proven false, and replaced by genuine constructions if the program is to be salvaged.
 
@@ -19,14 +19,14 @@ Each is *not fixable by arithmetic substitution*. Each needs a separate research
 
 **Where.** G1 Def 15 (2004.14810 line 325), G1 Eq 25, G1 §3.3 Eqs 86–90. G2 §5 and G3 §5 reuse.
 
-**Statement of the flaw.** Every formula that mentions $g^{ab}$, $\sqrt{-g}$, $d\mu_g$, $\delta/\delta g^{ab}$, or the Christoffel symbols $\Gamma^\rho_{\mu\nu}$ on the *discrete* side uses an object whose components are never defined. Gorard writes "let $g$ be a discrete Lorentzian metric of signature $(-,+,+,+)$" (Def 15) without providing any formula or procedure for constructing its components from the hypergraph / causal-graph combinatorics.
+**Statement of the flaw.** Every formula that mentions $g^{ab}$, $\sqrt{-g}$, $d\mu_g$, $\delta/\delta g^{ab}$, or the Christoffel symbols $\Gamma^\rho_{\mu\nu}$ on the *discrete* side uses an object whose components are never defined. JGORARD writes "let $g$ be a discrete Lorentzian metric of signature $(-,+,+,+)$" (Def 15) without providing any formula or procedure for constructing its components from the hypergraph / causal-graph combinatorics.
 
 **Why it's major (not just an arithmetic oversight).** The central §3.3 argument computes $\delta S[g^{ab}]/\delta g^{ab}$ — a *functional derivative with respect to the metric components*. This requires:
 - the metric to have components you can vary;
 - a vector space of metric perturbations;
 - an inner product (to take a gradient).
 
-None of these exists on a discrete hypergraph without extra choices. Gorard makes the extra choices implicitly ("by analogy"). The whole §3.3 "derivation" is a continuum manipulation applied to a discrete symbol without defining the object.
+None of these exists on a discrete hypergraph without extra choices. JGORARD makes the extra choices implicitly ("by analogy"). The whole §3.3 "derivation" is a continuum manipulation applied to a discrete symbol without defining the object.
 
 **What refutation looks like.** Lean-level formalisation showing that:
 - a naive coercion of the hypergraph to a matrix of distances does not give a non-degenerate metric tensor,
@@ -52,7 +52,7 @@ None of these exists on a discrete hypergraph without extra choices. Gorard make
 
 **Statement.** "We also assume that all pairs of hyperedges which are not parallel (i.e. incident to the same set of vertices) can be considered to be orthonormal."
 
-**Why it's major.** Orthonormality is a property of a bilinear form $g(v, w)$. With no bilinear form defined, the statement is vacuous. Moreover, the subsequent machinery — sectional curvature, Riemann tensor — depends on treating pairs of "tangent vectors" as orthonormal, which requires the bilinear form to exist and to render them orthonormal. Gorard uses this fiat assumption to *transport* Riemannian-geometry formulas onto the hypergraph side without constructing the geometric structures those formulas depend on.
+**Why it's major.** Orthonormality is a property of a bilinear form $g(v, w)$. With no bilinear form defined, the statement is vacuous. Moreover, the subsequent machinery — sectional curvature, Riemann tensor — depends on treating pairs of "tangent vectors" as orthonormal, which requires the bilinear form to exist and to render them orthonormal. JGORARD uses this fiat assumption to *transport* Riemannian-geometry formulas onto the hypergraph side without constructing the geometric structures those formulas depend on.
 
 **What refutation looks like.** Lean-level proof that the assumption is *non-constructive*: no bilinear form on the hyperedge set renders every non-parallel pair orthonormal without additional choices.
 
@@ -62,26 +62,26 @@ None of these exists on a discrete hypergraph without extra choices. Gorard make
 - `Form E := E → E → ℝ`; `Orthonormal g e₁ e₂ := g e₁ e₁ = 1 ∧ g e₂ e₂ = 1 ∧ g e₁ e₂ = 0`.
 - `orthonormality_depends_on_form` — orthonormality is a property of the form, not of the hyperedges: exhibits `g₁` (Kronecker) making `(true, false)` orthonormal, and `g₂ ≡ 0` for which it fails.
 - `orthonormalising_form_not_unique` — two distinct forms both render the same pair orthonormal.
-- `gorard_orthonormality_is_non_canonical` — Gorard's §3.2 fiat does not single out a unique form.
+- `gorard_orthonormality_is_non_canonical` — JGORARD's §3.2 fiat does not single out a unique form.
 - All axiom-clean.
 
 ### F3 — "Asymptotic dimensionality preservation" is tautological
 
 **Where.** G1 §3.3 line 890 (Eq 87), and the subsequent "derivation" of the Einstein equations.
 
-**Statement.** Gorard defines "asymptotic dimensionality preservation" as the condition
+**Statement.** JGORARD defines "asymptotic dimensionality preservation" as the condition
 $$\frac{\delta S[g^{ab}]}{\delta g^{ab}} \to 0$$
 and then concludes that conservative + asymptotically-dimensionality-preserving rules satisfy the vacuum Einstein equations. But the above equation *is* the Euler-Lagrange equation of the Einstein-Hilbert action; saying "the Euler-Lagrange equation holds in the limit" and deducing "the equations of motion hold" is tautological.
 
-**Why it's major.** It masquerades as a derivation ("we have shown that causally-invariant and asymptotically-dimensionality-preserving rules give GR") when it is a restatement of the definition. A reader who takes Gorard's abstract at face value will believe GR has been derived.
+**Why it's major.** It masquerades as a derivation ("we have shown that causally-invariant and asymptotically-dimensionality-preserving rules give GR") when it is a restatement of the definition. A reader who takes JGORARD's abstract at face value will believe GR has been derived.
 
-**What refutation looks like.** Lean-level proof that, if we *define* "asymptotic dimensionality preservation" the way Gorard does, the "Einstein equations" claim follows by definitional unfolding alone — no combinatorial or geometric content. I.e., prove the implication is *logically trivial*.
+**What refutation looks like.** Lean-level proof that, if we *define* "asymptotic dimensionality preservation" the way JGORARD does, the "Einstein equations" claim follows by definitional unfolding alone — no combinatorial or geometric content. I.e., prove the implication is *logically trivial*.
 
 **Status.** Documented in `notes/severity_taxonomy.md` S3, `notes/corpus_assessment.md`.
 
 **Lean status.** Formalised in `lean/InfraFormalization/Refutations/F3Tautology.lean`:
 - `gorard_dim_preservation_is_euler_lagrange : AsymptoticDimPreservation P g ↔ EulerLagrange P g := Iff.rfl` — the biconditional is definitional unfolding.
-- `gorard_section_3_3_contentless` — the Gorard chain (conservative ∧ causal-invariant ∧ asymp-dim-pres ⇒ vacuum EFE) reduces on its EFE leg to the identity function on `AsymptoticDimPreservation P g`.
+- `gorard_section_3_3_contentless` — the JGORARD chain (conservative ∧ causal-invariant ∧ asymp-dim-pres ⇒ vacuum EFE) reduces on its EFE leg to the identity function on `AsymptoticDimPreservation P g`.
 - Axiom-clean (`#print axioms` confirms `[propext, Classical.choice, Quot.sound]` only).
 
 ### F4 — "Causal invariance ⇒ discrete general covariance" tautology
@@ -102,14 +102,14 @@ and then concludes that conservative + asymptotically-dimensionality-preserving 
 
 **Statement.** "In the continuum limit of an arbitrarily large causal graph, this sum becomes (subject to a weak ergodicity assumption on the dynamics of the causal graph) an integral."
 
-**Why it's major.** Neither *"becomes"* (which topology? $\Gamma$-convergence? Mosco? pointwise? $L^p$?) nor *"weak ergodicity"* (precise definition?) is specified. The closest rigorous version in the causal-set-theory literature is the Sorkin–Benincasa–Dowker conjecture, which is *open* — partial numerical support (Cunningham 2018) only. Gorard asserts it as established.
+**Why it's major.** Neither *"becomes"* (which topology? $\Gamma$-convergence? Mosco? pointwise? $L^p$?) nor *"weak ergodicity"* (precise definition?) is specified. The closest rigorous version in the causal-set-theory literature is the Sorkin–Benincasa–Dowker conjecture, which is *open* — partial numerical support (Cunningham 2018) only. JGORARD asserts it as established.
 
 **What refutation looks like.** Pin down the precise claim, then either (a) show that no existing convergence theorem delivers it under Wolfram-model-specific hypotheses, or (b) construct a rule whose discrete sum provably does not converge to the continuum integral in any reasonable topology.
 
 **Status.** Documented; Lean stub `ContinuumLimitClaim` in `Limit.lean`.
 
 **Lean status.** Formalised in `lean/InfraFormalization/Refutations/F5Illdefined.lean`:
-- `ConvergenceNotion := (ℕ → ℝ) → ℝ → Prop` — abstract parameter standing in for the unspecified "topology of convergence" in Gorard's "becomes".
+- `ConvergenceNotion := (ℕ → ℝ) → ℝ → Prop` — abstract parameter standing in for the unspecified "topology of convergence" in JGORARD's "becomes".
 - `becomes_is_underdetermined` — exhibits a sequence (`n ↦ 1/(n+1)`) and a target (`0`) for which two natural notions disagree: `StandardLimit` affirms, `EventuallyEquals` denies.
 - `claim_is_vacuous_without_convergence_notion (s L) : ∃ C, C s L` — for any sequence and target, there is a convergence notion under which the claim holds.
 - `different_notions_give_different_limits (s L₁ L₂)` — for the same sequence, there are notions giving any two target values. "Becomes" is not a function of the sequence alone.
@@ -166,8 +166,8 @@ as "provably satisfying the Einstein field equations in the continuum limit." Ed
 
 F1–F5 are formalised in `lean/InfraFormalization/Refutations/`. **F6 and F7 are now also Lean-formalised**:
 
-- **F6 — `Refutations/F6Circularity.lean`.** The `CircularReconstruction` schema captures the Poisson-sprinkle-then-reconstruct pattern; `circular_reconstruction_has_no_content` (0 axioms) + `circular_procedure_is_identity` prove any such procedure produces its input identically. Gorard 2102.09363's "derivation of GR" fits this schema exactly; the claim of derivational content is refuted at the Lean-type level.
+- **F6 — `Refutations/F6Circularity.lean`.** The `CircularReconstruction` schema captures the Poisson-sprinkle-then-reconstruct pattern; `circular_reconstruction_has_no_content` (0 axioms) + `circular_procedure_is_identity` prove any such procedure produces its input identically. JGORARD 2102.09363's "derivation of GR" fits this schema exactly; the claim of derivational content is refuted at the Lean-type level.
 
-- **F7 — `Refutations/F7NamedRuleStructure.lean`.** `namedRule_trajectory_edge_count_fixed` + `isConservative_implies_structurallyOneDim` prove that any conservative rule (which Gorard's named rule is, since `|LHS|=|RHS|=4`) preserves edge count along every trajectory. Combined with the quasi-regular in-degree structure this forces on the causal DAG, this is the structural barrier to polynomial cone growth with exponent > 1 — Gorard's §3.3 (which needs dimension 4 in the continuum) is unreachable by this rule class. Confirmed empirically: cone-growth dimension ≈ 1 on every tested seed (SetReplace + independent Python rewriter).
+- **F7 — `Refutations/F7NamedRuleStructure.lean`.** `namedRule_trajectory_edge_count_fixed` + `isConservative_implies_structurallyOneDim` prove that any conservative rule (which JGORARD's named rule is, since `|LHS|=|RHS|=4`) preserves edge count along every trajectory. Combined with the quasi-regular in-degree structure this forces on the causal DAG, this is the structural barrier to polynomial cone growth with exponent > 1 — JGORARD's §3.3 (which needs dimension 4 in the continuum) is unreachable by this rule class. Confirmed empirically: cone-growth dimension ≈ 1 on every tested seed (SetReplace + independent Python rewriter).
 
-F8 is an overclaim — the 2303.07282 paper's title promises discrete singularity theorems that are not in the body (Gorard concedes this in the paper's conclusion). F6/F7 Lean formalisation added 2026-04-22.
+F8 is an overclaim — the 2303.07282 paper's title promises discrete singularity theorems that are not in the body (JGORARD concedes this in the paper's conclusion). F6/F7 Lean formalisation added 2026-04-22.

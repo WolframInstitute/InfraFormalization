@@ -22,7 +22,7 @@ Einstein equations. They differ in:
     causal/branchial output.
   * **Emergence mechanism.** Jacobson / Verlinde derive EFE via
     thermodynamic / entropic consistency. Wolfram physics claims
-    emergence via asymptotic dimensionality preservation (Gorard G1
+    emergence via asymptotic dimensionality preservation (JGORARD G1
     §3.3 — a key argument our audit identifies as tautological: F3
     refutation).
   * **Formal status.** Jacobson's derivation is largely accepted;

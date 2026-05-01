@@ -1,10 +1,10 @@
 # Weekly report — 2026-04-23
 
-Project: **`infra_formalization`** — Lean 4 / Mathlib formalisation of the Wolfram-model → GR / QM programme, plus a machine-checked audit of Gorard's published derivation claims.
+Project: **`infra_formalization`** — Lean 4 / Mathlib formalisation of the Wolfram-model → GR / QM programme, plus a machine-checked audit of JGORARD's published derivation claims.
 
 ## Project at a glance
 
-- Three axes: (i) positive construction of a 10-rung bridge from hypergraph rewriting to Einstein's equations; (ii) Lean-formal audit of four Gorard papers (2004.14810, 2011.12174, 2102.09363, 2303.07282); (iii) Wolfram-Institute *infrageometry* programme (57 tasks / 9 groups).
+- Three axes: (i) positive construction of a 10-rung bridge from hypergraph rewriting to Einstein's equations; (ii) Lean-formal audit of four JGORARD papers (2004.14810, 2011.12174, 2102.09363, 2303.07282); (iii) Wolfram-Institute *infrageometry* programme (57 tasks / 9 groups).
 - 140 Lean modules; ~20k LOC; 3468 `lake` build jobs.
 - Every proved theorem reduces to `{propext, Classical.choice, Quot.sound}`; no `sorry`, no `native_decide`, no custom axioms.
 - Grounding principle: every continuous object has a hypergraph anchor or an attached origin-obligation Prop.
@@ -22,12 +22,12 @@ Project: **`infra_formalization`** — Lean 4 / Mathlib formalisation of the Wol
 - Axiom-cleanliness: no `sorry`, no `native_decide`, no custom axioms; only the three standard Lean axioms.
 - Grounding audit: 4 of 4 action items closed. Every continuum GR structure in the repository carries an obligation Prop binding it to a hypergraph-side witness, so no continuum object stands unattached to the hypergraph substrate.
 - Infrageometry programme: 52 of 57 tasks closed with real content; 5 still open (IG10 exponential map; ID6 dimension compatibility; ID7 spectral-dimension asymptotics; IB2 commutator theorem; IR7 reverse-engineer rule from signature).
-- Gorard corpus: F1–F7 formalised as Lean theorems, plus F8 as a documentary finding (title-body gap in G4).
+- JGORARD corpus: F1–F7 formalised as Lean theorems, plus F8 as a documentary finding (title-body gap in G4).
 - Flat continuum-limit bridges proved: cycle → circle, path → interval, 2-torus, d-torus, discrete Lorentz → Minkowski.
 
-## Motivation and the Gorard corpus
+## Motivation and the JGORARD corpus
 
-The published Wolfram-model-to-GR derivations of Jonathan Gorard make a strong claim: that a specific hypergraph rewriting rule "provably satisfies the Einstein field equations in the continuum limit" (G3 abstract). The formal audit here checks that chain end-to-end, classifies each step, and decides the load-bearing ones either correct (verify and formalise) or flawed (refute and formalise the refutation).
+The published Wolfram-model-to-GR derivations of JGORARD make a strong claim: that a specific hypergraph rewriting rule "provably satisfies the Einstein field equations in the continuum limit" (G3 abstract). The formal audit here checks that chain end-to-end, classifies each step, and decides the load-bearing ones either correct (verify and formalise) or flawed (refute and formalise the refutation).
 
 **The four audited papers**
 
@@ -57,7 +57,7 @@ The published Wolfram-model-to-GR derivations of Jonathan Gorard make a strong c
 | F6 | `Refutations/F6Circularity.lean` | `CircularReconstruction` schema; `circular_reconstruction_has_no_content`; `circular_procedure_is_identity` (the Poisson-sprinkle-then-reconstruct returns its input) | three standard (`circular_reconstruction_has_no_content` uses 0) |
 | F7 | `Refutations/F7NamedRuleStructure.lean` | `namedRule_trajectory_edge_count_fixed`; `isConservative_implies_structurallyOneDim` — conservative rules fix edge count along every trajectory; cone-growth dimension ≈ 1 on every tested seed | three standard |
 
-**F8** (G4 title-body gap) is not a formal claim but a documentary finding: the title promises discrete singularity theorems that the body does not deliver, a fact Gorard himself concedes in the paper's conclusion.
+**F8** (G4 title-body gap) is not a formal claim but a documentary finding: the title promises discrete singularity theorems that the body does not deliver, a fact JGORARD himself concedes in the paper's conclusion.
 
 **Summary verdict on the corpus.** Overclaim in multiple load-bearing places. The §3.3 Einstein-equations derivation in G1 uses objects that are never constructed (F1, F2). The logical spine reduces, in multiple places, to `Iff.rfl` (F3, F4). The continuum-limit step is left informal (F5). The G3 argument that a rule satisfies EFE is circular (F6). The specific named rule is empirically and structurally 1-dimensional (F7). The correct cited identities are mis-stated by non-trivial factors on simple test manifolds (Eq 342, Eq 344).
 
@@ -148,7 +148,7 @@ Legend for the State column:
 - `Infra/ScaledLorentz` — int-to-ℝ scaling, iff preservation of `CausalPrecedes`, `Timelike`.
 - `Infra/TrajectoryLorentz`, `Infra/TrajectoryLorentzD` — trajectory → Lorentz-lattice embedding (1+0 and d+1 versions).
 - `Infra/FullBridge` — end-to-end `causallyPrecedes → continuum Minkowski` under `LightConeCompatible`.
-- `Infra/OllivierStatement`, `Infra/GrayTubeStatement` — correct identity vs Gorard's form, with disagreement proofs on S² (1/6 vs 1/3) and S³ (1/3 vs 2).
+- `Infra/OllivierStatement`, `Infra/GrayTubeStatement` — correct identity vs JGORARD's form, with disagreement proofs on S² (1/6 vs 1/3) and S³ (1/3 vs 2).
 
 ## Distance and measure
 
@@ -228,7 +228,7 @@ Modules: `HypergraphMetricBridges`, `CausalLorentzianBridge`, `FiberedGraphConne
 - `EMETracker` — `EMEPredicate V`, `emeHoldsEverywhere`, edge-count-bounded EME.
 - `RemainingObligations` — `FubiniStudyLimitObligation` with proof `fubiniStudyBhattacharyya_bound` (Cauchy–Schwarz / Bhattacharyya); EME and path-integral baselines; IT5 Latschev connectivity; IT6 scale trichotomy endpoints.
 
-## Audit of the Gorard corpus (refutations F1–F7)
+## Audit of the JGORARD corpus (refutations F1–F7)
 
 | Flaw | Lean module | Substance |
 |---|---|---|
@@ -246,14 +246,14 @@ Empirical: 2102.09363 named rule shows causal-graph dimension = 1 on every teste
 
 | Group | Topic | Lead | Closed | Total | Open items (substantive) |
 |---|---|---|---|---|---|
-| IA | Infraanalysis | Pavel Hájek | 5 | 5 | — |
-| IG | InfraGaugeTheory | Pavel Pokorny | 11 | 11 | IG10 exponential map (needs shortest-path counting) |
-| IC | Infracausality | Zapata, Ahmed | 8 | 8 | — |
-| IT | Infratopology (VR + Latschev) | Pavel Hájek | 6 | 6 | IT5 GH form, IT6 scale trichotomy bulk |
+| IA | Infraanalysis | PHAJEK | 5 | 5 | — |
+| IG | InfraGaugeTheory | PPOKORNY | 11 | 11 | IG10 exponential map (needs shortest-path counting) |
+| IC | Infracausality | CZAPATA, SAHMED | 8 | 8 | — |
+| IT | Infratopology (VR + Latschev) | PHAJEK | 6 | 6 | IT5 GH form, IT6 scale trichotomy bulk |
 | ID | Infradimension | — | 7 | 7 | ID6 compatibility, ID7 spectral asymptotics |
-| IB | Infrablowup | Hubert Kolcz | 6 | 6 | IB2 commutator theorem |
-| IQ | Branchial / quantum | Van Le, Ahmed | 4 | 4 | IQ8 EME tracking functor, IQ9 path-integral amplitudes |
-| IS | Synthetic axiomatic | Pokorny | 3 | 3 | — |
+| IB | Infrablowup | HKOLCZ | 6 | 6 | IB2 commutator theorem |
+| IQ | Branchial / quantum | HVLE, SAHMED | 4 | 4 | IQ8 EME tracking functor, IQ9 path-integral amplitudes |
+| IS | Synthetic axiomatic | PPOKORNY | 3 | 3 | — |
 | IR | Ruliology | — | 7 | 7 | IR7 reverse-engineering full form |
 
 ## Additional key modules (not yet listed above)
@@ -267,20 +267,20 @@ Empirical: 2102.09363 named rule shows causal-graph dimension = 1 on every teste
 
 ## Research directions on file (cross-collaborator planning)
 
-Tracked as tasks **P1–P19** (catalog in [`NEXT_STEPS.md`](NEXT_STEPS.md) § "Pavel Hájek planning items (P-group)"). These are items from Pavel Hájek's weekly update and Discord "core dump" (2025-10-06 to 2026-04-14) not yet formalised here.
+Tracked as tasks **P1–P19** (catalog in [`NEXT_STEPS.md`](NEXT_STEPS.md) § "PHAJEK planning items (P-group)"). These are items from PHAJEK's weekly update and Discord "core dump" (2025-10-06 to 2026-04-14) not yet formalised here.
 
 - **Simplicial / complex machinery.** P1 Delta and simplicial machinery (face maps, degeneracies, barycentric subdivision, coordinate-squashing); P2 cup product and comparison of two form definitions; P19 hypergraph as (1-skeleton, clique-complex cochain) — Kolpakov direction.
-- **Chern-Simons and homotopy algebra.** P3 Discrete Chern-Simons amplitude from Hodge propagator + ribbon graphs + IBL-∞ twist (overlaps M4 Pullman); P17 homotopy-algebra and homological-algebra scaffold.
+- **Chern-Simons and homotopy algebra.** P3 Discrete Chern-Simons amplitude from Hodge propagator + ribbon graphs + IBL-∞ twist (overlaps M4 JPULLMAN); P17 homotopy-algebra and homological-algebra scaffold.
 - **Ribbon structure.** P4 Ribbon (hyper)graph structure + Whitehead moves + amplitudohedron-type representations.
 - **Sheaves and cohomology.** P5 Sheaves on hypergraphs, restriction maps, sheaf cohomology, orientation sheaf.
 - **Signs and brackets.** P6 Koszul signs / graded Lie bracket on (hyper)graph rewriting; P10 n-Lie / Filippov extension of the insertion bracket (IB4).
-- **Multiway and action.** P7 Homotopy colimit of multiway systems (Knill invariants on simplicial sets); P8 filtrations of multiway systems; P9 action principle for rewriting (Carlos Zapata thread).
+- **Multiway and action.** P7 Homotopy colimit of multiway systems (Knill invariants on simplicial sets); P8 filtrations of multiway systems; P9 action principle for rewriting (CZAPATA thread).
 - **Causal / interaction.** P11 Interaction diagrams from causal graphs; P12 chaos theory (vertical and horizontal).
-- **Dual and renormalisation.** P13 Utkarsh Bajaj twisted-difference operators and ring-of-functions reconstruction theorem; P14 blow-up rules as renormalisation-group flow.
+- **Dual and renormalisation.** P13 UBAJAJ twisted-difference operators and ring-of-functions reconstruction theorem; P14 blow-up rules as renormalisation-group flow.
 - **Geometry.** P16 Knill geodesics approximating Riemannian geodesics (Latschev extension).
 - **Physics and tooling.** P18 Holography / Unruh effect discussions; P15 observability tools (flame graph / waterfall).
 
-See [`NEXT_STEPS.md`](NEXT_STEPS.md) § "Pavel Hájek planning items (P-group)" for the full item-by-item mapping of Pavel's planning notes to coverage status and task IDs.
+See [`NEXT_STEPS.md`](NEXT_STEPS.md) § "PHAJEK planning items (P-group)" for the full item-by-item mapping of PHAJEK's planning notes to coverage status and task IDs.
 
 ## Open items
 
@@ -328,10 +328,10 @@ Every item here corresponds to a pending or in-progress task in the task list; t
 - X3 Mathlib Taylor integration (uniform C^k-on-compacts version); X4 multi-way engine integration from `efficient_rewriting_final`.
 
 **Colleague-work integration (M-series).**
-- M1 Ioana Milea IG-intern coordination; M3 Hubert Kolcz Lie-Poisson MBQC; M4 Jan Pullman IBL-∞ / BV formalism; M6 Pokorny Infrageometry paclet parity; M7 Ahmed EME-tracking community post; M8 Pokorny diffusion-geometry bridge; M9 Tropical-geometry synthetic infrageometry; M10 3BP / dynamical-systems dimension signature.
+- M1 IMILEA IG-intern coordination; M3 HKOLCZ Lie-Poisson MBQC; M4 JPULLMAN IBL-∞ / BV formalism; M6 PPOKORNY Infrageometry paclet parity; M7 SAHMED EME-tracking community post; M8 PPOKORNY diffusion-geometry bridge; M9 Tropical-geometry synthetic infrageometry; M10 3BP / dynamical-systems dimension signature.
 
-**Pavel Hájek planning items (P-series, P1–P19).**
-- P1 delta/simplicial machinery; P2 cup product + form-definition comparison; P3 discrete Chern-Simons amplitude (overlaps M4); P4 ribbon (hyper)graph structure + Whitehead moves; P5 sheaves on hypergraphs; P6 Koszul signs / graded Lie bracket; P7 homotopy colimit of rewriting system; P8 filtrations of multiway systems; P9 action principle for rewriting; P10 n-Lie / Filippov extension of insertion bracket; P11 interaction diagrams from causal graphs; P12 chaos theory; P13 Utkarsh twisted-difference operators + ring-of-functions reconstruction; P14 blow-up rules as renormalization group; P15 observability tools; P16 Knill geodesics approximating Riemannian geodesics; P17 homotopy-algebra / homological-algebra scaffold; P18 holography / Unruh effect; P19 hypergraph as (1-skeleton, clique-complex cochain). Full mapping in [`NEXT_STEPS.md`](NEXT_STEPS.md) § "Pavel Hájek planning items (P-group)".
+**PHAJEK planning items (P-series, P1–P19).**
+- P1 delta/simplicial machinery; P2 cup product + form-definition comparison; P3 discrete Chern-Simons amplitude (overlaps M4); P4 ribbon (hyper)graph structure + Whitehead moves; P5 sheaves on hypergraphs; P6 Koszul signs / graded Lie bracket; P7 homotopy colimit of rewriting system; P8 filtrations of multiway systems; P9 action principle for rewriting; P10 n-Lie / Filippov extension of insertion bracket; P11 interaction diagrams from causal graphs; P12 chaos theory; P13 UBAJAJ twisted-difference operators + ring-of-functions reconstruction; P14 blow-up rules as renormalization group; P15 observability tools; P16 Knill geodesics approximating Riemannian geodesics; P17 homotopy-algebra / homological-algebra scaffold; P18 holography / Unruh effect; P19 hypergraph as (1-skeleton, clique-complex cochain). Full mapping in [`NEXT_STEPS.md`](NEXT_STEPS.md) § "PHAJEK planning items (P-group)".
 
 **Paper drafts (K-series).**
 - K1 P1 audit paper; K2 P2 corrected-identities paper; K3 P3 infrageometry continuum-limits paper (R1 / R2 / R5 / A3 / A4 form the technical core); K4 P4 structural library; K5 P5 Wolfram → GR bridge; K6 P6 branchial QM audit + formalisation; K7 P7 BBH via hypergraph; K8 P8 discrete d'Alembertian + BD flag; K9 P9 refutation-chain paper.
@@ -350,6 +350,6 @@ Every item here corresponds to a pending or in-progress task in the task list; t
 - [`COVERAGE_MAP.md`](COVERAGE_MAP.md) — per-module coverage map.
 - [`BRIDGE_MACHINERY.md`](BRIDGE_MACHINERY.md) — 10-rung ladder.
 - [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md) — research programme (57 tasks).
-- [`MAJOR_FLAWS.md`](MAJOR_FLAWS.md) — Gorard F1–F8 flaws with Lean status.
+- [`MAJOR_FLAWS.md`](MAJOR_FLAWS.md) — JGORARD F1–F8 flaws with Lean status.
 - [`RULE_SEARCH.md`](RULE_SEARCH.md) — rule-search pipeline design.
 - [`notes/corpus_assessment.md`](notes/corpus_assessment.md) — per-claim assessment synthesis.

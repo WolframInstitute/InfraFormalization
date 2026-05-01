@@ -23,7 +23,7 @@ Each is a single mathematical-physics result — a corrected continuum identity,
 
 ### Major papers (synthesis-level)
 
-Each collects multiple incremental results to make a larger claim. The major paper on the Gorard audit cites each incremental technical correction. The major paper on Wolfram-to-GR would rest on several Phase-4 infrageometry incremental papers.
+Each collects multiple incremental results to make a larger claim. The major paper on the JGORARD audit cites each incremental technical correction. The major paper on Wolfram-to-GR would rest on several Phase-4 infrageometry incremental papers.
 
 ## Framing
 
@@ -50,7 +50,7 @@ Each folder contains:
 
 ### Major papers (targets)
 
-- [`publications/M01-gorard-corpus-audit/`](M01-gorard-corpus-audit/) — The full Gorard-corpus audit, synthesising the incremental corrections I05, I06, I07 and the S1–S6 + F1–F8 structural-flaw classifications. **The major refutation paper.**
+- [`publications/M01-gorard-corpus-audit/`](M01-gorard-corpus-audit/) — The full JGORARD-corpus audit, synthesising the incremental corrections I05, I06, I07 and the S1–S6 + F1–F8 structural-flaw classifications. **The major refutation paper.**
 - [`publications/M02-infrageometry-foundations/`](M02-infrageometry-foundations/) — Foundations of the infrageometry programme: what it means for a discrete structure to converge to a continuum geometric one, unified via `GHApproximation`. Synthesises I02, I03, I04.
 - [`publications/M03-wolfram-gr-bridge/`](M03-wolfram-gr-bridge/) — **The scientific prize**: the first provable Wolfram-rewriting-to-GR bridge. Depends on open research — see `MILESTONES.md` Phase 5.
 - [`publications/M04-bbh-hypergraph-merger/`](M04-bbh-hypergraph-merger/) — Binary-black-hole hypergraph evolution to merger. Depends on M03.

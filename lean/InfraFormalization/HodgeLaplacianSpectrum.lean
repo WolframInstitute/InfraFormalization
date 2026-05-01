@@ -1,7 +1,7 @@
 /-
 **Spectrum of the Hodge 0-Laplacian on a VR complex** (task IT3 / #135 partial).
 
-Pavel Hajek's IT3 asks for the spectrum of the Hodge Laplacian on the
+PHAJEK's IT3 asks for the spectrum of the Hodge Laplacian on the
 Vietoris–Rips complex of a hypergraph, as a hypergraph invariant.
 
 This file proves the baseline structural facts about `vrHodge0` (from

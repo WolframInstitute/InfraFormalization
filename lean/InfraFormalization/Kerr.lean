@@ -20,7 +20,7 @@ metric components + validity predicate as a target for B9 / future
 Kerr-vacuum proof.
 
 **Connection to hypergraphs.** Same anchor: continuum-target side.
-The Kerr rule-origin claim (Gorard et al.) is currently unsupported.
+The Kerr rule-origin claim (JGORARD et al.) is currently unsupported.
 -/
 
 import InfraFormalization.PartialMetricData

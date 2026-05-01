@@ -15,7 +15,7 @@ This file provides:
      signature criterion (conservative vs. not; bounded edge count).
   4. **Witness theorems** connecting rules to bridge constraints.
 
-This is the Lean-side of the rule-search problem. Gorard claimed his
+This is the Lean-side of the rule-search problem. JGORARD claimed his
 rules produce GR; the filter predicates here are the *machine-checkable
 obstruction*: a rule that fails the screen cannot plausibly produce
 the target.
@@ -111,7 +111,7 @@ theorem tripleToEdgeRule_not_conservative :
   decide
 
 /-- **`selfMapRule`**: consume one edge, produce the same edge.
-Conservative, `|LHS|=|RHS|=1`. A Gorard-style "rewrite-in-place" rule. -/
+Conservative, `|LHS|=|RHS|=1`. A JGORARD-style "rewrite-in-place" rule. -/
 noncomputable def selfMapRule : Rule (Fin 2) where
   lhs := singleBinaryHypergraph 0 1
   rhs := singleBinaryHypergraph 0 1
@@ -198,7 +198,7 @@ theorem growthCatalog_all_non_conservative :
 For a target that requires unbounded dimensional growth (which every
 continuum target does, by Euler-formula / ball-volume scaling),
 **conservative rules on a *fixed* vertex type cannot inhabit the
-bridge with unbounded growth**. This is Gorard's structural block.
+bridge with unbounded growth**. This is JGORARD's structural block.
 
 We state it here as a filter-compatible predicate. -/
 

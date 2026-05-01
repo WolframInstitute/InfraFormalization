@@ -1,6 +1,6 @@
 /-
 **Concrete Poisson brackets on hypergraph invariants** (IB5 extension,
-Kolcz M3).
+HKOLCZ M3).
 
 Extends `BlowupLieAlgebra.lean` with explicit Poisson-bracket instances:
 

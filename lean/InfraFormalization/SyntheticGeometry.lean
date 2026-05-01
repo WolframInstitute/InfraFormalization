@@ -2,7 +2,7 @@
 **Synthetic infrageometry: circles, lines, spheres** (Group IS / #156).
 
 Following the Srní / Madrid program on synthetic infrageometry
-(Pavel Hájek et al., Pavel Pokorny's tropical-geometry exploration),
+(PHAJEK et al., PPOKORNY's tropical-geometry exploration),
 we construct Euclid-style geometric objects directly from the
 hypergraph distance:
 

@@ -2,7 +2,7 @@
 **Rule-signature dossier schema** (#372).
 
 Lean-internal data model for the per-rule trajectory dossiers exchanged
-between the WL-side enumerator (Pokorny's `Infrageometry` paclet, #374)
+between the WL-side enumerator (PPOKORNY's `Infrageometry` paclet, #374)
 and the Lean-side validator (#375). Three fields:
 
   * `rule` — the `ExecRule` whose trajectory is being recorded;

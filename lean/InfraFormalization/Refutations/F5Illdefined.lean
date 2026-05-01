@@ -1,5 +1,5 @@
 /-
-**F5: the Gorard G1 Eq 88 / G3 §5 claim "the discrete sum becomes the
+**F5: the JGORARD G1 Eq 88 / G3 §5 claim "the discrete sum becomes the
 continuum integral under weak ergodicity" is ill-defined.**
 
 **Context.** arXiv:2004.14810 line 898 reads, in full:
@@ -20,7 +20,7 @@ ergodicity" hypothesis. As written, it specifies:
 The closest rigorous version — Benincasa–Dowker 2010 (for the d'Alembertian
 on a Poisson sprinkling) — is a *conjectural* statement in causal set theory
 with only partial numerical support (Cunningham 2018). It is also not what
-G1 Eq 88 says: BD work in expectation over Poisson ensembles, while Gorard
+G1 Eq 88 says: BD work in expectation over Poisson ensembles, while JGORARD
 writes a pointwise limit over a single deterministic hypergraph.
 
 **What this file does.** Formalises the observation that *without* specifying
@@ -31,9 +31,9 @@ says "no", both being acceptable readings of English "becomes".
 Concretely: the sequence `n ↦ 1 / (n + 1)` converges to `0` in the standard
 sense (`Tendsto _ atTop (𝓝 0)`) but is never eventually equal to `0`.
 Both are reasonable interpretations of "the sum becomes 0 in the limit";
-Gorard's prose does not distinguish them.
+JGORARD's prose does not distinguish them.
 
-The point of this file is *not* to claim Gorard meant `EventuallyEq`.
+The point of this file is *not* to claim JGORARD meant `EventuallyEq`.
 It is to demonstrate formally that "becomes" under-determines the claim,
 so the F5 statement is not a mathematical assertion until a convergence
 notion is supplied.
@@ -48,7 +48,7 @@ namespace Refutations
 open Filter Topology
 
 /-- An abstract "convergence notion": a binary predicate on a real sequence
-and a candidate limit. This parameter is *precisely* what Gorard leaves
+and a candidate limit. This parameter is *precisely* what JGORARD leaves
 unspecified when he writes "the discrete sum *becomes* the integral". -/
 abbrev ConvergenceNotion : Type := (ℕ → ℝ) → ℝ → Prop
 
@@ -96,7 +96,7 @@ theorem becomes_is_underdetermined :
 there is a convergence notion under which `s` converges to `L`. In
 particular, the trivial notion "everything converges to everything"
 satisfies the English phrase "the sum becomes L" equally well as any
-substantive notion. Gorard's prose does not rule out such a reading, so
+substantive notion. JGORARD's prose does not rule out such a reading, so
 the claim carries no content absent specification. -/
 theorem claim_is_vacuous_without_convergence_notion
     (s : ℕ → ℝ) (L : ℝ) :

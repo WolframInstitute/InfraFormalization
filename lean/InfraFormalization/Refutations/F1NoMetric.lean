@@ -1,5 +1,5 @@
 /-
-**F1: the Gorard G1 Def 15 "discrete Lorentzian metric tensor g^{ab} on
+**F1: the JGORARD G1 Def 15 "discrete Lorentzian metric tensor g^{ab} on
 a hypergraph" is never constructed, and is not determined by the
 hypergraph data alone.**
 
@@ -21,7 +21,7 @@ which is a property of the (undefined) bilinear form.
     "for the metric `g^{ab}` of hypergraph `H`, property P holds"
 
 is under-specified: the symbol `g^{ab}` refers to no object unless a
-*construction* `H ↦ g^{ab}(H)` is supplied. Gorard's text supplies none.
+*construction* `H ↦ g^{ab}(H)` is supplied. JGORARD's text supplies none.
 Moreover, even granting some construction, many inequivalent
 constructions are compatible with "using only hypergraph data" — so
 `g^{ab}` is not uniquely determined by the hypergraph.
@@ -49,7 +49,7 @@ namespace Refutations
 
 /-- A minimalistic directed hypergraph: a vertex type together with a
 set of directed hyperedges (encoded as lists of vertices). This is
-the only data Gorard's Def 15 gives himself when he writes "the metric
+the only data JGORARD's Def 15 gives himself when he writes "the metric
 `g^{ab}` of the hypergraph". -/
 structure DHyp (V : Type*) where
   edges : Set (List V)
@@ -82,7 +82,7 @@ theorem hypergraph_does_not_determine_metric
 
 /-- **F1 stronger form.** For *any* candidate metric construction `Φ`,
 there is another construction `Ψ ≠ Φ`: concretely, `Ψ H u v := Φ H u v + 1`.
-Hence no individual construction is singled out — Gorard's `g^{ab}` is
+Hence no individual construction is singled out — JGORARD's `g^{ab}` is
 always a *choice*, never a canonical consequence of the hypergraph. -/
 theorem metric_construction_is_never_unique
     (V : Type*) [Inhabited V] (Φ : MetricConstruction V) :
@@ -98,7 +98,7 @@ theorem metric_construction_is_never_unique
 `H ↦ g_H` assigning a bilinear form to every hypergraph that
 is singled out by the hypergraph data alone: for any such function,
 a non-equal alternative exists, and both are equally "from the
-hypergraph" in the weak sense Gorard invokes. -/
+hypergraph" in the weak sense JGORARD invokes. -/
 theorem no_canonical_metric_from_hypergraph_alone
     (V : Type*) [Inhabited V] :
     ¬ ∃ (Φ : MetricConstruction V),
@@ -111,7 +111,7 @@ theorem no_canonical_metric_from_hypergraph_alone
 `S : MetricConstruction V → ℝ` can distinguish distinct constructions.
 Therefore the symbol `δS/δg^{ab}` in G1 Eq 87 is not a function of the
 hypergraph; it is a function of the hypergraph *together with* a choice
-of construction. Gorard's prose treats this choice as absent, which is
+of construction. JGORARD's prose treats this choice as absent, which is
 the F1 structural flaw. -/
 theorem action_depends_on_construction_choice
     (V : Type*) [Inhabited V]

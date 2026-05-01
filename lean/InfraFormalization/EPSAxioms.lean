@@ -4,7 +4,7 @@
 The EPS scheme (1972) axiomatises spacetime via light-rays and
 particle-worldlines, deriving the conformal/projective/affine
 structures → metric structure without presupposing a continuum
-manifold. Carlos Zapata and Sara Ahmed's "Axiomatic Relativity from
+manifold. CZAPATA and SAHMED's "Axiomatic Relativity from
 Causal Graphs" paper (in preparation) identifies EPS as the most
 discrete-compatible axiomatisation.
 
@@ -62,7 +62,7 @@ Formally stated, the EPS axioms enforce:
   (A5) Physical-extension axiom: every physical observer has a
        coordinatisation.
 
-Per Zapata–Ahmed's axiomatic-relativity programme, A4 is the
+Per CZAPATA–SAHMED's axiomatic-relativity programme, A4 is the
 compatibility condition that separates null from timelike structure:
 a particle worldline's consecutive edges cannot be light-ray edges
 (otherwise the worldline would be null, not timelike). -/

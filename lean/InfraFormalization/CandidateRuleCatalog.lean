@@ -22,7 +22,7 @@ structurally unable to produce higher-dimensional causal graphs;
 those are flagged as such.
 
 **Sources catalogued**.
-  * `gorardNamedRule`: arXiv:2102.09363 line 6202. Gorard's "provably
+  * `gorardNamedRule`: arXiv:2102.09363 line 6202. JGORARD's "provably
     EFE-satisfying" rule. |LHS|=|RHS|=4 ⟹ conservative ⟹ causal-dim ≤ 1
     (F7 refutation). Refuted empirically on every seed tested.
   * `edgeDoublingRule`: trivial WPP "rule 0" — doubles each edge. Non-
@@ -58,7 +58,7 @@ structure LiteratureSource where
   identifier : String  -- arXiv ID, paper title, WPP rule number, etc.
   note : String
 
-/-- **Pattern-vertex type with 6 slots**: enough for Gorard's named rule
+/-- **Pattern-vertex type with 6 slots**: enough for JGORARD's named rule
 `{x, y, z, w, v, u}` (5 bound + 1 fresh). -/
 abbrev P6 : Type := Fin 6
 
@@ -82,7 +82,7 @@ def mkHypergraph {P : Type} (es : List (Hyperedge P)) : Hypergraph P :=
 
 /-! ## Catalogued rules -/
 
-/-- **Gorard's named rule** (arXiv:2102.09363 line 6202):
+/-- **JGORARD's named rule** (arXiv:2102.09363 line 6202):
 `{{x,y},{y,z},{z,w},{w,v}} → {{y,u},{u,v},{w,x},{x,u}}`.
 The LHS is a path of length 4; the RHS rewires into a different
 path of length 4 with one fresh vertex `u`.
@@ -96,14 +96,14 @@ def gorardNamedRule : Rule P6 :=
   { lhs := mkHypergraph [edge 0 1, edge 1 2, edge 2 3, edge 3 4],
     rhs := mkHypergraph [edge 1 5, edge 5 4, edge 3 0, edge 0 5] }
 
-/-- Source citation for Gorard's named rule. -/
+/-- Source citation for JGORARD's named rule. -/
 def gorardNamedRule_source : LiteratureSource :=
-  { author := "Jonathan Gorard"
+  { author := "JGORARD"
     year := 2021
     identifier := "arXiv:2102.09363"
     note := "\"provably satisfies EFE in the continuum limit\" — structurally refuted (F7)" }
 
-/-- **Gorard's rule is conservative**: |LHS| = |RHS| = 4. -/
+/-- **JGORARD's rule is conservative**: |LHS| = |RHS| = 4. -/
 theorem gorardNamedRule_isConservative :
     Rule.IsConservative gorardNamedRule := by
   unfold Rule.IsConservative gorardNamedRule Rule.lhsSize Rule.rhsSize

@@ -1,8 +1,8 @@
 /-
-**F6 — Circularity of Gorard's 2102.09363 "provably satisfies EFE"**
+**F6 — Circularity of JGORARD's 2102.09363 "provably satisfies EFE"**
 (formal refutation of the most serious structural flaw).
 
-**The claim.** Gorard (2102.09363 §5, line 6080+) claims the hypergraph
+**The claim.** JGORARD (2102.09363 §5, line 6080+) claims the hypergraph
 rewriting rule
 `{{x,y},{y,z},{z,w},{w,v}} → {{y,u},{u,v},{w,x},{x,u}}`
 "provably satisfies the Einstein field equations in the continuum
@@ -27,7 +27,7 @@ the specific physics. We model the general pattern and prove that any
 function of that shape "trivially produces its input" — making it not
 a derivation.
 
-The user-facing conclusion: Gorard's 2102.09363 "derivation of GR"
+The user-facing conclusion: JGORARD's 2102.09363 "derivation of GR"
 fits this pattern. It is therefore devoid of the mathematical content
 the word "derivation" implies. The numerical agreement (Tables 6–7 of
 the paper) is a consistency check on the sampling, not a verification

@@ -645,7 +645,7 @@ theorem discreteKleinGordonSpectrum_holds (m : ℝ) :
 
 /-! ## C. Rule-driven trajectories → curved spacetimes
 
-**This is the core open problem in Wolfram Physics.** Gorard claims
+**This is the core open problem in Wolfram Physics.** JGORARD claims
 that specific hypergraph rewriting rules produce Schwarzschild,
 Kerr, and FLRW spacetimes in continuum limit. No rule has been
 published with a proof; the corpus audit (see `MAJOR_FLAWS.md`,
@@ -663,7 +663,7 @@ a `Trajectory sys init`, scaling functions, and an embedding, such
 that the scaled trajectory GH-converges to the Schwarzschild manifold
 with mass `M > 0`.
 
-Currently: **open**. No rule known to satisfy this. Gorard's claimed
+Currently: **open**. No rule known to satisfy this. JGORARD's claimed
 derivations (arXiv:2004.14810, 2102.09363, 2303.07282) use
 Poisson-sprinkled coordinates from the target manifold, which is
 circular. -/
@@ -690,7 +690,7 @@ FLRW cosmology with specified scale factor `a(t)`. -/
 def FLRWObligationMet (a : ℝ → ℝ) : Prop :=
   (∀ t, 0 < a t) ∧ False
 
-/-! ## D. Full refutation of Gorard claims where obligation fails
+/-! ## D. Full refutation of JGORARD claims where obligation fails
 
 If the obligation fails — no rule produces the claimed spacetime —
 the claim is refuted. These refutations are elsewhere
@@ -700,7 +700,7 @@ dependency.
 
 In particular:
 
-  `SchwarzschildObligationMet M`  UNPROVED  ⟹  Gorard's
+  `SchwarzschildObligationMet M`  UNPROVED  ⟹  JGORARD's
     "provably-satisfies-EFE" claim in arXiv:2102.09363 §5 is
     not substantiated by the hypergraph evidence provided.
 

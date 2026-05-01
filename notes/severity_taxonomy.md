@@ -1,6 +1,6 @@
-# Severity taxonomy of errors in the Gorard corpus
+# Severity taxonomy of errors in the JGORARD corpus
 
-A graded classification of the errors found across Gorard's Wolfram-physics papers (arXiv:2004.14810 / 2011.12174 / 2102.09363 / 2303.07282). Severity is ordered from highest to lowest.
+A graded classification of the errors found across JGORARD's Wolfram-physics papers (arXiv:2004.14810 / 2011.12174 / 2102.09363 / 2303.07282). Severity is ordered from highest to lowest.
 
 ## Terminology
 
@@ -21,7 +21,7 @@ Highest severity. The claim is mathematically wrong, is visibly wrong to anyone 
 
 | # | Error | Papers | Severity marker | Evidence |
 |---|---|---|---|---|
-| 1 | **Ollivier's theorem stated with scalar $R$ instead of directional $\mathrm{Ric}(v,v)$.** Gorard cites Ollivier's JFA 2009 paper (ref [ollivier]/[ollivier2]/[ollivier3]) throughout and states a formula that contradicts the cited theorem by a factor of 2 on $S^2$. | G1 (line 604), G2 (lines 1668, 1699, 1882), G3 (Eq 344, line 2645) | **4 instances, 3 papers, verbatim** | `results/phase2_continuum/eq344_verdict.md` |
+| 1 | **Ollivier's theorem stated with scalar $R$ instead of directional $\mathrm{Ric}(v,v)$.** JGORARD cites Ollivier's JFA 2009 paper (ref [ollivier]/[ollivier2]/[ollivier3]) throughout and states a formula that contradicts the cited theorem by a factor of 2 on $S^2$. | G1 (line 604), G2 (lines 1668, 1699, 1882), G3 (Eq 344, line 2645) | **4 instances, 3 papers, verbatim** | `results/phase2_continuum/eq344_verdict.md` |
 | 2 | **Tube-volume expansion with the wrong coefficient.** Coefficient $(d-1)/(d+1)$ given; correct value is $1/(2(d+1))$ with a different algebraic form inside. Off by factor 2 on $S^2$, factor 6 on $S^3$ — verified by four-rail (analytic, symbolic, numerical, manual) audit. | G2 (Eq 126), G3 (Eq 342) | 2 instances, 2 papers | `results/phase2_continuum/eq342_verdict.md` |
 
 Why these are S1: Both are computational equalities that can be checked against standard Riemannian geometry in ten minutes by any trained reader. Both appear in papers published in peer-reviewed venues (Complex Systems) or as frequently-cited arXiv preprints. Both are repeated in later papers without anyone (author, coauthors, reviewers) catching them.
@@ -61,7 +61,7 @@ Claims about discrete-to-continuum convergence asserted as facts, with either no
 | 11 | **"Named rule $\{\{x,y\},\{y,z\},\{z,w\},\{w,v\}\} \to \{\{y,u\},\{u,v\},\{w,x\},\{x,u\}\}$ provably satisfies the Einstein field equations in the continuum limit."** | G3 abstract + line 6202 | "Provably" is traced to the Sorkin–Benincasa–Dowker construction under an assumed Poisson sampling of the known target manifold. No Wolfram-model dynamics enters the proof. And the named rule is empirically 1-dimensional (see S5 #13). |
 | 12 | **"Ollivier–Ricci scalar on directed hypergraphs converges to Riemannian Ricci in the continuum limit."** | G1 §3.1 end, G2 §3, G3 §5 | Asserted without a convergence theorem. In the literature (Lin–Lu–Yau, Trillos–Slepčev) such theorems exist only for specific random-geometric-graph constructions under hypotheses that Wolfram-model rewriting does not obviously satisfy. |
 
-Why S4: These are unproven conjectures that Gorard's papers treat as settled facts. The asymmetry between "stated" and "proved" is the defect.
+Why S4: These are unproven conjectures that JGORARD's papers treat as settled facts. The asymmetry between "stated" and "proved" is the defect.
 
 ### S5 — REFUTED SPECIFIC CLAIMS
 
@@ -69,7 +69,7 @@ Claims that are concretely false on inspection or by direct computation — not 
 
 | # | Error | Where | Refutation |
 |---|---|---|---|
-| 13 | **Named rule "provably satisfying EFE" produces a 1-dimensional causal graph on every tested seed**, including 3D-grid seeds. $\|LHS\|=\|RHS\|=4$ forces edge-count conservation ⇒ cone growth is at most linear ⇒ causal dimension ≤ 1. Gorard's own §3.3 argument needs $n = 4$ for 3+1-dim GR. | G3 line 6202 | Verified by SetReplace on 9 seeds *and* by independent Python rewriter (`results/phase1_selfaudit/`). |
+| 13 | **Named rule "provably satisfying EFE" produces a 1-dimensional causal graph on every tested seed**, including 3D-grid seeds. $\|LHS\|=\|RHS\|=4$ forces edge-count conservation ⇒ cone growth is at most linear ⇒ causal dimension ≤ 1. JGORARD's own §3.3 argument needs $n = 4$ for 3+1-dim GR. | G3 line 6202 | Verified by SetReplace on 9 seeds *and* by independent Python rewriter (`results/phase1_selfaudit/`). |
 | 14 | **Eq 65, the discrete $N(r)$ ball-expansion**, carries the factor $R/(6(n+2))$ "by analogy" with the Riemannian formula. The analogy is not a derivation. Downstream it is used to "compute" hypergraph Ricci scalars. | G1 Eq 65, G2 §5 | The claim is not that a specific formula is wrong but that the "derivation" is by verbal analogy rather than by convergence theorem. Combined with S1 #1 and S2 #5–6, the computed "curvatures" from hypergraphs are calibrated against a formula that is itself either unjustified or wrong. |
 
 ### S6 — TITLE AND ABSTRACT CLAIMS NOT DELIVERED IN THE BODY

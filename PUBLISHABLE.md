@@ -4,7 +4,7 @@ Working list of concrete publishable units the infrageometry programme is headin
 
 Grouped from most-immediate (parts already done) to most-ambitious.
 
-## P1 — Audit and formal refutation of the Gorard corpus
+## P1 — Audit and formal refutation of the JGORARD corpus
 
 **One-line pitch.** A machine-checked audit of arXiv:2004.14810, 2011.12174, 2102.09363, 2303.07282 showing that the central claim — that general relativity has been derived from Wolfram-model hypergraph rewriting — has not been established. Each specific error and structural flaw is documented at citation-precision and **formally refuted in Lean**.
 
@@ -13,10 +13,10 @@ Grouped from most-immediate (parts already done) to most-ambitious.
 **Sufficient conditions.**
 - [x] S1/S2/S6 error taxonomy with TeX line references
 - [x] F1–F5 structural flaws **formally refuted in Lean** (`Refutations/F1-F5*.lean`), all axiom-clean
-- [x] **F6 circularity of 2102.09363 "provably satisfies EFE"** formalised in Lean (`Refutations/F6Circularity.lean`): `CircularReconstruction` schema + `circular_reconstruction_has_no_content` (0 axioms) + `circular_procedure_is_identity`. Gorard's Poisson-sprinkle-and-reconstruct procedure is PROVED mathematically content-free at the Lean-type level.
+- [x] **F6 circularity of 2102.09363 "provably satisfies EFE"** formalised in Lean (`Refutations/F6Circularity.lean`): `CircularReconstruction` schema + `circular_reconstruction_has_no_content` (0 axioms) + `circular_procedure_is_identity`. JGORARD's Poisson-sprinkle-and-reconstruct procedure is PROVED mathematically content-free at the Lean-type level.
 - [x] Corpus-wide cross-paper propagation map
 - [x] Continuum-limit claims catalog
-- [x] Line-by-line close readings of all four Gorard papers
+- [x] Line-by-line close readings of all four JGORARD papers
 - [x] Edge conservation proved in Lean (underpins F7 refutation)
 - [x] Named rule empirically refuted (SetReplace + independent Python rewriter)
 - [ ] A short (≤ 15 page) technical-comment-style PDF
@@ -30,13 +30,13 @@ Grouped from most-immediate (parts already done) to most-ambitious.
 - F3: `Refutations.F3Tautology.gorard_dim_preservation_is_euler_lagrange` (Iff.rfl)
 - F4: `Refutations.F4Tautology.gorard_causal_invariance_is_general_covariance` (axiom-free)
 - F5: `Refutations.F5Illdefined.becomes_is_underdetermined`
-- F6: `Refutations.F6Circularity.circular_reconstruction_has_no_content` (formal refutation of Gorard's circular "derivation" at the type level); also `DiscreteDAlembertian.BenincasaDowkerConjecture` (explicit unproven-load-bearing flag on the conjectured side).
+- F6: `Refutations.F6Circularity.circular_reconstruction_has_no_content` (formal refutation of JGORARD's circular "derivation" at the type level); also `DiscreteDAlembertian.BenincasaDowkerConjecture` (explicit unproven-load-bearing flag on the conjectured side).
 - F7: `Refutations.F7NamedRuleStructure.namedRule_trajectory_edge_count_fixed` + `isConservative_implies_structurallyOneDim` (structural barrier to 4D continuum limit for any conservative rule).
 - F7: `Application.size_result_of_conservative`
 
 ## P2 — Corrected continuum identities formalised
 
-**One-line pitch.** The correct versions of the Ollivier–Ricci identity and the Gray tube formula, expressed as Lean definitions, with their disagreement with Gorard's forms machine-verified at concrete test manifolds.
+**One-line pitch.** The correct versions of the Ollivier–Ricci identity and the Gray tube formula, expressed as Lean definitions, with their disagreement with JGORARD's forms machine-verified at concrete test manifolds.
 
 **Status.** Statement-level formalisation complete; proofs of the correct identities are tracked as project-own tasks (#217 project-own Ricci/Einstein on named metrics; #214 project-own Wasserstein-1) — not contingent on Mathlib.
 
@@ -113,7 +113,7 @@ Grouped from most-immediate (parts already done) to most-ambitious.
 
 **Sufficient conditions.**
 - [x] `Infra/LorentzLattice.lean` + `Infra/Minkowski.lean` + `Infra/FullBridge.lean` — discrete causal-graph ↔ continuum Minkowski, exact isometry + bridge theorems.
-- [x] **`DiscreteDAlembertian`** — Benincasa-Dowker operator on trajectories, `discreteAction`, `discreteEL`. The Gorard-attempted-but-failed operator, now formalised.
+- [x] **`DiscreteDAlembertian`** — Benincasa-Dowker operator on trajectories, `discreteAction`, `discreteEL`. The JGORARD-attempted-but-failed operator, now formalised.
 - [x] **`BenincasaDowkerConjecture`** explicitly flagged as an open `Prop`-level hypothesis.
 - [x] **Forman-Ricci → continuum Ricci** bridge on the cycle/circle (`RicciBridge.lean`) — first discrete-to-continuum curvature match.
 - [x] **`leviCivitaConnection : MetricDataC2 → ConnectionData`** — full local-coord curvature derivation.
@@ -127,9 +127,9 @@ Grouped from most-immediate (parts already done) to most-ambitious.
 - [x] **Strengthened origin obligations with quantitative rate content** (#233, Phase A landing): `HypergraphMetricOriginObligationStrong target := ∃ d, _with_rate target d` embeds a `ScaledDiscrepancy` with `WassersteinRateObligation`. Concrete discharges: `minkowski4_from_hypergraph_strong` via `subdivisionDiscrepancyBundle`; `any_metric_has_strong_obligation_witness` + `any_partialMetric_has_strong_obligation_witness` lift to every metric in the GR zoo. **First obligation Prop with quantitative rate content** — the obligation lattice now *says something*.
 - [x] **Formal completion-criterion theorems for the program endgame** (#369–#371, 2026-04-27): `Milestone.lean` lands. `GR_emerges_from_hypergraph (target : MetricData n) : Prop` with six structural conjuncts (W₁ measure-rate concrete via existing `HypergraphMetricOriginObligationStrong`; layers 2–6 — distance-GH, connection-Levi-Civita, Riemann-tensor, EFE-preservation, discrete-stress-energy — `True`-typed placeholders awaiting their named layer-tasks). Specialisations `_minkowski` / `_schwarzschild` / `_flrw` / `_some_hypergraph` (existential disjunction). `QM_emerges_from_hypergraph` (branchial Hilbert + unitary + Born). `BBH_emerges_from_hypergraph` (Phase D / K7 paper headline). Three Lean-verifiable signals of completion documented (no `sorry` / clean `#print axioms` / term-witnessed existential). **Anyone reading the file can see exactly what "got to GR" means in the formal-proof sense; the proof of any specific instance is a downstream task built from existing layer-tasks.**
 - [x] **Bishop-Gromov scalar curvature from log V(r)** (AT9 #294, 2026-04-27): `Hypergraph.scalarCurvatureAt v d r := (6(d+2)/r²)·(1 − V(v,r)/V_flat(d,r))` in `DiscreteRicci.lean`; sign theorems. Discrete-bridge to continuum scalar curvature without chain complex; cross-checks Forman-Ricci.
-- [x] **Pre-metric topology surfaces** (TOP1 #323 + TOP4 #326, 2026-04-27): new `HypergraphTopology.lean`: `firstBettiZ` (cycle rank), `spatialB0` (Stephen's "is every point reachable from every other"), `IsSpatiallyConnected`, bound theorems. Most elementary topological invariants — pre-metric, no `dist` needed.
+- [x] **Pre-metric topology surfaces** (TOP1 #323 + TOP4 #326, 2026-04-27): new `HypergraphTopology.lean`: `firstBettiZ` (cycle rank), `spatialB0` (SWOLF's "is every point reachable from every other"), `IsSpatiallyConnected`, bound theorems. Most elementary topological invariants — pre-metric, no `dist` needed.
 - [x] **Bachmann motion-group substrate** (HYPER2 / HYPER3 / MIDPT1, 2026-04-27): `perpBisector` (metric hyperplane), `voronoiCell`, `midpoint`, `nearMidpoint`, `closerHalf`, `HasTopologicalHyperplane` stub. Foundation for the constructive route reflections → translations → rotations → isometry group → Coxeter / Lie.
-- [x] **Phase B screener pipeline complete on both curvature and angular sides** (AT0 / AT1 / AT6 / AT7, 2026-04-27): `Hypergraph.elementaryAngle` (Stephen's chord-ratio), `cosAngle`, `angle`, `IsOrthoApprox`; `AngularScreener`, `CombinedScreener` (edge-count + Forman-Ricci + angular triple). `AreOrthogonalAxes` `True`-stub replaced with chord-ratio condition. **Both sides feed the same `ConvergenceRateObligation` framework.**
+- [x] **Phase B screener pipeline complete on both curvature and angular sides** (AT0 / AT1 / AT6 / AT7, 2026-04-27): `Hypergraph.elementaryAngle` (SWOLF's chord-ratio), `cosAngle`, `angle`, `IsOrthoApprox`; `AngularScreener`, `CombinedScreener` (edge-count + Forman-Ricci + angular triple). `AreOrthogonalAxes` `True`-stub replaced with chord-ratio condition. **Both sides feed the same `ConvergenceRateObligation` framework.**
 - [x] **Generic `ConvergenceRateObligation d r`** (#233 Phase A follow-up): admits any rate function `r : ℕ → ℝ` (not just W_1's `1/n`). Concrete rates: `rateOneOverN`, `rateOneOverNSquared`, `rateGeometric c` for `0 < c < 1`. Bidirectional bridge `convergenceRateObligation_oneOverN_of_wasserstein` + `wassersteinRateObligation_of_convergenceRate_oneOverN`. `subdivisionDiscrepancy_satisfies_geometric` characterises the natural `(1/2)^n` rate (strictly faster than any polynomial `O(1/n^k)`). Generic `convergenceRateObligation_zero` for trivial witness. Admits non-W_1 discrepancies (Forman-Ricci curvature deviation, Gromov-Hausdorff distance, spectral gap) — precondition for Phase B's screener metrics. Phase A next: tie discrepancy to actual W_1 of trajectory's pushed measure (requires measure-of-trajectory infra).
 - [ ] At least one *curved* candidate rule identified (or engineered) — the Phase C target per [`ROADMAP.md`](ROADMAP.md).
 - [ ] Convergence theorem for that rule on a curved Lorentzian metric (Phase C #218 + #236).
@@ -138,7 +138,7 @@ Grouped from most-immediate (parts already done) to most-ambitious.
 
 ## P6 — Branchial quantum mechanics audit + formalisation
 
-**One-line pitch.** Gorard's claim that branchial structure recovers quantum mechanics, audited with the same methodology as P1, with corrected and formalised versions in Lean where the claim survives.
+**One-line pitch.** JGORARD's claim that branchial structure recovers quantum mechanics, audited with the same methodology as P1, with corrected and formalised versions in Lean where the claim survives.
 
 **Status.** Partial infrastructure.
 
@@ -148,7 +148,7 @@ Grouped from most-immediate (parts already done) to most-ambitious.
 - [x] `FisherMetric.lean` (IQ5) — Fisher metric on branchial distributions.
 - [x] `SchrodingerEquation.lean` (D10) — discrete Schrödinger on `Hypergraph V` with proven unitarity / probability conservation.
 - [x] IQ6 `fubiniStudyBhattacharyya_bound` (Cauchy-Schwarz / Bhattacharyya), IQ8 EMEPersistenceObligation baseline, IQ9 PathIntegralObligation baseline all proved in `RemainingObligations.lean`; bundled in `all_obligations_hold`.
-- [ ] Complete S1–S6 audit of Gorard's QM paper (arXiv:2004.14808).
+- [ ] Complete S1–S6 audit of JGORARD's QM paper (arXiv:2004.14808).
 - [x] Branchial measure: uniform probability on finite slices (I2; `BranchialHilbert.lean` — `branchialUniformWeight` summing to 1 when nonempty).
 - [x] `ℓ²(slice)` Hilbert space (I4 / R3 partial; `BranchialHilbert.lean` — ℂ-Hilbert alias, ℂ-linear adjacency operator `branchialAdjLM`, self-adjointness for symmetric adjacency).
 - [~] Branchial amplitudes + evolution as unitary (I3 ✅, I5 ✅, I8 pending). `BranchialHilbert.lean` defines `BranchialAmplitude` + Born rule; `BranchialSchrodinger.lean` proves `branchialSchrodinger_unitary_evolution` (total probability conservation for `i ∂_t ψ = A ψ` with adjacency `A`).
@@ -174,13 +174,13 @@ Grouped from most-immediate (parts already done) to most-ambitious.
 
 ## P8 — Formalised discrete d'Alembertian + Benincasa-Dowker conjecture flag
 
-**One-line pitch.** A Lean formalisation of the Benincasa-Dowker discrete d'Alembertian on a Wolfram-model trajectory's causal DAG, with the continuum-limit `B_ρ → □ − ½R` explicitly recorded as an open `Prop`-level conjecture. This closes the F6 "Gorard's circular EFE derivation" gap on the discrete side: the operator is fully defined, its linearity is proved, and the unproven load-bearing claim is machine-flagged.
+**One-line pitch.** A Lean formalisation of the Benincasa-Dowker discrete d'Alembertian on a Wolfram-model trajectory's causal DAG, with the continuum-limit `B_ρ → □ − ½R` explicitly recorded as an open `Prop`-level conjecture. This closes the F6 "JGORARD's circular EFE derivation" gap on the discrete side: the operator is fully defined, its linearity is proved, and the unproven load-bearing claim is machine-flagged.
 
 **Status.** Core done (`DiscreteDAlembertian.lean`). Ready as a short technical note.
 
 **Sufficient conditions.**
 - [x] `openInterval`, `intervalSize`, `layer τ k i`, `discreteDAlembertian4` defined and proved linear.
-- [x] `discreteAction` (Gorard Eq 86 analog), `discreteEL` (EL equation).
+- [x] `discreteAction` (JGORARD Eq 86 analog), `discreteEL` (EL equation).
 - [x] `BenincasaDowkerConjecture` structure; `gorardF6_carries_BD_assumption`.
 - [x] `layer_disjoint`, `mem_layer_isCausalPred` structural lemmas.
 - [ ] General-dimension `discreteDAlembertian_d` (coefficients indexed by `d`).
@@ -188,9 +188,9 @@ Grouped from most-immediate (parts already done) to most-ambitious.
 
 **Audience.** arXiv gr-qc + hep-th (*Classical and Quantum Gravity* as a Letter).
 
-## P9 — Machine-checked refutation of Gorard's EFE derivation chain
+## P9 — Machine-checked refutation of JGORARD's EFE derivation chain
 
-**One-line pitch.** A self-contained paper walking through Gorard's prose derivation of the Einstein field equations from Wolfram-model dynamics, showing at each step which move is tautological (F3, F4), ill-defined (F5), circular (F6), or unsupported (F1, F2). Every refutation is a cited Lean theorem.
+**One-line pitch.** A self-contained paper walking through JGORARD's prose derivation of the Einstein field equations from Wolfram-model dynamics, showing at each step which move is tautological (F3, F4), ill-defined (F5), circular (F6), or unsupported (F1, F2). Every refutation is a cited Lean theorem.
 
 **Status.** All pieces formalised; drafting ready to begin.
 
@@ -201,7 +201,7 @@ Grouped from most-immediate (parts already done) to most-ambitious.
 - [x] F4 refuted: `gorard_causal_invariance_is_general_covariance` (axiom-free).
 - [x] F5 refuted: `becomes_is_underdetermined`.
 - [x] F6 flagged: `BenincasaDowkerConjecture`.
-- [x] Positive construction (hypergraph anchor) exists for each "what Gorard should have formalised" move.
+- [x] Positive construction (hypergraph anchor) exists for each "what JGORARD should have formalised" move.
 - [ ] 15-page paper draft
 
 **Audience.** arXiv gr-qc + cs.LO. This is the direct counter-paper.

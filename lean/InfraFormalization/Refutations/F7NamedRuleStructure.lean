@@ -1,8 +1,8 @@
 /-
-**F7 — Gorard's named rule is structurally 1-dimensional** (formal
+**F7 — JGORARD's named rule is structurally 1-dimensional** (formal
 refutation of arXiv:2102.09363's key concrete claim).
 
-**The claim to refute.** Gorard (2102.09363 line 6202) names the specific
+**The claim to refute.** JGORARD (2102.09363 line 6202) names the specific
 rewriting rule
 `{{x,y},{y,z},{z,w},{w,v}} → {{y,u},{u,v},{w,x},{x,u}}`
 and claims it "provably satisfies EFE in the continuum limit".
@@ -14,7 +14,7 @@ single-step application. By `size_preserved_by_applications`
 (`Conservation.lean`), every finite trajectory of applications preserves
 edge count. Edge-count conservation forces a quasi-regular causal DAG
 where each event has in-degree exactly 4 (the `lhsSize`); such a DAG
-cannot have polynomial cone growth with exponent `d > 1`. Gorard's
+cannot have polynomial cone growth with exponent `d > 1`. JGORARD's
 §3.3 machinery in 2004.14810 needs `d = 4` (a (3+1)-dimensional
 spacetime), which is **structurally impossible** for this rule.
 
@@ -34,7 +34,7 @@ import InfraFormalization.Conservation
 namespace InfraFormalization
 namespace Refutations
 
-/-- **F7 structural conservation.** The Gorard-named rule has
+/-- **F7 structural conservation.** The JGORARD-named rule has
 `|LHS| = |RHS| = 4`. We abstract over any conservative rule and
 state the trajectory-level edge-preservation consequence: the size
 of the hypergraph at every step of a rewriting trajectory equals
@@ -42,7 +42,7 @@ its starting size. This is the structural barrier to 4-dimensional
 continuum limits: a rule that preserves edge count on every
 trajectory produces a quasi-regular causal DAG with in-degree equal
 to `lhsSize`, which cannot have polynomial cone growth at
-exponent `> 1` — making the 4D limit Gorard needs impossible. -/
+exponent `> 1` — making the 4D limit JGORARD needs impossible. -/
 theorem namedRule_trajectory_edge_count_fixed
     {P V : Type*} [DecidableEq V]
     {r : Rule P} (hcons : r.IsConservative)

@@ -170,21 +170,21 @@ noncomputable def Hypergraph.geodesicBallVolume (H : Hypergraph V)
 
 /-! ## Infra-sphere and infra-disk (SPHERE1)
 
-Stephen's "all points with an equal distance to a point" — the discrete
+SWOLF's "all points with an equal distance to a point" — the discrete
 sphere `S(O, r) := {v | H.dist O v = r}`. The **infra-disk** is the
 closed ball (alias for `geodesicBall`); the **infra-sphere** is its
 boundary level-set. Together they're the local-geometric primitive that
-Stephen's chord-ratio AT0 (`elementaryAngle`) and Bishop-Gromov scalar
+SWOLF's chord-ratio AT0 (`elementaryAngle`) and Bishop-Gromov scalar
 curvature AT9 (`scalarCurvatureAt`) both ride on. -/
 
 /-- **Infra-disk** — closed ball of radius `r` around `v`. Alias for
-`geodesicBall` exposing the Stephen-vocabulary terminology. -/
+`geodesicBall` exposing the SWOLF-vocabulary terminology. -/
 noncomputable def Hypergraph.infraDisk (H : Hypergraph V) (v : V) (r : ℕ) :
     Finset V :=
   H.geodesicBall v r
 
 /-- **Infra-sphere** — vertices at exactly distance `r` from `v`. The
-boundary level-set of the infra-disk. Stephen's "all points with equal
+boundary level-set of the infra-disk. SWOLF's "all points with equal
 distance to a point". -/
 noncomputable def Hypergraph.infraSphere (H : Hypergraph V) (v : V) (r : ℕ) :
     Finset V :=
@@ -1600,9 +1600,9 @@ theorem cycleHypergraph_ballVolume_zero_exact {n : Nat} [NeZero n]
   rw [h_eq]
   simp
 
-/-! ## Elementary chord-ratio angle (AT0, Stephen's primitive)
+/-! ## Elementary chord-ratio angle (AT0, SWOLF's primitive)
 
-Stephen's elementary angle definition: at vertex `O`, given two
+SWOLF's elementary angle definition: at vertex `O`, given two
 *equidistant* vertices `A, B` (i.e. `H.dist O A = H.dist O B = r > 0`),
 the **chord-ratio** is `H.dist A B / H.dist O A`. This is `2 sin(θ/2)`
 for the geometric law-of-cosines angle θ — a strictly increasing
@@ -1614,12 +1614,12 @@ geodesics).
 
 Equidistant pair `(A, B)` ranges over `H.infraSphere O r := {v : V |
 H.dist O v = r}` (SPHERE1); the angle is therefore an *infra-sphere
-statistic*. Stephen's intuition: in flat d-space, equidistant pair
+statistic*. SWOLF's intuition: in flat d-space, equidistant pair
 chord-ratios concentrate at `√2`; deviation from `√2` is the local
 curvature signature.
 -/
 
-/-- **Elementary chord-ratio angle** (Stephen / AT0). `H.elementaryAngle
+/-- **Elementary chord-ratio angle** (SWOLF / AT0). `H.elementaryAngle
 O A B := d(A, B) / d(O, A)` when `A, B` are equidistant from `O` at
 positive distance, otherwise `0`. The number is `2 sin(θ_geom / 2)`
 for the geometric angle θ_geom at `O` between rays to `A, B`. -/
@@ -1692,7 +1692,7 @@ noncomputable def Hypergraph.angle (H : Hypergraph V) (O A B : V) : ℝ :=
 
 /-! ## Orthogonality with chord-ratio tolerance (AT6 stub-fix)
 
-Stephen's elementary-angle gives the natural orthogonality predicate:
+SWOLF's elementary-angle gives the natural orthogonality predicate:
 two axes `w₁, w₂` from basepoint `v` are *orthogonal* iff the
 chord-ratio between equidistant samples on each axis is `≈ √2` (the
 flat-Euclidean expected value). This will replace the `True`-stub in
@@ -1710,7 +1710,7 @@ noncomputable def Hypergraph.IsOrthoApprox (H : Hypergraph V)
 
 /-! ## GeodesicallyUnique predicate (AT8)
 
-Stephen's straight-lines requirement: the angle-as-real-angle
+SWOLF's straight-lines requirement: the angle-as-real-angle
 interpretation of `elementaryAngle` (AT0) and `cosAngle` (AT1) needs a
 unique geodesic between every vertex pair. On a generic hypergraph
 geodesics may branch (the multi-fibration story IC6); AT8 surfaces the
@@ -1726,7 +1726,7 @@ identical (as `SimpleGraph.Walk`s). On `GeodesicallyUnique` hypergraphs:
 -/
 
 /-- **`GeodesicallyUnique`** — every pair of shortest walks between the
-same endpoints is equal. Stephen's straight-lines condition. The
+same endpoints is equal. SWOLF's straight-lines condition. The
 *unique-direction* hypothesis that makes the angle interpretation
 well-defined (AT0 number → AT0 angle, AT3 limit → AT3 angle). -/
 def Hypergraph.GeodesicallyUnique (H : Hypergraph V) : Prop :=
@@ -1752,7 +1752,7 @@ theorem Hypergraph.geodesicallyUnique_self_walks (H : Hypergraph V) (u : V)
 
 /-! ## Cut-vertex / bridge / Jordan-separator predicates (INOUT1)
 
-Stephen's "much more basic question, inside vs outside". The pre-metric
+SWOLF's "much more basic question, inside vs outside". The pre-metric
 cut-vertex / bridge primitives from graph theory; the genuine Jordan-
 separator predicate sits on top of these. -/
 
@@ -1792,7 +1792,7 @@ def Hypergraph.CycleSeparates (H : Hypergraph V)
 
 /-! ## Contractibility predicates (CONTRACT1 substrate)
 
-Stephen's "once we have a cycle we have the notion of a contractable
+SWOLF's "once we have a cycle we have the notion of a contractable
 cycle". The full Knill-Fisk recursive contractibility (γ is reducible
 to `Walk.nil` via DEFORM1 elementary moves) needs the cellular machinery
 that hasn't landed yet. Substrate landed here:
@@ -1862,12 +1862,12 @@ theorem Hypergraph.diskContractible_zero_support (H : Hypergraph V) {v : V}
 
 /-! ## Perpendicular bisector + midpoint + Voronoi (HYPER2 / MIDPT1 / HYPER3)
 
-Stephen's "set of points equidistant from two given points" + Pavel's
+SWOLF's "set of points equidistant from two given points" + PHAJEK's
 graph-separator framing + the Voronoi generalisation. All sit directly
 on `dist` and are pure-`Finset` constructions. -/
 
 /-- **Perpendicular bisector** (HYPER2 / metric hyperplane): the set of
-vertices equidistant from `A` and `B`. Stephen's "all points equidistant
+vertices equidistant from `A` and `B`. SWOLF's "all points equidistant
 from two given points". On a finite hypergraph this is a `Finset V`,
 *always* computable. The pre-metric "graph-separator" hyperplane (HYPER1)
 asks whether removing this set disconnects `A` from `B` — see
@@ -1899,10 +1899,10 @@ theorem Hypergraph.perpBisector_symm (H : Hypergraph V) (A B : V) :
 
 /-- **Pre-metric "topological hyperplane" predicate** (HYPER1 / HYPER4):
 removing the perpendicular bisector vertices disconnects `A` from `B`
-in the clique-expansion graph. Stephen's "if you remove all points of
+in the clique-expansion graph. SWOLF's "if you remove all points of
 the hyperplane do you separate the two points". This is *strictly
 stronger* than just being equidistant — it's the genuine separator
-condition (Pavel's framing). -/
+condition (PHAJEK's framing). -/
 def Hypergraph.HasTopologicalHyperplane (H : Hypergraph V) (A B : V) : Prop :=
   A ∉ H.perpBisector A B ∧ B ∉ H.perpBisector A B ∧
   ¬ H.toSimpleGraph.Reachable A B  -- placeholder: needs subgraph

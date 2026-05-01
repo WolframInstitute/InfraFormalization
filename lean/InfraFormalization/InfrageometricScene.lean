@@ -1,7 +1,7 @@
 /-
 **Multi-construction scenes on hypergraphs** (Group IS / #157).
 
-From Pavel Hájek's Srní/Madrid talks: an *infrageometric scene* is
+From PHAJEK's Srní/Madrid talks: an *infrageometric scene* is
 an ensemble of synthetic geometric constructions over a common
 base hypergraph, with the Hausdorff distance between construction
 instances defining a branchial structure on scenes.

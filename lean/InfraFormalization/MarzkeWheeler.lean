@@ -1,7 +1,7 @@
 /-
 **Marzke-Wheeler clock construction** (Group IC / #132 IC8).
 
-Following Zapata-Ahmed: in a transitively-reduced causal graph, an
+Following CZAPATA-SAHMED: in a transitively-reduced causal graph, an
 observer's proper time can be defined operationally by bouncing
 light rays off a reference (the "MW clock"). Each tick of the
 clock is a round-trip along two null edges.

@@ -1,10 +1,10 @@
-# Plan: deep review of Gorard's GR-from-rewriting claims
+# Plan: deep review of JGORARD's GR-from-rewriting claims
 
-**Mission.** Examine Gorard's claimed derivation of general relativity from hypergraph rewriting (arXiv:2004.14810, 2102.09363, 2303.07282). For every load-bearing claim: determine *correctness* with *certainty*. Correct claims → formalize in Lean and extend toward an actual discrete-to-continuum geometry theorem. Incorrect claims → document precisely, with counterexample or correct-statement side-by-side, so the error is unambiguous.
+**Mission.** Examine JGORARD's claimed derivation of general relativity from hypergraph rewriting (arXiv:2004.14810, 2102.09363, 2303.07282). For every load-bearing claim: determine *correctness* with *certainty*. Correct claims → formalize in Lean and extend toward an actual discrete-to-continuum geometry theorem. Incorrect claims → document precisely, with counterexample or correct-statement side-by-side, so the error is unambiguous.
 
 ## Ground rules (non-negotiable)
 
-1. **Triple-redundant verification for every claim we make.** Any statement of the form "Gorard's Eq N is wrong" requires:
+1. **Triple-redundant verification for every claim we make.** Any statement of the form "JGORARD's Eq N is wrong" requires:
    - **(A)** independent re-derivation from scratch, cross-checked against ≥2 independent references;
    - **(B)** symbolic verification (Mathematica / SymPy);
    - **(C)** numerical test on a nontrivial case where the correct answer is known;
@@ -12,7 +12,7 @@
    If any of (A)–(D) disagree, we stop and find the bug in our own work before concluding anything.
 2. **Independent re-implementation for every empirical finding.** If SetReplace says X, we re-derive X in Python from the rule's semantics and check that they agree on ≥ 5 seeds. Any disagreement blocks publication of the finding.
 3. **Name the exact line.** Every critique of a claim cites the TeX line / arxiv equation number. No paraphrases without the verbatim quote adjacent.
-4. **Separate Gorard-specific claims from imported-from-the-literature claims.** Many "provable" moves in 2102.09363 (Benincasa–Dowker, Ollivier, Gray, Ollivier, ADM) are *imports* of known results. Their correctness is not Gorard's contribution. We judge each on its own terms and note the attribution.
+4. **Separate JGORARD-specific claims from imported-from-the-literature claims.** Many "provable" moves in 2102.09363 (Benincasa–Dowker, Ollivier, Gray, Ollivier, ADM) are *imports* of known results. Their correctness is not JGORARD's contribution. We judge each on its own terms and note the attribution.
 5. **Never conflate "loose rhetoric" with "computational error."** If a claim is a rhetorical overclaim but the equation is correct, note both. If a computation is wrong, prove it.
 
 ## Phase 0 — Catalog (prerequisite for everything else)
@@ -28,7 +28,7 @@ This is the spine. Everything in Phases 1–4 references entries in the catalog 
 
 ## Phase 1 — Audit our own empirical work (self-verification first)
 
-Before trusting a single of our findings against Gorard, verify our tools.
+Before trusting a single of our findings against JGORARD, verify our tools.
 
 ### 1A. Re-implement the named EFE rule from scratch in Python.
 - `scripts/py_rewriter.py`: minimal single-way rewriter operating on multisets of hyperedges, no SetReplace.
@@ -53,32 +53,32 @@ Before trusting a single of our findings against Gorard, verify our tools.
 
 **Phase 1 delivers a verified empirical claim** or surfaces a bug. Without this we cannot trust Phase 4 conclusions.
 
-## Phase 2 — Audit Gorard's continuum-side equations
+## Phase 2 — Audit JGORARD's continuum-side equations
 
 Every equation on the smooth-manifold side is a statement in Riemannian geometry that is either standard or not. For each one we apply the triple check.
 
-### 2A. Gray ball-volume expansion (Gorard Eqs 340, 343)
+### 2A. Gray ball-volume expansion (JGORARD Eqs 340, 343)
 - Standard: Gray (1973); Gray–Vanhecke (1979); Chavel, *Riemannian Geometry: A Modern Introduction*, Ch. III.6.
 - **Symbolic check:** use Mathematica's built-in `RicciTensor` on a metric and compute $\int_B \sqrt{\det g}\, d^d x$ by Taylor expansion; compare coefficient.
 - **Numerical check:** on $S^d$ (known $R = d(d-1)$) and on hyperbolic $\mathbb{H}^d$ (known $R = -d(d-1)$), compute the small-ball volume directly and compare to the formula.
 - **Expected verdict:** Eqs 340 & 343 are correct standard results.
 
-### 2B. Gray tube-volume expansion (Gorard Eq 342)
+### 2B. Gray tube-volume expansion (JGORARD Eq 342)
 - Standard: Gray, *Tubes*, 2nd ed., §4; also Weyl (1939) for Euclidean case, Hotelling (1939), Gray–Vanhecke (1979).
 - Correct formula (to be verified from Gray): $V(T_\varepsilon(\gamma)) = \omega_{d-1}\varepsilon^{d-1}L\left(1 - \frac{\varepsilon^2}{2(d+1)}(R - \mathrm{Ric}(u,u)) + O(\varepsilon^4)\right)$.
-- Gorard's coefficient: $\frac{d-1}{d+1}$ (no 1/2, no factor-of-2, different combinatorial form).
+- JGORARD's coefficient: $\frac{d-1}{d+1}$ (no 1/2, no factor-of-2, different combinatorial form).
 - **Symbolic check:** compute on $S^2$ directly, expand exactly.
 - **Numerical check:** $S^2$ great-circle tube is a spherical zone of area $4\pi\sin\varepsilon$; expand and compare.
 - **Expected verdict (pending full verification):** Eq 342 coefficient is wrong by factor $2(d-1)$.
 - **If confirmed:** this is the first *computational* error in the paper (not just rhetoric). Document as `notes/eq342_error.md` with the correct Gray derivation step-by-step.
 
-### 2C. Ollivier's theorem (Gorard Eq 344)
+### 2C. Ollivier's theorem (JGORARD Eq 344)
 - Standard: Ollivier, *Ricci curvature of Markov chains on metric spaces*, JFA 256 (2009), Theorem 6 + Example 7.
 - Ollivier's statement: $W_1(m_p^\varepsilon, m_q^\varepsilon) = \delta(1 - \frac{\varepsilon^2}{2(d+2)}\mathrm{Ric}(v,v) + O(\varepsilon^4 + \varepsilon^2 \delta^2))$ with $v = (q-p)/\|q-p\|$.
-- Gorard's statement: same prefactor but $R$ (scalar) instead of $\mathrm{Ric}(v,v)$.
+- JGORARD's statement: same prefactor but $R$ (scalar) instead of $\mathrm{Ric}(v,v)$.
 - **Numerical check:** on $S^2$, $R=2$, $\mathrm{Ric}(v,v) = 1$ ⇒ predictions differ by factor 2. Compute $W_1$ numerically (optimal transport between two small spherical cap measures) and see which matches.
-- **Expected verdict:** Gorard's Eq 344 has a directional-vs-scalar confusion.
-- **If confirmed:** the error propagates to Gorard's discrete Ollivier–Ricci argument throughout §3.
+- **Expected verdict:** JGORARD's Eq 344 has a directional-vs-scalar confusion.
+- **If confirmed:** the error propagates to JGORARD's discrete Ollivier–Ricci argument throughout §3.
 
 ### 2D. Metric-in-geodesic-normal-coords (Eqs 337, 338, 772–773, 777)
 - Standard: any differential-geometry text; Gray's book has the expansion explicitly.
@@ -91,16 +91,16 @@ $V(C_t(p)) = a t^n [1 - \frac{1}{6} R_{ij} t^i t^j + O(\|t\|^3)]$
 - **Verify coefficient:** the $\frac{1}{6}$ vs $\frac{1}{6(d+2)}$ issue — the coefficient in 343 has $(d+2)$, but in 792 it's just $\frac{1}{6}$. Check if these reconcile under the right integration measure.
 
 ### 2F. Each standard-reference theorem cited
-Benincasa–Dowker d'Alembertian eq 378–383, Sorkin action eq 384–387. Each needs a correct-citation-check: does Gorard state the result as Sorkin/Benincasa/Dowker do? In particular, line 6080's *swap of weak ergodicity for Poisson* is critical.
+Benincasa–Dowker d'Alembertian eq 378–383, Sorkin action eq 384–387. Each needs a correct-citation-check: does JGORARD state the result as Sorkin/Benincasa/Dowker do? In particular, line 6080's *swap of weak ergodicity for Poisson* is critical.
 
 **Phase 2 delivers** `notes/continuum_eqs_audit.md` with a triple-check verdict on every continuum equation in §§3.1–3.3 of 2102.09363 (and equivalents in 2004.14810).
 
-## Phase 3 — Audit Gorard's discrete-side equations
+## Phase 3 — Audit JGORARD's discrete-side equations
 
 ### 3A. Discrete Ollivier–Ricci on directed hypergraphs (Eqs 348–356)
 - Cited: Eidi–Jost, *Ollivier Ricci Curvature of Directed Hypergraphs*, arXiv:1907.04727.
-- **Check:** Gorard's definitions match Eidi–Jost?
-- **Verify by direct computation:** compute $\kappa$ for the tested hypergraphs (Figures 66, 67, 68: asymptotically flat / positive / negative), check the sign matches Gorard's claim.
+- **Check:** JGORARD's definitions match Eidi–Jost?
+- **Verify by direct computation:** compute $\kappa$ for the tested hypergraphs (Figures 66, 67, 68: asymptotically flat / positive / negative), check the sign matches JGORARD's claim.
 - This is an auditable numerical experiment: construct the specific rule from each caption, evolve, compute discrete Ollivier–Ricci, report value.
 
 ### 3B. Discrete causal graph + ADM decomposition
@@ -110,10 +110,10 @@ Benincasa–Dowker d'Alembertian eq 378–383, Sorkin action eq 384–387. Each 
 ### 3C. Discrete-sectional-curvature formula (Eq 808)
 $d(\exp_x(\mathbf{v}_x), \exp_y(\varepsilon \mathbf{v}_y)) = \delta(1 - \frac{\varepsilon^2}{2} K(\mathbf{u},\mathbf{v}) + O(\varepsilon^3 + \varepsilon^2 \delta))$
 - This **does** have the directional form ($K(\mathbf{u},\mathbf{v})$ is a sectional curvature, two-argument).
-- Check whether this is consistent with Gorard's other formulas (2C) and with standard Riemannian sectional-curvature formulas.
+- Check whether this is consistent with JGORARD's other formulas (2C) and with standard Riemannian sectional-curvature formulas.
 
 ### 3D. Discrete Einstein–Hilbert (Eqs on causal-set / Benincasa–Dowker)
-- Separate what Gorard imports from Sorkin/Benincasa/Dowker from what he asserts.
+- Separate what JGORARD imports from Sorkin/Benincasa/Dowker from what he asserts.
 - The critical step 6080 (Poisson replaces weak ergodicity) is the hinge.
 
 **Phase 3 delivers** `notes/discrete_eqs_audit.md` with each discrete-side equation triple-checked.
@@ -124,7 +124,7 @@ The load-bearing claims. Each needs **precise formal statement** and **explicit 
 
 ### 4A. "Convergence of Ollivier–Ricci to Ricci for discrete hypergraphs"
 - Is there a convergence theorem? In the literature (Lin–Lu–Yau 2011, Ollivier 2007, Trillos–Slepčev 2018 for random geometric graphs): yes, under specific sampling hypotheses.
-- Does Gorard's §3 invoke such a theorem? **Check line by line.**
+- Does JGORARD's §3 invoke such a theorem? **Check line by line.**
 
 ### 4B. "Provably satisfies EFE in the continuum limit"
 - This is the crux. The line trace (lines 6080 / 6152 / 6202 of the TeX) gave a specific chain: Poisson sampling in a known manifold + BD conjecture.
@@ -150,7 +150,7 @@ After Phases 1–4, we have a catalog of correct, incorrect, and open claims. Be
 - Each "correct" verdict is rechecked by trying to break it (can we find a counterexample? a reference that states it differently?).
 - Each "open" verdict is recontextualized (who has the strongest positive / negative evidence in the literature?).
 
-This phase exists because the cost of publishing a wrong "Gorard got this wrong" is high.
+This phase exists because the cost of publishing a wrong "JGORARD got this wrong" is high.
 
 **Phase 5 delivers** `notes/verdicts_final.md` with each claim's status double-signed.
 
@@ -165,7 +165,7 @@ For each claim that survives Phase 5 as *correct*:
 Particular targets for Lean:
 - **Theorem A** (edge conservation for $|LHS|=|RHS|$ rules).
 - **Theorem B** (linear-cone bound for conservative rules).
-- **Theorem C** (|LHS|=|RHS| ⇒ Gorard §3.3 cannot apply).
+- **Theorem C** (|LHS|=|RHS| ⇒ JGORARD §3.3 cannot apply).
 - The correct Gray tube formula (if Mathlib's differential geometry has enough infrastructure).
 - The correct Ollivier theorem for directional Ricci (more speculative — Mathlib's OT + differential geometry isn't quite there yet).
 
@@ -177,7 +177,7 @@ Once we know what is actually true, we formulate a positive program.
 
 Candidates:
 - **Positive theorem:** for random geometric graphs on a Riemannian manifold (Poisson sampling + proximity edges + $\varepsilon$-scaling), the discrete Ollivier–Ricci converges to $\frac{\mathrm{Ric}(v,v)}{2(d+2)}$ in the appropriate limit. This is Trillos–Slepčev-style but for Ollivier–Ricci specifically.
-- **Negative theorem:** no |LHS|=|RHS| rule in the Wolfram-model class can yield a $d \ge 2$ causal graph. Structural, provable, refutes a wide subclass of Gorard's claims in one shot.
+- **Negative theorem:** no |LHS|=|RHS| rule in the Wolfram-model class can yield a $d \ge 2$ causal graph. Structural, provable, refutes a wide subclass of JGORARD's claims in one shot.
 - **Lean contribution:** formalization of the correct Gray ball-volume expansion + Ollivier directional statement + the Wolfram-model-as-conservation-system link.
 
 ## Concrete next step

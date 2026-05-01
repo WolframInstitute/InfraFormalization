@@ -45,7 +45,7 @@ which currently contains `∧ False` — the obligation is formally
 uninhabited. No term exists, so nothing downstream is permitted to
 assume "Schwarzschild comes from a Wolfram-model rule."
 
-This matters because Gorard's corpus (arXiv:2004.14810 §3.3;
+This matters because JGORARD's corpus (arXiv:2004.14810 §3.3;
 2102.09363 §5; 2303.07282) *claims* to have derived Schwarzschild
 (and Kerr, FLRW) from hypergraph rules. The corpus audit (see
 `MAJOR_FLAWS.md` / `memory/corpus_audit_finding.md`) finds the

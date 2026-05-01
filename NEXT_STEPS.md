@@ -8,7 +8,7 @@ Lives next to [`README.md`](README.md) / [`INDEX.md`](INDEX.md) / [`FINDINGS.md`
 
 - **MILESTONE-GR / -QM / -BBH (#369–#371, 2026-04-27)** — `Milestone.lean` lands. Concrete Lean signatures answering "how do we know we got to GR / QM / BBH". `GR_emerges_from_hypergraph` six-conjunct Prop (W₁ rate concrete, layers 2–6 placeholders); specialisations `_minkowski` / `_schwarzschild` / `_flrw` / `_some_hypergraph`; `QM_emerges_from_hypergraph`; `BBH_emerges_from_hypergraph`. **Three Lean-verifiable signals of completion** (no `sorry` / clean `#print axioms` / term-witnessed existential).
 
-- **AT0 + AT1 angle primitives (#285, #286, 2026-04-27)** — `Hypergraph.elementaryAngle O A B` (Stephen's chord-ratio = `2 sin(θ/2)`), `cosAngle`, `angle := Real.arccos cosAngle`, `IsOrthoApprox` orthogonality predicate. In `HypergraphDistance.lean`. Foundation of the 14-column angle tower.
+- **AT0 + AT1 angle primitives (#285, #286, 2026-04-27)** — `Hypergraph.elementaryAngle O A B` (SWOLF's chord-ratio = `2 sin(θ/2)`), `cosAngle`, `angle := Real.arccos cosAngle`, `IsOrthoApprox` orthogonality predicate. In `HypergraphDistance.lean`. Foundation of the 14-column angle tower.
 
 - **AT6 orthogonality stub-replacement (#291, 2026-04-27)** — `CoordinatizationDimension.AreOrthogonalAxes` `True`-stub replaced with `IsOrthoApprox`-based chord-ratio ≈ √2 condition.
 
@@ -16,9 +16,9 @@ Lives next to [`README.md`](README.md) / [`INDEX.md`](INDEX.md) / [`FINDINGS.md`
 
 - **AT9 Bishop-Gromov scalar curvature (#294, 2026-04-27)** — `Hypergraph.scalarCurvatureAt v d r` in `DiscreteRicci.lean`. `unitBallVolumeEuclidean d`, `flatBallVolume d r`, sign theorems. Cross-checks Forman-Ricci.
 
-- **TOP1 first Betti + TOP4 connected components (#323, #326, 2026-04-27)** — new `HypergraphTopology.lean`: `spatialB0`, `IsSpatiallyConnected`, `firstBettiZ`, bound theorems. **Stephen's "is every point reachable from every other"** + first non-trivial topological invariant after b_0.
+- **TOP1 first Betti + TOP4 connected components (#323, #326, 2026-04-27)** — new `HypergraphTopology.lean`: `spatialB0`, `IsSpatiallyConnected`, `firstBettiZ`, bound theorems. **SWOLF's "is every point reachable from every other"** + first non-trivial topological invariant after b_0.
 
-- **SPHERE1 infra-sphere/disk (#334, 2026-04-27)** — `Hypergraph.infraSphere`, `infraDisk`, `infraSphereVolume` + boundary inclusion / disjointness / cardinality bound. Stephen's "all points equidistant from a point".
+- **SPHERE1 infra-sphere/disk (#334, 2026-04-27)** — `Hypergraph.infraSphere`, `infraDisk`, `infraSphereVolume` + boundary inclusion / disjointness / cardinality bound. SWOLF's "all points equidistant from a point".
 
 - **HYPER2 / HYPER3 / MIDPT1 (#339, #340, #342, 2026-04-27)** — `perpBisector`, `closerHalf`, `HasTopologicalHyperplane` stub, `midpoint`, `nearMidpoint`, `voronoiCell` + characterisations + symmetry lemmas. **Bachmann motion-group substrate.**
 
@@ -70,16 +70,16 @@ Lives next to [`README.md`](README.md) / [`INDEX.md`](INDEX.md) / [`FINDINGS.md`
   - `CausalLorentzianBridge.lean` (G3) — `LorentzianManifoldOriginObligation` binds `CausalGraph V` + scale; witnessed via `trivialCausalGraph`.
   - `FiberedGraphConnectionBridge.lean` (G1) — `ConnectionDataOriginObligation` binds `FiberedGraph V W` + `FiberedGraph.Connection F` + scale; flat-connection case witnessed via `trivialFiberedGraph` + `trivialConnection`.
   - `EinsteinEquationsBridge.lean` (G4) — `EFEOriginObligation` bundles EFE-satisfaction with metric + connection origins; `minkowski4_flat_vacuum_EFE_originated_global` is the **first complete rule → metric → connection → EFE chain**.
-  - `RuleSearch.lean` — decidable `IsConservative`; catalog of 5 rules (`identityRule`, `selfMapRule`, `edgeDuplicateRule`, `tripleToEdgeRule`, `pairToTriangleRule`); proved screens over `conservativeCatalog` / `growthCatalog`; `minkowski4_from_growthRule` uses `edgeDuplicateRule` load-bearingly; `conservative_blocks_dim_geq_one` formalises Gorard's structural block.
+  - `RuleSearch.lean` — decidable `IsConservative`; catalog of 5 rules (`identityRule`, `selfMapRule`, `edgeDuplicateRule`, `tripleToEdgeRule`, `pairToTriangleRule`); proved screens over `conservativeCatalog` / `growthCatalog`; `minkowski4_from_growthRule` uses `edgeDuplicateRule` load-bearingly; `conservative_blocks_dim_geq_one` formalises JGORARD's structural block.
 
 - **Hypergraph-grounded overnight grind (2026-04-23)**: dedicated to `GROUNDING_AUDIT.md`-compliant work only.
   - `PathHypergraphDistance.lean` — path heat kernel preserves constants; row-sum zero.
   - `CycleHeatDecayBounds.lean` — spectral gap, first-mode explicit decay, constant fixed.
-  - `FisherMetricExtended.lean` — ℝ-linearity + PSD for Van Le branchial Fisher metric.
-  - `HodgeLaplacianBounds.lean` — Pavel Hajek IT3 Hodge 0-Laplacian negative semi-definite (Dirichlet energy argument).
-  - `BlowupPoissonConcrete.lean` — concrete bracket instances (zero, difference) + vertex/edge-count invariants for Kolcz M3 Lie-Poisson.
-  - `EMETracker.lean` — Ahmed M7 EME persistence on Trajectory + concrete edge-count-bounded EME.
-  - `BranchialCommutator.lean` — BranchialMultiRelated reflexive-transitive closure (symmetry + transitivity) for Ahmed-Zapata M5.
+  - `FisherMetricExtended.lean` — ℝ-linearity + PSD for HVLE branchial Fisher metric.
+  - `HodgeLaplacianBounds.lean` — PHAJEK IT3 Hodge 0-Laplacian negative semi-definite (Dirichlet energy argument).
+  - `BlowupPoissonConcrete.lean` — concrete bracket instances (zero, difference) + vertex/edge-count invariants for HKOLCZ M3 Lie-Poisson.
+  - `EMETracker.lean` — SAHMED M7 EME persistence on Trajectory + concrete edge-count-bounded EME.
+  - `BranchialCommutator.lean` — BranchialMultiRelated reflexive-transitive closure (symmetry + transitivity) for SAHMED-CZAPATA M5.
   - `ProperTimeBounds.lean` — `ChainOfLength` length-0/length-1 characterisations and concatenation lemmas.
   - `RuleSignatureEquiv.lean` — `RuleSignature.sigEquiv` (refl/symm/trans) + empty-hypergraph signature theorems.
 
@@ -113,7 +113,7 @@ Lives next to [`README.md`](README.md) / [`INDEX.md`](INDEX.md) / [`FINDINGS.md`
 - **T5 (partial) / Path hypergraph type + free-path spectrum sentinel + spectral gap** (`PathHypergraph.lean`): `pathEdge n i = {i, i+1}` builds `pathHypergraph n` on `Fin n` with `n−1` edges. `pathHypergraph_edges_card_le` (|E| ≤ n−1). **Corrected to free-path formula**: `pathEigenvalue n k = −4 sin²(kπ/(2n))` and `pathEigenvector n k j = cos(kπ(2j+1)/(2n))` — these match the actual (no-boundary-condition) Laplacian on `pathHypergraph n`, not the Dirichlet spectrum. `pathEigenvalue_nonpos` (non-positivity), `pathEigenvalue_ground_zero` (k=0 mode vanishes), `pathEigenvalue_one_neg` (first non-constant mode strictly negative for n ≥ 2 — path spectral gap). Axiom-clean. Path is the open-chain analog of `cycleHypergraph`; together they are the 1-D atomic factors for d-torus products.
 - **Branchial quantum-mechanics bridge closed (I2/I3/I4/I5/I6/I7/I9, R3)** (`BranchialHilbert.lean`, `BranchialSchrodinger.lean`): `BranchialHilbert S := EuclideanSpace ℂ S` (finite-dim ℂ-Hilbert alias) with ℂ-linear adjacency operator `branchialAdjLM` and Hermitian self-adjointness `branchialAdjLM_inner` for symmetric adj. `BranchialAmplitude` + Born rule `bornProbability` with `sum_bornProbability = ‖ψ‖²`. Uniform branchial measure `branchialUniformWeight` summing to 1. Full Schrödinger evolution `BranchialSchrodinger adj u v` with proven unitarity `branchialSchrodinger_unitary_evolution` (total probability conserved via self-adjointness). `BranchialObservable S` structure + `branchialAdjObservable`. `expectationValue A ψ := ⟨ψ, A ψ⟩` with real-valuedness for Hermitian operators. `branchialSliceFintype` + `branchialSliceHilbert` bridge to concrete branchial slice. 8/10 I-series tasks done.
 - **Heat-kernel decay + eigenvector orthogonality (D6 partial)** (`HeatKernelDecay.lean`, `SymmEigenOrthogonal.lean`): `heatKernel_cycleHypergraph_firstMode_tendsto_zero` and `heatKernel_cycleHypergraph_nonzero_mode_tendsto_zero` prove pointwise decay of every non-constant mode. `heatKernel_cycleHypergraph_constMode_invariant` proves the constant mode is preserved. `heatKernel_cycleHypergraph_const_plus_mode_tendsto` shows linear combinations converge to the constant component. `symm_eigenvectors_orthogonal` + `cycleEigenvector_orthogonal` + `cycleEigenvector_const_orthogonal_nonzero` + `cycleEigenvector_first_half_orthogonal` establish orthogonality of eigenvectors with distinct eigenvalues, closing the spectral-theorem step. `cycleEigenvalue_strict_mono_first_half` + `cycleEigenvalue_ne_first_half` prove pairwise distinctness of first-half eigenvalues.
-- **IT3 (Pavel Hajek): Hodge Laplacian spectrum baseline** (`HodgeLaplacianSpectrum.lean`): `vrHodge0_add`, `vrHodge0_smul` (ℝ-linearity), `vrHodge0_has_zero_eigenvalue` (constants are in the kernel — 0-form Hodge cohomology). Spectral foundation for IT3 closed.
+- **IT3 (PHAJEK): Hodge Laplacian spectrum baseline** (`HodgeLaplacianSpectrum.lean`): `vrHodge0_add`, `vrHodge0_smul` (ℝ-linearity), `vrHodge0_has_zero_eigenvalue` (constants are in the kernel — 0-form Hodge cohomology). Spectral foundation for IT3 closed.
 - **IQ6: Fubini-Study/Bhattacharyya bound, upgraded to real content + proved** (`RemainingObligations.lean`): `FubiniStudyLimitObligation` now states `‖⟨ψ, φ⟩‖ ≤ ∑ s, ‖ψ s‖ · ‖φ s‖` (Cauchy-Schwarz / Bhattacharyya bound on branchial amplitudes). Proved as `fubiniStudyBhattacharyya_bound` via `PiLp.inner_apply` + `norm_sum_le` + `norm_mul` + `Complex.norm_conj`. T6 progress: 3/7 obligations upgraded.
 - **T6 partial / Infrageometry obligations: upgraded from True ∧ False to real Prop types** (`RemainingObligations.lean`): `all_obligations_hold` bundles the substantive closures (IT5 `latschevObligation_holds`, IT6 `scaleTrichotomyObligation_holds`, ID6 `dimensionCompatibilityObligation_holds`, IQ6 `fubiniStudyBhattacharyya_bound`, IR7-refined `reverseEngineeringObligationRefined_holds`) together with IQ8 + IQ9 cosmetic zero-witness baselines (reopened as tasks #154 / #155 for real content). The original unrefined IR7 is provably FALSE via `not_reverseEngineeringObligation`.
 - **A5 / Counting measure on Hypergraph V + pushforward** (`HypergraphMeasure.lean`): `countingMeasure`, `uniformProbability`, `pushforwardCounting`, `pushforwardUniform`. Unblocks A6/A7.
@@ -271,14 +271,14 @@ Every theorem above depends only on `{propext, Classical.choice, Quot.sound}`. N
 
 ### Colleague-work integration (M-group)
 
-- [ ] M1 — Ioana Milea gauge-intern coordination.
-- [ ] M2 — Van Le Fisher → Fubini-Study bridge.
-- [ ] M3 — Hubert Kolcz Lie-Poisson MBQC.
-- [ ] M4 — Jan Pullman IBL-∞ / BV formalism.
-- [ ] M5 — Zapata + Ahmed axiomatic-relativity paper.
-- [ ] M6 — Pokorny Infrageometry paclet parity.
-- [ ] M7 — Ahmed EME-tracking community post.
-- [ ] M8 — Pokorny diffusion-geometry bridge.
+- [ ] M1 — IMILEA gauge-intern coordination.
+- [ ] M2 — HVLE Fisher → Fubini-Study bridge.
+- [ ] M3 — HKOLCZ Lie-Poisson MBQC.
+- [ ] M4 — JPULLMAN IBL-∞ / BV formalism.
+- [ ] M5 — CZAPATA + SAHMED axiomatic-relativity paper.
+- [ ] M6 — NMURZIN `Infrageometry` paclet — Lean port parity (previous "PPOKORNY Infrageometry paclet parity" wording conflated PPOKORNY with the `Infrageometry` paclet — see `CONTRIBUTORS.md`).
+- [ ] M7 — SAHMED EME-tracking community post.
+- [ ] M8 — Diffusion-geometry bridge — attribution under review (previously credited PPOKORNY without verified evidence).
 - [ ] M9 — Tropical-geometry synthetic infrageometry.
 - [ ] M10 — 3BP / dynamical-systems dimension signature.
 
@@ -336,18 +336,18 @@ Lean ports of `resources/SyntheticInfrageometry/SyntheticInfrageometry/Kernel/*.
 - [ ] **SIG4** — `Coordinatization.wl` Lean port — analytisation via shortest-path counts / Cayley-style embedding. Bridges ID4 + IGE1.
 - [ ] **SIG5** — Branching-construction stability: `SceneDistance` via #214 W_1 + `ConstructionStability` under refinement. First instance: subdivision rule (#234) on path/cycle.
 
-### Pavel Hájek planning items (P-group)
+### PHAJEK planning items (P-group)
 
-From Pavel Hájek's weekly update and Discord "core dump" (entries dated 2025-10-06 through 2026-04-14). Each item cross-referenced below with existing Lean coverage where applicable; items without existing coverage are tracked as new tasks.
+From PHAJEK's weekly update and Discord "core dump" (entries dated 2025-10-06 through 2026-04-14). Each item cross-referenced below with existing Lean coverage where applicable; items without existing coverage are tracked as new tasks.
 
 Source items that map to existing coverage:
 
 - Mathematical content of his persistence project: `VietorisRips.lean` (IT1), `HodgeVR.lean` (IT2), `HodgeLaplacianSpectrum.lean` + `HodgeLaplacianBounds.lean` (IT3), persistence barcode (IT4), Latschev obligation proved for cycles (IT5), scale-trichotomy endpoints proved (IT6). Paclet migration itself is M6 (pending).
-- Fisher-information side of holographic-duality discussions: `FisherMetric.lean` (IQ5), `FisherMetricExtended.lean`, M2 Van Le Fisher → Fubini-Study bridge completed, IQ6 `fubiniStudyBhattacharyya_bound` proved.
-- Classification of graphs with pointwise constant Wolfram-Hausdorff dimension (with Dugan, inspired by Sam Rodkey): `ID1` WH dimension on hypergraphs, `ID2` plateau detection, `ID6` compatibility theorem CLOSED (`dimensionCompatibilityObligation_holds`: V(v,r) = 2r+1 exact on cycle for 2r+1 ≤ n). Tracked explicitly as **P20** below. Web search (2026-04) returned no published Rodkey paper on the topic; the attribution is to a conversational question (Sam Rodkey, GitHub `SamRodkey`, Texas), not to a paper.
+- Fisher-information side of holographic-duality discussions: `FisherMetric.lean` (IQ5), `FisherMetricExtended.lean`, M2 HVLE Fisher → Fubini-Study bridge completed, IQ6 `fubiniStudyBhattacharyya_bound` proved.
+- Classification of graphs with pointwise constant Wolfram-Hausdorff dimension (with DHAMMOCK, inspired by SRODKEY): `ID1` WH dimension on hypergraphs, `ID2` plateau detection, `ID6` compatibility theorem CLOSED (`dimensionCompatibilityObligation_holds`: V(v,r) = 2r+1 exact on cycle for 2r+1 ≤ n). Tracked explicitly as **P20** below. Web search (2026-04) returned no published Rodkey paper on the topic; the attribution is to a conversational question (SRODKEY, GitHub `SamRodkey`), not to a paper.
 - Combinatorial Levi-Civita connection in InfraGaugeTheory: IG1–IG11 covered; C5 Koszul Levi-Civita and C7 discrete connection on a hypergraph pending; `FiberedGraphConnectionBridge.lean` attaches the obligation Prop.
-- Carlos's InfraCausality paper: IC1 CausalGraphType, IC2 ObserverChain, IC3 LightRay, IC4 Foliation + ProperTime, IC5 SpatialReconstruction, IC6 MultiFibrationProjection, IC7 EPSAxioms, IC8 MarzkeWheeler; M5 Zapata + Ahmed paper completed.
-- Ioana on InfraGaugeTheory coordinatization pipeline: ID4 CoordinatizationDimension completed; M1 IG-intern coordination pending.
+- CZAPATA's InfraCausality paper: IC1 CausalGraphType, IC2 ObserverChain, IC3 LightRay, IC4 Foliation + ProperTime, IC5 SpatialReconstruction, IC6 MultiFibrationProjection, IC7 EPSAxioms, IC8 MarzkeWheeler; M5 CZAPATA + SAHMED paper completed.
+- IMILEA on InfraGaugeTheory coordinatization pipeline: ID4 CoordinatizationDimension completed; M1 IG-intern coordination pending.
 - Exponential map at a vertex (shortest-path counts): IG10 pending.
 - Tropical geometry: M9 pending.
 - 3-body problem as Turing machine: M10 pending.
@@ -356,26 +356,26 @@ New tasks P1–P19 (items not yet covered in any existing module or task):
 
 - [ ] **P1** — Delta / simplicial machinery on hypergraphs (face maps, degeneracies, barycentric subdivision, coordinate-squashing for delta-complexes). Core-dump 2025-10-06 / 2025-10-18 / 2025-10-22.
 - [ ] **P2** — Cup product on discrete de Rham + comparison of two form definitions (IA de Rham vs VR-complex route). Core-dump 2025-10-06.
-- [ ] **P3** — Discrete Chern-Simons amplitude: Hodge propagator on graphs, 1-loop amplitude from ribbon graphs, IBL-∞ twist via Maurer-Cartan (overlaps M4 Pullman). Core-dump 2025-10-06, 2025-11-09.
+- [ ] **P3** — Discrete Chern-Simons amplitude: Hodge propagator on graphs, 1-loop amplitude from ribbon graphs, IBL-∞ twist via Maurer-Cartan (overlaps M4 JPULLMAN). Core-dump 2025-10-06, 2025-11-09.
 - [ ] **P4** — Ribbon (hyper)graph structure + Whitehead moves + amplitudohedron-type alternatives (aligned with Kolpakov discussions). Core-dump 2025-10-18, 2025-11-06 + weekly update.
 - [ ] **P5** — Sheaves on hypergraphs; restriction maps; sheaf cohomology; orientation sheaf. Core-dump 2025-10-18.
 - [ ] **P6** — Koszul signs / graded Lie bracket on (hyper)graph rewriting. Core-dump 2025-10-18, 2025-11-12.
 - [ ] **P7** — Homotopy colimit of a rewriting system (simplicial set from hypergraph + simplicial map from rewriting; extend Knill invariants to simplicial sets). Core-dump 2025-10-18.
 - [ ] **P8** — Filtrations of multiway systems (vertical, layered, completion). Core-dump 2025-10-21.
-- [ ] **P9** — Action principle for hypergraph rewriting (action functional on paths; variational). Carlos Zapata thread. Core-dump 2025-12-10, 2026-02-21.
+- [ ] **P9** — Action principle for hypergraph rewriting (action functional on paths; variational). CZAPATA thread. Core-dump 2025-12-10, 2026-02-21.
 - [ ] **P10** — n-Lie / Filippov extension of the insertion bracket (IB4) via signed confluence of n+1 rules. Core-dump 2026-02-22.
 - [ ] **P11** — Interaction diagrams from causal graphs (light rays as degenerate-interval chains; elementary particles as volume-bounded subgraphs). Core-dump 2025-12-20.
 - [ ] **P12** — Chaos theory in hypergraph rewriting (vertical + horizontal chaos). Core-dump 2026-02-02.
-- [ ] **P13** — Utkarsh Bajaj twisted-difference operators + ring-of-functions reconstruction theorem. Core-dump 2026-04-14.
+- [ ] **P13** — UBAJAJ twisted-difference operators + ring-of-functions reconstruction theorem. Core-dump 2026-04-14.
 - [ ] **P14** — Blow-up rules as renormalization-group flow (via IB4 closure under commutator). Core-dump 2025-11-23.
 - [ ] **P15** — Observability tools for hypergraph rewriting (flame graph, waterfall); tooling, not formal Lean theorems. Core-dump 2025-10-06.
 - [ ] **P16** — Knill geodesics approximating Riemannian geodesics (extend Latschev); with Janko. Core-dump 2025-11-09.
 - [ ] **P17** — Homotopy algebra / homological-algebra scaffold (supports future paclets: quantum topology, homological algebra, homotopy algebras). Core-dump 2025-10-06.
 - [ ] **P18** — Holography / Unruh effect discussion track (Rangamani talk, Aaronson group, UT junior researchers); relates to J6 AdS/CFT-analog.
 - [ ] **P19** — Hypergraph as (1-skeleton, clique-complex cochain) decomposition (Kolpakov direction).
-- [ ] **P20** — Rodkey classification: characterise hypergraphs / graphs for which `localDimension v r` is constant across vertices at each fixed `r` (equivalently, `wolframHausdorffDimension` is vertex-uniform). Partner task with Pavel Hájek and Dugan Hammock; attributed to a question of Sam Rodkey. Infrastructure in place: sufficient chain `AdjTransitive → DistTransitive → BallVolumeVertexUniform → LocalDimensionVertexUniform`; necessary condition `BallVolumeVertexUniform ⇒ uniform SimpleGraph degree` (via `geodesicBallVolume v 1 = 1 + degree v`). Positive example: `cycleHypergraph n` for n ≥ 2 (full chain inhabited via rotation). Negative example: `pathHypergraph n` for n ≥ 3 (endpoints degree 1 vs interior degree 2 blocks radius-1 uniformity). Remaining open: d-torus positive example, general classification theorem, and sharper characterisations (e.g., Cayley structure). Per weekly update 2026-04.
+- [ ] **P20** — Rodkey classification: characterise hypergraphs / graphs for which `localDimension v r` is constant across vertices at each fixed `r` (equivalently, `wolframHausdorffDimension` is vertex-uniform). Partner task with PHAJEK and DHAMMOCK; attributed to a question of SRODKEY. Infrastructure in place: sufficient chain `AdjTransitive → DistTransitive → BallVolumeVertexUniform → LocalDimensionVertexUniform`; necessary condition `BallVolumeVertexUniform ⇒ uniform SimpleGraph degree` (via `geodesicBallVolume v 1 = 1 + degree v`). Positive example: `cycleHypergraph n` for n ≥ 2 (full chain inhabited via rotation). Negative example: `pathHypergraph n` for n ≥ 3 (endpoints degree 1 vs interior degree 2 blocks radius-1 uniformity). Remaining open: d-torus positive example, general classification theorem, and sharper characterisations (e.g., Cayley structure). Per weekly update 2026-04.
 
-Items deliberately out of scope here: Austin talk, Aaronson group meeting, Mukund Rangamani holography talk attendance (external activities); Vim distance, minimal square covering, git as hypergraph rewriting (off-topic fun posts); Knutt's paper (reference not held here); Turing 2 DS (done by Pavel in GeneralizedShift).
+Items deliberately out of scope here: Austin talk, Aaronson group meeting, Mukund Rangamani holography talk attendance (external activities); Vim distance, minimal square covering, git as hypergraph rewriting (off-topic fun posts); Knutt's paper (reference not held here); Turing 2 DS (done by PHAJEK in GeneralizedShift).
 
 ## External communication
 

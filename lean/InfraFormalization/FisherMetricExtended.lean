@@ -1,5 +1,5 @@
 /-
-**Fisher information metric — extended theorems** (M2 Van Le bridge).
+**Fisher information metric — extended theorems** (M2 HVLE bridge).
 
 Extends `FisherMetric.lean` with:
 

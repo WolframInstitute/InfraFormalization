@@ -10,7 +10,7 @@ structural fact that drives the empirical refutation of the
 "EFE-satisfying" rule in arXiv:2102.09363: the rule has `|LHS| = |RHS|
 = 4`, so the spatial hypergraph size is a conserved quantity — it
 cannot grow as $r^d$ for any $d > 0$, which is a necessary condition for
-Gorard's §3.3 continuum-Einstein argument to even begin.
+JGORARD's §3.3 continuum-Einstein argument to even begin.
 -/
 
 import InfraFormalization.Application

@@ -16,7 +16,7 @@ available in `RuleSignature.lean`:
 This file closes H3 by exhibiting a concrete catalogued rule whose
 trajectory-state signatures pass specific screens. The witnesses used:
 
-  * Gorard's named rule (`gorardNamedRule` on `P6 = Fin 6`) —
+  * JGORARD's named rule (`gorardNamedRule` on `P6 = Fin 6`) —
     conservative: trajectory-state edge count is invariant, so every
     signature along a conservative trajectory from a 4-edge seed
     passes `sameEdgeCount` against a 4-edge target.
@@ -72,7 +72,7 @@ theorem signature_sameEdgeCount_of_conservative
   show (τ.states.get ⟨i, hi⟩).size = init.size
   exact trajectory_size_invariant τ hstep hcons i hi
 
-/-- **Gorard's named rule passes the 4-edge screen from a 4-edge
+/-- **JGORARD's named rule passes the 4-edge screen from a 4-edge
 seed.** Given a trajectory where every applied rule is
 `gorardNamedRule` (conservative by `gorardNamedRule_isConservative`),
 starting from an initial state with 4 edges, every reachable state

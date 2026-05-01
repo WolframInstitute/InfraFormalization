@@ -6,9 +6,9 @@ W(B_\varepsilon(p), B_\varepsilon(q)) \;=\; \delta \left(1 - \frac{\varepsilon^2
 $$
 where $R$ is the scalar Ricci curvature at $p$.
 
-**Verdict.** Incorrect. The correct statement, due to Ollivier — whom Gorard cites in the immediately preceding paragraph (TeX line 2628 cites `\cite{ollivier}` for the generalization to metric-measure spaces) — has the **directional** Ricci tensor $\mathrm{Ric}(v, v)$ (where $v$ is the unit vector from $p$ to $q$) in place of $R$.
+**Verdict.** Incorrect. The correct statement, due to Ollivier — whom JGORARD cites in the immediately preceding paragraph (TeX line 2628 cites `\cite{ollivier}` for the generalization to metric-measure spaces) — has the **directional** Ricci tensor $\mathrm{Ric}(v, v)$ (where $v$ is the unit vector from $p$ to $q$) in place of $R$.
 
-This is a direct contradiction of the published theorem Gorard imports.
+This is a direct contradiction of the published theorem JGORARD imports.
 
 ## Rail A — Statement of Ollivier's theorem
 
@@ -24,7 +24,7 @@ Here $\mathrm{Ric}(v,v) = R_{ij}v^i v^j$ is a **scalar** but a **directional** o
 
 ## Rail B — Algebraic comparison
 
-| | Ollivier 2009 Thm | Gorard Eq 344 | Same formula? |
+| | Ollivier 2009 Thm | JGORARD Eq 344 | Same formula? |
 |---|---|---|---|
 | Prefactor | $\delta$ | $\delta$ | ✓ |
 | $\varepsilon^2$ correction | $\dfrac{\mathrm{Ric}(v,v)}{2(d+2)}$ | $\dfrac{R}{2(d+2)}$ | ✗ |
@@ -43,9 +43,9 @@ Unit round $S^2$: $d = 2$, $R = 2$, $\mathrm{Ric}(v,v) = 1$ for every unit $v$.
 | | coefficient of $\varepsilon^2$ correction |
 |---|---:|
 | Ollivier's theorem | $1/8 = 0.125$ |
-| Gorard Eq 344 | $2/8 = 0.250$ |
+| JGORARD Eq 344 | $2/8 = 0.250$ |
 
-Gorard's prediction is **twice** the Ollivier value. At $\varepsilon = 0.3$: Ollivier $1 - 0.01125 \cdot \delta$, Gorard $1 - 0.0225 \cdot \delta$. Relative discrepancy $O(\varepsilon^2 \cdot \delta)$ – small in absolute terms but propagates through all downstream arguments.
+JGORARD's prediction is **twice** the Ollivier value. At $\varepsilon = 0.3$: Ollivier $1 - 0.01125 \cdot \delta$, JGORARD $1 - 0.0225 \cdot \delta$. Relative discrepancy $O(\varepsilon^2 \cdot \delta)$ – small in absolute terms but propagates through all downstream arguments.
 
 ## Rail D — Why we do not present a direct numerical verification
 
@@ -57,9 +57,9 @@ The refutation nevertheless stands on Rails A–C above. We propose as Phase 2C 
 
 The error in Eq 344 propagates into every use of the discrete Ollivier–Ricci curvature in 2102.09363 §5 that is motivated by "generalizing" this Riemannian identity. If the Riemannian identity is wrong, the discrete generalization inherits the mis-calibration: curvatures extracted from hypergraph ball-growth rates are being calibrated against the wrong continuum formula.
 
-This is the **same error pattern** as in arXiv:2004.14810 Def 31 (see `notes/2004.14810_close_reading.md`, claim A3), where Gorard writes "the Ollivier-Ricci scalar curvature $\kappa(p,q)$ reduces to the standard Riemannian Ricci scalar curvature $R(p,q)$" — "$R(p,q)$" is not a standard object; Ollivier's theorem gives $\mathrm{Ric}(v,v)$ for $v$ the direction $p \to q$.
+This is the **same error pattern** as in arXiv:2004.14810 Def 31 (see `notes/2004.14810_close_reading.md`, claim A3), where JGORARD writes "the Ollivier-Ricci scalar curvature $\kappa(p,q)$ reduces to the standard Riemannian Ricci scalar curvature $R(p,q)$" — "$R(p,q)$" is not a standard object; Ollivier's theorem gives $\mathrm{Ric}(v,v)$ for $v$ the direction $p \to q$.
 
-The pattern: **Gorard consistently conflates the directional Ricci tensor $\mathrm{Ric}(v,v)$ with the scalar curvature $R$**, both in 2004.14810 and in 2102.09363. On constant-curvature manifolds these are proportional but not equal; on general Riemannian manifolds they are independent quantities.
+The pattern: **JGORARD consistently conflates the directional Ricci tensor $\mathrm{Ric}(v,v)$ with the scalar curvature $R$**, both in 2004.14810 and in 2102.09363. On constant-curvature manifolds these are proportional but not equal; on general Riemannian manifolds they are independent quantities.
 
 ## Reproducing
 

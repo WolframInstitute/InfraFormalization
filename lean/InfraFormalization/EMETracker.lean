@@ -1,7 +1,7 @@
 /-
-**EME (Emergent Multiway Event) tracker** (IQ8 extension, M7 Ahmed).
+**EME (Emergent Multiway Event) tracker** (IQ8 extension, M7 SAHMED).
 
-Sara Ahmed's programme asks for a formal "EME lifetime" — the
+SAHMED's programme asks for a formal "EME lifetime" — the
 persistence of distinguishable branchial-state features across
 multiway-rewriting steps. This file provides concrete infrastructure
 grounded in `Hypergraph V` and `Trajectory` directly.

@@ -1,6 +1,6 @@
 # Glossary
 
-Definitions used throughout this project. Organized by topic. Terms Gorard uses in his corpus are marked with ★; our additions are unmarked.
+Definitions used throughout this project. Organized by topic. Terms JGORARD uses in his corpus are marked with ★; our additions are unmarked.
 
 ## Hypergraph rewriting
 
@@ -30,7 +30,7 @@ Definitions used throughout this project. Organized by topic. Terms Gorard uses 
 
 ★ **Confluence (Church–Rosser).** Standard ARS property: divergent rewrites reconverge. Necessary condition for causal invariance.
 
-★ **Asymptotic dimensionality preservation.** Gorard's condition (G1 §3.3): the "dimension anomaly" of the causal graph $\to 0$ as the graph grows. Defined by Gorard as $\delta S[g^{ab}] / \delta g^{ab} \to 0$. Our audit classifies this as tautological (S3) because the definition is the Euler-Lagrange equation of the claimed action.
+★ **Asymptotic dimensionality preservation.** JGORARD's condition (G1 §3.3): the "dimension anomaly" of the causal graph $\to 0$ as the graph grows. Defined by JGORARD as $\delta S[g^{ab}] / \delta g^{ab} \to 0$. Our audit classifies this as tautological (S3) because the definition is the Euler-Lagrange equation of the claimed action.
 
 ## Continuum geometry
 
@@ -64,7 +64,7 @@ Definitions used throughout this project. Organized by topic. Terms Gorard uses 
 
 **Ollivier–Ricci curvature** $\kappa(x,y) = 1 - W_1(m_x, m_y) / d(x,y)$ for a random walk $m$ on a metric space $(X, d)$. For a Riemannian manifold with uniform-ball random walk, Ollivier (JFA 2009, Example 7) proved $\kappa = \varepsilon^2 \mathrm{Ric}(v,v) / (2(d+2)) + O(\varepsilon^3)$ where $v$ = unit vector from $x$ to $y$.
 
-**Directional vs scalar Ollivier.** Ollivier's Riemannian identity yields $\kappa$ ∝ directional Ricci $\mathrm{Ric}(v,v)$. Gorard consistently writes scalar $R$ where $\mathrm{Ric}(v,v)$ should appear — S1.
+**Directional vs scalar Ollivier.** Ollivier's Riemannian identity yields $\kappa$ ∝ directional Ricci $\mathrm{Ric}(v,v)$. JGORARD consistently writes scalar $R$ where $\mathrm{Ric}(v,v)$ should appear — S1.
 
 **Benincasa–Dowker action.** A discrete counting functional $S_{BD}(C)$ on a causal set $C$, whose expectation under Poisson sampling in a continuum spacetime converges to (conjecturally) the Einstein–Hilbert action.
 
@@ -78,7 +78,7 @@ Definitions used throughout this project. Organized by topic. Terms Gorard uses 
 
 **Poisson sampling / sprinkling.** Drawing a countable point set in a measure space whose number-of-points-in-$V$ distribution is Poisson$(\rho \mathrm{Vol}(V))$. Standard in causal-set theory. In G3 §5 this is what replaces "Wolfram-model dynamics" by fiat.
 
-**Continuum limit.** Informal phrase used throughout Gorard's corpus. Never formally defined. Could mean GH, spectral, measure-space, Γ-convergence, or several other things; the papers do not commit.
+**Continuum limit.** Informal phrase used throughout JGORARD's corpus. Never formally defined. Could mean GH, spectral, measure-space, Γ-convergence, or several other things; the papers do not commit.
 
 ## Research program
 
@@ -92,13 +92,13 @@ Definitions used throughout this project. Organized by topic. Terms Gorard uses 
 
 **Rail (verification).** One of four independent ways we verify a claim: (A) literature re-derivation, (B) symbolic check, (C) numerical check, (D) manual hand-check. A claim must pass ≥ 3 to be published as verified.
 
-**Corpus (G1–G4).** The four Gorard papers under audit: 2004.14810 (G1), 2011.12174 (G2), 2102.09363 (G3), 2303.07282 (G4).
+**Corpus (G1–G4).** The four JGORARD papers under audit: 2004.14810 (G1), 2011.12174 (G2), 2102.09363 (G3), 2303.07282 (G4).
 
 **Severity class (S1–S6).** Defined in [`notes/severity_taxonomy.md`](notes/severity_taxonomy.md). S1 = false statement; S2 = ill-defined; S3 = tautology; S4 = unsupported bridge; S5 = refuted specific; S6 = claim not delivered in the body.
 
 **Verdict status.** ✓ verified, ✗ refuted, ⚠ ill-defined, ⊘ tautology, ○ open.
 
-**Conservative rule.** $|LHS| = |RHS|$ — Wolfram-model-specific term (not Gorard's; ours). Central to the structural refutation of S5.
+**Conservative rule.** $|LHS| = |RHS|$ — Wolfram-model-specific term (not JGORARD's; ours). Central to the structural refutation of S5.
 
 **Directional Ricci conflation.** Our label for the S1 error pattern — treating $\mathrm{Ric}(v,v)$ as if it were the scalar $R$.
 

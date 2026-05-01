@@ -1,7 +1,7 @@
-# InfraFormalization — Gorard-corpus pointers for Pavel
+# InfraFormalization — JGORARD-corpus pointers for PHAJEK
 
-Standalone reading guide answering Pavel's three questions about the
-Gorard papers (arxiv:2004.14810, 2102.09363, 2303.07282, 2011.12174 —
+Standalone reading guide answering PHAJEK's three questions about the
+JGORARD papers (arxiv:2004.14810, 2102.09363, 2303.07282, 2011.12174 —
 G1, G2, G3, G4):
 
 1. Are there false claims?
@@ -30,8 +30,8 @@ Lean refutation `circular_procedure_is_identity` makes this precise.
 This is not a minor error; it is the load-bearing argument of the
 paper, and it is vacuous.
 
-**(2) Genuinely novel claims in Gorard's corpus — essentially none of
-the substantive technical content is novel-to-Gorard.** Cataloguing
+**(2) Genuinely novel claims in JGORARD's corpus — essentially none of
+the substantive technical content is novel-to-JGORARD.** Cataloguing
 what's there:
 
 - *The hypergraph-rewriting substrate itself* is not his — it is the
@@ -53,7 +53,7 @@ what's there:
   from the *target manifold*, then the procedure runs `manifold →
   sprinkled-points → bin → reconstruct manifold`. This is `F6Circularity.lean`.
   The novelty being claimed is therefore not actually present.
-- *Where Gorard *deviates* from cited literature, he is wrong:* G3
+- *Where JGORARD *deviates* from cited literature, he is wrong:* G3
   Eq 344 uses scalar `R` where Ollivier's cited JFA 2009 theorem has
   directional `Ric(v,v)` (off by factor 2 on S²); G3 Eq 342 has the
   wrong tube-volume coefficient (off by factor 2 on S², factor 6 on
@@ -75,11 +75,11 @@ tautological, or (d) circular. The *attempt* at an end-to-end
 derivation is novel as an attempt but failed; the *named-rule
 simulation* is novel as a choice but produces 1D spacetime so does
 not demonstrate the claimed agreement. **There is no point in the
-corpus where Gorard establishes a non-trivial novel claim about
+corpus where JGORARD establishes a non-trivial novel claim about
 emergence of GR (or QM) from hypergraph rewriting that survives
 audit.**
 
-**(3) Beyond summary + named-rule simulation — Gorard's corpus
+**(3) Beyond summary + named-rule simulation — JGORARD's corpus
 contains *claims* of more, but no substantive content of more.**
 Cataloguing what is actually in the papers, the only material beyond
 (a) summary of discrete-GR / Wolfram-physics literature and (b)
@@ -94,7 +94,7 @@ the hand-picked named-rule simulation is:
   an undefined object, and the procedure is structurally circular —
   the continuum metric is Poisson-sprinkled from the target manifold
   before the "derivation" begins (F6 `circular_procedure_is_identity`).
-  Pavel's GR postdoc can verify this herself by reading G3 §5 alongside
+  PHAJEK's GR postdoc can verify this herself by reading G3 §5 alongside
   `Refutations/F6Circularity.lean`.
 - *G4 — claimed "discrete singularity theorems".* Title states a
   theorem; body does not prove the stated theorem. Documentary flaw
@@ -104,7 +104,7 @@ the hand-picked named-rule simulation is:
   presented as substantive bridges from rule-properties to physical
   symmetries. Both tautological as stated (F3, F4).
 
-**On the simulation:** Gorard's papers contain pictures of the
+**On the simulation:** JGORARD's papers contain pictures of the
 named-rule trajectory's causal graph and multiway evolution, plus
 assertions that they "look like" or "approximate" Lorentzian /
 Riemannian manifolds. **What he does *not* do** in the corpus:
@@ -137,7 +137,7 @@ corpus. Formal version: `RuleDimensionBounds.trajectory_size_invariant`.
 Empirical version: `wolframscript`-driven causal-dim measurements via
 the `efficient_rewriting_final` engine. Both reproducible offline.
 
-**Direct answer to Pavel's question:** Gorard does not do anything of
+**Direct answer to PHAJEK's question:** JGORARD does not do anything of
 substance beyond summary + the failed named-rule simulation; the
 animation does not match continuum GR in any meaningful way (no
 quantitative comparison is presented in the corpus, and the
@@ -164,13 +164,13 @@ a reader can check each statement with `lake build` and
 | **`FINDINGS.md`** | One-line-per-claim audit table. Severity classes S1 (false statements contradicting cited sources) → S6 (open conjectures). Cross-referenced to verdict files. |
 | **`results/phase2_continuum/eq342_verdict.md`** | Tube-volume coefficient (G2 Eq 126 / G3 Eq 342). Off by factor 2 on S², factor 6 on S³. Four-rail refutation. |
 | **`results/phase2_continuum/eq344_verdict.md`** | Wasserstein-Ollivier identity (G3 Eq 344) — uses scalar `R` where Ollivier's cited JFA 2009 theorem has directional `Ric(v,v)`. Refuted against the cited source. |
-| **`PUBLISHABLE.md` §P1** | "Audit and formal refutation of the Gorard corpus" — paper target, audience, sufficient-condition list. Most P1 ingredients are in. |
+| **`PUBLISHABLE.md` §P1** | "Audit and formal refutation of the JGORARD corpus" — paper target, audience, sufficient-condition list. Most P1 ingredients are in. |
 
 ### B. Lean refutations (sorry-free, axiom-clean)
 
 | File | What it proves |
 |---|---|
-| **`lean/InfraFormalization/Refutations/F1NoMetric.lean`** | The "discrete metric tensor `g^{ab}`" Gorard varies in §3.3 has no constructed components anywhere in the corpus. |
+| **`lean/InfraFormalization/Refutations/F1NoMetric.lean`** | The "discrete metric tensor `g^{ab}`" JGORARD varies in §3.3 has no constructed components anywhere in the corpus. |
 | **`F2Orthonormality.lean`** | "All non-parallel hyperedges are orthonormal" requires a bilinear form that is never defined. |
 | **`F3Tautology.lean`** | "Asymptotic dimensionality preservation ⇒ general covariance" is tautological. |
 | **`F4Tautology.lean`** | "Causal invariance ⇒ general covariance" is tautological. |
@@ -195,7 +195,7 @@ a reader can check each statement with `lake build` and
 ## Pointer list — positive arm (what we ARE building)
 
 The project is not just an audit. The positive arm builds the
-infrastructure Gorard *should* have produced before claiming the
+infrastructure JGORARD *should* have produced before claiming the
 result, and it is structured so that the eventual "we got to GR"
 claim is *machine-verifiable* rather than asserted.
 
@@ -208,7 +208,7 @@ claim is *machine-verifiable* rather than asserted.
 | **`COVERAGE_MAP.md`** | Single source of truth for coverage. Per-file content + per-task status. |
 | **`MILESTONES.md`** | Per-phase checkboxes. Recent landings list. |
 | **`INDEX.md`** | Document navigation + per-Lean-file one-line content summary (~150 files). |
-| **`INFRAGEOMETRY.md`** | The conceptual home: Tarski reduction / cellular sheaves / units-emergence / 25-step constructive route to differential geometry / cross-reference to Murzin's "Geometry on Combinatorial Objects" paper (which formalises the same synthesis from a different angle). |
+| **`INFRAGEOMETRY.md`** | The conceptual home: Tarski reduction / cellular sheaves / units-emergence / 25-step constructive route to differential geometry / cross-reference to NMURZIN's "Geometry on Combinatorial Objects" paper (which formalises the same synthesis from a different angle). |
 | **`GROUNDING_AUDIT.md`** | Per-Lean-object: ✅ grounded on `Hypergraph V` / ⚠ partially grounded / ❌ continuum-island. Audit log. |
 | **`GLOSSARY.md`** | Symbol/notation guide. |
 | **`LEAN_PHYSICS.md`** | How we align with the Mathlib physics + HepLean ecosystem. |
@@ -229,7 +229,7 @@ convergence proof on its trajectory.
 | **`subdivisionDiscrepancy_satisfies_obligation`** in `WassersteinRate.lean` | `subdivisionDiscrepancy n := 1/2^n` discharges `WassersteinRateObligation` with explicit `O(2^{-n})` decay. **First end-to-end machine-checked rule-trajectory → continuum-target convergence certificate.** |
 | **`minkowski4_from_hypergraph_strong`** in `HypergraphMetricBridges.lean` | Concrete discharge of the Minkowski origin obligation via the subdivision-rule trajectory. |
 
-Concretely: when Pavel asks "what does it mean to *prove* something
+Concretely: when PHAJEK asks "what does it mean to *prove* something
 here": we have a rule (the edge-subdivision rule), evolved in Lean
 (via `singleWayStep` against the bridged abstract `Step`/`MultiStep`),
 with a measure-theoretic convergence proof on its trajectory
@@ -243,7 +243,7 @@ chain reduces to `propext / Classical.choice / Quot.sound` only.
 
 ## "How can we know we got to GR" — formalised completion criterion
 
-This addresses Pavel's deeper question of how Lean can *tell us* when
+This addresses PHAJEK's deeper question of how Lean can *tell us* when
 we have actually succeeded.
 
 | File | What it gives |
@@ -255,7 +255,7 @@ we have actually succeeded.
 So when the milestone Lean theorem compiles AND the axiom check
 passes, **we have actually got there in the formal-proof sense**. Not
 "we believe", but "the proof object exists and is sound, anyone can
-verify it offline". That is the structural contrast with Gorard's
+verify it offline". That is the structural contrast with JGORARD's
 animations.
 
 ---

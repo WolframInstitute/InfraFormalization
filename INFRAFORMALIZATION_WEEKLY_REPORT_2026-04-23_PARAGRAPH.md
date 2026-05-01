@@ -1,6 +1,6 @@
 # Weekly report — 2026-04-23 (paragraph)
 
-Set up the `infra_formalization` Lean 4 / Mathlib project: a machine-checked formalisation of the Wolfram-model → GR / QM bridge programme, coupled with an audit of Gorard's four principal derivation papers (arXiv 2004.14810, 2011.12174, 2102.09363, 2303.07282). The Lean library now holds 679 theorems + 17 lemmas across 140 files (~20k LOC); every theorem reduces to Lean's three standard axioms (`propext`, `Classical.choice`, `Quot.sound`), certified by 497 `#print axioms` lines. On the positive side, the 10-rung bridge ladder from hypergraph rewriting to Einstein's equations is proved through:
+Set up the `infra_formalization` Lean 4 / Mathlib project: a machine-checked formalisation of the Wolfram-model → GR / QM bridge programme, coupled with an audit of JGORARD's four principal derivation papers (arXiv 2004.14810, 2011.12174, 2102.09363, 2303.07282). The Lean library now holds 679 theorems + 17 lemmas across 140 files (~20k LOC); every theorem reduces to Lean's three standard axioms (`propext`, `Classical.choice`, `Quot.sound`), certified by 497 `#print axioms` lines. On the positive side, the 10-rung bridge ladder from hypergraph rewriting to Einstein's equations is proved through:
 
 - Rung 1 — discrete calculus / hypergraph Laplacian `Δ_H` / matrix form / heat kernel `exp(t·Δ)`
 - Rung 2 — operator convergence: C² Taylor, cycle spectrum → circle spectrum
@@ -11,14 +11,14 @@ Set up the `infra_formalization` Lean 4 / Mathlib project: a machine-checked for
 
 and all flat continuum-limit bridges (cycle → circle, path → interval, 2-torus, d-torus, discrete Lorentz → Minkowski); on the quantum side, the branchial QM bridge is closed through finite branchial slice → ℂ-Hilbert space → ℂ-linear self-adjoint adjacency operator → unitary Schrödinger evolution → Born rule → Hermitian observables → real expectation values. The infrageometry research programme has 52 of 57 tasks closed with real content, including:
 
-- Pavel Hájek direction — full Vietoris-Rips + Hodge-Laplacian + persistence-barcode chain (IT1–IT4) with Latschev and scale-trichotomy endpoints proved for cycles (IT5, IT6), the infraanalysis layer (IA1–IA5: DagBlowup / DagCalculus / discrete de Rham / form-cochain integration), Wolfram-Hausdorff dimension on hypergraphs with plateau detection (ID1, ID2), and homology / causal / coordinatization dimensions (ID3, ID4, ID5)
+- PHAJEK direction — full Vietoris-Rips + Hodge-Laplacian + persistence-barcode chain (IT1–IT4) with Latschev and scale-trichotomy endpoints proved for cycles (IT5, IT6), the infraanalysis layer (IA1–IA5: DagBlowup / DagCalculus / discrete de Rham / form-cochain integration), Wolfram-Hausdorff dimension on hypergraphs with plateau detection (ID1, ID2), and homology / causal / coordinatization dimensions (ID3, ID4, ID5)
 - InfraGaugeTheory — full FiberedGraph → Section → Connection → ParallelTransport → HolonomyMatrix → WilsonLoop → FlatConnection → FiberBundle → GraphTangentBundle → MultiFibrationProjection stack (IG1–IG9, IG11) with `FiberedGraphConnectionBridge` attaching the obligation Prop that a combinatorial Levi-Civita could fulfil
-- Kolcz blowup / Poisson side — ElementaryBlowup + BlowupOperations + BlowupLieAlgebra + Insertion Lie algebra + formal Poisson bracket + radial/laminar blowup (IB1, IB3–IB6)
-- Van Le Fisher side — Fisher metric on branchial graphs + extended linearity / PSD lemmas and the Fisher → Fubini-Study bridge with the proved Cauchy-Schwarz / Bhattacharyya bound (IQ5, M2, IQ6)
+- HKOLCZ blowup / Poisson side — ElementaryBlowup + BlowupOperations + BlowupLieAlgebra + Insertion Lie algebra + formal Poisson bracket + radial/laminar blowup (IB1, IB3–IB6)
+- HVLE Fisher side — Fisher metric on branchial graphs + extended linearity / PSD lemmas and the Fisher → Fubini-Study bridge with the proved Cauchy-Schwarz / Bhattacharyya bound (IQ5, M2, IQ6)
 - EME-persistence and path-integral baselines on causal graphs (IQ8, IQ9)
-- Carlos Zapata + Sara Ahmed axiomatic-relativity scaffold — transitively-reduced causal graph, ObserverChain, LightRay, IsFoliation + ProperTime, SpatiallyReconstructedHypergraph, Ehlers-Pirani-Schild axioms, Marzke-Wheeler clock (IC1–IC8; M5 paper task completed)
+- CZAPATA + SAHMED axiomatic-relativity scaffold — transitively-reduced causal graph, ObserverChain, LightRay, IsFoliation + ProperTime, SpatiallyReconstructedHypergraph, Ehlers-Pirani-Schild axioms, Marzke-Wheeler clock (IC1–IC8; M5 paper task completed)
 
-and every continuum GR target now carries a hypergraph-side origin-obligation Prop with inhabited flat-case witnesses, giving a complete rule → metric → connection → EFE chain in the Minkowski flat-vacuum case. On the critique side, Gorard's seven load-bearing flaws are Lean-formalised with an empirical cross-check (SetReplace + independent Python re-implementation):
+and every continuum GR target now carries a hypergraph-side origin-obligation Prop with inhabited flat-case witnesses, giving a complete rule → metric → connection → EFE chain in the Minkowski flat-vacuum case. On the critique side, JGORARD's seven load-bearing flaws are Lean-formalised with an empirical cross-check (SetReplace + independent Python re-implementation):
 
 - F1 — unconstructed discrete metric
 - F2 — fiat orthonormality

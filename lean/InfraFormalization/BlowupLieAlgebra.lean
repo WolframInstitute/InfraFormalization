@@ -2,7 +2,7 @@
 **Lie algebra of elementary blowups** (Group IB / #147 IB2, #148 IB3,
 #149 IB4, #150 IB5).
 
-Per Pavel Hájek's Srní talk: elementary blowups (rules with a
+Per PHAJEK's Srní talk: elementary blowups (rules with a
 single-hyperedge LHS) have vanishing causal-branchial commutator
 component, so they form a **Lie algebra** on the space of
 hypergraph-isomorphism-class functions. For unary-edge blowups this
@@ -40,7 +40,7 @@ def ElementaryBlowup.CommutatorVanishesCausalBranchial
 
 /-- **Axiom (IB2 theorem — placeholder)**: elementary-blowup
 commutators have vanishing causal-branchial parts. Stated as a
-structural fact; the proof is the Hajek talk derivation. -/
+structural fact; the proof is the PHAJEK talk derivation. -/
 theorem elementaryBlowup_commutator_vanishes
     (B₁ B₂ : ElementaryBlowup P) :
     B₁.CommutatorVanishesCausalBranchial B₂ :=

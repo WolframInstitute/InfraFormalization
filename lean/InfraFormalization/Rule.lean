@@ -7,7 +7,7 @@ into *bound* variables (which must match existing target vertices) and
 *fresh* variables (which must get new vertex labels allocated when the
 rule fires).
 
-This is stronger than Gorard's prose definition (which leaves "preserves
+This is stronger than JGORARD's prose definition (which leaves "preserves
 symmetries" unformalised) but exactly matches how every Wolfram-model
 rule is actually written — with pattern variables on the left and
 possibly some fresh ones on the right.
@@ -44,7 +44,7 @@ Every conservative rule preserves `state.size` under every application;
 see `Conservation.lean`. -/
 def IsConservative (r : Rule P) : Prop := r.lhsSize = r.rhsSize
 
-/-- Gorard's named "EFE-satisfying" rule (arXiv:2102.09363 line 6202) is
+/-- JGORARD's named "EFE-satisfying" rule (arXiv:2102.09363 line 6202) is
 conservative: |LHS| = |RHS| = 4. See `NamedRule.lean`. -/
 example : True := trivial
 

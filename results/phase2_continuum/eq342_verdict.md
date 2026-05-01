@@ -43,7 +43,7 @@ $$
 
 ### Rail B. Symbolic verification in Mathematica
 
-Series expansion of the exact closed-form tube volume on $S^2$ and $S^3$ (around great circles, length $L=2\pi$) reproduces the Rail-A coefficient and disagrees with Gorard's:
+Series expansion of the exact closed-form tube volume on $S^2$ and $S^3$ (around great circles, length $L=2\pi$) reproduces the Rail-A coefficient and disagrees with JGORARD's:
 
 | Manifold | Closed-form volume | $\varepsilon^2$ coeff (series) |
 |---|---|---|
@@ -58,7 +58,7 @@ Relative error in the tube-volume prediction versus the exact value:
 
 **$S^2$:**
 
-| $\varepsilon$ | exact ratio | Rail-A prediction | Gorard Eq 342 | \|err\|/exact (Gorard) |
+| $\varepsilon$ | exact ratio | Rail-A prediction | JGORARD Eq 342 | \|err\|/exact (JGORARD) |
 |---:|---:|---:|---:|---:|
 | 0.05 | 0.99958 | 0.99958 | 0.99917 | 4.2e-4 |
 | 0.10 | 0.99833 | 0.99833 | 0.99667 | 1.7e-3 |
@@ -66,11 +66,11 @@ Relative error in the tube-volume prediction versus the exact value:
 | 0.20 | 0.99335 | 0.99333 | 0.98667 | 6.7e-3 |
 | 0.30 | 0.98507 | 0.98500 | 0.97000 | 1.5e-2 |
 
-Rail-A prediction matches the exact value to O($\varepsilon^4$); Gorard's error grows as $\varepsilon^2$, consistent with the coefficient being off by a factor of 2.
+Rail-A prediction matches the exact value to O($\varepsilon^4$); JGORARD's error grows as $\varepsilon^2$, consistent with the coefficient being off by a factor of 2.
 
 **$S^3$:**
 
-| $\varepsilon$ | exact ratio | Rail-A prediction | Gorard Eq 342 | \|err\|/exact (Gorard) |
+| $\varepsilon$ | exact ratio | Rail-A prediction | JGORARD Eq 342 | \|err\|/exact (JGORARD) |
 |---:|---:|---:|---:|---:|
 | 0.05 | 0.99917 | 0.99917 | 0.99500 | 4.2e-3 |
 | 0.10 | 0.99667 | 0.99667 | 0.98000 | 1.7e-2 |
@@ -78,7 +78,7 @@ Rail-A prediction matches the exact value to O($\varepsilon^4$); Gorard's error 
 | 0.20 | 0.98674 | 0.98667 | 0.92000 | 6.8e-2 |
 | 0.30 | 0.97036 | 0.97000 | 0.82000 | 1.5e-1 |
 
-At $\varepsilon = 0.3$, Gorard's Eq 342 gives a 15 % relative error on $S^3$. For comparison, the correct Rail-A formula gives a $4 \times 10^{-4}$ relative error (the residual $\varepsilon^4$ term, exactly as predicted).
+At $\varepsilon = 0.3$, JGORARD's Eq 342 gives a 15 % relative error on $S^3$. For comparison, the correct Rail-A formula gives a $4 \times 10^{-4}$ relative error (the residual $\varepsilon^4$ term, exactly as predicted).
 
 ### Rail D. Hand-computation on $S^2$
 
@@ -97,15 +97,15 @@ Ratio to flat $(2\varepsilon)\cdot(2\pi) = 4\pi\varepsilon$: $\sin\varepsilon/\v
 | C — Numerical at several $\varepsilon$ | agrees with A to $O(\varepsilon^4)$ | ✓ |
 | D — Hand computation on $S^2$ | 1/6 | ✓ |
 
-**All four rails agree** on the correct value. Gorard's Eq 342 disagrees on both test manifolds:
+**All four rails agree** on the correct value. JGORARD's Eq 342 disagrees on both test manifolds:
 
 | | $S^2$ | $S^3$ |
 |---|---|---|
 | Correct $\varepsilon^2$ coefficient | 1/6 | 1/3 |
-| Gorard Eq 342 coefficient | 1/3 | 2 |
-| Ratio Gorard/correct | 2 | 6 |
+| JGORARD Eq 342 coefficient | 1/3 | 2 |
+| Ratio JGORARD/correct | 2 | 6 |
 
-The ratio Gorard/correct is not constant across $d$, so Eq 342 is not "off by an overall factor" — its algebraic structure is wrong: $(R - \mathrm{Ric}(u,u))\cdot(d-1)/(d+1)$ vs the correct $(R + \mathrm{Ric}(u,u))/(6(d+1))$.
+The ratio JGORARD/correct is not constant across $d$, so Eq 342 is not "off by an overall factor" — its algebraic structure is wrong: $(R - \mathrm{Ric}(u,u))\cdot(d-1)/(d+1)$ vs the correct $(R + \mathrm{Ric}(u,u))/(6(d+1))$.
 
 ## Propagation / downstream impact
 

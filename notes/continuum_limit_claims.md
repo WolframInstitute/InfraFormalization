@@ -1,12 +1,12 @@
-# Gorard's continuum-limit claims — exhaustive catalog
+# JGORARD's continuum-limit claims — exhaustive catalog
 
-Every claim in the Gorard corpus that asserts *convergence to, emergence of, or
+Every claim in the JGORARD corpus that asserts *convergence to, emergence of, or
 equivalence to a continuum geometric/physical object*. Organised by paper and by
 type. For each: verbatim quote (TeX line reference), claimed continuum object,
 proof status in the paper, and our audit status.
 
 Status key:
-- ✅ genuine standard fact (correctly cited; not a Gorard contribution).
+- ✅ genuine standard fact (correctly cited; not a JGORARD contribution).
 - ✗ mathematically wrong.
 - ⊘ tautology (rewrites a definition as a limit claim).
 - ⚠ ill-defined (limit invoked without specifying topology / convergence sense / target object components).
@@ -27,7 +27,7 @@ Status key:
 $$\mathrm{Vol}(B_\varepsilon(p))/\mathrm{Vol}(B_\varepsilon(0) \subset \mathbb{R}^n) = 1 - R\varepsilon^2/(6(n+2)) + O(\varepsilon^4)$$
 as $\varepsilon \to 0$.
 **Continuum object.** Riemannian scalar curvature.
-**Our status.** ✅ Standard (Gray 1973). Not a Gorard contribution; quoted correctly from the literature.
+**Our status.** ✅ Standard (Gray 1973). Not a JGORARD contribution; quoted correctly from the literature.
 
 **Claim (Eq 48 / line 604).** Parallel-transport W distance between two $\varepsilon$-balls
 $$W(B_\varepsilon(p), B_\varepsilon(q)) = \delta(1 - \varepsilon^2 R/(2(n+2)) + O(\varepsilon^3 + \varepsilon^2 \delta))$$
@@ -49,7 +49,7 @@ as $\varepsilon, \delta \to 0$, where $\delta = d(p, q)$.
 $$d\mu_g = [1 - R_{jk} x^j x^k / 6 + O(\|x\|^3)] d\mu_{\text{Euclidean}}$$
 in geodesic normal coordinates.
 **Continuum object.** Ricci tensor.
-**Our status.** ✅ Standard (Taylor expansion of $\sqrt{\det g}$). Not a Gorard contribution.
+**Our status.** ✅ Standard (Taylor expansion of $\sqrt{\det g}$). Not a JGORARD contribution.
 
 **Claim (Eq 84 / line 871).** Discrete cone-growth
 $$C(t) = a t^n [1 - R_{jk} t^j t^k / 6 + O(\|t\|^3)]$$
@@ -119,13 +119,13 @@ Reprises the G1 continuum-limit machinery and adds causal-set-theory material (S
 $$\mathbb{E}[B_\rho^{(d)} \phi] \to \Box \phi - \tfrac{1}{2} R \phi$$
 as $\rho \to \infty$, in Riemann normal coordinates.
 **Continuum object.** Box operator + Ricci scalar.
-**Our status.** ✅ Genuine result (Benincasa–Dowker 2010), correctly imported. Not a Gorard contribution.
+**Our status.** ✅ Genuine result (Benincasa–Dowker 2010), correctly imported. Not a JGORARD contribution.
 
 **Claim.** $\phi \equiv 1$ specialisation yields
 $$\mathbb{E}[S_{\mathrm{BD}}(C)] \to -\tfrac{1}{2} \int \sqrt{-g} R \, d^d x$$
 as $\rho \to \infty$ with additional assumptions (zero surface terms, non-local cutoff).
 **Continuum object.** Einstein–Hilbert action (up to constant).
-**Our status.** ○🧨 **The Sorkin–Benincasa–Dowker conjecture in causal-set theory.** Cited as numerically demonstrated (Cunningham 2018). *Open* analytically. This is the best-supported continuum-limit claim in the entire corpus, but it is not Gorard's — it's causal-set theory, still open there.
+**Our status.** ○🧨 **The Sorkin–Benincasa–Dowker conjecture in causal-set theory.** Cited as numerically demonstrated (Cunningham 2018). *Open* analytically. This is the best-supported continuum-limit claim in the entire corpus, but it is not JGORARD's — it's causal-set theory, still open there.
 
 **Claim.** Wolfram-model causal graphs, under a weak ergodicity assumption, can be interpreted as Poisson-sampled causal sets of some continuum spacetime.
 **Continuum object.** Causal set embedding.

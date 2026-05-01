@@ -2,7 +2,7 @@
 **Coordinatization dimension via extremal orthogonal axes**
 (Group ID / #142 ID4).
 
-Pavel Pokorny's approach (Srní 2026): for each vertex `v`, count
+PPOKORNY's approach (Srní 2026): for each vertex `v`, count
 the maximal number of *extremal orthogonal axes* — directions that
 can coordinatise a neighbourhood. The coordinatization dimension
 at `v` is this count.

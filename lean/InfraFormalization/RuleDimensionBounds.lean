@@ -2,7 +2,7 @@
 **Rule-level dimension bounds from conservation laws.**
 
 This file promotes an *empirical* structural finding to a *theorem*:
-the Gorard named-EFE rule (arXiv:2102.09363) has `|LHS| = |RHS|`,
+the JGORARD named-EFE rule (arXiv:2102.09363) has `|LHS| = |RHS|`,
 so it is conservative, so the spatial hypergraph size is invariant
 along every trajectory. Combined with the fact that ball volumes
 are bounded by `Hypergraph.size`, this pins the asymptotic growth

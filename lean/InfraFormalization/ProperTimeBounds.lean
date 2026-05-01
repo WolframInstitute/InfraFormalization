@@ -1,7 +1,7 @@
 /-
 **Proper time theorems on causal graph** (IC4 extension).
 
-Pavel Hajek / Zapata-Ahmed: proper time is the longest causal chain
+PHAJEK / CZAPATA-SAHMED: proper time is the longest causal chain
 between two events. This file extends `CausalFoliation.properTime` with:
 
   * `ChainOfLength 0 u v ↔ u = v`

@@ -2,7 +2,7 @@
 
 ## The rule under test
 
-Gorard (arXiv:2102.09363, line 6202) names
+JGORARD (arXiv:2102.09363, line 6202) names
 $$
 \{\{x,y\},\{y,z\},\{z,w\},\{w,v\}\}\;\to\;\{\{y,u\},\{u,v\},\{w,x\},\{x,u\}\}
 $$
@@ -33,7 +33,7 @@ Since `|LHS| = |RHS| = 4`, each firing destroys 4 edges and creates 4 edges. Tot
 | 20-cycle | 1000 | **20** | 1000 | 3980 |
 | figure-8 | 1000 | **14** | 1000 | 3986 |
 
-The spatial hypergraph size is *constant over thousands of updates*. This is incompatible with Gorard's §3.1 / §3.3 of arXiv:2004.14810, where the argument that $N(r) = a r^n(1 - R r^2 / 6(n+2) + ...)$ requires the spatial hypergraph to grow as $r^n$.
+The spatial hypergraph size is *constant over thousands of updates*. This is incompatible with JGORARD's §3.1 / §3.3 of arXiv:2004.14810, where the argument that $N(r) = a r^n(1 - R r^2 / 6(n+2) + ...)$ requires the spatial hypergraph to grow as $r^n$.
 
 ### (3) Causal-graph cone growth is linear: $C(r) \approx 2r+1$
 
@@ -57,18 +57,18 @@ For the 10-path: $C(r) = 2, 4, 6, 9, 12, 15, 18, \ldots$, coefficient $\approx 3
 
 All are affine in $r$, i.e. the causal graph is a quasi-line with small tangential width.
 
-## What this means for Gorard's claim
+## What this means for JGORARD's claim
 
-Gorard's §3.3 (2004.14810) argument for the discrete Einstein equations requires:
+JGORARD's §3.3 (2004.14810) argument for the discrete Einstein equations requires:
 - $C(t) = a\,t^n (1 - R_{jk} t^j t^k / 6 + O(\|t\|^3))$ — the *leading* term $a t^n$, with $n = 4$ for 3+1-dim spacetime, sets the *dimension* that the correction factor is measured against.
 - *Asymptotic dimensionality preservation*: $n$ stabilizes and the correction has small relative magnitude.
 
-On the rule that Gorard's own paper names as "provably satisfying EFE," on the tested seeds:
+On the rule that JGORARD's own paper names as "provably satisfying EFE," on the tested seeds:
 - $n$ stabilizes at $n = 1$, not $n = 4$.
 - The leading growth is $C(r) \approx 2r+1$, and the deviation from a pure line is at the bounded-additive-constant level, not the $R r^2$ level.
 - The spatial hypergraph size is strictly constant, so the *spatial* dimension calculation of §3.1 gives $n_{\text{spatial}} = 0$ (finite bounded growth, not polynomial).
 
-The "continuum limit" of this rule on these seeds is **a 1-dimensional causal graph**, not a 3+1-dimensional Lorentzian manifold. Gorard's §3.3 argument, even taken at face value, cannot conclude the Einstein equations for a 1-dimensional causal structure (where there is no Ricci tensor to constrain in the first place). The leading $a t^4$ identification fails.
+The "continuum limit" of this rule on these seeds is **a 1-dimensional causal graph**, not a 3+1-dimensional Lorentzian manifold. JGORARD's §3.3 argument, even taken at face value, cannot conclude the Einstein equations for a 1-dimensional causal structure (where there is no Ricci tensor to constrain in the first place). The leading $a t^4$ identification fails.
 
 ### (4) 3D grid seeds do NOT rescue the rule
 
@@ -90,18 +90,18 @@ This is **structural, not incidental**. The rule has $|LHS| = |RHS| = 4$, so eve
 
 ## Limitations / caveats
 
-1. **Single-way.** SetReplace is single-way: we sampled one canonical update order per seed. Gorard's "causal invariance" requires all update orders to produce isomorphic causal graphs. We have not verified causal invariance for this rule; we have only shown that in the canonical order the resulting causal graph is 1-D. If the rule is *not* causally invariant, even the §2.3 argument for discrete Lorentz covariance does not apply. (Note: since the cone dimension is structurally forced to be 1 regardless of update order, causal invariance does not help the dimensionality claim either way.)
+1. **Single-way.** SetReplace is single-way: we sampled one canonical update order per seed. JGORARD's "causal invariance" requires all update orders to produce isomorphic causal graphs. We have not verified causal invariance for this rule; we have only shown that in the canonical order the resulting causal graph is 1-D. If the rule is *not* causally invariant, even the §2.3 argument for discrete Lorentz covariance does not apply. (Note: since the cone dimension is structurally forced to be 1 regardless of update order, causal invariance does not help the dimensionality claim either way.)
 2. **Small scale.** We've gone to 2000 events. A determined advocate could argue "the continuum limit only reveals itself at $N \gg 10^6$." The data we have does not support that — the dimension fit is already very close to 1 at $N = 500$, tightens as $N$ grows, and the conservation-law argument rules out any eventual change.
-3. **"Maybe Gorard meant a different rule."** The rule tested is exactly the one named in the source (arXiv:2102.09363, line 6202). If the "correct" rule is different, it is not disclosed in the paper.
+3. **"Maybe JGORARD meant a different rule."** The rule tested is exactly the one named in the source (arXiv:2102.09363, line 6202). If the "correct" rule is different, it is not disclosed in the paper.
 
 ## What we would need to do next
 
-- Run a 3D grid seed (e.g. Cartesian-product $\mathbb{Z}_k^3$) and measure the cone dimension. If it's 4-ish, we've found a regime in which Gorard's claim has a chance; if it's 1 or 2, the refutation strengthens.
+- Run a 3D grid seed (e.g. Cartesian-product $\mathbb{Z}_k^3$) and measure the cone dimension. If it's 4-ish, we've found a regime in which JGORARD's claim has a chance; if it's 1 or 2, the refutation strengthens.
 - Test causal invariance via permuted update orders (SetReplace's `EventOrderingFunction` can be varied) and check whether the causal graph is order-invariant.
-- Compute the discrete Ollivier–Ricci tensor on the causal graph and compare against what Gorard's Eq (84) predicts for the measured $n$.
+- Compute the discrete Ollivier–Ricci tensor on the causal graph and compare against what JGORARD's Eq (84) predicts for the measured $n$.
 
 ## Bottom line
 
-The specific rule Gorard names as "provably satisfying the Einstein field equations in the continuum limit" produces a causal graph that is empirically, and in fact structurally, **one-dimensional** — independently of whether the spatial seed is 1D, 2D, or 3D. This is forced by the $|LHS|=|RHS|$ conservation law, which is visible on sight of the rule. Gorard's own §3.3 argument requires $n=4$ and cannot apply to this rule.
+The specific rule JGORARD names as "provably satisfying the Einstein field equations in the continuum limit" produces a causal graph that is empirically, and in fact structurally, **one-dimensional** — independently of whether the spatial seed is 1D, 2D, or 3D. This is forced by the $|LHS|=|RHS|$ conservation law, which is visible on sight of the rule. JGORARD's own §3.3 argument requires $n=4$ and cannot apply to this rule.
 
 This is an **empirical, reproducible, structural refutation** of the single concrete rule that the paper advances as evidence that Wolfram-model rules can satisfy the Einstein field equations.

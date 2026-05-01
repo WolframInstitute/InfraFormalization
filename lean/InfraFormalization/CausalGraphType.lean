@@ -1,9 +1,9 @@
 /-
 **Transitively-reduced causal graph type** (Group IC — infracausality).
 
-The Srní / Madrid Infrageometry program (Pavel Hájek et al.) and
-the "Axiomatic Relativity from Causal Graphs" draft (Carlos Zapata,
-Sara Ahmed) anchor everything on *transitively-reduced* causal
+The Srní / Madrid Infrageometry program (PHAJEK et al.) and
+the "Axiomatic Relativity from Causal Graphs" draft (CZAPATA,
+SAHMED) anchor everything on *transitively-reduced* causal
 graphs as the minimal data structure for special relativity in the
 Wolfram-model context. Light rays, observer chains, Cauchy foliations,
 and Marzke–Wheeler clocks all live on this type.
@@ -157,7 +157,7 @@ def DegenerateInterval (v u : V) : Prop :=
   ∀ w, G.causallyPrecedes v w → G.causallyPrecedes w u → w = v ∨ w = u
 
 /-- **On a light-step from `v`**: `u` is on the light ray through `v`
-if `[v, u]` is degenerate. This aligns with Carlos Zapata's
+if `[v, u]` is degenerate. This aligns with CZAPATA's
 Marzke–Wheeler setup where direct causal edges are light-steps. -/
 def OnLightStepFrom (v u : V) : Prop := G.DegenerateInterval v u
 

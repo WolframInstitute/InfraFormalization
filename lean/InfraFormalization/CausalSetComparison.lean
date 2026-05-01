@@ -34,7 +34,7 @@ Key distinction from Wolfram-physics causal graphs:
     causal graphs aim to be the primitive.
 
 The corpus-audit finding (cf. `FINDINGS.md` F6, S4 / #11) is that
-Gorard's 2102.09363 "provably satisfies EFE" derivation reduces to
+JGORARD's 2102.09363 "provably satisfies EFE" derivation reduces to
 the causal-set Sorkin-Benincasa-Dowker conjecture applied to a
 Poisson-sprinkled target manifold — i.e., it relies on the causal-set
 technique that assumes the target. We formalise the comparison so that

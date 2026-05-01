@@ -2,12 +2,12 @@
 Discrete d'Alembertian (Benincasa–Dowker-style) on a trajectory's
 causal DAG.
 
-**The Gorard-attempted-but-failed centrepiece.** arXiv:2102.09363 §5
+**The JGORARD-attempted-but-failed centrepiece.** arXiv:2102.09363 §5
 bases its "the causal graph provably satisfies EFE" claim on the
 Benincasa–Dowker discrete d'Alembertian (`B_ρ`) and the conjectural
 convergence
   `⟨B_ρ φ⟩ → □ φ − ½ R φ`   (as ρ → ∞, in expectation over Poisson sprinklings).
-This convergence is the *load-bearing* step in Gorard's derivation
+This convergence is the *load-bearing* step in JGORARD's derivation
 (F6 in `MAJOR_FLAWS.md`); it is *unproven* and relies on open
 conjectures in causal-set theory (Benincasa–Dowker 2010; only partial
 numerical evidence from Cunningham 2018 exists).
@@ -28,7 +28,7 @@ theorem is *not* proved — it is the Benincasa–Dowker conjecture. We
 record it explicitly as an unproven `Prop` in `ConvergenceConjecture`
 so the gap is formally visible and cannot be papered over.
 
-This closes the F6 "what Gorard assumed" gap on the discrete side:
+This closes the F6 "what JGORARD assumed" gap on the discrete side:
 the operator is now formally defined, its linearity is formally
 proved, and the unproven continuum-limit claim is formally flagged
 as an assumption.
@@ -170,7 +170,7 @@ as an open proposition. Physicists expect
 
 but this is UNPROVED. We record it here as a `Prop`-level hypothesis
 parameterised by the ingredients it would need. A future formal
-proof (or falsification) would instantiate this proposition; Gorard's
+proof (or falsification) would instantiate this proposition; JGORARD's
 F6 "EFE derivation" assumes it without proof.
 
 The conjecture is purely *about the continuum limit*; the discrete
@@ -187,7 +187,7 @@ structure BenincasaDowkerConjecture where
   support (Cunningham 2018); no proof. -/
   is_open : Prop := claim = claim  -- placeholder; in practice we'd record this as "no proof known".
 
-/-- **F6 flag.** Gorard's 2102.09363 derivation of the Einstein field
+/-- **F6 flag.** JGORARD's 2102.09363 derivation of the Einstein field
 equations from a Wolfram-model rule invokes `BenincasaDowkerConjecture`
 at a load-bearing step. Until that conjecture is proved, the
 derivation carries an unproven assumption — exactly the F6 structural
@@ -201,7 +201,7 @@ def gorardF6_carries_BD_assumption : Prop :=
 /-- **Discrete action** `S[φ] := ∑_{i < N} φ(i) · B[φ](i)` on a
 trajectory of length `N`.
 
-This is the discrete analog of Gorard's `S[g^{ab}] = ∫ μ_g · R`
+This is the discrete analog of JGORARD's `S[g^{ab}] = ∫ μ_g · R`
 (arXiv:2004.14810 Eq 86), with `B = discreteDAlembertian4` playing
 the role of the discrete `R`. The action is well-defined as a finite
 sum; the question of its continuum-limit (the Einstein-Hilbert action
@@ -240,7 +240,7 @@ the discrete analog of `δS/δφ = 0`, i.e., the Euler-Lagrange equation
 of the discrete action.
 
 For the Wolfram-model context, the analog of `δS[g^{ab}]/δg^{ab} = 0`
-(which Gorard equates with the vacuum Einstein equations in F3 via a
+(which JGORARD equates with the vacuum Einstein equations in F3 via a
 tautology) is here machine-checkable: it is `discreteEL` on the
 metric perturbation. -/
 def discreteEL {sys : RewritingSystem P} {init : Hypergraph V}

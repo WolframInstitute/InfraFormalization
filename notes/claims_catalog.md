@@ -6,7 +6,7 @@ Equation-by-equation + definition-by-definition catalog, covering every `\begin{
 - `DEF` – labelled `\begin{definition}` block (no equation number of its own, though may contain numbered equations).
 - `STD` – standard continuum result quoted from the literature.
 - `CONT-COMP` – continuum computation carried out in-paper.
-- `DISCR-DEF` – Gorard-specific definition for discrete hypergraphs / causal graphs.
+- `DISCR-DEF` – JGORARD-specific definition for discrete hypergraphs / causal graphs.
 - `DISCR-ASSERT` – unproved assertion about a discrete object.
 - `BRIDGE` – discrete→continuum correspondence claim.
 - `CONCL` – claimed conclusion (never labelled "theorem" but stated as one).
@@ -165,7 +165,7 @@ Columns: # | TeX line | Eqn # in paper | Type | Verbatim | Status | Note.
 | 117 | 835 | (80) | STD | $\delta(1-\frac{\epsilon^2}{2(n+2)}R+O(\epsilon^3+\epsilon^2\delta))$ — average of sectional curvature | ✗ | **Same directional/scalar error as Eq 48**: Ollivier's theorem yields $\mathrm{Ric}(v,v)$, not $R$, unless $K$ is averaged over all 2-planes, not over all $\mathbf w$ at fixed $\mathbf v$. See `results/phase2_continuum/eq344_verdict.md`. |
 | 118 | 840 (text) | — | DISCR-ASSERT | **Assertion: in a directed hypergraph, set $\epsilon=\delta=1$, all non-parallel hyperedges are "orthonormal"** | ✗ | **Load-bearing fiat**: (1) orthonormality declared without any inner product — vacuous. (2) $\epsilon=\delta=1$ invalidates the asymptotic expansions (47)–(80), which are $\epsilon\to 0$. See close-reading §3.2. |
 | 119 | 842 | (81) | BRIDGE | $K(\mathbf u,\mathbf v)=\langle R(\mathbf u,\mathbf v)\mathbf v,\mathbf u\rangle$ (repeat of Eq 78) | ⚠ | Formally identical to Eq 78; now used as the "discrete definition" via the fiat of line 840. See close-reading §3.2. |
-| 120 | 851 | (82) | BRIDGE | $C(t)=at^n$, $a\in\mathbb Z$ | ⚠ | Leading term for a flat causal graph. As with Eq 63, $a\in\mathbb Z$ is wrong (typically irrational); and "flat causal graph" is never defined. Empirically, for the Gorard-named EFE rule, $C(t)\approx 2t+1$, i.e. $n=1$ always. See `notes/empirical_refutation.md`. |
+| 120 | 851 | (82) | BRIDGE | $C(t)=at^n$, $a\in\mathbb Z$ | ⚠ | Leading term for a flat causal graph. As with Eq 63, $a\in\mathbb Z$ is wrong (typically irrational); and "flat causal graph" is never defined. Empirically, for the JGORARD-named EFE rule, $C(t)\approx 2t+1$, i.e. $n=1$ always. See `notes/empirical_refutation.md`. |
 | 121 | 865 | (83) | STD | $d\mu_g = (1-\frac16 R_{jk}x^j x^k + O(\|\mathbf x\|^3))d\mu_{Eucl}$ | ✓ | Repeat of Eq 76. |
 | 122 | 870 | (84) | BRIDGE | $C(t)=at^n[1-\frac16 R_{jk}t^j t^k + O(\|\mathbf t\|^3)]$ | ✗ | **Key discrete-cone claim.** Obtained "by analogy" from Eq 76, with no derivation in the discrete setting. Tube-volume formula has been independently refuted (different paper, same structural claim) — see `results/phase2_continuum/eq342_verdict.md`. The sign and coefficient do not match the Riemannian tube formula derived there. Empirically, the specific "EFE-satisfying" rule gives $C(t)\sim 2t+1$, ruling out this expansion entirely — see `notes/empirical_refutation.md`. |
 | 123 | 875 | (85) | BRIDGE | $t^a=\alpha n^a + \beta^a$ | ⚠ | ADM decomposition of time vector; depends on $(\alpha,n^a,\beta^a)$ from §2.3 which were only verbally identified. |
@@ -191,7 +191,7 @@ Columns: # | TeX line | Eqn # in paper | Type | Verbatim | Status | Note.
 | 138 | 963 | (99) | STD | $T_{ab}=-\frac{C_M}{8\pi\sqrt{-g}}\delta S_M/\delta g^{ab}$ | ✓ | Same, action form. |
 | 139 | 977 | (100) | BRIDGE | $S[g^{ab}]=\sum d\mu_g(R+2\Lambda)$ | ⚠ | Adds $2\Lambda$ as integration constant. Same issues as Eq 86. |
 | 140 | 982 | (101) | STD | $\mathcal L_G=\sqrt{-g}(R+2\Lambda)$ | ✓ | Standard continuum Lagrangian with $\Lambda$. |
-| 141 | 987 | (102) | CONCL | $R_{ab}-\frac12 Rg_{ab}+\Lambda g_{ab}=8\pi T_{ab}$ | ✗ | Same verdict as Eq 97. Continuum EFE with $\Lambda$ — ✓; discrete derivation — ✗. Gorard's claim the Wolfram Model is "consistent with both zero and non-zero $\Lambda$" is vacuous: you added $\Lambda$ as an arbitrary constant, of course you get either sign. |
+| 141 | 987 | (102) | CONCL | $R_{ab}-\frac12 Rg_{ab}+\Lambda g_{ab}=8\pi T_{ab}$ | ✗ | Same verdict as Eq 97. Continuum EFE with $\Lambda$ — ✓; discrete derivation — ✗. JGORARD's claim the Wolfram Model is "consistent with both zero and non-zero $\Lambda$" is vacuous: you added $\Lambda$ as an arbitrary constant, of course you get either sign. |
 | 142 | 994 | (103) | STD | $\partial f/\partial t + \mathbf v\cdot\partial f/\partial\mathbf r + \mathbf F\cdot\partial f/\partial\mathbf v=\hat C f$ (Boltzmann) | ✓ | Standard. |
 | 143 | 999 | (104) | STD | same with $\hat C f/\epsilon$ | ✓ | Standard Chapman-Enskog ansatz. |
 | 144 | 1004 | (105) | STD | $f=f^{(0)}+\epsilon f^{(1)}+\epsilon^2 f^{(2)}+\dots$ | ✓ | Standard expansion. |
@@ -251,7 +251,7 @@ Columns: # | TeX line | Eqn # in paper | Type | Verbatim | Status | Note.
 | §2.2 Abstract rewriting | Standard ARS material, all ✓. Only caveat: Def 9 (causal invariance) is quantified-informally. |
 | §2.3 Causal graph hypersurfaces / ADM | Mix of standard ✓ carryovers of Penrose-Hawking-Ellis causal structure (Defs 17-25, Eqs 29-38) and load-bearing ⚠/⊘ items: Eqs 25-28 (ADM identification) and the two named conclusions (causal inv ⇔ GC, and the SR derivation) which are tautological / circular. |
 | §2.4 Discrete Lorentz transformations | Def 26 / Eq 43 apply the continuum Lorentz formula to integer lattice without closure / approximation theorems (⚠). The particle-as-Kuratowski-tangle discussion contains no equations, only prose. |
-| §3.1 Ollivier-Ricci on hypergraphs | **Major load-bearing errors.** Eq 48/85 (`R` vs `Ric(v,v)`) is refuted in `results/phase2_continuum/eq344_verdict.md`. Def 33 and Eqs 56-65 are ad-hoc with no convergence theorem. Eq 65 empirically refuted on Gorard's named rule by `notes/empirical_refutation.md`. |
+| §3.1 Ollivier-Ricci on hypergraphs | **Major load-bearing errors.** Eq 48/85 (`R` vs `Ric(v,v)`) is refuted in `results/phase2_continuum/eq344_verdict.md`. Def 33 and Eqs 56-65 are ad-hoc with no convergence theorem. Eq 65 empirically refuted on JGORARD's named rule by `notes/empirical_refutation.md`. |
 | §3.2 Parallel transport / Riemann / Ricci on hypergraphs | §3.2 Riemannian review (Eqs 66-80) is all ✓. The discrete transition (line 840 fiat: orthonormal non-parallel hyperedges; $\epsilon=\delta=1$) is unjustified (✗). Eq 84 is refuted (same structural error as 2102.09363 Eq 342, see `results/phase2_continuum/eq342_verdict.md`). |
 | §3.3 Discrete EFE (main theorem) | Depends on Eqs 86-88 (discrete action, variation, continuum limit) — all ⚠/○. The final equations (91, 97, 102) are correct continuum EFE but the *discrete derivation of them* from the hypergraph is vacuous: none of the three required steps (define discrete action, prove continuum limit, define discrete variational principle) is carried out. Close-reading §3.3. |
 | §3.4 Variable dim + cosmology | Eqs 113-144 are all ✓ textbook continuum cosmology (VSL, $n$-D FLRW, Holanda-Pereira). The "connection to the Wolfram Model" is prose-only; no discrete-side object is constructed. |
@@ -263,7 +263,7 @@ The chain of claims that would need to be made rigorous for the "derivation of E
 | Load-bearing claim | Eqn # | Status |
 |---|---|---|
 | Ollivier-Ricci scalar on hypergraphs converges to scalar $R$ on the continuum limit | (48), (80) | ✗ (error is `R` ↔ `Ric(v,v)`; see eq344 verdict) |
-| Hypergraph ball volume $N(r)$ grows as $ar^n(1-Rr^2/6(n+2)+\dots)$ | (65) | ✗ (empirical refutation on Gorard's named rule) |
+| Hypergraph ball volume $N(r)$ grows as $ar^n(1-Rr^2/6(n+2)+\dots)$ | (65) | ✗ (empirical refutation on JGORARD's named rule) |
 | Non-parallel hyperedges can be treated as orthonormal | line 840 fiat | ✗ (declared, not constructed) |
 | $\epsilon=\delta=1$ is OK in asymptotic expansions | line 840 fiat | ✗ (category error) |
 | Hypergraph cone volume $C(t)$ expansion | (84) | ✗ (same error as 2102.09363 Eq 342; see eq342 verdict) |
@@ -274,7 +274,7 @@ None of these is verified; five are refuted, one open, one ill-defined. The main
 
 ## Equations that are candidates for Lean formalisation
 
-Equations that are correct-as-stated AND whose proof is purely continuum-mathematical (no discrete→continuum bridge, no Gorard-specific constructions) — these are safely formalisable in Mathlib-style Lean:
+Equations that are correct-as-stated AND whose proof is purely continuum-mathematical (no discrete→continuum bridge, no JGORARD-specific constructions) — these are safely formalisable in Mathlib-style Lean:
 
 - **§2.2 Abstract rewriting:** Eqs (2)–(14). All correspond to existing Mathlib definitions (rewriting / confluence / Church-Rosser).
 - **§2.3 Causal structure on a DAG / partial order:** Defs 17–25, Eqs (29)–(36), (39). All are order-theoretic and match Hawking-Ellis verbatim; no Lorentzian-manifold content is required.

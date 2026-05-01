@@ -70,7 +70,7 @@ from iterating a causal-invariant and asymptotically-dimension-
 preserving conservative rule, and the induced sequence converges to a
 Riemannian manifold in pointed Gromov–Hausdorff sense, then [...].
 
-This is exactly the type signature Gorard's §3.3 claim would have to
+This is exactly the type signature JGORARD's §3.3 claim would have to
 inhabit to be a theorem. We phrase it with a hypothesis `¬ r.IsConservative`
 because of `NonConservativeNeededForHigherDim` below — conservative
 rules can never yield a higher-dim limit. -/

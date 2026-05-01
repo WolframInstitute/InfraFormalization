@@ -138,7 +138,7 @@ example : (tripleDossier 2).isConsistent = true := canonicalDossier_isConsistent
 
 example : (tripleDossier 2).edgeCountConstant = false := by decide
 
-/-! ## Gorard's named rule: `{x,y},{y,z},{z,w},{w,v} → {y,u},{u,v},{w,x},{x,u}` (u fresh)
+/-! ## JGORARD's named rule: `{x,y},{y,z},{z,w},{w,v} → {y,u},{u,v},{w,x},{x,u}` (u fresh)
 
 Conservation: `|LHS| = |RHS| = 4` (matches the abstract
 `gorardNamedRule_isConservative` from `CandidateRuleCatalog`). -/
@@ -153,7 +153,7 @@ private def gor_rhs1 : Hyperedge (Fin 6) := ⟨[5, 4], by decide⟩
 private def gor_rhs2 : Hyperedge (Fin 6) := ⟨[3, 0], by decide⟩
 private def gor_rhs3 : Hyperedge (Fin 6) := ⟨[0, 5], by decide⟩
 
-/-- Gorard's named rule (arXiv:2102.09363, line 6202).
+/-- JGORARD's named rule (arXiv:2102.09363, line 6202).
 **Conservative**: |LHS| = |RHS| = 4. ExecRule version of
 `CandidateCatalog.gorardNamedRule` from `CandidateRuleCatalog.lean`. -/
 def gorardNamedExecRule : ExecRule where
@@ -162,7 +162,7 @@ def gorardNamedExecRule : ExecRule where
   lhs := [gor_lhs0, gor_lhs1, gor_lhs2, gor_lhs3]
   rhs := [gor_rhs0, gor_rhs1, gor_rhs2, gor_rhs3]
 
-/-- **Conservation status of Gorard's rule (decidable)**: lhs.length =
+/-- **Conservation status of JGORARD's rule (decidable)**: lhs.length =
 rhs.length = 4. Mirrors `CandidateCatalog.gorardNamedRule_isConservative`
 on the ExecHG side. -/
 example : gorardNamedExecRule.lhs.length = gorardNamedExecRule.rhs.length := by decide
@@ -172,7 +172,7 @@ example : gorardNamedExecRule.lhs.length = 4 := by decide
 example : gorardNamedExecRule.rhs.length = 4 := by decide
 
 /-- A 4-edge directed path: `1→2→3→4→5`. Provides exactly one match
-for Gorard's LHS pattern at the bound (x,y,z,w,v) = (1,2,3,4,5). -/
+for JGORARD's LHS pattern at the bound (x,y,z,w,v) = (1,2,3,4,5). -/
 def gorardPathSeed : ExecHG ℕ :=
   [⟨[1, 2], by decide⟩, ⟨[2, 3], by decide⟩, ⟨[3, 4], by decide⟩, ⟨[4, 5], by decide⟩]
 
@@ -181,7 +181,7 @@ def gorardPathDossier (n : Nat) : Dossier :=
 
 example : (gorardPathDossier 1).isConsistent = true := canonicalDossier_isConsistent _ _ _
 
-/-- **Edge count is constant 4 along Gorard's path-seed trajectory after
+/-- **Edge count is constant 4 along JGORARD's path-seed trajectory after
 one single-way step**. The conservative screener passes (axiom-clean,
 `native_decide` for the kernel-heavy 5-pattern-vertex enumeration).
 This is the Lean-internal closed-corpus instance of #373. -/
@@ -192,7 +192,7 @@ example : (gorardPathDossier 1).edgeCountConstant = true := by native_decide
 /-! ## Cycle-seed observation: overlap breaks single-way conservation
 
 A 4-cycle seed `1→2→3→4→1` admits **four** simultaneous matches for
-Gorard's LHS pattern (one starting at each cycle vertex). Under
+JGORARD's LHS pattern (one starting at each cycle vertex). Under
 `MultiwayExec.singleWayStep`'s foldl-based "fire all matches" semantics,
 overlapping matches consume already-removed edges (no-ops) but each
 still emits its 4-edge RHS, so edge count grows — even though the rule

@@ -1,4 +1,4 @@
-# Null tetrad in Gorard's papers — where it actually is, and what it's for
+# Null tetrad in JGORARD's papers — where it actually is, and what it's for
 
 **Bottom line.** The null tetrad is NOT extracted from a hypergraph. It is built on the *continuum metric tensor* that the CCZ4/BSSN numerical relativity code computes on a hypergraph-as-adaptive-mesh. The hypergraph's only role in the tetrad construction is to provide grid points. This is standard numerical-relativity gravitational-wave extraction and has no novel content.
 
@@ -24,9 +24,9 @@ The construction relies on:
 
 Every one of these is a continuum object. They exist in 2102.09363 only because the code runs CCZ4 — which is a reformulation of the Einstein PDEs — on values stored at hypergraph vertices. The hypergraph is a mesh, nothing more. If you strip the CCZ4 PDE layer, you get "pure Wolfram model evolution" and **none of these objects exist**: there is no metric, no lapse, no shift, no Weyl tensor, no tetrad.
 
-## What Gorard's "pure Wolfram model evolution" actually does (companion claim)
+## What JGORARD's "pure Wolfram model evolution" actually does (companion claim)
 
-On the "pure" side, Gorard does *not* build a tetrad. Instead, he cites a "hypergraph substitution rule that provably satisfies the Einstein field equations in the continuum limit" and compares its emergent spacetime to the CCZ4 one. That claim is traced (2102.09363 §5, around line 6000+) to the Benincasa–Dowker action from causal-set theory:
+On the "pure" side, JGORARD does *not* build a tetrad. Instead, he cites a "hypergraph substitution rule that provably satisfies the Einstein field equations in the continuum limit" and compares its emergent spacetime to the CCZ4 one. That claim is traced (2102.09363 §5, around line 6000+) to the Benincasa–Dowker action from causal-set theory:
 
 1. Define a discrete d'Alembertian B^(d) on a causal graph (Eqs 378, 379) — copied from Benincasa–Dowker 2010.
 2. Under **uniform Poisson sampling** of events in (M,g), expected value of the smoothed B_k^(d) converges to □φ − (1/2) R(x) φ(x) (Eq 383) — Sorkin–Benincasa–Dowker conjecture, supported by numerical work of Cunningham.
@@ -42,4 +42,4 @@ So the "provably satisfies EFE in continuum limit" claim reduces to:
 ## Two immediate consequences for this project
 
 1. "The null tetrad question" — the one the user flagged — has a clean answer: **there is no hypergraph-native tetrad**, so there is nothing to formalise on the Lean side beyond ordinary Lorentzian NR. The question to flag upstream: does 2303.07282, which applies Raychaudhuri + singularity theorems, also work exclusively on the continuum side? (Check needed — preliminary grep shows Raychaudhuri language in the abstract but no "tetrad" in 2303.07282's text.)
-2. The "pure Wolfram model rule that satisfies EFE in the continuum limit" claim is actually the Benincasa–Dowker convergence conjecture *applied to* a Poisson sampling assumption on causal graphs. Any Lean-side or mathematical attack on this claim goes through the causal-set literature, not through Gorard-specific machinery.
+2. The "pure Wolfram model rule that satisfies EFE in the continuum limit" claim is actually the Benincasa–Dowker convergence conjecture *applied to* a Poisson sampling assumption on causal graphs. Any Lean-side or mathematical attack on this claim goes through the causal-set literature, not through JGORARD-specific machinery.

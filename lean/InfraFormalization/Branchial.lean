@@ -1,7 +1,7 @@
 /-
 Branchial structure — states sharing a common single-step predecessor.
 
-Gorard (arXiv:2004.14810 and companion) posits a branchial graph at
+JGORARD (arXiv:2004.14810 and companion) posits a branchial graph at
 each "slice" of the multiway evolution graph: vertices are hypergraph
 states on the slice, edges connect states sharing an immediate
 predecessor. This graph is the staging ground for the branchial-space

@@ -1,5 +1,5 @@
 /-
-**Hodge 0-Laplacian spectrum bounds** (IT3 extension, Pavel Hajek).
+**Hodge 0-Laplacian spectrum bounds** (IT3 extension, PHAJEK).
 
 Extends `HodgeLaplacianSpectrum.lean` with a spectrum-sign theorem:
 `⟨f, vrHodge0 f⟩ ≤ 0` for all `f`, i.e., the Hodge 0-Laplacian is

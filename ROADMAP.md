@@ -152,14 +152,14 @@ Per the INFRAGEOMETRY.md framing just added.
 P1–P20 — each is a paper's worth of work. P3 (Chern-Simons), P4 (ribbon), P5 (sheaves), P6 (Koszul), P7 (homotopy colimit), P9 (action principle), P11 (interaction diagrams), P14 (blowup → RG), P19 (1-skeleton + clique-complex), etc.
 
 ### M-track (collaborator-coupled work)
-- **M3** Hubert Kolcz Lie-Poisson MBQC.
-- **M4** Jan Pullman IBL-∞ / BV.
-- **M6** Pokorny Infrageometry paclet parity.
-- **M7** Ahmed EME-tracking community post.
-- **M8** Pokorny diffusion-geometry bridge.
+- **M3** HKOLCZ Lie-Poisson MBQC.
+- **M4** JPULLMAN IBL-∞ / BV.
+- **M6** PPOKORNY Infrageometry paclet parity.
+- **M7** SAHMED EME-tracking community post.
+- **M8** PPOKORNY diffusion-geometry bridge.
 - **M9** Tropical-geometry synthetic infrageometry.
 - **M10** 3BP / dynamical-systems dimension signature.
-- **M1** Ioana Milea gauge-intern coordination.
+- **M1** IMILEA gauge-intern coordination.
 
 ### Specific GR metrics (B-track)
 - **B2** Schwarzschild Riemann tensor components.
@@ -226,13 +226,13 @@ END: BBH merger from hypergraph IC, K5 + K7 papers.
 
 **Currently sitting at (2026-04-27, late): Phase B opened with #224 + #292 — both curvature (Forman-Ricci) and angular (chord-ratio) sides of the screener pipeline complete. Plus AT0/AT1 angle primitives (#285/#286), AT6 orthogonality (#291), AT9 Bishop-Gromov scalar curvature (#294), TOP1/TOP4 pre-metric topology (#323/#326), SPHERE1 infra-sphere (#334), HYPER2/HYPER3/MIDPT1 Bachmann substrate (#339/#340/#342), and MILESTONE-GR/-QM/-BBH statements (#369–#371). 12 tasks closed in 7 commits this push. Next Phase B steps: (a) `RuleSignatureSchema` JSON interchange + Lean validator; (b) #190 wolframscript driver to feed empirical signatures into the screener. Phase A follow-up (tie discrepancy to actual trajectory W_1, needs measure-of-trajectory infra) remains staged.**
 
-**Angle-tower workstream opens** (parallel to Phase B critical path). 29 tasks `AT0`–`AT27` + `AT-W` (#285–#314, #319) across 14 flavour-columns × multiple abstraction levels. `PATH1`/`PATH2` (#300/#301) for Stephen's non-overlapping-path substrate. Three structural anchors: (1) **AT18 projective Cayley-Klein angle is more elementary than AT0 chord-ratio** — sidesteps Stephen's straight-lines requirement; (2) **AT23 conformal structure IS pure-angle data** — angles alone define conformal geometry; (3) **AT20 Regge deficit angle IS the numerical-GR variable** — gating for Phase D BBH (#106 K7). Plus **AT9 Bishop-Gromov scalar curvature** from log V(r) growth, **AT11 dimensionless-↔-dimensional bridge** formalising units-emergence under continuum rescaling, and **AT-W (#319) cellular-sheaf angle** — the 14th flavour-column from Pavel's "string theory on the graph" framing. Recommended landing order: AT0 → AT1 → AT9 → AT6 → AT7 → PATH1 → AT8 → AT3 → AT26 → AT20 → spectral/branchial/Lorentzian columns.
+**Angle-tower workstream opens** (parallel to Phase B critical path). 29 tasks `AT0`–`AT27` + `AT-W` (#285–#314, #319) across 14 flavour-columns × multiple abstraction levels. `PATH1`/`PATH2` (#300/#301) for SWOLF's non-overlapping-path substrate. Three structural anchors: (1) **AT18 projective Cayley-Klein angle is more elementary than AT0 chord-ratio** — sidesteps SWOLF's straight-lines requirement; (2) **AT23 conformal structure IS pure-angle data** — angles alone define conformal geometry; (3) **AT20 Regge deficit angle IS the numerical-GR variable** — gating for Phase D BBH (#106 K7). Plus **AT9 Bishop-Gromov scalar curvature** from log V(r) growth, **AT11 dimensionless-↔-dimensional bridge** formalising units-emergence under continuum rescaling, and **AT-W (#319) cellular-sheaf angle** — the 14th flavour-column from PHAJEK's "string theory on the graph" framing. Recommended landing order: AT0 → AT1 → AT9 → AT6 → AT7 → PATH1 → AT8 → AT3 → AT26 → AT20 → spectral/branchial/Lorentzian columns.
 
-**Topology-before-metric workstream opens** (parallel to angle-tower). Stephen's structural framing: pre-metric topological invariants come BEFORE balls/volumes/regions. Layered hierarchy (each layer one short Lean def on top of previous):
+**Topology-before-metric workstream opens** (parallel to angle-tower). SWOLF's structural framing: pre-metric topological invariants come BEFORE balls/volumes/regions. Layered hierarchy (each layer one short Lean def on top of previous):
 - **Layer −1: Connectedness (b_0)** — TOP4 (#326) — four flavours: spatial / causal / branchial / rewriting-reachable. Partition that EVERY OTHER topological invariant sits inside.
 - **Layer 1: Paths** — PATH1 (#300), PATH2 (#301).
 - **Layer 2: Polygons** — POLY1 (#316) generalised polygon with arbitrary intersection sequences (recovers Euclidean as singleton-intersection special case); POLY2 (#317) cellular k-chain in Δ-complex with sheaf coefficients (full categorical generalisation); POLY3 (#318) spin networks/foams (LQG primitive, knot-invariant home via Witten/RT).
-- **Layer 3: Cellular sheaves** — CELL1 (#315) — Pavel's "string theory on the graph" framework, AT-W (#319) sheaf-angle.
+- **Layer 3: Cellular sheaves** — CELL1 (#315) — PHAJEK's "string theory on the graph" framework, AT-W (#319) sheaf-angle.
 - **Layer 4: Contractibility** — CONTRACT1 (#329) — binary, scale-indexed via VR-complex; persistence-barcode death-time IS the contractibility scale.
 - **Layer 5: Path moves** — DEFORM1 (#330) deformations (backtrack, 2-cell, hyperedge-transit substitution); DEFORM2 (#331) extensions (forward/backward edge or hyperedge-transit append). Tietze/Whitehead/Reidemeister style.
 - **Layer 6: Equivalence** — HOM1 (#332) path-homotopy `EqvGen DEFORM1`; HOM2 (#333) fundamental groupoid Π_1(H).

@@ -1,7 +1,7 @@
 /-
 **Radial and laminar blowup operations** (Group IB / #151 IB6).
 
-Pavel Hájek's Infrageometry paclet provides "radial" and "laminar"
+PHAJEK's Infrageometry paclet provides "radial" and "laminar"
 blowups as canonical refinement operators for illustrating
 scaling/renormalisation. We formalise the predicate-level notions:
 

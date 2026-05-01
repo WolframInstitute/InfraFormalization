@@ -207,7 +207,7 @@ discrete extraction of scalar curvature from ball-count data:
 where `V_flat(d, r) := Ω_d · r^d` is the flat-baseline ball volume in
 `d`-dimensional Euclidean space.
 
-This is the **Wolfram-style ball-growth curvature** (Murzin §3.4): no
+This is the **Wolfram-style ball-growth curvature** (NMURZIN §3.4): no
 chain complex required, no metric tensor, just `geodesicBallVolume` plus
 a flat-baseline. Cross-checks the Forman-Ricci scalar
 (`formanRicciHypergraph`) above and the AT2 angle-defect Gauss-Bonnet

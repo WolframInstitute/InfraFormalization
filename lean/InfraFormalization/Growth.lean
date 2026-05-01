@@ -92,7 +92,7 @@ function.
 edges; under edge conservation, the total edge count is preserved; so
 the number of events at radius `t` is bounded linearly in `t`.
 Empirical confirmation on seven distinct seeds (see
-`results/phase1_selfaudit`): cone-growth exponent ≈ 1 for Gorard's
+`results/phase1_selfaudit`): cone-growth exponent ≈ 1 for JGORARD's
 named rule.
 
 Status: **real-content obligation** (no longer a `True` stub). -/
@@ -128,7 +128,7 @@ theorem boundedConeOfConservativeObligation {P : Type*}
 /-- **No-higher-dim obligation (stated).** A conservative rule's
 causal graphs cannot have continuum-limit dimension `≥ 2`. Specifically,
 the cone-count function cannot be bounded below by a super-linear
-polynomial. Gorard's §3.3 argument (arXiv:2004.14810) requires
+polynomial. JGORARD's §3.3 argument (arXiv:2004.14810) requires
 `C(t) = a t^n` with `n = 4`; the statement below asserts the exponent
 obstruction directly. -/
 def NoHigherDimLimitObligation {P : Type*} (r : Rule P) : Prop :=

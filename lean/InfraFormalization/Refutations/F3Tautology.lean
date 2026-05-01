@@ -1,5 +1,5 @@
 /-
-**F3: the Gorard §3.3 "asymptotic dim preservation ⇒ Einstein
+**F3: the JGORARD §3.3 "asymptotic dim preservation ⇒ Einstein
 equations" argument is a tautology.**
 
 **Context.** arXiv:2004.14810 §3.3 (equations 86–91) proceeds as
@@ -12,14 +12,14 @@ follows:
   Eq 90:  δS_EH/δg^ab = √(−g) (R_ab − ½R g_ab)
   Eq 91:  R_ab − ½R g_ab = 0                       (vacuum Einstein)
 
-Gorard summarises: "for any set of hypergraph updating rules that are
+JGORARD summarises: "for any set of hypergraph updating rules that are
 both causal-invariant and asymptotically dimensionality preserving
 … the limiting manifold must satisfy the vacuum Einstein field
 equations."
 
 **The structural issue.** Eq 87 *defines* "asymptotic dim preservation"
 as the Euler-Lagrange equation. Saying "asymptotic dim preservation
-⇒ EL-equation" is saying "X ⇒ X". Gorard's abstract makes this
+⇒ EL-equation" is saying "X ⇒ X". JGORARD's abstract makes this
 sound like a substantive derivation; it is not. The only non-trivial
 content in §3.3 is Eq 88 (the limit "becomes" an integral), which
 depends on an undefined "continuum limit" notion and an unspecified
@@ -44,7 +44,7 @@ returns a real number interpreted as the `δS/δg` residue. -/
 structure VariationalSetup (M : Type*) where
   variation : M → ℝ
 
-/-- Gorard's `AsymptoticDimPreservation` (from arXiv:2004.14810
+/-- JGORARD's `AsymptoticDimPreservation` (from arXiv:2004.14810
 Eq 87): the condition that the variation of the action vanishes. -/
 def AsymptoticDimPreservation {M : Type*} (P : VariationalSetup M) (g : M) : Prop :=
   P.variation g = 0
@@ -54,7 +54,7 @@ point: the condition that the variation vanishes. -/
 def EulerLagrange {M : Type*} (P : VariationalSetup M) (g : M) : Prop :=
   P.variation g = 0
 
-/-- **F3 as a theorem.** In Gorard's §3.3, "asymptotic dim
+/-- **F3 as a theorem.** In JGORARD's §3.3, "asymptotic dim
 preservation" is *defined* to be the vanishing of the action's
 variation. The Euler-Lagrange equation of the same action is the
 same condition. The two are therefore equivalent by definitional
@@ -82,9 +82,9 @@ theorem gorard_dim_preservation_trivially_implies_euler_lagrange
     AsymptoticDimPreservation P g → EulerLagrange P g :=
   id
 
-/-- **Contextual consequence.** Every instance of Gorard's §3.3
+/-- **Contextual consequence.** Every instance of JGORARD's §3.3
 argument (whatever the interpretation of M and of `variation`) is
-of this form. In particular, even a Gorard-style chain of the form
+of this form. In particular, even a JGORARD-style chain of the form
 
   (conservative + causal-invariant + asymp.-dim.-pres.) ⇒ vacuum EFE
 
@@ -93,7 +93,7 @@ definitional equivalence: having stipulated that the variation
 vanishes, stating the Euler-Lagrange equation (= vanishing variation)
 is re-stating the same fact. The Einstein field equations enter the
 picture only via the *identification* of the discrete action's
-limit with the Einstein-Hilbert action (Gorard Eq 88), which is
+limit with the Einstein-Hilbert action (JGORARD Eq 88), which is
 unproven. -/
 theorem gorard_section_3_3_contentless
     {M : Type*} (P : VariationalSetup M) (g : M)

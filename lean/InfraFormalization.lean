@@ -3,7 +3,7 @@ Top-level module of the `InfraFormalization` Lean library.
 
 **Purpose.** Formalize the mechanics of directed hypergraph rewriting
 in a way that supports proving continuum-limit theorems — and use that
-machinery to formally state, where possible, refutations of Gorard's
+machinery to formally state, where possible, refutations of JGORARD's
 2004.14810 / 2102.09363 / 2303.07282 claims that survive the
 project's multi-rail verification (see ../README.md).
 
@@ -18,7 +18,7 @@ Layout grouped by phase:
     (cycle / path / torus GH bounds, Lorentz lattice, Minkowski,
     bridging theorems).
 
-  * **Refutations of Gorard's structural flaws:**
+  * **Refutations of JGORARD's structural flaws:**
     `Refutations/F1NoMetric`, `F2Orthonormality`, `F3Tautology`,
     `F4Tautology`, `F5Illdefined`.
 
@@ -65,7 +65,7 @@ import InfraFormalization.Infra.Minkowski
 import InfraFormalization.Infra.ScaledLorentz
 import InfraFormalization.Infra.FullBridge
 
--- Refutations of Gorard structural flaws F1-F5
+-- Refutations of JGORARD structural flaws F1-F5
 import InfraFormalization.Refutations.F1NoMetric
 import InfraFormalization.Refutations.F2Orthonormality
 import InfraFormalization.Refutations.F3Tautology

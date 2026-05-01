@@ -2,7 +2,7 @@
 **Rodkey classification — pointwise-uniform Wolfram-Hausdorff dimension.**
 
 First inhabiting theorems for P20 (task #212). Attribution: a question
-of Sam Rodkey, pursued with Pavel Hájek and Dugan Hammock per Pavel's
+of SRODKEY, pursued with PHAJEK and DHAMMOCK per PHAJEK's
 2026-04 weekly update: *classification of graphs with pointwise
 constant Wolfram-Hausdorff dimension*.
 
@@ -733,7 +733,7 @@ The full Rodkey classification is open: characterise every finite
 hypergraph `H` such that `H.BallVolumeVertexUniform` (equivalently,
 every hypergraph-vertex-transitive graph in the adjacency sense). The
 predicate is formalised; the classification theorem is future work
-(task #212, with Pavel Hájek and Dugan Hammock). -/
+(task #212, with PHAJEK and DHAMMOCK). -/
 
 /-- **Rodkey classification obligation**: every finite hypergraph
 admitting a vertex-transitive adjacency automorphism group has

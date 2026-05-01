@@ -1,5 +1,5 @@
 /-
-**F2: the Gorard G1 §3.2 "all non-parallel hyperedges are orthonormal"
+**F2: the JGORARD G1 §3.2 "all non-parallel hyperedges are orthonormal"
 fiat assumption is vacuous / non-canonical.**
 
 **Context.** arXiv:2004.14810 line 840 states, verbatim:
@@ -9,7 +9,7 @@ fiat assumption is vacuous / non-canonical.**
    orthonormal."
 
 Orthonormality is a property of a bilinear form: two vectors `u, v` are
-orthonormal w.r.t. `g` iff `g(u,u) = g(v,v) = 1 ∧ g(u,v) = 0`. Gorard
+orthonormal w.r.t. `g` iff `g(u,u) = g(v,v) = 1 ∧ g(u,v) = 0`. JGORARD
 uses this fiat claim to propagate Riemannian-geometry formulas (Gauss
 curvature, Ricci, sectional curvature) onto the hypergraph side.
 
@@ -49,7 +49,7 @@ namespace Refutations
 
 /-- An abstract "bilinear form on hyperedges": a binary function
 `g : E → E → ℝ`. We do not require bilinearity in any strict sense —
-the weakest interpretation of Gorard's `g^{ab}`. -/
+the weakest interpretation of JGORARD's `g^{ab}`. -/
 abbrev Form (E : Type*) : Type _ := E → E → ℝ
 
 /-- Orthonormality of a pair `(e₁, e₂) : E × E` with respect to a
@@ -98,7 +98,7 @@ theorem orthonormalising_form_not_unique :
   · refine ⟨?_, ?_, ?_⟩ <;> simp
   · refine ⟨?_, ?_, ?_⟩ <;> simp
 
-/-- **F2 applied to the §3.2 assumption.** Gorard's statement
+/-- **F2 applied to the §3.2 assumption.** JGORARD's statement
 "all non-parallel hyperedges are orthonormal" does not single out a
 unique geometric structure: for any set of hyperedges it either (a)
 constrains an underlying form that is not uniquely determined (this

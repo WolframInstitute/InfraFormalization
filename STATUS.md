@@ -12,8 +12,8 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 
 - **Five H1 rules ported**: `trivialIdentityExecRule`, `edgeDoublingExecRule`, `edgeAppendExecRule`, `tripleExpansionExecRule`, `gorardNamedExecRule`. Each gets concrete seeds and canonical dossiers.
 - **`Dossier.edgeCountConstant : Bool`** + `vertexCountConstant` added to `RuleSignatureSchema.lean` — the screener verdicts as decidable Bool predicates over the ExecHG-side trajectory.
-- **Headline theorem `h1_corpus_edgeCount_screener_verdict`**: trivialIdentity passes (constant 1), Gorard path-seed passes (constant 4 after 1 step), edgeDoubling/edgeAppend/tripleExpansion fail. All `decide` / `native_decide`-checked.
-- **Cycle-seed observation**: Gorard's rule + 4-cycle seed *fails* edge-count constancy under `singleWayStep`. Four overlapping matches around the cycle each emit a 4-edge RHS while consumed edges have already been removed by earlier matches — engine-level non-conservation despite abstract-side `Rule.IsConservative`. Documented as a useful negative test, not a bug.
+- **Headline theorem `h1_corpus_edgeCount_screener_verdict`**: trivialIdentity passes (constant 1), JGORARD path-seed passes (constant 4 after 1 step), edgeDoubling/edgeAppend/tripleExpansion fail. All `decide` / `native_decide`-checked.
+- **Cycle-seed observation**: JGORARD's rule + 4-cycle seed *fails* edge-count constancy under `singleWayStep`. Four overlapping matches around the cycle each emit a 4-edge RHS while consumed edges have already been removed by earlier matches — engine-level non-conservation despite abstract-side `Rule.IsConservative`. Documented as a useful negative test, not a bug.
 
 This closes the on-ramp end of the rule-search pipeline. The paclet hookup (#374 / #375) accelerates open enumeration only; for the closed H1 corpus, Lean executor end-to-end is sufficient and stronger.
 
@@ -21,7 +21,7 @@ This closes the on-ramp end of the rule-search pipeline. The paclet hookup (#374
 
 `RuleSignatureSchema.lean` lands (#372) with the strong correctness theorem (#377). This is the WL-paclet-to-Lean trust boundary, sealed.
 
-- **`Dossier { rule, seed, states }`** — Lean-internal data model for the JSON interchange used by Pokorny's `Infrageometry` paclet (#374). The dossier is the *trajectory*, not the *verdict*.
+- **`Dossier { rule, seed, states }`** — Lean-internal data model for the JSON interchange used by PPOKORNY's `Infrageometry` paclet (#374). The dossier is the *trajectory*, not the *verdict*.
 - **`isConsistent : Bool`** — decidable check that `Hᵢ₊₁ = singleWayStep ⟨[d.rule]⟩ Hᵢ` for every step plus `states[0] = seed`. Computed from the dossier alone — no external trust.
 - **`canonicalDossier rule seed n`** — reference dossier built by running `singleWayEvolve` directly. `canonicalDossier_isConsistent` proves the Lean executor itself produces a consistent dossier (soundness).
 - **#377 `consistent_dossier_eq_canonical`** — *every* consistent dossier IS the canonical Lean-executor trajectory. The WL paclet cannot smuggle a non-canonical trajectory past `isConsistent`. Combined with `canonicalDossier_isConsistent`, the consistency check is both sound and characterising.
@@ -57,12 +57,12 @@ For BBH (Phase D): event horizon = non-disk-contractible cycle (vertices on the 
 - **OPEN1** — predicate-level definitions for the four canonical topologies on a hypergraph: `IsDiscreteOpen` (trivial), `IsAlexandrovOpen` (closed under one-step neighbour expansion, useful for posets / causal-DAGs), `IsCellularStarOpen` (open star of every vertex it contains), `IsVRScaleOpen r` (closed under r-neighbourhoods, scale-indexed). Plus `isAlexandrovOpen_univ`, `isVRScaleOpen_univ` (`Finset.univ` is always open).
 - **NBHD1** — `nbhdBasis v r := H.geodesicBall v r`, the decreasing-radius family generating the local topology at vertex `v`. Plus `nbhdBasis_mono`, `self_mem_nbhdBasis`, `nbhdBasis_zero_eq`.
 
-Stephen + Pavel's pivot to formal topology now has its substrate. Each topology yields different compactness/continuity theorems; the corresponding `TopologicalSpace V` instances (closure under arbitrary union + finite intersection) are deferred. Stephen's "locally has neighbourhoods" intuition for surfaces becomes "neighbourhood basis stabilises to disk-shapes" — precise diagnostic for SURFACE1 manifold-detection.
+SWOLF + PHAJEK's pivot to formal topology now has its substrate. Each topology yields different compactness/continuity theorems; the corresponding `TopologicalSpace V` instances (closure under arbitrary union + finite intersection) are deferred. SWOLF's "locally has neighbourhoods" intuition for surfaces becomes "neighbourhood basis stabilises to disk-shapes" — precise diagnostic for SURFACE1 manifold-detection.
 
 ## Headline (2026-04-27, late — AT8 GeodesicallyUnique + INOUT1 cut/bridge/Jordan)
 
 `HypergraphDistance.lean` extension lands AT8 (#293) + INOUT1 (#344):
-- `Hypergraph.GeodesicallyUnique H` — every pair of shortest walks between the same endpoints is equal (Stephen's straight-lines condition; gates the angle-as-real-angle interpretation for AT0 / AT1 / AT3 / AT26).
+- `Hypergraph.GeodesicallyUnique H` — every pair of shortest walks between the same endpoints is equal (SWOLF's straight-lines condition; gates the angle-as-real-angle interpretation for AT0 / AT1 / AT3 / AT26).
 - `GeodesicallyUnique.swap` (well-defined under endpoint swap), `geodesicallyUnique_self_walks` (length-0 walks at a vertex are all `Walk.nil`).
 - `Hypergraph.IsCutVertex H v` (articulation point), `Hypergraph.IsBridgeEdge H u v` (cut edge — predicate uses `Walk.support` indexing), `Hypergraph.CycleSeparates γ` (Jordan-separator predicate on a closed walk: removing γ's support disconnects ≥ 2 vertices).
 
@@ -81,7 +81,7 @@ The full sum identity `∑_x (6 − T(x)) = 6·|V| − 3·|triangles|` (which on
 ## Headline (2026-04-27, late — MEMBER1 + BOUND1 spatial)
 
 `HypergraphTopology.lean` extension lands MEMBER1 (#346) and BOUND1 spatial flavour (#345):
-- `IsInRegion v R := v ∈ R` uniform alias surfacing Stephen's foundational topological membership predicate. Decidable for free via `Finset.decidableMem`.
+- `IsInRegion v R := v ∈ R` uniform alias surfacing SWOLF's foundational topological membership predicate. Decidable for free via `Finset.decidableMem`.
 - `isInRegion_infraDisk_iff`, `isInRegion_infraSphere_iff`, `isInRegion_perpBisector_iff`: characterisation lemmas through the alias.
 - `Hypergraph.spatialDiameter := sup_{u, v} dist u v`; `dist_le_spatialDiameter`.
 - `Hypergraph.IsBounded R := ∃ k, ∀ u v ∈ R, dist u v ≤ k`; `isBounded_of_finite` (every region of a finite hypergraph is bounded).
@@ -90,14 +90,14 @@ The four-flavour BOUND1 (causal / branchial / rewriting-reachable diameters) rem
 
 ## Headline (2026-04-27, late — pre-metric topology + curvature/hyperplane substrate land)
 
-**12 tasks closed in 7 commits this push** (`c1447bc` → `683633c`). The full angle / curvature / topology / hyperplane substrate that Stephen and Pavel discussed across three meetings is now sorry-free, build-clean Lean code at 3532 jobs:
+**12 tasks closed in 7 commits this push** (`c1447bc` → `683633c`). The full angle / curvature / topology / hyperplane substrate that SWOLF and PHAJEK discussed across three meetings is now sorry-free, build-clean Lean code at 3532 jobs:
 
 - **AT9 (#294)** — `Hypergraph.scalarCurvatureAt v d r` — Bishop-Gromov scalar curvature `(6(d+2)/r²)·(1 − V/V_flat)` from `geodesicBallVolume` + flat baseline (`unitBallVolumeEuclidean d`, `flatBallVolume d r`). Sign theorems: `_zero_of_match` (flat ↔ R = 0), `_pos_iff` (R > 0 ↔ sub-flat = spherical-like). In `DiscreteRicci.lean`.
 - **AT6 (#291)** — `AreOrthogonalAxes` `True`-stub replaced with `IsOrthoApprox`-based chord-ratio condition `≈ √2`. In `CoordinatizationDimension.lean`.
 - **AT7 (#292)** — `elementaryAngleSample`, `angularDeviation`, `AngularScreener`, `CombinedScreener` (edge-count + Forman-Ricci + angular triple), `angularScreener_fails_of_persistent_gap`. **Phase B screener pipeline complete on both curvature and angular sides.** In `RuleSignatureScreener.lean`.
-- **TOP1 (#323) + TOP4 (#326)** — `Hypergraph.spatialB0` (Stephen's "is every point reachable from every other"), `IsSpatiallyConnected`, `firstBettiZ` (cycle rank `#hyperedges − #V + b_0` over ℤ), `spatialB0_le_card`, `spatialB0_pos_of_nonempty`, `firstBettiZ_lower_bound`. New file `HypergraphTopology.lean`. **Pre-metric topological invariants surface as first-class objects.**
-- **SPHERE1 (#334)** — `Hypergraph.infraSphere`, `infraDisk`, `infraSphereVolume`, sphere-disk inclusion, distinct-radii disjointness, `self_mem_infraSphere_zero`. In `HypergraphDistance.lean`. Stephen's "all points equidistant from a point".
-- **HYPER2 (#339) + HYPER3 (#340) + MIDPT1 (#342)** — `Hypergraph.perpBisector` (metric hyperplane), `closerHalf`, `HasTopologicalHyperplane` (Pavel's separator stub), `midpoint`, `nearMidpoint`, `voronoiCell`, with `mem_*` characterisations and `*_symm` symmetry lemmas. In `HypergraphDistance.lean`. **Bachmann motion-group substrate now in place.**
+- **TOP1 (#323) + TOP4 (#326)** — `Hypergraph.spatialB0` (SWOLF's "is every point reachable from every other"), `IsSpatiallyConnected`, `firstBettiZ` (cycle rank `#hyperedges − #V + b_0` over ℤ), `spatialB0_le_card`, `spatialB0_pos_of_nonempty`, `firstBettiZ_lower_bound`. New file `HypergraphTopology.lean`. **Pre-metric topological invariants surface as first-class objects.**
+- **SPHERE1 (#334)** — `Hypergraph.infraSphere`, `infraDisk`, `infraSphereVolume`, sphere-disk inclusion, distinct-radii disjointness, `self_mem_infraSphere_zero`. In `HypergraphDistance.lean`. SWOLF's "all points equidistant from a point".
+- **HYPER2 (#339) + HYPER3 (#340) + MIDPT1 (#342)** — `Hypergraph.perpBisector` (metric hyperplane), `closerHalf`, `HasTopologicalHyperplane` (PHAJEK's separator stub), `midpoint`, `nearMidpoint`, `voronoiCell`, with `mem_*` characterisations and `*_symm` symmetry lemmas. In `HypergraphDistance.lean`. **Bachmann motion-group substrate now in place.**
 
 **The 25-step constructive route to differential geometry** (INFRAGEOMETRY.md §5f) now has concrete code at layers 1 (PATH1 staged), 7 (TOP1/TOP4), 13 (metric → spheres SPHERE1, Voronoi HYPER3), 14 (angles AT0/AT1), 15 (Bishop-Gromov scalar curvature AT9). The Bachmann route from reflections through perpendicular bisectors → Coxeter / Lie has its substrate (HYPER2 + MIDPT1).
 
@@ -112,17 +112,17 @@ The four-flavour BOUND1 (causal / branchial / rewriting-reachable diameters) rem
 - `BBH_emerges_from_hypergraph` (Phase D / K7 paper headline).
 - All compile as `Prop`s; placeholders are `True`-typed so NO axiom is introduced at the milestone-statement level (`#print axioms` clean). Three Lean-verifiable signals of completion (no `sorry` / clean `#print axioms` / term-witnessed existential) explicitly documented.
 
-**AT0 + AT1 angle primitives land** (#285, #286 → completed) — `Hypergraph.elementaryAngle O A B` (Stephen's chord-ratio `d(A,B)/d(O,A)` for equidistant pairs, equals `2 sin(θ/2)`); `Hypergraph.cosAngle O A B` (law-of-cosines); `Hypergraph.angle O A B := Real.arccos cosAngle`; `Hypergraph.IsOrthoApprox` (chord-ratio `≈ √2` orthogonality predicate, AT6 substrate). All in `HypergraphDistance.lean` next to `dist`. Symmetry, non-negativity, self = 0 lemmas. **Foundation of the angle tower; AT9 Bishop-Gromov scalar curvature now sits naturally on top.**
+**AT0 + AT1 angle primitives land** (#285, #286 → completed) — `Hypergraph.elementaryAngle O A B` (SWOLF's chord-ratio `d(A,B)/d(O,A)` for equidistant pairs, equals `2 sin(θ/2)`); `Hypergraph.cosAngle O A B` (law-of-cosines); `Hypergraph.angle O A B := Real.arccos cosAngle`; `Hypergraph.IsOrthoApprox` (chord-ratio `≈ √2` orthogonality predicate, AT6 substrate). All in `HypergraphDistance.lean` next to `dist`. Symmetry, non-negativity, self = 0 lemmas. **Foundation of the angle tower; AT9 Bishop-Gromov scalar curvature now sits naturally on top.**
 
-## Headline (2026-04-26 — late, topology-before-metric layer + cellular-sheaf framework + Stephen's structural sequence)
+## Headline (2026-04-26 — late, topology-before-metric layer + cellular-sheaf framework + SWOLF's structural sequence)
 
-**The full pre-metric topology layer is now logged** as a coherent task family. Stephen's structural insight: topological information should be available BEFORE metric / volume / region structure. The hypergraph has a natural layered topology hierarchy that doesn't need `Hypergraph.dist` or `geodesicBallVolume`. In dependency order:
+**The full pre-metric topology layer is now logged** as a coherent task family. SWOLF's structural insight: topological information should be available BEFORE metric / volume / region structure. The hypergraph has a natural layered topology hierarchy that doesn't need `Hypergraph.dist` or `geodesicBallVolume`. In dependency order:
 
-- **PATH1 (#300)** — native `Hypergraph.SimplePath u v` (Stephen's "non-overlapping path"); **PATH2 (#301)** — equivalence to clique-expansion `dist`.
+- **PATH1 (#300)** — native `Hypergraph.SimplePath u v` (SWOLF's "non-overlapping path"); **PATH2 (#301)** — equivalence to clique-expansion `dist`.
 - **POLY1 (#316)** — generalised polygon (cycle-of-segments with arbitrary intersection sequences; recovers Euclidean as singleton-intersection case).
 - **POLY2 (#317)** — full categorical generalisation: cellular k-chain in Δ-complex with sheaf coefficients (subsumes POLY1 + CELL1 + P4 + P5 + P19 + IGE2).
 - **POLY3 (#318)** — spin networks / spin foams (LQG primitive + knot-invariant home via Witten/Reshetikhin-Turaev).
-- **CELL1 (#315)** — cellular sheaves on Hypergraph V — Pavel's "string theory on the graph" framework. Cycles-with-common-points = equalizer at common-stalk.
+- **CELL1 (#315)** — cellular sheaves on Hypergraph V — PHAJEK's "string theory on the graph" framework. Cycles-with-common-points = equalizer at common-stalk.
 - **AT-W (#319)** — sheaf-angle (14th flavour-column in the angle tower): `cos θ = ⟨r₁, r₂⟩_{F(common)} / (‖r₁‖·‖r₂‖)` for restriction maps; generalises Knill/Connes spectral angle to sheaves.
 - **CONTRACT1 (#329)** — contractibility predicate (binary, scale-indexed via VR-complex; persistence-barcode death-time IS the contractibility scale).
 - **DEFORM1 (#330)** — elementary path deformations (Tietze/Whitehead/Reidemeister-style generating set: backtrack, 2-cell substitution, hyperedge-transit substitution).
@@ -139,18 +139,18 @@ The four-flavour BOUND1 (causal / branchial / rewriting-reachable diameters) rem
 - **KNOT2 (#321)** — Massey products / higher-linking invariants.
 - **KNOT3 (#322)** — Yamada / Jones polynomial via spin-network Chern-Simons evaluation.
 
-**Pavel's "string theory on the graph" framing**: the cellular-sheaf framework IS string field theory. Closed strings = 1-cycles, interaction vertices = common-stalk equalizers, worldsheets = cellular k-chains, string amplitudes = sheaf-cohomology. Translation table in INFRAGEOMETRY.md §5d.
+**PHAJEK's "string theory on the graph" framing**: the cellular-sheaf framework IS string field theory. Closed strings = 1-cycles, interaction vertices = common-stalk equalizers, worldsheets = cellular k-chains, string amplitudes = sheaf-cohomology. Translation table in INFRAGEOMETRY.md §5d.
 
-**Stephen's structural sequence** (the Tietze/Whitehead style — moves are the data, topology is the consequence):
+**SWOLF's structural sequence** (the Tietze/Whitehead style — moves are the data, topology is the consequence):
 PATH1 → POLY1 → CONTRACT1 → DEFORM1/DEFORM2 → HOM1/HOM2 → TOP3 (π_1) → TOP1 (b_1).
 Each layer needs only the previous; the whole hierarchy lives below the metric layer.
 
 For Phase D BBH specifically: black-hole horizon = non-contractible cycle; merger event = moment cycle becomes contractible (a new 2-cell fills the previously-non-contractible region). KNOT-cobordism between linked → unlinked configurations. Cellular-sheaf cohomology change at the merger is the topological signature.
 
-**Stephen's program statement: "we're going to get all the way to differential geometry"**. The 25-step constructive route from elementary connectedness to BBH-from-hypergraph is now logged in INFRAGEOMETRY.md §5f. Each step is one short Lean def on top of the previous.
+**SWOLF's program statement: "we're going to get all the way to differential geometry"**. The 25-step constructive route from elementary connectedness to BBH-from-hypergraph is now logged in INFRAGEOMETRY.md §5f. Each step is one short Lean def on top of the previous.
 
-**Hyperplane / polytope / inside-outside / bounded primitives (Pavel + Stephen):**
-- HYPER1 (#338) vertex separator (Pavel's pre-metric "graph separation"); HYPER2 (#339) perpendicular bisector (metric hyperplane); HYPER3 (#340) Voronoi decomposition; HYPER4 (#341) — equidistant-set vs separator equivalence (3 strengths, finite-vs-infinite hyperplane distinction recovers in continuum limit).
+**Hyperplane / polytope / inside-outside / bounded primitives (PHAJEK + SWOLF):**
+- HYPER1 (#338) vertex separator (PHAJEK's pre-metric "graph separation"); HYPER2 (#339) perpendicular bisector (metric hyperplane); HYPER3 (#340) Voronoi decomposition; HYPER4 (#341) — equidistant-set vs separator equivalence (3 strengths, finite-vs-infinite hyperplane distinction recovers in continuum limit).
 - MIDPT1 (#342) midpoint (multivalued, possibly empty).
 - POLYTOPE1 (#343) polytope as cell of hyperplane arrangement.
 - INOUT1 (#344) inside-outside / Jordan separator on cycles — *not automatic*, four "which side is inside" criteria (contractibility, volume, orientation, causal-future).
@@ -159,19 +159,19 @@ For Phase D BBH specifically: black-hole horizon = non-contractible cycle; merge
 
 **The Bachmann route to Lie theory:** reflections through perpendicular bisectors → translations and rotations → isometry group → Coxeter / Weyl group → Lie algebra (IB5 #150). The constructive route to the full Lie-theoretic isometry structure of differential geometry.
 
-**Cross-reference with Murzin "Geometry on Combinatorial Objects" (2026-04-26, Wolfram Cloud, Nik Murzin's 11-page write-up of the meeting we tracked)** — the document's full taxonomy is now subsumed by our task list. ~60-70% of its content maps to existing tasks (Knill / Forman / Ollivier / Bishop-Gromov / DEC / Hodge / cellular-sheaf framework already logged). 18 new gap-tasks #351–#368 cover the document's residual content: SHEAF-CHOICE1–7 + SHEAF-CLASSIFICATION (#351–#358) for the §7 restriction-map classification — constant / Hodge / `S_k`-equivariant / diffusion / order / gauge / tensor-contraction sheaves and the meta-table; EFFRES1 (#359) effective-resistance curvature (Devriendt-Lambiotte 2022); DEC1 (#360) explicit Hodge star; DEC2 (#361) wedge product; CLOSURE1 (#362) explicit closure-choice infrastructure (downward / clique / nerve); CHEEGER1 (#363) Hansen-Ghrist sheaf-Cheeger inequalities; REGGE-CONV1 (#364) Christiansen 2024 distributional convergence; CDT1 (#365) causal dynamical triangulations; MYERS1 (#366) Stone discrete Myers; HIGUCHI1 (#367) Higuchi planar curvature; OLLIVIER-HG (#368) Ollivier-Ricci hypergraph multi-marginal extension. **The document's central thesis** — every geometric construction corresponds to a structural commitment, sheaves make this explicit — IS exactly the synthesis Stephen and Pavel converged on; our SHEAF-CHOICE family + INFRAGEOMETRY.md §5d–§5g now formalises this precisely.
+**Cross-reference with NMURZIN "Geometry on Combinatorial Objects" (2026-04-26, Wolfram Cloud, NMURZIN's 11-page write-up of the meeting we tracked)** — the document's full taxonomy is now subsumed by our task list. ~60-70% of its content maps to existing tasks (Knill / Forman / Ollivier / Bishop-Gromov / DEC / Hodge / cellular-sheaf framework already logged). 18 new gap-tasks #351–#368 cover the document's residual content: SHEAF-CHOICE1–7 + SHEAF-CLASSIFICATION (#351–#358) for the §7 restriction-map classification — constant / Hodge / `S_k`-equivariant / diffusion / order / gauge / tensor-contraction sheaves and the meta-table; EFFRES1 (#359) effective-resistance curvature (Devriendt-Lambiotte 2022); DEC1 (#360) explicit Hodge star; DEC2 (#361) wedge product; CLOSURE1 (#362) explicit closure-choice infrastructure (downward / clique / nerve); CHEEGER1 (#363) Hansen-Ghrist sheaf-Cheeger inequalities; REGGE-CONV1 (#364) Christiansen 2024 distributional convergence; CDT1 (#365) causal dynamical triangulations; MYERS1 (#366) Stone discrete Myers; HIGUCHI1 (#367) Higuchi planar curvature; OLLIVIER-HG (#368) Ollivier-Ricci hypergraph multi-marginal extension. **The document's central thesis** — every geometric construction corresponds to a structural commitment, sheaves make this explicit — IS exactly the synthesis SWOLF and PHAJEK converged on; our SHEAF-CHOICE family + INFRAGEOMETRY.md §5d–§5g now formalises this precisely.
 
-**Surface / manifold detection (Stephen's "what is a surface")** — SURFACE1 (#348) Knill/Fisk recursive manifold predicate: `IsFiskManifold n H` iff every vertex's unit sphere is `IsFiskManifold (n-1)` AND every unit ball is contractible. **Diagnostic on a tree**: shell at any positive radius is disconnected (one component per branch) — fails Knill at every positive dim. Empirical screener for "rule produces manifold-like hypergraph". Subsumes / sharpens KN13 (#249).
+**Surface / manifold detection (SWOLF's "what is a surface")** — SURFACE1 (#348) Knill/Fisk recursive manifold predicate: `IsFiskManifold n H` iff every vertex's unit sphere is `IsFiskManifold (n-1)` AND every unit ball is contractible. **Diagnostic on a tree**: shell at any positive radius is disconnected (one component per branch) — fails Knill at every positive dim. Empirical screener for "rule produces manifold-like hypergraph". Subsumes / sharpens KN13 (#249).
 
-**Formal-topology layer (Stephen + Pavel pivoting)** — OPEN1 (#349) multiple natural topologies on a hypergraph (discrete / Alexandrov / metric / cellular-star / VR-scale-indexed / causal — each yields different compactness/continuity theorems); NBHD1 (#350) neighbourhood basis at each vertex (Stephen's "locally has neighbourhoods" intuition for surfaces).
+**Formal-topology layer (SWOLF + PHAJEK pivoting)** — OPEN1 (#349) multiple natural topologies on a hypergraph (discrete / Alexandrov / metric / cellular-star / VR-scale-indexed / causal — each yields different compactness/continuity theorems); NBHD1 (#350) neighbourhood basis at each vertex (SWOLF's "locally has neighbourhoods" intuition for surfaces).
 
 ## Headline (2026-04-26 — late, angle tower + units observation + path-vs-walk gap identified)
 
-**Full angle-tower taxonomy logged** as `AT0`–`AT27` (#285–#314, 28 tasks across 13 flavour-columns × multiple abstraction levels). Plus `PATH1`/`PATH2` (#300/#301) for Stephen's non-overlapping-path requirement at the substrate level.
+**Full angle-tower taxonomy logged** as `AT0`–`AT27` (#285–#314, 28 tasks across 13 flavour-columns × multiple abstraction levels). Plus `PATH1`/`PATH2` (#300/#301) for SWOLF's non-overlapping-path requirement at the substrate level.
 
 **Three structural observations that emerged:**
 
-1. **Y2 / AT18 — Projective Cayley-Klein angle is more elementary than M0 / AT0 — Stephen's chord-ratio.** Cross-ratio reads off from `Between` + `dist` ratios; works on hypergraphs WITHOUT requiring `GeodesicallyUnique`. Sidesteps Stephen's "no angle without straight lines" objection. Possibly the right starting point for non-geodesically-unique hypergraphs.
+1. **Y2 / AT18 — Projective Cayley-Klein angle is more elementary than M0 / AT0 — SWOLF's chord-ratio.** Cross-ratio reads off from `Between` + `dist` ratios; works on hypergraphs WITHOUT requiring `GeodesicallyUnique`. Sidesteps SWOLF's "no angle without straight lines" objection. Possibly the right starting point for non-geodesically-unique hypergraphs.
 
 2. **K1 / AT23 — Conformal structure IS pure-angle data.** Angles alone define conformal geometry; lengths are extra structure beyond conformal. A "pure infrageometric angle theory" IS conformal geometry; Riemannian = angles + length scale. Lorentzian = rapidities + light cones (this is GR). Kähler = angles + complex structure.
 
@@ -179,7 +179,7 @@ For Phase D BBH specifically: black-hole horizon = non-contractible cycle; merge
 
 **Units-emergence observation (AT11 / #296)**: in the hypergraph, both `r` (geodesic distance, step count) and `V(r)` (vertex count) are `ℕ`-valued counts — same kind of thing. Units `[L]`, `[L^d]`, `[L^{-2}]` etc. are *artifacts of continuum rescaling* `a → 0`, not properties of the underlying object. Every dimensional physical quantity is `a^k · (count-level quantity)` for an integer `k` set by the Taylor-order at which the quantity sits in the `r`-expansion of `V(r)`. The "−2" in `[R] = L^{-2}` is intrinsic — second-order Taylor coefficient. Bishop-Gromov gives the discrete recipe `R_disc(v, r) := (6(d+2)/r²)·[V_flat(d, r) − V(v, r)] / V_flat(d, r)` (AT9 / #294). **Background-independence: no clock, no ruler assumed; geometry derived from rewriting structure. Dimension itself is emergent, not chosen.**
 
-**Path-vs-walk gap (PATH1 / PATH2)**: per Stephen's "we need non-overlapping paths, not just walks". Currently `Hypergraph.dist := H.toSimpleGraph.dist` uses Mathlib's clique-expansion which: (a) treats ≥3-arity hyperedges as `K_n` (any pair-step inside a hyperedge is one step); (b) silently drops self-loops via `loopless`; (c) collapses multi-edges in the `Multiset`. We have `SubdivisionPath.IsPathOf` for `ExecHG ℕ` (correct `Nodup` semantics, but ExecHG-specific), and Mathlib `SimpleGraph.Walk.IsPath` after the lossy reflection. **Missing: a native `Hypergraph.SimplePath u v` first-class type carrying both `Nodup` vertex list AND the actual hyperedge sequence (so multi-arity structure isn't collapsed).** Numerically `dist` is right (Mathlib's shortest walk is auto-simple); structurally we're losing "which hyperedge was rewritten at step i" — important for #228 / #229 causal/branchial extraction. PATH1 is prerequisite for AT3 (Toponogov), AT8 (GeodesicallyUnique), AT26 (multivalued angle).
+**Path-vs-walk gap (PATH1 / PATH2)**: per SWOLF's "we need non-overlapping paths, not just walks". Currently `Hypergraph.dist := H.toSimpleGraph.dist` uses Mathlib's clique-expansion which: (a) treats ≥3-arity hyperedges as `K_n` (any pair-step inside a hyperedge is one step); (b) silently drops self-loops via `loopless`; (c) collapses multi-edges in the `Multiset`. We have `SubdivisionPath.IsPathOf` for `ExecHG ℕ` (correct `Nodup` semantics, but ExecHG-specific), and Mathlib `SimpleGraph.Walk.IsPath` after the lossy reflection. **Missing: a native `Hypergraph.SimplePath u v` first-class type carrying both `Nodup` vertex list AND the actual hyperedge sequence (so multi-arity structure isn't collapsed).** Numerically `dist` is right (Mathlib's shortest walk is auto-simple); structurally we're losing "which hyperedge was rewritten at step i" — important for #228 / #229 causal/branchial extraction. PATH1 is prerequisite for AT3 (Toponogov), AT8 (GeodesicallyUnique), AT26 (multivalued angle).
 
 ## Headline (2026-04-26 — late, Phase B opens: #224 RuleSignatureScreener)
 
@@ -297,7 +297,7 @@ reduces to `{propext, Classical.choice, Quot.sound}` (and many to
 `{propext, Quot.sound}` only). No `sorry`, no `native_decide`, no
 `decide`, no custom axioms. `lake build` fully green.
 
-**Gorard refutations F1–F7 Lean-formal**, including `F6Circularity`
+**JGORARD refutations F1–F7 Lean-formal**, including `F6Circularity`
 (the Poisson-sprinkle-then-reconstruct schema of arXiv:2102.09363
 §3.3 formally proved to produce its input identically — the
 `circular_procedure_is_identity` theorem).
@@ -325,7 +325,7 @@ Highlights:)
   predicate.
 - **J1**: `MultiwayCausalGraph` — joint structure bundling a rewriting
   system, initial hypergraph, and causal DAG on events.
-- **H1**: `CandidateRuleCatalog` — Gorard's named rule (arXiv:2102.09363)
+- **H1**: `CandidateRuleCatalog` — JGORARD's named rule (arXiv:2102.09363)
   plus four other literature rules as concrete `Rule P` instances with
   `LiteratureSource` citations and machine-checked conservation theorems.
 - **P20 advances**: Rodkey classification — `AdjTransitive → DistTransitive
@@ -335,7 +335,7 @@ Highlights:)
 - **Ollivier audit (research-new)**: quantitative discrepancy
   `ollivier_minus_gorard_leading = δε²(R - Ric_vv)/(2(n+2))`, with S²
   worked example `δε²/8` (`s2_gorard_error`) — identifies a specific
-  computable deviation between Gorard's discrete-Ricci construction
+  computable deviation between JGORARD's discrete-Ricci construction
   and standard Ollivier-Ricci.
 - **A6 partial**: `A6_for_{constants,identity,sq,cube}` monomial
   convergence + `A6Holds` predicate closed under `const_mul`, `add`,
@@ -478,7 +478,7 @@ witnesses with real convergence / amplitude / curvature computations:
 
 | Open item | Status |
 |---|---|
-| **IG10** exponential map via weighted shortest-path counts | needs shortest-path counting infrastructure + Hajek's weighted-sum formulation |
+| **IG10** exponential map via weighted shortest-path counts | needs shortest-path counting infrastructure + PHAJEK's weighted-sum formulation |
 | **IB2** causal-branchial commutator theorem | predicate placeholder at `True`; needs a real theorem statement before proof |
 | **ID7** spectral dimension via heat-kernel trace | heat trace defined; small-`t` asymptotics pending |
 | **A6** weak convergence (general continuous) | polynomials to degree 3 closed; Weierstrass lift pending |
@@ -506,7 +506,7 @@ For the full per-module view, see [`COVERAGE_MAP.md`](COVERAGE_MAP.md).
 
 ## Key deliverables by phase
 
-### Phase 0 — Audit of the Gorard corpus
+### Phase 0 — Audit of the JGORARD corpus
 - ✅ Close-readings of G1 (2004.14810), G2 (2011.12174), G3 (2102.09363), G4 (2303.07282).
 - ✅ 184-row claims catalog, severity taxonomy S1–S6, major-flaws index F1–F8, cross-paper audit.
 - ✅ Empirical refutation of the named EFE rule (SetReplace + independent Python rewriter on 9 seeds).
@@ -527,8 +527,8 @@ All formalized as Lean theorems, axiom-clean:
 - ✅ **F5** (`Refutations/F5Illdefined.lean`) — "becomes" is convergence-notion-dependent.
 
 ### Phase 2 — Corrected continuum identities
-- ✅ Statement-only forms of the correct Ollivier identity (directional Ric) and Gorard's wrong form (scalar R); coincidence-condition theorem.
-- ✅ Statement-only forms of the correct Gray tube formula and Gorard's wrong form; concrete disagreement proofs on S² (1/6 ≠ 1/3) and S³ (1/3 ≠ 2).
+- ✅ Statement-only forms of the correct Ollivier identity (directional Ric) and JGORARD's wrong form (scalar R); coincidence-condition theorem.
+- ✅ Statement-only forms of the correct Gray tube formula and JGORARD's wrong form; concrete disagreement proofs on S² (1/6 ≠ 1/3) and S³ (1/3 ≠ 2).
 
 ### Phase 3 — Continuum-limit theorems
 - ✅ **Cycle → circle** GH bound at `1/(2n)` (`Infra/GHBound.lean`).
@@ -588,7 +588,7 @@ All formalized as Lean theorems, axiom-clean:
 
 **What we have:** full chain `causallyPrecedes (trajectory) → CausalPrecedes (discrete Lorentz) → ContinuumCausalPrecedes (Minkowski)` under `LightConeCompatible τ φ`. Flat-target GH bounds in all dimensions (cycle, path, d-torus). Graph Laplacian with full spectral-theory readiness. F1–F5 refuted.
 
-**What we're missing for GR:** curved-target bridges (tasks #217 + #218 — our own Ricci / Einstein on explicit metrics, plus real discrete-Ricci convergence on curved targets; nothing waits on Mathlib). Full Lorentzian-GH (task #213 — we define it ourselves). A specific rule whose causal graph has the right dimension (empirical + structural rejection of Gorard's named rule — F7). Discretization of the Einstein–Hilbert action converging to the continuum one (F5 blocks naïve form).
+**What we're missing for GR:** curved-target bridges (tasks #217 + #218 — our own Ricci / Einstein on explicit metrics, plus real discrete-Ricci convergence on curved targets; nothing waits on Mathlib). Full Lorentzian-GH (task #213 — we define it ourselves). A specific rule whose causal graph has the right dimension (empirical + structural rejection of JGORARD's named rule — F7). Discretization of the Einstein–Hilbert action converging to the continuum one (F5 blocks naïve form).
 
 **Rule search as the practical route:** our Lean corpus serves as verifier for any candidate rule + candidate spatial embedding (`RULE_SEARCH.md`). Screening signatures: level growth `~t^{d+1}`, antichain width `~k^d`, cone volume. Any candidate rule passing these + `LightConeCompatible` gets a machine-checked Minkowski-consistency certificate via the end-to-end bridge.
 

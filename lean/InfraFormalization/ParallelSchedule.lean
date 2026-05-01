@@ -12,7 +12,7 @@ function*. It is NOT the same as "BFS-cone growth is linear in
 radius" — events in a BFS cone of radius `t` from a fixed source can
 have arbitrarily high parallel-level via long alternate causal paths,
 so cones are not contained in bounded bands of layers. The linear
-cone growth observed empirically for Gorard's named rule is
+cone growth observed empirically for JGORARD's named rule is
 rule-and-seed-specific structure, not a corollary of the parallel-
 layer bound.
 

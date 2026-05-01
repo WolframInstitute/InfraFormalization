@@ -2,7 +2,7 @@
 **Elementary blowups** (Group IB / #146).
 
 An *elementary blowup* is a rewriting rule whose LHS consists of a
-single hyperedge. Pavel Hájek's Srní talk (2026) identifies this
+single hyperedge. PHAJEK's Srní talk (2026) identifies this
 class as the minimal-model Lie-algebra generator:
 
   * Commutator `[B₁, B₂]` on isomorphism classes of hypergraphs

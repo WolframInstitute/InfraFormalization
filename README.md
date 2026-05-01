@@ -1,12 +1,12 @@
 # InfraFormalization
 
-A Lean 4 / Mathlib formalisation of the Wolfram-model → general-relativity / quantum-mechanics bridge programme, coupled with a machine-checked audit of Gorard's principal publications on deriving GR from hypergraph rewriting.
+A Lean 4 / Mathlib formalisation of the Wolfram-model → general-relativity / quantum-mechanics bridge programme, coupled with a machine-checked audit of JGORARD's principal publications on deriving GR from hypergraph rewriting.
 
 The project runs on three parallel axes:
 
 1. **Positive construction** — a 10-rung bridge ladder from hypergraph primitives to Einstein's equations, with every continuous object anchored to a hypergraph origin by an obligation Prop.
-2. **Audit of the Gorard corpus** — line-by-line formalisation of seven structural flaws (F1–F7), each converted to an axiom-clean Lean theorem with counter-example witnesses.
-3. **Infrageometry programme** — 57-task / 9-group research programme for the Wolfram Institute, covering colleagues' work (Pavel Hájek, Pavel Pokorny, Van Le, Hubert Kolcz, Jan Pullman, Carlos Zapata, Sara Ahmed, Ioana Milea).
+2. **Audit of the JGORARD corpus** — line-by-line formalisation of seven structural flaws (F1–F7), each converted to an axiom-clean Lean theorem with counter-example witnesses.
+3. **Infrageometry programme** — 57-task / 9-group research programme for the Wolfram Institute, covering colleagues' work (PHAJEK, NMURZIN, JWILES, HVLE, HKOLCZ, JPULLMAN, CZAPATA, SAHMED, IMILEA, DHAMMOCK, UBAJAJ, SRODKEY). Handle index in [`CONTRIBUTORS.md`](CONTRIBUTORS.md).
 
 `lake build` is fully green. Every theorem reduces to Lean's three standard axioms `{propext, Classical.choice, Quot.sound}` — no `sorry`, no `native_decide`, no custom axioms, certified by `#print axioms` in `AxiomCheck.lean`.
 
@@ -14,8 +14,8 @@ The project runs on three parallel axes:
 
 - A Lean library built on the primitives `Hypergraph V`, `RewritingSystem P`, and `Trajectory sys init`, with every downstream object (graph Laplacian, discrete PDEs, metric/connection data, Lorentzian structures, causal foliations, branchial Hilbert spaces, Ricci and Einstein machinery) reduced to those primitives or to an explicit hypergraph-origin obligation Prop.
 - A documentation set: [`ROADMAP.md`](ROADMAP.md) (phase-sorted full-program sequencing), [`STATUS.md`](STATUS.md), [`NEXT_STEPS.md`](NEXT_STEPS.md), [`INDEX.md`](INDEX.md), [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md), [`COVERAGE_MAP.md`](COVERAGE_MAP.md), [`BRIDGE_MACHINERY.md`](BRIDGE_MACHINERY.md), [`MAJOR_FLAWS.md`](MAJOR_FLAWS.md), [`GROUNDING_AUDIT.md`](GROUNDING_AUDIT.md), [`MILESTONES.md`](MILESTONES.md).
-- An audit trail for the Gorard papers (G1 2004.14810, G2 2011.12174, G3 2102.09363, G4 2303.07282): close-readings, cross-paper corpus audit, row-level claims catalog, severity taxonomy, continuum-limit claim ledger, per-claim corpus assessment.
-- Empirical scripts (Wolfram Language + Python) that independently re-implement the mechanics of Gorard's claims and test them against his rules, including a SetReplace-vs-Python cross-check on the named EFE rule.
+- An audit trail for the JGORARD papers (G1 2004.14810, G2 2011.12174, G3 2102.09363, G4 2303.07282): close-readings, cross-paper corpus audit, row-level claims catalog, severity taxonomy, continuum-limit claim ledger, per-claim corpus assessment.
+- Empirical scripts (Wolfram Language + Python) that independently re-implement the mechanics of JGORARD's claims and test them against his rules, including a SetReplace-vs-Python cross-check on the named EFE rule.
 
 ## Motivation
 
@@ -28,15 +28,15 @@ The project exists to settle, formally, what is actually true in this corpus and
 **Pre-metric topology + curvature/hyperplane substrate + MILESTONE statements land.** 12 tasks closed in 7 commits this push (`c1447bc` → `683633c`):
 
 - **MILESTONE-GR / -QM / -BBH (#369–#371)** — `Milestone.lean`: closed Lean signatures for the program-completion theorems. `GR_emerges_from_hypergraph` six-conjunct Prop; specialisations `_minkowski`/`_schwarzschild`/`_flrw`/`_some`. **Three Lean-verifiable signals of completion** documented (no `sorry` / clean `#print axioms` / term-witnessed existential). Anyone reading the file can see exactly what "got to GR" means in the formal-proof sense.
-- **AT0 / AT1 angle primitives (#285, #286)** — `Hypergraph.elementaryAngle` (Stephen's chord-ratio = `2 sin(θ/2)`), `cosAngle`, `angle := Real.arccos cosAngle`, `IsOrthoApprox`. Foundation of the 14-column angle tower.
+- **AT0 / AT1 angle primitives (#285, #286)** — `Hypergraph.elementaryAngle` (SWOLF's chord-ratio = `2 sin(θ/2)`), `cosAngle`, `angle := Real.arccos cosAngle`, `IsOrthoApprox`. Foundation of the 14-column angle tower.
 - **AT6 (#291)** — `CoordinatizationDimension.AreOrthogonalAxes` `True`-stub replaced with `IsOrthoApprox` chord-ratio ≈ √2.
 - **AT7 (#292)** — angular-deviation screener, `CombinedScreener` triple. **Phase B screener pipeline complete on both curvature and angular sides.**
 - **AT9 (#294)** — `Hypergraph.scalarCurvatureAt v d r` Bishop-Gromov scalar curvature. Cross-checks Forman-Ricci.
-- **TOP1 / TOP4 (#323, #326)** — new `HypergraphTopology.lean`: `firstBettiZ` cycle rank, `spatialB0` (Stephen's "is every point reachable from every other"), `IsSpatiallyConnected`. **Pre-metric topology surfaced as first-class.**
-- **SPHERE1 (#334)** — `infraSphere`, `infraDisk`, `infraSphereVolume`. Stephen's "all points equidistant from a point".
+- **TOP1 / TOP4 (#323, #326)** — new `HypergraphTopology.lean`: `firstBettiZ` cycle rank, `spatialB0` (SWOLF's "is every point reachable from every other"), `IsSpatiallyConnected`. **Pre-metric topology surfaced as first-class.**
+- **SPHERE1 (#334)** — `infraSphere`, `infraDisk`, `infraSphereVolume`. SWOLF's "all points equidistant from a point".
 - **HYPER2 / HYPER3 / MIDPT1 (#339, #340, #342)** — `perpBisector`, `voronoiCell`, `midpoint`, `nearMidpoint`, `HasTopologicalHyperplane` stub. **Bachmann motion-group substrate for the constructive route to differential geometry's Lie structure.**
 
-84 new tasks logged this session (#285–#368) covering the full angle / topology / cellular-sheaf / knot framework + the Murzin "Geometry on Combinatorial Objects" cross-reference + 18 gap-tasks. Plus 3 milestone-tasks #369–#371. Build clean (3532 jobs).
+84 new tasks logged this session (#285–#368) covering the full angle / topology / cellular-sheaf / knot framework + the NMURZIN "Geometry on Combinatorial Objects" cross-reference + 18 gap-tasks. Plus 3 milestone-tasks #369–#371. Build clean (3532 jobs).
 
 Previous landings (2026-04-26, late):
 
@@ -58,7 +58,7 @@ Previous landings (2026-04-26, late):
     - **C7 `HypergraphConnection`**: discrete connection on a hypergraph with group-valued transport, flat baseline, walk-transport as a monoid homomorphism (`transportWalk_append`), holonomy, `IsFlat` predicate; hypergraph analog of `FiberedGraph.Connection`.
     - **C1 `DiagRiemannianMetric` / C2 `DiagLorentzianMetric`**: positive-definite and `(−,+,+,+)` predicates on `MetricData n` with Euclidean and Minkowski witnesses.
     - **J1 `MultiwayCausalGraph`**: joint structure bundling a rewriting system, initial hypergraph, and causal DAG on events — the "multiway causal graph" of Wolfram physics at the formalization level.
-    - **H1 `CandidateRuleCatalog`**: Gorard's named rule (arXiv:2102.09363) plus four other literature rules as concrete `Rule P` instances with `LiteratureSource` citations and machine-checked conservation theorems.
+    - **H1 `CandidateRuleCatalog`**: JGORARD's named rule (arXiv:2102.09363) plus four other literature rules as concrete `Rule P` instances with `LiteratureSource` citations and machine-checked conservation theorems.
     - **Cycle-hypergraph distance infrastructure**: closed-form `.val` for iterated ±1 shifts, injectivity on admissible ranges, forward/backward disjointness, parallel-transport walk composition — feeds C8 (scaled → Levi-Civita).
 - **Grounding audit**: all four action items closed. No free-floating continuum islands at the obligation level (see [`GROUNDING_AUDIT.md`](GROUNDING_AUDIT.md)).
 - **Refutations**: F1–F7 Lean-formal; F6 (circular G3 derivation) formally proved as `circular_procedure_is_identity`; F8 documentary.
@@ -236,7 +236,7 @@ lean/
 
 ### Results (`results/`)
 
-- `phase1_selfaudit/` — Python rewriter ↔ SetReplace agreement on the Gorard named rule; causal-dimension measurements on 9 seeds.
+- `phase1_selfaudit/` — Python rewriter ↔ SetReplace agreement on the JGORARD named rule; causal-dimension measurements on 9 seeds.
 - `phase2_continuum/` — Eq 342 (Gray tube), Eq 344 (Ollivier) verdict files with symbolic + numeric computation.
 
 ### Scripts (`scripts/`)
@@ -279,7 +279,7 @@ Every continuous structure in the repository must either:
 
 No category-(3) obligation is allowed to sit as an open `True ∧ False` stub — every one carries a predicate with real mathematical content, and flat-case witnesses are inhabited by concrete hypergraph-side constructions. The audit of this principle lives in [`GROUNDING_AUDIT.md`](GROUNDING_AUDIT.md).
 
-## Refutation track (Gorard corpus)
+## Refutation track (JGORARD corpus)
 
 ### The four audited papers
 
@@ -311,7 +311,7 @@ Supporting papers referenced: 2308.07508, 2401.14209.
 | F6 — G3 circular derivation | `Refutations/F6Circularity.lean` | `circular_reconstruction_has_no_content` (0 axioms); `circular_procedure_is_identity` — any Poisson-sprinkle-then-reconstruct returns its input |
 | F7 — named rule is structurally 1-D | `Refutations/F7NamedRuleStructure.lean` + empirical | `namedRule_trajectory_edge_count_fixed`; `isConservative_implies_structurallyOneDim`; `conservative_blocks_dim_geq_one` (in `RuleSearch.lean`) |
 
-**F8** (G4 title-body gap): not a formal claim but a documentary finding; Gorard concedes the gap in the paper's conclusion.
+**F8** (G4 title-body gap): not a formal claim but a documentary finding; JGORARD concedes the gap in the paper's conclusion.
 
 ### Empirical refutation
 
@@ -331,14 +331,14 @@ See [`MAJOR_FLAWS.md`](MAJOR_FLAWS.md), [`FINDINGS.md`](FINDINGS.md), [`notes/co
 
 | Group | Topic | Lead / collaborator | Closed | Total |
 |---|---|---|---|---|
-| IA | Infraanalysis | Pavel Hájek | 5 | 5 |
-| IG | InfraGaugeTheory | Pavel Pokorny | 11 | 11 |
-| IC | Infracausality | Zapata + Ahmed | 8 | 8 |
-| IT | Infratopology (VR + Latschev) | Pavel Hájek | 6 | 6 |
+| IA | Infraanalysis | PHAJEK (`InfraAnalysis` paclet) | 5 | 5 |
+| IG | InfraGaugeTheory | `InfraGaugeTheory` paclet — PacletInfo Creator: PPOKORNY; sole git committer: PHAJEK (see CONTRIBUTORS.md) | 11 | 11 |
+| IC | Infracausality | CZAPATA + SAHMED (paper); `InfraCausality` paclet — PHAJEK | 8 | 8 |
+| IT | Infratopology (VR + Latschev) | PHAJEK | 6 | 6 |
 | ID | Infradimension | — | 7 | 7 |
-| IB | Infrablowup (Lie algebra, Poisson) | Hubert Kolcz | 6 | 6 |
-| IQ | Branchial / quantum | Van Le, Ahmed | 4 | 4 |
-| IS | Synthetic axiomatic | Pokorny | 3 | 3 |
+| IB | Infrablowup (Lie algebra, Poisson) | HKOLCZ | 6 | 6 |
+| IQ | Branchial / quantum | HVLE, SAHMED | 4 | 4 |
+| IS | Synthetic axiomatic | PHAJEK (`SyntheticInfrageometry` paclet) | 3 | 3 |
 | IR | Ruliology | — | 7 | 7 |
 
 See [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md) for per-task descriptions.
@@ -374,10 +374,10 @@ Every verdict is reproducible to the precision quoted in `results/`.
 
 ## Methodology
 
-Every claim about the Gorard corpus is checked against four independent rails (close-reading, symbolic computation, Lean formalisation, independent empirical re-implementation) before being accepted into the repository. Correct claims are verified; incorrect claims are documented precisely, with counter-example witnesses and corrected statements side by side.
+Every claim about the JGORARD corpus is checked against four independent rails (close-reading, symbolic computation, Lean formalisation, independent empirical re-implementation) before being accepted into the repository. Correct claims are verified; incorrect claims are documented precisely, with counter-example witnesses and corrected statements side by side.
 
 Verdicts are labelled precisely ("overclaim", "misstatement", "ill-defined", "tautology", "error", "conjectural", "hunch"). The goal is to have a load-bearing, verifiable answer to: *what in this corpus is actually true, and how is it linked (if at all) to general relativity?*
 
 ## License
 
-MIT — see [`LICENSE.md`](LICENSE.md). Gorard paper sources in `papers/` are the original authors' and included only for reference.
+MIT — see [`LICENSE.md`](LICENSE.md). JGORARD paper sources in `papers/` are the original authors' and included only for reference.

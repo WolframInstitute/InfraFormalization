@@ -1,7 +1,7 @@
 /-
 Hypergraph pattern matching and rewriting rules.
 
-Gorard's Def 3 (2004.14810) defines an update rule as `H₁ → H₂` replacing
+JGORARD's Def 3 (2004.14810) defines an update rule as `H₁ → H₂` replacing
 a "subhypergraph" matching `H₁` with a copy of `H₂`, preserving (a) the
 number of outgoing hyperedges and (b) the symmetries of `H₁`. Neither (a)
 nor (b) is made precise in his prose.

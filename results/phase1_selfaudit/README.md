@@ -79,11 +79,11 @@ Chains of length 4: `4→1→u→5` is the longest directed chain and has only 3
 
 ## What this lets us trust
 
-Because Phase 1A passes, we can treat the following as verified facts about the rule Gorard names in arXiv:2102.09363:
+Because Phase 1A passes, we can treat the following as verified facts about the rule JGORARD names in arXiv:2102.09363:
 
 1. **(Termination on small cycles/paths.)** On `{{1,2},…,{4,1}}` and `{{1,2},…,{4,5}}`, the rule halts after one firing.
 2. **(State conservation.)** For any seed and update order, the state multiset size is constant.
 3. **(Linear cone growth.)** The causal graph has log-log cone-growth exponent ≈ 1 on every seed tested, up to and including 3D grid seeds.
-4. **(Structural refutation.)** Gorard's §3.3 machinery needs cone dimension $n = 4$ for 3+1-dim GR. The actual dimension is 1. The argument cannot apply to this rule.
+4. **(Structural refutation.)** JGORARD's §3.3 machinery needs cone dimension $n = 4$ for 3+1-dim GR. The actual dimension is 1. The argument cannot apply to this rule.
 
 These four claims, independently verified by two implementations that agree to scheduler-level noise, form the empirical core of the refutation of arXiv:2102.09363 line 6202.

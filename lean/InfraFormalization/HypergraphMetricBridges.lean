@@ -16,7 +16,7 @@ current file wires each concrete metric to such an obligation Prop,
 so no metric lives as a free-floating continuum island anymore.
 
 **Status**: the obligations are stated; filling them is the open
-programme (Gorard claims + refutations). What this file guarantees
+programme (JGORARD claims + refutations). What this file guarantees
 is that the *shape* of the bridge is machine-checkable and attached
 to each target metric.
 
@@ -75,11 +75,11 @@ system whose trajectory GH-converges to Minkowski 4-space. -/
 def minkowski4_from_hypergraph : Prop :=
   HypergraphMetricOriginObligation minkowski4
 
-/-- **Schwarzschild bridge obligation** (B4 Gorard-claim). -/
+/-- **Schwarzschild bridge obligation** (B4 JGORARD-claim). -/
 def schwarzschild_from_hypergraph (M : ℝ) : Prop :=
   HypergraphPartialMetricOriginObligation (schwarzschildPartial M)
 
-/-- **FLRW bridge obligation** (F5 Gorard-claim). -/
+/-- **FLRW bridge obligation** (F5 JGORARD-claim). -/
 def flrw_from_hypergraph (a da : ℝ → ℝ) : Prop :=
   HypergraphPartialMetricOriginObligation (flrwPartial a da)
 

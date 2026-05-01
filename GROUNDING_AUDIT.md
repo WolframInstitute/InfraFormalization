@@ -142,7 +142,7 @@ This file tracks every major object with a ruthless honesty mark:
 
 ## Infrageometry groups (colleagues' notions)
 
-### IS — Synthetic (Pokorny) — ✅ grounded
+### IS — Synthetic (PPOKORNY) — ✅ grounded
 
 All on `Hypergraph V`: `SyntheticCircle`, `SyntheticLine`, `SyntheticSphere`,
 `InfrageometricScene`, `SyntheticAxiomatic`.
@@ -156,18 +156,18 @@ candidate DB (IR6).
 ### IT — Topology / VR complex — ✅ grounded
 
 All on `Hypergraph V`: `VietorisRipsEdge`, `VietorisRipsSimplex`,
-`vietorisRipsGraph`, Hodge Laplacian on VR (IT3 Pavel Hajek),
+`vietorisRipsGraph`, Hodge Laplacian on VR (IT3 PHAJEK),
 persistence barcode (IT4), Latschev obligation (IT5, proved), scale
 trichotomy (IT6, proved).
 
 ### IQ — Quantum — ✅ grounded
 
-- IQ5 Fisher metric on branchial (Van Le): ✅ grounded on `BranchialSlice`.
+- IQ5 Fisher metric on branchial (HVLE): ✅ grounded on `BranchialSlice`.
 - IQ6 Fubini-Study / Bhattacharyya bound: ✅ grounded on `BranchialHilbert`.
 - IQ8 EME persistence (baseline): ✅ grounded (uses `BranchialHilbert`).
 - IQ9 Path integral (baseline): ✅ grounded (uses `CausalGraph`).
 
-### IC — Causal (Zapata/Ahmed axiomatic relativity) — ✅ grounded
+### IC — Causal (CZAPATA/SAHMED axiomatic relativity) — ✅ grounded
 
 `CausalGraph`, `ObserverChain`, `LightRay`, `SpatiallyReconstructedHypergraph`,
 `Foliation + ProperTime`, `EPSAxioms`, `MarzkeWheeler`. All ✅.
@@ -179,7 +179,7 @@ trichotomy (IT6, proved).
 **But**: the bridge from IG-connection to `ConnectionData n` (continuum
 connection on `ℝⁿ`) is **missing** — grounding action item.
 
-### IB — Blowup / Poisson (Kolcz Lie-Poisson) — ✅ grounded
+### IB — Blowup / Poisson (HKOLCZ Lie-Poisson) — ✅ grounded
 
 `ElementaryBlowup`, `BlowupOperations`, `BlowupLieAlgebra`, Poisson
 bracket (IB5), radial/laminar blowup (IB6). All ✅ on `Hypergraph V`.
