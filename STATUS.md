@@ -6,6 +6,20 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-05-13 — paclet pull: PHAJEK curvature / resistance / Hodge-pseudoinverse primitives in NMURZIN's `Infrageometry`)
+
+Submodule bump on `resources/Infrageometry`, `resources/SyntheticInfrageometry`, `resources/InfraGaugeTheory` to 2026-05-13 surfaces substantial new WL-side reference implementations.
+
+**`Infrageometry` (NMURZIN's paclet, May-2026 PHAJEK additions)**
+- `Graph.wl` now exposes `FormanRicciCurvature` (full Forman on the clique complex with `OnCells` / `MaxCellDimension` options, sped up to O(V+E) via precomputed incidence map), `OllivierRicciCurvature` (W₁ via `LinearOptimization`), `WolframRicciCurvature` (volume-comparison scalar with auto or fixed local dimension), `EffectiveResistance` (Klein-Randić resistance distance), `ResistanceQ` (Schoenberg negative-type test).
+- `Infrageometry.wl` now exposes `GreenOperatorMatrix` (block Moore-Penrose pseudoinverse of the Hodge laplacian — **distinct from** the existing Knill `GreenFunctionMatrix`) and `HodgePropagatorMatrix` (Moore-Penrose pseudoinverse of the boundary `d_k`).
+
+**`SyntheticInfrageometry` (PHAJEK)** — major restructure to 26 kernel files. Per-primitive organisation: `InfraPoint`, `InfraLine`, `InfraSegment`, `InfraRay`, `InfraCircle`, `InfraPlane`, `InfraPolyline`, `InfraShell`, `InfraRevolution`, `InfraScene` (plus visualization variants). New geometry-layer files: `AlexandrovGeometry`, `EuclideanSpace`, `MetricGeometry`, `ProjectiveGeometry`, `TarskiGeometry`. New modules: `Homotopy`, `PathSpace`, `ExampleGraphs`, `GraphEnumeration`. `FindSegment` now supports `Method → "Stretched"` / `"Pulled"` (Forman-Ricci frontier sweep) / `"Pulled"` with Wolfram-Ricci. `TorusTessellation[{p, q}]` via Schläfli symbol. Old `Postulates.wl` / `Predicates.wl` / `Scenes.wl` / `Viewers.wl` removed in the refactor.
+
+**Impact on rule search**: a more refined Forman-Ricci screener (full clique-complex Forman vs our current elementary form) is now available as a target upgrade for `RuleSignatureScreener.formanRicciTrajectory`; an Ollivier-Ricci screener becomes feasible with a reference implementation; two new screener-metric candidates open (effective resistance, spectral via Moore-Penrose Hodge).
+
+**Task updates surfaced**: #287 AT2 Forman, #295 AT10 Tarski, #297 AT12 Ollivier-Wasserstein, #300 PATH1, #305 AT18 Cayley-Klein, #359 EFFRES1, #368 OLLIVIER-HG — all flagged with WL reference implementations now available. #171 M6 NMURZIN parity description expanded. #263 SIG2 / #264 SIG3 marked for restructure (target files no longer exist after refactor). New tasks #381 (Knill-Green vs Moore-Penrose-Green distinction) and #382 (HodgePropagatorMatrix port).
+
 ## Headline (2026-04-30 — H1 corpus end-to-end Lean-internal screening (#373))
 
 `RuleSignatureExecCorpus.lean` lands the on-ramp. The closed H1 candidate-rule corpus is screened end-to-end inside Lean — `MultiwayExec.singleWayEvolve` produces canonical dossiers, the dossier carries `edgeCountTrace` / `edgeCountConstant`, and `decide` / `native_decide` produce axiom-clean verdicts. **No paclet round-trip.** The trust boundary is internal to Lean.
