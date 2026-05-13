@@ -6,6 +6,16 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-05-13 — triangle-corrected Forman screener (#383))
+
+Upgrade of the per-trajectory Forman-Ricci screener to the standard 1D Forman with triangle-correction term, parallel to PHAJEK's `FormanRicciCurvature[g, "OnCells" -> 1]` at unit weights in NMURZIN's `Infrageometry/Graph.wl`.
+
+- `Hypergraph.trianglesThroughEdge v w`, `Hypergraph.adjDegree v`, `Hypergraph.formanRicciEdgeTriangle v w` in `DiscreteRicci.lean`. Edge curvature `F(v, w) = 4 − deg(v) − deg(w) + 3 · #triangles_through(v, w)`. Symmetry `formanRicciEdgeTriangle_symm` and helper `trianglesThroughEdge_symm` proved.
+- `Hypergraph.formanRicciTriangleDoubled H`: total scalar as the double sum over ordered adjacent pairs; equal to `2 · F_total` with the factor of two absorbed by the rate constant downstream.
+- `RuleSignatureScreener` extended with `formanRicciTriangleTrajectory τ`, `formanRicciTriangleDeviation τ κ`, `FormanRicciTriangleScreener τ κ r`, plus the const-self / length-1 conservative-discharge lemmas and the persistent-gap negative-discharge theorem, parallel to the existing `FormanRicciScreener` family.
+
+The triangle term captures local clustering (`+3` per triangle through the edge) — a strictly finer screener than the bare 4 − deg − deg form. The bare-Forman screener is retained for backwards compatibility on tests that depend on the existing trajectory shape.
+
 ## Headline (2026-05-13 — paclet pull: PHAJEK curvature / resistance / Hodge-pseudoinverse primitives in NMURZIN's `Infrageometry`)
 
 Submodule bump on `resources/Infrageometry`, `resources/SyntheticInfrageometry`, `resources/InfraGaugeTheory` to 2026-05-13 surfaces substantial new WL-side reference implementations.

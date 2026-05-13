@@ -191,6 +191,111 @@ def FormanRicciScreener {sys : RewritingSystem P} {init : Hypergraph V}
     (τ : Trajectory sys init) (κ : ℝ) (r : ℕ → ℝ) : Prop :=
   ConvergenceRateObligation (formanRicciDeviation τ κ) r
 
+/-! ## Triangle-corrected Forman-Ricci trajectory (1D Forman on the clique skeleton)
+
+The standard 1D Forman with the triangle-correction term — finer than
+the bare `formanRicciHypergraph` (which sums `k(2−k)` over hyperedges
+and vanishes on simple graphs). Per edge `(v, w)` in the
+clique-expansion graph,
+  `F(v, w) = 4 − deg(v) − deg(w) + 3 · #triangles_through(v, w)`.
+
+The trajectory value is `Hypergraph.formanRicciTriangleDoubled` — the
+double sum that equals `2 · F_total`. The factor of two is absorbed by
+the rate constant in `ConvergenceRateObligation`, so the screener is
+unchanged in meaning. Aligns with `Infrageometry/Graph.wl`'s
+`FormanRicciCurvature[g, "OnCells" -> 1]` (PHAJEK 2026-05). -/
+
+noncomputable def formanRicciTriangleTrajectory {sys : RewritingSystem P}
+    {init : Hypergraph V} (τ : Trajectory sys init) : ScaledDiscrepancy :=
+  fun n =>
+    if h : n < τ.states.length then
+      (((τ.states.get ⟨n, h⟩).formanRicciTriangleDoubled : ℤ) : ℝ)
+    else
+      ((init.formanRicciTriangleDoubled : ℤ) : ℝ)
+
+@[simp] theorem formanRicciTriangleTrajectory_zero {sys : RewritingSystem P}
+    {init : Hypergraph V} (τ : Trajectory sys init) (h0 : 0 < τ.states.length) :
+    formanRicciTriangleTrajectory τ 0 = ((init.formanRicciTriangleDoubled : ℤ) : ℝ) := by
+  unfold formanRicciTriangleTrajectory
+  rw [dif_pos h0]
+  congr 1
+  congr 1
+  exact trajectory_states_zero τ h0
+
+@[simp] theorem formanRicciTriangleTrajectory_oob {sys : RewritingSystem P}
+    {init : Hypergraph V} (τ : Trajectory sys init)
+    {n : ℕ} (h : ¬ n < τ.states.length) :
+    formanRicciTriangleTrajectory τ n = ((init.formanRicciTriangleDoubled : ℤ) : ℝ) := by
+  unfold formanRicciTriangleTrajectory
+  rw [dif_neg h]
+
+/-- **Triangle-Forman deviation**: pointwise distance from target. -/
+noncomputable def formanRicciTriangleDeviation {sys : RewritingSystem P}
+    {init : Hypergraph V} (τ : Trajectory sys init) (κ : ℝ) : ScaledDiscrepancy :=
+  fun n => |formanRicciTriangleTrajectory τ n - κ|
+
+/-- **Triangle-Forman screener obligation**: the trajectory's
+triangle-corrected Forman scalar converges to `κ` at rate `r`. -/
+def FormanRicciTriangleScreener {sys : RewritingSystem P} {init : Hypergraph V}
+    (τ : Trajectory sys init) (κ : ℝ) (r : ℕ → ℝ) : Prop :=
+  ConvergenceRateObligation (formanRicciTriangleDeviation τ κ) r
+
+/-- **Constant-trajectory triangle-Forman screener**: a trajectory
+whose triangle-Forman scalar is identically equal to the initial value
+passes the screener at the initial target for any non-negative rate. -/
+theorem formanRicciTriangleScreener_const_self {sys : RewritingSystem P}
+    {init : Hypergraph V} (τ : Trajectory sys init)
+    (hconst : ∀ n, formanRicciTriangleTrajectory τ n =
+      ((init.formanRicciTriangleDoubled : ℤ) : ℝ))
+    (r : ℕ → ℝ) (hr_nonneg : ∀ n, 0 ≤ r n) :
+    FormanRicciTriangleScreener τ ((init.formanRicciTriangleDoubled : ℤ) : ℝ) r := by
+  refine ⟨1, one_pos, 0, ?_⟩
+  intros n _
+  unfold formanRicciTriangleDeviation
+  rw [hconst n, sub_self, abs_zero, one_mul]
+  exact hr_nonneg n
+
+/-- **Length-1-trajectory triangle-Forman screener**: a trajectory with
+only the initial state passes the triangle-Forman screener at the
+initial target with any non-negative rate. -/
+theorem formanRicciTriangleScreener_initial_state_const {sys : RewritingSystem P}
+    {init : Hypergraph V} (τ : Trajectory sys init)
+    (hlen : τ.states.length = 1)
+    (r : ℕ → ℝ) (hr_nonneg : ∀ n, 0 ≤ r n) :
+    FormanRicciTriangleScreener τ ((init.formanRicciTriangleDoubled : ℤ) : ℝ) r := by
+  refine formanRicciTriangleScreener_const_self τ ?_ r hr_nonneg
+  intro n
+  unfold formanRicciTriangleTrajectory
+  by_cases hn : n < τ.states.length
+  · rw [dif_pos hn]
+    have h0 : 0 < τ.states.length := by rw [hlen]; exact one_pos
+    have hn_zero : n = 0 := by
+      have : n < 1 := by rw [hlen] at hn; exact hn
+      omega
+    subst hn_zero
+    have := trajectory_states_zero τ h0
+    rw [this]
+  · rw [dif_neg hn]
+
+/-- **Negative discharge** for the triangle-Forman screener: a
+trajectory whose triangle-Forman deviation has a cofinal positive
+lower bound `δ` fails any rate eventually less than `δ`. -/
+theorem formanRicciTriangleScreener_fails_of_persistent_gap
+    {sys : RewritingSystem P} {init : Hypergraph V}
+    (τ : Trajectory sys init) (κ : ℝ) (δ : ℝ) (_hδ : 0 < δ)
+    (hgap : ∀ N, ∃ n, N ≤ n ∧ δ ≤ formanRicciTriangleDeviation τ κ n)
+    (r : ℕ → ℝ) (hC : ∀ C : ℝ, 0 < C → ∃ N₀, ∀ n, N₀ ≤ n → C * r n < δ) :
+    ¬ FormanRicciTriangleScreener τ κ r := by
+  intro ⟨C, hC_pos, N, hN⟩
+  obtain ⟨N₀, hN₀⟩ := hC C hC_pos
+  obtain ⟨n, h_Nmax, h_gap⟩ := hgap (max N N₀)
+  have h_N_le : N ≤ n := le_of_max_le_left h_Nmax
+  have h_N₀_le : N₀ ≤ n := le_of_max_le_right h_Nmax
+  have h_d_le : formanRicciTriangleDeviation τ κ n ≤ C * r n := hN n h_N_le
+  have h_Cr_lt : C * r n < δ := hN₀ n h_N₀_le
+  have h_d_lt : formanRicciTriangleDeviation τ κ n < δ := lt_of_le_of_lt h_d_le h_Cr_lt
+  exact absurd h_gap (not_le.mpr h_d_lt)
+
 /-! ## Trivial / baseline screener witnesses -/
 
 /-- **Self-screener**: a constant trajectory (every state has the same

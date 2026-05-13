@@ -168,6 +168,76 @@ theorem formanRicciHyperedge_neg_of_three_or_more (e : Hyperedge V)
 noncomputable def formanRicciHypergraph (H : Hypergraph V) : ℤ :=
   (H.edges.map formanRicciHyperedge).sum
 
+/-! ## Triangle-corrected Forman (1D Forman on the clique skeleton)
+
+The standard 1D Forman with the triangle-correction term used across
+the discrete-Ricci literature on graph rewriting (Sreejith–Mohan–
+Saucan, Saucan–Weber). Per edge `(v, w)` in the clique-expansion graph
+of `H`:
+
+  `F(v, w) = 4 − deg(v) − deg(w) + 3 · #triangles_through(v, w)`
+
+where degrees and triangles are taken in `H.Adj` (the clique-expansion
+adjacency). On a triangle-free graph this collapses to the existing
+`formanRicciEdge` formula. The triangle term captures local clustering
+and gives a strictly finer screener than the bare 4 − deg − deg form.
+
+This aligns with `Infrageometry/Graph.wl`'s `FormanRicciCurvature[g,
+"OnCells" -> 1]` for unit weights on the 1-cell (edge) level. The full
+clique-complex Forman with parallelism term (PHAJEK's
+`FormanRicciCurvature` at higher `OnCells`) is a further upgrade and
+not formalised here. -/
+
+/-- **Number of triangles through an unordered edge** `(v, w)` in the
+clique-expansion graph of `H`. Counts common `H.Adj`-neighbours of `v`
+and `w`. Symmetric in `v, w` via `Adj_symm`. -/
+def Hypergraph.trianglesThroughEdge (H : Hypergraph V) (v w : V) : ℕ :=
+  (Finset.univ.filter (fun x => H.Adj v x ∧ H.Adj w x)).card
+
+/-- **Adjacency-degree of `v` in `H.Adj`**: the size of the set of
+clique-expansion neighbours of `v`. -/
+def Hypergraph.adjDegree (H : Hypergraph V) (v : V) : ℕ :=
+  (Finset.univ.filter (H.Adj v ·)).card
+
+/-- **Triangle-corrected Forman-Ricci edge curvature** on a hypergraph.
+For an edge `(v, w)` in the clique-expansion graph:
+
+  `F(v, w) = 4 − deg(v) − deg(w) + 3 · #triangles_through(v, w)`. -/
+def Hypergraph.formanRicciEdgeTriangle (H : Hypergraph V) (v w : V) : ℤ :=
+  4 - (H.adjDegree v : ℤ) - (H.adjDegree w : ℤ)
+    + 3 * (H.trianglesThroughEdge v w : ℤ)
+
+/-- The triangle count is symmetric in its two endpoints. -/
+theorem Hypergraph.trianglesThroughEdge_symm (H : Hypergraph V) (v w : V) :
+    H.trianglesThroughEdge v w = H.trianglesThroughEdge w v := by
+  unfold Hypergraph.trianglesThroughEdge
+  apply Finset.card_bij (fun x _ => x) ?_ ?_ ?_
+  · intro x hx
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hx ⊢
+    exact ⟨hx.2, hx.1⟩
+  · intros _ _ _ _ h; exact h
+  · intro x hx
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hx
+    refine ⟨x, ?_, rfl⟩
+    simp only [Finset.mem_filter, Finset.mem_univ, true_and]
+    exact ⟨hx.2, hx.1⟩
+
+/-- **Edge symmetry** of the triangle-corrected Forman. -/
+theorem Hypergraph.formanRicciEdgeTriangle_symm (H : Hypergraph V) (v w : V) :
+    H.formanRicciEdgeTriangle v w = H.formanRicciEdgeTriangle w v := by
+  unfold Hypergraph.formanRicciEdgeTriangle
+  rw [H.trianglesThroughEdge_symm v w]
+  ring
+
+/-- **Hypergraph triangle-corrected Forman-Ricci scalar (doubled)**:
+sum over all ordered pairs `(v, w)` with `H.Adj v w` of the edge
+curvature. Equal to `2·F_total` since each unordered edge is counted
+twice; the factor-of-two is preserved through the screener because it
+is a constant scaling absorbed by the rate constant. -/
+def Hypergraph.formanRicciTriangleDoubled (H : Hypergraph V) : ℤ :=
+  ∑ v : V, ∑ w ∈ Finset.univ.filter (H.Adj v ·),
+    H.formanRicciEdgeTriangle v w
+
 /-- **Hypergraph Forman-Ricci vanishes on simple graphs**. -/
 theorem formanRicciHypergraph_zero_of_simple (H : Hypergraph V)
     (hall : ∀ e ∈ H.edges, e.verts.toFinset.card = 2) :
