@@ -1,0 +1,113 @@
+Observations extracted from a PHAJEK note to SWOLF (macro-observer
+perspective on the infrageometry framework). Recorded here for the
+project record. Two themes: assigning Riemannian geometry to a graph,
+and the feasibility of the discrete-to-continuous passage.
+
+=== Theme 1: a graph maps to a MODULI of Riemannian manifolds ===
+
+PHAJEK's framing: edge-length embeddings of a graph into R^n followed
+by TDA / DEC / manifold-learning give candidate Riemannian geometries
+as submanifolds of R^n. Both the embedding and the shape detection are
+highly non-unique, so a single graph corresponds to a whole moduli of
+Riemannian manifolds, not a single one.
+
+Useful points for this project:
+
+1. This is an independent articulation of our F1 refutation ("no
+   canonical metric"). It sharpens it: the correct object is not "the
+   manifold a graph converges to" but "the moduli of manifolds
+   compatible with the graph". Our HypergraphMetricOriginObligation
+   Props should be read as existential over that moduli, never as
+   pinning a unique target. Worth stating explicitly in the obligation
+   docs and in the K1 audit framing.
+
+2. Nash-embedding observation (refutation-grade). PHAJEK notes that
+   merely assuming "shortest-path distance = geodesic distance of the
+   assigned Riemannian geometry" already lands you in the moduli,
+   because every Riemannian manifold embeds isometrically in some R^n
+   by Nash. Consequence: shortest-path distance alone can NEVER pin a
+   unique manifold. This is a clean, citable strengthening of F1 and a
+   candidate Lean-or-prose statement: "the graph-distance-as-geodesic
+   assumption is satisfied by a positive-dimensional family of
+   manifolds". Any derivation that treats the limit manifold as unique
+   without further structure is therefore underdetermined.
+
+3. Discrete invariants act as obstructions that cut down the moduli:
+     - clique size  -> lower bound on embedding dimension
+     - discrete curvature -> curvature constraints
+     - clique complex -> topology
+   This is exactly what our RuleSignatureScreener computes (Forman /
+   Ollivier curvature, edge / vertex counts, angular profile). The
+   conceptual reframe worth adopting: the screener is an
+   obstruction calculator that narrows the moduli. A rule "passes"
+   when its screened invariants are consistent with the target moduli
+   class; it can never single out one manifold, only a class.
+
+4. Gromov coarse-graining is the positive route. Large-scale / coarse
+   invariants can collapse the moduli to finitely many classes, or a
+   unique class, depending on observer scale and graph properties.
+   This is precisely the pointed-Gromov-Hausdorff and
+   metric-measure-GH infrastructure already on the task list (the
+   project-own pointed-GH task). That task should be understood as the
+   moduli-collapsing machinery, not just a distance definition.
+
+5. Proposed precise problem: formulate the map from equivalence
+   classes of graphs to equivalence classes of Riemannian manifolds,
+   survey existing methods, position infrageometry. PHAJEK frames this
+   as a theoretical LaTeX document. It overlaps our K3 (infrageometry
+   continuum-limits paper) and K5 (Wolfram-to-GR bridge paper).
+
+=== Theme 2: a measure-theoretic obstruction to discrete-to-continuous ===
+
+PHAJEK reports that HVLE has statistical counterarguments against the
+discrete-to-continuous direction, framed via a projective limit and
+the distinction between probability distributions and charges (signed
+or merely finitely-additive measures). Keywords given: Orbanz
+framework, Suslin-type issues.
+
+Useful points for this project:
+
+6. This is a SECOND, independent obstruction class, distinct from the
+   F1-F7 structural refutations. It is measure-theoretic. A continuum
+   limit of a sequence of finite rewriting states is a projective
+   limit; the obstruction is that a projective family of
+   finite-dimensional laws need not extend to a genuine countably-
+   additive probability measure. It can extend only to a charge, or
+   run into non-measurable (Suslin-type) pathologies. The Kolmogorov
+   extension theorem needs topological regularity that is not
+   automatic here.
+
+7. Relation to our existing audit. Our F5 ("ill-defined limit") is in
+   the same spirit but vaguer. The HVLE / Orbanz framing is sharper
+   because it names the precise failure mode: the projective limit is
+   a charge, not a probability measure. F5 should be annotated with
+   this sharper statement.
+
+8. Relation to our convergence work. Our weak-convergence results
+   (counting measure to Lebesgue on the interval, the Wasserstein-rate
+   results) are MARGINAL statements and remain safe. The obstruction
+   bites at the level of the JOINT law of the whole limiting object,
+   not the one-dimensional marginals. Worth recording explicitly so
+   the scope of the A-series convergence results is not overstated:
+   they establish marginal weak convergence, not the existence of a
+   genuine limiting process.
+
+9. Proposed work: place hypergraph rewriting explicitly in the
+   projective-limit setting, identify when the statistical obstruction
+   applies, and explore renormalization / controlled coarse-graining /
+   variational principles as ways around it. PHAJEK frames this as a
+   second theoretical LaTeX document. It overlaps our K8 (discrete
+   d'Alembertian / BD-flag) and K5, and is the natural home for a
+   precise statement of F5.
+
+=== Net actions worth considering ===
+
+A. Annotate the F1 refutation and the metric-origin-obligation docs
+   with the moduli framing and the Nash-embedding sharpening.
+B. Reframe the screener (in docs) as an obstruction calculator that
+   narrows the moduli, citing the clique-size / curvature /
+   clique-complex obstruction list.
+C. Annotate F5 with the projective-limit / charge-vs-measure failure
+   mode and scope our A-series convergence results explicitly as
+   marginal.
+D. Note the two proposed LaTeX documents as overlapping K3 and K5/K8.
