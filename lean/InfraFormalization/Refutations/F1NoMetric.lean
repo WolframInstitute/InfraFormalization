@@ -38,6 +38,21 @@ constructions are compatible with "using only hypergraph data" — so
 
 This is the impossibility theorem backing the claim that `g^{ab}`, as
 used in G1 §3, is not a well-defined object on hypergraphs.
+
+**Sharpening (2026-05, macro-observer note; see
+`notes/phajek_macro_observer_notes.txt`).** The non-uniqueness is not
+merely "many constructions are possible" — it is unavoidable in
+principle. A graph determines a *moduli of Riemannian manifolds*, not
+one manifold. By the Nash embedding theorem every Riemannian manifold
+embeds isometrically in some `ℝⁿ`, so the assumption "graph
+shortest-path distance = geodesic distance of the assigned metric" is
+satisfied by a positive-dimensional family of manifolds. Discrete
+invariants (clique size → embedding-dimension bound, discrete
+curvature → curvature constraints, clique complex → topology) act as
+obstructions narrowing that moduli but never collapse it to a point
+without large-scale / Gromov coarse-graining data. The two-element
+witness below is the minimal Lean expression of a phenomenon that is
+genuinely a positive-dimensional moduli.
 -/
 
 import Mathlib.Data.Real.Basic

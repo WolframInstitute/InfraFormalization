@@ -37,6 +37,23 @@ The point of this file is *not* to claim JGORARD meant `EventuallyEq`.
 It is to demonstrate formally that "becomes" under-determines the claim,
 so the F5 statement is not a mathematical assertion until a convergence
 notion is supplied.
+
+**Sharpening (2026-05, macro-observer note; see
+`notes/phajek_macro_observer_notes.txt`).** Beyond the unspecified
+topology, there is a deeper obstruction: even after a topology is
+fixed, the limit object may fail to exist as a probability measure.
+A continuum limit of a sequence of finite rewriting states is a
+*projective limit* of finite-dimensional laws, and such a projective
+family need not extend to a countably-additive probability measure —
+it can extend only to a *charge* (finitely-additive / signed), or hit
+Suslin-type non-measurability, since the Kolmogorov extension theorem
+needs topological regularity the rewriting setting does not supply
+(HVLE, via the Orbanz framework). This obstruction is independent of
+the F1–F4/F6/F7 structural flaws. Scope boundary: the marginal
+weak-convergence results elsewhere in this project (counting measure →
+Lebesgue, Wasserstein-rate bounds on 1-D projections) are unaffected;
+the obstruction bites at the *joint* law of the whole limiting
+process, which is the object G1 Eq 88 silently assumes.
 -/
 
 import Mathlib.Analysis.SpecificLimits.Basic
