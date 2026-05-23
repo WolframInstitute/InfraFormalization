@@ -6,6 +6,19 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-05-20 — ExecHG-native screener metrics; the Lean-alone rule-search keystone + engine-port spec (#384))
+
+`RuleSignatureExecMetrics.lean` makes a candidate rule's executable run screenable end-to-end inside Lean, and pins the metric set to port into RASSAR's fast `HypergraphRewritingEngine`.
+
+The abstract triangle-Forman screener (#383) lives on `[Fintype V]` `Hypergraph`; the engine's states are `ExecHG ℕ` (ℕ-vertex lists, no `Fintype`). #384 closes that gap by recomputing the *same arithmetic* on the finite carrier `vertexList H`:
+
+- **`execAdj`, `execAdjDegree`, `execTriangles`, `execFormanEdge`** (= `Hypergraph.formanRicciEdgeTriangle`: `4 − deg u − deg w + 3·#△`), **`execFormanScalar`** (= `Hypergraph.formanRicciTriangleDoubled`). All total, computable, `decide`-able.
+- **`Dossier.formanScalarTrace`** + the **`SignatureVerdict ⟨edgeCounts, vertexCounts, formanScalars⟩`** bundle — the exact per-state triple the fast engine must emit per candidate. This bundle *is* the metric-set specification for the engine port.
+- Screener verdicts as decidable Bool predicates on the run: **`formanScalarConstant`** (conservative/flat-target pass), **`formanScalarReaches tgt`** (positive verdict), **`formanScalarPersistentGap tgt`** (negative discharge — no state ever attains the target).
+- Numerics pinned by cross-check (`K₃ = 18`; flat 4-cycle `= 0`; single edge / 3-path `= 4`). End-to-end the edge-append run certifies `⟨[1,2,4,8], [2,3,5,9], [4,4,0,-12]⟩` — the Forman scalar turning **negative** is the tree-like / hyperbolic signature, a `decide`-checked rejection against any flat or positively-curved target.
+
+This is the keystone the user identified for "rule search using Lean alone": run a candidate, read a certified `SignatureVerdict`, accept/reject by `decide`. The literal #267 subdivision simulation lemma remains deferred (Route D #284 already decoupled the subdivision trajectory from the engine). Next: drive an open candidate enumeration through this screener (#190), and hand the `SignatureVerdict` formulas to the fast engine.
+
 ## Headline (2026-05-13 — triangle-corrected Forman screener (#383))
 
 Upgrade of the per-trajectory Forman-Ricci screener to the standard 1D Forman with triangle-correction term, parallel to PHAJEK's `FormanRicciCurvature[g, "OnCells" -> 1]` at unit weights in NMURZIN's `Infrageometry/Graph.wl`.

@@ -29,6 +29,22 @@ These are the per-rule observables that should track dimensional expectations:
 
 4. **Bridging consistency.** Given a candidate spatial embedding `φ : event-index → Fin d → ℤ`, check that every `causallyPrecedes τ i j` pair satisfies `Timelike d (fullEmbed φ i) (fullEmbed φ j)` in the Lorentz lattice. This is decidable and mechanisable. The 1+0-dim version is already proved automatic (`causallyPrecedes_implies_timelike`); higher-dim is a conditional theorem parameterised by the embedding.
 
+### Executable-side screening, Lean-alone (#384)
+
+`RuleSignatureExecMetrics.lean` makes a candidate rule screenable **without leaving Lean and without reconstructing an abstract `Trajectory`**. The engine's states are `ExecHG ℕ` (ℕ-vertex hyperedge lists); the signature metrics are recomputed on the finite carrier `vertexList H`, so every verdict is `decide`/`native_decide`-checkable.
+
+Pipeline per candidate `ExecRule r`, seed `H`, horizon `n`:
+1. `d := canonicalDossier r H n` — run the engine (`singleWayEvolve`), recording the trajectory. `canonicalDossier_isConsistent` guarantees `d` is the genuine engine run; #377 guarantees no other consistent trajectory exists.
+2. `d.signatureVerdict : SignatureVerdict ⟨edgeCounts, vertexCounts, formanScalars⟩` — the per-state metric triple, computed from the run alone.
+3. Accept / reject by decidable predicate:
+   - `d.formanScalarConstant` — conservative / flat-target pass.
+   - `d.formanScalarReaches tgt` — positive verdict (final state hits the target curvature).
+   - `d.formanScalarPersistentGap tgt` — negative discharge (no state ever attains `tgt`; reject for this seed).
+
+The metric primitives are `execAdj`, `execAdjDegree`, `execTriangles`, `execFormanEdge` (= `Hypergraph.formanRicciEdgeTriangle`: `4 − deg u − deg w + 3·#△`), and `execFormanScalar` (= `Hypergraph.formanRicciTriangleDoubled`). Worked example: the edge-append rule from a single edge certifies `⟨[1,2,4,8], [2,3,5,9], [4,4,0,-12]⟩` — the Forman scalar going negative is the tree-like / hyperbolic signature, a decide-checked rejection against any flat or positively-curved target.
+
+**Engine-port spec.** This `SignatureVerdict` triple, computed by exactly these formulas, is the metric set to port into RASSAR's `HypergraphRewritingEngine` (the fast engine). The engine is the at-scale generator+runner; Lean fixes *what* it must compute per state and certifies the screening logic on small instances. Open enumeration (#190) drives candidates through this same screener.
+
 ### Verification scaffolding
 
 Once a candidate rule is found:
