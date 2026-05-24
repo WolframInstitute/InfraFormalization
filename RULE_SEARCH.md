@@ -45,6 +45,18 @@ The metric primitives are `execAdj`, `execAdjDegree`, `execTriangles`, `execForm
 
 **Engine-port spec.** This `SignatureVerdict` triple, computed by exactly these formulas, is the metric set to port into RASSAR's `HypergraphRewritingEngine` (the fast engine). The engine is the at-scale generator+runner; Lean fixes *what* it must compute per state and certifies the screening logic on small instances. Open enumeration (#190) drives candidates through this same screener.
 
+### A complete Lean-alone search loop (#384 + #385)
+
+`RuleSignatureExecSearch.lean` closes the loop: **generate → run → classify → select**, all `decide`/`native_decide`-checkable.
+
+- **Generate.** `enumerateRules2_1 maxRHS` is a bounded rule generator (not a hand-list): single-edge LHS `{0,1}`, RHS any nonempty subset (size ≤ `maxRHS`) of the ordered pairs over `Fin 3` (two bound + one fresh vertex). 21 candidates at `maxRHS = 2`.
+- **Classify.** `trendOf r seed n` runs the candidate (`canonicalDossier`) and reduces its Forman-scalar trace to a `CurvatureTrend` (`flat` if constant, else the sign of the final scalar: `positive` / `negative` / `zero`).
+- **Select.** `selectByTrend cands seed n tgt` keeps the candidates matching a target trend — the search filter.
+
+Certified result on the single-edge seed at two steps: the 21 candidates partition into **13 flat, 4 zero-non-constant, 2 negatively-curved (tree-like / hyperbolic), 2 positively-curved** (`13 + 4 + 2 + 2 = 21`, classification total). This is a machine-checked demonstration that the screener discriminates curved from flat rules, and the template for at-scale search once the same `CurvatureTrend` logic runs in the fast engine.
+
+This is a finite-horizon, bounded-family search; scaling up the family size, the horizon `n`, and the seed set is mechanical (and the point where the fast engine takes over). The trend is a *coarse* proxy — final-state Forman sign — not yet a convergence-rate verdict; tightening it to a `ConvergenceRateObligation`-style accept criterion is the next refinement.
+
 ### Verification scaffolding
 
 Once a candidate rule is found:

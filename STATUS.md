@@ -6,6 +6,17 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-05-24 — Lean-alone rule-search driver: generate → run → classify → select (#385))
+
+`RuleSignatureExecSearch.lean` turns the #384 screener into an actual search loop, entirely inside Lean and entirely `decide`/`native_decide`-checked.
+
+- **Generate.** `enumerateRules2_1 maxRHS` is a real bounded generator: single-edge LHS `{0,1}`, RHS = any nonempty subset (size ≤ `maxRHS`) of the ordered vertex pairs over `Fin 3` (two bound vertices + one fresh). 21 candidates at `maxRHS = 2` — rules are *generated*, not hand-listed.
+- **Run + classify.** `trendOf r seed n` runs a candidate via `canonicalDossier` and reduces its triangle-Forman trace to a coarse `CurvatureTrend` (flat / positive / negative / zero) via `classifyForman` (constant ⇒ flat, else sign of the final scalar).
+- **Select.** `selectByTrend` keeps the candidates landing in a target trend.
+- **Certified result.** On the single-edge seed at 2 steps the family partitions into **13 flat, 4 zero-non-constant, 2 negatively-curved (tree-like / hyperbolic), 2 positively-curved**, summing to 21 — the classification is total and the screener is a genuine discriminator, not a pass-through. Every count is `native_decide`-certified.
+
+This is the first end-to-end "rule search using Lean alone" the user asked for: a generated candidate set, screened and partitioned by curvature, with machine-checked counts. The same `CurvatureTrend` signal — built from the `RuleSignatureExecMetrics` formulas — is exactly what must be ported into the fast `HypergraphRewritingEngine` to run this at scale (#190). Build green at 3536 jobs.
+
 ## Headline (2026-05-20 — ExecHG-native screener metrics; the Lean-alone rule-search keystone + engine-port spec (#384))
 
 `RuleSignatureExecMetrics.lean` makes a candidate rule's executable run screenable end-to-end inside Lean, and pins the metric set to port into RASSAR's fast `HypergraphRewritingEngine`.
