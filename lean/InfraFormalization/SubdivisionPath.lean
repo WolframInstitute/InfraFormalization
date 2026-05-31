@@ -575,12 +575,7 @@ example :
   decide
 
 /-- **Combined certified base-case ladder**: the simulation lemma's
-length-2 case holds for every pair listed above. The abstract general
-form `(a ≠ b) → ...` remains the formal residual that requires
-symbolic unfolding of `allFunctions 2 [a, b]` and the 4-binding
-filter — see plan in `notes/232_subdivision_path_plan.md` §3 (S1/S2/S3
-sub-lemmas). The concrete ladder demonstrates the shape of the
-abstract proof's RHS. -/
+length-2 case holds for every pair listed above. -/
 example :
     (singleWayStep subdivisionSys [consEdge 1 2]
       = [consEdge 1 (max 1 2 + 1), consEdge (max 1 2 + 1) 2])
@@ -588,6 +583,48 @@ example :
     (singleWayStep subdivisionSys [consEdge 100 200]
       = [consEdge 100 (max 100 200 + 1), consEdge (max 100 200 + 1) 200]) := by
   decide
+
+/-! ### Fin-bounded abstract: the base case holds for ALL pairs in `Fin K`
+
+The truly-abstract `a b : ℕ` version requires symbolic unfolding of
+`allFunctions 2 [a, b]` + 4-binding filter (residual). But for the
+**finite-bounded variant** — `∀ a b : Fin K`, both potentially equal
+— `native_decide` enumerates all `K²` pairs and certifies the
+equation. With `K = 8` this covers `64` cases including the diagonal
+`a = b` (which has only a 1-vertex carrier and produces a self-loop
+subdivision). -/
+
+/-- **All pairs in `Fin 8`** satisfy the simulation lemma's base
+case — `native_decide` over 64 instances, including the `a = b`
+diagonal. -/
+theorem singleWayStep_subdivisionSys_consEdge_fin8 :
+    ∀ a b : Fin 8,
+      singleWayStep subdivisionSys [consEdge a.val b.val]
+        = [consEdge a.val (max a.val b.val + 1),
+           consEdge (max a.val b.val + 1) b.val] := by
+  native_decide
+
+/-- **Extended Fin-bounded case** (`Fin 12`, 144 instances). -/
+theorem singleWayStep_subdivisionSys_consEdge_fin12 :
+    ∀ a b : Fin 12,
+      singleWayStep subdivisionSys [consEdge a.val b.val]
+        = [consEdge a.val (max a.val b.val + 1),
+           consEdge (max a.val b.val + 1) b.val] := by
+  native_decide
+
+/-- **Spot-check at high values** (asymmetric, vertex IDs in the
+hundreds): the closed form holds across the magnitude range. -/
+theorem singleWayStep_subdivisionSys_consEdge_high :
+    (singleWayStep subdivisionSys [consEdge 137 891]
+      = [consEdge 137 (max 137 891 + 1),
+         consEdge (max 137 891 + 1) 891])
+  ∧ (singleWayStep subdivisionSys [consEdge 891 137]
+      = [consEdge 891 (max 891 137 + 1),
+         consEdge (max 891 137 + 1) 137])
+  ∧ (singleWayStep subdivisionSys [consEdge 500 500]
+      = [consEdge 500 (max 500 500 + 1),
+         consEdge (max 500 500 + 1) 500]) := by
+  native_decide
 
 /-- **Closed form, n=3**: `singleWayEvolve … 3 = pathEdges (subdVerts 3)`. -/
 example : singleWayEvolve subdivisionSys subdSeed 3 = pathEdges (subdVerts 3) := by
