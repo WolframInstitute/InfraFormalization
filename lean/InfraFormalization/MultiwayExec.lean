@@ -149,6 +149,40 @@ def applyMatch (r : ExecRule) (H : ExecHG ℕ)
   let produced := mapPattern ρExt r.rhs
   removeEdges H consumed ++ produced
 
+/-! ## Per-edge-instance match enumeration (#227, non-breaking)
+
+`allMatches` enumerates bindings `Fin numBound → ℕ` and deduplicates
+edge instances that share a binding — two equal edges in `H` produce
+**one** match, not two. This is "per-binding" semantics; it is what
+the existing engine uses.
+
+The Wolfram-model intended semantics is **per-instance**: each
+occurrence of an edge that matches the LHS contributes its own
+application. For rules with `|LHS| = 1`, the per-edge-instance
+enumeration below mirrors that: each edge of `H` whose arity matches
+the LHS's contributes a binding `i ↦ e.verts[i]`.
+
+This primitive is **additive** — `allMatches` and `singleWayStep` are
+unchanged so all existing decide-checked corpora keep working. The
+general multi-edge-LHS per-instance enumeration (which has to choose
+an injective assignment of `H`'s edges to `LHS`'s edges) is the open
+piece of #227 proper. -/
+
+/-- **Per-edge-instance match enumeration** for rules with a single
+LHS edge. Each edge instance of `H` whose arity equals the LHS's
+contributes a binding `i ↦ e.verts[i]` (with `0` for out-of-range
+indices, defensively). Contrast `allMatches` which deduplicates
+bindings. -/
+def allEdgeInstanceMatches_singleLHS (r : ExecRule) (H : ExecHG ℕ) :
+    List (Fin r.numBound → ℕ) :=
+  match h : r.lhs with
+  | [lhsEdge] =>
+    H.filterMap (fun e =>
+      if e.verts.length = lhsEdge.verts.length then
+        some (fun i : Fin r.numBound => (e.verts[i.val]?).getD 0)
+      else none)
+  | _ => []
+
 /-- All states reachable from `H` by a single application of `r`. -/
 def oneStepStates (r : ExecRule) (H : ExecHG ℕ) : List (ExecHG ℕ) :=
   (allMatches r H).map (applyMatch r H)

@@ -6,6 +6,20 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-05-30 — wide-and-deep starters: InfraMeasure (#388) + PerpendicularModuli (#390) + per-edge-instance primitive (#227 non-breaking) (#396))
+
+Three parallel starters land alongside the existing rule-search machinery:
+
+- **#388 — `InfraMeasure.lean`**: synthetic measure primitive on a vertex type (`InfraMeasureData V := V → ℝ` with non-negativity witness). Primitives: `totalMass` (with `totalMass_nonneg`), `restrict`, `uniformOn`, `dirac`. Decoupled from `MeasureTheory.Measure` — this is an infrageometric construct, not a probability measure on a continuum. Makes the **F5 sharpening structural at the type level**: a measure on a graph is now its own kind of mathematical object; whether it can be realised as the marginal of a continuum probability measure is a separate question (the HVLE projective-limit obstruction). Reference target for #368 (Ollivier-Ricci hypergraph) and the Ollivier screener thread.
+
+- **#390 — `PerpendicularModuli.lean`**: multi-method perpendicularity. `PerpMethod` inductive (`adjacencyWedge`, `sharedNeighbour`); per-method Bool predicates on `List (Hyperedge V)`; method-parameterised `isPerpendicular`. **`native_decide`-certified disagreement on the 4-cycle**: `(0, 1, 2)` in the 4-cycle satisfies the adjacency-wedge method but fails the shared-neighbour method (`0` and `2` have two common neighbours, not one). The headline theorem `perpendicular_methods_disagree` is the **F1 moduli realisation at the perpendicular layer**: the hypergraph does not determine a *canonical* notion of perpendicularity — only a moduli of method choices, exactly as F1 predicts at the metric level and PHAJEK's paclet treats as a feature via the `Method` argument.
+
+- **#227 (non-breaking starter) — `allEdgeInstanceMatches_singleLHS`** in `MultiwayExec.lean`: a per-edge-instance match enumeration alongside the existing per-binding `allMatches`. For single-LHS-edge rules, each edge instance of `H` whose arity matches the LHS contributes a binding `i ↦ e.verts[i]` — duplicate edges produce duplicate bindings, fixing the deduplication issue that #227 documents. Additive: `allMatches` and `singleWayStep` are unchanged so the entire decide-checked corpus keeps working; the new primitive is opt-in. General multi-edge-LHS per-instance enumeration (choosing an injective assignment of `H` edges to LHS edges) remains the open part of #227 proper.
+
+**#267 engine-side base case**: attempted; unfolding `allFunctions 2 [a, b]` symbolically for abstract `a ≠ b` plus filtering 4 bindings is a substantial mechanical effort beyond this session's budget. The #395 RHS-side bricks (`vertexList_consEdge_of_ne`, `nextFresh_consEdge_of_ne`, `subdivideAll_singleton`, `subdivideAll_consEdge_nextFresh_of_ne`) stay in place; the engine-side equation is the next discrete step.
+
+Build green at 3539 jobs (+3 modules / 1 def from this push). Three new modules registered in the aggregator.
+
 ## Headline (2026-05-30 — #267 progress: closed-form ladder extended + structural base-case bricks landed (#395))
 
 Toward closing #267 (`singleWayStep subdivisionSys H = subdivideAll H (nextFresh H)` for path-shape `H`):
