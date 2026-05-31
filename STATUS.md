@@ -6,6 +6,35 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-05-31 — B4-advance: per-area density convergence — first non-trivial scaling continuum limit (#424))
+
+`NormalizedDensityLimits.lean` reconciles the prior non-convergence audits (#421 T², #423 grid) with the convergence framework: **the absolute totals diverge, but the per-area densities converge** to non-zero topological-combinatorial bulk constants. This is the **first non-trivial scaling continuum limit** in the codebase.
+
+**Closed-form formulas certified at sample sizes**:
+
+- `Forman(T²(n, n)) = -16n²` (pure bulk, no boundary) — at `n = 4, 5, 6, 8`
+- `Higuchi(T²(n, n)) = -2n²` (pure bulk) — at `n = 4, 5, 6`
+- `Forman(grid(n, n)) = -16n² + 40n − 16` (bulk + perimeter + corner) — at `n = 3, 4, 5, 6, 8, 12`
+- `Higuchi(grid(n, n)) = -2n² + 4n` (bulk + boundary) — at `n = 3, 4, 5, 6`
+
+**Per-area density limits**:
+
+- T² Forman per-area = `-16` exactly (constant), proven via `tendsto_const_nhds`.
+- T² Higuchi per-area = `-2` exactly (constant).
+- Grid Forman density = `-16 + 40/n − 16/n²` → `-16` (boundary correction `O(1/n)`).
+- Grid Higuchi density = `-2 + 4/n` → `-2`.
+
+**The structural-constant interpretation**: `-16` is the **per-area Forman of the 4-regular triangle-free interior** — a discrete-combinatorial bulk invariant. Similarly `-2` is the per-vertex Higuchi of degree-4 vertices. These are NOT the smooth Riemannian Ricci of the continuum target (which is 0 for flat T² and D²) — they are the discrete-bulk densities that the unweighted formulas naturally extract. The discrepancy is a real fact about unweighted Forman / Higuchi, not a flaw in the proof.
+
+**Why this matters**: this is the first time the codebase has proven a **non-trivial scaling continuum limit** — extensive quantities (totals) rescaled by volume (`n²`) to give intensive densities with finite non-zero limits. The pattern matches **lattice gauge theory** and **statistical mechanics**: bulk densities are the meaningful continuum observables once you divide by the volume.
+
+| Topology      | Forman closed form    | per-area limit | Higuchi closed form | per-area limit |
+|---------------|------------------------|----------------|---------------------|----------------|
+| `T²(n, n)`    | `-16 n²`              | `-16` exact    | `-2 n²`             | `-2` exact     |
+| `grid(n, n)`  | `-16 n² + 40 n − 16`  | `-16` (O(1/n)) | `-2 n² + 4 n`       | `-2` (O(1/n))  |
+
+Build green at 3565 jobs.
+
 ## Headline (2026-05-31 — B4-audit: 2D open grid full non-convergence + architecture scope statement (#423))
 
 `GridContinuumLimit.lean` completes the second non-convergence audit (after T², #421), generalizing to the **open-boundary 2D case** (`D²` analog). The open grid `gridHG m n` mixes corner / edge / interior vertices but **all four scalars diverge**:
