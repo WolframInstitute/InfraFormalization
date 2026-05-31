@@ -164,5 +164,54 @@ theorem singleWayStep_inner_extension_eq (a b : ℕ) :
     show (max a b + 1) + 0 + (2 - 2) = matchABext a b ⟨2, by decide⟩
     rw [matchABext_two]
 
+/-! ## Symbolic enumeration of `allFunctions 2 [a, b]`
+
+For symbolic `a, b : ℕ`, the 4-element candidate list reduces via
+definitional unfolding. -/
+
+/-- **Pair-projection of `allFunctions 2 [a, b]`**: each candidate
+binding `ρ : Fin 2 → ℕ` projects to the pair `(ρ 0, ρ 1)`. The four
+candidates produce exactly the 4 ordered pairs from `{a, b} × {a, b}`. -/
+theorem allFunctions_2_pair_projection (a b : ℕ) :
+    ((allFunctions 2 [a, b]).map (fun ρ => (ρ ⟨0, by decide⟩, ρ ⟨1, by decide⟩)))
+      = [(a, a), (a, b), (b, a), (b, b)] := by
+  simp [allFunctions, List.flatMap]
+
+/-- `allFunctions 2 [a, b]` has exactly 4 elements. -/
+theorem allFunctions_2_length (a b : ℕ) :
+    (allFunctions 2 [a, b]).length = 4 := by
+  simp [allFunctions, List.flatMap]
+
+/-! ## `bindingMatches` characterization
+
+For the subdivision rule with a single-LHS-edge `[subdLhs]` and a
+single-state-edge `[consEdge a b]`, the multiset-containment predicate
+`bindingMatches` reduces to literal equality of the image edge with
+`consEdge a b`. -/
+
+/-- `Hyperedge.map ρ subdLhs = consEdge (ρ 0) (ρ 1)`. -/
+theorem mapPattern_subdLhs_eq (ρ : Fin 2 → ℕ) :
+    Hyperedge.map ρ subdLhs = consEdge (ρ ⟨0, by decide⟩) (ρ ⟨1, by decide⟩) :=
+  rfl
+
+/-- `consEdge` is injective in both arguments. -/
+theorem consEdge_eq_iff (x y a b : ℕ) :
+    consEdge x y = consEdge a b ↔ x = a ∧ y = b := by
+  constructor
+  · intro h
+    have := congrArg Hyperedge.verts h
+    simp [consEdge] at this
+    exact this
+  · rintro ⟨rfl, rfl⟩; rfl
+
+/-! ## Direct singleton characterization residual
+
+The `bindingMatches subdivisionRule.lhs [consEdge a b] ρ ↔ Hyperedge.map ρ subdLhs = consEdge a b`
+characterization sits as a planned next-step. The mechanical residual:
+unfold `edgesContained`'s `.dedup.all` over the singleton and reduce
+the `count` arithmetic. Once landed, combine with
+`allFunctions_2_pair_projection` to get the full singleton-of-matches
+characterization for symbolic `a ≠ b`. -/
+
 end MultiwayExec
 end InfraFormalization
