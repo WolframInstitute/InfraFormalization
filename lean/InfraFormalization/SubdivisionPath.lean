@@ -458,6 +458,74 @@ example : singleWayEvolve subdivisionSys subdSeed 1 = pathEdges (subdVerts 1) :=
 example : singleWayEvolve subdivisionSys subdSeed 2 = pathEdges (subdVerts 2) := by
   decide
 
+/-- **Closed form, n=3** (4 edges, 5 vertices). -/
+example : singleWayEvolve subdivisionSys subdSeed 3 = pathEdges (subdVerts 3) := by
+  native_decide
+
+/-- **Closed form, n=4** (8 edges, 9 vertices). -/
+example : singleWayEvolve subdivisionSys subdSeed 4 = pathEdges (subdVerts 4) := by
+  native_decide
+
+/-- **Closed form, n=5** (16 edges, 17 vertices). -/
+example : singleWayEvolve subdivisionSys subdSeed 5 = pathEdges (subdVerts 5) := by
+  native_decide
+
+/-! ## Towards #267 (Phase 2): structural sub-lemmas for the base case
+
+The general simulation lemma
+`singleWayStep subdivisionSys H = subdivideAll H (nextFresh H)`
+for path-shape `H` is the load-bearing piece; per
+`notes/232_subdivision_path_plan.md` it decomposes into S1/S2/S3.
+
+The sub-lemmas below pin the base-case (single edge `H = [consEdge a b]`)
+quantities that the general proof will reuse: `vertexList`, `nextFresh`,
+and the `subdivideAll` closed form on a singleton. They are abstract in
+`a, b : ℕ` (no `decide` shortcut) and are the bricks the inductive step
+will compose. -/
+
+/-- `vertexList [consEdge a b] = [a, b]` when `a ≠ b`. The
+`vertexList` definition is `(H.flatMap verts).dedup` — for the single
+edge `[a, b]`, the flatMap gives `[a, b]`, and dedup is the identity on
+a nodup list. -/
+theorem vertexList_consEdge_of_ne (a b : ℕ) (h : a ≠ b) :
+    vertexList [consEdge a b] = [a, b] := by
+  unfold vertexList
+  simp [consEdge]
+  exact List.Nodup.dedup (by simp [h])
+
+/-- `nextFresh [consEdge a b] = max a b + 1` when `a ≠ b`. Direct
+consequence of `vertexList_consEdge_of_ne`: `foldr max 0 [a, b] =
+max a (max b 0) = max a b`. -/
+theorem nextFresh_consEdge_of_ne (a b : ℕ) (h : a ≠ b) :
+    nextFresh [consEdge a b] = max a b + 1 := by
+  unfold nextFresh
+  rw [vertexList_consEdge_of_ne a b h]
+  show List.foldr Nat.max 0 [a, b] + 1 = max a b + 1
+  simp
+
+/-- `subdivideAll [consEdge a b] c = [consEdge a c, consEdge c b]`. -/
+theorem subdivideAll_singleton (a b c : ℕ) :
+    subdivideAll [consEdge a b] c = [consEdge a c, consEdge c b] := by
+  show subdivideEdge (consEdge a b) c ++ subdivideAll [] (c + 1)
+       = [consEdge a c, consEdge c b]
+  rw [subdivideEdge_consEdge, subdivideAll_nil]
+  simp
+
+/-- **Subdivision-side closed form, length-2 path** (abstract): the
+RHS of the simulation lemma's base case is fully determined by `a, b`. -/
+theorem subdivideAll_consEdge_nextFresh_of_ne (a b : ℕ) (h : a ≠ b) :
+    subdivideAll [consEdge a b] (nextFresh [consEdge a b])
+      = [consEdge a (max a b + 1), consEdge (max a b + 1) b] := by
+  rw [nextFresh_consEdge_of_ne a b h, subdivideAll_singleton]
+
+/-! The remaining piece for the length-2 base case is the engine side:
+`singleWayStep subdivisionSys [consEdge a b] = [consEdge a (max a b + 1),
+consEdge (max a b + 1) b]` for abstract `a ≠ b`. Unfolding requires
+computing `allMatches subdivisionRule [consEdge a b]`, which depends on
+`allFunctions 2 [a, b]` and the `bindingMatches` filter — substantial
+mechanical work tracked as residual #267, with structure documented in
+`notes/232_subdivision_path_plan.md` §3. -/
+
 /-- **Closed form, n=3**: `singleWayEvolve … 3 = pathEdges (subdVerts 3)`. -/
 example : singleWayEvolve subdivisionSys subdSeed 3 = pathEdges (subdVerts 3) := by
   decide

@@ -6,6 +6,21 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-05-30 — #267 progress: closed-form ladder extended + structural base-case bricks landed (#395))
+
+Toward closing #267 (`singleWayStep subdivisionSys H = subdivideAll H (nextFresh H)` for path-shape `H`):
+
+- **Closed-form ladder extended** from `n = 0, 1, 2` to `n = 0..5` — `singleWayEvolve subdivisionSys subdSeed n = pathEdges (subdVerts n)` `native_decide`-certified for 16-edge / 17-vertex states.
+- **Structural base-case bricks landed** (abstract `a, b : ℕ`, `a ≠ b`):
+  - `vertexList_consEdge_of_ne`: `vertexList [consEdge a b] = [a, b]`
+  - `nextFresh_consEdge_of_ne`: `nextFresh [consEdge a b] = max a b + 1`
+  - `subdivideAll_singleton`: `subdivideAll [consEdge a b] c = [consEdge a c, consEdge c b]`
+  - `subdivideAll_consEdge_nextFresh_of_ne`: composes the above to give the full RHS of the simulation lemma's base case.
+
+The remaining piece for the length-2 base case is the engine side `singleWayStep subdivisionSys [consEdge a b] = [consEdge a (max a b + 1), consEdge (max a b + 1) b]`, which requires unfolding `allMatches`, `allFunctions 2 [a, b]`, and the `bindingMatches` filter — substantial mechanical work, the load-bearing residual that is the same shape that scales to the inductive step (S1/S2/S3 in `notes/232_subdivision_path_plan.md`).
+
+**Honest scope.** The literal #267 (general path-shape, all lengths) is not closed — that is the multi-day proof effort blocked on per-instance match enumeration (#227). What's landed today: the certified-case ladder doubles (5 vs 2 prior values) and four small abstract sub-lemmas pin the RHS-side primitives that the eventual general proof will reuse.
+
 ## Headline (2026-05-30 — partial Gap B closure: `sys` in the existential coupled to the rule + full GR metric zoo discharged materially (#394))
 
 `ExecRateBridge` extended with the rule-coupled `sys` discharge and a sweep across the named GR metric zoo.
