@@ -6,6 +6,24 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-05-30 — material trace-coupling closes Gap A on the ExecHG side (#393))
+
+`ExecRateBridge` extended with the **materially-coupled discrepancy**. The discrepancy fed into `WassersteinRateObligation` is no longer a constant `c/(k+1)` derived from the rate parameter — it is literally `|trace[k] − tgt|`, cast to `ℝ`, where `trace` is `witnessRule0`'s actual Forman-scalar trace on `edge12`.
+
+  - **`rateBoundedAux_implies`** — induction lemma: if `rateBoundedAux i trace tgt c = true`, every in-range index `k` satisfies `|trace[k] − tgt| · (i + k + 1) ≤ c`.
+  - **`rateBounded_implies`** — specialised at offset `0`: `|trace[k] − tgt| · (k + 1) ≤ c` for every `k < trace.length`.
+  - **`discrepancyOfTrace trace tgt`** — `|trace.get ⟨k, h⟩ − tgt|` (cast to `ℝ`) for `k < trace.length`, `0` past the end.
+  - **`discrepancyOfTrace_satisfies_obligation`** — derives `WassersteinRateObligation` directly from `rateBounded`, with `C = c + 1`. Proof: case-split (in-range chains `c/(n + 1) ≤ (c + 1)/n` via `nlinarith`; out-of-range is `0`).
+  - **`strong_obligation_from_exec_rate_with_trace`** and its `Partial` variant — bridge theorems using the material discrepancy.
+  - **Concrete material discharges**: `witnessRule0_edge12_trace_rateBounded` (`native_decide` on the actual trace), `minkowski4_strong_from_exec_witness_trace`, and `schwarzschild_strong_from_exec_witness_trace M` — all use the rule's *real* Forman trace, not a constant.
+
+**Status of the two gaps after this:**
+
+- **Gap A — discrepancy decoupled from rule** → **closed on the ExecHG side.** The discrepancy is now the rule's actual Forman-scalar trace.
+- **Gap B — existential trajectory decoupled from rule** → **still open.** The strong obligation's `∃ trajectory` half still uses the trivial empty trajectory; closing it requires the dossier-to-trajectory simulation lemma (#267 / #231).
+
+What's structurally new today: discharging the strong metric-origin obligation for Minkowski 4 or Schwarzschild now requires not only exhibiting a passing rule (statement-coupling) but also has the discrepancy half *materially* equal to the rule's trace values. The remaining decoupling is precisely the trajectory side, which is the deferred simulation-lemma work.
+
 ## Headline (2026-05-30 — bridge: rate-screener → strong metric-origin obligation discharged by a named candidate rule (#392))
 
 `ExecRateBridge.lean` lands the first end-to-end coupling from the executable rule-search machinery (#384/#385/#386/#391) to the abstract metric-origin obligations in `HypergraphMetricBridges`.
