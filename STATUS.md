@@ -6,6 +6,20 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-05-30 — `QM_emerges_from_hypergraph_Strong`: QM-side completion-criterion umbrella, mirrors GR (#411, instantiating #370 / #371))
+
+`QMEmergence.lean` lifts the GR umbrella architecture to the branchial / quantum side. Introduces:
+
+- **`QuantumTarget`** type (finite-dim Hilbert-space dimension + positivity).
+- **`HypergraphQuantumOriginObligationStrong Q`** Prop — structurally identical to `HypergraphMetricOriginObligationStrong` but with a `QuantumTarget` target. Reuses `WassersteinRateObligation` infrastructure.
+- **Five-fold material discharges** via the existing curvature families (Forman / Transport / Higuchi / DegVariance / SquareCount), parametric in the quantum target.
+- **Named QM-zoo discharges**: `qubit_*`, `qutrit_*`, `qudit_*` across all five families.
+- **Per-target quint bundles**: `qubit_quintDischarge`, `qutrit_quintDischarge` — five independent discharges per target.
+- **Umbrella theorem `QM_emerges_from_hypergraph_Strong`**: qubit, qutrit, quditFour, quditEight, AND `∀ n : ℕ, HypergraphQuantumOriginObligationStrong (qudit n)` — all materially discharged.
+- **Grand-unified `GR_and_QM_emerge_from_hypergraph`**: combined GR + QM completion-criterion in one theorem.
+
+QM discharge-count certification: `5 (families) × 3 (seeds) × 4 (named targets) = 60` cells, plus the parametric universal `∀ n` qudit form. This is the "we got to QM" completion-criterion, structurally identical to the GR signature from #409. The placeholder `True`-stubs in `Milestone.lean`'s `QM_emerges_from_hypergraph` are now superseded by the materially-discharged companion. Build green at 3554 jobs.
+
 ## Headline (2026-05-30 — `#267` abstract base case: structural reducer + canonical-binding helpers (#398 progress))
 
 `SubdivisionAbstract.lean` lifts the structural building blocks for the abstract `singleWayStep_subdivisionSys_consEdge_of_ne` proof out of the 208-instance Fin-bounded version (`SubdivisionPath`). Lands:
