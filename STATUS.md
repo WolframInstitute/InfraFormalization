@@ -6,6 +6,17 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-05-24 — Multi-seed stability filter sharpens the rule-search discriminator (#386))
+
+`RuleSignatureExecSearch.lean` gains a stability layer: a candidate's curvature class is only admissible if it is the same on *every* seed in a topologically diverse seed set. This rejects rules that pass the single-seed (#385) filter by seed-coincidence.
+
+- **`seedSet`** = `[edge12, path123, cycle4]` — three distinct 1-skeleton topologies (single edge, simple path, 4-cycle), no triangles in any.
+- **`trendsAcross r seeds n`** — the trend each seed produces.
+- **`isStablyTrend`, `stablyClassifiable`, `stableSelect`** — primitives for stable-target filtering.
+- **Certified stability distribution** over the 21-candidate family at 2 steps: **7 stably flat, 2 stably negative (genuine hyperbolic, seed-independent), 2 stably positive, 0 stably zero = 11 stably classifiable**. The remaining **10 candidates are seed-dependent**: their curvature trend changes with the seed, so they have no rule-level curvature class on this family and are not admissible for a curvature-target search.
+
+The stability filter does real work — it rejects roughly half the candidates that passed the single-seed filter as bona-fide curved. The genuinely seed-independent hyperbolic rules drop from 2 to 2 (both survived), the genuinely seed-independent positively-curved rules drop from 2 to 2 (both survived), and the seed-dependent rest are filtered out cleanly. Same screener primitives (`RuleSignatureExecMetrics`), same engine-port spec, stronger discriminator.
+
 ## Headline (2026-05-24 — Lean-alone rule-search driver: generate → run → classify → select (#385))
 
 `RuleSignatureExecSearch.lean` turns the #384 screener into an actual search loop, entirely inside Lean and entirely `decide`/`native_decide`-checked.

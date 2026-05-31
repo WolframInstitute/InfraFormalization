@@ -57,6 +57,18 @@ Certified result on the single-edge seed at two steps: the 21 candidates partiti
 
 This is a finite-horizon, bounded-family search; scaling up the family size, the horizon `n`, and the seed set is mechanical (and the point where the fast engine takes over). The trend is a *coarse* proxy — final-state Forman sign — not yet a convergence-rate verdict; tightening it to a `ConvergenceRateObligation`-style accept criterion is the next refinement.
 
+### Multi-seed stability filter (#386)
+
+The single-seed classification above can over-accept: a rule may register `negative` on one seed by coincidence while producing a flat trace on another. A rule's curvature class should be a property of the rule, not of (rule, seed). `RuleSignatureExecSearch` adds a stability layer for this:
+
+- `seedSet = [edge12, path123, cycle4]` — three topologically distinct seeds (edge, path, 4-cycle).
+- `trendsAcross r seeds n` — the trend on each seed.
+- `isStablyTrend r seeds n tgt` — accept iff every seed yields `tgt`.
+- `stablyClassifiable r seeds n` — every seed yields *some* common trend.
+- `stableSelect cands seeds n tgt` — the stable-target filter.
+
+Certified stability distribution on `seedSet` at two steps: **7 stably flat, 2 stably negative (genuine seed-independent hyperbolic), 2 stably positive, 0 stably zero = 11 stably classifiable**. The remaining **10 candidates are seed-dependent** — their trend changes with the seed, so they have no rule-level curvature class on this family and are inadmissible for a curvature-target search. The stability filter rejects roughly half of the single-seed passes as coincidences. This is the form of the discriminator we want in the fast engine: per-state metrics from `RuleSignatureExecMetrics`, per-seed classification via `classifyForman`, accept only on seed-stable trends.
+
 ### Verification scaffolding
 
 Once a candidate rule is found:

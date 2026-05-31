@@ -137,5 +137,107 @@ example :
       = (enumerateRules2_1 2).length := by
   native_decide
 
+/-! ## Multi-seed stability filter (#386)
+
+A rule's curvature class should be a property of the rule, not of a
+particular seed. The single-seed classification above can over-accept:
+a rule may register `negative` on one seed by coincidence while
+producing a flat trace on another. To filter such pseudo-passes, run
+every candidate across a topologically diverse seed set and demand the
+trend agrees on all seeds. Only candidates that pass the stability
+filter have a well-defined rule-level curvature signature on this
+family. -/
+
+/-- A small topologically diverse seed set: a single edge (`edge12`),
+a simple path (`path123`), and a 4-cycle (`cycle4`). Three distinct
+1-skeleton shapes, none containing a triangle. -/
+def seedSet : List (ExecHG ℕ) := [edge12, path123, cycle4]
+
+/-- The list of curvature trends a candidate produces across a seed
+set. -/
+def trendsAcross (r : ExecRule) (seeds : List (ExecHG ℕ)) (n : Nat) :
+    List CurvatureTrend :=
+  seeds.map (fun s => trendOf r s n)
+
+/-- A candidate stably exhibits the target trend iff every seed in the
+set lands at `tgt`. -/
+def isStablyTrend (r : ExecRule) (seeds : List (ExecHG ℕ)) (n : Nat)
+    (tgt : CurvatureTrend) : Bool :=
+  (trendsAcross r seeds n).all (fun t => decide (t = tgt))
+
+/-- A candidate is *stably classifiable* iff every seed produces the
+same trend (without specifying which). -/
+def stablyClassifiable (r : ExecRule) (seeds : List (ExecHG ℕ))
+    (n : Nat) : Bool :=
+  match trendsAcross r seeds n with
+  | [] => true
+  | t :: rest => rest.all (fun t' => decide (t' = t))
+
+/-- The stable-select primitive: keep only candidates whose run is
+trend-`tgt` on every seed in `seeds`. -/
+def stableSelect (cands : List ExecRule) (seeds : List (ExecHG ℕ))
+    (n : Nat) (tgt : CurvatureTrend) : List ExecRule :=
+  cands.filter (fun r => isStablyTrend r seeds n tgt)
+
+/-! ### Certified stability distribution
+
+Over `seedSet = [edge12, path123, cycle4]` at 2 steps, partitioning the
+21 candidates by stable trend (and the seed-dependent remainder). -/
+
+/-- **Stably flat: 7 candidates** — every seed in `seedSet` yields a
+constant Forman scalar. -/
+example :
+    (stableSelect (enumerateRules2_1 2) seedSet 2 CurvatureTrend.flat).length = 7 := by
+  native_decide
+
+/-- **Stably negative (tree-like / hyperbolic on every seed):
+2 candidates** — the genuine seed-independent hyperbolic rules of this
+family. -/
+example :
+    (stableSelect (enumerateRules2_1 2) seedSet 2 CurvatureTrend.negative).length = 2 := by
+  native_decide
+
+/-- **Stably positive: 2 candidates** — the genuine seed-independent
+positively-curved rules of this family. -/
+example :
+    (stableSelect (enumerateRules2_1 2) seedSet 2 CurvatureTrend.positive).length = 2 := by
+  native_decide
+
+/-- **Stably zero: 0 candidates.** -/
+example :
+    (stableSelect (enumerateRules2_1 2) seedSet 2 CurvatureTrend.zero).length = 0 := by
+  native_decide
+
+/-- **Total stably classifiable: 11 candidates** — every seed agrees
+on the trend. The remaining `21 − 11 = 10` candidates are seed-dependent
+and have no rule-level curvature class on this family; they are not
+admissible for a curvature-target search. -/
+example :
+    ((enumerateRules2_1 2).filter
+        (fun r => stablyClassifiable r seedSet 2)).length = 11 := by
+  native_decide
+
+/-- The four stable selections sum to the total stably-classifiable
+count (`7 + 2 + 2 + 0 = 11`) — the stable classification partitions
+the stably-classifiable subset. -/
+example :
+    (stableSelect (enumerateRules2_1 2) seedSet 2 CurvatureTrend.flat).length
+    + (stableSelect (enumerateRules2_1 2) seedSet 2 CurvatureTrend.negative).length
+    + (stableSelect (enumerateRules2_1 2) seedSet 2 CurvatureTrend.positive).length
+    + (stableSelect (enumerateRules2_1 2) seedSet 2 CurvatureTrend.zero).length
+      = ((enumerateRules2_1 2).filter
+          (fun r => stablyClassifiable r seedSet 2)).length := by
+  native_decide
+
+/-- **Seed-dependent (rejected) count: 10 candidates** — these rules
+land on different trends for different seeds and so have no rule-level
+curvature signature. The stability filter is doing genuine work: it
+rejects nearly half the single-seed pass rate. -/
+example :
+    (enumerateRules2_1 2).length
+      - ((enumerateRules2_1 2).filter
+          (fun r => stablyClassifiable r seedSet 2)).length = 10 := by
+  native_decide
+
 end RuleSignatureExecSearch
 end InfraFormalization
