@@ -135,6 +135,7 @@ import InfraFormalization.ExecTrajectoryLift
 import InfraFormalization.MetricTargetScalars
 import InfraFormalization.DiscreteRicciConvergence
 import InfraFormalization.CycleContinuumLimit
+import InfraFormalization.AdvancedContinuumLimits
 import InfraFormalization.WitnessDiversity
 import InfraFormalization.GREmergence
 import InfraFormalization.Milestone

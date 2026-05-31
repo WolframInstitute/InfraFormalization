@@ -6,6 +6,31 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-05-31 — B4-advance: multi-scalar cycle convergence + T² Forman non-convergence audit (#421))
+
+`AdvancedContinuumLimits.lean` extends the #420 cycle continuum-limit framework in two directions, one positive and one negative — both honestly certified.
+
+**(a) Multi-scalar cycle convergence**: the cycle sequence (`C_n` for `n ≥ 4`) discharges true-limit convergence across **four independent curvature scalars** — Forman, Higuchi, SquareCount, DegVariance — all → 0 = vacuum target. Verified at depths `n ∈ {4, 5, 6, 8, 16, 32}` per scalar via `native_decide`.
+
+- **Higuchi(C_n) = 0**: per-vertex `2 − deg(v) = 0` for degree-2 vertices.
+- **SquareCount(C_n) = 0** for `n ≥ 5`: long cycles contain no 4-cycles.
+- **DegVariance(C_n) = 0**: regular degree-2 graph has zero variance.
+
+**(b) T² Forman non-convergence audit** — the honesty piece. The unweighted Forman scalar on the 2D flat torus `T²(n, n)` **DOES NOT converge** as `n → ∞`. Certified at sample sizes:
+
+- `torus_4_4_forman_neg : execFormanScalar (torusHG 4 4) = -256`
+- `torus_5_5_forman_neg : execFormanScalar (torusHG 5 5) = -400`
+- `torus_6_6_forman_neg : execFormanScalar (torusHG 6 6) = -576`
+- `torusFormanSampleTrace_decreasing`: sequence `[-256, -400, -576]` is strictly decreasing, NOT approaching 0.
+- `unweighted_forman_fails_on_2d_torus`: explicit conjunction of `≠ 0` for all sampled sizes.
+- `torus_per_edge_forman_bias`: the structural reason — `-8` per edge constant for 4-regular triangle-free, summing to `-16n²`.
+
+**Why this matters** — scope statement for the architecture: the cycle case (Forman = 0) is the *only* unweighted-Forman continuum-limit case that converges to the vacuum target trivially. For `d ≥ 2` flat continua, **weighted Forman** (Forman 2003 original) or a different scalar (effective resistance, Christiansen 2024 distributional Ricci, Regge deficit) is needed. The current codebase **certifies this gap in Lean** rather than hiding it.
+
+The cycle case is genuinely unblocked across 4 scalars. The torus case is genuinely **blocked** by an unweighted-formula bias, and Lean now witnesses that fact directly — exactly the discipline JGORARD's papers lack.
+
+Build green at 3562 jobs.
+
 ## Headline (2026-05-30 — First genuine `TrueLimitConverges` discharge: cycle Forman → 0 = Ric(S¹) (#420))
 
 The first concrete inhabitant of the `TrueLimitConverges` framework (#419) that ISN'T a finite-fit fudge. `CycleContinuumLimit.lean`:
