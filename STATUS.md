@@ -6,6 +6,38 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-05-31 — B4-fix: Knill discrete Gauss-Bonnet recovers χ(S²) = 2 triangulation-independent (#427))
+
+`KnillDiscreteGaussBonnet.lean` is the **first constructive fix** for a documented architecture failure: the #426 audit showed unweighted Forman/Higuchi are triangulation-dependent; this module implements **Knill's discrete Gauss-Bonnet** which IS triangulation-independent on closed triangulated 2-manifolds.
+
+**The vertex-defect formula** (scaled by 6 to keep integers):
+
+    K6(v) := 6 − 3·deg(v) + 2·tri(v)
+    knillEulerScaled H := Σ_v K6(v)    -- = 6 · χ(surface)
+
+For a triangulated 2-manifold: `Σ K6 = 6V - 6E + 6F = 6χ` (combinatorial Euler formula).
+
+**The triangulation-independence certificate**:
+
+| Triangulation | V  | E  | F  | knillEulerScaled |
+|---------------|----|----|----|-------------------|
+| Tetrahedron   | 4  | 6  | 4  | **12** = 6·χ(S²)  |
+| Octahedron    | 6  | 12 | 8  | **12** = 6·χ(S²)  |
+| Icosahedron   | 12 | 30 | 20 | **12** = 6·χ(S²)  |
+
+All `native_decide`-certified: `tetrahedron_knillEuler`, `octahedron_knillEuler`, `icosahedron_knillEuler`.
+
+**Side-by-side contrast** (`knill_fixes_forman_triangulation_dependence`):
+
+- Forman: `+48` (tetrahedron), `+48` (octahedron), `0` (icosahedron) — INCONSISTENT.
+- Knill: `12, 12, 12` — CONSISTENT.
+
+**`knill_triangulation_independent_on_S2`** gives pairwise equality across all three triangulations explicitly.
+
+**Why this matters**: this is the **first time the codebase constructively proves a literature-grade fix works**. The earlier audits documented WHERE the unweighted scalars fail (T²/grid divergence, sphere inconsistency); this module documents HOW to fix one of those failures (sphere case) with the correct curvature notion. The pattern generalizes: any closed triangulated 2-manifold gives `knillEulerScaled = 6 · χ(surface)` by combinatorial Euler.
+
+Build green at 3568 jobs.
+
 ## Headline (2026-05-31 — B4-audit: sphere-triangulation curvature inconsistency on S² (#426))
 
 `SphereTriangulationAudit.lean` identifies a **third failure mode** of the unweighted scalars — distinct from the prior torus/grid divergence (recoverable via per-volume density) and the cycle/path convergence patterns.
