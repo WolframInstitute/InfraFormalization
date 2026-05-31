@@ -145,6 +145,7 @@ import InfraFormalization.KnillDiscreteGaussBonnet
 import InfraFormalization.KnillHigherGenus
 import InfraFormalization.KnillRuleBridge
 import InfraFormalization.KnillThreeManifold
+import InfraFormalization.RulePreservationClassification
 import InfraFormalization.WitnessDiversity
 import InfraFormalization.GREmergence
 import InfraFormalization.Milestone
