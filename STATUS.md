@@ -6,6 +6,21 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-05-30 — Ollivier-Ricci-style integer screener integrated with rule-search dossiers (#402))
+
+`OllivierRicciScreener.lean` lifts the W₁-based foundation (#401) into an integer-valued, `decide`-checkable per-state scalar and a Dossier trace, paralleling the triangle-Forman screener of #384. The screener is now a real second curvature family for rule-search candidates.
+
+- **`hopCostInt`, `indicatorInt`, `w1IntegerUpper`**: integer-valued primitives. `w1IntegerUpper(u, v)` sums hop-costs over the carrier² weighted by closed-neighbourhood indicators.
+- **`transportScalarAdj`** (per-edge): `1 − W₁_int_upper` for adjacent (u, v), `0` otherwise.
+- **`transportScalarH`** (per-state): sum over directed adjacent pairs.
+- **`Dossier.transportScalarTrace`** + **`Dossier.transportScalarConstant`**: identical shape to `Dossier.formanScalarTrace`/`formanScalarConstant`, so the existing rate-screener machinery slots in directly.
+
+**Certified numerics** (`native_decide`): K₃ → `−30`, C₄ → `−64`, edge12 → `−2`. `transportScalarH K₃ ≠ transportScalarH C₄` — the screener strongly distinguishes the two. Concrete-run: `trivialIdentity` on `edge12` has constant trace `[-2, -2, -2]`; `edgeAppend` is NOT constant. The screener IS a discriminator.
+
+**Honest framing**: the integer-valued primitive uses the **product-coupling upper bound**, not the LP-optimum true Ollivier-Ricci κ. The product coupling is not a valid coupling of the (unnormalised) uniform measures, so this is a related-but-distinct graph invariant. It's a real, decide-checkable discriminator; the true κ requires a candidate-coupling set with `w1InfimumOver` (#400 has the infrastructure; the candidate set is the next refinement).
+
+This is the second curvature family for rule search (after the triangle-Forman of #384) and another concrete metric to port into the fast `HypergraphRewritingEngine`.
+
 ## Headline (2026-05-30 — W₁ layer (#400) + Ollivier-Ricci screener foundation on ExecHG (#401) — second curvature family unlocked)
 
 **#400 — W₁ Wasserstein-1 layer on `InfraMeasure`**: `productCoupling`, `w1ProductUpper` (decidable W₁ upper bound via independent coupling) + non-negativity, `w1InfimumOver` (infimum over a candidate-coupling list) + `w1InfimumOver_le_member`. The W₁ infrastructure missing for an Ollivier-Ricci screener is now in.

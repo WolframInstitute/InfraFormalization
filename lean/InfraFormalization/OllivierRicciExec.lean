@@ -40,7 +40,7 @@ open RuleSignatureExecMetrics
 all `u ∈ vertexList H` with `u ≠ v` and some edge containing both. -/
 def neighbourhood (H : ExecHG ℕ) (v : ℕ) : List ℕ :=
   (vertexList H).filter (fun u =>
-    decide (u ≠ v) ∧ H.any (fun e => e.verts.contains u && e.verts.contains v))
+    (u != v) && H.any (fun e => e.verts.contains u && e.verts.contains v))
 
 /-- The closed neighbourhood `{v} ∪ N(v)` as a deduplicated list. -/
 def closedNeighbourhood (H : ExecHG ℕ) (v : ℕ) : List ℕ :=
