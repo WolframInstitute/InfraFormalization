@@ -6,6 +6,20 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-05-30 — W₁ layer (#400) + Ollivier-Ricci screener foundation on ExecHG (#401) — second curvature family unlocked)
+
+**#400 — W₁ Wasserstein-1 layer on `InfraMeasure`**: `productCoupling`, `w1ProductUpper` (decidable W₁ upper bound via independent coupling) + non-negativity, `w1InfimumOver` (infimum over a candidate-coupling list) + `w1InfimumOver_le_member`. The W₁ infrastructure missing for an Ollivier-Ricci screener is now in.
+
+**#401 — Ollivier-Ricci edge curvature on `ExecHG ℕ`** (instantiating #368). `OllivierRicciExec.lean`:
+- `neighbourhood` / `closedNeighbourhood` on `ExecHG ℕ`
+- `uniformOnNeighbourhood` (uniform `InfraMeasureData` on `{v} ∪ N(v)`)
+- `hopCost` (small-step `0/1/2`) + `hopCost_nonneg`
+- `w1NeighbourhoodUpper` between two vertex-neighbourhood measures
+- `ollivierRicciEdgeUpper`: `κ(u, v) := 1 − W₁_upper / d(u, v)`
+- Demos on K₃ and 4-cycle (`|N(1)|` and `|closedN(1)|` `native_decide`-checked)
+
+**This opens a second curvature family for rule search**, parallel to the triangle-Forman screener from #384. Future work: build a `RuleSignatureExecMetrics`-shaped wrapper that exposes a `SignatureVerdict`-like bundle including the Ollivier scalar, and a rate-screener on it.
+
 ## Headline (2026-05-30 — #267 Fin-bounded base cases (208 instances) + enlarged 41-candidate rule-search distribution (#398, #399))
 
 Two further residual closures.

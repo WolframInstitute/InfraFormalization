@@ -116,6 +116,7 @@ import InfraFormalization.RuleSignatureExecSearch
 import InfraFormalization.ExecRateBridge
 import InfraFormalization.InfraMeasure
 import InfraFormalization.PerpendicularModuli
+import InfraFormalization.OllivierRicciExec
 import InfraFormalization.Milestone
 import InfraFormalization.HypergraphTopology
 import InfraFormalization.WassersteinRate
