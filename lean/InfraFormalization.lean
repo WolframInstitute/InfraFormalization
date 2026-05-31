@@ -142,6 +142,7 @@ import InfraFormalization.NormalizedDensityLimits
 import InfraFormalization.PolynomialDensityLimits
 import InfraFormalization.SphereTriangulationAudit
 import InfraFormalization.KnillDiscreteGaussBonnet
+import InfraFormalization.KnillHigherGenus
 import InfraFormalization.WitnessDiversity
 import InfraFormalization.GREmergence
 import InfraFormalization.Milestone

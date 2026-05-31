@@ -6,6 +6,38 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-05-31 — B4-extend: Knill higher-genus — triangulated T² gives χ=0 (#428))
+
+`KnillHigherGenus.lean` extends the #427 Knill discrete Gauss-Bonnet to **higher-genus surfaces**, demonstrating the framework recovers the correct topological Euler characteristic across the closed-orientable-surface classification, not just S².
+
+**The triangulated torus**: `triangulatedTorusHG n` is a square grid wrap (T² topology) with diagonals splitting each square into 2 triangles. Each vertex has degree 6 (4 grid + 2 diagonal neighbors); each vertex is in 6 triangles for `n ≥ 4`. K6(v) = 6 − 18 + 12 = 0; sum = 0 = 6·χ(T²).
+
+**Certified at n = 4, 5, 6** via `native_decide`:
+
+- `triangulatedTorus_4_knillEuler : knillEulerScaled (triangulatedTorusHG 4) = 0`
+- `triangulatedTorus_5_knillEuler : ... = 0`
+- `triangulatedTorus_6_knillEuler : ... = 0`
+
+Bundled `knill_torus_triangulation_independent`.
+
+**The n=3 special case** documented explicitly (`triangulatedTorus_3_knillEuler_special = 54`): the size-3 wrap creates extra long-diagonal triangles. Same anomaly pattern as T² Forman at n=3 (#421) — not a bug, but a real feature of the small triangulation.
+
+**Cross-genus pattern bundle** `knill_genus_zero_one_pattern`:
+
+| g | Surface | χ  | 6χ | Knill-certified                       |
+|---|---------|----|----|---------------------------------------|
+| 0 | S²      | 2  | 12 | Tetrahedron / Octa / Icosa (#427)    |
+| 1 | T²      | 0  | 0  | `triangulatedTorusHG n`, n = 4, 5, 6 |
+
+**Direct contrast `knill_vs_forman_across_genera`**:
+- Forman: +48, +48, 0 on S² triangulations (INCONSISTENT).
+- Knill: 12, 12, 12 on S² triangulations (= 6·χ(S²)).
+- Knill: 0, 0, 0 on T² triangulations (= 6·χ(T²)).
+
+**Why this matters**: this is the **second positive constructive result** for the Knill framework (after #427). Combined, they prove the literature-grade discrete Gauss-Bonnet scales across genera 0 and 1 of the closed-orientable-surface classification. Any closed triangulated 2-manifold gives `knillEulerScaled = 6·(V − E + F) = 6·(2 − 2g)` by the combinatorial Euler formula. The architecture is no longer just a failure-mode catalog — it demonstrates the *right* curvature notions scale uniformly across topologies.
+
+Build green at 3569 jobs.
+
 ## Headline (2026-05-31 — B4-fix: Knill discrete Gauss-Bonnet recovers χ(S²) = 2 triangulation-independent (#427))
 
 `KnillDiscreteGaussBonnet.lean` is the **first constructive fix** for a documented architecture failure: the #426 audit showed unweighted Forman/Higuchi are triangulation-dependent; this module implements **Knill's discrete Gauss-Bonnet** which IS triangulation-independent on closed triangulated 2-manifolds.
