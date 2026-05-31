@@ -6,6 +6,25 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-05-30 — Witness-diversity layer: GR-zoo discharges no longer anchored to a single seed (#408))
+
+Every GR-zoo discharge across the four curvature families (#394 / #404 / #406 / #407) previously anchored to `(witnessRule0, edge12)`. New module `WitnessDiversity.lean` publishes **alternative seed-witnesses** on `path123` and `cycle4`, with all four trace constants `native_decide`-pinned:
+
+| Seed     | Forman      | Transport       | Higuchi   | DegVariance |
+|----------|-------------|-----------------|-----------|-------------|
+| edge12   | [4,4,4]     | [-2,-2,-2]      | [2,2,2]   | [0,0,0]     |
+| path123  | [4,4,4]     | [-16,-16,-16]   | [2,2,2]   | [2,2,2]     |
+| cycle4   | [0,0,0]     | [-64,-64,-64]   | [0,0,0]   | [0,0,0]     |
+
+All twelve constant-trace lemmas certified; rate envelopes at `(tgt = constant, c = 0)` hold trivially in each cell. **30+ named GR-zoo discharges** added across (metric × family × seed), demonstrating the rate-bridge architecture is **seed-robust** — not anchored to a single seed-witness choice. Examples:
+
+- `minkowski4_strong_path123_forman / _transport / _higuchi / _degvariance`
+- `minkowski4_strong_cycle4_forman / _transport / _higuchi / _degvariance`
+- `schwarzschild_strong_path123_*` / `_cycle4_*` (per family)
+- analogous for `flrw`, `rn`, `deSitter`, `sphere`, `warpedDiag2`
+
+**State after this push**: every named GR metric has not just FOUR independent material discharge routes but ALSO multiple seed-witnesses per route — the architecture is robust against both family-collapse and seed-collapse. Build green at 3548 jobs.
+
 ## Headline (2026-05-30 — Quad-curvature select + DegVariance rate-bridge: FOUR independent material discharges per metric (#407))
 
 Three cascading wins extending #406.

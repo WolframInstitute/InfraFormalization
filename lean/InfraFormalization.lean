@@ -124,6 +124,7 @@ import InfraFormalization.HiguchiScreener
 import InfraFormalization.HiguchiRateBridge
 import InfraFormalization.DegreeVarianceScreener
 import InfraFormalization.DegVarianceRateBridge
+import InfraFormalization.WitnessDiversity
 import InfraFormalization.Milestone
 import InfraFormalization.HypergraphTopology
 import InfraFormalization.WassersteinRate
