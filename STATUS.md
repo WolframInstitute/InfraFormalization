@@ -6,6 +6,40 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-06-01 — B4-report: PhysicsReport — printable artifact bundling all observables (#435))
+
+`RulePhysicsReport.lean` assembles the codebase's full curvature / topology pipeline into a **single printable physics-report artifact** for any `(rule, seed, n)` triple. This is the **first end-to-end printable, certified, structured numerical artifact** demonstrating the pipeline works end-to-end.
+
+**The `PhysicsReport` structure** has 11 fields:
+
+- **Spatial trajectory** (per-step lists): edges, vertices, Knill, Forman, Higuchi.
+- **Causal-DAG topology** (from #434 trace): vertices, edges, Knill.
+- **Derived physical observables**: spatial χ trajectory (Knill/6), causal χ, merger-event count (1 − causalχ, from diamond holes), topology-preservation indicator.
+
+**Concrete certified report** for `subdivisionSys` on `[consEdge 1 2]` at depth 3:
+
+```
+spatialEdges      = [1, 2, 4, 8]      -- doubling pattern
+spatialVertices   = [2, 3, 5, 9]      -- V = E + 1 (tree)
+spatialKnill      = [6, 6, 6, 6]      -- topology preserved
+spatialForman     = [4, 4, 4, 4]      -- boundary signal
+spatialHiguchi    = [2, 2, 2, 2]      -- Euler-with-boundary
+causalDAGEdges    = 6                  -- binary tree depth 3
+causalKnill       = 6                  -- = 6·χ(tree)
+spatialChi        = [1, 1, 1, 1]
+causalChi         = 1
+mergerEventCount  = 0                  -- no multi-way mergers
+topologyPreserved = true
+```
+
+Every field individually `native_decide`-certified + bundled `subdivision_report_complete` (10-field conjunction).
+
+**Multi-rule comparison**: `trivialIdentityReport`, `subdivisionReport1`, `triangulationReport` for the canonical edge12 seed at depth 1, all certified `topologyPreserved = true`. Bundled `all_rules_preserve_topology_via_report`.
+
+**Why this matters**: every observable a discrete-physics observer would care about is now **computable, certifiable, and packaged into a single record** — `#eval` for printing, `theorem` for certification. The pattern generalizes to any (rule, seed, n) triple. This is what end-to-end success looks like: a structured artifact, not just a theorem, with every field both printable and provable. The substrate is now complete for higher-level analyses — rule classification, topology-preservation testing, multi-way merger detection, and ultimately the BBH discrete-Ψ₄ extraction.
+
+Build green at 3576 jobs.
+
 ## Headline (2026-06-01 — B4-causal-trace: per-instance causal event tracking from rule evolution (#434, closing #228))
 
 `CausalEventTrace.lean` closes the long-standing **#228 task** by extracting per-instance causal-edge tracking from rule evolution. This is the **first execution-level extraction** of causal-edge data from the rewriting engine — the last infrastructure piece needed for the BBH endgame's causal-side analysis.
