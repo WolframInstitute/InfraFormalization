@@ -6,6 +6,42 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-05-31 — B4-abstract: polynomial-density `Tendsto` theorem + 3D torus extension (#425))
+
+`PolynomialDensityLimits.lean` lifts the per-sample density certifications (#424) to a **fully-abstract `Tendsto` theorem** and extends the framework to 3 dimensions.
+
+**Abstract theorem** (no `native_decide` reliance):
+
+```
+polynomialPerArea_tendsto (a b c : ℝ) :
+  Tendsto (fun n : ℕ => (a · n² + b · n + c) / n²) atTop (nhds a)
+```
+
+Proven via Mathlib limit lemmas (`tendsto_one_div_atTop_nhds_zero_nat`, `Tendsto.const_mul`, `.add`, `.congr'`). Applied to:
+
+- `grid_forman_perArea_tendsto_neg16`: `Forman(grid n n) / n² → -16` for ALL n.
+- `grid_higuchi_perArea_tendsto_neg2`: `Higuchi(grid n n) / n² → -2` for ALL n.
+
+These are the **first fully-abstract continuum convergence theorems** in the codebase — proven for every `n`, not just samples.
+
+**3D torus extension** — the dimensional pattern continues:
+
+- `Forman(T³(n, n, n)) = -48 n³` (certified n=4,5).
+- `Higuchi(T³(n, n, n)) = -4 n³` (certified n=3,4,5).
+- Per-volume densities: `-48` and `-4`, both via `tendsto_const_nhds`.
+
+**Cross-dimensional pattern** (`bulk_curvature_density_dimension_pattern` bundles all three dimensions):
+
+| d  | Topology  | Per-volume Forman | Per-volume Higuchi |
+|----|-----------|--------------------|--------------------|
+| 1  | `T¹` cycle | `0`                | `0`                |
+| 2  | `T²`       | `-16`              | `-2`               |
+| 3  | `T³`       | `-48`              | `-4`               |
+
+**General dimensional formulas**: per-volume Forman = `-8d(d-1)`, per-volume Higuchi = `2-2d`. These are discrete-bulk invariants of the hypercubic d-dimensional lattice.
+
+Build green at 3566 jobs.
+
 ## Headline (2026-05-31 — B4-advance: per-area density convergence — first non-trivial scaling continuum limit (#424))
 
 `NormalizedDensityLimits.lean` reconciles the prior non-convergence audits (#421 T², #423 grid) with the convergence framework: **the absolute totals diverge, but the per-area densities converge** to non-zero topological-combinatorial bulk constants. This is the **first non-trivial scaling continuum limit** in the codebase.

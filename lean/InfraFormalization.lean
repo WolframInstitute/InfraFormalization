@@ -139,6 +139,7 @@ import InfraFormalization.AdvancedContinuumLimits
 import InfraFormalization.PathContinuumLimit
 import InfraFormalization.GridContinuumLimit
 import InfraFormalization.NormalizedDensityLimits
+import InfraFormalization.PolynomialDensityLimits
 import InfraFormalization.WitnessDiversity
 import InfraFormalization.GREmergence
 import InfraFormalization.Milestone
