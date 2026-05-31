@@ -6,6 +6,30 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-05-31 — B4-audit: 2D open grid full non-convergence + architecture scope statement (#423))
+
+`GridContinuumLimit.lean` completes the second non-convergence audit (after T², #421), generalizing to the **open-boundary 2D case** (`D²` analog). The open grid `gridHG m n` mixes corner / edge / interior vertices but **all four scalars diverge**:
+
+- **Forman** = `-40, -112, -216, -352` at sizes `n = 3, 4, 5, 6` (asymptotic `~ -8(n−1)²`); `grid_forman_nonzero_at_samples` certified `≠ 0` at all sizes.
+- **Higuchi** = `-6, -16, -30, -48` (asymptotic `~ -2(n−2)²`).
+- **SquareCount** = `32, 72, 128` at `n = 3, 4, 5` (`= 8(n−1)²`, counts grid faces).
+- **DegVariance** = `36, 128, 300` (mixed-degree variance bias).
+
+Bundled `unweighted_scalars_fail_on_2d_grid`: certifies all 4 scalars `≠ 0` simultaneously at `n = 4`.
+
+**Architecture scope statement** (now formally certified in Lean):
+
+| Topology               | Forman   | Higuchi  | SquareCount | DegVariance |
+|------------------------|----------|----------|-------------|-------------|
+| `cycle C_n` (→ `S¹`)    | 0        | 0        | 0           | 0           |
+| `path P_n` (→ `[0,1]`)  | **4**    | **2**    | 0           | diverges    |
+| `torus T²_n` (→ `T²`)   | diverges | diverges | diverges    | diverges    |
+| `grid G_{n×n}` (→ `D²`) | diverges | diverges | diverges    | diverges    |
+
+The unweighted curvature scalars work cleanly only for compact 1-manifolds (cycle vacuum, path boundary signals). For any 2D+ flat manifold (closed or with boundary), **weighted Forman** (Forman 2003 with edge length weights) or distinct curvature notions (Christiansen 2024, effective resistance, Regge deficit) are the literature-grade routes. The codebase now **certifies in Lean** exactly where the unweighted approach hits its limit — no glossing, no fudging.
+
+Build green at 3564 jobs.
+
 ## Headline (2026-05-31 — B4-instance: path lattice multi-target continuum-limit (#422))
 
 `PathContinuumLimit.lean` adds the **second concrete inhabitant** of the `TrueLimitConverges` framework — and the **first multi-target** instance.
