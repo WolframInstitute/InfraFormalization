@@ -6,6 +6,22 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-05-30 — `#267` FULLY CLOSED: abstract base case proved symbolically)
+
+The long-standing `#267` / `#398` simulation-lemma abstract base case is **fully proved** for symbolic `a ≠ b : ℕ`. No `decide` / `native_decide` — entirely symbolic.
+
+Proof chain landed in `SubdivisionAbstract.lean`:
+1. `allFunctions_2_pair_projection` — the 4 candidate functions' (ρ 0, ρ 1) values are `[(a,a), (a,b), (b,a), (b,b)]`.
+2. `bindingMatches_subdLhs_iff` — the multiset-count filter predicate reduces to literal LHS-image equality.
+3. `pair_proj_injective` + `allFunctions_2_nodup` — the 4 candidates are pairwise distinct via injective pair projection.
+4. `matchAB_mem_allMatches` + `allMatches_unique` — `matchAB a b` is in the filter result, and uniquely so.
+5. `allMatches_eq_singleton_matchAB` — combining nodup + uniqueness + membership ⇒ singleton list equality.
+6. `singleWayStep_subdivisionSys_consEdge_of_ne` — the engine step on `[consEdge a b]` produces the canonical 2-edge subdivision path `[consEdge a (max a b + 1), consEdge (max a b + 1) b]`, for any `a ≠ b : ℕ`.
+
+This closes the simulation lemma's length-2 case for any natural number pair. The 208-instance Fin-bounded coverage from `SubdivisionPath` is now subsumed by the truly-abstract symbolic theorem.
+
+**Unlock impact**: every ExecHG engine run on the subdivision rule now has a symbolic abstract-Trajectory anchor (via lifting through the simulation lemma); the discharge architecture's "Gap B" (relating ExecHG runs to abstract Trajectories) loses its principal mechanical residual. Build green at 3559 jobs.
+
 ## Headline (2026-05-30 — B1 + B2 + B3: unblock-stack to material discharges (#416 + #417 + #418))
 
 The user's question "what do you need to do to unblock material claims about rule → spacetime correspondence" had a concrete blocker stack. This commit attacks the first three layers:

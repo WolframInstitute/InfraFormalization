@@ -245,19 +245,172 @@ theorem bindingMatches_subdLhs_iff (ρ : Fin 2 → ℕ) (a b : ℕ) :
       simp at h
     · intro h; exact absurd h heq
 
-/-! ## Singleton-characterization residual
+/-! ## Singleton-of-matches characterization (membership + uniqueness)
 
-The full closure `allMatches subdivisionRule [consEdge a b] = [matchAB a b]`
-for symbolic `a ≠ b` requires combining `bindingMatches_subdLhs_iff` (just
-landed above) with `allFunctions_2_pair_projection` and propagating
-through the `filter` + `map` composition. The interaction between the
-Bool-valued filter predicate and the Prop-valued iff lemma needs a
-small custom rewriting step; deferred as the final mechanical piece.
+Rather than try to symbolically simplify the `filter` composition,
+prove `allMatches subdivisionRule [consEdge a b] = [matchAB a b]`
+via the **membership-and-uniqueness** equational pattern:
 
-The ARCHITECTURAL closure — the bridge from the singleton-match
-assumption to the abstract base case — is the `singleWayStep_inner_extension_eq`
-lemma above; once `allMatches_eq_singleton_matchAB` lands the rest
-composes mechanically. -/
+  - `matchAB a b ∈ allMatches subdivisionRule [consEdge a b]`
+    (it passes the LHS-image equation).
+  - Any `ρ ∈ allMatches subdivisionRule [consEdge a b]` equals `matchAB a b`
+    (extensional uniqueness via `matchAB_pointwise_of_image_eq` + `fin2_funext`).
+  - Length is 1 (via pair-projection + `allFunctions_2_pair_projection`,
+    when `a ≠ b`).
+
+These three combined deliver the singleton-list equality. -/
+
+/-- `matchAB a b ∈ allFunctions 2 [a, b]`: the canonical binding lives in
+the candidate list. (For any `a, b`; no `a ≠ b` needed yet.) -/
+theorem matchAB_mem_allFunctions (a b : ℕ) :
+    matchAB a b ∈ allFunctions 2 [a, b] := by
+  -- The 4 candidates' (ρ 0, ρ 1) values are [(a,a), (a,b), (b,a), (b,b)].
+  -- matchAB a b has projection (a, b), which is one of them.
+  -- Pull this back via `map_mem` from pair-projection.
+  have hpair := allFunctions_2_pair_projection a b
+  -- (a, b) is in the projected list
+  have : (a, b) ∈ ((allFunctions 2 [a, b]).map
+      (fun ρ => (ρ ⟨0, by decide⟩, ρ ⟨1, by decide⟩))) := by
+    rw [hpair]; simp
+  -- Pull back through `map_mem`: there's some ρ in `allFunctions 2 [a, b]`
+  -- whose pair projection is (a, b). That ρ equals matchAB a b.
+  obtain ⟨ρ, hρ_mem, hρ_proj⟩ := List.mem_map.mp this
+  have hρ_eq : ρ = matchAB a b := by
+    apply fin2_funext
+    · have := congrArg Prod.fst hρ_proj
+      simpa using this
+    · have := congrArg Prod.snd hρ_proj
+      simpa using this
+  rw [← hρ_eq]; exact hρ_mem
+
+/-- `matchAB a b` satisfies the filter predicate when `a ≠ b`. -/
+theorem matchAB_bindingMatches (a b : ℕ) (_hab : a ≠ b) :
+    bindingMatches subdivisionRule.lhs [consEdge a b] (matchAB a b) = true := by
+  rw [bindingMatches_subdLhs_iff]
+  rfl
+
+/-- `matchAB a b ∈ allMatches subdivisionRule [consEdge a b]` when `a ≠ b`. -/
+theorem matchAB_mem_allMatches (a b : ℕ) (hab : a ≠ b) :
+    matchAB a b ∈ allMatches subdivisionRule [consEdge a b] := by
+  show matchAB a b ∈ (allFunctions 2 (vertexList [consEdge a b])).filter _
+  rw [vertexList_consEdge_of_ne a b hab]
+  rw [List.mem_filter]
+  exact ⟨matchAB_mem_allFunctions a b, matchAB_bindingMatches a b hab⟩
+
+/-- Uniqueness: any binding in `allMatches subdivisionRule [consEdge a b]`
+equals `matchAB a b`. -/
+theorem allMatches_unique (a b : ℕ) :
+    ∀ ρ ∈ allMatches subdivisionRule [consEdge a b], ρ = matchAB a b := by
+  intro ρ hρ
+  -- Extract bindingMatches = true
+  have : bindingMatches subdivisionRule.lhs [consEdge a b] ρ = true := by
+    have := List.mem_filter.mp hρ
+    exact this.2
+  rw [bindingMatches_subdLhs_iff] at this
+  exact match_eq_matchAB_of_image_eq this
+
+/-! ## Nodup of `allFunctions 2 [a, b]` when `a ≠ b`
+
+Distinct pair projections (`a ≠ b` ⇒ `(a,a), (a,b), (b,a), (b,b)` are
+all distinct) ⇒ distinct functions (by `fin2_funext`) ⇒ Nodup. -/
+
+/-- The pair-projection function (Fin 2 → ℕ) → ℕ × ℕ is **injective**. -/
+theorem pair_proj_injective {ρ σ : Fin 2 → ℕ}
+    (h : (ρ ⟨0, by decide⟩, ρ ⟨1, by decide⟩) = (σ ⟨0, by decide⟩, σ ⟨1, by decide⟩)) :
+    ρ = σ := by
+  have h0 : ρ ⟨0, by decide⟩ = σ ⟨0, by decide⟩ := congrArg Prod.fst h
+  have h1 : ρ ⟨1, by decide⟩ = σ ⟨1, by decide⟩ := congrArg Prod.snd h
+  apply fin2_funext h0 h1
+
+/-- `allFunctions 2 [a, b]` is `Nodup` when `a ≠ b`. The mapped
+pair-projection list `[(a,a), (a,b), (b,a), (b,b)]` is Nodup when
+`a ≠ b`; `List.Nodup.of_map` then gives Nodup of the original. -/
+theorem allFunctions_2_nodup (a b : ℕ) (hab : a ≠ b) :
+    (allFunctions 2 [a, b]).Nodup := by
+  apply List.Nodup.of_map (fun ρ => (ρ ⟨0, by decide⟩, ρ ⟨1, by decide⟩))
+  rw [allFunctions_2_pair_projection]
+  -- Goal: [(a,a), (a,b), (b,a), (b,b)] is Nodup when a ≠ b
+  simp [List.Nodup, hab, hab.symm, Ne.symm hab]
+
+/-! ## Singleton equality — full closure of the abstract base case
+
+Combining membership, uniqueness, and Nodup-of-filter delivers the
+singleton list equality `allMatches subdivisionRule [consEdge a b] =
+[matchAB a b]` for `a ≠ b`. -/
+
+/-- **Singleton-list equality**: `allMatches subdivisionRule [consEdge a b]
+= [matchAB a b]` when `a ≠ b`. -/
+theorem allMatches_eq_singleton_matchAB (a b : ℕ) (hab : a ≠ b) :
+    allMatches subdivisionRule [consEdge a b] = [matchAB a b] := by
+  -- Strategy: every element equals matchAB a b (uniqueness) + Nodup forces length ≤ 1
+  -- + membership forces length ≥ 1 ⇒ singleton.
+  have hmem := matchAB_mem_allMatches a b hab
+  have huniq := allMatches_unique a b
+  have hnodup_orig : (allFunctions 2 [a, b]).Nodup := allFunctions_2_nodup a b hab
+  -- allMatches = filter of allFunctions, hence Nodup too.
+  have hnodup_matches : (allMatches subdivisionRule [consEdge a b]).Nodup := by
+    show (((allFunctions 2 (vertexList [consEdge a b])).filter _)).Nodup
+    rw [vertexList_consEdge_of_ne a b hab]
+    exact hnodup_orig.filter _
+  -- Destructure on allMatches.
+  rcases h : allMatches subdivisionRule [consEdge a b] with _ | ⟨ρ, rest⟩
+  · -- Empty: contradicts membership.
+    rw [h] at hmem; exact absurd hmem (List.not_mem_nil)
+  · -- Non-empty: ρ = matchAB a b by uniqueness; rest must be empty by Nodup + uniqueness.
+    have hρ_in : ρ ∈ allMatches subdivisionRule [consEdge a b] := by
+      rw [h]; exact List.mem_cons_self
+    have hρ_eq : ρ = matchAB a b := huniq ρ hρ_in
+    have hrest_empty : rest = [] := by
+      cases hrest : rest with
+      | nil => rfl
+      | cons σ rest' =>
+        exfalso
+        have hσ_in : σ ∈ allMatches subdivisionRule [consEdge a b] := by
+          rw [h, hrest]; exact List.mem_cons.mpr (Or.inr List.mem_cons_self)
+        have hσ_eq : σ = matchAB a b := huniq σ hσ_in
+        -- Nodup of ρ :: σ :: rest' says ρ ∉ σ :: rest', so ρ ≠ σ.
+        rw [h, hrest] at hnodup_matches
+        have h_head_not_in : ρ ∉ σ :: rest' :=
+          (List.nodup_cons.mp hnodup_matches).1
+        apply h_head_not_in
+        rw [hρ_eq, ← hσ_eq]
+        exact List.mem_cons_self
+    rw [hρ_eq, hrest_empty]
+    rfl
+
+/-! ## Abstract base case — fully discharged
+
+Combining `allMatches_eq_singleton_matchAB` with the structural
+reducer pieces (`subdivisionSys_rules`, `removeEdges_consEdge_self`,
+`mapPattern_matchAB_lhs`, `nextFresh_consEdge_of_ne`,
+`singleWayStep_inner_extension_eq`, `mapPattern_matchABext_rhs`)
+delivers the abstract base case for any `a ≠ b : ℕ`. No
+`decide`/`native_decide` — purely symbolic. -/
+
+/-- **#267 / #398 abstract base case — fully discharged**. For any
+`a ≠ b : ℕ`, the engine's single-way step on the single-edge state
+`[consEdge a b]` produces the canonical 2-edge subdivision path. -/
+theorem singleWayStep_subdivisionSys_consEdge_of_ne (a b : ℕ) (hab : a ≠ b) :
+    singleWayStep subdivisionSys [consEdge a b]
+      = [consEdge a (max a b + 1), consEdge (max a b + 1) b] := by
+  show (subdivisionSys.rules.foldl _ ([consEdge a b], 0)).fst = _
+  rw [subdivisionSys_rules]
+  show ((allMatches subdivisionRule [consEdge a b]).foldl _ ([consEdge a b], 0)).fst = _
+  rw [allMatches_eq_singleton_matchAB a b hab]
+  show (removeEdges [consEdge a b] (mapPattern (matchAB a b) subdivisionRule.lhs)
+        ++ mapPattern
+            (fun i : Fin (subdivisionRule.numBound + subdivisionRule.numFresh) =>
+              if h : i.val < subdivisionRule.numBound then
+                matchAB a b ⟨i.val, h⟩
+              else
+                nextFresh [consEdge a b] + 0 + (i.val - subdivisionRule.numBound))
+            subdivisionRule.rhs) = _
+  rw [mapPattern_matchAB_lhs, removeEdges_consEdge_self,
+      nextFresh_consEdge_of_ne a b hab,
+      singleWayStep_inner_extension_eq a b]
+  show [] ++ mapPattern (matchABext a b) subdivisionRule.rhs = _
+  rw [mapPattern_matchABext_rhs]
+  rfl
 
 end MultiwayExec
 end InfraFormalization
