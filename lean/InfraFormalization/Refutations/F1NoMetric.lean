@@ -53,6 +53,29 @@ obstructions narrowing that moduli but never collapse it to a point
 without large-scale / Gromov coarse-graining data. The two-element
 witness below is the minimal Lean expression of a phenomenon that is
 genuinely a positive-dimensional moduli.
+
+**Sharpening (2026-05-30, paclet-design note).** The moduli observation
+is now structural in PHAJEK's `SyntheticInfrageometry` paclet:
+primitive synthetic operations come as one-parameter families of
+inequivalent definitions, exposed via an explicit `Method` argument.
+- `InfraPerpendicularQ` admits Schoenberg, Centroid (balanced-feet
+  test), and four-corner-wedge methods
+  (`resources/SyntheticInfrageometry/Kernel/InfraEquality.wl`).
+- `FindInfraShellCenter` admits bisector, chord, and equidistant
+  methods (`resources/SyntheticInfrageometry/Kernel/InfraShell.wl`).
+- `FindLineStructure` / `InfraLineStructure` treats a line as a
+  *consistent path system*, with multiple T1–T5 methods and an
+  explicit tie-break study
+  (`resources/SyntheticInfrageometry/Kernel/InfraLineStructure.wl`).
+
+These primitives realize F1 at the synthetic level: every basic
+geometric construct admits a moduli of inequivalent realisations.
+JGORARD's `g^{ab}` is not the only object without a canonical
+definition — perpendicularity, the centre of a shell, and the notion
+of a line are all of the same kind. Any derivation that silently fixes
+one representative (as G1 Def 15 does for the metric) is choosing a
+point in a moduli; competing equally-valid derivations exist on the
+alternative methods.
 -/
 
 import Mathlib.Data.Real.Basic

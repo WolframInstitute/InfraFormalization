@@ -54,6 +54,25 @@ weak-convergence results elsewhere in this project (counting measure →
 Lebesgue, Wasserstein-rate bounds on 1-D projections) are unaffected;
 the obstruction bites at the *joint* law of the whole limiting
 process, which is the object G1 Eq 88 silently assumes.
+
+**Sharpening (2026-05-30, synthetic-measure note).** PHAJEK's
+`SyntheticInfrageometry` paclet now exposes a *synthetic*
+measure-theoretic primitive `InfraMeasure` (renamed from `VisitMeasure`
+in the unification commit `9f34fb4`, with the new name in commit
+`38693c2`) plus `InfraBoundary` and an `infraRepType` classifier
+(`resources/SyntheticInfrageometry/Kernel/Tools.wl`). This makes the
+F5 distinction structural: a measure attached to a graph is now an
+*infrageometric construction of its own*, built directly from the
+synthetic data, and is not identified with the probability measure of
+any continuum limit. Whether such a synthetic measure can be realised
+as the marginal of a probability law on a continuum object is a
+separate question — the HVLE projective-limit obstruction in the
+previous sharpening. G1 Eq 88 conflates the two: it writes the
+"discrete sum" as if it were already a finite-state expectation of a
+continuum-side integral. The synthetic-side primitive shows this is a
+category error — the discrete object is a different kind of
+mathematical entity, and the bridge between the two is the
+obstruction, not an identity.
 -/
 
 import Mathlib.Analysis.SpecificLimits.Basic

@@ -6,6 +6,31 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-05-30 — paclet pull: delta complexes, scale-indexed topology, multi-method moduli, synthetic measures)
+
+Substantial conceptual landings in PHAJEK's two paclets (Infrageometry cf04481→f811dc5; SyntheticInfrageometry ec934d6→eb68944, ~34 commits). Not just bugfixes — new structural primitives that touch the refutation chain (F1, F5) and open new port targets.
+
+**Infrageometry (PHAJEK May 23–30):**
+- **Delta complexes** (commit 02536bc, "feat: support delta complexes") — presimplicial sets (face maps, no degeneracies) are now first-class. Concrete WL reference for #248 KN12.
+- **`BallTopology[g, r]`** (`Kernel/Topology.wl`) — scale-indexed Alexandrov topology on V(g), Hasse-diagram of the specialization preorder; plus `TopologicalClosure / Interior / Boundary / Neighborhood / ContinuousMapQ`. A *scale spectrum* of topologies on the same vertex set. Reference for #312 AT25.
+- **`UnitLengthGraph` / `UnitLengthEmbedding`** in `Kernel/Mesh.wl` — rigid unit-distance embeddings via iterative hard-sphere packing; the natural discrete setting for Regge calculus (#307). New task #389 logged.
+- **`GraphBoundary` / `GraphInterior`** — combinatorial boundary/interior front-end primitives.
+
+**SyntheticInfrageometry (PHAJEK May 23–30):**
+- **`InfraLineStructure` / `FindLineStructure`** (T1–T5 series) — a *line structure* on a graph = a consistent path system; `ConsistentPathSystemQ` verifier; multiple methods with explicit tie-break. Direct realisation of the F1 moduli framing in the line-primitive layer. Reference for #300 PATH1; new task #387 logged.
+- **`InfraMeasure`** (renamed from `VisitMeasure`) + `InfraBoundary` + `infraRepType` — a *synthetic* measure-theoretic primitive on a graph, decoupled from any continuum probability measure. Makes the F5 distinction structural. New task #388 logged.
+- **Multi-method moduli of basic primitives** — `InfraPerpendicularQ` (Schoenberg / Centroid / four-corner-wedge), `FindInfraShellCenter` (bisector / chord / equidistant). Each method = a distinct invariant, exposed via `Method` argument. F1 moduli pattern made structural across the API. New task #390 logged.
+- **`GeodesicGraph → GeodesicSprayGraph`** (rename) — signals more structural use, Riemannian-spray analog. Updates #208 P16.
+- **`InfraTriangle` / `InfraPolygon` / `InfraQuadric`** — first-class higher-order shape primitives; polygons as *geodesic-side chains*.
+- **`PathSpace.wl`** substantially expanded (172 lines) — loop-space / path-space machinery. Updates #333 HOM2.
+- **Universal line / line hull / segment hull** — universal-property hulls (category-theoretic flavor).
+
+**Refutation-chain impact (the F1 and F5 sharpenings landed today):**
+- **F1 — paclet-design sharpening**: every basic synthetic construct (perpendicular, shell-centre, line) admits a moduli of inequivalent definitions, and the paclet treats this as a feature via the `Method` argument. F1 is not only "the metric is not canonical" but "*no* basic synthetic operation is canonical." Annotated in `MAJOR_FLAWS.md` and `lean/.../Refutations/F1NoMetric.lean`.
+- **F5 — synthetic-measure sharpening**: `InfraMeasure` is an infrageometric construct of its own kind, not the marginal of a continuum probability measure. G1 Eq 88 conflates the two — a category error. Annotated in `MAJOR_FLAWS.md` and `lean/.../Refutations/F5Illdefined.lean`.
+
+Task descriptions updated: #208, #248, #300, #312, #333. New tasks: #387 (line-structure typeclass), #388 (InfraMeasure synthetic primitive), #389 (UnitLengthGraph rigid embedding), #390 (multi-method perpendicular moduli).
+
 ## Headline (2026-05-24 — Multi-seed stability filter sharpens the rule-search discriminator (#386))
 
 `RuleSignatureExecSearch.lean` gains a stability layer: a candidate's curvature class is only admissible if it is the same on *every* seed in a topologically diverse seed set. This rejects rules that pass the single-seed (#385) filter by seed-coincidence.
