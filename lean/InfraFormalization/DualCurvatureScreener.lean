@@ -22,6 +22,7 @@ class on the family.
 import InfraFormalization.RuleSignatureExecSearch
 import InfraFormalization.OllivierRicciScreener
 import InfraFormalization.HiguchiScreener
+import InfraFormalization.DegreeVarianceScreener
 
 namespace InfraFormalization
 namespace DualCurvatureScreener
@@ -32,6 +33,7 @@ open RuleSignatureExecMetrics
 open RuleSignatureExecSearch
 open OllivierRicciScreener
 open HiguchiScreener
+open DegreeVarianceScreener
 
 /-- The transport-scalar trend of a rule on a seed at depth `n`. Uses
 the same `classifyForman` shape (constant ⇒ `flat`, else sign of final
@@ -210,6 +212,100 @@ example :
   ∧ ((enumerateRules2_1 2).filter
         (fun r => higuchiStablyClassifiable r seedSet 2)).length = 17
   ∧ (tripleStableSelect (enumerateRules2_1 2) seedSet 2).length = 11 := by
+  native_decide
+
+/-! ## Quad-curvature select: Forman + Transport + Higuchi + DegVariance -/
+
+/-- The degree-variance scalar trend of a rule on a seed at depth `n`. -/
+def degVarianceTrendOf (r : ExecRule) (seed : ExecHG ℕ) (n : Nat) :
+    CurvatureTrend :=
+  classifyForman ((canonicalDossier r seed n).degVarianceTrace)
+
+/-- The degree-variance trend across a list of seeds. -/
+def degVarianceTrendsAcross (r : ExecRule) (seeds : List (ExecHG ℕ))
+    (n : Nat) : List CurvatureTrend :=
+  seeds.map (fun s => degVarianceTrendOf r s n)
+
+/-- A candidate's degree-variance trend is stably-classifiable. -/
+def degVarianceStablyClassifiable (r : ExecRule) (seeds : List (ExecHG ℕ))
+    (n : Nat) : Bool :=
+  match degVarianceTrendsAcross r seeds n with
+  | []      => true
+  | t :: ts => ts.all (fun t' => decide (t' = t))
+
+/-- **Quad-curvature stably classifiable**: ALL FOUR screeners give
+seed-independent verdicts. -/
+def quadStablyClassifiable (r : ExecRule) (seeds : List (ExecHG ℕ))
+    (n : Nat) : Bool :=
+  stablyClassifiable r seeds n
+    && transportStablyClassifiable r seeds n
+    && higuchiStablyClassifiable r seeds n
+    && degVarianceStablyClassifiable r seeds n
+
+/-- The quad-curvature selection. -/
+def quadStableSelect (cands : List ExecRule) (seeds : List (ExecHG ℕ))
+    (n : Nat) : List ExecRule :=
+  cands.filter (fun r => quadStablyClassifiable r seeds n)
+
+/-! ### Certified quad-stability distribution -/
+
+/-- **DegVariance stably-classifiable: 11 candidates** — same total as
+Forman, but a **DIFFERENT SET** (mutual non-containment certified
+below). DegVariance is a genuine fourth angle, not a relabelling. -/
+example :
+    ((enumerateRules2_1 2).filter
+        (fun r => degVarianceStablyClassifiable r seedSet 2)).length = 11 := by
+  native_decide
+
+/-- **Quad stably-classifiable: 5 candidates** — adding DegVariance
+to the Triple cascade SHRINKS the stable set from 11 to 5, a strict
+refinement. Six rules that pass Forman + Transport + Higuchi fail the
+degree-variance check; the fourth screener finds new structure. -/
+example :
+    (quadStableSelect (enumerateRules2_1 2) seedSet 2).length = 5 := by
+  native_decide
+
+/-- **Forman-stable ⊄ DegVariance-stable**: NOT every Forman-stable
+rule is DegVariance-stable. Six rules in the Forman-stable set fail
+the degree-variance test. -/
+example :
+    ((enumerateRules2_1 2).filter
+        (fun r => stablyClassifiable r seedSet 2)).all
+      (fun r => degVarianceStablyClassifiable r seedSet 2) = false := by
+  native_decide
+
+/-- **DegVariance-stable ⊄ Forman-stable**: NOT every DegVariance-stable
+rule is Forman-stable. Six rules in the DegVariance-stable set fail
+the Forman test. The two screeners are **independent** — they classify
+different curvature aspects. -/
+example :
+    ((enumerateRules2_1 2).filter
+        (fun r => degVarianceStablyClassifiable r seedSet 2)).all
+      (fun r => stablyClassifiable r seedSet 2) = false := by
+  native_decide
+
+/-- **Quad-curvature distribution summary**:
+  - Forman-stable      = 11
+  - Transport-stable   = 17
+  - Higuchi-stable     = 17  (= Transport-stable as sets)
+  - DegVariance-stable = 11  (same total as Forman, DIFFERENT set)
+  - Triple-stable      = 11  (= Forman ⊆ Transport ∩ Higuchi)
+  - Quad-stable        =  5  (strict refinement: Triple ∩ DegVariance)
+DegVariance is the first screener to **shrink** the stable set
+below 11, because it's the first independent of the local
+combinatorial-Forman family. The fourfold cross-confirmation
+identifies 5 rules with maximally-stable curvature signatures. -/
+example :
+    ((enumerateRules2_1 2).filter
+        (fun r => stablyClassifiable r seedSet 2)).length = 11
+  ∧ ((enumerateRules2_1 2).filter
+        (fun r => transportStablyClassifiable r seedSet 2)).length = 17
+  ∧ ((enumerateRules2_1 2).filter
+        (fun r => higuchiStablyClassifiable r seedSet 2)).length = 17
+  ∧ ((enumerateRules2_1 2).filter
+        (fun r => degVarianceStablyClassifiable r seedSet 2)).length = 11
+  ∧ (tripleStableSelect (enumerateRules2_1 2) seedSet 2).length = 11
+  ∧ (quadStableSelect (enumerateRules2_1 2) seedSet 2).length = 5 := by
   native_decide
 
 end DualCurvatureScreener

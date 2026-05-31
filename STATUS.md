@@ -6,6 +6,29 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-05-30 — Quad-curvature select + DegVariance rate-bridge: FOUR independent material discharges per metric (#407))
+
+Three cascading wins extending #406.
+
+**(a) Fourth curvature scalar** in `DegreeVarianceScreener.lean`: `degVarianceScaled H := |V|·Σdeg² − (Σdeg)²` — the integer-valued scaled vertex-degree variance. **Second-order in the degree distribution**, so genuinely independent of Forman / Transport / Higuchi (all three are first-order in `deg(v)`). Certified pin-points:
+  - K₃ → 0, C₄ → 0, edge12 → 0 (all degree-regular)
+  - path123 → 2 (degree-heterogeneous)
+  - edge-append on edge12: trace `[0, 2, 16]` — non-constant; the rule perturbs degree distribution
+
+**(b) Triple → Quad screener cascade** in `DualCurvatureScreener.lean`: `degVarianceTrendOf`, `degVarianceStablyClassifiable`, `quadStablyClassifiable`, `quadStableSelect`. Certified distribution on 21-cand × seedSet at 2 steps:
+  - Forman-stable      = 11
+  - Transport-stable   = 17
+  - Higuchi-stable     = 17  (= Transport set-wise)
+  - DegVariance-stable = 11  (same total as Forman, **DIFFERENT set** — mutual ⊄ certified)
+  - Triple-stable      = 11
+  - **Quad-stable      = 5**  ← first screener to strictly refine the Triple intersection
+
+DegVariance is the first screener to **shrink** the stable set below 11, finding new structure invisible to the three first-order families.
+
+**(c) `DegVarianceRateBridge.lean`** parallels `ExecRateBridge` (#394), `TransportRateBridge` (#404), and `HiguchiRateBridge` (#406) for the new scalar. `witnessRule0_edge12_degVarianceTrace = [0, 0, 0]` (witness preserves degree-regularity), rate bound at `(tgt=0, c=0)` trivially holds. **Named GR-zoo discharges via degree-variance**: `minkowski4_strong_from_exec_witness_degvariance`, `schwarzschild_*`, `flrw_*`, `rn_*`, `deSitter_*`, `sphere_*`, `warpedDiag2_*`.
+
+**State after this push**: every named GR metric in the zoo now has **FOUR independent material trace-coupled discharges** through four distinct curvature families — Forman (#394), Transport (#404), Higuchi (#406), DegVariance (this commit). Build green at 3547 jobs.
+
 ## Headline (2026-05-30 — Triple-curvature select + Higuchi rate-bridge: THREE independent material discharges per metric (#406))
 
 Two cascading wins from #405's Higuchi family.
