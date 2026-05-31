@@ -6,6 +6,24 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-05-30 — TransportRateBridge: second material discharge route for every GR-metric obligation (#404))
+
+`TransportRateBridge.lean` parallels `ExecRateBridge` (Forman-side, #394) for the transport scalar of #402. Every continuum GR metric now has **two independent material rate-bridge discharges** through two distinct curvature families.
+
+- **Transport-side rate primitives**: `dossierTransportConvergesToAt`, `transportStablyConvergesToAt`, `transportStableRateSelect`, `ExecTransportMetricOriginObligation`.
+- **Bridge theorems** `strong_obligation_from_transport_rate` + `_partial` variant — discharge any `MetricData` / `PartialMetricData` strong obligation from a transport-trace rate-pass. Reuses `discrepancyOfTrace` + `discrepancyOfTrace_satisfies_obligation` from `ExecRateBridge` (both are trace-generic, agnostic to which scalar produced the trace — clean infrastructure reuse).
+- **Witness**: `witnessRule0` on `edge12` has transport trace `[-2, -2, -2]` (constant — the rule preserves the seed); `witnessRule0_edge12_transportTrace_rateBounded` at `(tgt = -2, c = 0)` trivially holds.
+- **Named GR-zoo discharges via transport** — second route for every metric:
+  - `minkowski4_strong_from_exec_witness_transport`
+  - `schwarzschild_strong_from_exec_witness_transport (M : ℝ)`
+  - `flrw_strong_from_exec_witness_transport (a da : ℝ → ℝ)`
+  - `rn_strong_from_exec_witness_transport (M Q : ℝ)`
+  - `deSitter_strong_from_exec_witness_transport (Λ : ℝ)`
+  - `sphere_strong_from_exec_witness_transport`
+  - `warpedDiag2_strong_from_exec_witness_transport`
+
+Combined with #394's Forman discharges, every named GR metric in the zoo now has **two independent material trace-coupled discharges** with rule-coupled `sys` in the existential. The remaining decoupling is only the `Trajectory.applications` list (Gap B, requires the simulation lemma #267).
+
 ## Headline (2026-05-30 — Dual-curvature select: Forman ⊊ Transport on the 21-family (#403))
 
 `DualCurvatureScreener.lean` combines the two parallel curvature families (#384 triangle-Forman, #402 transport scalar) into a dual-screener filter and produces a new structural result.
