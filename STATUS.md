@@ -6,6 +6,25 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-05-30 — partial Gap B closure: `sys` in the existential coupled to the rule + full GR metric zoo discharged materially (#394))
+
+`ExecRateBridge` extended with the rule-coupled `sys` discharge and a sweep across the named GR metric zoo.
+
+**Partial Gap B closure**: the strong obligation's existential `RewritingSystem` witness, previously `⟨[]⟩` (empty rule list), is now `ExecSystem.toRewritingSystem_single r` — the rule's abstract cast (`P = Fin (r.numBound + r.numFresh)`). The Trajectory's `applications` list is still empty (full closure requires the dossier-to-trajectory simulation lemma which is Gap B proper / #267 / #231 / blocked on per-instance match enumeration #227).
+
+  - `strong_obligation_from_exec_rate_with_trace_and_sys` and its partial variant — bridge theorems with both *material* discrepancy (Forman trace; #393) and *rule-coupled* `sys` (this commit).
+
+**Full GR metric zoo, materially discharged via `witnessRule0` on `edge12`**:
+  - `minkowski4_strong_from_exec_witness_trace_and_sys`
+  - `schwarzschild_strong_from_exec_witness_trace_and_sys (M : ℝ)`
+  - `flrw_strong_from_exec_witness_trace_and_sys (a da : ℝ → ℝ)`
+  - `rn_strong_from_exec_witness_trace_and_sys (M Q : ℝ)`
+  - `deSitter_strong_from_exec_witness_trace_and_sys (Λ : ℝ)`
+  - `sphere_strong_from_exec_witness_trace_and_sys`
+  - `warpedDiag2_strong_from_exec_witness_trace_and_sys`
+
+Every named GR target now has a strong-origin discharge that requires producing a passing ExecRule, materially uses its Forman trace as the Wasserstein discrepancy, and the existential's `RewritingSystem` is the rule's actual cast. Only the Trajectory's `applications` list remains decoupled — the residual Gap B that the simulation lemma (#267) would close.
+
 ## Headline (2026-05-30 — material trace-coupling closes Gap A on the ExecHG side (#393))
 
 `ExecRateBridge` extended with the **materially-coupled discrepancy**. The discrepancy fed into `WassersteinRateObligation` is no longer a constant `c/(k+1)` derived from the rate parameter — it is literally `|trace[k] − tgt|`, cast to `ℝ`, where `trace` is `witnessRule0`'s actual Forman-scalar trace on `edge12`.

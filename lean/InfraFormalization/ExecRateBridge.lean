@@ -22,6 +22,12 @@ discrepancy here suffices to land the bridge form.
 
 import InfraFormalization.RuleSignatureExecSearch
 import InfraFormalization.HypergraphMetricBridges
+import InfraFormalization.MultiwayExecBridge
+import InfraFormalization.FLRW
+import InfraFormalization.ReissnerNordstrom
+import InfraFormalization.DeSitter
+import InfraFormalization.TwoSphere
+import InfraFormalization.CurvedRicciBridge
 
 namespace InfraFormalization
 namespace ExecRateBridge
@@ -316,6 +322,125 @@ theorem schwarzschild_strong_from_exec_witness_trace (M : ℝ) :
     HypergraphPartialMetricOriginObligationStrong (schwarzschildPartial M) :=
   strong_partial_obligation_from_exec_rate_with_trace
     (schwarzschildPartial M)
+    witnessRule0 edge12 2 0 12 witnessRule0_edge12_trace_rateBounded
+
+/-! ## Partial Gap B closure: rule-coupled `sys` in the existential (#394)
+
+The bridge theorems above still discharge the strong obligation's
+existential-trajectory half with the trivial empty `RewritingSystem`.
+This section tightens the discharge by replacing the empty system with
+`ExecSystem.toRewritingSystem_single r`, so the existential's `sys`
+witness is the *rule's* abstract cast. The `Trajectory` itself remains
+the 1-state degenerate witness (no applications recorded) — fully
+populating the applications list requires the dossier-to-trajectory
+simulation lemma which is **Gap B proper** (#267 / #231) and stays
+the deferred next step. -/
+
+/-- **Bridge with rule-coupled `sys` in the existential.** The
+existential's `RewritingSystem` is now `ExecSystem.toRewritingSystem_single r`
+(the rule's actual abstract cast) instead of `⟨[]⟩`; the discrepancy is
+materially the rule's Forman trace. The trajectory's `applications`
+list stays empty pending closure of Gap B (#267 / #231). -/
+theorem strong_obligation_from_exec_rate_with_trace_and_sys
+    {n : ℕ} (M : MetricData n)
+    (r : ExecRule) (seed : ExecHG ℕ) (N : ℕ) (tgt : ℤ) (c : ℕ)
+    (h : rateBounded (canonicalDossier r seed N).formanScalarTrace tgt c = true) :
+    HypergraphMetricOriginObligationStrong M := by
+  refine ⟨discrepancyOfTrace (canonicalDossier r seed N).formanScalarTrace tgt,
+    ?_, ?_⟩
+  · refine ⟨Fin 1, inferInstance, inferInstance,
+      Fin (r.numBound + r.numFresh),
+      ExecSystem.toRewritingSystem_single r,
+      Hypergraph.empty,
+      { states := [Hypergraph.empty]
+        applications := []
+        length_eq := rfl
+        first_state := rfl
+        well_formed := by intro i hi; simp at hi },
+      fun k => (1 : ℝ) / (k + 1), ?_⟩
+    intro k; positivity
+  · exact discrepancyOfTrace_satisfies_obligation h
+
+/-- **PartialMetricData variant** with rule-coupled `sys`. -/
+theorem strong_partial_obligation_from_exec_rate_with_trace_and_sys
+    {n : ℕ} (M : PartialMetricData n)
+    (r : ExecRule) (seed : ExecHG ℕ) (N : ℕ) (tgt : ℤ) (c : ℕ)
+    (h : rateBounded (canonicalDossier r seed N).formanScalarTrace tgt c = true) :
+    HypergraphPartialMetricOriginObligationStrong M := by
+  refine ⟨discrepancyOfTrace (canonicalDossier r seed N).formanScalarTrace tgt,
+    ?_, ?_⟩
+  · refine ⟨Fin 1, inferInstance, inferInstance,
+      Fin (r.numBound + r.numFresh),
+      ExecSystem.toRewritingSystem_single r,
+      Hypergraph.empty,
+      { states := [Hypergraph.empty]
+        applications := []
+        length_eq := rfl
+        first_state := rfl
+        well_formed := by intro i hi; simp at hi },
+      fun k => (1 : ℝ) / (k + 1), ?_⟩
+    intro k; positivity
+  · exact discrepancyOfTrace_satisfies_obligation h
+
+/-! ## Multi-metric material + rule-coupled discharges across the GR zoo
+
+Every named continuum metric in the project gets its strong-origin
+obligation discharged by `witnessRule0` on `edge12` via the
+trace-and-sys-coupled bridge. The discrepancy is `witnessRule0`'s
+actual Forman trace; the existential's `sys` is `witnessRule0`'s
+abstract cast. -/
+
+/-- **Minkowski 4** strong-origin obligation discharged with material
+trace and rule-coupled `sys`. -/
+theorem minkowski4_strong_from_exec_witness_trace_and_sys :
+    HypergraphMetricOriginObligationStrong minkowski4 :=
+  strong_obligation_from_exec_rate_with_trace_and_sys minkowski4
+    witnessRule0 edge12 2 0 12 witnessRule0_edge12_trace_rateBounded
+
+/-- **Schwarzschild** partial-metric strong-origin obligation, full
+coupling. -/
+theorem schwarzschild_strong_from_exec_witness_trace_and_sys (M : ℝ) :
+    HypergraphPartialMetricOriginObligationStrong (schwarzschildPartial M) :=
+  strong_partial_obligation_from_exec_rate_with_trace_and_sys
+    (schwarzschildPartial M)
+    witnessRule0 edge12 2 0 12 witnessRule0_edge12_trace_rateBounded
+
+/-- **FLRW** partial-metric strong-origin obligation, full coupling. -/
+theorem flrw_strong_from_exec_witness_trace_and_sys (a da : ℝ → ℝ) :
+    HypergraphPartialMetricOriginObligationStrong (flrwPartial a da) :=
+  strong_partial_obligation_from_exec_rate_with_trace_and_sys
+    (flrwPartial a da)
+    witnessRule0 edge12 2 0 12 witnessRule0_edge12_trace_rateBounded
+
+/-- **Reissner–Nordström** partial-metric strong-origin obligation,
+full coupling. -/
+theorem rn_strong_from_exec_witness_trace_and_sys (M Q : ℝ) :
+    HypergraphPartialMetricOriginObligationStrong (rnPartial M Q) :=
+  strong_partial_obligation_from_exec_rate_with_trace_and_sys
+    (rnPartial M Q)
+    witnessRule0 edge12 2 0 12 witnessRule0_edge12_trace_rateBounded
+
+/-- **de Sitter** partial-metric strong-origin obligation, full
+coupling. -/
+theorem deSitter_strong_from_exec_witness_trace_and_sys (Λ : ℝ) :
+    HypergraphPartialMetricOriginObligationStrong (dsPartial Λ) :=
+  strong_partial_obligation_from_exec_rate_with_trace_and_sys
+    (dsPartial Λ)
+    witnessRule0 edge12 2 0 12 witnessRule0_edge12_trace_rateBounded
+
+/-- **2-sphere** partial-metric strong-origin obligation, full
+coupling. -/
+theorem sphere_strong_from_exec_witness_trace_and_sys :
+    HypergraphPartialMetricOriginObligationStrong spherePartial :=
+  strong_partial_obligation_from_exec_rate_with_trace_and_sys
+    spherePartial
+    witnessRule0 edge12 2 0 12 witnessRule0_edge12_trace_rateBounded
+
+/-- **Warped-diagonal 2D** metric (R4 curved-Ricci witness)
+strong-origin obligation, full coupling. -/
+theorem warpedDiag2_strong_from_exec_witness_trace_and_sys :
+    HypergraphMetricOriginObligationStrong warpedDiag2 :=
+  strong_obligation_from_exec_rate_with_trace_and_sys warpedDiag2
     witnessRule0 edge12 2 0 12 witnessRule0_edge12_trace_rateBounded
 
 end ExecRateBridge
