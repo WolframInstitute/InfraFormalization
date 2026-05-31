@@ -120,6 +120,7 @@ import InfraFormalization.OllivierRicciExec
 import InfraFormalization.OllivierRicciScreener
 import InfraFormalization.DualCurvatureScreener
 import InfraFormalization.TransportRateBridge
+import InfraFormalization.HiguchiScreener
 import InfraFormalization.Milestone
 import InfraFormalization.HypergraphTopology
 import InfraFormalization.WassersteinRate

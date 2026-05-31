@@ -6,6 +6,25 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-05-30 — Higuchi planar combinatorial curvature: third independent curvature family + real research finding (#405, instantiating #367))
+
+`HiguchiScreener.lean` adds the Euler-defect form of Higuchi's combinatorial curvature `κ_H(v) := 1 − deg(v)/2` (integer doubled `2 − deg(v)`) as a third independent curvature family alongside triangle-Forman (#384) and transport-Ollivier (#402).
+
+- `higuchiVertexDoubled`, `higuchiTotalDoubled` (integer-valued, decide-checkable).
+- `Dossier.higuchiScalarTrace` + `Dossier.higuchiScalarConstant`.
+- **Certified numerics**: K₃ → `0` (flat), C₄ → `0` (flat), edge12 → `2` (positive sphere-like defect), 3-path → `2`.
+
+**Real research finding**: The **edge-append rule** (`{a,b} → {a,b},{b,c}`) **CONSERVES Higuchi curvature** on `edge12`. The trace `[2, 2, 2]` is constant — confirmed by `native_decide`. This is the rule's intrinsic property: each application extends the path by one new edge + one new vertex, so `V - E` is invariant. The Forman and Transport screeners both said this rule was non-constant on their scalars; **Higuchi says it IS constant** — the three screeners detect different aspects of curvature.
+
+**Three-curvature project state**: Forman, Transport, Higuchi all running in parallel. Edge-append:
+- Forman: non-constant
+- Transport: non-constant
+- Higuchi: **constant** (path-shape conservation)
+
+This is a real, independently-meaningful structural distinction between the three families. Each is a separate sieve in rule search.
+
+Build green at 3544 jobs.
+
 ## Headline (2026-05-30 — TransportRateBridge: second material discharge route for every GR-metric obligation (#404))
 
 `TransportRateBridge.lean` parallels `ExecRateBridge` (Forman-side, #394) for the transport scalar of #402. Every continuum GR metric now has **two independent material rate-bridge discharges** through two distinct curvature families.
