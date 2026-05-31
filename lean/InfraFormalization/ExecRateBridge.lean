@@ -324,6 +324,138 @@ theorem schwarzschild_strong_from_exec_witness_trace (M : ℝ) :
     (schwarzschildPartial M)
     witnessRule0 edge12 2 0 12 witnessRule0_edge12_trace_rateBounded
 
+/-! ## Multi-seed material discharge
+
+The single-seed material bridges above use only `edge12`'s trace.
+For a candidate that passes the rate envelope on **every** seed in the
+`seedSet`, the material discrepancy can be the sum of per-seed
+discrepancies — each is `O(1/n)`, so the sum is `O(1/n)` with constant
+scaled by the number of seeds. -/
+
+/-- Pointwise sum of two `ScaledDiscrepancy`s. -/
+def addDiscrepancy (d₁ d₂ : ScaledDiscrepancy) : ScaledDiscrepancy :=
+  fun k => d₁ k + d₂ k
+
+/-- The pointwise sum of two `O(1/n)` discrepancies is again `O(1/n)`
+with constant `C₁ + C₂`. -/
+theorem addDiscrepancy_satisfies {d₁ d₂ : ScaledDiscrepancy}
+    (h₁ : WassersteinRateObligation d₁) (h₂ : WassersteinRateObligation d₂) :
+    WassersteinRateObligation (addDiscrepancy d₁ d₂) := by
+  obtain ⟨C₁, hC₁_pos, N₁, h₁'⟩ := h₁
+  obtain ⟨C₂, hC₂_pos, N₂, h₂'⟩ := h₂
+  refine ⟨C₁ + C₂, by linarith, max N₁ N₂, ?_⟩
+  intro n hn hn1
+  unfold addDiscrepancy
+  have hN₁ : N₁ ≤ n := le_trans (le_max_left N₁ N₂) hn
+  have hN₂ : N₂ ≤ n := le_trans (le_max_right N₁ N₂) hn
+  have hn_pos : (0 : ℝ) < n := by exact_mod_cast hn1
+  have step1 : d₁ n ≤ C₁ / n := h₁' n hN₁ hn1
+  have step2 : d₂ n ≤ C₂ / n := h₂' n hN₂ hn1
+  have hsum : d₁ n + d₂ n ≤ C₁ / n + C₂ / n := by linarith
+  rwa [show (C₁ + C₂) / (n : ℝ) = C₁ / n + C₂ / n by ring] at *
+
+/-- Foldr-style sum of a list of discrepancies. -/
+def sumDiscrepancies : List ScaledDiscrepancy → ScaledDiscrepancy
+  | []      => fun _ => 0
+  | d :: ds => addDiscrepancy d (sumDiscrepancies ds)
+
+/-- A finite sum of `O(1/n)` discrepancies is again `O(1/n)`. -/
+theorem sumDiscrepancies_satisfies {ds : List ScaledDiscrepancy}
+    (h : ∀ d ∈ ds, WassersteinRateObligation d) :
+    WassersteinRateObligation (sumDiscrepancies ds) := by
+  induction ds with
+  | nil =>
+    show WassersteinRateObligation (fun _ => 0)
+    exact wassersteinRateObligation_zero
+  | cons d rest ih =>
+    show WassersteinRateObligation (addDiscrepancy d (sumDiscrepancies rest))
+    apply addDiscrepancy_satisfies
+    · exact h d (by simp)
+    · apply ih
+      intro d' hd'
+      exact h d' (by simp [hd'])
+
+/-- The seed-summed trace-discrepancy from a rule's run on every seed
+in `seeds`. -/
+noncomputable def discrepancyOfRuleOverSeeds (r : ExecRule) (seeds : List (ExecHG ℕ))
+    (N : ℕ) (tgt : ℤ) : ScaledDiscrepancy :=
+  sumDiscrepancies
+    (seeds.map (fun s =>
+      discrepancyOfTrace (canonicalDossier r s N).formanScalarTrace tgt))
+
+/-- **Multi-seed material bridge**: if a rule passes the rate
+screener on every seed in `seeds` (i.e., `stablyConvergesToAt`),
+the strong obligation for any continuum `MetricData M` discharges
+with the seed-summed material discrepancy and the rule's abstract
+cast in the existential's `sys`. -/
+theorem strong_obligation_from_stably_converges
+    {n : ℕ} (M : MetricData n)
+    (r : ExecRule) (seeds : List (ExecHG ℕ)) (N : ℕ) (tgt : ℤ) (c : ℕ)
+    (_h : ExecMetricOriginObligation r seeds N tgt c) :
+    HypergraphMetricOriginObligationStrong M := by
+  refine ⟨discrepancyOfRuleOverSeeds r seeds N tgt, ?_, ?_⟩
+  · refine ⟨Fin 1, inferInstance, inferInstance,
+      Fin (r.numBound + r.numFresh),
+      ExecSystem.toRewritingSystem_single r,
+      Hypergraph.empty,
+      { states := [Hypergraph.empty]
+        applications := []
+        length_eq := rfl
+        first_state := rfl
+        well_formed := by intro i hi; simp at hi },
+      fun k => (1 : ℝ) / (k + 1), ?_⟩
+    intro k; positivity
+  · -- Each per-seed discrepancy satisfies the rate obligation; sum does too.
+    apply sumDiscrepancies_satisfies
+    intro d hd
+    simp [discrepancyOfRuleOverSeeds, List.mem_map] at hd
+    obtain ⟨s, hs_mem, hs_eq⟩ := hd
+    rw [← hs_eq]
+    apply discrepancyOfTrace_satisfies_obligation
+    -- `ExecMetricOriginObligation` unfolds to `stablyConvergesToAt = true`,
+    -- which by definition is `seeds.all (... rate-bounded ...) = true`.
+    -- Extract the per-seed pass for `s`.
+    have hall := _h
+    unfold ExecMetricOriginObligation stablyConvergesToAt at hall
+    have := List.all_eq_true.mp hall s hs_mem
+    exact this
+
+/-- **PartialMetricData variant** of the multi-seed material bridge. -/
+theorem strong_partial_obligation_from_stably_converges
+    {n : ℕ} (M : PartialMetricData n)
+    (r : ExecRule) (seeds : List (ExecHG ℕ)) (N : ℕ) (tgt : ℤ) (c : ℕ)
+    (_h : ExecMetricOriginObligation r seeds N tgt c) :
+    HypergraphPartialMetricOriginObligationStrong M := by
+  refine ⟨discrepancyOfRuleOverSeeds r seeds N tgt, ?_, ?_⟩
+  · refine ⟨Fin 1, inferInstance, inferInstance,
+      Fin (r.numBound + r.numFresh),
+      ExecSystem.toRewritingSystem_single r,
+      Hypergraph.empty,
+      { states := [Hypergraph.empty]
+        applications := []
+        length_eq := rfl
+        first_state := rfl
+        well_formed := by intro i hi; simp at hi },
+      fun k => (1 : ℝ) / (k + 1), ?_⟩
+    intro k; positivity
+  · apply sumDiscrepancies_satisfies
+    intro d hd
+    simp [discrepancyOfRuleOverSeeds, List.mem_map] at hd
+    obtain ⟨s, hs_mem, hs_eq⟩ := hd
+    rw [← hs_eq]
+    apply discrepancyOfTrace_satisfies_obligation
+    have hall := _h
+    unfold ExecMetricOriginObligation stablyConvergesToAt at hall
+    exact List.all_eq_true.mp hall s hs_mem
+
+/-- **Minkowski 4 strong obligation discharged via the multi-seed
+material bridge.** Uses the entire `seedSet`'s rate-pass — discrepancy
+is the sum of the rule's Forman-trace differences on all three seeds. -/
+theorem minkowski4_strong_from_multi_seed :
+    HypergraphMetricOriginObligationStrong minkowski4 :=
+  strong_obligation_from_stably_converges minkowski4
+    witnessRule0 seedSet 2 0 12 witnessRule0_passes
+
 /-! ## Partial Gap B closure: rule-coupled `sys` in the existential (#394)
 
 The bridge theorems above still discharge the strong obligation's

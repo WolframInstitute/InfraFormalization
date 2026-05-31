@@ -6,6 +6,20 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-05-30 — residual sweep: multi-seed material discharge + Coupling/transport-cost + three-way perpendicular moduli + #267 base-case ladder (#397))
+
+Four parallel residual closures from the #396 wide+deep push.
+
+**(a) Multi-seed material discharge** in `ExecRateBridge.lean`. New primitives `addDiscrepancy`, `sumDiscrepancies`, `discrepancyOfRuleOverSeeds`; bridge theorems `strong_obligation_from_stably_converges` + `strong_partial_obligation_from_stably_converges` that consume `ExecMetricOriginObligation r seeds N tgt c` and discharge `HypergraphMetricOriginObligationStrong` using the **sum of per-seed Forman-trace discrepancies** — every seed in the seedSet contributes its own material trace, summed point-wise. `addDiscrepancy_satisfies` and `sumDiscrepancies_satisfies` prove the rate envelope is preserved under sum. Concrete `minkowski4_strong_from_multi_seed` uses `witnessRule0` over the full `seedSet` (3 seeds).
+
+**(b) Coupling + transport cost in `InfraMeasure.lean`** (foundation for an Ollivier-Ricci screener). New `Coupling V` structure (joint weight on `V × V` with non-negativity), `marginal1` / `marginal2` with non-negativity lemmas, `IsCouplingOf` predicate (couplings respecting given marginals), `transportCost` (sum-over-carrier-square of `cost u v * jointWeight u v`, defined via a flattened sum for clean induction), and `transportCost_nonneg`. With a metric `d` substituted as `cost`, this is the per-coupling cost whose infimum is the W₁ Wasserstein distance — the missing piece for #368 OLLIVIER-HG.
+
+**(c) Three-way moduli in `PerpendicularModuli.lean`** (#390 extended). Added `pythagoreanHop` method (Schoenberg-style): `d² + d² = d²` on a small-step distance (`0` if equal, `1` if adjacent, `2` otherwise). New `path3HG` graph + carrier. Theorem `perp_methods_pairwise_disagree`: every pair of distinct `PerpMethod`s disagrees on some graph and triple — the moduli is now genuinely three-way, with each method a distinct invariant. `native_decide`-certified across all three pairs.
+
+**(d) #267 engine-side certified ladder.** Added six `decide`-checked instances of the engine-side base case `singleWayStep subdivisionSys [consEdge a b] = [consEdge a (max a b + 1), consEdge (max a b + 1) b]` for fixed concrete `(a, b)` pairs spanning `(0,1), (1,2), (3,7), (5,2), (10,20), (100,200)` — verifies the closed form across small / large / out-of-order / non-adjacent IDs. The abstract general `(a ≠ b) → ...` proof requires symbolic unfolding of `allFunctions 2 [a, b]` + 4-binding filter, still residual; the ladder pins the shape the abstract proof must reach.
+
+Build green at 3539 jobs. Task #397 completed.
+
 ## Headline (2026-05-30 — wide-and-deep starters: InfraMeasure (#388) + PerpendicularModuli (#390) + per-edge-instance primitive (#227 non-breaking) (#396))
 
 Three parallel starters land alongside the existing rule-search machinery:

@@ -121,5 +121,97 @@ theorem dirac_of_ne {V : Type*} [DecidableEq V] (v₀ v : V) (h : v ≠ v₀) :
   unfold dirac
   simp [h]
 
+/-! ## Coupling + transport cost (foundation for Ollivier-Ricci screener)
+
+A **coupling** of two `InfraMeasureData`s `m₁`, `m₂` on `V` is a
+non-negative joint weight on `V × V` whose `V`-marginals (over a
+finite carrier list) recover the originals. The W₁ Wasserstein
+distance is the infimum of transport costs over couplings; we
+formalise the per-coupling cost here as the foundation. -/
+
+/-- A coupling on `V × V`: non-negative weights on ordered pairs. -/
+structure Coupling (V : Type*) where
+  jointWeight : V → V → ℝ
+  jointNonneg : ∀ u v, 0 ≤ jointWeight u v
+
+namespace Coupling
+
+variable {V : Type*}
+
+/-- The first marginal of a coupling over an explicit carrier: the
+weight at `u` is the sum of `jointWeight u v` for `v` in the carrier. -/
+def marginal1 (γ : Coupling V) (carrier : List V) (u : V) : ℝ :=
+  carrier.foldr (fun v acc => γ.jointWeight u v + acc) 0
+
+/-- The second marginal of a coupling over an explicit carrier. -/
+def marginal2 (γ : Coupling V) (carrier : List V) (v : V) : ℝ :=
+  carrier.foldr (fun u acc => γ.jointWeight u v + acc) 0
+
+/-- Marginal-1 non-negativity. -/
+theorem marginal1_nonneg (γ : Coupling V) (carrier : List V) (u : V) :
+    0 ≤ γ.marginal1 carrier u := by
+  unfold marginal1
+  induction carrier with
+  | nil => simp
+  | cons v rest ih =>
+    show 0 ≤ γ.jointWeight u v + List.foldr _ 0 rest
+    have := γ.jointNonneg u v
+    linarith
+
+/-- Marginal-2 non-negativity. -/
+theorem marginal2_nonneg (γ : Coupling V) (carrier : List V) (v : V) :
+    0 ≤ γ.marginal2 carrier v := by
+  unfold marginal2
+  induction carrier with
+  | nil => simp
+  | cons u rest ih =>
+    show 0 ≤ γ.jointWeight u v + List.foldr _ 0 rest
+    have := γ.jointNonneg u v
+    linarith
+
+end Coupling
+
+/-- A coupling **respects** a pair of `InfraMeasureData`s if its
+marginals over the carrier equal the input measures' weights. -/
+def IsCouplingOf {V : Type*} (carrier : List V)
+    (γ : Coupling V) (m₁ m₂ : InfraMeasureData V) : Prop :=
+  (∀ u, γ.marginal1 carrier u = m₁.weight u) ∧
+  (∀ v, γ.marginal2 carrier v = m₂.weight v)
+
+/-- **Transport cost** of a coupling under a non-negative cost
+function `c : V × V → ℝ` (cost of moving one unit of mass from `u` to
+`v`): the sum over the carrier-square of `c u v * γ.jointWeight u v`.
+For W₁ on a metric space, use `c u v := d u v` (the graph distance).
+Defined via a flattened list of (u, v)-pairs to keep induction clean. -/
+def transportCost {V : Type*} (carrier : List V)
+    (cost : V → V → ℝ) (γ : Coupling V) : ℝ :=
+  (carrier.flatMap (fun u =>
+    carrier.map (fun v => cost u v * γ.jointWeight u v))).foldr (· + ·) 0
+
+/-- Helper: a foldr-sum of a non-negative list is non-negative. -/
+theorem foldr_add_nonneg (l : List ℝ) (h : ∀ x ∈ l, 0 ≤ x) :
+    0 ≤ l.foldr (· + ·) 0 := by
+  induction l with
+  | nil => simp
+  | cons x rest ih =>
+    show 0 ≤ x + rest.foldr (· + ·) 0
+    have h_head : 0 ≤ x := h x (by simp)
+    have h_rest : 0 ≤ rest.foldr (· + ·) 0 := ih (fun y hy => h y (by simp [hy]))
+    linarith
+
+/-- **Transport cost is non-negative** when the cost function and
+coupling are both non-negative. -/
+theorem transportCost_nonneg {V : Type*} (carrier : List V)
+    (cost : V → V → ℝ) (hcost : ∀ u v, 0 ≤ cost u v)
+    (γ : Coupling V) :
+    0 ≤ transportCost carrier cost γ := by
+  unfold transportCost
+  apply foldr_add_nonneg
+  intro x hx
+  simp [List.mem_flatMap, List.mem_map] at hx
+  obtain ⟨u, _, v, _, h_eq⟩ := hx
+  rw [← h_eq]
+  exact mul_nonneg (hcost u v) (γ.jointNonneg u v)
+
 end InfraMeasure
 end InfraFormalization
