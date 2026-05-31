@@ -6,6 +6,19 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-05-30 — bridge: rate-screener → strong metric-origin obligation discharged by a named candidate rule (#392))
+
+`ExecRateBridge.lean` lands the first end-to-end coupling from the executable rule-search machinery (#384/#385/#386/#391) to the abstract metric-origin obligations in `HypergraphMetricBridges`.
+
+  - **`ExecMetricOriginObligation r seeds N tgt c`** — `abbrev` for `stablyConvergesToAt r seeds N tgt c = true` (decidable Prop).
+  - **`discrepancyOfRate c := c/(k+1)`** — the constant-rate discrepancy derived from a rate-pass; `discrepancyOfRate_satisfies` proves it satisfies `WassersteinRateObligation`.
+  - **`strong_obligation_from_exec_rate M r seeds N tgt c (h : ExecMetricOriginObligation r seeds N tgt c)`** — for any continuum `MetricData M`, the strong obligation discharges from the rate-pass. Parallel `strong_partial_obligation_from_exec_rate` for `PartialMetricData`.
+  - **Concrete witness**: `witnessRule0 := rate12Witnesses.headD trivialIdentityExecRule` (the first of #391's 7-element rate-(0,12) selection). `witnessRule0_passes` discharged by `native_decide`. Named discharges `minkowski4_strong_from_exec_witness` and `schwarzschild_strong_from_exec_witness M` for Minkowski 4 and Schwarzschild.
+
+**Honest scope.** The coupling is **statement-coupled, not body-coupled**: the bridge theorem syntactically requires exhibiting a passing rule (you cannot apply it without supplying a candidate that decides true), but the proof body uses only the rate constant `c` to build the discrepancy, and the existential-trajectory half is still discharged by the trivial empty witness — the dossier-to-trajectory lift (Gap B / #267) remains the deferred next step that would push the rule's actual engine trajectory through to the existential half. Material trace-coupling (the discrepancy being `|trace[k] − tgt|` rather than the constant `c/(k+1)`) is staged as a follow-up.
+
+What this gives the project: the rule-search work since #384 is no longer free-floating ExecHG-side machinery — it now syntactically participates in the discharge of named GR-metric obligations. The shape of "rule search ⇒ metric origin" is in place, with the two open structural gaps (Gap A: tie discrepancy to actual trajectory W₁; Gap B: dossier-to-trajectory lift) being the explicit residuals.
+
 ## Headline (2026-05-30 — rate-based target-aware screener: rate-stability ≠ trend-stability, with a 17 > 11 separation (#391))
 
 The trend classification of #385/#386 is qualitative — sign of the final Forman scalar. `RuleSignatureExecSearch` now adds a quantitative *rate-bound* predicate parallel to the abstract `ConvergenceRateObligation`:

@@ -113,6 +113,7 @@ import InfraFormalization.RuleSignatureSchema
 import InfraFormalization.RuleSignatureExecCorpus
 import InfraFormalization.RuleSignatureExecMetrics
 import InfraFormalization.RuleSignatureExecSearch
+import InfraFormalization.ExecRateBridge
 import InfraFormalization.Milestone
 import InfraFormalization.HypergraphTopology
 import InfraFormalization.WassersteinRate
