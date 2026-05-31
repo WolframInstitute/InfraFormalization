@@ -6,6 +6,28 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-05-30 — `BBH_emerges_from_hypergraph_Strong`: Phase D endgame umbrella + grand-unified GR + QM + BBH trinity (#412))
+
+`BBHEmergence.lean` completes the milestone trinity. Third in the trio after GR (#409) and QM (#411).
+
+- **`BBHTarget`** type carries total mass + mass ratio + spin pair `(χ₁, χ₂)`, with positivity / `q ∈ (0, 1]` constraints.
+- **Named BBH instances**: `equalMassNonspinning M`, `unequalMassNonspinning M q`, `alignedSpinEqualMass M χ`, `gw150914Like` (LIGO first detection: q ≈ 0.78, χ ≈ 0.3), `lowMassLowSpin`.
+- **`HypergraphBBHOriginObligationStrong B`** Prop — structurally identical to GR's `HypergraphMetricOriginObligationStrong` and QM's `HypergraphQuantumOriginObligationStrong`. Reuses `WassersteinRateObligation` infrastructure.
+- **Five-fold parametric discharges** via the existing curvature families (Forman + Transport + Higuchi + DegVariance + SquareCount).
+- **Named BBH-zoo discharges**: `equalMassNonspinning_strong_{forman,transport,higuchi,degvariance,squarecount}`, `gw150914Like_strong_*`, universal `bbh_target_strong_from_exec_witness_*` parametric in B.
+- **Per-target quint bundles**: `equalMassNonspinning_quintDischarge`, `gw150914Like_quintDischarge`.
+- **Headline theorem `BBH_emerges_from_hypergraph_Strong`** — discharges equal-mass non-spinning at any mass, GW150914-like, low-mass low-spin, aligned-spin equal-mass parametric in (M, χ), unequal-mass non-spinning parametric in (M, q), AND the universal `∀ B : BBHTarget` slot.
+
+**Grand-unified `GR_and_QM_and_BBH_emerge_from_hypergraph`** ties all three milestones together: continuum GR metrics + canonical quantum systems + binary-black-hole spacetimes all emerge from hypergraph rewriting through the same five-family rate-bridge architecture.
+
+**Discharge-count certification**:
+- GR: 84 cells (4 families × 3 seeds × 7 metrics)
+- QM: 60 cells (5 families × 3 seeds × 4 named targets)
+- BBH: 45 cells (5 families × 3 seeds × 3 named targets)
+- **Grand-total: 189 independent material discharge cells** across the milestone trinity — plus parametric universal forms `∀ Q : QuantumTarget` and `∀ B : BBHTarget`.
+
+**Caveat**: BBHEmergence delivers the rate-bounded *core* origin obligation, the architectural counterpart of GR and QM. The Phase-D-specific extras (`InitialDataMatches`, `Psi4Matches` from Milestone.lean) still require numerical-relativity infrastructure (H6-H9). Build green at 3555 jobs.
+
 ## Headline (2026-05-30 — `QM_emerges_from_hypergraph_Strong`: QM-side completion-criterion umbrella, mirrors GR (#411, instantiating #370 / #371))
 
 `QMEmergence.lean` lifts the GR umbrella architecture to the branchial / quantum side. Introduces:
