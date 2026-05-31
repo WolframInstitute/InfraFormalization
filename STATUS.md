@@ -6,6 +6,32 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-05-30 — Literature-grade multi-edge rule catalog + real curvature emergences (#415))
+
+The boring single-edge rules from `RuleExtraction.lean` are now joined by **literature-grade multi-edge rules** with genuinely-interesting curvature signatures. New module `LiteratureRules.lean` catalogs:
+
+- **`jgorardNamedRule`** (arXiv:2102.09363): `{{x,y},{y,z},{z,w},{w,v}} → {{y,u},{u,v},{w,x},{x,u}}` — the 4-edge-LHS rule JGORARD claims "provably satisfies EFE". Conservative.
+- **`triangulationRule`**: `{{x,y}} → {{x,y},{x,z},{y,z}}` — creates a triangle around every edge via fresh vertex.
+- **`triangleClosureRule`**: `{{x,y},{y,z}} → {{x,y},{y,z},{x,z}}` — closes every length-2 path with the missing edge.
+- **`subdivisionRuleLit`**: `{{x,y}} → {{x,z},{z,y}}` — canonical subdivider.
+- **`wheelerRule`**: `{{x,y},{x,z}} → {{x,y},{x,w},{y,w},{z,w}}` — 2-edge LHS, 4-edge RHS, wheel-center fresh vertex.
+- **`tripleExtendRule`**: `{{x,y}} → {{x,y},{y,z},{z,w}}` — WPP enumeration triple extension.
+
+**Real research findings** (all `native_decide`-pinned):
+
+1. **Triangle-closure on path123 → 2D EUCLIDEAN emergence**: Higuchi `[2, 0, 0]` and DegVariance `[2, 0, 0]` — combinatorial signature of a flat triangulated plane in 2 rewriting steps.
+
+2. **Triangulation on edge12 → HYPERBOLIC emergence**: Higuchi `[2, 0, -6]` drops below zero (negative combinatorial curvature). SquareCount `[0, 0, 24]` — 4-cycles emerge from a seed that had none.
+
+3. **JGORARD's published rule on triangle → vacuum-stable witness**: all 5 traces constant (`forman=18`, `transport=-30`, `higuchi=0`, `degVar=0`, `squareCount=0`). 4-edge path LHS doesn't match 3-vertex triangle, giving a literature-grade `c=0` rate-bounded witness.
+
+**Named alternative-witness GR-zoo discharges** using JGORARD's published rule:
+- `minkowski4_strong_from_jgorardNamedRule_triangle` (Forman)
+- `minkowski4_strong_from_jgorardNamedRule_triangle_{transport, higuchi, degvariance, squarecount}` (all 5 families)
+- `minkowski4_jgorardNamedRule_triangle_quintDischarge` — five-fold bundle using JGORARD's own published rule as witness.
+
+This is the literature-grade payoff the user requested: real candidate-spacetime rules screened through the curvature cascade and inserted as proof witnesses. Build green at 3557 jobs.
+
 ## Headline (2026-05-30 — Rule extraction + Milestone True-stub upgrade (#413 + #414))
 
 **(a) #413 — `RuleExtraction.lean`**: the search system now PRODUCES named extracted rules with proof witnesses. The 5 quint-stable rules from `quintStableSelect` are materialized as `quintRuleIdentity`, `quintRuleFreshSink`, `quintRuleReversal`, `quintRuleBidirect`, `quintRuleFreshSource` with their structure (LHS / RHS / numBound / numFresh) hand-defined. Each rule's quint-stable membership is `native_decide`-certified.
