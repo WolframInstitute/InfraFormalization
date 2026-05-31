@@ -204,14 +204,60 @@ theorem consEdge_eq_iff (x y a b : ℕ) :
     exact this
   · rintro ⟨rfl, rfl⟩; rfl
 
-/-! ## Direct singleton characterization residual
+/-! ## bindingMatches characterization
 
-The `bindingMatches subdivisionRule.lhs [consEdge a b] ρ ↔ Hyperedge.map ρ subdLhs = consEdge a b`
-characterization sits as a planned next-step. The mechanical residual:
-unfold `edgesContained`'s `.dedup.all` over the singleton and reduce
-the `count` arithmetic. Once landed, combine with
-`allFunctions_2_pair_projection` to get the full singleton-of-matches
-characterization for symbolic `a ≠ b`. -/
+For the subdivision rule's singleton-edge LHS against a singleton-edge
+state, `bindingMatches` reduces to literal equality of the image edge
+with the state's unique edge. -/
+
+/-- `bindingMatches subdivisionRule.lhs [consEdge a b] ρ = true` iff
+`Hyperedge.map ρ subdLhs = consEdge a b`. -/
+theorem bindingMatches_subdLhs_iff (ρ : Fin 2 → ℕ) (a b : ℕ) :
+    bindingMatches subdivisionRule.lhs [consEdge a b] ρ = true
+    ↔ Hyperedge.map ρ subdLhs = consEdge a b := by
+  -- bindingMatches := edgesContained (mapPattern ρ r.lhs) H
+  -- = edgesContained [Hyperedge.map ρ subdLhs] [consEdge a b]
+  -- = ([Hyperedge.map ρ subdLhs].dedup).all
+  --     (fun e => decide (edgeCount e [Hyperedge.map ρ subdLhs] ≤ edgeCount e [consEdge a b]))
+  -- = decide (1 ≤ count (Hyperedge.map ρ subdLhs) [consEdge a b])
+  -- = (Hyperedge.map ρ subdLhs = consEdge a b)
+  show edgesContained [Hyperedge.map ρ subdLhs] [consEdge a b] = true
+       ↔ Hyperedge.map ρ subdLhs = consEdge a b
+  unfold edgesContained
+  have hdedup : ([Hyperedge.map ρ subdLhs]).dedup = [Hyperedge.map ρ subdLhs] := by simp
+  rw [hdedup]
+  simp only [List.all_cons, List.all_nil, Bool.and_true, decide_eq_true_eq,
+             edgeCount, List.count_singleton]
+  by_cases heq : Hyperedge.map ρ subdLhs = consEdge a b
+  · constructor
+    · intro _; exact heq
+    · intro _
+      rw [heq]
+  · constructor
+    · intro h
+      exfalso
+      have hself : (Hyperedge.map ρ subdLhs == Hyperedge.map ρ subdLhs) = true :=
+        beq_self_eq_true _
+      have hother : (consEdge a b == Hyperedge.map ρ subdLhs) = false := by
+        rw [beq_eq_false_iff_ne]
+        intro h'; exact heq h'.symm
+      rw [hself, hother] at h
+      simp at h
+    · intro h; exact absurd h heq
+
+/-! ## Singleton-characterization residual
+
+The full closure `allMatches subdivisionRule [consEdge a b] = [matchAB a b]`
+for symbolic `a ≠ b` requires combining `bindingMatches_subdLhs_iff` (just
+landed above) with `allFunctions_2_pair_projection` and propagating
+through the `filter` + `map` composition. The interaction between the
+Bool-valued filter predicate and the Prop-valued iff lemma needs a
+small custom rewriting step; deferred as the final mechanical piece.
+
+The ARCHITECTURAL closure — the bridge from the singleton-match
+assumption to the abstract base case — is the `singleWayStep_inner_extension_eq`
+lemma above; once `allMatches_eq_singleton_matchAB` lands the rest
+composes mechanically. -/
 
 end MultiwayExec
 end InfraFormalization

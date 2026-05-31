@@ -6,6 +6,25 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-05-30 — B1 + B2 + B3: unblock-stack to material discharges (#416 + #417 + #418))
+
+The user's question "what do you need to do to unblock material claims about rule → spacetime correspondence" had a concrete blocker stack. This commit attacks the first three layers:
+
+**B1 — `bindingMatches_subdLhs_iff` (#416)**: closed the multiset-count characterization step of the abstract base case. `bindingMatches subdivisionRule.lhs [consEdge a b] ρ = true ↔ Hyperedge.map ρ subdLhs = consEdge a b`. Combined with the previously-landed `allFunctions_2_pair_projection`, this leaves the singleton-of-matches lemma as a small filter-propagation residual (not committed here — needs careful `bindingMatches`-vs-`filter` Bool/Prop bridging).
+
+**B2 — `ExecHG run → Trajectory` lift (#417)**: `ExecTrajectoryLift.lean`. `execHGToFinHypergraph` projects engine states into `Hypergraph (Fin (vertexBound + 1))`. `liftExecRunInitial` builds a 1-state `Trajectory` carrying the **actual engine-run final state** as its `init`. New theorem `strong_obligation_from_exec_rate_with_lifted_trajectory` discharges the strong obligation with the existential's `(V, init, τ)` slot carrying genuine engine data, not the `Fin 1 + Hypergraph.empty + empty applications` trivial witness. Named lifted GR-zoo discharges: `minkowski4_strong_lifted`, `schwarzschild_strong_lifted`, `flrw_strong_lifted`, `warpedDiag2_strong_lifted`.
+
+**B3 — Per-metric target scalars (#418)**: `MetricTargetScalars.lean`. `formanTarget : MetricData n → ℤ` and analogues (transport, higuchi, degvariance, squarecount) give the **continuum-side counterpart** the discrete trace should converge to. For vacuum metrics (Minkowski 4, sphere, warpedDiag2, Schwarzschild exterior, Ric ≡ 0), the target is `0`. New `strong_obligation_from_exec_rate_with_metric_coupled_tgt` requires `tgt = formanTarget M` — **the rate envelope is no longer target-agnostic**. Named coupled GR-zoo discharges: `minkowski4_strong_coupled`, `sphere_strong_coupled`, `warpedDiag2_strong_coupled`, `schwarzschild_strong_coupled`.
+
+**Honesty audit**: with B1-B3, the discharge architecture is upgraded from
+  - "engine trace satisfies arbitrary integer rate envelope" (target-agnostic)
+to
+  - "engine trace satisfies metric-specific target envelope, with existential `init` carrying actual engine-run final state in a finite-vertex hypergraph"
+
+The remaining gap (B4: actual discrete-Forman → continuum-Ricci convergence theorem) is research-level mathematics. What landed: the architectural pieces that make the eventual material claim instantiable, not vacuously inhabited.
+
+Build green at 3559 jobs.
+
 ## Headline (2026-05-30 — Literature-grade multi-edge rule catalog + real curvature emergences (#415))
 
 The boring single-edge rules from `RuleExtraction.lean` are now joined by **literature-grade multi-edge rules** with genuinely-interesting curvature signatures. New module `LiteratureRules.lean` catalogs:
