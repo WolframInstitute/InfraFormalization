@@ -23,6 +23,7 @@ import InfraFormalization.RuleSignatureExecSearch
 import InfraFormalization.OllivierRicciScreener
 import InfraFormalization.HiguchiScreener
 import InfraFormalization.DegreeVarianceScreener
+import InfraFormalization.SquareCountScreener
 
 namespace InfraFormalization
 namespace DualCurvatureScreener
@@ -34,6 +35,7 @@ open RuleSignatureExecSearch
 open OllivierRicciScreener
 open HiguchiScreener
 open DegreeVarianceScreener
+open SquareCountScreener
 
 /-- The transport-scalar trend of a rule on a seed at depth `n`. Uses
 the same `classifyForman` shape (constant ⇒ `flat`, else sign of final
@@ -306,6 +308,93 @@ example :
         (fun r => degVarianceStablyClassifiable r seedSet 2)).length = 11
   ∧ (tripleStableSelect (enumerateRules2_1 2) seedSet 2).length = 11
   ∧ (quadStableSelect (enumerateRules2_1 2) seedSet 2).length = 5 := by
+  native_decide
+
+/-! ## Quint-curvature select: Forman + Transport + Higuchi + DegVariance + SquareCount -/
+
+/-- The square-count scalar trend of a rule on a seed at depth `n`. -/
+def squareCountTrendOf (r : ExecRule) (seed : ExecHG ℕ) (n : Nat) :
+    CurvatureTrend :=
+  classifyForman ((canonicalDossier r seed n).squareCountTrace)
+
+/-- The square-count trend across a list of seeds. -/
+def squareCountTrendsAcross (r : ExecRule) (seeds : List (ExecHG ℕ))
+    (n : Nat) : List CurvatureTrend :=
+  seeds.map (fun s => squareCountTrendOf r s n)
+
+/-- A candidate's square-count trend is stably-classifiable. -/
+def squareCountStablyClassifiable (r : ExecRule) (seeds : List (ExecHG ℕ))
+    (n : Nat) : Bool :=
+  match squareCountTrendsAcross r seeds n with
+  | []      => true
+  | t :: ts => ts.all (fun t' => decide (t' = t))
+
+/-- **Quint-curvature stably classifiable**: ALL FIVE screeners give
+seed-independent verdicts. -/
+def quintStablyClassifiable (r : ExecRule) (seeds : List (ExecHG ℕ))
+    (n : Nat) : Bool :=
+  stablyClassifiable r seeds n
+    && transportStablyClassifiable r seeds n
+    && higuchiStablyClassifiable r seeds n
+    && degVarianceStablyClassifiable r seeds n
+    && squareCountStablyClassifiable r seeds n
+
+/-- The quint-curvature selection. -/
+def quintStableSelect (cands : List ExecRule) (seeds : List (ExecHG ℕ))
+    (n : Nat) : List ExecRule :=
+  cands.filter (fun r => quintStablyClassifiable r seeds n)
+
+/-! ### Certified quint-stability distribution -/
+
+/-- **SquareCount stably-classifiable: 11 candidates** — same total
+as Forman / DegVariance. -/
+example :
+    ((enumerateRules2_1 2).filter
+        (fun r => squareCountStablyClassifiable r seedSet 2)).length = 11 := by
+  native_decide
+
+/-- **Quint stably-classifiable: 5 candidates** — the same as Quad.
+SquareCount is a *redundant filter* on top of Quad: every quad-stable
+rule is also square-count-stable on this family. The five-fold
+intersection equals the four-fold intersection. -/
+example :
+    (quintStableSelect (enumerateRules2_1 2) seedSet 2).length = 5 := by
+  native_decide
+
+/-- **Quad-stable ⊆ SquareCount-stable**: every quad-stable rule
+also has a seed-stable square-count verdict. -/
+example :
+    ((enumerateRules2_1 2).filter
+        (fun r => quadStablyClassifiable r seedSet 2)).all
+      (fun r => squareCountStablyClassifiable r seedSet 2) = true := by
+  native_decide
+
+/-- **Quint-curvature distribution summary**:
+  - Forman-stable      = 11
+  - Transport-stable   = 17
+  - Higuchi-stable     = 17  (= Transport set-wise)
+  - DegVariance-stable = 11  (different set from Forman)
+  - SquareCount-stable = 11
+  - Triple-stable      = 11
+  - Quad-stable        =  5  (Triple ∩ DegVariance — first strict refinement)
+  - Quint-stable       =  5  (= Quad — SquareCount agrees on the quad-survivors)
+The 5 quint-stable rules survive ALL FIVE independent screeners.
+The five-fold cross-confirmation identifies the maximally robust
+curvature-class on this family. -/
+example :
+    ((enumerateRules2_1 2).filter
+        (fun r => stablyClassifiable r seedSet 2)).length = 11
+  ∧ ((enumerateRules2_1 2).filter
+        (fun r => transportStablyClassifiable r seedSet 2)).length = 17
+  ∧ ((enumerateRules2_1 2).filter
+        (fun r => higuchiStablyClassifiable r seedSet 2)).length = 17
+  ∧ ((enumerateRules2_1 2).filter
+        (fun r => degVarianceStablyClassifiable r seedSet 2)).length = 11
+  ∧ ((enumerateRules2_1 2).filter
+        (fun r => squareCountStablyClassifiable r seedSet 2)).length = 11
+  ∧ (tripleStableSelect (enumerateRules2_1 2) seedSet 2).length = 11
+  ∧ (quadStableSelect (enumerateRules2_1 2) seedSet 2).length = 5
+  ∧ (quintStableSelect (enumerateRules2_1 2) seedSet 2).length = 5 := by
   native_decide
 
 end DualCurvatureScreener

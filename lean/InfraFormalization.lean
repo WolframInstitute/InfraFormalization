@@ -124,6 +124,8 @@ import InfraFormalization.HiguchiScreener
 import InfraFormalization.HiguchiRateBridge
 import InfraFormalization.DegreeVarianceScreener
 import InfraFormalization.DegVarianceRateBridge
+import InfraFormalization.SquareCountScreener
+import InfraFormalization.SquareCountRateBridge
 import InfraFormalization.WitnessDiversity
 import InfraFormalization.GREmergence
 import InfraFormalization.Milestone

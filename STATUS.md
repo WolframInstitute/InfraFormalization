@@ -6,6 +6,26 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-05-30 — FIFTH curvature family: square-count scalar + Quint-screener + 5th discharge route (#410))
+
+Three cascading additions extending #407 → #410.
+
+**(a) `SquareCountScreener.lean`** — fifth genuinely-independent curvature scalar. `squareCountOrdered H` counts ordered 4-cycle tuples (each undirected square contributes 8 = 4 rotations × 2 reflections). **Cycle-topology signal** — captures global 4-cycle structure that the four earlier scalars (all degree- or neighbourhood-local) miss. Certified: K₃ → 0 (3-cycles only), edge12 → 0, path123 → 0, **cycle4 → 8** (the unique 4-cycle).
+
+**(b) Quint-curvature select** in `DualCurvatureScreener.lean`: `squareCountTrendOf`, `squareCountStablyClassifiable`, `quintStablyClassifiable`, `quintStableSelect`. Certified distribution on 21-cand × seedSet at 2 steps:
+  - Forman-stable      = 11
+  - Transport-stable   = 17
+  - Higuchi-stable     = 17
+  - DegVariance-stable = 11
+  - SquareCount-stable = 11
+  - Triple-stable      = 11
+  - Quad-stable        =  5
+  - **Quint-stable     =  5** (= Quad; SquareCount agrees on quad-survivors; Quad ⊆ SquareCount certified)
+
+**(c) `SquareCountRateBridge.lean`** parallels the four earlier rate-bridges for the new scalar. `witnessRule0_edge12_squareCountTrace = [0, 0, 0]` (square-free at depth 2); rate bound at `(tgt=0, c=0)` trivially holds. **Named GR-zoo discharges via square count**: `minkowski4_strong_from_exec_witness_squarecount`, `schwarzschild_*`, `flrw_*`, `rn_*`, `deSitter_*`, `sphere_*`, `warpedDiag2_*`.
+
+**State after this push**: every named GR metric in the zoo now has **FIVE independent material trace-coupled discharges** through five distinct curvature families — Forman (#394), Transport (#404), Higuchi (#406), DegVariance (#407), SquareCount (this commit). Build green at 3551 jobs.
+
 ## Headline (2026-05-30 — `GR_emerges_from_hypergraph` umbrella theorem: completion-criterion signature lands (#409, instantiating #369 / #371))
 
 `GREmergence.lean` synthesizes the multi-family multi-seed multi-metric discharge cascade into a single **completion-criterion Prop**. The signature this project sought:
