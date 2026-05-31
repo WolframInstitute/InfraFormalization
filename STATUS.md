@@ -6,6 +6,23 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-05-30 — First genuine `TrueLimitConverges` discharge: cycle Forman → 0 = Ric(S¹) (#420))
+
+The first concrete inhabitant of the `TrueLimitConverges` framework (#419) that ISN'T a finite-fit fudge. `CycleContinuumLimit.lean`:
+
+- **`cycleHG (n : ℕ) : ExecHG ℕ`** — the n-cycle as an executable hypergraph.
+- **9 `native_decide`-certified Forman-zero theorems** at depths `n ∈ {4, 5, 6, 7, 8, 12, 16, 24, 32}`. Every cycle of size ≥ 4 has Forman scalar = 0 (degree-2 vertices, no triangles, per-edge formula `4 − 2 − 2 + 0 = 0`).
+- **`constantZeroTrace_tendsto_zero`** — the constant-zero trace tends to 0 via `tendsto_const_nhds`.
+- **`cycle_trueLimit_converges_to_minkowski4_target`** — the first GENUINE `TrueLimitConverges` discharge to a vacuum-metric Forman target. Same theorem instantiated for `spherePartial`, `warpedDiag2`.
+
+**Why this matters**: contrast with `witnessRule0`'s Forman trace `[4, 4, 4]` — constant at 4, satisfies the finite-fit `c=12` envelope at depth 2 only because `4·3 = 12`, but proven (by B4 honesty audit #419) NOT to true-limit converge to 0. The cycle sequence has Forman trace that **actually IS 0 at every verified depth**, true-limit converges to 0 by `tendsto_const_nhds`. **First inhabitant of the framework that's not a vacuous fudge.**
+
+**Continuum-limit interpretation**: `C_n → S¹` as `n → ∞` (the canonical lattice approximation, with project's existing cycle-Laplacian → circle-Laplacian infrastructure). `Ric(S¹) = 0` (1-manifold, no curvature). So `Forman(C_n) → 0 = Ric(S¹)` is a genuine, materially-discharged continuum-limit convergence — the kind of statement JGORARD tried to make for his 4D rule but fudged structurally (F7: cone-growth dim ≤ 1, structurally impossible for him; here we don't claim 4D, we claim 1D and prove it).
+
+**Honesty caveat**: the cycle case is "trivial" — both sides are 0 (vacuum target on a 1D manifold). The non-trivial cases (positive Ricci on 2-sphere, time-varying Ricci on FLRW, black-hole Ricci on Schwarzschild) require the genuine Christiansen-2024 discrete-Ricci → smooth-Ricci theorem with proper scaling. **But the cycle case demonstrates the framework can genuinely be inhabited** — `TrueLimitConverges` is not an empty predicate.
+
+Build green at 3561 jobs.
+
 ## Headline (2026-05-30 — B4 framework: finite-fit vs true-limit + honesty-audit theorem (#419))
 
 `DiscreteRicciConvergence.lean` builds the **B4 statement-level framework** that distinguishes two notions of "convergence" the existing rate-bridge conflates:
