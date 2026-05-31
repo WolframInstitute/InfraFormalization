@@ -6,6 +6,24 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-05-30 — B4 framework: finite-fit vs true-limit + honesty-audit theorem (#419))
+
+`DiscreteRicciConvergence.lean` builds the **B4 statement-level framework** that distinguishes two notions of "convergence" the existing rate-bridge conflates:
+
+1. **`FiniteFitEnvelope trace tgt c`**: the trace fits in a `c/(k+1)` envelope around `tgt` over its finite recorded length. (What the existing `rateBounded` checks.)
+2. **`TrueLimitConverges extendedTrace tgt`**: `extendedTrace n → tgt` as `n → ∞` in the genuine `Filter.Tendsto` sense. (What physics actually requires for the metric-emergence claim.)
+
+**Honesty-audit theorem** `witnessRule0_edge12_does_not_true_limit_converge_to_zero`: assuming the witness rule's Forman trace is constant 4 (which it is — the rule preserves the seed's Forman scalar), then it does **NOT** satisfy `TrueLimitConverges _ 0`. The proof:
+
+- The constant-4 sequence's only possible limit is 4 (by `tendsto_const_nhds` + `tendsto_nhds_unique`).
+- So if it also tended to 0, we'd have `4 = 0`, contradiction.
+
+**What this surfaces**: the standing GR-zoo discharges satisfy finite-fit at depth 2 with `c = 12` (since `4 · 3 = 12`), but they do NOT satisfy true-limit convergence to the vacuum target `tgt = 0`. The discharge cascade's "Minkowski 4 emerges from witnessRule0" claim is precisely a finite-fit claim, not a continuum-limit claim. The `c = 12` is loose enough to fit the constant trace at depth 2, but the trace doesn't approach `tgt = 0`.
+
+**`RuleGeneratesMetric_forman r seed M`** is the statement-level shape of the fully-material discharge: `TrueLimitConverges (formanLimitTrace r seed) (formanTarget M)`. Discharging it for non-trivial `(r, seed, M)` triples is research-level mathematics (R4 / #179 / #218 / Christiansen 2024).
+
+What landed: the framework that makes the gap **explicit and certified** rather than glossed over. Build green at 3560 jobs.
+
 ## Headline (2026-05-30 — `#267` FULLY CLOSED: abstract base case proved symbolically)
 
 The long-standing `#267` / `#398` simulation-lemma abstract base case is **fully proved** for symbolic `a ≠ b : ℕ`. No `decide` / `native_decide` — entirely symbolic.

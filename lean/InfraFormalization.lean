@@ -133,6 +133,7 @@ import InfraFormalization.RuleExtraction
 import InfraFormalization.LiteratureRules
 import InfraFormalization.ExecTrajectoryLift
 import InfraFormalization.MetricTargetScalars
+import InfraFormalization.DiscreteRicciConvergence
 import InfraFormalization.WitnessDiversity
 import InfraFormalization.GREmergence
 import InfraFormalization.Milestone
