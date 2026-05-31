@@ -6,6 +6,22 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-05-30 — Dual-curvature select: Forman ⊊ Transport on the 21-family (#403))
+
+`DualCurvatureScreener.lean` combines the two parallel curvature families (#384 triangle-Forman, #402 transport scalar) into a dual-screener filter and produces a new structural result.
+
+- `transportTrendOf`, `transportTrendsAcross`, `transportStablyClassifiable`, `dualStablyClassifiable`, `dualStableSelect`.
+- **Certified distribution** on the 21-candidate family + `seedSet` at 2 steps:
+  - Forman stably classifiable: **11**
+  - Transport stably classifiable: **17**
+  - **Dual stably classifiable: 11** (= Forman alone)
+
+**Structural result** (`native_decide`): every Forman-stably-classifiable candidate is also transport-stably-classifiable. The Forman screener is *strictly stricter* than the transport screener (11 < 17). 6 candidates pass transport but fail Forman — transport detects something Forman cannot, but the dual filter (intersection) is determined entirely by Forman on this family.
+
+**What this means**: the two curvature screeners are NOT equivalent. The dual filter doesn't improve over Forman alone in this family because every Forman-classifiable rule is transport-classifiable too. The 6-candidate gap shows transport is detecting a different aspect of curvature than Forman — useful as a separate sieve in larger families, even if redundant here.
+
+Build green at 3542 jobs (+1 module).
+
 ## Headline (2026-05-30 — Ollivier-Ricci-style integer screener integrated with rule-search dossiers (#402))
 
 `OllivierRicciScreener.lean` lifts the W₁-based foundation (#401) into an integer-valued, `decide`-checkable per-state scalar and a Dossier trace, paralleling the triangle-Forman screener of #384. The screener is now a real second curvature family for rule-search candidates.
