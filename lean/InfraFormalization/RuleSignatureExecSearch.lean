@@ -239,5 +239,130 @@ example :
           (fun r => stablyClassifiable r seedSet 2)).length = 10 := by
   native_decide
 
+/-! ## Rate-based, target-aware screener (#391)
+
+The coarse trend classification (flat / positive / negative / zero)
+loses quantitative information. This section adds a `decide`-checkable
+*rate-bound* predicate on the Forman-scalar trace, parallel to the
+abstract `ConvergenceRateObligation` in `RuleSignatureScreener`:
+
+  `|trace[i] − tgt| · (i + 1) ≤ C`  for every recorded state `i`.
+
+Equivalently, `|Forman(state_i) − tgt| ≤ C / (i+1)` — the canonical
+finite-horizon `O(1/n)` rate at the integer-arithmetic level. This is
+the shape of obligation that ultimately feeds
+`HypergraphMetricOriginObligationStrong`. -/
+
+/-- Per-state rate check, threading the index. -/
+def rateBoundedAux : Nat → List ℤ → ℤ → ℕ → Bool
+  | _, [], _, _ => true
+  | i, x :: xs, tgt, c =>
+    decide ((x - tgt).natAbs * (i + 1) ≤ c) && rateBoundedAux (i + 1) xs tgt c
+
+/-- `rateBounded trace tgt c = true` iff `|trace[i] − tgt| · (i + 1) ≤ c`
+for every `i`. The canonical integer-arithmetic encoding of an
+`O(1/n)`-rate convergence-to-target on a finite trace. -/
+def rateBounded (trace : List ℤ) (tgt : ℤ) (c : ℕ) : Bool :=
+  rateBoundedAux 0 trace tgt c
+
+/-- A dossier converges to target Forman scalar `tgt` at rate `C` iff
+its Forman-scalar trace satisfies the rate bound. -/
+def dossierConvergesToAt (d : Dossier) (tgt : ℤ) (c : ℕ) : Bool :=
+  rateBounded d.formanScalarTrace tgt c
+
+/-- A candidate rule stably converges to `tgt` at rate `c` iff every
+seed in `seeds` produces a run satisfying the rate bound. -/
+def stablyConvergesToAt (r : ExecRule) (seeds : List (ExecHG ℕ))
+    (n : Nat) (tgt : ℤ) (c : ℕ) : Bool :=
+  seeds.all (fun s => dossierConvergesToAt (canonicalDossier r s n) tgt c)
+
+/-- The rate-screener selection: candidates whose every-seed run lies
+within the `(tgt, c)` rate envelope. -/
+def stableRateSelect (cands : List ExecRule) (seeds : List (ExecHG ℕ))
+    (n : Nat) (tgt : ℤ) (c : ℕ) : List ExecRule :=
+  cands.filter (fun r => stablyConvergesToAt r seeds n tgt c)
+
+/-! ### Discovery via `#eval` of pass-counts at several `(tgt, c)`.
+
+The four targets exercise the spectrum: exact zero (`tgt=0, c=0`),
+zero with slack (`tgt=0, c=12`), exact `4` (the single-edge / path-123
+Forman value), and a generous envelope around `4`. -/
+
+/-! ### Certified rate-screener distribution -/
+
+/-- **No rule has exact zero Forman scalar on every state across every
+seed** (`tgt = 0, c = 0`). -/
+example :
+    (stableRateSelect (enumerateRules2_1 2) seedSet 2 0 0).length = 0 := by
+  native_decide
+
+/-- **At the canonical envelope `c = 12` (= max-`|x|`·(max-index+1) for
+the stably-flat traces), the rate-(0, 12) selection has 7 candidates.**
+This matches the stably-flat count exactly. -/
+example :
+    (stableRateSelect (enumerateRules2_1 2) seedSet 2 0 12).length = 7 := by
+  native_decide
+
+/-- **Loosening to `c = 36` picks up 9 candidates** — 2 more than the
+canonical envelope. -/
+example :
+    (stableRateSelect (enumerateRules2_1 2) seedSet 2 0 36).length = 9 := by
+  native_decide
+
+/-- **At a generous `c = 200`, 17 candidates pass.** This is *more* than
+the 11 stably-classifiable count from #386: rate-stability is strictly
+weaker than trend-stability — a rule can keep its Forman scalar
+bounded near `0` on every seed without producing the same trend on
+every seed. -/
+example :
+    (stableRateSelect (enumerateRules2_1 2) seedSet 2 0 200).length = 17 := by
+  native_decide
+
+/-- **Negative-target convergence (`tgt = -4, c = 12`) is empty.** No
+rule in this family produces Forman scalars stably near `-4` at this
+rate on every seed. -/
+example :
+    (stableRateSelect (enumerateRules2_1 2) seedSet 2 (-4) 12).length = 0 := by
+  native_decide
+
+/-- **A shifted-target envelope `(tgt = 4, c = 16)` also picks up 7
+candidates** — the stably-flat rules whose traces sit either at 0
+(on `cycle4`) or 4 (on `edge12` / `path123`) all fit this envelope. -/
+example :
+    (stableRateSelect (enumerateRules2_1 2) seedSet 2 4 16).length = 7 := by
+  native_decide
+
+/-! ### Structural connection: rate-(0, 12) = stably-flat
+
+The tight `c = 12` envelope is exactly the canonical rate at which the
+stably-flat traces (constants in `{0, 4, -4}` on the seeds, max index
+`2`) fit `|x| · (i + 1) ≤ c`. The two selections coincide as sets. -/
+
+/-- Every candidate passing the rate-(0, 12) envelope is stably flat. -/
+example :
+    (stableRateSelect (enumerateRules2_1 2) seedSet 2 0 12).all
+      (fun r => isStablyTrend r seedSet 2 CurvatureTrend.flat) = true := by
+  native_decide
+
+/-- And every stably-flat candidate passes the rate-(0, 12) envelope. -/
+example :
+    (stableSelect (enumerateRules2_1 2) seedSet 2 CurvatureTrend.flat).all
+      (fun r => stablyConvergesToAt r seedSet 2 0 12) = true := by
+  native_decide
+
+/-! ### Rate-stability is strictly weaker than trend-stability
+
+At `c = 200`, the rate-(0, c) selection has 17 elements while the
+stably-classifiable selection has 11 — so rate-(0, 200) cannot be a
+subset of stably-classifiable. Some rate-passing rules are seed-dependent
+in their trend yet stay bounded near 0 on every seed. -/
+
+/-- Strict inequality between the two counts. -/
+example :
+    ((enumerateRules2_1 2).filter
+        (fun r => stablyClassifiable r seedSet 2)).length
+      < (stableRateSelect (enumerateRules2_1 2) seedSet 2 0 200).length := by
+  native_decide
+
 end RuleSignatureExecSearch
 end InfraFormalization

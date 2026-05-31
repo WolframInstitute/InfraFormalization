@@ -6,6 +6,32 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-05-30 — rate-based target-aware screener: rate-stability ≠ trend-stability, with a 17 > 11 separation (#391))
+
+The trend classification of #385/#386 is qualitative — sign of the final Forman scalar. `RuleSignatureExecSearch` now adds a quantitative *rate-bound* predicate parallel to the abstract `ConvergenceRateObligation`:
+
+  `|trace[i] − tgt| · (i + 1) ≤ C`  for every recorded state `i`
+
+The integer-arithmetic encoding of `O(1/n)` convergence to `tgt` at rate `C`. Decide-checkable on a finite dossier trace. Then `dossierConvergesToAt`, `stablyConvergesToAt`, and `stableRateSelect` filter candidates whose every-seed run lies within a `(tgt, c)` envelope.
+
+**Certified distribution on `seedSet` at 2 steps:**
+
+| `(tgt, c)` | passing candidates |
+|---|---|
+| `(0, 0)` | 0 |
+| `(0, 12)` | **7 (= stably flat)** |
+| `(0, 36)` | 9 |
+| `(0, 200)` | **17 (> 11 stably classifiable)** |
+| `(4, 16)` | 7 |
+| `(-4, 12)` | 0 |
+
+**Two structural results** (both `native_decide`-certified):
+
+1. **`rate-(0, 12) = stably-flat` as sets.** The two `.all`-checked containments hold both ways, so the tight envelope at the canonical `c = 12` characterises the stably-flat selection exactly.
+2. **Rate-stability is strictly weaker than trend-stability** (`17 > 11`). A rule can keep its Forman scalar bounded near `0` on every seed without producing the same trend on every seed; rate-stability is the looser criterion.
+
+This is the form of obligation that ultimately feeds `HypergraphMetricOriginObligationStrong`: the next step (genuinely harder, deferred) is to discharge the abstract `FormanRicciScreener τ κ r` from a `stablyConvergesToAt`-passing rule via the dossier-to-trajectory lift (the deferred Gap B / #231).
+
 ## Headline (2026-05-30 — paclet pull: delta complexes, scale-indexed topology, multi-method moduli, synthetic measures)
 
 Substantial conceptual landings in PHAJEK's two paclets (Infrageometry cf04481→f811dc5; SyntheticInfrageometry ec934d6→eb68944, ~34 commits). Not just bugfixes — new structural primitives that touch the refutation chain (F1, F5) and open new port targets.
