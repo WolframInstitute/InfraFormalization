@@ -136,6 +136,7 @@ import InfraFormalization.MetricTargetScalars
 import InfraFormalization.DiscreteRicciConvergence
 import InfraFormalization.CycleContinuumLimit
 import InfraFormalization.AdvancedContinuumLimits
+import InfraFormalization.PathContinuumLimit
 import InfraFormalization.WitnessDiversity
 import InfraFormalization.GREmergence
 import InfraFormalization.Milestone

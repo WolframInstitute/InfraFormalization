@@ -6,6 +6,30 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-05-31 — B4-instance: path lattice multi-target continuum-limit (#422))
+
+`PathContinuumLimit.lean` adds the **second concrete inhabitant** of the `TrueLimitConverges` framework — and the **first multi-target** instance.
+
+The path lattice `path_n` (linear chain of `n` vertices, `n − 1` edges) discretizes the **interval `[0, 1]`** (a 1-manifold *with boundary*). Unlike the cycle case (#420), where all scalars converge trivially to 0 = vacuum, the path case discharges **multiple non-zero targets** simultaneously, with one honest divergence:
+
+- **Forman → 4** (`path_forman_trueLimit_converges_to_4`): constant 4 across all sampled depths `n ∈ {3,5,8,10,16,32}`, all `native_decide`-certified. The 4 encodes the two boundary edges' contributions (per-edge `2·(4 − 1 − 2) = 2`, doubled).
+- **Higuchi → 2** (`path_higuchi_trueLimit_converges_to_2`): constant 2 — the discrete Euler-with-boundary signal. Internal degree-2 vertices contribute 0; the two boundary degree-1 vertices contribute `2·(2 − 1) = 2`.
+- **SquareCount → 0** (`path_squareCount_trueLimit_zero`): constant 0 — no 4-cycles in a linear chain.
+- **DegVariance — DIVERGES** (`degVariance_fails_on_path`): `2(n − 2)` grows unboundedly. Sample trace `[2, 4, 6, 12, 28]` certified via `pathDegVarianceSampleTrace_strictly_increasing`. The mixed degree-1 boundary / degree-2 interior distribution drives the divergence.
+
+**Bundled multi-target theorem** `path_lattice_multiscalar_continuum_limit`: packs all four results together.
+
+**Why this matters**: the path is the **first inhabitant where different scalars land on different non-zero targets**, distinguishing boundary signals (Forman = 4, Higuchi = 2) from vacuum contributions (SquareCount = 0) within a single continuum-limit instance. This validates the multi-scalar approach as a *decomposition* tool — different scalars carry different geometric content (boundary vs interior vs vacuum). The honest DegVariance divergence is included rather than hidden.
+
+| Scalar      | cycle `C_n` (→ `S¹`) | path `path_n` (→ `[0,1]`) |
+|-------------|----------------------|---------------------------|
+| Forman      | 0 (vacuum)           | 4 (boundary signal)       |
+| Higuchi     | 0 (vacuum)           | 2 (Euler-with-boundary)   |
+| SquareCount | 0 (vacuum)           | 0 (vacuum)                |
+| DegVariance | 0 (vacuum)           | unbounded                 |
+
+Build green at 3563 jobs.
+
 ## Headline (2026-05-31 — B4-advance: multi-scalar cycle convergence + T² Forman non-convergence audit (#421))
 
 `AdvancedContinuumLimits.lean` extends the #420 cycle continuum-limit framework in two directions, one positive and one negative — both honestly certified.
