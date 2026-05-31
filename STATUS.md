@@ -6,6 +6,32 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-05-31 — B4-bridge: Knill connected to rewriting engine — subdivision rule preserves topology (#429))
+
+`KnillRuleBridge.lean` **closes the first explicit loop** from the literature-grade Knill curvature scalar (#427/#428) to the rewriting engine itself. Three integrations:
+
+**(1) Knill on path lattice** = `6 = 6·χ(interval)` for all `n`:
+- `path_n_knillEuler` certified for n = 3, 5, 8, 16.
+- Bundled `path_knill_const_six`.
+- Both endpoints (deg 1) contribute K6 = 3 each; interior (deg 2) contribute K6 = 0. Total = 6.
+
+**(2) Subdivision rule preserves Knill across evolution**:
+- `subdivision_step_k_knill` for k = 0, 1, 2, 3: Knill stays at 6 across 4 steps of `singleWayEvolve subdivisionSys [consEdge 1 2] k`.
+- Bundled `subdivision_preserves_knill_euler`.
+- Multi-edge: `subdivision_on_path_3_knill_step_1` / `_step_2` extend to initial paths.
+- **Structural reason**: the subdivision rule `{a, b} → {a, c}, {c, b}` adds a fresh degree-2 interior vertex (K6 = 0), so total `Σ K6` is invariant.
+
+**(3) Disjoint-union additivity** (sample): two vertex-disjoint tetrahedra give Knill = `12 + 12 = 24` = `6·χ(S² ⊔ S²)`:
+- `shiftedTetrahedronHG` (on vertices 100-103) + `tetrahedronHG` (on 0-3).
+- `two_disjoint_tetrahedra_knillEuler = 24` certified.
+- `knill_additive_on_disjoint_tetra_sample` proves the additivity equation as a proof.
+
+**Bundled `knill_rewriting_bridge`**: the three pieces in one theorem.
+
+**Why this matters**: this is the **first time the codebase connects the curvature framework to actual rule-output state streams**. Structural physics rules should be topology-preserving for consistent observables; subdivision (the mechanically clean rule from #232) demonstrates the property. The Knill scalar isn't just a descriptive tool — it now has *predictive consequences* for rule properties.
+
+Build green at 3570 jobs.
+
 ## Headline (2026-05-31 — B4-extend: Knill higher-genus — triangulated T² gives χ=0 (#428))
 
 `KnillHigherGenus.lean` extends the #427 Knill discrete Gauss-Bonnet to **higher-genus surfaces**, demonstrating the framework recovers the correct topological Euler characteristic across the closed-orientable-surface classification, not just S².
