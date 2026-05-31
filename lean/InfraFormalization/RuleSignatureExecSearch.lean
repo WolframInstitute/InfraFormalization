@@ -239,6 +239,75 @@ example :
           (fun r => stablyClassifiable r seedSet 2)).length = 10 := by
   native_decide
 
+/-! ### Enlarged family: `maxRHS = 3` (single-edge LHS, RHS size ≤ 3)
+
+Growing the family from 21 candidates (`maxRHS = 2`) to substantially
+more by allowing RHS up to 3 edges. New certified distribution data
+on the larger family. -/
+
+/-- The enlarged 3-edge-RHS candidate family. `C(6, 1) + C(6, 2) +
+C(6, 3) = 6 + 15 + 20 = 41`. -/
+example : (enumerateRules2_1 3).length = 41 := by decide
+
+/-- **The enlarged 3-edge-RHS family has 41 candidates** (almost
+double the 21 at `maxRHS = 2`). -/
+example : (enumerateRules2_1 3).length = 41 := by decide
+
+/-! ### Certified stability distribution on the 41-candidate family
+
+At one engine step (`n = 1`) across the `seedSet`. Larger family →
+more nuanced distribution. -/
+
+/-- **Stably classifiable: 19 candidates** — almost half (19/41) of
+the enlarged family have a seed-independent curvature class at `n = 1`. -/
+example :
+    ((enumerateRules2_1 3).filter
+        (fun r => stablyClassifiable r seedSet 1)).length = 19 := by
+  native_decide
+
+/-- **Stably flat: 11 candidates** at `n = 1`. -/
+example :
+    (stableSelect (enumerateRules2_1 3) seedSet 1 CurvatureTrend.flat).length = 11 := by
+  native_decide
+
+/-- **Stably positive: 8 candidates** at `n = 1` — the enlarged family
+exposes more curved candidates than the small one. -/
+example :
+    (stableSelect (enumerateRules2_1 3) seedSet 1 CurvatureTrend.positive).length = 8 := by
+  native_decide
+
+/-- **Stably negative: 0 candidates** at `n = 1` — short traces don't
+yet show the hyperbolic signature on every seed (it emerges at higher
+`n` as branching accumulates). -/
+example :
+    (stableSelect (enumerateRules2_1 3) seedSet 1 CurvatureTrend.negative).length = 0 := by
+  native_decide
+
+/-- **Stably zero (non-constant): 0 candidates** at `n = 1`. -/
+example :
+    (stableSelect (enumerateRules2_1 3) seedSet 1 CurvatureTrend.zero).length = 0 := by
+  native_decide
+
+/-- **Seed-dependent (rejected) count: 22 candidates** — over half the
+enlarged family. Confirms the stability filter does substantial work
+at scale. -/
+example :
+    (enumerateRules2_1 3).length
+      - ((enumerateRules2_1 3).filter
+          (fun r => stablyClassifiable r seedSet 1)).length = 22 := by
+  native_decide
+
+/-- The four stable selections sum to the stably-classifiable total
+(`11 + 8 + 0 + 0 = 19`). -/
+example :
+    (stableSelect (enumerateRules2_1 3) seedSet 1 CurvatureTrend.flat).length
+    + (stableSelect (enumerateRules2_1 3) seedSet 1 CurvatureTrend.negative).length
+    + (stableSelect (enumerateRules2_1 3) seedSet 1 CurvatureTrend.positive).length
+    + (stableSelect (enumerateRules2_1 3) seedSet 1 CurvatureTrend.zero).length
+      = ((enumerateRules2_1 3).filter
+          (fun r => stablyClassifiable r seedSet 1)).length := by
+  native_decide
+
 /-! ## Rate-based, target-aware screener (#391)
 
 The coarse trend classification (flat / positive / negative / zero)

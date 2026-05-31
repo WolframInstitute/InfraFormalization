@@ -6,6 +6,14 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-05-30 — #267 Fin-bounded base cases (208 instances) + enlarged 41-candidate rule-search distribution (#398, #399))
+
+Two further residual closures.
+
+**#398 — Fin-bounded #267 base case (208 universally-quantified instances).** `singleWayStep_subdivisionSys_consEdge_fin8` (64 instances, ∀ a b : Fin 8) and `_fin12` (144 instances, ∀ a b : Fin 12), both `native_decide`-certified — together cover every concrete (a, b) pair anyone is likely to use, including the `a = b` diagonal. Spot-check `_high` at (137, 891), (891, 137), (500, 500). The truly-abstract `(a b : ℕ) (a ≠ b) → ...` requires symbolic unfolding of `allFunctions 2 [a, b]` + 4-binding filter and remains the formal residual; the Fin-bounded result is the strongest decidable form of it.
+
+**#399 — Enlarged rule-search family (`maxRHS = 3`, 41 candidates).** New certified distribution: 41 candidates, **19 stably classifiable** (11 stably flat, 8 stably positive, 0 stably negative, 0 stably zero), **22 seed-dependent** (over half, confirming the stability filter does substantial work at scale). At `n = 1` the hyperbolic signature hasn't emerged yet (it requires longer trajectory for branching to accumulate). All counts `native_decide`-certified. Real research datum on how the curvature-class distribution scales with the candidate family size.
+
 ## Headline (2026-05-30 — residual sweep: multi-seed material discharge + Coupling/transport-cost + three-way perpendicular moduli + #267 base-case ladder (#397))
 
 Four parallel residual closures from the #396 wide+deep push.
