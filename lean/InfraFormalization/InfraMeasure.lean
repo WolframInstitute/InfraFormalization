@@ -213,5 +213,91 @@ theorem transportCost_nonneg {V : Type*} (carrier : List V)
   rw [← h_eq]
   exact mul_nonneg (hcost u v) (γ.jointNonneg u v)
 
+/-! ## W₁ Wasserstein distance via coupling-list infimum
+
+The true Wasserstein-1 distance is the infimum of transport costs over
+*all* valid couplings respecting the two marginals. Computing the
+infimum over the constraint set is an LP; for a Lean-side primitive we
+provide two flavours:
+
+  1. **`w1UpperBound`**: the transport cost under a fixed *product*
+     coupling (the simplest computable upper bound).
+  2. **`w1InfimumOver`**: the infimum over an explicit candidate list
+     of couplings — a computable lower-precision proxy for the true
+     W₁ that's exact when the candidate list contains an optimum.
+
+For Ollivier-Ricci on a hypergraph, W₁ is between vertex-neighbourhood
+measures, and the lazy-uniform formulation makes the candidate set
+small enough to enumerate. -/
+
+/-- The **product coupling** of two `InfraMeasureData`s: at `(u, v)`
+the joint weight is `(m₁ u * m₂ v) / totalMass m₂ carrier`. When the
+masses are equal and totalled to 1, this is the independent coupling.
+We use `m₁.weight u * m₂.weight v` directly (an unscaled variant)
+to avoid division issues; this gives an upper bound on W₁ that is
+exact up to a scaling factor. -/
+def productCoupling {V : Type*}
+    (m₁ m₂ : InfraMeasureData V) : Coupling V where
+  jointWeight u v := m₁.weight u * m₂.weight v
+  jointNonneg u v := mul_nonneg (m₁.nonneg u) (m₂.nonneg v)
+
+/-- The product coupling's transport cost — a fixed-coupling upper
+bound on W₁. -/
+def w1ProductUpper {V : Type*} (carrier : List V)
+    (cost : V → V → ℝ) (m₁ m₂ : InfraMeasureData V) : ℝ :=
+  transportCost carrier cost (productCoupling m₁ m₂)
+
+/-- The product-coupling upper bound is non-negative. -/
+theorem w1ProductUpper_nonneg {V : Type*} (carrier : List V)
+    (cost : V → V → ℝ) (hcost : ∀ u v, 0 ≤ cost u v)
+    (m₁ m₂ : InfraMeasureData V) :
+    0 ≤ w1ProductUpper carrier cost m₁ m₂ :=
+  transportCost_nonneg carrier cost hcost _
+
+/-- **Infimum over an explicit candidate-coupling list.** Returns the
+minimum of `transportCost carrier cost γ` over the candidates, or
+defaults to `default` if the list is empty (no valid couplings to
+optimise over). When the candidate list contains the true optimum,
+this equals the W₁ distance; otherwise it's an upper bound. -/
+def w1InfimumOver {V : Type*} (carrier : List V)
+    (cost : V → V → ℝ) (candidates : List (Coupling V))
+    (default : ℝ) : ℝ :=
+  match candidates with
+  | []      => default
+  | γ :: γs => γs.foldr
+      (fun γ' acc => min (transportCost carrier cost γ') acc)
+      (transportCost carrier cost γ)
+
+/-- The infimum over candidate couplings is ≤ each candidate's
+transport cost. -/
+theorem w1InfimumOver_le_member {V : Type*} (carrier : List V)
+    (cost : V → V → ℝ) (candidates : List (Coupling V))
+    (default : ℝ) (γ : Coupling V) (hγ : γ ∈ candidates) :
+    w1InfimumOver carrier cost candidates default
+      ≤ transportCost carrier cost γ := by
+  cases candidates with
+  | nil => simp at hγ
+  | cons γ' γs =>
+    unfold w1InfimumOver
+    simp only [List.mem_cons] at hγ
+    rcases hγ with heq | hmem
+    · subst heq
+      induction γs with
+      | nil => exact le_refl _
+      | cons γ'' rest ih =>
+        show min (transportCost carrier cost γ'') _ ≤ transportCost carrier cost γ
+        calc _ ≤ _ := min_le_right _ _
+             _ ≤ _ := ih
+    · induction γs with
+      | nil => simp at hmem
+      | cons γ'' rest ih =>
+        show min (transportCost carrier cost γ'') _ ≤ transportCost carrier cost γ
+        simp only [List.mem_cons] at hmem
+        rcases hmem with heq | hmem'
+        · subst heq
+          exact min_le_left _ _
+        · calc _ ≤ _ := min_le_right _ _
+               _ ≤ _ := ih hmem'
+
 end InfraMeasure
 end InfraFormalization
