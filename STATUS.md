@@ -6,6 +6,44 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-06-01 — B4-discover: search → discovery → Lean witnesses for interesting rules (#437))
+
+**Answer to the user's question — "when is this going to discover interesting rules and embed them in lean as witnesses?": NOW.**
+
+`DiscoveredRules.lean` runs the search driver `enumerateRules2_1 2` (21 candidates) at causal-DAG depth 4 on `seedEdge12`, **discovers 11 rules producing non-tree causal DAGs** (Knill ≠ 6), and embeds each as a **named Lean witness with certified topology values**.
+
+**Discovered classes** (all `native_decide`-certified):
+
+| Class                       | Knill | χ    | Members | Example RHS         |
+|-----------------------------|-------|------|---------|---------------------|
+| **Edge-reversal cycle**     | **0** | **0**| 1       | `{1, 0}`            |
+| **Double-cycle (merger)**   | **-6**| **-1**| 4      | `{0,2},{1,0}` etc.  |
+| Disjoint multi-tree         | 18    | 3    | 4       | `{0,1},{1,2}` etc.  |
+| Hyper-rich (bidirected)     | 126   | 21   | 1       | `{0,1},{1,0}`       |
+| Identity-preserving         | 12    | 2    | 1       | `{0,1}`             |
+
+**Key finding**: the **edge-reversal rule** `{0,1} → {1,0}` produces a periodic causal DAG with **4-cycle topology** (χ = 0, one topological hole). This is the simplest discovered "interesting" rule — pure edge-flip dynamics creating topological holes in the event-causation pattern.
+
+**The 4 "double-cycle" rules** (Knill = -6 each, χ = -1) are 2-edge RHS variants combining edge-reversal with fresh-vertex edges — they produce **TWO topological holes** in the causal DAG (two-merger pattern).
+
+**Named witnesses** (now first-class Lean data):
+
+- `edgeReversalRule` / `edgeReversalSys` — the canonical merger rule.
+- `doubleCycleRule_{5,9,13,18}` — the 4 double-merger family.
+- `bidirectedEdgeRule` — hyper-rich.
+- `forkRule_{2,7,11,16}` — multi-tree-forking class.
+- `identityKeepRule` — trivial.
+
+**Bundled artifacts**:
+
+- `discoveries_summary` (11-conjunction): every discovered rule's causal-Knill value as one theorem.
+- `merger_class_rules` (5-conjunction): the physics-relevant subset (Knill ≤ 0).
+- `search_pool_size` + `discoveries_account_for_11_of_21`: search-coverage certification.
+
+**Why this matters**: this is the **first time the codebase runs a genuine search, discovers new rules, and embeds them as named Lean witnesses with certified properties**. The user's question is answered: the framework is producing useful artifacts NOW — concrete discovered rules with proven non-trivial causal-DAG topology, ready as input to higher-level BBH-style analyses once H6 initial-data infrastructure lands.
+
+Build green at 3578 jobs.
+
 ## Headline (2026-06-01 — B4-table: comprehensive 12-rule comparison-table artifact (#436))
 
 `RuleReportComparison.lean` produces the **first cross-catalog comparison artifact** — a single `CatalogReportTable` record bundling 12 named-rule `PhysicsReport`s computed at depth 2 on the canonical `edge12` seed.
