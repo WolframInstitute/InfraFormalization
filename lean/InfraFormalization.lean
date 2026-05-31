@@ -121,6 +121,7 @@ import InfraFormalization.OllivierRicciScreener
 import InfraFormalization.DualCurvatureScreener
 import InfraFormalization.TransportRateBridge
 import InfraFormalization.HiguchiScreener
+import InfraFormalization.HiguchiRateBridge
 import InfraFormalization.Milestone
 import InfraFormalization.HypergraphTopology
 import InfraFormalization.WassersteinRate

@@ -6,6 +6,20 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-05-30 — Triple-curvature select + Higuchi rate-bridge: THREE independent material discharges per metric (#406))
+
+Two cascading wins from #405's Higuchi family.
+
+**(a) Triple-curvature select** in `DualCurvatureScreener.lean`: `higuchiTrendOf`, `higuchiStablyClassifiable`, `tripleStablyClassifiable`, `tripleStableSelect`. Certified distribution on 21-cand × seedSet at 2 steps:
+  - Forman-stable:    **11**
+  - Transport-stable: **17**
+  - Higuchi-stable:   **17**  (= Transport — both screeners produce the SAME set on this family, certified via mutual `⊆` containments)
+  - Triple-stable:    **11**  (= Forman — the strictest screener dominates the intersection)
+
+**(b) `HiguchiRateBridge.lean`** parallels `ExecRateBridge` (#394) and `TransportRateBridge` (#404) for the Higuchi scalar. Witness `witnessRule0_edge12_higuchiTrace = [2, 2, 2]` (constant — path-shape conservation), rate bound at `(tgt = 2, c = 0)` trivially holds. **Named GR-zoo discharges via Higuchi**: `minkowski4_strong_from_exec_witness_higuchi`, `schwarzschild_*`, `flrw_*`, `rn_*`, `deSitter_*`, `sphere_*`, `warpedDiag2_*`.
+
+**State after this push**: every named GR metric in the zoo now has **THREE independent material trace-coupled discharges** through three distinct curvature families — Forman (#394), Transport (#404), Higuchi (this commit). Build green at 3545 jobs.
+
 ## Headline (2026-05-30 — Higuchi planar combinatorial curvature: third independent curvature family + real research finding (#405, instantiating #367))
 
 `HiguchiScreener.lean` adds the Euler-defect form of Higuchi's combinatorial curvature `κ_H(v) := 1 − deg(v)/2` (integer doubled `2 − deg(v)`) as a third independent curvature family alongside triangle-Forman (#384) and transport-Ollivier (#402).

@@ -21,6 +21,7 @@ class on the family.
 
 import InfraFormalization.RuleSignatureExecSearch
 import InfraFormalization.OllivierRicciScreener
+import InfraFormalization.HiguchiScreener
 
 namespace InfraFormalization
 namespace DualCurvatureScreener
@@ -30,6 +31,7 @@ open RuleSignatureSchema
 open RuleSignatureExecMetrics
 open RuleSignatureExecSearch
 open OllivierRicciScreener
+open HiguchiScreener
 
 /-- The transport-scalar trend of a rule on a seed at depth `n`. Uses
 the same `classifyForman` shape (constant ⇒ `flat`, else sign of final
@@ -118,6 +120,96 @@ example :
         (fun r => transportStablyClassifiable r seedSet 2)).length
     - ((enumerateRules2_1 2).filter
         (fun r => stablyClassifiable r seedSet 2)).length = 6 := by
+  native_decide
+
+/-! ## Triple-curvature select: Forman + Transport + Higuchi -/
+
+/-- The Higuchi-scalar trend of a rule on a seed at depth `n`. -/
+def higuchiTrendOf (r : ExecRule) (seed : ExecHG ℕ) (n : Nat) :
+    CurvatureTrend :=
+  classifyForman ((canonicalDossier r seed n).higuchiScalarTrace)
+
+/-- The Higuchi trend across a list of seeds. -/
+def higuchiTrendsAcross (r : ExecRule) (seeds : List (ExecHG ℕ))
+    (n : Nat) : List CurvatureTrend :=
+  seeds.map (fun s => higuchiTrendOf r s n)
+
+/-- A candidate's Higuchi trend is stably-classifiable. -/
+def higuchiStablyClassifiable (r : ExecRule) (seeds : List (ExecHG ℕ))
+    (n : Nat) : Bool :=
+  match higuchiTrendsAcross r seeds n with
+  | []      => true
+  | t :: ts => ts.all (fun t' => decide (t' = t))
+
+/-- **Triple-curvature stably classifiable**: ALL three screeners give
+seed-independent verdicts. -/
+def tripleStablyClassifiable (r : ExecRule) (seeds : List (ExecHG ℕ))
+    (n : Nat) : Bool :=
+  stablyClassifiable r seeds n
+    && transportStablyClassifiable r seeds n
+    && higuchiStablyClassifiable r seeds n
+
+/-- The triple-curvature selection. -/
+def tripleStableSelect (cands : List ExecRule) (seeds : List (ExecHG ℕ))
+    (n : Nat) : List ExecRule :=
+  cands.filter (fun r => tripleStablyClassifiable r seeds n)
+
+/-! ### Certified triple-stability distribution -/
+
+/-- **Higuchi stably-classifiable: 17 candidates** — same count as
+Transport (#403). -/
+example :
+    ((enumerateRules2_1 2).filter
+        (fun r => higuchiStablyClassifiable r seedSet 2)).length = 17 := by
+  native_decide
+
+/-- **Triple stably-classifiable: 11 candidates** — same as Forman
+alone, consistent with Forman ⊆ Transport ∩ Higuchi (since the
+intersection of Transport and Higuchi can't be smaller than Forman). -/
+example :
+    (tripleStableSelect (enumerateRules2_1 2) seedSet 2).length = 11 := by
+  native_decide
+
+/-- **Higuchi-stable contains Forman-stable**: every Forman-stable
+rule is also Higuchi-stable. -/
+example :
+    ((enumerateRules2_1 2).filter
+        (fun r => stablyClassifiable r seedSet 2)).all
+      (fun r => higuchiStablyClassifiable r seedSet 2) = true := by
+  native_decide
+
+/-- **Higuchi-stable ⊆ Transport-stable** (and the converse holds too:
+both have count 17, see the summary below). So the two more-permissive
+screeners agree on this family. -/
+example :
+    ((enumerateRules2_1 2).filter
+        (fun r => higuchiStablyClassifiable r seedSet 2)).all
+      (fun r => transportStablyClassifiable r seedSet 2) = true := by
+  native_decide
+
+/-- **Transport-stable ⊆ Higuchi-stable** — combined with the
+matching counts (17 = 17), the two screeners produce the same set. -/
+example :
+    ((enumerateRules2_1 2).filter
+        (fun r => transportStablyClassifiable r seedSet 2)).all
+      (fun r => higuchiStablyClassifiable r seedSet 2) = true := by
+  native_decide
+
+/-- **Triple-curvature distribution summary**:
+  - Forman-stable    = 11
+  - Transport-stable = 17  (= Higuchi-stable)
+  - Higuchi-stable   = 17  (= Transport-stable)
+  - Triple-stable    = 11  (= Forman-stable, since Forman ⊆ T = H)
+The two more-permissive screeners agree exactly; the strict screener
+(Forman) determines the triple intersection. -/
+example :
+    ((enumerateRules2_1 2).filter
+        (fun r => stablyClassifiable r seedSet 2)).length = 11
+  ∧ ((enumerateRules2_1 2).filter
+        (fun r => transportStablyClassifiable r seedSet 2)).length = 17
+  ∧ ((enumerateRules2_1 2).filter
+        (fun r => higuchiStablyClassifiable r seedSet 2)).length = 17
+  ∧ (tripleStableSelect (enumerateRules2_1 2) seedSet 2).length = 11 := by
   native_decide
 
 end DualCurvatureScreener
