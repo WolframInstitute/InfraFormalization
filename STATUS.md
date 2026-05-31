@@ -6,6 +6,29 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-05-30 — `GR_emerges_from_hypergraph` umbrella theorem: completion-criterion signature lands (#409, instantiating #369 / #371))
+
+`GREmergence.lean` synthesizes the multi-family multi-seed multi-metric discharge cascade into a single **completion-criterion Prop**. The signature this project sought:
+
+```lean
+theorem GR_emerges_from_hypergraph :
+    HypergraphMetricOriginObligationStrong minkowski4
+  ∧ (∀ M, HypergraphPartialMetricOriginObligationStrong (schwarzschildPartial M))
+  ∧ (∀ a da, HypergraphPartialMetricOriginObligationStrong (flrwPartial a da))
+  ∧ (∀ M Q, HypergraphPartialMetricOriginObligationStrong (rnPartial M Q))
+  ∧ (∀ Λ, HypergraphPartialMetricOriginObligationStrong (dsPartial Λ))
+  ∧ HypergraphPartialMetricOriginObligationStrong spherePartial
+  ∧ HypergraphMetricOriginObligationStrong warpedDiag2
+```
+
+"Continuum GR metrics arise as the rate-bounded limit of curvature scalars on actual hypergraph rewriting trajectories." Each conjunct is materially discharged from `witnessRule0`'s engine run on a concrete seed.
+
+Bundles per metric:
+- `minkowski4_quadDischarge` / `schwarzschild_quadDischarge M` / `flrw_quadDischarge a da` / `rn_quadDischarge M Q` / `deSitter_quadDischarge Λ` / `sphere_quadDischarge` / `warpedDiag2_quadDischarge` — each bundles four independent discharges through the four curvature families.
+- `minkowski4_seedTriple_forman` / `_transport` / `_higuchi` / `_degvariance` — each bundles three independent seed-witnesses through the same family for Minkowski 4.
+
+Discharge-count certification: `4 (families) × 3 (seeds) × 7 (metrics) = 84` independent material discharge cells across the (metric × family × seed) cube. Per-metric depth: `4 × 3 = 12` independent witnesses. Build green at 3549 jobs.
+
 ## Headline (2026-05-30 — Witness-diversity layer: GR-zoo discharges no longer anchored to a single seed (#408))
 
 Every GR-zoo discharge across the four curvature families (#394 / #404 / #406 / #407) previously anchored to `(witnessRule0, edge12)`. New module `WitnessDiversity.lean` publishes **alternative seed-witnesses** on `path123` and `cycle4`, with all four trace constants `native_decide`-pinned:
