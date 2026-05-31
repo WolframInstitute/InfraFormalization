@@ -148,6 +148,7 @@ import InfraFormalization.KnillThreeManifold
 import InfraFormalization.RulePreservationClassification
 import InfraFormalization.CausalDAGKnill
 import InfraFormalization.KnillTopologyBenchmark
+import InfraFormalization.CausalEventTrace
 import InfraFormalization.WitnessDiversity
 import InfraFormalization.GREmergence
 import InfraFormalization.Milestone

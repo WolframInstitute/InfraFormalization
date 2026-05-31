@@ -6,6 +6,31 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-06-01 — B4-causal-trace: per-instance causal event tracking from rule evolution (#434, closing #228))
+
+`CausalEventTrace.lean` closes the long-standing **#228 task** by extracting per-instance causal-edge tracking from rule evolution. This is the **first execution-level extraction** of causal-edge data from the rewriting engine — the last infrastructure piece needed for the BBH endgame's causal-side analysis.
+
+**Three core constructions**:
+
+- `CausalEvent { step, matchIdx, ruleIdx, consumed, produced }`: per-match event data.
+- `tracedSingleWayStep` / `tracedSingleWayEvolve`: mirror `singleWayStep` / `singleWayEvolve` (MultiwayExec.lean) but emit the event list alongside state evolution.
+- `deriveCausalEdges`: derives causal precedence — event_i → event_j iff i < j and some edge produced by event_i appears in event_j's consumed multiset.
+- `causalDAGOfEvolution`: full pipeline `(sys, seed, n) → ExecHG ℕ` representing the causal DAG.
+
+**End-to-end pipeline theorem** `causal_pipeline_subdivision_depth2`:
+
+    knillEulerScaled (causalDAGOfEvolution subdivisionSys [consEdge 1 2] 2) = 6
+
+For the subdivision rule on `[consEdge 1 2]` over 2 steps:
+- 1 event at step 0 (consumes initial edge, produces 2 pieces)
+- 2 events at step 1 (each consumes one piece, produces 2 more)
+- Causal DAG: 1-fork (event_0 → event_1, event_0 → event_2) = 3 vertices, 2 edges = tree topology
+- Knill = 6 = `6·χ(tree)` ✓
+
+**Why this matters**: combined with #431 (universal rule-topology classification) and #432 (Knill on causal-DAG topologies), the codebase now has a **complete loop** from rule definitions to topological invariants of their causal evolution. Given a rule, the architecture can compute its causal DAG and apply Knill to read off discrete topology observables — the substrate the BBH endgame (#225, H6-H9) needs for discrete-Ψ₄ extraction.
+
+Build green at 3575 jobs.
+
 ## Headline (2026-06-01 — B4-benchmark: Knill across extended topology zoo (#433))
 
 `KnillTopologyBenchmark.lean` builds a **comprehensive cross-topology benchmark** of Knill's `6·χ` recovery, expanding beyond Platonic solids (#427), T² triangulations (#428), 3-manifolds (#430), and causal DAGs (#432).
