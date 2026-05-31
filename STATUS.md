@@ -6,6 +6,36 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-06-01 — B4-benchmark: Knill across extended topology zoo (#433))
+
+`KnillTopologyBenchmark.lean` builds a **comprehensive cross-topology benchmark** of Knill's `6·χ` recovery, expanding beyond Platonic solids (#427), T² triangulations (#428), 3-manifolds (#430), and causal DAGs (#432).
+
+**Extended zoo** (all `native_decide`-certified):
+
+| Topology       | V   | E   | F (triangles) | χ  | Knill = 6χ |
+|----------------|-----|-----|---------------|----|------------|
+| K_6            | 6   | 15  | 20            | 11 | 66         |
+| K_7            | 7   | 21  | 35            | 21 | 126        |
+| Petersen       | 10  | 15  | 0             | -5 | -30        |
+| Q_3 (cube)     | 8   | 12  | 0             | -4 | -24        |
+
+The Petersen graph is the canonical girth-5 non-planar 3-regular graph (no triangles); the hypercube Q_3 is bipartite (no triangles either); K_6 and K_7 are complete graphs with maximal triangle density. All four give Knill = 6·χ correctly.
+
+Bundled `knill_extended_zoo_benchmark`.
+
+**Why this matters**: combined with the prior certifications, Knill is now demonstrated across:
+- **Polyhedra**: K_4, octahedron, icosahedron (#427)
+- **Closed surfaces**: triangulated T² (#428)
+- **3-manifolds**: K_5 = ∂Δ⁴ (#430)
+- **Causal DAGs**: chain, fork, join, diamond, etc. (#432)
+- **Complete graphs**: K_6, K_7 (here)
+- **Non-planar**: Petersen (here)
+- **Bipartite**: hypercube Q_3 (here)
+
+The architecture's Knill is **uniformly correct** across all these topology classes — not a narrow Platonic-solid coincidence.
+
+Build green at 3574 jobs.
+
 ## Headline (2026-06-01 — B4-causal: Knill on causal-DAG topologies — first causal-side curvature (#432))
 
 `CausalDAGKnill.lean` is the **first application of Knill to causal graphs (DAGs)** in the codebase — opening the causal-side curvature analysis the BBH endgame needs. Encodes six canonical causal-DAG topologies, applies Knill, and certifies each matches the expected `6·χ`.
