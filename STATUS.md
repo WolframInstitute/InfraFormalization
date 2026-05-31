@@ -6,6 +6,31 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-06-01 — B4-table: comprehensive 12-rule comparison-table artifact (#436))
+
+`RuleReportComparison.lean` produces the **first cross-catalog comparison artifact** — a single `CatalogReportTable` record bundling 12 named-rule `PhysicsReport`s computed at depth 2 on the canonical `edge12` seed.
+
+**The classification table** (all `native_decide`-certified):
+
+| Class       | Rule count | Edge trajectory   | Members |
+|-------------|------------|-------------------|---------|
+| Identity    | 6          | `[1, 1, 1]`       | trivialIdentity, triangleClosure, wheeler, jgorardNamed, quintIdentity, quintReversal |
+| Doubling    | 4          | `[1, 2, 4]`       | subdivision, quintFreshSink, quintBidirect, quintFreshSource |
+| Tripling    | 2          | `[1, 3, 9]`       | triangulation, tripleExtend |
+
+**Bundled artifacts**:
+
+- `catalogReportTable` (12-field record): one `PhysicsReport` per named rule.
+- 12 per-rule edge-trajectory certifications.
+- 12 per-rule topology-preservation certifications.
+- `catalog_topology_universally_preserved` (12-conj): all rules preserve Knill.
+- `catalog_rule_diversity_3_classes` (12-conj): explicit 3-class classification.
+- `catalog_classes_are_distinct`: pairwise `≠` proofs across classes.
+
+**Why this matters**: this is the **first cross-catalog comparison artifact** (not just a bunch of separate theorems): a single `CatalogReportTable` value with 12 rule reports, certified field by field, demonstrating the codebase produces *structured comparative data* about rules. Combined with #435 (single-rule PhysicsReport), the architecture now has the foundation for higher-level rule analysis — sorting by asymptotic growth rate, classifying by causal-DAG shape, identifying BBH-relevant causal patterns.
+
+Build green at 3577 jobs.
+
 ## Headline (2026-06-01 — B4-report: PhysicsReport — printable artifact bundling all observables (#435))
 
 `RulePhysicsReport.lean` assembles the codebase's full curvature / topology pipeline into a **single printable physics-report artifact** for any `(rule, seed, n)` triple. This is the **first end-to-end printable, certified, structured numerical artifact** demonstrating the pipeline works end-to-end.
