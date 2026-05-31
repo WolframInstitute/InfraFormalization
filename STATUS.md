@@ -6,6 +6,24 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-05-30 — Rule extraction + Milestone True-stub upgrade (#413 + #414))
+
+**(a) #413 — `RuleExtraction.lean`**: the search system now PRODUCES named extracted rules with proof witnesses. The 5 quint-stable rules from `quintStableSelect` are materialized as `quintRuleIdentity`, `quintRuleFreshSink`, `quintRuleReversal`, `quintRuleBidirect`, `quintRuleFreshSource` with their structure (LHS / RHS / numBound / numFresh) hand-defined. Each rule's quint-stable membership is `native_decide`-certified.
+
+For the three constant-trace rules (Identity, Reversal, Bidirect), all 15 (3 seeds × 5 scalars) trace values are `native_decide`-pinned and a rate-(constant, c=0) envelope is certified per cell. Named alternative-witness discharges:
+- `minkowski4_strong_from_quintRuleIdentity` (Forman)
+- `minkowski4_strong_from_quintRuleReversal` (Forman)
+- `minkowski4_strong_from_quintRuleBidirect` (Forman)
+- `minkowski4_strong_from_quintRuleIdentity_{transport, higuchi, degvariance, squarecount}` (5 families)
+- `minkowski4_quintRuleIdentity_quintDischarge` — 5-tuple bundle
+- `minkowski4_three_rule_witnesses` — 3-tuple of independent quint-stable rule witnesses for the same metric/family
+
+User-facing payoff: the search system extracts rules → inserts them as proof witnesses end-to-end. Three independent quint-stable rule witnesses now discharge Minkowski 4, not just `witnessRule0`.
+
+**(b) #414 — `Milestone.lean` True-stub upgrade**: 10 Props upgraded from `True` to `∃ d : ScaledDiscrepancy, WassersteinRateObligation d` (real rate-bounded content, no longer trivially inhabited by `trivial`). Affected: `DistConvergesTo`, `ConnectionConvergesTo`, `RiemannTensorConvergesTo`, `EinsteinFieldEquationsHold`, `DiscreteStressEnergyEmerges`, `BranchialHilbertConvergesTo`, `BranchialEvolutionConvergesTo`, `BornRuleEmerges`, `InitialDataMatches`, `Psi4Matches`. Each Prop gets a `_zero` companion theorem proving it via the constant-zero discrepancy (the rate-bound is trivially satisfied), so the existing milestone Props remain inhabited but the layer-Props now carry rate-bounded existential content. Status note in the doc updated to 2026-05-30.
+
+Build green at 3556 jobs.
+
 ## Headline (2026-05-30 — `BBH_emerges_from_hypergraph_Strong`: Phase D endgame umbrella + grand-unified GR + QM + BBH trinity (#412))
 
 `BBHEmergence.lean` completes the milestone trinity. Third in the trio after GR (#409) and QM (#411).

@@ -129,6 +129,7 @@ import InfraFormalization.SquareCountRateBridge
 import InfraFormalization.SubdivisionAbstract
 import InfraFormalization.QMEmergence
 import InfraFormalization.BBHEmergence
+import InfraFormalization.RuleExtraction
 import InfraFormalization.WitnessDiversity
 import InfraFormalization.GREmergence
 import InfraFormalization.Milestone
