@@ -6,6 +6,33 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-06-01 — B4-causal: Knill on causal-DAG topologies — first causal-side curvature (#432))
+
+`CausalDAGKnill.lean` is the **first application of Knill to causal graphs (DAGs)** in the codebase — opening the causal-side curvature analysis the BBH endgame needs. Encodes six canonical causal-DAG topologies, applies Knill, and certifies each matches the expected `6·χ`.
+
+**The causal-topology table** (all `native_decide`-certified):
+
+| Topology               | V, E      | Underlying χ | Knill | Interpretation                |
+|------------------------|-----------|--------------|-------|-------------------------------|
+| `causalChain n` (3-16) | n, n-1    | 1 (path)     | 6     | deterministic evolution       |
+| `causalFork`           | 3, 2      | 1 (tree)     | 6     | multi-way branching           |
+| `causalJoin`           | 3, 2      | 1 (tree)     | 6     | multi-way merge               |
+| `causalDiamond`        | 4, 4      | 0 (1 hole)   | 0     | **multi-way merger signature** |
+| `causalTripleDiamond`  | 7, 8      | -1 (2 holes) | -6    | cascaded mergers              |
+| `causalBipartite23`    | 5, 6      | -1 (2 holes) | -6    | K_{2,3} causal pattern        |
+| `causalTriangle`       | 3, 3      | 1 (disk)     | 6     | filled triangle               |
+
+**Two anchor theorems**:
+
+- `singleway_evolution_causal_dag_knill`: any `singleWayEvolve` chain has Knill = 6 = `6·χ(interval)` regardless of length n.
+- `diamond_is_one_hole`: the canonical multi-way-merger pattern (diamond) has Knill = 0 — the **discrete signature of a multi-way merger**. Cascaded mergers add holes additively (`triple_diamond_is_two_holes`).
+
+Bundled `causal_dag_knill_classification` (7-way conjunction across all topologies).
+
+**Why this matters**: in the Wolfram-physics endgame (#225, #229, H6-H9), the causal DAG is the **physically meaningful structure**, not the spatial hypergraph. A black-hole merger's discrete signature lives on the causal side (event-causation pattern), not the spatial side. This module is the first demonstration that **Knill works correctly on causal DAGs** — and the diamond-hole identification gives a discrete topological observable for *counting merger events* in a causal DAG, directly applicable to discrete-Ψ₄ extraction (H8/H9) once per-instance causal-edge tracking (#228) is in place.
+
+Build green at 3573 jobs.
+
 ## Headline (2026-06-01 — B4-classify: universal topology-preservation classification across rule catalog (#431))
 
 `RulePreservationClassification.lean` extends the Knill / rewriting bridge (#429) to the **full catalog of 12 named rules**, certifying that ALL of them preserve `knillEulerScaled = 6` on the canonical seed `edge12` across 1 evolution step. **The codebase's rule library is universally topology-preserving** in the discrete Gauss-Bonnet sense.
