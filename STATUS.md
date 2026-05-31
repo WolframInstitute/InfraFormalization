@@ -6,6 +6,18 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-05-30 — `#267` abstract base case: structural reducer + canonical-binding helpers (#398 progress))
+
+`SubdivisionAbstract.lean` lifts the structural building blocks for the abstract `singleWayStep_subdivisionSys_consEdge_of_ne` proof out of the 208-instance Fin-bounded version (`SubdivisionPath`). Lands:
+
+- **Canonical binding** `matchAB a b : Fin 2 → ℕ` and extension `matchABext a b : Fin 3 → ℕ` (with fresh = max a b + 1).
+- **LHS / RHS image identities** by `rfl`: `mapPattern (matchAB a b) subdivisionRule.lhs = [consEdge a b]` and `mapPattern (matchABext a b) subdivisionRule.rhs = [consEdge a (max a b + 1), consEdge (max a b + 1) b]`.
+- **Pointwise extraction** `matchAB_pointwise_of_image_eq`: any binding `ρ` with `Hyperedge.map ρ subdLhs = consEdge a b` satisfies `ρ ⟨0,_⟩ = a ∧ ρ ⟨1,_⟩ = b`.
+- **`Fin 2` extensionality** `fin2_funext` + corollary `match_eq_matchAB_of_image_eq`: pointwise agreement forces literal equality with `matchAB a b`.
+- **Engine-side reducer pieces**: `subdivisionSys_rules`, `removeEdges_consEdge_self`, `singleWayStep_inner_extension_eq` (the `(fun i => if ... matchAB ... else baseFresh + ...) = matchABext a b` identity at the engine's binding extension).
+
+Together with the existing 208-instance Fin-bounded coverage (`_fin8`, `_fin12`, `_high`), these reduce the residual mechanical work to the single remaining enumeration lemma: `allMatches subdivisionRule [consEdge a b] = [matchAB a b]` for symbolic `a ≠ b`. Build green at 3553 jobs.
+
 ## Headline (2026-05-30 — FIFTH curvature family: square-count scalar + Quint-screener + 5th discharge route (#410))
 
 Three cascading additions extending #407 → #410.

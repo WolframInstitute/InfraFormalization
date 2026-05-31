@@ -126,6 +126,7 @@ import InfraFormalization.DegreeVarianceScreener
 import InfraFormalization.DegVarianceRateBridge
 import InfraFormalization.SquareCountScreener
 import InfraFormalization.SquareCountRateBridge
+import InfraFormalization.SubdivisionAbstract
 import InfraFormalization.WitnessDiversity
 import InfraFormalization.GREmergence
 import InfraFormalization.Milestone
