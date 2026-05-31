@@ -6,6 +6,36 @@ research programme ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md),
 [`MILESTONES.md`](MILESTONES.md),
 [`COVERAGE_MAP.md`](COVERAGE_MAP.md)).
 
+## Headline (2026-05-31 — B4-audit: sphere-triangulation curvature inconsistency on S² (#426))
+
+`SphereTriangulationAudit.lean` identifies a **third failure mode** of the unweighted scalars — distinct from the prior torus/grid divergence (recoverable via per-volume density) and the cycle/path convergence patterns.
+
+**The setup**: three 2-sphere triangulations as ExecHG instances — tetrahedron `K_4`, octahedron, icosahedron. ALL three are topologically `S²` (smooth target `Ric > 0`).
+
+**The result**: the discrete Forman and Higuchi give **wildly inconsistent values** across triangulations of the *same* target:
+
+| Triangulation | V  | E  | Forman | per-V | Higuchi | per-V |
+|---------------|----|----|--------|-------|----------|-------|
+| Tetrahedron   | 4  | 6  | `+48`  | `+12` | `-4`     | `-1`  |
+| Octahedron    | 6  | 12 | `+48`  | `+8`  | `-12`    | `-2`  |
+| Icosahedron   | 12 | 30 | `0`    | `0`   | `-36`    | `-3`  |
+
+Per-vertex Forman: `+12 → +8 → 0` — strictly decreasing across triangulations, no consistent limit. Per-vertex Higuchi: `-1, -2, -3` — tracks `2 - deg(v)`, varies by degree (3, 4, 5 for the three Platonic solids).
+
+**Bundled audit**: `sphere_triangulation_scalars_inconsistent`, `forman_inconsistent_across_sphere_triangulations`, `higuchi_inconsistent_across_sphere_triangulations` — explicit `≠` certifications for every pair.
+
+**The honest conclusion**: the architecture's unweighted scalars are **triangulation-dependent**, not topology-dependent. They don't recover the smooth Ric of the target — different triangulations of the same S² give different curvature signatures.
+
+**Literature-grade fixes** (research-level, scope-stated):
+
+- **Knill discrete Gauss-Bonnet** with vertex defect angle → recovers `2π · χ(S²) = 4π` summed over vertices, triangulation-independent.
+- **Christiansen 2024 distributional Ricci** with edge-length weights → recovers smooth Ric in regular-triangulation limit.
+- **Effective resistance curvature** (Devriendt-Lambiotte 2022) → metrics-aware, triangulation-independent.
+
+This audit makes the architecture's scope **explicit**: works for compact flat 1-manifolds (cycle), 1-manifolds with boundary (path), and gives per-volume densities for flat 2-tori (T²) and disks (D²). For **positively-curved targets** like `S²`, alternative literature-grade curvature notions are required.
+
+Build green at 3567 jobs.
+
 ## Headline (2026-05-31 — B4-abstract: polynomial-density `Tendsto` theorem + 3D torus extension (#425))
 
 `PolynomialDensityLimits.lean` lifts the per-sample density certifications (#424) to a **fully-abstract `Tendsto` theorem** and extends the framework to 3 dimensions.
