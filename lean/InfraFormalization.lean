@@ -181,6 +181,7 @@ import InfraFormalization.CorpusObservableTable
 import InfraFormalization.PersistentRDegeneracy
 import InfraFormalization.VacuumLikeUniversal
 import InfraFormalization.BBHVacuumRegime
+import InfraFormalization.VacuumPsiFour
 import InfraFormalization.DiscreteQuantumGravity
 import InfraFormalization.BBHDeepEvolution
 import InfraFormalization.DiscreteBondiFlux
