@@ -167,6 +167,7 @@ import InfraFormalization.PsiFourScalingOpen
 import InfraFormalization.RuleClassifier
 import InfraFormalization.ClassifierMaxRHS4
 import InfraFormalization.ClassifierRefined
+import InfraFormalization.ClassifierCorpusValidation
 import InfraFormalization.WitnessDiversity
 import InfraFormalization.GREmergence
 import InfraFormalization.Milestone
