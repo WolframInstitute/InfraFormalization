@@ -169,6 +169,7 @@ import InfraFormalization.BranchialDepthTrajectory
 import InfraFormalization.BranchialUniversalAdditivity
 import InfraFormalization.DualSideIndependence
 import InfraFormalization.BranchialFromInteraction
+import InfraFormalization.UnifiedEHBalance
 import InfraFormalization.DiscreteQuantumGravity
 import InfraFormalization.BBHDeepEvolution
 import InfraFormalization.DiscreteBondiFlux
