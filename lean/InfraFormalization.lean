@@ -165,6 +165,7 @@ import InfraFormalization.DiscreteRicciScalar
 import InfraFormalization.RicciScalarDepthTrajectory
 import InfraFormalization.MultiRuleRDivergence
 import InfraFormalization.BranchialRSpectrum
+import InfraFormalization.BranchialDepthTrajectory
 import InfraFormalization.DiscreteQuantumGravity
 import InfraFormalization.BBHDeepEvolution
 import InfraFormalization.DiscreteBondiFlux
