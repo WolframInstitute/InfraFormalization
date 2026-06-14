@@ -191,6 +191,7 @@ import InfraFormalization.BEquivalenceRefinement
 import InfraFormalization.PersistentBEquivalence
 import InfraFormalization.BClosedForm
 import InfraFormalization.PersistentScalingExponent
+import InfraFormalization.BClosedFormExtended
 import InfraFormalization.DiscreteQuantumGravity
 import InfraFormalization.BBHDeepEvolution
 import InfraFormalization.DiscreteBondiFlux
