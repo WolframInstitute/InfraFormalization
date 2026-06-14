@@ -184,6 +184,7 @@ import InfraFormalization.BBHVacuumRegime
 import InfraFormalization.VacuumPsiFour
 import InfraFormalization.RZeroCrossings
 import InfraFormalization.RGrowthRates
+import InfraFormalization.BBHCurvatureEvolution
 import InfraFormalization.DiscreteQuantumGravity
 import InfraFormalization.BBHDeepEvolution
 import InfraFormalization.DiscreteBondiFlux
