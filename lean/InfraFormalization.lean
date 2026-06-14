@@ -158,6 +158,7 @@ import InfraFormalization.MergerGrowthDepthTrajectory
 import InfraFormalization.BranchialEventTrace
 import InfraFormalization.MultiRuleDiscovered
 import InfraFormalization.BBHInitialData
+import InfraFormalization.BBHDeepEvolution
 import InfraFormalization.RuleClassifier
 import InfraFormalization.WitnessDiversity
 import InfraFormalization.GREmergence
