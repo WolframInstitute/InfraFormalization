@@ -105,6 +105,22 @@ theorem branchial_universal_additivity_eR_id :
   · rw [branchial_eR_id_path]; rfl
   · rw [branchial_eR_id_triangle]; rfl
 
+/-! ## Universal additivity on branchial side for a second combo -/
+
+theorem branchial_eR_fork_path :
+    knillEulerScaled (branchialDAGOfEvolution edgeReversal_fork_Sys seedPath123 3) = 132 := by
+  native_decide
+
+/-- **`branchial_universal_additivity_eR_fork`**: branchial Knill for
+`edgeReversal + forkRule_2` at depth 3 ALSO follows the universal
+per-edge additivity law: 66 (1 edge), 132 (2 edges, path). -/
+theorem branchial_universal_additivity_eR_fork :
+    knillEulerScaled (branchialDAGOfEvolution edgeReversal_fork_Sys seedEdge12 3) = 66 ∧
+    knillEulerScaled (branchialDAGOfEvolution edgeReversal_fork_Sys seedPath123 3) = 2 * 66 := by
+  refine ⟨?_, ?_⟩
+  · native_decide
+  · rw [branchial_eR_fork_path]; rfl
+
 /-! ## The dual-side discrete Ricci scalars -/
 
 /-- **`discreteBranchialDensity`**: the discrete-QM per-edge
