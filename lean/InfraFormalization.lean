@@ -160,6 +160,7 @@ import InfraFormalization.MultiRuleDiscovered
 import InfraFormalization.MultiRuleDepthTrajectory
 import InfraFormalization.BBHInitialData
 import InfraFormalization.UniversalAdditivity
+import InfraFormalization.CurvatureDensityLimit
 import InfraFormalization.BBHDeepEvolution
 import InfraFormalization.DiscreteBondiFlux
 import InfraFormalization.DiscretePsiFour
