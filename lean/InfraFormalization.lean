@@ -186,6 +186,7 @@ import InfraFormalization.RZeroCrossings
 import InfraFormalization.RGrowthRates
 import InfraFormalization.BBHCurvatureEvolution
 import InfraFormalization.BCoincidenceFinding
+import InfraFormalization.BEquivalenceClasses
 import InfraFormalization.DiscreteQuantumGravity
 import InfraFormalization.BBHDeepEvolution
 import InfraFormalization.DiscreteBondiFlux
