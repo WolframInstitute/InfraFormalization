@@ -183,6 +183,7 @@ import InfraFormalization.VacuumLikeUniversal
 import InfraFormalization.BBHVacuumRegime
 import InfraFormalization.VacuumPsiFour
 import InfraFormalization.RZeroCrossings
+import InfraFormalization.RGrowthRates
 import InfraFormalization.DiscreteQuantumGravity
 import InfraFormalization.BBHDeepEvolution
 import InfraFormalization.DiscreteBondiFlux
