@@ -159,6 +159,7 @@ import InfraFormalization.BranchialEventTrace
 import InfraFormalization.MultiRuleDiscovered
 import InfraFormalization.MultiRuleDepthTrajectory
 import InfraFormalization.BBHInitialData
+import InfraFormalization.UniversalAdditivity
 import InfraFormalization.BBHDeepEvolution
 import InfraFormalization.DiscreteBondiFlux
 import InfraFormalization.DiscretePsiFour
