@@ -188,6 +188,7 @@ import InfraFormalization.BBHCurvatureEvolution
 import InfraFormalization.BCoincidenceFinding
 import InfraFormalization.BEquivalenceClasses
 import InfraFormalization.BEquivalenceRefinement
+import InfraFormalization.PersistentBEquivalence
 import InfraFormalization.DiscreteQuantumGravity
 import InfraFormalization.BBHDeepEvolution
 import InfraFormalization.DiscreteBondiFlux
