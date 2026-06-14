@@ -111,6 +111,38 @@ theorem universal_per_edge_additivity :
   · rw [doubleCycle_5_triangle_knill_neg18]; rfl
   · rw [doubleCycle_5_bbh_knill_neg42]; rfl
 
+/-! ## edgeReversal at depth 5 — additivity also holds -/
+
+theorem edgeReversal_path_depth5 :
+    knillEulerScaled (causalDAGOfEvolution edgeReversalSys seedPath123 5) = -12 := by
+  native_decide
+
+theorem edgeReversal_triangle_depth5 :
+    knillEulerScaled (causalDAGOfEvolution edgeReversalSys seedTriangle 5) = -18 := by
+  native_decide
+
+theorem edgeReversal_disjoint_depth5 :
+    knillEulerScaled (causalDAGOfEvolution edgeReversalSys seedTwoDisjoint 5) = -12 := by
+  native_decide
+
+/-- **`universal_additivity_edgeReversal_depth5`**: the universal
+per-edge additivity law ALSO holds for `edgeReversal` at depth 5,
+with baseline `-6` per edge.
+
+Confirmed across 4 seed topologies (1, 2 path, 2 disjoint, 3
+triangle). Combined with #443 BBH(7)=-42 at depth 5, this gives
+5 topologies for `edgeReversal` at depth 5. -/
+theorem universal_additivity_edgeReversal_depth5 :
+    knillEulerScaled (causalDAGOfEvolution edgeReversalSys seedEdge12 5) = -6 ∧
+    knillEulerScaled (causalDAGOfEvolution edgeReversalSys seedPath123 5) = 2 * (-6) ∧
+    knillEulerScaled (causalDAGOfEvolution edgeReversalSys seedTwoDisjoint 5) = 2 * (-6) ∧
+    knillEulerScaled (causalDAGOfEvolution edgeReversalSys seedTriangle 5) = 3 * (-6) := by
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · native_decide
+  · rw [edgeReversal_path_depth5]; rfl
+  · rw [edgeReversal_disjoint_depth5]; rfl
+  · rw [edgeReversal_triangle_depth5]; rfl
+
 /-- **`topology_independence`**: at depth 4 under `doubleCycle_5`,
 the Knill is **determined by edge count alone**, regardless of
 seed topology. Two seeds with the same edge count give the same
