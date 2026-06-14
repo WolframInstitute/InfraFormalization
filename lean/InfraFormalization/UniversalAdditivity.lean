@@ -143,6 +143,36 @@ theorem universal_additivity_edgeReversal_depth5 :
   · rw [edgeReversal_disjoint_depth5]; rfl
   · rw [edgeReversal_triangle_depth5]; rfl
 
+/-! ## Bidirected class — additivity also holds -/
+
+theorem bidirectedEdge_path_depth4 :
+    knillEulerScaled (causalDAGOfEvolution bidirectedEdgeSys seedPath123 4) = 252 := by
+  native_decide
+
+theorem bidirectedEdge_triangle_depth4 :
+    knillEulerScaled (causalDAGOfEvolution bidirectedEdgeSys seedTriangle 4) = 378 := by
+  native_decide
+
+/-- **`universal_additivity_bidirected`**: per-edge additivity ALSO
+holds for the Bidirected-class `bidirectedEdgeSys` at depth 4, with
+baseline 126 per edge:
+
+  * edge12 (1 edge): 126
+  * path123 (2 edges): 252 = 2 × 126
+  * triangle (3 edges): 378 = 3 × 126
+
+Combined with #443/#445 (Merger) and the depth-5 edgeReversal
+result, this confirms universal additivity holds across **all
+three discovered rule classes**: Tree, Merger, Bidirected. -/
+theorem universal_additivity_bidirected :
+    knillEulerScaled (causalDAGOfEvolution bidirectedEdgeSys seedEdge12 4) = 126 ∧
+    knillEulerScaled (causalDAGOfEvolution bidirectedEdgeSys seedPath123 4) = 2 * 126 ∧
+    knillEulerScaled (causalDAGOfEvolution bidirectedEdgeSys seedTriangle 4) = 3 * 126 := by
+  refine ⟨?_, ?_, ?_⟩
+  · native_decide
+  · rw [bidirectedEdge_path_depth4]; rfl
+  · rw [bidirectedEdge_triangle_depth4]; rfl
+
 /-- **`topology_independence`**: at depth 4 under `doubleCycle_5`,
 the Knill is **determined by edge count alone**, regardless of
 seed topology. Two seeds with the same edge count give the same
