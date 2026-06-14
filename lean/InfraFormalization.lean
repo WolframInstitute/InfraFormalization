@@ -152,6 +152,7 @@ import InfraFormalization.CausalEventTrace
 import InfraFormalization.RulePhysicsReport
 import InfraFormalization.RuleReportComparison
 import InfraFormalization.DiscoveredRules
+import InfraFormalization.StableDiscoveredRules
 import InfraFormalization.WitnessDiversity
 import InfraFormalization.GREmergence
 import InfraFormalization.Milestone
