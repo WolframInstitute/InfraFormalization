@@ -178,6 +178,7 @@ import InfraFormalization.CorpusBalanceSpectrum
 import InfraFormalization.BBHBranchialMultiDepth
 import InfraFormalization.EnhancedPsi4
 import InfraFormalization.CorpusObservableTable
+import InfraFormalization.PersistentRDegeneracy
 import InfraFormalization.DiscreteQuantumGravity
 import InfraFormalization.BBHDeepEvolution
 import InfraFormalization.DiscreteBondiFlux
