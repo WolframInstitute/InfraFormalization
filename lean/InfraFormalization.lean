@@ -175,6 +175,7 @@ import InfraFormalization.MetricSignatureEvolution
 import InfraFormalization.BBHMetricTensor
 import InfraFormalization.Phase_D_FrameworkOverview
 import InfraFormalization.CorpusBalanceSpectrum
+import InfraFormalization.BBHBranchialMultiDepth
 import InfraFormalization.DiscreteQuantumGravity
 import InfraFormalization.BBHDeepEvolution
 import InfraFormalization.DiscreteBondiFlux
