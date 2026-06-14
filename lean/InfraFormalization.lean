@@ -171,6 +171,7 @@ import InfraFormalization.DualSideIndependence
 import InfraFormalization.BranchialFromInteraction
 import InfraFormalization.UnifiedEHBalance
 import InfraFormalization.DiscreteMetricTensor
+import InfraFormalization.MetricSignatureEvolution
 import InfraFormalization.DiscreteQuantumGravity
 import InfraFormalization.BBHDeepEvolution
 import InfraFormalization.DiscreteBondiFlux
