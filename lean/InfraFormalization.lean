@@ -192,6 +192,7 @@ import InfraFormalization.PersistentBEquivalence
 import InfraFormalization.BClosedForm
 import InfraFormalization.PersistentScalingExponent
 import InfraFormalization.BClosedFormExtended
+import InfraFormalization.DiscreteQGPredictions
 import InfraFormalization.DiscreteQuantumGravity
 import InfraFormalization.BBHDeepEvolution
 import InfraFormalization.DiscreteBondiFlux
