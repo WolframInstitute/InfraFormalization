@@ -161,6 +161,7 @@ import InfraFormalization.MultiRuleDepthTrajectory
 import InfraFormalization.BBHInitialData
 import InfraFormalization.BBHDeepEvolution
 import InfraFormalization.DiscreteBondiFlux
+import InfraFormalization.DiscretePsiFour
 import InfraFormalization.RuleClassifier
 import InfraFormalization.WitnessDiversity
 import InfraFormalization.GREmergence
