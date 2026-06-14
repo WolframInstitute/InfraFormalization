@@ -157,6 +157,7 @@ import InfraFormalization.DiscoveredRulesExpanded
 import InfraFormalization.MergerGrowthDepthTrajectory
 import InfraFormalization.BranchialEventTrace
 import InfraFormalization.MultiRuleDiscovered
+import InfraFormalization.MultiRuleDepthTrajectory
 import InfraFormalization.BBHInitialData
 import InfraFormalization.BBHDeepEvolution
 import InfraFormalization.RuleClassifier
