@@ -167,6 +167,7 @@ import InfraFormalization.MultiRuleRDivergence
 import InfraFormalization.BranchialRSpectrum
 import InfraFormalization.BranchialDepthTrajectory
 import InfraFormalization.BranchialUniversalAdditivity
+import InfraFormalization.DualSideIndependence
 import InfraFormalization.DiscreteQuantumGravity
 import InfraFormalization.BBHDeepEvolution
 import InfraFormalization.DiscreteBondiFlux
