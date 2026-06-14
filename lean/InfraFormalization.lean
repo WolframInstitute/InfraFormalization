@@ -163,6 +163,7 @@ import InfraFormalization.UniversalAdditivity
 import InfraFormalization.CurvatureDensityLimit
 import InfraFormalization.DiscreteRicciScalar
 import InfraFormalization.RicciScalarDepthTrajectory
+import InfraFormalization.MultiRuleRDivergence
 import InfraFormalization.BBHDeepEvolution
 import InfraFormalization.DiscreteBondiFlux
 import InfraFormalization.DiscretePsiFour
