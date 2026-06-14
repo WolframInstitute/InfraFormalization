@@ -162,6 +162,7 @@ import InfraFormalization.BBHInitialData
 import InfraFormalization.BBHDeepEvolution
 import InfraFormalization.DiscreteBondiFlux
 import InfraFormalization.DiscretePsiFour
+import InfraFormalization.BBHAnalogCertificate
 import InfraFormalization.RuleClassifier
 import InfraFormalization.ClassifierMaxRHS4
 import InfraFormalization.ClassifierRefined
