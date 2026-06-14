@@ -164,6 +164,7 @@ import InfraFormalization.DiscreteBondiFlux
 import InfraFormalization.DiscretePsiFour
 import InfraFormalization.RuleClassifier
 import InfraFormalization.ClassifierMaxRHS4
+import InfraFormalization.ClassifierRefined
 import InfraFormalization.WitnessDiversity
 import InfraFormalization.GREmergence
 import InfraFormalization.Milestone
