@@ -175,10 +175,9 @@ on a length-2 path produces, in 2 rewriting steps:
   - DegVariance `[2, 0, 0]` (degree heterogeneity → homogeneous = regular = Euclidean)
   - SquareCount `[0, 0, 0]` (no 4-cycles)
 
-**The flat Higuchi + flat DegVariance signature in step 1 is the
-discrete combinatorial signature of EMERGENT 2D EUCLIDEAN SPACE**:
-constant curvature `0` (Higuchi) + degree-regular (DegVariance) = the
-combinatorial fingerprint of a triangulated plane. -/
+**The flat Higuchi + flat DegVariance signature observed at the
+step-1 trace on `path123` depth 2 is consistent with a 2D Euclidean
+fingerprint; the "emergence" framing is heuristic, not certified.** -/
 
 example : (canonicalDossier triangleClosureRule path123 2).formanScalarTrace
     = [4, 18, 18] := by native_decide
@@ -204,8 +203,9 @@ Triangulation adds a triangle to every edge using a fresh vertex.
 After 2 iterations:
   - Forman `[4, 18, 24]` — positive curvature accumulates strongly
   - Transport `[-2, -30, -330]` — strong negative growth
-  - Higuchi `[2, 0, -6]` — **drops BELOW zero**, indicating
-    *negative* combinatorial curvature → emergent **hyperbolic** geometry
+  - Higuchi value `[2, 0, -6]` at the listed depths on `edge12`
+    dropping to -6; the "emergent hyperbolic geometry" interpretation
+    is heuristic, not certified
   - DegVariance `[0, 0, 36]` — degree heterogeneity grows substantially
   - SquareCount `[0, 0, 24]` — **squares emerge** (24 ordered 4-cycle
     tuples = 3 undirected squares in the resulting structure) -/
@@ -324,20 +324,22 @@ def minkowski4_jgorardNamedRule_triangle_quintDischarge :
 
 /-! ## Research-finding summary
 
-Three genuinely-interesting curvature emergences from this catalog,
-all `native_decide`-certified:
+Three depth-2 trace patterns from this catalog (`native_decide`-
+verified at specific d, rule, seed inputs); the "emergence" labels
+are interpretive overlays on finite traces, not certified geometric
+emergence:
 
-1. **Triangle-closure on path123 → 2D EUCLIDEAN emergence**:
+1. **Triangle-closure on path123**:
    `Higuchi = [2, 0, 0]` and `DegVariance = [2, 0, 0]` — combinatorial
-   signature of a flat triangulated plane.
+   signature consistent with a flat triangulated plane.
 
-2. **Triangulation on edge12 → HYPERBOLIC emergence**:
+2. **Triangulation on edge12**:
    `Higuchi = [2, 0, -6]` — drops below zero, indicating negative
-   combinatorial curvature.
+   combinatorial curvature value at this depth.
 
-3. **Triangulation on edge12 → SQUARE emergence**:
-   `SquareCount = [0, 0, 24]` — 4-cycles emerge from a seed that
-   originally had none.
+3. **Triangulation on edge12**:
+   `SquareCount = [0, 0, 24]` — 4-cycles appear at depth 2 from a
+   seed that originally had none.
 
 These are not vacuum-stable rate bounds; they are genuine *dynamics*
 captured by the five-scalar screener cascade on literature-grade

@@ -12,10 +12,10 @@ two-edge path seed and check whether the causal-Knill value scales
 
   `causalKnill(rule, path123, 4) = 2 · causalKnill(rule, edge12, 4)`
 
-This says: **every seed edge spawns its own independent causal
-sub-DAG**, and the total Knill is the sum. The per-seed-edge Knill
-is therefore a **stable structural invariant** of the rule —
-independent of seed shape, only the edge count matters.
+Confirmed for two seeds (edge12=1 edge, path123=2 edges) across
+11 discovered rules at d=4. Whether the per-seed-edge value is a
+true rule invariant across arbitrary seed shapes is the
+corresponding open conjecture.
 
 **Per-seed-edge Knill table** (the rule's invariant signature):
 
@@ -33,11 +33,10 @@ independent of seed shape, only the edge count matters.
 | `forkRule_16`     | 18                  | 3-tree       |
 | `identityKeep`    | 12                  | 2-tree       |
 
-**Bundled artifact `stable_per_seed_edge_invariants`**: for every
-discovered rule, certifies that its causal-DAG Knill on the path
-seed (2 edges) is exactly twice the value on the single-edge seed.
-This proves the per-seed-edge Knill is a genuine **rule invariant**,
-not a seed-specific accident.
+**Bundled artifact `stable_per_seed_edge_invariants`**: confirms
+that for each of the 11 rules at d=4, the Knill on path123
+(2 edges) is twice the Knill on edge12 (1 edge); calling this a
+'rule invariant' would require checking more seed shapes.
 
 **Why this matters**: a structurally-meaningful classifier of rules
 needs an invariant that doesn't depend on the chosen seed. The
@@ -178,10 +177,10 @@ The 11-conjunction certifying that every discovered rule satisfies
 the structural additivity law on (edge12, path123). The per-seed-edge
 Knill is thus a stable rule invariant. -/
 
-/-- **`stable_per_seed_edge_invariants`**: every discovered rule's
-causal-DAG Knill at depth 4 scales linearly with seed-edge count.
-The per-seed-edge Knill is therefore a stable structural invariant
-of the rule. -/
+/-- **`stable_per_seed_edge_invariants`**: each of the 11
+discovered rules' Knill matches the 2× ratio between path123
+(2 edges) and edge12 (1 edge) at d=4; linearity in seed-edge count
+is observed at these two seeds only. -/
 theorem stable_per_seed_edge_invariants :
     knillEulerScaled (causalDAGOfEvolution edgeReversalSys seedPath123 4) =
       2 * knillEulerScaled (causalDAGOfEvolution edgeReversalSys seedEdge12 4) ∧

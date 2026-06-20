@@ -30,12 +30,13 @@ R stays zero. This is the discrete-physics analog of how a vacuum-GR
 solution has zero Ricci scalar everywhere but still has a
 well-defined matter-free stress-energy structure.
 
-**Combined structural law**:
+**Combined structural relation** observed for one rule
+(fork + doubleCycle_5) at seeds ∈ {edge12, path123, triangle},
+d ∈ {3, 4}:
 
-  `(R(rule, seed, d), B(rule, seed, d)) = (|seed| · R_edge(d), |seed| · B_edge(d))`
+  `(R, B) = (|seed| · R_edge, |seed| · B_edge)`
 
-For vacuum-like rules: R_edge = 0, so the law simplifies to scaling
-B alone.
+'law' framing is informal.
 
 **Why this matters** (genuinely deepens the dual-side framework):
 
@@ -115,12 +116,15 @@ theorem fork_dCyc_B_triangle_4 :
 
 /-! ## Consolidated structural law: R-persistence + B-additivity -/
 
-/-- **`vacuum_like_universal_R_persistence`**: in the vacuum-like
-regime `fork + doubleCycle_5`, R = 0 on **multiple seed topologies
-at multiple depths**:
+/-- **`vacuum_like_universal_R_persistence`**: R = 0 verified at
+(seed, depth) ∈ {edge12, path123, triangle} × {3, 4} for
+`fork + doubleCycle_5`:
 
   * d=3: edge12, path123, triangle all give R = 0.
-  * d=4: edge12, path123, triangle all give R = 0. -/
+  * d=4: edge12, path123, triangle all give R = 0.
+
+Note: theorem name says 'universal'; statement is a 6-conjunct
+over (seed, depth) ∈ {edge12, path123, triangle} × {3, 4}. -/
 theorem vacuum_like_universal_R_persistence :
     knillEulerScaled (causalDAGOfEvolution fork_doubleCycle_Sys seedEdge12 3) = 0 ∧
     knillEulerScaled (causalDAGOfEvolution fork_doubleCycle_Sys seedPath123 3) = 0 ∧
@@ -130,11 +134,14 @@ theorem vacuum_like_universal_R_persistence :
     knillEulerScaled (causalDAGOfEvolution fork_doubleCycle_Sys seedTriangle 4) = 0 := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
 
-/-- **`vacuum_like_B_universal_additivity`**: in the vacuum-like
-regime, B follows `|seed| · B_edge` at multiple depths.
+/-- **`vacuum_like_B_universal_additivity`**: B = |seed| · B_edge
+verified at d ∈ {3, 4} on seeds ∈ {edge12, path123, triangle}.
 
   * d=3: 78 (edge12), 156=2·78 (path123), 234=3·78 (triangle).
-  * d=4: 240 (edge12), 480=2·240 (path123), 720=3·240 (triangle). -/
+  * d=4: 240 (edge12), 480=2·240 (path123), 720=3·240 (triangle).
+
+Note: theorem name says 'universal'; statement is a 4-conjunct
+over (seed, depth) ∈ {path123, triangle} × {3, 4}. -/
 theorem vacuum_like_B_universal_additivity :
     -- Depth 3:
     knillEulerScaled (branchialDAGOfEvolution fork_doubleCycle_Sys seedPath123 3) = 2 * 78 ∧
@@ -153,8 +160,9 @@ theorem vacuum_like_B_universal_additivity :
 /-- **`vacuum_like_unified_structural_law`**: vacuum-like rule
 `fork + doubleCycle_5` satisfies BOTH:
 
-  * R-persistence: `R = 0` for every probed (seed, depth).
-  * B-additivity: `B(seed) = |seed| · B(edge12)` for every depth. -/
+  * R-persistence: `R = 0` at (edge12, d=3) and (triangle, d=4).
+  * B-additivity: `B(triangle, d=4) = 3 · B(edge12, d=4)` (single
+    B-additivity instance in the conjunction). -/
 theorem vacuum_like_unified_structural_law :
     -- R persistence:
     knillEulerScaled (causalDAGOfEvolution fork_doubleCycle_Sys seedEdge12 3) = 0 ∧
@@ -185,10 +193,8 @@ independent**: both can hold simultaneously. This means:
     discrete-physics regime.
   * For BBH-style vacuum modeling, this regime gives a well-defined
     substrate.
-  * The R = 0 condition is **topology-independent** (holds on all
-    probed seeds).
-  * The B-additivity is **R-degeneracy-independent** (holds even
-    when R = 0).
+  * R = 0 verified on 3 probed seeds; B-additivity verified even
+    where R = 0; 'topology-independent' is informal.
 
 **Continuum-limit prediction**:
 

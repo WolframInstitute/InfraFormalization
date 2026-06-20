@@ -93,9 +93,9 @@ theorem tripleMerger_depth5_knill_neg66 :
 
 /-! ## Bundled artifact -/
 
-/-- **`merger_class_event_multiplication`**: the depth-trajectory
-artifact certifying that each merger-class rule produces
-exponentially more mergers as depth grows. -/
+/-- **`merger_class_event_multiplication`**: verified at depths
+{4,5,6} for edgeReversal and depths {4,5} for doubleCycle/tripleMerger;
+exponential extrapolation is informal. -/
 theorem merger_class_event_multiplication :
     -- Edge-reversal: 0 (1 hole) -> -6 (2 holes) -> -18 (4 holes)
     knillEulerScaled (causalDAGOfEvolution edgeReversalSys seedEdge12 4) = 0 ∧
@@ -126,7 +126,11 @@ the certified Knill values:
 | doubleCycle_5  |       2       |       6       |       ?       |
 | tripleMerger   |       3       |      12       |       ?       |
 
-The pattern is exponential-class growth:
+The pattern is exponential-class growth.
+
+Conjectural closed form fit to 2-3 data points (edgeReversal:
+d ∈ {4,5,6}; doubleCycle/tripleMerger: d ∈ {4,5}); not certified
+for d ≥ 7.
 
   * edgeReversal at depth d: holes ≈ 2^(d-4) for d ≥ 4 (doubling)
   * doubleCycle_5 at depth d: holes ≈ 3 · 2^(d-4) for d ≥ 4

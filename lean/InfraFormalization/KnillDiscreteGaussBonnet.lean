@@ -84,7 +84,7 @@ theorem icosahedron_knillEuler : knillEulerScaled icosahedronHG = 12 := by nativ
 
 /-- **The constructive fix**: Knill's discrete Gauss-Bonnet recovers
 the topological Euler characteristic `χ(S²) = 2` (scaled by 6 = 12)
-on EVERY S² triangulation, in direct contrast to the unweighted
+on the three S² triangulations verified here (tetra/octa/icosa), in direct contrast to the unweighted
 Forman audit's `+48, +48, 0`. -/
 theorem knill_recovers_chi_S2 :
     knillEulerScaled tetrahedronHG = 12 ∧
@@ -140,9 +140,10 @@ architecture's unweighted Forman / Higuchi don't recover the
 topological invariant of `S²`. This module **constructively fixes**
 that for one literature-grade alternative — Knill's discrete
 Gauss-Bonnet — and proves it works on three sample triangulations.
-The pattern generalizes: any closed triangulated 2-manifold gives
-`knillEulerScaled = 6 · χ(surface)` by the discrete Euler formula
-`V − E + F = χ`.
+Conjectural generalization: any closed triangulated 2-manifold
+should give `knillEulerScaled = 6 · χ(surface)` by the discrete
+Euler formula `V − E + F = χ`; verified here only on the three
+S² triangulations.
 
 This demonstrates the architecture **can extend** to triangulation-
 independent invariants when the right curvature notion is chosen.

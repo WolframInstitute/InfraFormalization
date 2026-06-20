@@ -9,11 +9,11 @@ three steps:
 
   1. **Knill on path lattice**: `knillEulerScaled (pathHG n) = 6` for
      all `n`, matching `6 · χ(interval) = 6 · 1`.
-  2. **Subdivision preserves Knill**: the subdivision rule (#232 /
-     `SubdivisionPath`) applied to a path or edge keeps the Knill
-     Euler character constant. Subdivision adds interior degree-2
-     vertices (each contributing `K6 = 0`), so the total `6χ`
-     doesn't change — proving the rule is **topology-preserving**.
+  2. **Subdivision Knill check**: verified at 0-3 subdivision steps
+     from seed `consEdge 1 2` and at 1-2 steps from `pathHG 3`;
+     general invariance not proved. Subdivision adds interior degree-2
+     vertices (each contributing `K6 = 0`), so on the checked
+     trajectories the total `6χ` doesn't change.
   3. **Disjoint-union additivity** (sample): two vertex-disjoint
      tetrahedra give Knill = 24 = 12 + 12, matching
      `6 · χ(S² ⊔ S²) = 6 · 4`.
@@ -27,8 +27,9 @@ rule evolution — closing a real loop from rewriting to topology.
 two edges through a new interior vertex. The new vertex `c` has
 degree 2 and is in 0 triangles, so `K6(c) = 6 − 6 + 0 = 0`. The
 endpoints `a, b` retain the same degree (they each lose one neighbor
-and gain one), so their `K6` is unchanged. Hence the total `Σ K6`
-is invariant under subdivision.
+and gain one), so their `K6` is unchanged. Hence, on the specific
+finite-step trajectories checked below, Σ K6 stays constant; a
+general invariance theorem is not formalized here.
 
 **Why this matters**: structural physics rules (in any
 hypergraph-rewriting model) should be **topology-preserving** to

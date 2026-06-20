@@ -27,10 +27,10 @@ topologically `S³`. For any closed odd-dimensional manifold,
 | 3   | `S³` (= ∂Δ⁴)  | 0 | 12χ = 0           | K5 (here) ✅     |
 
 **Why this matters**: this is the **first 3D topological-invariant
-computation** in the codebase. Knill's discrete Gauss-Bonnet is
-**dimension-agnostic**: it gives the right Euler characteristic for
-the simplicial complex of any dimension, with the formula
-`K(v) := Σ_k (-1)^k · (# k-cliques containing v) / (k+1)`.
+computation** in the codebase. Knill's discrete Gauss-Bonnet formula
+`K(v) := Σ_k (-1)^k · (# k-cliques containing v) / (k+1)` is here
+verified in 2D (#427) and 3D (this module) on one triangulation
+each; cross-dimensional theorem not formalized.
 
 For 3D, scaled by `lcm(2, 3, 4) = 12`:
 
@@ -158,10 +158,10 @@ theorem knill_dimension_independent_chi :
   * Certified `knillEulerScaled12 k5HG = 0 = 12·χ(S³)`.
   * Bundled `knill_dimension_independent_chi`: cross-dim pattern.
 
-**Why this matters**: the Knill framework now spans **two dimensions**
-of topological-invariant recovery (#427 for 2D, this module for 3D),
-demonstrating it is genuinely **dimension-agnostic**. The same
-vertex-defect philosophy works in any dimension d: `K(v) =
+**Why this matters**: the Knill framework is verified at d=2
+(S² triangulations) and d=3 (K₅ = ∂Δ⁴); dimension-agnosticism
+in the formal sense is not proven. The same vertex-defect
+philosophy works in any dimension d: `K(v) =
 Σ_{k=0}^{d} (-1)^k · (# k-cliques containing v) / (k+1)`.
 
 For d = 1 (graph): K(v) = 1 − deg/2 → `Σ K = V − E`.
@@ -169,9 +169,9 @@ For d = 2 (surface): K(v) = 1 − deg/2 + tri/3 → `Σ K = V − E + F`.
 For d = 3 (3-manifold): K(v) = 1 − deg/2 + tri/3 − tet/4 →
                               `Σ K = V − E + F − T`.
 
-This module covers d = 3. The architecture proves that **literature-
-grade topological invariants extend cleanly across dimensions** in
-the discrete framework — not just a one-off success on `S²`.
+This module covers d = 3. Knill computed at d=2 (∂Δ³) and d=3
+(∂Δ⁴) with matching χ values; further-dimension extension is
+conjectural.
 -/
 
 end KnillThreeManifold

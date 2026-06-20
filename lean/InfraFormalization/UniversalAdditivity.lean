@@ -19,12 +19,13 @@ This module **generalizes**: the per-edge additivity holds across
   | `triangle`                  |   3   | -18   | 3 × -6 ✓          |
   | `bbhInitial` (#443)         |   7   | -42   | 7 × -6 ✓          |
 
-**The structural law** (`universal_per_edge_additivity`):
+**Statement** (`universal_per_edge_additivity`):
 
-  `Knill(doubleCycle_5, seed, 4) = (|seed| / 1) · Knill(doubleCycle_5, edge12, 4)`
-
-holds **independent of seed topology** — for paths, triangles, disjoint
-unions, or complex BBH-like configurations.
+  Per-edge additivity identity verified at seeds ∈ {edge12, path123,
+  disjoint, triangle, bbhInitial}, doubleCycle_5, d=4:
+  Knill(seed) = |seed| · Knill(edge12). 'Independent of seed topology'
+  is informal — the proven statement is a 5-conjunct, not a universal
+  theorem.
 
 **Why this matters**: this is **the strongest structural invariance
 result** for the discovered merger rules. It tells us:
@@ -33,8 +34,8 @@ result** for the discovered merger rules. It tells us:
      the seed — independent of how those edges are connected.
   2. The discrete-physics interpretation: each edge in the seed acts
      as an **independent merger event source**.
-  3. For any future complex initial-data hypergraph (not just BBH),
-     the merger rate can be predicted from the edge count alone.
+  3. Conjectured for arbitrary initial-data hypergraphs; verified at
+     the 5 seeds above.
 
 This is a Phase D-foundation result: the framework's discrete BBH
 analog operates by a clean local-per-edge law, exactly analogous
@@ -86,14 +87,18 @@ theorem doubleCycle_5_disjoint_knill_neg12 :
 
 /-! ## The universal per-edge additivity theorem -/
 
-/-- **`universal_per_edge_additivity`**: for the `doubleCycle_5`
-rule at depth 4, the Knill on **any seed topology** is exactly
-`(|seed|) × Knill(edge12)`. The law is topology-independent.
+/-- **`universal_per_edge_additivity`**: verified at seeds ∈
+{edge12, path123, disjoint, triangle, bbhInitial}, doubleCycle_5,
+d=4; 'any seed topology' is informal.
 
 Confirmed across 5 seed topologies: single edge (1), path (2),
 disjoint (2), triangle (3), BBH (7).
 
-For each seed, `Knill / (-6)` recovers exactly `|seed|`. -/
+For each seed, `Knill / (-6)` recovers exactly `|seed|`.
+
+Note: name says 'universal'; statement is a 5-conjunct over seeds
+{edge12, path123, disjoint, triangle, bbhInitial} for doubleCycle_5
+at d=4. -/
 theorem universal_per_edge_additivity :
     -- Single edge baseline (1 edge):
     knillEulerScaled (causalDAGOfEvolution doubleCycleSys_5 seedEdge12 4) = -6 ∧
@@ -126,13 +131,17 @@ theorem edgeReversal_disjoint_depth5 :
     knillEulerScaled (causalDAGOfEvolution edgeReversalSys seedTwoDisjoint 5) = -12 := by
   native_decide
 
-/-- **`universal_additivity_edgeReversal_depth5`**: the universal
-per-edge additivity law ALSO holds for `edgeReversal` at depth 5,
-with baseline `-6` per edge.
+/-- **`universal_additivity_edgeReversal_depth5`**: per-edge
+additivity identity verified for edgeReversal at depth 5 across
+seeds ∈ {edge12, path123, disjoint, triangle}, with baseline `-6`
+per edge.
 
 Confirmed across 4 seed topologies (1, 2 path, 2 disjoint, 3
 triangle). Combined with #443 BBH(7)=-42 at depth 5, this gives
-5 topologies for `edgeReversal` at depth 5. -/
+5 topologies for `edgeReversal` at depth 5.
+
+Note: name says 'universal'; statement is a 4-conjunct over seeds
+{edge12, path123, disjoint, triangle} for edgeReversal at d=5. -/
 theorem universal_additivity_edgeReversal_depth5 :
     knillEulerScaled (causalDAGOfEvolution edgeReversalSys seedEdge12 5) = -6 ∧
     knillEulerScaled (causalDAGOfEvolution edgeReversalSys seedPath123 5) = 2 * (-6) ∧
@@ -162,9 +171,13 @@ baseline 126 per edge:
   * path123 (2 edges): 252 = 2 × 126
   * triangle (3 edges): 378 = 3 × 126
 
-Combined with #443/#445 (Merger) and the depth-5 edgeReversal
-result, this confirms universal additivity holds across **all
-three discovered rule classes**: Tree, Merger, Bidirected. -/
+Combined with prior modules, per-edge additivity verified at
+finitely many (rule, seed, depth) tuples across Tree/Merger/
+Bidirected classes; 'universal additivity holds across all three
+classes' is informal.
+
+Note: name says 'universal'; statement is a 3-conjunct over seeds
+{edge12, path123, triangle} for bidirectedEdgeSys at d=4. -/
 theorem universal_additivity_bidirected :
     knillEulerScaled (causalDAGOfEvolution bidirectedEdgeSys seedEdge12 4) = 126 ∧
     knillEulerScaled (causalDAGOfEvolution bidirectedEdgeSys seedPath123 4) = 2 * 126 ∧
@@ -186,18 +199,18 @@ theorem edgeReversal_identity_triangle_depth3 :
       MultiRuleDiscovered.edgeReversal_identity_Sys seedTriangle 3) = -72 := by
   native_decide
 
-/-- **`universal_additivity_multi_rule`**: per-edge additivity ALSO
-holds for **multi-rule systems**. The combo
-`edgeReversal + identityKeep` at depth 3 has baseline `-24` per
-edge:
+/-- **`universal_additivity_multi_rule`**: verified for
+edgeReversal+identityKeep at seeds ∈ {edge12, path123, triangle},
+d=3; 'fully universal across the entire rule space tested' is
+informal — the proven content is a finite conjunction. The combo
+has baseline `-24` per edge:
 
   * edge12 (1 edge): -24
   * path123 (2 edges): -48 = 2 × -24
   * triangle (3 edges): -72 = 3 × -24
 
-This generalizes universal additivity from single-rule systems
-to the multi-rule corpus. The structural law is fully universal
-across the entire rule space tested. -/
+Note: name says 'universal'; statement is a 3-conjunct over seeds
+{edge12, path123, triangle} for edgeReversal+identityKeep at d=3. -/
 theorem universal_additivity_multi_rule :
     knillEulerScaled (causalDAGOfEvolution
       MultiRuleDiscovered.edgeReversal_identity_Sys seedEdge12 3) = -24 ∧
@@ -211,10 +224,9 @@ theorem universal_additivity_multi_rule :
   · rw [edgeReversal_identity_triangle_depth3]; rfl
 
 /-- **`topology_independence`**: at depth 4 under `doubleCycle_5`,
-the Knill is **determined by edge count alone**, regardless of
-seed topology. Two seeds with the same edge count give the same
-Knill (the path and the disjoint-2 example both have 2 edges and
-both give -12). -/
+two specific 2-edge seeds (path-2 and disjoint-2) give identical
+Knill — a single confirming instance, not a topology-independence
+theorem. -/
 theorem topology_independence_2_edges :
     knillEulerScaled (causalDAGOfEvolution doubleCycleSys_5 seedPath123 4) =
       knillEulerScaled (causalDAGOfEvolution doubleCycleSys_5 seedTwoDisjoint 4) := by

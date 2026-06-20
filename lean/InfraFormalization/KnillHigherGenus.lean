@@ -43,10 +43,10 @@ characteristic `χ = 2 − 2g`:
 
 This shows the architecture's Knill implementation **scales across
 the full genus classification**, not just one topological type. The
-discrete Euler formula `Σ K6 = 6(V − E + F)` and the topological
-identity `χ = V − E + F` together give Knill = `6χ` for any
-triangulated closed surface, INDEPENDENT of the specific triangulation
-or genus.
+Verified on three S² triangulations and on triangulated tori at
+n ∈ {4,5,6}; the general "Knill = 6χ for any triangulated closed
+surface" would follow from the discrete Euler formula but is not
+formally proved across genera here.
 -/
 
 import InfraFormalization.KnillDiscreteGaussBonnet
@@ -195,10 +195,9 @@ first being #427 for S²):
 
 **Why this matters**: this is the second concrete topological type
 (after S²) where Knill demonstrably recovers `6χ`. Combined with
-#427, the Knill scalar is now proven to give the correct
-topological invariant for closed orientable surfaces of genus 0 and
-1, demonstrating the literature-grade fix scales across the
-classification — not just a one-off for S².
+#427, the Knill scalar is verified on three S² triangulations and
+three triangulated tori (n=4,5,6); not proven for all surfaces
+in either genus — not just a one-off for S².
 
 The pattern extends to any genus: any closed orientable triangulated
 surface gives `knillEulerScaled = 6 · (V − E + F) = 6 · (2 − 2g)`.
