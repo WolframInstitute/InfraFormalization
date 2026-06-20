@@ -193,6 +193,7 @@ import InfraFormalization.BClosedForm
 import InfraFormalization.PersistentScalingExponent
 import InfraFormalization.BClosedFormExtended
 import InfraFormalization.RClosedForm
+import InfraFormalization.DistinctEdgeIdentity
 import InfraFormalization.DiscreteQGPredictions
 import InfraFormalization.DiscreteQuantumGravity
 import InfraFormalization.BBHDeepEvolution
