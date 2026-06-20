@@ -159,7 +159,11 @@ theorem quintFreshSource_preserves : report_quintFreshSource.topologyPreserved =
 
 /-- **`catalog_topology_universally_preserved`**: every rule in the
 12-rule catalog produces a `PhysicsReport` with `topologyPreserved =
-true` on `edge12` at depth 2. -/
+true` on `edge12` at depth 2.
+
+Note: `catalog_topology_universally_preserved` sounds universal;
+statement is the 12-conjunct over the named catalog rules at a single
+seed and single depth. -/
 theorem catalog_topology_universally_preserved :
     report_trivialIdentity.topologyPreserved = true ∧
     report_subdivision.topologyPreserved = true ∧

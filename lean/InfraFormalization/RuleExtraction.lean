@@ -16,8 +16,9 @@ anchored to a single `witnessRule0`.
   4. **`quintRuleBidirect`**   — `{0,1} → {0,1}, {1,0}`  (add reverse edge)
   5. **`quintRuleFreshSource`** — `{0,1} → {0,1}, {2,1}` (growth: fresh source)
 
-Rules 1, 3, 4 are **state-preserving up to edge-direction relabeling**:
-their traces are literally constant on every seed. Rules 2, 5 produce
+Rules 1, 3, 4 are **state-preserving on the three tested seeds**
+(edge12, path123, cycle4): their traces are constant on each of those
+seeds; "every seed" is informal extrapolation. Rules 2, 5 produce
 **growing structure** (extra edges accumulate); their traces grow but
 their *trend* stays the same across seeds, so they pass the quint-
 stability screener.

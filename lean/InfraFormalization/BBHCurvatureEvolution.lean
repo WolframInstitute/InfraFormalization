@@ -37,8 +37,7 @@ trajectory** across the multi-rule corpus, derived from single-edge
 baselines via universal additivity (no expensive BBH-scale probes).
 
 The result: a Phase-D-ready substrate for BBH-specific curvature
-calculations, with explicit predicted values at every depth for
-the leading multi-rule combos.
+calculations, with explicit predicted values at d ∈ {2,3,4,5}.
 
 **Computational efficiency observation**:
 
@@ -148,7 +147,9 @@ under that combo.
 
 For modeling BBH at depth 5+:
   * eR + tripleMerger gives the strongest curvature signal.
-  * Universal additivity reduces BBH-scale calculations to O(1).
+  * Universal additivity (verified at d=3) would reduce BBH-scale
+    calculations to O(1) if it persists at deeper d; depth-extension
+    is conjectural.
 
 The framework's BBH endgame substrate is now fully predictable
 from single-edge baselines.

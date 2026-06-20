@@ -30,7 +30,11 @@ reference the framework's key results.
   (D) **Universal additivity** (#454, #462):
       - Causal side: `Knill_causal = |seed| · R`.
       - Branchial side: `Knill_branchial = |seed| · B`.
-      - Topology-independent.
+      - Topology-independent. The capstone bundle below packs a
+        single-instance `native_decide` check (eR + id on
+        `UniversalAdditivity.seedPath123`, depth 3) per side; the
+        "universal" framing is the corresponding open theorem,
+        not a Lean-formalized universal statement here.
 
   (E) **Discrete metric tensor** (#466, #467, #468):
       - Unified `g(rule, d) := diag(R, B)`.
@@ -95,8 +99,8 @@ of #443-#468.
   2. R-scalar baseline values.
   3. B-density baseline values.
   4. Single-rule branchial-zero theorem.
-  5. Universal additivity (causal side, multi-rule combo).
-  6. Universal additivity (branchial side).
+  5. Additivity instance (eR+id on seedPath123, d=3) — causal.
+  6. Additivity instance (eR+id on seedPath123, d=3) — branchial.
   7. Dual-side independence (R non-monotonic, B monotonic).
   8. Dual-side independence (same R different B).
   9. Discrete metric tensor explicit values.
@@ -118,10 +122,10 @@ theorem phase_D_framework_complete :
     discreteBranchialDensity edgeReversal_identity_Sys 3 = 30 ∧
     -- (4) Single-rule branchial = 0
     knillEulerScaled (branchialDAGOfEvolution edgeReversalSys seedEdge12 3) = 0 ∧
-    -- (5) Universal additivity causal
+    -- (5) Additivity instance (eR+id on seedPath123, d=3) — causal
     knillEulerScaled (causalDAGOfEvolution edgeReversal_identity_Sys
       UniversalAdditivity.seedPath123 3) = 2 * (-24) ∧
-    -- (6) Universal additivity branchial
+    -- (6) Additivity instance (eR+id on seedPath123, d=3) — branchial
     knillEulerScaled (branchialDAGOfEvolution edgeReversal_identity_Sys
       UniversalAdditivity.seedPath123 3) = 2 * 30 ∧
     -- (7) R non-monotonic

@@ -26,8 +26,8 @@ matching the per-seed-edge additivity prediction:
   * `Knill(BBH, doubleCycle_5, 4)  = 7 × -6 = -42` ✓
 
 The structural-rule invariants extend cleanly from simple single-edge
-seeds to physics-motivated initial data. This proves the rule-class
-invariants discovered in #438 generalize to seven-edge BBH seeds.
+seeds to physics-motivated initial data. Confirmed at d=4 for the 2
+sampled rules on seven-edge BBH seeds; not a general theorem.
 
 **Why this matters**: a discrete BBH model needs to predict event
 counts and topology of the causal evolution from physically-motivated

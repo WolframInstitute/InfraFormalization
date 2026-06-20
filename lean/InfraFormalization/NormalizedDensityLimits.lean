@@ -228,11 +228,17 @@ per-area Higuchi density → -2 (both exactly), and the grid case
 matches via the closed-form `gridFormanClosedForm / n² → -16` +
 `gridHiguchiClosedForm / n² → -2` (verified at sample sizes). -/
 
-/-- **`bulk_curvature_density_constants`**: the per-area Forman and
-Higuchi densities of T² and grid both converge to non-zero topological-
-combinatorial bulk constants (-16 and -2 respectively), even though
-the absolute totals diverge. This is the proper continuum-limit /
-thermodynamic-density scaling. -/
+/-- **`bulk_curvature_density_constants`** (named for the intended
+density-convergence picture; see WARNING).
+
+WARNING: the theorem's third conjunct is the vacuous implication
+`(∀ n, exec... = gridFormanClosedForm n → exec... = -16·n² + 40·n − 16)`
+— a definitional unfolding of `gridFormanClosedForm`, not a
+convergence proof for grid. The actual grid verification is at
+`n ∈ {3, 4, 5, 6, 8, 12}` for Forman and `n ∈ {3, 4, 5, 6}` for
+Higuchi (`native_decide` spot checks above). The T² per-area
+conjuncts are honest convergences of the constant traces
+`torusFormanPerArea = -16` and `torusHiguchiPerArea = -2`. -/
 theorem bulk_curvature_density_constants :
     TrueLimitConverges torusFormanPerArea (-16) ∧
     TrueLimitConverges torusHiguchiPerArea (-2) ∧
@@ -248,6 +254,9 @@ theorem bulk_curvature_density_constants :
 |---------------|------------------------|----------------|---------------------|----------------|
 | `T²(n, n)`    | `-16 n²`              | `-16` exact    | `-2 n²`             | `-2` exact     |
 | `grid(n, n)`  | `-16 n² + 40 n − 16`  | `-16` (O(1/n)) | `-2 n² + 4 n`       | `-2` (O(1/n))  |
+
+The `O(1/n)` entries reflect the closed form at the sampled `n`; the
+asymptotic theorem for grid is not formalized.
 
 **Convergence reconciled**: the prior #421 / #423 audits certified
 that the *absolute* Forman / Higuchi totals diverge on T² and grid.

@@ -11,17 +11,18 @@ across multiple curvature families, not just Forman.
 
 **(b) T² Forman non-convergence audit**: certified Lean theorem
 showing the **unweighted** Forman scalar on the 2D flat torus
-`T²(n, n)` does **NOT converge** as `n → ∞` — it grows unboundedly
-(`-16n²` for `n ≥ 4`). This surfaces the structural failure mode of
-unweighted Forman on higher-dimensional flat continua, explaining why
-the cycle case is special (1D, no extra dimension contributing
-per-edge curvature bias).
+`T²(n, n)` evaluates to `-16 n²` (verified at sample sizes
+`n ∈ {(4,4),(4,5),(5,5),(6,6)}`; the `n → ∞` extrapolation is
+informal). This surfaces the structural failure mode of unweighted
+Forman on higher-dimensional flat continua at the probed scales,
+explaining why the cycle case is special (1D, no extra dimension
+contributing per-edge curvature bias).
 
 **The honesty point**: the cycle case (Forman = 0) is the *only*
 unweighted-Forman continuum-limit case that works trivially. The
-torus (Forman ∝ -n²) demonstrates that for d ≥ 2, the unweighted
-scalar carries a per-volume curvature bias that obstructs naive
-convergence. The mathematical fix is weighted Forman (Forman 2003's
+torus (Forman ∝ -n²) is demonstrated at d=2 (n ∈ {4,5,6}); the
+d ≥ 2 claim is informal extrapolation that the unweighted scalar
+carries a per-volume curvature bias obstructing naive convergence. The mathematical fix is weighted Forman (Forman 2003's
 original) or a different scalar entirely (effective resistance,
 Christiansen 2024 distributional Ricci); both are research-level.
 -/

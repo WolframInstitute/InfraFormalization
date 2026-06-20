@@ -31,10 +31,10 @@ class:
     curvatures, analogous to how different cosmological models
     have different scale-dependent Ricci scalars.
 
-The depth-3 universality (`R = 6` for all rules) suggests that
-**at shallow scales**, all rule dynamics look like trees with
-flat curvature. The class-specific behavior emerges only at
-deeper scales — this is the discrete analog of how curvature
+At d=3 the three checked rule classes (edgeReversal, identityKeep,
+doubleCycle_5) each produce `R = 6`; whether this extends to all
+rule classes is conjectural. The class-specific behavior emerges
+only at deeper scales — this is the discrete analog of how curvature
 emerges only at scales where the manifold is not flat.
 
 **Open analysis question**: as `d → ∞`, does `R(rule, d)` have a
@@ -59,8 +59,8 @@ open DiscreteRicciScalar
 
 /-! ## edgeReversal depth-3 universal regime -/
 
-/-- All discovered rules produce `R = 6` at depth 3 — the universal
-"tree-like" regime where rule-class distinctions don't yet show. -/
+/-- Three checked rules (edgeReversal, identityKeep, doubleCycle_5)
+each produce `R = 6` at depth 3; "all discovered rules" is informal. -/
 theorem R_universal_at_depth3_edgeReversal :
     discreteRicciScalar edgeReversalSys 3 = 6 := by
   native_decide
@@ -119,8 +119,11 @@ theorem R_depth_trajectory_three_classes :
    R_identityKeep_4, R_identityKeep_5,
    R_doubleCycle_5_4, R_doubleCycle_5_5⟩
 
-/-- **`depth_3_universal_regime`**: at depth 3, all rule classes
-produce the same Ricci scalar `R = 6`, regardless of class. -/
+/-- **`depth_3_universal_regime`**: at depth 3, the three checked
+classes agree on `R = 6`.
+
+Note: `depth_3_universal_regime` sounds universal; statement is the
+3-conjunct over edgeReversal/identityKeep/doubleCycle_5 at d=3. -/
 theorem depth_3_universal_regime :
     discreteRicciScalar edgeReversalSys 3 =
       discreteRicciScalar identityKeepSys 3 ∧

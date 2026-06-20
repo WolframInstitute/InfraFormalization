@@ -8,18 +8,18 @@ form `p(n) = a · n^d + b · n^(d-1) + c`, the per-volume density
 `p(n) / n^d → a` as `n → ∞`, proven via Mathlib limit lemmas without
 any per-sample `native_decide` reliance.
 
-Then the module **extends the framework to 3 dimensions**: the 3D
-torus `T³(n, n, n)` gives `Forman = -48n³` and `Higuchi = -4n³` for
-`n ≥ 4`, with per-volume densities `-48` and `-4` respectively.
+Then the module **extends the framework to 3 dimensions**: verified
+at `n ∈ {4, 5}` (Forman) and `n ∈ {3, 4, 5}` (Higuchi); the
+"for `n ≥ 4`" closed form is conjectural.
 Pattern across dimensions:
 
   * `T¹` (cycle, 2-regular): per-volume Forman = `0`,  Higuchi = `0`.
   * `T²` (4-regular):        per-volume Forman = `-16`, Higuchi = `-2`.
   * `T³` (6-regular):        per-volume Forman = `-48`, Higuchi = `-4`.
 
-The general formula: **per-volume bulk Forman of `Td` = `-8 d (d−1)`,
-per-volume bulk Higuchi = `2 − 2d`**. These are discrete-combinatorial
-bulk invariants of the d-dimensional 4d-regular hypercubic lattice.
+Pattern observed at `d ∈ {1, 2, 3}`: **per-volume bulk Forman of `Td`
+≈ `-8 d (d−1)`, per-volume bulk Higuchi ≈ `2 − 2d`**; the "general
+formula" framing is conjectural extrapolation.
 
 **What this delivers**:
 
@@ -105,7 +105,7 @@ theorem polynomialPerArea_tendsto (a b c : ℝ) :
 The 3D torus `T³(n, n, n)` (all vertices degree 6, no triangles for
 `n ≥ 4`) gives:
 
-  * `Forman(T³(n, n, n)) = -48 n³` (= `-16 per-edge × 3n³ edges`)
+  * `Forman(T³(n, n, n)) = -48 n³` verified at `n ∈ {4, 5}`
   * `Higuchi(T³(n, n, n)) = -4 n³` (= `-4 per-vertex × n³ vertices`)
 
 The per-volume densities `-48` and `-4` follow the pattern

@@ -31,8 +31,8 @@ characterization**:
   * Branchial side: BBH branchial = 7 × edge12 branchial at every
     depth (depths 2, 3, 4 in this module).
 
-The structural per-edge invariance is **fully preserved across both
-sides and all depths**.
+The structural per-edge invariance is **fully preserved at all
+probed depths (2, 3, 4)**.
 
 **Implication for H8 / discrete Ψ₄**:
 

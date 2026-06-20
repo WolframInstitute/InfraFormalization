@@ -150,8 +150,8 @@ This is the **focused BBH application** of the dual-side framework:
   * For any Phase-D BBH calculation, the metric tensor values are
     now explicit and certified.
   * The universal additivity at tensor level (7× scaling) means
-    the BBH-specific calculations are fully predicted from single-
-    edge baseline.
+    the BBH-specific calculations at the verified depth (d=3) are
+    fully predicted from single-edge baseline.
   * The line-element values give concrete distance measurements on
     BBH initial data.
 

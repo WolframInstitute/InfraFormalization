@@ -31,8 +31,9 @@ R trajectories.
 is structurally equivalent — they generate the same quantum-amplitude
 dynamics despite very different classical-curvature evolution.
 
-This is a real **dual-side decoupling** finding: the QM (B) and GR
-(R) sides can be **completely decoupled** at the rule level.
+This is a **dual-side decoupling** observation at 2 sampled combos
+across d ∈ {2,3,4}: at the probed (rule, depth) pairs the QM (B) and
+GR (R) sides exhibit decoupling.
 
 **Why this matters** (research-level finding):
 
@@ -125,11 +126,10 @@ theorem R_trajectories_different :
 
 /-- **`B_R_decoupling_finding`**: the **exact B-trajectory
 coincidence** combined with **R-trajectory difference** between two
-structurally different combos demonstrates the framework's
-dual-side observables are **maximally decoupled**: B is genuinely
-independent of R.
+structurally different combos exhibits decoupling at d ∈ {2,3,4} for
+the sampled pair; full independence of B from R is conjectural.
 
-This is the strongest quantitative evidence for dual-side
+This is the strongest quantitative evidence so far for dual-side
 independence (#463). -/
 theorem B_R_decoupling_finding :
     -- B coincidence at 3 depths:

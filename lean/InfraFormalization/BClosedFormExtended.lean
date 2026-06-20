@@ -21,7 +21,8 @@ The closed form holds for **5 consecutive depths** (d = 2, 3, 4, 5, 6).
 **Strengthens the scaling-exponent conjecture**:
 
 5-depth verification makes the conjecture
-`B(rule, d) = 3^(d+1) - 3 for all d ≥ 2` extremely well-supported.
+`B(rule, d) = 3^(d+1) - 3 for all d ≥ 2` extremely well-supported;
+the all-d claim remains a conjecture extrapolated from d ∈ {2..6}.
 
 The log_2(3) ≈ 1.585 scaling exponent prediction is the framework's
 strongest discrete-physics prediction to date.
@@ -122,9 +123,10 @@ theorem persistent_B_equivalence_5_depths :
 **The framework's strongest analytical prediction**:
 
 `B(d) = 3^(d+1) - 3` for the persistent equivalence class at every
-depth.
+probed depth (d ∈ {2..6}); universal-d claim is conjectural.
 
-**Continuum-limit prediction**:
+**Continuum-limit prediction** (conjectural continuum-limit
+extrapolation; no formal proof):
 
 `B(h) ~ 3 · h^{-log_2(3)} ≈ 3 · h^{-1.585}` for h → 0.
 

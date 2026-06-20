@@ -33,9 +33,9 @@ depth.
 the merger event rate grows non-trivially with cosmic time as the
 holes approach. The depth-trajectory analog is the per-step Knill drop
 — each additional depth contributes more holes (events) than the
-previous. The fact that the BBH initial-data Knill at every depth is
-exactly **7× the single-edge baseline** means the qualitative event-
-production rate is set by the per-edge baseline alone; the structural
+previous. The fact that the BBH initial-data Knill at every probed depth
+(4, 5, 6) is exactly **7× the single-edge baseline** means the
+qualitative event-production rate is set by the per-edge baseline alone; the structural
 multiplicity (BBH has 7 edges, single edge12 has 1) acts as a clean
 multiplier.
 

@@ -11,13 +11,12 @@ triangle-closure, wheeler, JGORARD-named, triple-extend, and the
 5 quint-stable rules from #413. **All preserve `knillEulerScaled = 6`
 on the canonical seed `edge12`** across 1 evolution step.
 
-**The structural physics interpretation**: rules in any hypergraph-
-rewriting model that are local and combinatorially conservative
-(LHS and RHS represent topologically equivalent local pieces) **must
-preserve the global Euler characteristic** by the additive nature of
-the discrete Gauss-Bonnet. This module gives the **first cross-
-catalog certification** of this property — a uniform structural
-guarantee that the codebase's rule library respects topology.
+**Observed on the 12-rule catalog at a single seed and single depth**:
+rules in this catalog preserve the global Euler characteristic; the
+"any hypergraph-rewriting model" claim is the corresponding open
+conjecture. This module gives the **first cross-catalog certification**
+of this property — a uniform structural guarantee that the codebase's
+rule library respects topology in the finite checks performed here.
 
 **Why this matters**: Forman / Higuchi audits (#421, #426) showed
 unweighted scalars are unreliable as continuum-Ricci proxies. Knill
@@ -140,9 +139,14 @@ theorem quintFreshSource_preserves_knill :
 
 /-- **`universal_rule_topology_preservation`**: all 12 named rules in
 the codebase's catalog preserve the Knill Euler character (=6) on the
-canonical seed `edge12` across 1 evolution step. **The codebase's
-rule library is universally topology-preserving** in the discrete
-Gauss-Bonnet sense. -/
+canonical seed `edge12` across 1 evolution step. **The 12 named
+catalog rules preserve Knill = 6 on edge12 at depth 1** (this is a
+finite-conjunction theorem, not a universal claim about rules in
+general).
+
+Note: `universal_rule_topology_preservation` sounds universal;
+statement is the 12-conjunct over the named catalog rules at edge12
+depth 1. -/
 theorem universal_rule_topology_preservation :
     knillEulerScaled (singleWayEvolve trivialIdentitySys edge12 1) = 6 ∧
     knillEulerScaled (singleWayEvolve subdivisionSysLocal edge12 1) = 6 ∧
@@ -204,9 +208,9 @@ for free.
 structural certification** of any property in the codebase. Earlier
 modules certified properties per-rule (signatures, curvature traces,
 rate envelopes). This module certifies a property **across the
-entire rule library at once**, demonstrating that topology
-preservation isn't a coincidence of one rule — it's a uniform
-structural feature of well-designed hypergraph-rewriting catalogs.
+entire rule library at once**: within the 12-rule catalog at edge12
+depth 1, every rule preserves Knill; whether this generalizes to all
+"well-designed catalogs" is the corresponding open conjecture.
 -/
 
 end RulePreservationClassification

@@ -141,8 +141,9 @@ dynamics** with quantum-amplitude content.
   * Lorentzian combos (eR + id, eR + fork, eR + tripleMerger,
     eR + dCyc): non-zero R at every depth — "matter-coupled"
     dynamics.
-  * Persistent R = 0 (fork + dCyc): zero R from depth 3 onward —
-    "vacuum-like" dynamics.
+  * Persistent R = 0 (fork + dCyc): zero R verified at `d ∈ {3, 4}`
+    (per the `native_decide` cases in this file) — "vacuum-like"
+    dynamics; persistence at `d ≥ 5` is conjectural.
 
 This dichotomy is a real research finding: the framework's rule
 corpus exhibits qualitatively distinct dynamical regimes

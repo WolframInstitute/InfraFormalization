@@ -20,9 +20,10 @@ For the persistent equivalence class `{eR + tripleMerger, fork + dCyc}`.
 
 **Why this matters** (clean continuum-limit prediction):
 
-The closed-form `B(d) = 3 · (3^d - 1)` gives the framework a
-**precise analytical prediction** for the quantum-amplitude growth
-of the persistent equivalence class:
+The closed-form `B(d) = 3 · (3^d - 1)` is verified at d ∈ {2,3,4,5};
+extrapolation to all d is conjectural. Under that conjecture the
+framework would have a **precise analytical prediction** for the
+quantum-amplitude growth of the persistent equivalence class:
 
   * Pure exponential growth in d (no polynomial corrections).
   * Asymptotically: `B(d) ~ 3^(d+1) → ∞` as `d → ∞`.
@@ -122,17 +123,19 @@ analytical formula** for the quantum-amplitude growth in a
 specific dynamical regime:
 
   `B(rule, d) = 3^(d+1) - 3` for rule ∈ {eR + tripleMerger,
-                                          fork + dCyc}.
+                                          fork + dCyc}, verified
+  at d ∈ {2,3,4,5}; the all-d statement is a conjecture.
 
-**Continuum-limit prediction**:
+**Continuum-limit prediction** (conjectural continuum-limit
+extrapolation from the finite-d check):
 
 With depth d ~ -log_2 h (lattice spacing h):
 
   `B(h) ~ 3 · h^{-log_2 3} ≈ 3 · h^{-1.585}` for h → 0.
 
 The scaling exponent `log_2 3 ≈ 1.585` is the framework's
-**discrete-physics prediction for the quantum-amplitude scaling
-exponent** of the persistent equivalence class.
+**conjectural discrete-physics prediction for the quantum-amplitude
+scaling exponent** of the persistent equivalence class.
 
 **This is a falsifiable physics-level prediction**:
 

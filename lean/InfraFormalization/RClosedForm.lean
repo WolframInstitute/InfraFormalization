@@ -6,9 +6,10 @@ Major discovery: the discrete Ricci scalar R(d) for `eR + tripleMerger`
 admits a **closed form** combining the previously discovered B(d) form
 with a depth-parity-dependent arithmetic term.
 
-**The closed form**:
+**The closed form** (verified at d ∈ {2, 3, 4, 5} and probe-only at d=6;
+the "for d ≥ 2" framing is conjectural extrapolation, not a proven theorem):
 
-  `R(d) + B(d) = 12·d + 6·(d mod 2)`  for `d ≥ 2`.
+  `R(d) + B(d) = 12·d + 6·(d mod 2)`.
 
 Equivalently:
 
@@ -49,7 +50,8 @@ sub-leading oscillatory corrections to the continuum scaling.
 
 **For BBH-vacuum modeling**:
 
-By universal additivity:
+Conjectural extrapolation (assuming per-edge additivity continues from
+finite checks):
   * `R_BBH(d) = 7 · (3 - 3^(d+1) + 12d + 6·(d mod 2))`.
   * `B_BBH(d) = 7 · (3^(d+1) - 3)`.
 
@@ -152,9 +154,10 @@ theorem R_explicit_closed_form_d5 :
 
 /-! ## What this delivers
 
-**First closed-form expression for R(d) in the framework**:
+**Closed-form candidate verified at d ∈ {2, 3, 4, 5}**:
 
-  R(d) = 3 - 3^(d+1) + 12·d + 6·(d mod 2)   for d ≥ 2.
+  R(d) = 3 - 3^(d+1) + 12·d + 6·(d mod 2);
+  the "for d ≥ 2" framing is conjectural extrapolation.
 
   * `R_plus_B_closed_form` 4-conj (d=2..5).
   * `R_explicit_closed_form_d3` through `_d5`: 3 individual verifications.
@@ -163,7 +166,8 @@ theorem R_explicit_closed_form_d5 :
 **Why this matters** (framework completion):
 
 The persistent equivalence class `{eR + tripleMerger, fork + dCyc}`
-now has a **complete analytical characterization** on both sides:
+has a **characterization (verified at d ∈ {2..5}, conjectured for d ≥ 2)**
+on both sides:
 
   * `B(d) = 3^(d+1) - 3` (#485).
   * `R(d) = 3 - 3^(d+1) + 12·d + 6·(d mod 2)` (this module).

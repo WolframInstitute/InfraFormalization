@@ -19,9 +19,10 @@ trajectories. Two interesting classes emerge:
   * `eR + identityKeep`: R trajectory -6 → -24 → 6 → 132.
     Passes through R=0 between d=3 and d=4 — signature transition.
 
-**Class C — Persistent Lorentzian** (R stays negative):
+**Class C — Persistent Lorentzian** (R < 0 verified at d ∈ {2..5}):
 
-  * `eR + fork`: R trajectory -6 → -42 → -72 → -36. Never crosses 0.
+  * `eR + fork`: R trajectory -6 → -42 → -72 → -36 at d ∈ {2,3,4,5};
+    "never crosses 0" for d ≥ 6 is conjectural.
 
 **Why this matters** (research finding):
 
@@ -100,7 +101,7 @@ theorem eR_fork_R_5_neg36 :
   native_decide
 
 /-- **`persistent_lorentzian_eR_fork`**: `eR + fork` has R < 0 at
-every depth probed (2, 3, 4, 5). Never crosses zero.
+every depth probed (2, 3, 4, 5).
 
   R trajectory: -6 → -42 → -72 → -36. -/
 theorem persistent_lorentzian_eR_fork :

@@ -200,10 +200,14 @@ theorem triangulation_report_topology_preserved :
 
 /-! ### Universal topology-preservation report bundle -/
 
-/-- **`all_rules_preserve_topology_via_report`**: every rule in the
-catalog produces a `PhysicsReport` whose `topologyPreserved` field is
-`true` on the `edge12` seed at depth 1. This is the report-level
-restatement of `#431 universal_rule_topology_preservation`. -/
+/-- **`all_rules_preserve_topology_via_report`**: three rules
+(trivialIdentity, subdivision, triangulation) produce a `PhysicsReport`
+with `topologyPreserved = true` at the `edge12` seed at depth 1. This
+is the report-level restatement of `#431 universal_rule_topology_preservation`.
+
+Note: `all_rules_preserve_topology_via_report` sounds universal;
+statement is the 3-conjunct over {trivialIdentity, subdivision,
+triangulation} at edge12 depth 1. -/
 theorem all_rules_preserve_topology_via_report :
     trivialIdentityReport.topologyPreserved = true ∧
     subdivisionReport1.topologyPreserved = true ∧
