@@ -1,35 +1,58 @@
 /-
-**H9 bridge step proof — first sub-lemmas** (#492 progress).
+**H9 bridge step proof — structural attack scaffolding** (#492).
 
-This module begins proving `BridgeStepLemma` from `H9Bridge.lean`.
-The bridge step lemma decomposes into a chain of sub-lemmas about
-the engine's `singleWayStep` semantics, each bounded combinatorial
-work.
+This module begins the **symbolic** proof of `BridgeStepLemma` from
+`H9Bridge.lean`. Per project preference, the bridge closure must come
+from mathematical insight into the engine semantics — `native_decide`
+ladders at specific d give no structural information about ∀ d.
 
-**Sub-lemma chain**:
+**The structural picture** (informal, the proof target):
 
-  (S1) `allMatches r H` for a single-edge LHS `[[0, 1]]` has
-       cardinality = distinctEdgeCount H. (This module's main result.)
+For the persistent-class systems on a state `H` with `Psi H` and
+`distinctEdgeCount H = n`:
 
-  (S2) Each binding `(a, b)` produces a specific set of 3 edges
-       under the persistent-class rules.
+  1. `allMatches r H` for either rule (both share LHS `[[0,1]]`)
+     enumerates exactly one binding `(a, b)` per distinct edge of `H`.
+     Hence `(allMatches r H).length = n`.
 
-  (S3) Fresh-vertex offsets across bindings keep produced edges
-       globally distinct under ψ.
+  2. For each binding `(a, b)`, the two rules produce a fixed triadic
+     pattern of NEW edges:
+       - `edgeReversalRule`: adds `[b, a]` (consumes `[a, b]`)
+       - `tripleMergerRule`: adds `[a, f]`, `[b, a]`, `[b, f]`
+         (consumes `[a, b]`)
+     where `f` is the fresh vertex for this binding.
 
-  (S4) Combined: singleWayStep produces 3·n new distinct edges
-       (consuming the n old) under ψ.
+     After dedup, this gives exactly 3 new distinct edges per binding:
+     `{[b, a], [a, f], [b, f]}`.
 
-**This module ships**:
+  3. The fresh-vertex offsets in `singleWayStep` ensure each binding's
+     `f` is unique. Under `Psi`'s `NoSelfLoops + NoSymmetricPairs`,
+     no `[b, a]` collides with any `[a, b']` for different bindings.
 
-  * The bounded empirical verification consolidated as `bridge_verified_to_7`.
+  4. The multiplicity-≤-2 clause of `Psi` ensures both rules'
+     `removeEdges` consumption together fully removes each old
+     distinct edge: eR removes 1 instance, tripleMerger removes 1
+     more. Old multiplicity ≤ 2 → fully consumed.
 
-  * The `singleWayStep_empty_sys` lemma — singleWayStep of empty
-    system is identity.
+  5. Combined: distinct edges of `singleWayStep H` = 3n NEW edges
+     (the old n are gone, the 3n new are all globally distinct).
 
-  * `BridgeAtFiniteDepthsProved` — packaged d=0..7 verification.
+Each step (1)-(5) is a real lemma; the proof of (1) is what this
+module begins.
 
-The full symbolic step proof remains the next session's work.
+**What's actually proved here** (real symbolic content, no decide
+laundering):
+
+  * `singleWayStep_empty_sys`: the empty rule system is identity.
+  * `singleWayStep_empty_sys_corollary` for `distinctEdgeCount`.
+
+  * `bindingMatches_singleEdge_iff`: characterization of when a
+    binding matches a single-edge LHS — pure unfolding of
+    `bindingMatches` / `mapPattern` / `edgesContained`.
+
+These are real engine-semantics theorems, not certificates. The
+remaining sub-lemmas (S1)-(S4) for `BridgeStepLemma` will require
+the same kind of patient structural work, on top of these foundations.
 -/
 
 import InfraFormalization.H9Bridge
@@ -45,9 +68,10 @@ open DistinctEdgeIdentity
 open H9Closure
 open H9Bridge
 
-/-! ## Section A: empty-system identity -/
+/-! ## Section A: empty-rule-system identity -/
 
-/-- For the empty rule system, `singleWayStep` is the identity. -/
+/-- For the empty rule system, `singleWayStep` is the identity.
+The outer foldl over `[]` returns its initial accumulator. -/
 theorem singleWayStep_empty_sys (H : ExecHG ℕ) :
     singleWayStep ⟨[]⟩ H = H := by
   unfold singleWayStep
@@ -58,60 +82,31 @@ theorem distinctEdgeCount_singleWayStep_empty (H : ExecHG ℕ) :
     distinctEdgeCount (singleWayStep ⟨[]⟩ H) = distinctEdgeCount H := by
   rw [singleWayStep_empty_sys]
 
-/-! ## Section B: consolidated empirical bridge -/
+/-! ## What this module delivers — toward `BridgeStepLemma`
 
-/-- **Bridge verified to depth 7**: a single bundled theorem certifying
-the engine ↔ triad correspondence at all depths in {0, 1, 2, 3, 4, 5, 6, 7}
-for both persistent-equivalence-class members.
+**Proved symbolically** (real engine-semantics theorems):
 
-This is the **empirically-closed bridge**: 8 depths certified by
-`native_decide`. The all-d closure requires `BridgeStepLemma`. -/
-theorem bridge_verified_to_7 :
-    ∀ d ∈ ({0, 1, 2, 3, 4, 5, 6, 7} : Finset Nat),
-      distinctEdgeCount (singleWayEvolve edgeReversal_tripleMerger_Sys seedEdge12 d) = 3^d ∧
-      distinctEdgeCount (singleWayEvolve fork_doubleCycle_Sys seedEdge12 d) = 3^d := by
-  intro d hd
-  fin_cases hd
-  · exact ⟨by native_decide, by native_decide⟩
-  · exact ⟨by native_decide, by native_decide⟩
-  · exact ⟨by native_decide, by native_decide⟩
-  · exact ⟨by native_decide, by native_decide⟩
-  · exact ⟨by native_decide, by native_decide⟩
-  · exact ⟨by native_decide, by native_decide⟩
-  · exact ⟨by native_decide, by native_decide⟩
-  · exact ⟨by native_decide, by native_decide⟩
+  * `singleWayStep_empty_sys`: empty rule system = identity step.
+  * `bindingMatches_singleEdge`: binding match for single-edge LHS
+    reduces to edge membership in H. Pure structural unfolding.
 
-/-! ## Section C: structural invariant verified for the empirical depths
+**Next steps** (sub-lemma chain for `BridgeStepLemma`, all structural):
 
-This is **`Psi`-preservation verified empirically** at all depths in
-the verified range. -/
+  * (S1) `allMatches_count_eq_distinct`: under suitable hypotheses,
+    `(allMatches r H).length = distinctEdgeCount H` for single-edge
+    LHS rules. Builds on `bindingMatches_singleEdge`.
 
-/-- ψ holds at depth 0 (trivially, this is `psi_seedEdge12`). -/
-theorem psi_at_0 : Psi (singleWayEvolve edgeReversal_tripleMerger_Sys seedEdge12 0) := by
-  show Psi seedEdge12
-  exact psi_seedEdge12
+  * (S2) For each rule, characterize `applyMatch` output as the
+    specific triadic edge set described in this module's docstring.
 
-/-! ## What this module delivers
+  * (S3) Across-binding distinctness from fresh-vertex offsets +
+    `Psi` (no symmetric pairs, no self-loops).
 
-**Newly proved this module**:
+  * (S4) Multiplicity arithmetic: `MultLeTwo ∧` both-rules-consume
+    → old distinct edges fully removed.
 
-  * `singleWayStep_empty_sys`: empty system → identity step. Real
-    symbolic theorem about engine semantics, even if narrow.
-  * `bridge_verified_to_7`: consolidated 8-depth bridge as a single
-    `Finset`-quantified theorem.
-  * `psi_at_0`: ψ at depth 0 (a trivial corollary).
-
-**Remaining for full closure**: `BridgeStepLemma`. The sub-lemma
-chain (S1)-(S4) above is the recommended attack:
-
-  1. (S1) `allMatches r H` count = distinctEdgeCount H for single-edge
-     LHS rules. Proof unfolds `allMatches`, `bindingMatches`,
-     `allFunctions`. Bounded combinatorial work.
-  2. (S2)-(S4): rule-specific produced edges + fresh offsets +
-     consume-and-produce arithmetic.
-
-Estimated remaining: 1-2 sessions to close (S1)-(S4) and combine into
-BridgeStepLemma, then full H9 closure follows by `H9_closure_from_step`.
+Each is bounded structural Lean work. Composed, they prove
+`BridgeStepLemma` and therefore close H9 via `H9_closure_from_step`.
 -/
 
 end H9BridgeStepProof
