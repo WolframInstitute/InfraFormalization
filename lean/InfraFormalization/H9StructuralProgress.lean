@@ -67,7 +67,12 @@ theorem distinct_fork_dCyc_d4 :
 
 /-- **`distinct_identity_5_depths`**: distinct edge count = `3^d`
 at depths 0, 1, 2, 3, 4 for both persistent-equivalence members.
-Five-depth `native_decide` verification. -/
+Depth-4 `native_decide` verification (d=0..3 separately verified
+in DistinctEdgeIdentity.lean).
+
+Note: theorem name says '5_depths'; statement is the 2-conjunct at
+d=4. Depths 0..3 are in DistinctEdgeIdentity.lean and not re-bundled
+here. -/
 theorem distinct_identity_5_depths :
     distinctEdgeCount (singleWayEvolve edgeReversal_tripleMerger_Sys seedEdge12 4) = 3^4 ∧
     distinctEdgeCount (singleWayEvolve fork_doubleCycle_Sys seedEdge12 4) = 3^4 := by

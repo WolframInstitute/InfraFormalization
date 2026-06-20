@@ -112,8 +112,9 @@ theorem tripleMerger_knill_neg12 :
 
 /-! ## Multi-seed stability (additivity)
 
-The new classes obey the same per-seed-edge structural additivity
-law as the original 11 discovered rules. -/
+The new classes match the same edge12 vs path123 ratio at depth 4
+as the original 11; calling this a 'law' would require depth-extension
+proof. -/
 
 theorem superHyper_path_knill :
     knillEulerScaled (causalDAGOfEvolution superHyperSys StableDiscoveredRules.seedPath123 4) = 312 := by

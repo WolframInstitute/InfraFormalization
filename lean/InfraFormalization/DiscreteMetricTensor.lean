@@ -130,9 +130,11 @@ theorem eR_fork_lorentzian_at_3 :
 
 /-! ## Universal additivity for the metric tensor -/
 
-/-- **`discreteMetricTensor_universal_additivity`**: the discrete
-metric tensor scales linearly with `|seed|` — each component
-follows the universal additivity law. -/
+/-- **`discreteMetricTensor_universal_additivity`**: verified for
+eR+id at depth 3 on path123.
+
+Note: theorem name implies universality; statement is a single
+instance at d=3 for path123. -/
 theorem discreteMetricTensor_universal_additivity_eR_id_path :
     let baselineRB := discreteMetricTensor edgeReversal_identity_Sys 3
     knillEulerScaled (causalDAGOfEvolution edgeReversal_identity_Sys

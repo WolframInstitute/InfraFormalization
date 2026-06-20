@@ -30,8 +30,9 @@ distinct-edge trajectories produce identical branchial DAGs.
     distinct edges triple per depth-step, giving log₂(3) scaling
     exponent characteristic of self-similar fractal growth.
   * Shows the persistent B-equivalence is **structural**, not
-    coincidental: the two systems produce isomorphic distinct-edge
-    graphs at every depth.
+    coincidental: Verified at d ∈ {0, 1, 2, 3} (extended to d=4
+    in H9StructuralProgress): the two systems produce isomorphic
+    distinct-edge graphs at the probed depths.
 
 **Towards H9 closure**: the next step (#492) is a structural
 induction proving `distinct(singleWayStep sys H) = 3·distinct H`
@@ -151,9 +152,11 @@ persistent B-equivalence:
   * Identical distinct-edge trajectories ⇒ identical event counts
     ⇒ identical branchial structure ⇒ identical Knill values.
 
-The `distinct(d+1) = 3·distinct(d)` law is also the structural reason
-for the **Sierpiński Hausdorff dimension log₂(3)** appearing as the
-H9 continuum-limit scaling exponent.
+The conjectured recurrence `distinct(d+1) = 3·distinct(d)` (verified
+at d=0..4; symbolic step-induction is the open BridgeStepLemma in
+H9Bridge.lean) is also the structural reason for the **Sierpiński
+Hausdorff dimension log₂(3)** appearing as the H9 continuum-limit
+scaling exponent.
 
 **Connection to H9 (#492)**: combining this identity with a
 structural-induction proof that the step always triples distinct

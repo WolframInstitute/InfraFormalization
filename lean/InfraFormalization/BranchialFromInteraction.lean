@@ -6,7 +6,8 @@ The single-vs-multi-rule branchial dichotomy (#459) showed that
 single-rule systems have zero branchial Knill while multi-rule
 systems produce non-zero values. This module **strengthens that
 finding** by showing it holds across a wider single-rule corpus,
-making the dichotomy a robust structural law.
+extending the finite single-rule verification to additional named
+single-rule systems.
 
 **Headline result** (all `native_decide`-certified):
 
@@ -30,10 +31,9 @@ Knill:
   | edgeReversal + fork         |       66        |
   | edgeReversal + tripleMerger |       78        |
 
-**Conclusion**: branchial Knill is **exclusively from rule
-interaction**. No individual rule produces branchial structure;
-it emerges only when multiple rules compete for the same
-consumed-edge slots.
+**Headline summary**: Across the 5 single-rule systems verified at
+d=3 on edge12, branchial K = 0; the 3 multi-rule combos give
+non-zero.
 
 **Why this matters** (deepens the discrete-QM analogy):
 
@@ -93,7 +93,10 @@ theorem tripleMerger_branchial_0 :
 
 /-- **`all_single_rules_branchial_zero`**: ALL probed single-rule
 systems have zero branchial Knill at depth 3. Strengthens
-`branchial_single_rule_zero` from #459 to a 5-rule corpus. -/
+`branchial_single_rule_zero` from #459 to a 5-rule corpus.
+
+Note: name says "all"; statement is a 5-conjunct over named
+single-rule systems at d=3. -/
 theorem all_single_rules_branchial_zero :
     knillEulerScaled (branchialDAGOfEvolution edgeReversalSys seedEdge12 3) = 0 ∧
     knillEulerScaled (branchialDAGOfEvolution identityKeepSys seedEdge12 3) = 0 ∧
@@ -134,7 +137,7 @@ quantum amplitudes.
 
   `S(rule, seed, d, α) = |seed| · (R + α · B)`
 
-For single-rule systems, `B = 0`, so the action reduces to
+For the 5 single-rule systems verified at d=3, `B = 0`, so the action reduces to
 classical `|seed| · R`. For multi-rule systems, `B ≠ 0` activates
 the quantum-amplitude contribution. This is the discrete analog
 of how the QG action requires multi-particle states to manifest

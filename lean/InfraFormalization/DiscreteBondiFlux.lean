@@ -18,10 +18,9 @@ information emission, and the per-step count is the analog of dE/dt.
   * `edgeReversal + forkRule_2` (geometric ~×3.5):
     14, 42, 98, 238, 574 on BBH — fastest event-rate growth.
 
-**Per-edge additivity confirmed at the event-count level**: every
-BBH count is exactly 7× the corresponding `edge12` single-edge
-baseline. The structural invariant from #438 extends from cumulative
-Knill to per-step event counts.
+**Per-edge additivity verified at the event-count level** for
+{edgeReversal, doubleCycle_5, edgeReversal+tripleMerger} at the
+listed depths.
 
 **Why this matters** (toward H8): in numerical-relativity, the Ψ₄
 extraction at finite radius gives a complex amplitude whose modulus
@@ -113,8 +112,8 @@ theorem edgeReversal_tripleMerger_edge12_flux :
 /-! ## Per-edge additivity theorem at the event-count level -/
 
 /-- **`bbh_flux_equals_7x_baseline`**: BBH per-step event counts are
-exactly 7× the corresponding `edge12` baseline. Per-edge additivity
-extends from cumulative Knill to instantaneous flux. -/
+exactly 7× the corresponding `edge12` baseline, verified at the 3
+specific (rule, depth) cases below. -/
 theorem bbh_flux_equals_7x_baseline :
     perStepEventCount edgeReversalSys bbhInitial 6 =
       (perStepEventCount edgeReversalSys seedEdge12 6).map (· * 7) ∧

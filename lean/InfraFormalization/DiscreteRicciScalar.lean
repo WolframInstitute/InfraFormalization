@@ -32,7 +32,8 @@ seed topology.
   | forkSys_2          |   4   |     18         | branching       |
   | tripleMergerSys    |   4   |    -12         | strong merger   |
 
-**Key result** (`universal_additivity_via_discreteRicciScalar`):
+**Conjecture** (verified for `doubleCycle_5` at depth 4 on three
+specific seeds via `einsteinHilbert_equals_knill_doubleCycle5`):
 
   `Knill(rule, seed, depth) = |seed| · discreteRicciScalar(rule, depth)`
 
@@ -67,9 +68,9 @@ open UniversalAdditivity
 /-! ## The discrete Ricci scalar definition -/
 
 /-- **`discreteRicciScalar`**: the discrete Ricci scalar of a rule
-at depth `d`. Defined as the causal-DAG Knill on the single-edge
-seed `edge12`. By universal additivity, this is the per-edge
-curvature density independent of seed topology. -/
+at depth `d`. Defined as the causal-DAG Knill on edge12; if per-edge
+additivity holds (verified at specific instances), this is the
+per-edge density. -/
 def discreteRicciScalar (sys : ExecSystem) (d : Nat) : Int :=
   knillEulerScaled (causalDAGOfEvolution sys seedEdge12 d)
 

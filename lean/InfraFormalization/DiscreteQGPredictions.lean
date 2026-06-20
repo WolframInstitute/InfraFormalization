@@ -6,13 +6,16 @@ This module **bundles the framework's discrete-physics predictions**
 for downstream physics analysis. With Phase-D substrate complete,
 the framework makes the following concrete, falsifiable predictions:
 
-**Prediction 1**: per-edge curvature density universality.
+**Prediction 1 (conjectural)**: per-edge curvature density
+universality. Verified at depth 3 for (eR+id, path123); claim 'for
+any rule, seed, and depth' is a conjecture extrapolated from finite
+checks.
 
   `Knill(rule, seed, d) = |seed| · R(rule, d)`
   `Branchial K(rule, seed, d) = |seed| · B(rule, d)`
 
-  for any rule, seed, and depth. The per-edge density is
-  topology-independent (#454, #462).
+  The per-edge density is topology-independent in the verified
+  instances (#454, #462).
 
 **Prediction 2**: dual-side independence.
 
@@ -21,7 +24,8 @@ the framework makes the following concrete, falsifiable predictions:
 
 **Prediction 3**: vacuum-like regime structural law.
 
-  `R(fork + dCyc, d) = 0` for d ≥ 3 (persistent R-degeneracy).
+  `R(fork + dCyc, d) = 0` verified at d ∈ {3,4} (per native_decide
+  cases); persistence at d ≥ 5 is conjectural.
   B continues to grow.
 
 **Prediction 4**: persistent B equivalence between two combos.

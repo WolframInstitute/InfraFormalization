@@ -88,7 +88,10 @@ theorem density_doubleCycle_5_bbh :
 
 /-- **`density_doubleCycle_5_universal`**: the per-edge curvature
 density `Knill(seed) / |seed|` for `doubleCycle_5` at depth 4 is
-constant `= -6` across all probed seed topologies.
+constant `= -6` at depth 4 across the 4 probed seed topologies.
+
+Note: name says 'universal'; statement is a finite conjunction over
+seeds ∈ {edge12, path123, triangle, bbhInitial} at depth 4.
 
 This is the per-edge curvature density value for the merger
 rule. It captures the "elementary merger rate" in discrete-physics
@@ -120,8 +123,10 @@ theorem density_bidirected_triangle :
   native_decide
 
 /-- **`density_bidirected_universal`**: per-edge curvature density
-for the bidirected-class rule is constant `= 126` across seed
-topologies. -/
+verified at depth 4 for seeds ∈ {edge12, triangle}.
+
+Note: theorem name says 'universal'; statement is a finite
+conjunction over 2 seed topologies at depth 4. -/
 theorem density_bidirected_universal :
     knillEulerScaled (causalDAGOfEvolution bidirectedEdgeSys seedEdge12 4) /
       (Int.ofNat seedEdge12.length) = 126 ∧

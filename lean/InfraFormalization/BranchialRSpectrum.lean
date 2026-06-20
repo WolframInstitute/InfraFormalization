@@ -26,8 +26,8 @@ curvature side of the framework. This module establishes the
 
 **Discrete-QM interpretation**:
 
-  * Single-rule systems have no branchial contention — each evolution
-    step is deterministic, no parallel branches.
+  * Among the 2 single-rule systems verified at d=3 on edge12,
+    branchial K = 0; no general single-rule theorem proved.
   * Multi-rule systems create competing match-applications at the
     same step. The branchial Knill counts these contentions.
   * In the discrete-QM analog: branchial structure = quantum
@@ -94,15 +94,21 @@ theorem eR_tripleMerger_branchial_78 :
 
 /-! ## The single-vs-multi-rule branchial dichotomy -/
 
-/-- **`branchial_single_rule_zero`**: single-rule systems have zero
-branchial Knill — they are "classical" in the discrete-QM sense. -/
+/-- **`branchial_single_rule_zero`**: edgeReversalSys and identityKeepSys
+have zero branchial Knill at d=3 on edge12.
+
+Note: name suggests universality across single-rule systems; statement
+is a 2-conjunct over named witnesses at d=3. -/
 theorem branchial_single_rule_zero :
     knillEulerScaled (branchialDAGOfEvolution edgeReversalSys seedEdge12 3) = 0 ∧
     knillEulerScaled (branchialDAGOfEvolution identityKeepSys seedEdge12 3) = 0 :=
   ⟨edgeReversal_branchial_0, identityKeep_branchial_0⟩
 
-/-- **`branchial_multi_rule_nonzero`**: multi-rule systems have
-non-zero branchial Knill — they support discrete-QM superposition. -/
+/-- **`branchial_multi_rule_nonzero`**: three specific multi-rule combos
+have non-zero branchial Knill at d=3.
+
+Note: name suggests universality across multi-rule systems; statement
+is a 3-conjunct over named witnesses at d=3. -/
 theorem branchial_multi_rule_nonzero :
     knillEulerScaled (branchialDAGOfEvolution edgeReversal_identity_Sys seedEdge12 3) = 30 ∧
     knillEulerScaled (branchialDAGOfEvolution edgeReversal_fork_Sys seedEdge12 3) = 66 ∧

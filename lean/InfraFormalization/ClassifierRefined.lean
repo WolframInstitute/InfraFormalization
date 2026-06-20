@@ -7,9 +7,9 @@ incorrectly at maxRHS=4 for self-edge rules. This module establishes
 **two new empirical structural laws** about the RHS-structure-Knill
 relationship via direct `native_decide`-certified probes:
 
-  1. **Tree distinct-count law**: for Tree-class rules (RHS contains
-     `{0,1}` but no `{1,0}`), the Knill at depth 4 on `edge12` is
-     determined by `# distinct RHS edges`, NOT by total RHS length.
+  1. **Tree distinct-count law**: across the 3 witnesses
+     {treeDistinct2A, treeDistinct2B, treeDistinct3C} at d=4 on
+     edge12, Knill matches the distinct-edge prediction.
 
        Examples (all certified):
        * RHS = [{0,1}, {0,1}, {0,2}] (2 distinct) → Knill 18 = Tree(2)
@@ -18,8 +18,8 @@ relationship via direct `native_decide`-certified probes:
 
   2. **Merger pure-duplicate saturation law**: for Merger-class
      rules where ALL RHS edges are the same reverse edge `{1,0}`,
-     the Knill at depth 4 on `edge12` **saturates at -18** for any
-     RHS length ≥ 2.
+     the Knill at depth 4 on `edge12` **saturates at -18** for RHS
+     length ∈ {2, 3, 4} (depth 4 on edge12).
 
        Examples (all certified):
        * RHS = [{1,0}, {1,0}]    (length 2) → Knill -18
@@ -102,8 +102,8 @@ theorem treeDistinct3C_knill_24 :
 
 /-- **`tree_distinct_count_law`**: for the certified Tree-class
 witnesses, the Knill at depth 4 is determined by `# distinct RHS
-edges`, NOT total RHS length. Two length-4 rules with the same
-distinct-count give the same Knill. -/
+edges`, NOT total RHS length. Two specific length-4 witnesses give
+equal Knill at d=4 on edge12. -/
 theorem tree_distinct_count_law :
     knillEulerScaled (causalDAGOfEvolution treeDistinct2A_sys seedEdge12 4) =
       knillEulerScaled (causalDAGOfEvolution treeDistinct2B_sys seedEdge12 4) ∧
@@ -136,9 +136,9 @@ theorem mergerSaturate3_knill_neg18 :
     knillEulerScaled (causalDAGOfEvolution mergerSaturate3_sys seedEdge12 4) = -18 := by
   native_decide
 
-/-- **`merger_pure_duplicate_saturation`**: for pure-duplicate reverse
-RHS rules with length ≥ 2, the Knill at depth 4 on `edge12`
-saturates at -18 regardless of RHS length.
+/-- **`merger_pure_duplicate_saturation`**: verified at RHS lengths
+2, 3, 4 at depth 4 on `edge12`; saturation conjecture for length ≥ 2
+not proven.
 
 (quadrupleMergerRule from #449 also gives -18 — see ClassifierMaxRHS4
 for that witness.) -/

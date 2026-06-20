@@ -5,8 +5,10 @@ The 2D open grid `gridHG m n` (a flat rectangular lattice with
 **open boundary**, no torus wrap) is the natural 2D analog of the
 path lattice (#422). Whereas the path → `[0, 1]` interval gives a
 mixed multi-target convergence (3 scalars to non-zero targets + 1
-divergence), the **open 2D grid → closed disk `D²` shows total
-non-convergence**: all four scalars diverge unboundedly with size.
+divergence), the **open 2D grid → closed disk `D²`**: all four
+scalars verified non-zero and monotonically increasing in magnitude
+at sample sizes n ∈ {3, 4, 5, 6}; unbounded divergence as n → ∞ is
+informal extrapolation.
 
 This is the parallel-to-T² (#421) audit for the open-boundary case.
 The asymptotic per-vertex / per-edge values are non-zero constants
@@ -20,9 +22,9 @@ total elements, giving unbounded sequences.
   * SquareCount(grid m n) ≠ 0 at sample sizes, sequence strictly increasing.
   * DegVariance(grid m n) ≠ 0 at sample sizes, sequence strictly increasing.
 
-All four diverge ⇒ none of the four scalars in the codebase recover
-the smooth Riemannian curvature of `D²` (flat target Ric = 0) under
-the naive unweighted formula.
+All four are non-zero at the sampled sizes ⇒ at the sampled sizes
+the four unweighted scalars do not match the flat target Ric = 0
+of `D²`; asymptotic divergence not proved.
 
 **Scope statement**: this is the **second non-convergence audit**
 (after T²). Together they delineate the architecture's limits — the
@@ -175,7 +177,11 @@ fails to converge under EVERY scalar in the architecture. -/
 /-- **`unweighted_scalars_fail_on_2d_grid`**: certifies that ALL FOUR
 unweighted curvature scalars (Forman, Higuchi, SquareCount,
 DegVariance) on the 2D open grid `gridHG n n` are non-zero at sample
-sizes — none of them recovers the vacuum target 0 of `D²`. -/
+sizes — none of them recovers the vacuum target 0 of `D²`.
+
+Note: theorem name claims a general failure; statement is verified
+at a single sample (`gridHG 4 4`). 'None of them recovers the vacuum
+target 0 of D²' is an extrapolation from this finite check. -/
 theorem unweighted_scalars_fail_on_2d_grid :
     execFormanScalar (gridHG 4 4) ≠ 0 ∧
     higuchiTotalDoubled (gridHG 4 4) ≠ 0 ∧
@@ -196,9 +202,11 @@ is the following:
 | Topology               | Forman   | Higuchi  | SquareCount | DegVariance |
 |------------------------|----------|----------|-------------|-------------|
 | `cycle C_n` (→ `S¹`)    | 0        | 0        | 0           | 0           |
-| `path P_n` (→ `[0,1]`)  | **4**    | **2**    | 0           | diverges    |
-| `torus T²_n` (→ `T²`)   | diverges | diverges | diverges    | diverges    |
-| `grid G_{n×n}` (→ `D²`) | diverges | diverges | diverges    | diverges    |
+| `path P_n` (→ `[0,1]`)  | **4**    | **2**    | 0           | non-zero & growing at sampled n |
+| `torus T²_n` (→ `T²`)   | non-zero & growing at sampled n | non-zero & growing at sampled n | non-zero & growing at sampled n | non-zero & growing at sampled n |
+| `grid G_{n×n}` (→ `D²`) | non-zero & growing at sampled n | non-zero & growing at sampled n | non-zero & growing at sampled n | non-zero & growing at sampled n |
+
+(at sampled n; asymptotic shape not proved)
 
 **Convergent**: cycle (4 trivial), path (3 boundary signals).
 
@@ -211,7 +219,9 @@ original, where each edge `e` carries weight `w_e` set to the edge
 length in a metrized embedding) or distinct curvature notions
 (Christiansen 2024 / effective resistance / Regge deficit) are the
 literature-grade routes for the 2D case. The codebase **certifies
-in Lean** that the unweighted approach hits its limit at 2D.
+in Lean** that all four unweighted scalars are non-zero at grid
+sample sizes 3×3..6×6; the 'hits its limit at 2D' framing is
+interpretive.
 -/
 
 end GridContinuumLimit

@@ -18,8 +18,7 @@ the **causal-DAG** Knill. This module establishes that the
 
   `branchial_K(rule, seed, depth) = |seed| · branchial_K(rule, edge12, depth)`
 
-holds **independent of seed topology** — for paths, triangles,
-disjoint configurations.
+verified at d=3 for seeds edge12 / path123 / triangle / disjoint.
 
 **Why this is significant**:
 
@@ -87,12 +86,15 @@ theorem branchial_eR_id_triangle :
 /-! ## Universal additivity on the branchial side -/
 
 /-- **`branchial_universal_additivity_eR_id`**: branchial Knill for
-the combo `edgeReversal + identityKeep` at depth 3 follows the
-universal per-edge additivity law:
+the combo `edgeReversal + identityKeep` at depth 3 satisfies the
+per-edge additivity identity at d=3 across {edge12, path123, triangle}:
 
   `branchial_K(combo, seed, 3) = |seed| · 30`
 
-across 3 seed topologies. -/
+across 3 seed topologies.
+
+Note: name suggests universality; statement is a finite conjunction
+at d=3 across seeds {edge12, path123, triangle}. -/
 theorem branchial_universal_additivity_eR_id :
     -- Baseline:
     knillEulerScaled (branchialDAGOfEvolution edgeReversal_identity_Sys seedEdge12 3) = 30 ∧
@@ -112,8 +114,11 @@ theorem branchial_eR_fork_path :
   native_decide
 
 /-- **`branchial_universal_additivity_eR_fork`**: branchial Knill for
-`edgeReversal + forkRule_2` at depth 3 ALSO follows the universal
-per-edge additivity law: 66 (1 edge), 132 (2 edges, path). -/
+`edgeReversal + forkRule_2` at depth 3 ALSO satisfies the per-edge
+additivity identity at d=3 for path123: 66 (1 edge), 132 (2 edges, path).
+
+Note: name suggests universality; statement is a finite conjunction
+at d=3 across seeds {edge12, path123}. -/
 theorem branchial_universal_additivity_eR_fork :
     knillEulerScaled (branchialDAGOfEvolution edgeReversal_fork_Sys seedEdge12 3) = 66 ∧
     knillEulerScaled (branchialDAGOfEvolution edgeReversal_fork_Sys seedPath123 3) = 2 * 66 := by
@@ -169,7 +174,7 @@ theorem unified_EH_at_alpha_1 :
 
 **Why this matters** (capstone-grade dual-side framework):
 
-The framework now has **DUAL universal-additivity laws**:
+The framework now has **DUAL per-edge additivity identities verified at d=3 on the corpus seeds**:
 
   * Causal side (#454): `Knill_causal(seed) = |seed| · R(rule, d)`.
   * Branchial side (this module): `Knill_branchial(seed) = |seed| · B(rule, d)`.

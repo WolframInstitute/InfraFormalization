@@ -107,7 +107,7 @@ theorem branchial_depth_trajectory :
    eR_fork_branchial_d2, eR_fork_branchial_66, eR_fork_branchial_d4⟩
 
 /-- **`arithmetic_branchial_regime`**: `eR + identityKeep` shows
-**arithmetic branchial growth** with constant `Δ=12` per depth step. -/
+Δ=12 verified at the steps d=2→3 and d=3→4. -/
 theorem arithmetic_branchial_regime :
     knillEulerScaled (branchialDAGOfEvolution edgeReversal_identity_Sys seedEdge12 3) -
       knillEulerScaled (branchialDAGOfEvolution edgeReversal_identity_Sys seedEdge12 2) = 12 ∧
@@ -119,8 +119,8 @@ theorem arithmetic_branchial_regime :
 
 /-- **`geometric_branchial_regime`**: `eR + forkRule_2` shows
 **super-arithmetic branchial growth**: depth-3 to depth-4 difference
-(102) exceeds depth-2 to depth-3 difference (42). The branchial
-structure accelerates with depth. -/
+(102) exceeds depth-2 to depth-3 difference (42). Between d=2→3 and
+d=3→4, the difference grows from 42 to 102. -/
 theorem geometric_branchial_regime :
     knillEulerScaled (branchialDAGOfEvolution edgeReversal_fork_Sys seedEdge12 4) -
       knillEulerScaled (branchialDAGOfEvolution edgeReversal_fork_Sys seedEdge12 3) >

@@ -31,11 +31,10 @@ causal side (event-causation pattern), not the spatial side
 demonstration** that Knill works correctly on causal DAGs — opening
 the causal-side curvature analysis the BBH endgame needs.
 
-**The chain-of-events Knill theorem**: for any singleWayEvolve
-trajectory of length `n ≥ 2`, the deterministic causal DAG is a
-chain of `n − 1` edges, with Knill = 6 = 6·χ(interval). This is the
-sanity baseline; all subsequent causal-topology analysis builds from
-it.
+**The chain-of-events Knill theorem**: for `causalChain n` at
+n ∈ {3,5,8,16}, Knill = 6; the corresponding general statement is
+conjectured but not proved. This is the sanity baseline; all
+subsequent causal-topology analysis builds from it.
 
 **Architecturally**: this module uses `ExecHG ℕ` to encode causal
 DAGs directly (each event is a vertex, each causal edge is an
@@ -159,11 +158,11 @@ theorem causal_dag_knill_classification :
 
 The deterministic causal DAG of any `singleWayEvolve` trajectory of
 length `n` is a chain `0 → 1 → … → (n − 1)`. Knill on this chain
-equals 6 = `6·χ(interval)`, regardless of `n`. -/
+equals 6 = `6·χ(interval)`, verified at n ∈ {3,5,8,16}. -/
 
 /-- **`singleway_evolution_causal_dag_knill`**: the causal DAG of a
-deterministic single-way evolution has Knill = 6 for any length
-n ≥ 2 (chain topology, χ = 1). -/
+deterministic single-way evolution has Knill = 6, verified at
+n ∈ {3,5,8,16}. -/
 theorem singleway_evolution_causal_dag_knill :
     knillEulerScaled (causalChain 3) = 6 ∧
     knillEulerScaled (causalChain 5) = 6 ∧
@@ -191,8 +190,8 @@ multi-way merger** — a structural physics observable. -/
 theorem diamond_is_one_hole : knillEulerScaled causalDiamond = 0 := by
   native_decide
 
-/-- **`triple_diamond_is_two_holes`**: cascaded multi-way mergers
-add holes additively. Knill = -6 = -1 · 6 = 6·(-1) = 6·χ(2 holes). -/
+/-- **`triple_diamond_is_two_holes`**: Knill = -6 = -1 · 6 = 6·(-1) =
+6·χ(2 holes). -/
 theorem triple_diamond_is_two_holes :
     knillEulerScaled causalTripleDiamond = -6 := by native_decide
 
