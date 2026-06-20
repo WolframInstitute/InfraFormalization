@@ -200,6 +200,7 @@ import InfraFormalization.DistinctEdgeAPI
 import InfraFormalization.H9Bridge
 import InfraFormalization.H9BridgeStepProof
 import InfraFormalization.PerEdgeAdditivityFramework
+import InfraFormalization.EdgeCausallyDisjointBridge
 import InfraFormalization.DiscreteQGPredictions
 import InfraFormalization.DiscreteQuantumGravity
 import InfraFormalization.BBHDeepEvolution
