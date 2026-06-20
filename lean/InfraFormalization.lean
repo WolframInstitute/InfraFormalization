@@ -196,6 +196,7 @@ import InfraFormalization.RClosedForm
 import InfraFormalization.DistinctEdgeIdentity
 import InfraFormalization.H9StructuralProgress
 import InfraFormalization.H9Closure
+import InfraFormalization.DistinctEdgeAPI
 import InfraFormalization.DiscreteQGPredictions
 import InfraFormalization.DiscreteQuantumGravity
 import InfraFormalization.BBHDeepEvolution
