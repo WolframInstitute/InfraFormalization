@@ -198,6 +198,22 @@ theorem bridge_at_4 :
       (triadList 4).length := by
   refine ⟨?_, ?_⟩ <;> (rw [triadList_length]; native_decide)
 
+/-- The bridge holds at depth 5. -/
+theorem bridge_at_5 :
+    distinctEdgeCount (singleWayEvolve edgeReversal_tripleMerger_Sys seedEdge12 5) =
+      (triadList 5).length ∧
+    distinctEdgeCount (singleWayEvolve fork_doubleCycle_Sys seedEdge12 5) =
+      (triadList 5).length := by
+  refine ⟨?_, ?_⟩ <;> (rw [triadList_length]; native_decide)
+
+/-- The bridge holds at depth 6. -/
+theorem bridge_at_6 :
+    distinctEdgeCount (singleWayEvolve edgeReversal_tripleMerger_Sys seedEdge12 6) =
+      (triadList 6).length ∧
+    distinctEdgeCount (singleWayEvolve fork_doubleCycle_Sys seedEdge12 6) =
+      (triadList 6).length := by
+  refine ⟨?_, ?_⟩ <;> (rw [triadList_length]; native_decide)
+
 /-! ## What this delivers — H9 status
 
 **Half-closed**: the combinatorial backbone of H9 is now proved
