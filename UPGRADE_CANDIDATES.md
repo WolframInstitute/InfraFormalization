@@ -120,9 +120,30 @@ The `· 6` scaling factor in `knillEulerScaled` then gives `6·χ`.
 
 ## Status
 
-- **#495** (in progress): per-edge additivity — START HERE.
-- **#496** (pending): Knill = 6·χ.
+- **#495** (in progress): per-edge additivity. K1 + K2 closed
+  (`K1_proved`, `K2_proved` in `PerEdgeAdditivityFramework.lean`).
+  BBH-disjointness reframed to **EdgeCausallyDisjoint** (BBH is NOT
+  vertex-disjoint; correct property is edge-causal disjointness of
+  the causal sub-DAGs, empirically verified at d=2 via
+  `probe_bbh_causal_decomp.lean`). Remaining work decomposed below.
+- **#496** (in progress): Knill = 6·χ.
 - **#497** (pending): path/cycle/torus closed forms.
 
+### #495 decomposition (sub-tasks)
+
+- **#498 (#495a)** — Fresh-vertex partition lemma for single-edge-LHS
+  rules. Direct from singleWayStep's offset accumulator.
+- **#499 (#495b)** — Partition closure under singleWayStep (events
+  stay in their step-0-rooted partition). Multi-session.
+- **#500 (#495c)** — Step-0 ancestor function: existence + uniqueness
+  (R1 of EdgeCausallyDisjoint).
+- **#501 (#495d)** — Causal sub-DAGs vertex-disjoint in the causal
+  DAG (R2 of EdgeCausallyDisjoint).
+- **#502 (#495e)** — Compose K1 + K2 to per-edge Knill additivity
+  (closes `EdgeCausalDisjoint_implies_knill_additive`).
+- **#503 (#495f)** — BBH instance: bbhInitial satisfies
+  EdgeCausallyDisjoint (closes BBH 7× theorem universally in d).
+
 Updated after task #494's audit-and-scrub of native_decide overreach
-(commits `7f8f1b8`, `a6674b5`, `454d8cd`).
+(commits `7f8f1b8`, `a6674b5`, `454d8cd`) and #495 K1+K2 closure
+(commit `89795ca`) and BBH framing correction (commit `0b5f437`).
