@@ -204,6 +204,7 @@ import InfraFormalization.PerEdgeAdditivityFramework
 import InfraFormalization.FreshVertexPartition
 import InfraFormalization.EdgeCausallyDisjointBridge
 import InfraFormalization.StepZeroAncestor
+import InfraFormalization.PartitionClosure
 import InfraFormalization.DiscreteQGPredictions
 import InfraFormalization.DiscreteQuantumGravity
 import InfraFormalization.BBHDeepEvolution
