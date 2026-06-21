@@ -145,6 +145,7 @@ import InfraFormalization.KnillDiscreteGaussBonnet
 import InfraFormalization.KnillHigherGenus
 import InfraFormalization.KnillRuleBridge
 import InfraFormalization.KnillThreeManifold
+import InfraFormalization.KnillEulerCharIdentity
 import InfraFormalization.RulePreservationClassification
 import InfraFormalization.CausalDAGKnill
 import InfraFormalization.KnillTopologyBenchmark
