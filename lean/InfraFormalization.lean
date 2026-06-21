@@ -203,6 +203,7 @@ import InfraFormalization.H9BridgeStepProof
 import InfraFormalization.PerEdgeAdditivityFramework
 import InfraFormalization.FreshVertexPartition
 import InfraFormalization.EdgeCausallyDisjointBridge
+import InfraFormalization.StepZeroAncestor
 import InfraFormalization.DiscreteQGPredictions
 import InfraFormalization.DiscreteQuantumGravity
 import InfraFormalization.BBHDeepEvolution
