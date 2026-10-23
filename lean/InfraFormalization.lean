@@ -40,6 +40,7 @@ import InfraFormalization.MultiwayExecTests
 import InfraFormalization.MultiwayExecBridge
 import InfraFormalization.Causal
 import InfraFormalization.CausalLevel
+import InfraFormalization.CausalHistory
 import InfraFormalization.Branchial
 import InfraFormalization.ParallelSchedule
 import InfraFormalization.Demo
