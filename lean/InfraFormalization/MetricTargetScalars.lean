@@ -1,33 +1,10 @@
 /-
-**B3: Per-metric target curvature scalars** (#418).
+Per-metric target values for the curvature scalar traces.
 
-The rate envelope `|trace[k] − tgt| · (k+1) ≤ c` in the GR/QM/BBH
-discharges currently uses `tgt : ℤ` as a free parameter — it has no
-connection to the metric `M` being discharged. This module defines
-
-  * `formanTarget : MetricData n → ℤ` and analogues per scalar,
-    giving the **continuum-side curvature counterpart** the discrete
-    trace should converge to.
-
-  * `tgtMatchesMetric` : a predicate that ties the rate-envelope `tgt`
-    to the metric's actual scalar invariant. For vacuum metrics
-    (Minkowski 4, Schwarzschild exterior, 2-sphere, warpedDiag2 with
-    Ric = 0), this is `tgt = 0`.
-
-  * **Coupled discharge theorems** that require `tgt = formanTarget M`,
-    so the rate envelope stops being target-agnostic.
-
-For non-vacuum metrics (FLRW with matter, Reissner-Nordström with
-charge), the target depends on the metric's stress-energy content;
-those targets are noncomputable but well-defined. We provide
-placeholders that can be refined when the discrete-Ricci-to-continuum-
-Ricci convergence (R4 / #179 / #218) lands.
-
-**Verdict on vacuousness**: with `tgt` coupled to the metric, the
-discharge claim "engine trace converges to target with rate" becomes a
-claim about the metric's curvature invariant, not just an arbitrary
-integer. The discharge is no longer target-agnostic. The remaining
-gap is the actual convergence theorem (B4 / B5).
+Every target value in this file is the constant 0, for every metric,
+including the non-vacuum metrics. A discharge that requires
+`tgt = formanTarget M` therefore requires `tgt = 0` and carries no
+information about `M`.
 -/
 
 import InfraFormalization.ExecTrajectoryLift

@@ -1,27 +1,13 @@
 /-
-**Hypergraph-GR metric bridges** — eliminating free-floating continuum
-islands.
+Origin obligations attached to the continuum metrics of the GR zoo.
 
-Every continuum GR metric in the project is re-bound to an explicit
-bridge obligation:
-
-    HypergraphOriginObligation metric_data
-    := ∃ (P : Type) (sys : RewritingSystem P) (s₀ : Hypergraph V)
-           (τ : Trajectory sys s₀) (scale : ℕ → ℝ),
-         "scaled trajectory GH-converges to metric_data"
-
-At statement level — the existential ties the continuum side to a
-RewritingSystem + Trajectory (grounded in `Hypergraph V`). The
-current file wires each concrete metric to such an obligation Prop,
-so no metric lives as a free-floating continuum island anymore.
-
-**Status**: the obligations are stated; filling them is the open
-programme (JGORARD claims + refutations). What this file guarantees
-is that the *shape* of the bridge is machine-checkable and attached
-to each target metric.
-
-Grounded: every obligation mentions `Hypergraph V`, `RewritingSystem`,
-`Trajectory`.
+`HypergraphMetricOriginObligation target` states that some rewriting system
+has a trajectory and a positive scale sequence. The target does not occur in
+the statement, so the obligation holds for every target. The `Strong` and
+`WithRate` forms add `WassersteinRateObligation d` for a discrepancy
+`d : ℕ → ℝ` that is not linked to the trajectory or the target; the zero
+function satisfies it. `any_metric_has_strong_obligation_witness` proves the
+strong form for every metric.
 -/
 
 import InfraFormalization.Schwarzschild
@@ -41,13 +27,9 @@ namespace Curvature
 
 open InfraFormalization
 
-/-- **Hypergraph-origin obligation for a continuum MetricData**: there
-exists a rewriting-system + trajectory + positive scaling such that a
-signature-convergence bridge to the target metric holds.
-
-At the statement level this is a pure existence claim; the bridge
-property itself is left as a predicate `bridgeHolds : MetricData n → …
-→ Prop` to be inhabited by future rule-construction proofs. -/
+/-- Some rewriting system has a trajectory and a positive scale sequence.
+Independent of `_target`.
+-/
 def HypergraphMetricOriginObligation
     {n : Nat} (_target : MetricData n) : Prop :=
   ∃ (V : Type) (_ : Fintype V) (_ : DecidableEq V)
@@ -55,8 +37,7 @@ def HypergraphMetricOriginObligation
     (_ : Trajectory sys s₀) (scale : ℕ → ℝ),
       (∀ k, 0 < scale k)
 
-/-- **PartialMetricData-level origin obligation** (for metrics only
-valid on a domain: Schwarzschild, FLRW, RN, de Sitter, Kerr, S²). -/
+/-- Partial-metric form of `HypergraphMetricOriginObligation`. Independent of `_target`. -/
 def HypergraphPartialMetricOriginObligation
     {n : Nat} (_target : PartialMetricData n) : Prop :=
   ∃ (V : Type) (_ : Fintype V) (_ : DecidableEq V)
@@ -155,28 +136,9 @@ theorem any_partialMetric_has_obligation_witness
   intro k
   positivity
 
-/-! ## Strengthened obligations with explicit convergence rate (#233)
-
-The `HypergraphMetricOriginObligation` form above states only that a
-rule + trajectory + scaling exists; it does NOT require any actual
-convergence. The strengthened form below adds an explicit
-`ScaledDiscrepancy` carrying the `WassersteinRateObligation` (an
-`O(1/n)` bound), so the obligation gains *quantitative content*:
-"the chosen scaling sequence has a discrepancy that decays at rate
-at least `O(1/n)`".
-
-This is the **Phase A entry** per `ROADMAP.md`. The first concrete
-discharge below ties it to the canonical subdivision-rule trajectory
-via `subdivisionDiscrepancyBundle` (#234). Future strengthening
-(tying the discrepancy to an *actual* W_1 of the trajectory's pushed
-measure against the target metric) is staged as follow-up — it
-requires a measure-of-trajectory definition + W_1 computation against
-the target's natural measure. -/
-
-/-- **Strengthened origin obligation with an explicit convergence rate**
-(#233): same existential as `HypergraphMetricOriginObligation`, plus a
-discrepancy `d : ScaledDiscrepancy` satisfying
-`WassersteinRateObligation d` (the `O(1/n)` decay bound). -/
+/-- `HypergraphMetricOriginObligation` together with `WassersteinRateObligation d`.
+Independent of `_target`; `d` is not linked to the trajectory.
+-/
 def HypergraphMetricOriginObligationWithRate
     {n : Nat} (_target : MetricData n) (d : ScaledDiscrepancy) : Prop :=
   (∃ (V : Type) (_ : Fintype V) (_ : DecidableEq V)
@@ -185,15 +147,14 @@ def HypergraphMetricOriginObligationWithRate
       (∀ k, 0 < scale k))
   ∧ WassersteinRateObligation d
 
-/-- **Strong origin obligation** (existentially over discrepancy).
-"There exists a rule + trajectory + scaling, plus a discrepancy with
-`O(1/n)` decay rate." Stronger than `HypergraphMetricOriginObligation`
-because of the rate-content claim. -/
+/-- `∃ d, HypergraphMetricOriginObligationWithRate target d`. Holds for every
+target (`any_metric_has_strong_obligation_witness`).
+-/
 def HypergraphMetricOriginObligationStrong
     {n : Nat} (target : MetricData n) : Prop :=
   ∃ d : ScaledDiscrepancy, HypergraphMetricOriginObligationWithRate target d
 
-/-- **PartialMetricData strong obligation**, parallel form. -/
+/-- Partial-metric form of `HypergraphMetricOriginObligationStrong`. Independent of `_target`. -/
 def HypergraphPartialMetricOriginObligationStrong
     {n : Nat} (_target : PartialMetricData n) : Prop :=
   ∃ d : ScaledDiscrepancy,
@@ -203,13 +164,9 @@ def HypergraphPartialMetricOriginObligationStrong
         (∀ k, 0 < scale k))
     ∧ WassersteinRateObligation d
 
-/-- **First strong-obligation discharge** (#233): the Minkowski 4
-metric's strong origin obligation is inhabited via the canonical
-subdivision-rule trajectory's `subdivisionDiscrepancy n := 1/2^n`,
-which satisfies the `O(1/n)` rate via `Nat.lt_two_pow_self`. The
-trivial existential side (Fin 1, empty rule, empty trajectory) is the
-same as the weak obligation; the new content is the discrepancy
-witness with `O(1/n)` rate. -/
+/-- The strong obligation at `minkowski4`, with the empty trajectory and
+`subdivisionDiscrepancy n = 1/2^n`.
+-/
 theorem minkowski4_from_hypergraph_strong :
     HypergraphMetricOriginObligationStrong minkowski4 := by
   refine ⟨subdivisionDiscrepancy, ?_, ?_⟩
@@ -225,12 +182,7 @@ theorem minkowski4_from_hypergraph_strong :
     positivity
   · exact subdivisionDiscrepancy_satisfies_obligation
 
-/-- **Generic strong-obligation discharge** for any `MetricData`: at
-the current statement level (no `bridgeHolds` predicate yet), the
-strong obligation is inhabited for every metric via the trivial
-existential side + the subdivision discrepancy bundle. Strengthening
-beyond statement-level (tying the discrepancy to the actual W_1 of
-the trajectory's measure pushed to the target) is staged as follow-up. -/
+/-- The strong obligation holds for every metric. -/
 theorem any_metric_has_strong_obligation_witness
     {n : Nat} (M : MetricData n) :
     HypergraphMetricOriginObligationStrong M := by

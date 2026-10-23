@@ -1,26 +1,11 @@
 /-
-**`BBH_emerges_from_hypergraph_Strong` — Phase D endgame umbrella**
-(#412, instantiating Milestone.lean's `BBH_emerges_from_hypergraph`).
+Strong BBH origin obligations, discharged with discrepancies computed from
+runs of `witnessRule0`.
 
-Third in the milestone trio after `GREmergence.lean` (#409) and
-`QMEmergence.lean` (#411). Promotes the placeholder
-`BBH_emerges_from_hypergraph` Prop (Milestone.lean line 199, currently
-`True`-stub conjuncts `InitialDataMatches`, `EinsteinFieldEquationsHold`,
-`RiemannTensorConvergesTo`, `Psi4Matches`) to a materially-discharged
-companion using the five-family rate-bridge architecture.
-
-**Architecture** mirrors GR and QM exactly:
-  - Target: a `BBHTarget` carrying total mass + mass-ratio + spin pair.
-  - Discharge route: rate-bounded scalar trace from `witnessRule0`'s
-    curvature evolution on the seed corpus.
-  - Five-fold material discharges via Forman / Transport / Higuchi /
-    DegVariance / SquareCount.
-
-The Phase-D-specific extras (InitialDataMatches, Psi4Matches) remain
-as additional obligations beyond the rate-bounded discharge — those
-require Phase-D numerical-relativity infrastructure (H6-H9 in the task
-tracker). What lands here is the **core BBH origin obligation** with
-material rate-bounded content, parallel to GR's and QM's.
+`HypergraphBBHOriginObligationStrong B` does not depend on `B`, and the zero
+discrepancy discharges it, so the theorems of this module hold for every
+`BBHTarget`. They do not state that a rewriting evolution produces a binary
+black hole spacetime.
 -/
 
 import InfraFormalization.QMEmergence
@@ -91,10 +76,10 @@ Structurally identical to `HypergraphMetricOriginObligationStrong`
 and `HypergraphQuantumOriginObligationStrong`: an existential
 discrepancy with rate-content, parametric in the target. -/
 
-/-- **Strong BBH-origin obligation** (existentially over discrepancy).
-"There exists a rule + trajectory + scaling, plus a discrepancy with
-`O(1/n)` decay rate, encoding the BBH spacetime's curvature
-signature." Structurally parallel to GR's and QM's strong obligations. -/
+/-- Same statement as `HypergraphMetricOriginObligationStrong`: a trajectory, a
+positive scale sequence and a discrepancy satisfying `WassersteinRateObligation`.
+Independent of `_B`.
+-/
 def HypergraphBBHOriginObligationStrong (_B : BBHTarget) : Prop :=
   ∃ d : ScaledDiscrepancy,
     (∃ (V : Type) (_ : Fintype V) (_ : DecidableEq V)
@@ -210,7 +195,7 @@ theorem strong_bbh_obligation_from_squarecount_rate
 
 /-! ## Named BBH-zoo discharges
 
-Each canonical BBH system is materially discharged via the standing
+Each canonical BBH system is discharged via the standing
 `witnessRule0` + `edge12` witness across all five curvature families. -/
 
 /-! ### Equal-mass non-spinning BBH -/
@@ -270,7 +255,7 @@ theorem gw150914Like_strong_squarecount :
 /-! ### General-target universal discharge -/
 
 /-- **Universal BBH discharge** via Forman: every `BBHTarget` is
-materially discharged by the standing witness. Single parametric
+discharged by the standing witness. Single parametric
 proof — not target-by-target. -/
 theorem bbh_target_strong_from_exec_witness_forman (B : BBHTarget) :
     HypergraphBBHOriginObligationStrong B :=
@@ -299,7 +284,7 @@ theorem bbh_target_strong_from_exec_witness_squarecount (B : BBHTarget) :
 
 /-! ## Per-target quint bundles -/
 
-/-- Bundle of FIVE independent material discharges for equal-mass non-spinning BBH. -/
+/-- Bundle of FIVE independent discharges for equal-mass non-spinning BBH. -/
 def equalMassNonspinning_quintDischarge (M : ℝ) (hM : 0 < M) :
     HypergraphBBHOriginObligationStrong (equalMassNonspinning M hM)
     ∧ HypergraphBBHOriginObligationStrong (equalMassNonspinning M hM)
@@ -312,7 +297,7 @@ def equalMassNonspinning_quintDischarge (M : ℝ) (hM : 0 < M) :
    equalMassNonspinning_strong_degvariance M hM,
    equalMassNonspinning_strong_squarecount M hM⟩
 
-/-- Bundle of FIVE independent material discharges for GW150914-like BBH. -/
+/-- Bundle of FIVE independent discharges for GW150914-like BBH. -/
 def gw150914Like_quintDischarge :
     HypergraphBBHOriginObligationStrong gw150914Like
     ∧ HypergraphBBHOriginObligationStrong gw150914Like
@@ -325,33 +310,10 @@ def gw150914Like_quintDischarge :
    gw150914Like_strong_degvariance,
    gw150914Like_strong_squarecount⟩
 
-/-! ## The umbrella `BBH_emerges_from_hypergraph_Strong` Prop
-
-Parallels `GR_emerges_from_hypergraph` (#409) and
-`QM_emerges_from_hypergraph_Strong` (#411): every canonical BBH
-target is materially discharged via concrete hypergraph rewriting. -/
-
-/-- **`BBH_emerges_from_hypergraph_Strong`** (Phase D endgame
-completion-criterion umbrella). For every canonical BBH target —
-equal-mass non-spinning at any mass, unequal-mass non-spinning,
-aligned-spin equal-mass, GW150914-like, low-mass low-spin — the
-strong hypergraph-BBH-origin obligation is materially discharged
-through the rate-bounded Forman trace from `witnessRule0`'s engine
-run on `edge12`. Parametric in the universal `∀ B : BBHTarget` slot.
-
-This is the BBH analog of `GR_emerges_from_hypergraph` (#409) and
-`QM_emerges_from_hypergraph_Strong` (#411): the "we got to BBH"
-completion-criterion signature, structurally identical to its
-GR and QM counterparts.
-
-**Caveat**: this is the rate-bounded *core* origin obligation. Full
-Phase-D BBH includes additional layers (initial-data matching, Ψ₄
-waveform extraction matching NR catalogs) that require Phase-D
-infrastructure (H6-H9 in the task tracker); those Props are still
-the `True`-stubs in `Milestone.lean`. The core origin obligation
-landed here is the architectural counterpart of the GR and QM
-umbrellas. -/
-theorem BBH_emerges_from_hypergraph_Strong :
+/-- The strong BBH origin obligation of each listed target. The
+obligation does not depend on the target.
+-/
+theorem bbh_strong_origin_obligations :
     (∀ M : ℝ, ∀ hM : 0 < M,
         HypergraphBBHOriginObligationStrong (equalMassNonspinning M hM))
   ∧ HypergraphBBHOriginObligationStrong gw150914Like
@@ -369,23 +331,10 @@ theorem BBH_emerges_from_hypergraph_Strong :
      bbh_target_strong_from_exec_witness_forman (unequalMassNonspinning M q hM hq hq1),
    bbh_target_strong_from_exec_witness_forman⟩
 
-/-! ## Grand-unified milestone trinity
-
-The full bridge-ladder completion-criterion: GR, QM, AND BBH all
-emerge from hypergraph rewriting via materially-discharged rate-
-bounded scalar traces. -/
-
-/-- **`GR_and_QM_and_BBH_emerge_from_hypergraph`** — the grand-
-unified milestone trinity. The three completion-criterion Props
-from `Milestone.lean` (#369 GR, #370 QM, the BBH endgame) unified
-into one theorem with real rate-bounded content (not the `True`-
-stub placeholders).
-
-The structural payoff of the entire bridge-ladder architecture:
-continuum GR metrics, canonical quantum systems, AND binary-black-
-hole merger spacetimes all emerge from hypergraph rewriting via
-the same five-family rate-bridge architecture. -/
-theorem GR_and_QM_and_BBH_emerge_from_hypergraph :
+/-- Conjunction of metric, quantum and BBH strong origin obligations. None of
+the obligations depends on its target.
+-/
+theorem zoo_quantum_bbh_strong_origin_obligations :
     (HypergraphMetricOriginObligationStrong minkowski4
       ∧ HypergraphPartialMetricOriginObligationStrong spherePartial
       ∧ HypergraphMetricOriginObligationStrong warpedDiag2)
@@ -433,7 +382,7 @@ example : numCurvatureFamilies * numWitnessSeeds = 15 := by decide
 
 Combining GR (#409: 84 cells), QM (#411: 60 cells), and BBH (#412
 this commit: 45 cells), the bridge-ladder architecture certifies
-**189 independent material discharge cells** across all three
+**189 independent discharge cells** across all three
 milestones — plus the universal `∀ Q : QuantumTarget` and
 `∀ B : BBHTarget` parametric forms. -/
 
@@ -443,7 +392,7 @@ def grandTotalDischargeCells : ℕ :=
     + QMEmergence.totalQMDischargeCells
     + totalBBHDischargeCells
 
-/-- **Grand-total**: 84 + 60 + 45 = 189 independent material discharge
+/-- **Grand-total**: 84 + 60 + 45 = 189 independent discharge
 cells across the milestone trinity. -/
 example : grandTotalDischargeCells = 189 := by decide
 

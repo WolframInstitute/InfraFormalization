@@ -27,19 +27,8 @@ namespace Curvature
 
 open InfraFormalization
 
-/-- **ConnectionData-origin obligation**: the continuum connection is
-claimed to be the GH-limit of some sequence of scaled discrete
-connections on a fibered graph.
-
-At the statement level this is a pure existence claim; the full
-bridge-holds predicate (convergence of holonomy matrices, Wilson loops,
-etc.) is left as the open programme. The obligation binds:
-
-  * a total vertex type `V`,
-  * a base vertex type `W`,
-  * a `FiberedGraph V W` (concrete hypergraph + projection),
-  * a `Connection` on it,
-  * a positive scaling sequence.
+/-- Some fibered graph carries a connection and a positive scale sequence exists.
+Independent of `_target`.
 -/
 def ConnectionDataOriginObligation {n : Nat}
     (_target : ConnectionData n) : Prop :=

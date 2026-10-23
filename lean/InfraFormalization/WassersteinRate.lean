@@ -2,26 +2,12 @@ import InfraFormalization.HypergraphMeasure
 import InfraFormalization.Infra.GHBound
 import Mathlib.Topology.Order.MonotoneConvergence
 
-/-!
-**Wasserstein-1 convergence rate** (A7 / #18).
+/-! Rate obligations for a discrepancy sequence `d : ℕ → ℝ`.
 
-Let `μ_n` be the uniform counting probability measure on the scaled
-cycle `cycleHypergraph n` embedded in the unit circle, and let `μ_∞`
-be Lebesgue measure on `[0, 1)`. The Wasserstein-1 distance
-`W_1(μ_n, μ_∞)` decays as `O(1/n)` — the optimal rate for a uniform
-discretisation of a 1-dim manifold.
-
-We phrase the A7 obligation via a supplied discrepancy function
-`d : ℕ → ℝ` that a concrete Wasserstein bound would fill in. The
-trivial zero-discrepancy satisfies the `O(1/n)` bound, closing A7 at
-the obligation level. A concrete Wasserstein-1 distance on finite
-supports is to be defined *in this project* (task #214), not left
-to Mathlib; task #215 then discharges A7 / A8 with a real `O(1/n)`
-bound rather than the baseline witness below.
-
-Grounded: the discrete measure lives on the cycle hypergraph; the
-continuum target is the circle / torus.
--/
+`WassersteinRateObligation d` states `d n ≤ C / n` for large `n`.
+`ConvergenceRateObligation d r` states `d n ≤ C * r n`. Neither definition
+computes a Wasserstein distance; `d` is supplied by the caller, and the zero
+function satisfies both (`wassersteinRateObligation_zero`). -/
 
 namespace InfraFormalization
 
@@ -62,23 +48,16 @@ theorem wassersteinRateBundle_zero :
     ∧ WassersteinRateTendsto (fun _ => 0) :=
   ⟨wassersteinRateObligation_zero, wassersteinRateTendsto_zero⟩
 
-/-! ## Subdivision-rule trajectory discrepancy (#234 entry)
-
-The canonical discrepancy for the edge-subdivision rule's n-step
-trajectory `pathEdges (subdVerts n)`: the spacing `1 / 2^n` between
-adjacent vertices of the path, scaled by the diameter `1`. This is
-an `O(1/n)` discrepancy because `n < 2^n`, so `1/2^n < 1/n`. -/
-
-/-- **Subdivision discrepancy**: the natural Wasserstein-1 spacing
-of the n-step trajectory `pathEdges (subdVerts n)`, equal to
-`1 / 2^n` (the inverse of the edge count). -/
+/-- The sequence `n ↦ 1/2^n`. It equals the length of one edge of the
+subdivided unit path after `n` steps; it is defined directly and is not
+computed from a measure.
+-/
 noncomputable def subdivisionDiscrepancy : ScaledDiscrepancy :=
   fun n => 1 / (2 : ℝ)^n
 
-/-- **#234 main**: the subdivision-rule discrepancy `1/2^n` satisfies
-the `O(1/n)` Wasserstein-rate obligation. Direct from `n < 2^n`
-(`Nat.lt_two_pow_self`), so `1/2^n < 1/n` for `n ≥ 1`. With `C = 1`
-and `N = 1`, the bound `1/2^n ≤ 1/n` holds for every `n ≥ 1`. -/
+/-- `1/2^n ≤ 1/n` for `n ≥ 1`, so `subdivisionDiscrepancy` satisfies
+`WassersteinRateObligation`.
+-/
 theorem subdivisionDiscrepancy_satisfies_obligation :
     WassersteinRateObligation subdivisionDiscrepancy := by
   refine ⟨1, one_pos, 1, ?_⟩
@@ -103,11 +82,7 @@ theorem subdivisionDiscrepancy_tendsto :
   rw [h_eq]
   exact tendsto_pow_atTop_nhds_zero_of_lt_one (by norm_num) (by norm_num)
 
-/-- **Bundled #234 witness**: the subdivision-rule trajectory
-discharges both the `O(1/n)` obligation and the tendsto-zero variant,
-with explicit decay rate `1/2^n`. End-to-end concrete certificate that
-the canonical Wolfram-rule trajectory converges to a continuum target
-in W_1. -/
+/-- `subdivisionDiscrepancy` satisfies `WassersteinRateObligation` and tends to 0. -/
 theorem subdivisionDiscrepancyBundle :
     WassersteinRateObligation subdivisionDiscrepancy
     ∧ WassersteinRateTendsto subdivisionDiscrepancy :=

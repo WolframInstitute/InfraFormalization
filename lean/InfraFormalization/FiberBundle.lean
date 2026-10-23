@@ -50,10 +50,7 @@ def AtMostOneEdgeLift : Prop :=
 
 /-! ## Local-triviality (stub, predicate level) -/
 
-/-- **LocallyTrivial** at a base vertex `w`: within the
-`w`-neighbourhood of the base graph, cycles have trivial holonomy.
-Mirrors `LocallyTrivialQ` from the paclet. Stated at the predicate
-level; full definition uses holonomy from `Holonomy.lean`. -/
+/-- Defined as `True`; `IsFiberBundle` therefore reduces to its other conjuncts. -/
 def LocallyTrivial (_F : FiberedGraph V W) : Prop :=
   True
 

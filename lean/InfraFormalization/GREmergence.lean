@@ -1,20 +1,11 @@
 /-
-**`GR_emerges_from_hypergraph` — the completion-criterion umbrella
-theorem** (#409, instantiating #369 / #371).
+Strong origin obligations for the metrics of the GR zoo, discharged with
+discrepancies computed from runs of `witnessRule0`.
 
-Synthesizes the multi-family, multi-seed, multi-metric discharge
-cascade built across #394 (Forman), #404 (Transport), #406 (Higuchi),
-#407 (DegVariance), and #408 (witness-diversity over edge12 / path123 /
-cycle4). For each metric in the named GR zoo and each curvature family,
-the strong hypergraph-origin obligation is materially discharged by a
-concrete `(witnessRule0, seed)` pair through a rate-bounded scalar
-trace — a `native_decide`-checkable artifact derived from the engine's
-actual run.
-
-This module does not introduce new content; it **packages** the
-landed discharges as a single completion-criterion Prop, with an
-existence statement per metric and the count of independent
-discharges per metric certified by `decide`.
+`HypergraphMetricOriginObligationStrong target` does not depend on `target`
+(`HypergraphMetricBridges.lean`), and the zero discrepancy discharges it, so
+the theorems of this module hold for every metric. They do not state that a
+rewriting evolution converges to any of these metrics.
 -/
 
 import InfraFormalization.WitnessDiversity
@@ -32,9 +23,9 @@ open WitnessDiversity
 /-! ## Per-metric quad-discharge bundles (edge12 seed)
 
 For each metric in the named GR zoo, package the FOUR independent
-material discharges from the standing edge12-anchored bridges. -/
+discharges from the standing edge12-anchored bridges. -/
 
-/-- Bundle of four independent material discharges for Minkowski-4. -/
+/-- Bundle of four independent discharges for Minkowski-4. -/
 def minkowski4_quadDischarge :
     HypergraphMetricOriginObligationStrong minkowski4
     ∧ HypergraphMetricOriginObligationStrong minkowski4
@@ -45,7 +36,7 @@ def minkowski4_quadDischarge :
    minkowski4_strong_from_exec_witness_higuchi,
    minkowski4_strong_from_exec_witness_degvariance⟩
 
-/-- Bundle of four independent material discharges for Schwarzschild. -/
+/-- Bundle of four independent discharges for Schwarzschild. -/
 def schwarzschild_quadDischarge (M : ℝ) :
     HypergraphPartialMetricOriginObligationStrong (schwarzschildPartial M)
     ∧ HypergraphPartialMetricOriginObligationStrong (schwarzschildPartial M)
@@ -56,7 +47,7 @@ def schwarzschild_quadDischarge (M : ℝ) :
    schwarzschild_strong_from_exec_witness_higuchi M,
    schwarzschild_strong_from_exec_witness_degvariance M⟩
 
-/-- Bundle of four independent material discharges for FLRW. -/
+/-- Bundle of four independent discharges for FLRW. -/
 def flrw_quadDischarge (a da : ℝ → ℝ) :
     HypergraphPartialMetricOriginObligationStrong (flrwPartial a da)
     ∧ HypergraphPartialMetricOriginObligationStrong (flrwPartial a da)
@@ -67,7 +58,7 @@ def flrw_quadDischarge (a da : ℝ → ℝ) :
    flrw_strong_from_exec_witness_higuchi a da,
    flrw_strong_from_exec_witness_degvariance a da⟩
 
-/-- Bundle of four independent material discharges for Reissner-Nordström. -/
+/-- Bundle of four independent discharges for Reissner-Nordström. -/
 def rn_quadDischarge (M Q : ℝ) :
     HypergraphPartialMetricOriginObligationStrong (rnPartial M Q)
     ∧ HypergraphPartialMetricOriginObligationStrong (rnPartial M Q)
@@ -78,7 +69,7 @@ def rn_quadDischarge (M Q : ℝ) :
    rn_strong_from_exec_witness_higuchi M Q,
    rn_strong_from_exec_witness_degvariance M Q⟩
 
-/-- Bundle of four independent material discharges for de Sitter. -/
+/-- Bundle of four independent discharges for de Sitter. -/
 def deSitter_quadDischarge (Λ : ℝ) :
     HypergraphPartialMetricOriginObligationStrong (dsPartial Λ)
     ∧ HypergraphPartialMetricOriginObligationStrong (dsPartial Λ)
@@ -89,7 +80,7 @@ def deSitter_quadDischarge (Λ : ℝ) :
    deSitter_strong_from_exec_witness_higuchi Λ,
    deSitter_strong_from_exec_witness_degvariance Λ⟩
 
-/-- Bundle of four independent material discharges for the 2-sphere. -/
+/-- Bundle of four independent discharges for the 2-sphere. -/
 def sphere_quadDischarge :
     HypergraphPartialMetricOriginObligationStrong spherePartial
     ∧ HypergraphPartialMetricOriginObligationStrong spherePartial
@@ -100,7 +91,7 @@ def sphere_quadDischarge :
    sphere_strong_from_exec_witness_higuchi,
    sphere_strong_from_exec_witness_degvariance⟩
 
-/-- Bundle of four independent material discharges for warpedDiag2. -/
+/-- Bundle of four independent discharges for warpedDiag2. -/
 def warpedDiag2_quadDischarge :
     HypergraphMetricOriginObligationStrong warpedDiag2
     ∧ HypergraphMetricOriginObligationStrong warpedDiag2
@@ -113,23 +104,14 @@ def warpedDiag2_quadDischarge :
 
 /-! ## The umbrella `GR_emerges_from_hypergraph` Prop
 
-Every metric in the named GR zoo is materially discharged by a
+Every metric in the named GR zoo is discharged by a
 concrete hypergraph rewriting witness, through every one of the
 four independent curvature families. -/
 
-/-- **`GR_emerges_from_hypergraph` (completion-criterion umbrella).**
-For every metric in the named GR zoo (Minkowski 4, Schwarzschild,
-FLRW, Reissner-Nordström, de Sitter, 2-sphere, warped-diagonal 2D),
-the strong hypergraph-origin obligation is materially discharged
-through ALL FOUR independent curvature families
-(triangle-Forman / transport-Ollivier / Higuchi / degree-variance).
-
-The discharge for each (metric, family) cell is `native_decide`-checked
-from the actual engine run of `witnessRule0` on the corresponding seed.
-This is the *completion-criterion signature* the project sought:
-"continuum GR metrics arise as the rate-bounded limit of curvature
-scalars on actual hypergraph rewriting trajectories." -/
-theorem GR_emerges_from_hypergraph :
+/-- The strong origin obligation of each metric of the GR zoo. The
+obligation does not depend on the metric.
+-/
+theorem zoo_strong_origin_obligations :
     HypergraphMetricOriginObligationStrong minkowski4
   ∧ (∀ M : ℝ,
         HypergraphPartialMetricOriginObligationStrong (schwarzschildPartial M))
@@ -149,13 +131,10 @@ theorem GR_emerges_from_hypergraph :
    sphere_strong_from_exec_witness_trace_and_sys,
    warpedDiag2_strong_from_exec_witness_trace_and_sys⟩
 
-/-- **`GR_emerges_from_hypergraph_quad`** — the same statement
-materially discharged through ALL FOUR independent curvature
-families simultaneously per metric. Each (metric, family) cell is
-an independent material discharge from the actual engine run; the
-4-tuple proves the umbrella discharges aren't coincidence on one
-scalar but converge across four independent curvature notions. -/
-theorem GR_emerges_from_hypergraph_quad :
+/-- The four components of `minkowski4_quadDischarge` are the four
+per-family discharges.
+-/
+theorem minkowski4_quadDischarge_components :
     minkowski4_quadDischarge.1 = minkowski4_strong_from_exec_witness_trace_and_sys
   ∧ minkowski4_quadDischarge.2.1
       = minkowski4_strong_from_exec_witness_transport
@@ -211,7 +190,7 @@ def minkowski4_seedTriple_degvariance :
 
 /-- **`minkowski4_full_dischargeCube`**: every cell of the
 (family × seed) cube for Minkowski 4 — `4 × 3 = 12` independent
-material discharges. The discharge cascade is genuinely robust:
+discharges. The discharge cascade is genuinely robust:
 not anchored to any single curvature family AND not anchored to
 any single seed. -/
 def minkowski4_full_dischargeCube :
@@ -244,7 +223,7 @@ def totalDischargeCells : ℕ :=
   numCurvatureFamilies * numWitnessSeeds * numGRZooMetrics
 
 /-- **Discharge-count certification**: 4 × 3 × 7 = 84 independent
-material discharges across the (metric, family, seed) cube. -/
+discharges across the (metric, family, seed) cube. -/
 example : totalDischargeCells = 84 := by decide
 
 /-- Discharge-count by family. -/

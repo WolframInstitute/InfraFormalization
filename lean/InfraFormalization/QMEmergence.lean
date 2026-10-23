@@ -1,25 +1,11 @@
 /-
-**`QM_emerges_from_hypergraph` materially-discharged umbrella theorem**
-(#411, instantiating #370 / #371 — QM half of the milestone pair).
+Strong quantum origin obligations, discharged with discrepancies computed
+from runs of `witnessRule0`.
 
-Parallels `GREmergence.lean` (#409) on the branchial / quantum side.
-The placeholder `QM_emerges_from_hypergraph` Prop in `Milestone.lean`
-(line 169) compiles with `True` conjuncts; this module promotes it to
-a **materially-discharged** companion `QM_emerges_from_hypergraph_Strong`
-that bundles real rate-bounded content per canonical finite-dim quantum
-target.
-
-**Architecture** mirrors GR exactly:
-  - Target: a `QuantumTarget` (finite Hilbert-space dimension `d`).
-  - Discharge route: rate-bounded scalar trace from `witnessRule0`'s
-    branchial slice cardinality (or any of the 5 curvature scalars,
-    applied to the branchial graph).
-  - The `WassersteinRateObligation` infrastructure (#391 / #393 / #394)
-    is reused verbatim — the obligation is structurally identical.
-
-This yields a parallel cascade of THREE seed-witnesses × FIVE scalar
-families per QM target — the same architectural depth as the GR side,
-but instantiated for quantum systems.
+`HypergraphQuantumOriginObligationStrong Q` does not depend on `Q`, and the
+zero discrepancy discharges it, so the theorems of this module hold for every
+quantum target. They do not state that a branchial evolution converges to
+quantum mechanics.
 -/
 
 import InfraFormalization.GREmergence
@@ -76,10 +62,10 @@ Structurally identical to `HypergraphMetricOriginObligationStrong`
 with rate-content. The target is now a `QuantumTarget` (finite-dim
 quantum system) instead of a continuum metric. -/
 
-/-- **Strong quantum-origin obligation** (existentially over discrepancy).
-"There exists a rule + trajectory + scaling, plus a discrepancy with
-`O(1/n)` decay rate, on the branchial side of a hypergraph rewriting
-system." Structurally parallel to `HypergraphMetricOriginObligationStrong`. -/
+/-- Same statement as `HypergraphMetricOriginObligationStrong`: a trajectory, a
+positive scale sequence and a discrepancy satisfying `WassersteinRateObligation`.
+Independent of `_Q`.
+-/
 def HypergraphQuantumOriginObligationStrong (_Q : QuantumTarget) : Prop :=
   ∃ d : ScaledDiscrepancy,
     (∃ (V : Type) (_ : Fintype V) (_ : DecidableEq V)
@@ -199,11 +185,11 @@ theorem strong_quantum_obligation_from_squarecount_rate
 
 /-! ## Named QM-target discharges (qubit, qutrit, qudit)
 
-Each canonical quantum target is materially discharged via all five
+Each canonical quantum target is discharged via all five
 curvature families using the standing `witnessRule0` + `edge12`
 witness — identical architecture to GR. -/
 
-/-! ### Qubit (`d = 2`) — five-fold material discharge -/
+/-! ### Qubit (`d = 2`) — five-fold discharge -/
 
 theorem qubit_strong_from_exec_witness_forman :
     HypergraphQuantumOriginObligationStrong qubit :=
@@ -230,7 +216,7 @@ theorem qubit_strong_from_exec_witness_squarecount :
   strong_quantum_obligation_from_squarecount_rate qubit
     witnessRule0 edge12 2 0 0 witnessRule0_edge12_squareCountTrace_rateBounded
 
-/-! ### Qutrit (`d = 3`) — five-fold material discharge -/
+/-! ### Qutrit (`d = 3`) — five-fold discharge -/
 
 theorem qutrit_strong_from_exec_witness_forman :
     HypergraphQuantumOriginObligationStrong qutrit :=
@@ -272,7 +258,7 @@ theorem qudit_strong_from_exec_witness_squarecount (n : ℕ) :
 /-! ### General QuantumTarget — universal discharge -/
 
 /-- **Universal quantum discharge** via Forman: every `QuantumTarget`
-is materially discharged by the standing witness. The discharge is
+is discharged by the standing witness. The discharge is
 parametric in the target — there's a single uniform proof, not
 target-by-target. -/
 theorem quantum_target_strong_from_exec_witness_forman (Q : QuantumTarget) :
@@ -282,10 +268,10 @@ theorem quantum_target_strong_from_exec_witness_forman (Q : QuantumTarget) :
 
 /-! ## Per-target quint-discharge bundles
 
-Each canonical quantum target receives FIVE independent material
+Each canonical quantum target receives five
 discharges via the five curvature families. -/
 
-/-- Bundle of FIVE independent material discharges for the qubit. -/
+/-- Bundle of FIVE independent discharges for the qubit. -/
 def qubit_quintDischarge :
     HypergraphQuantumOriginObligationStrong qubit
     ∧ HypergraphQuantumOriginObligationStrong qubit
@@ -298,7 +284,7 @@ def qubit_quintDischarge :
    qubit_strong_from_exec_witness_degvariance,
    qubit_strong_from_exec_witness_squarecount⟩
 
-/-- Bundle of FIVE independent material discharges for the qutrit. -/
+/-- Bundle of FIVE independent discharges for the qutrit. -/
 def qutrit_quintDischarge :
     HypergraphQuantumOriginObligationStrong qutrit
     ∧ HypergraphQuantumOriginObligationStrong qutrit
@@ -311,22 +297,10 @@ def qutrit_quintDischarge :
    qutrit_strong_from_exec_witness_degvariance,
    qutrit_strong_from_exec_witness_squarecount⟩
 
-/-! ## The umbrella `QM_emerges_from_hypergraph_Strong` Prop
-
-Parallels `GR_emerges_from_hypergraph` (#409): every canonical quantum
-target in the QM-zoo is materially discharged by a concrete hypergraph
-rewriting witness. -/
-
-/-- **`QM_emerges_from_hypergraph_Strong`** (completion-criterion
-umbrella, QM side). For every canonical quantum target (qubit, qutrit,
-arbitrary qudit), the strong hypergraph-quantum-origin obligation is
-materially discharged through ALL FIVE independent curvature families
-from `witnessRule0`'s engine run on `edge12`.
-
-This is the QM analog of `GR_emerges_from_hypergraph` (#409): the
-"we got to QM" completion-criterion signature, structurally identical
-to its GR counterpart. -/
-theorem QM_emerges_from_hypergraph_Strong :
+/-- The strong quantum origin obligation of each listed target. The
+obligation does not depend on the target.
+-/
+theorem quantum_strong_origin_obligations :
     HypergraphQuantumOriginObligationStrong qubit
   ∧ HypergraphQuantumOriginObligationStrong qutrit
   ∧ HypergraphQuantumOriginObligationStrong quditFour
@@ -363,18 +337,8 @@ example : totalQMDischargeCells = 60 := by decide
 /-- Per-QM-target depth: 5 × 3 = 15 cells. -/
 example : numCurvatureFamilies * numWitnessSeeds = 15 := by decide
 
-/-! ## Combined GR + QM grand umbrella
-
-The full bridge-ladder completion-criterion: continuum GR metrics AND
-canonical quantum systems both emerge from hypergraph rewriting via
-materially-discharged rate-bounded scalar traces. -/
-
-/-- **`GR_and_QM_emerge_from_hypergraph`**: the combined completion-
-criterion. Both the GR-zoo and the QM-zoo are materially discharged via
-hypergraph rewriting. The two milestones from `Milestone.lean`
-(GR #369, QM #370) unified into one theorem with real rate-bounded
-content (not the `True`-stub placeholders). -/
-theorem GR_and_QM_emerge_from_hypergraph :
+/-- Conjunction of three metric and two quantum strong origin obligations. -/
+theorem zoo_and_quantum_strong_origin_obligations :
     (HypergraphMetricOriginObligationStrong minkowski4
       ∧ HypergraphPartialMetricOriginObligationStrong spherePartial
       ∧ HypergraphMetricOriginObligationStrong warpedDiag2)
