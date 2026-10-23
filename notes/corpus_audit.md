@@ -1,117 +1,108 @@
-# Corpus audit: repeated errors across JGORARD's Wolfram-physics papers
+# Corpus audit: findings that recur across G1-G4
 
-This document maps errors across the four principal JGORARD papers on the Wolfram-model/GR program, so that the repetition of each error is visible.
+This document lists, for each finding about the gravitational constructions, every paper and line where it occurs. Per-claim status with axiom lists is in [`STATUS_OF_GORARD_CLAIMS.md`](../STATUS_OF_GORARD_CLAIMS.md), and the findings F1-F8 are in [`MAJOR_FLAWS.md`](../MAJOR_FLAWS.md).
+
+Line numbers refer to the text files `papers/gorard_*.txt`. The TeX sources are in `papers/tex_*`.
+
+Status labels: PROVED (Lean, kernel-checked, sorry-free, axioms at most `propext`, `Classical.choice`, `Quot.sound`), VACUOUS (a Lean theorem whose statement does not concern the paper's objects), MEASURED, READ, OPEN.
 
 ## The corpus
 
-| ID | Year | Title | arXiv | Pages |
+| ID | Year | Title | arXiv | Text file |
 |---|---|---|---|---|
-| G1 | 2020 | Some Relativistic and Gravitational Properties of the Wolfram Model | 2004.14810 | ~50 |
-| G2 | 2020 | Algorithmic Causal Sets and the Wolfram Model | 2011.12174 | ~100 |
-| G3 | 2021 | Hypergraph Discretization of the Cauchy Problem in GR via Wolfram Model Evolution | 2102.09363 | ~131 |
-| G4 | 2023 | Non-Vacuum Solutions, Gravitational Collapse and Discrete Singularity Theorems | 2303.07282 | ~109 |
+| G1 | 2020 | Some Relativistic and Gravitational Properties of the Wolfram Model | 2004.14810 | `papers/gorard_2004.14810.txt` |
+| G2 | 2020 | Algorithmic Causal Sets and the Wolfram Model | 2011.12174 | `papers/gorard_2011.12174.txt` |
+| G3 | 2021 | Hypergraph Discretization of the Cauchy Problem in General Relativity via Wolfram Model Evolution | 2102.09363 | `papers/gorard_2102.09363.txt` |
+| G4 | 2023 | Non-Vacuum Solutions, Gravitational Collapse and Discrete Singularity Theorems in Wolfram Model Systems | 2303.07282 | `papers/gorard_2303.07282.txt` |
 
-## Error-propagation map
+## Finding 1. The Wasserstein expansion uses the scalar curvature R where Ollivier (2009) has Ric(v,v)
 
-### Error 1 — "Ollivier–Ricci scalar κ(p,q) reduces to Ricci scalar R(p,q)"
+The papers state $W(B_\varepsilon(p),B_\varepsilon(q))=\delta\big(1-\tfrac{\varepsilon^2}{2(n+2)}R+O(\varepsilon^3+\varepsilon^2\delta)\big)$ with the scalar curvature $R$. Ollivier (2009, Example 7), which G2 and G3 cite, gives the same expansion with $\mathrm{Ric}(v,v)$, the Ricci curvature in the direction $v$ of the geodesic from $p$ to $q$. For $\delta,\varepsilon\neq0$ the two leading terms agree if and only if $R=\mathrm{Ric}(v,v)$. On the unit $S^2$, $R=2$ and $\mathrm{Ric}(v,v)=1$.
 
-The directional-vs-scalar Ricci conflation. Ollivier's JFA 2009 theorem gives **$\mathrm{Ric}(v,v)$** (directional along $v=(q-p)/|q-p|$), JGORARD writes **scalar $R$**.
-
-| Paper | Location | Quote |
+| Paper | Line | Text |
 |---|---|---|
-| G1 | RelativityAndGravitation.tex line 604 (Eq 48) | $\delta(1 - \varepsilon^2/(2(n+2))\,R + O(\varepsilon^3+\varepsilon^2\delta))$ |
-| G1 | line 637 (prose) | "Ollivier-Ricci scalar curvature $\kappa(p,q)$ reduces … to the standard Riemannian Ricci scalar curvature $R(p,q)$" |
-| G2 | CausalSetPaper.tex line 1668 | $W(B_\varepsilon(p),B_\varepsilon(q))=\delta(1-\varepsilon^2/(2(d+2))\,R + O(\varepsilon^3+\varepsilon^2\delta))$ |
-| G2 | line 1699 (prose) | "Ollivier-Ricci scalar $\kappa(p,q)$ reduces to the ordinary Riemannian Ricci scalar $R(p,q)$" |
-| G2 | line 1882 | $\delta(1 - \varepsilon^2/(2(d+2))\,R + O(\varepsilon^3+\varepsilon^2\delta))$ (third instance in this paper) |
-| G3 | NumericalRelativity.tex line 2626 (Eq 344) | $W(B_\varepsilon(p),B_\varepsilon(q))=\delta(1-\varepsilon^2/(2(d+2))\,R + O(\varepsilon^3+\varepsilon^2\delta))$ |
-| G3 | line 2645 (prose) | "Ollivier-Ricci curvature scalar $\kappa(p,q)$ reduces to the usual Riemannian Ricci curvature scalar $R(p,q)$" |
+| G1 | 1468 (eq. 48) | the expansion with $R$; line 1475 calls the quantity the "Ricci scalar curvature" |
+| G1 | 1532-1534 | "the Ollivier-Ricci scalar curvature κ (p, q) reduces (up to some arbitrary scaling factor) to the standard Riemannian Ricci scalar curvature R (p, q)" |
+| G1 | 1772 | the same reduction, used to infer eq. 64 |
+| G1 | 2054 (eq. 80) | the direction-averaged expansion with $R$ |
+| G2 | 3517 (eq. 197) | the expansion with $R$ |
+| G2 | 3581-3583 | "the Ollivier-Ricci scalar κ (p, q) reduces to the ordinary Riemannian Ricci scalar R (p, q)" |
+| G2 | 4042 (eq. 225) | the direction-averaged expansion with $R$ |
+| G3 | 5340 (eq. 344) | the expansion with $R$ |
+| G3 | 5414-5416 | "the Ollivier-Ricci curvature scalar κ (p, q) reduces to the usual Riemannian Ricci curvature scalar R (p, q)" |
+| G3 | 5868 (eq. 373) | the direction-averaged expansion with $R$ |
 
-Verdict **✗ refuted** — contradicts Ollivier 2009 Example 7. Full analysis: `results/phase2_continuum/eq344_verdict.md`.
+PROVED as arithmetic comparisons: `Infra.ollivier_minus_gorard_leading`, `Infra.ollivier_gorard_agree_iff`, `Infra.s2_gorard_error`. Ollivier's theorem is cited, not formalised. Details: [`results/phase2_continuum/eq344_verdict.md`](../results/phase2_continuum/eq344_verdict.md).
 
-**4 instances across 3 papers.** Same error copied verbatim.
+## Finding 2. The tube-volume coefficient differs from Gray (1973)
 
-### Error 2 — Tube-volume coefficient
+G2 and G3 give the $\varepsilon^2$ coefficient of the volume of a small geodesic tube as $\tfrac{d-1}{d+1}\big(R-\mathrm{Ric}(u,u)\big)$. Gray (1973) gives $\tfrac{R+\mathrm{Ric}(u,u)}{6(d+1)}$. On $S^2$ the two values are $1/3$ and $1/6$. On $S^3$ they differ by a factor of 6.
 
-$(d-1)/(d+1) \cdot (R - \mathrm{Ric}(u,u))$ vs the correct $(R + \mathrm{Ric}(u,u))/(6(d+1))$.
-
-| Paper | Location | Coefficient |
+| Paper | Line | Coefficient |
 |---|---|---|
-| G1 | (tube formula absent) | N/A |
-| G2 | CausalSetPaper.tex line 1165 (Eq 126) | $(d-1)/(d+1) \cdot (R - \mathrm{Ric}(u,u))$ ✗ |
-| G3 | NumericalRelativity.tex line 2607 (Eq 342) | $(d-1)/(d+1) \cdot (R - \mathrm{Ric}(u,u))$ ✗ |
-| G4 | (no tube formula in body; inherits from G3 by reference) | inherited |
+| G1 | none | G1 contains no tube-volume formula |
+| G2 | 2409 (eq. 126) | $\tfrac{d-1}{d+1}\big(R-\mathrm{Ric}(u,u)\big)$ |
+| G3 | 5276 (eq. 342) | $\tfrac{d-1}{d+1}\big(R-\mathrm{Ric}(u,u)\big)$ |
+| G4 | none | G4 contains no tube-volume formula |
 
-Verdict **✗ refuted** — off by factor 2 on $S^2$, factor 6 on $S^3$. Full analysis: `results/phase2_continuum/eq342_verdict.md`.
+PROVED as arithmetic comparisons: `Infra.gray_vs_gorard_disagree_on_S2`, `Infra.gray_vs_gorard_disagree_on_S3`. Gray's formula is cited, not formalised. Details: [`results/phase2_continuum/eq342_verdict.md`](../results/phase2_continuum/eq342_verdict.md).
 
-**2 instances across 2 papers; inherited in a third.**
+## Finding 3. The argument for the Einstein equations
 
-### Error 3 — Main §3.3 "derivation" of Einstein field equations
+G1 §3.3 (lines 2168-2416) sums the discrete curvature into $S[g^{ab}]=\sum d\mu_g R$ (eq. 86, line 2200), sets its variation to zero (eq. 87, line 2211), states that the sum "becomes" the Einstein-Hilbert integral "subject to a weak ergodicity assumption" (line 2214, eq. 88), and concludes the vacuum Einstein equations (eq. 91, line 2259) "if a continuum limit exists in which the causal graph becomes a Riemannian manifold" (line 2264). Def 15 (lines 786-788) introduces a discrete Lorentzian metric g, and lines 799-801 state that the details of how it "can be explicitly obtained are outlined in the next section". G1 gives no formula for the components of $g^{ab}$ or for $d\mu_g$ in terms of the hypergraph, no definition of the variation of a discrete sum, no definition of weak ergodicity and no notion of convergence for "becomes" (READ; F1 and F5 in `MAJOR_FLAWS.md`).
 
-Ill-defined discrete action $\sum d\mu_g R$, ill-defined $\delta/\delta g^{ab}$ on a discrete state, unproven "weak ergodicity ⇒ sum becomes integral" convergence, tautological "asymptotic dimension preservation" definition.
-
-| Paper | Location | Status |
+| Paper | Lines | Text |
 |---|---|---|
-| G1 | §3.3 (lines 882–990, Eqs 86–102) | original instance |
-| G2 | §5 (lines 1910–1980) | same argument, expanded |
-| G3 | §5 (lines 5240–6200) | further expanded with Benincasa–Dowker (which assumes Poisson sampling of a given manifold. G3's initial data is sampled from the target geometry) |
-| G4 | §4 | builds on G3's construction |
+| G1 | 2168-2416 (eqs. 86-102) | the argument above |
+| G2 | 4118-4160 (eqs. 227-229) | the same argument. G2 defines weak ergodicity as the vanishing, in the continuum limit, of the net flux of causal edges through every hypersurface of constant $x^\nu$ (lines 4136-4139). It then replaces weak ergodicity by "uniform (Poisson) distribution of causal set elements" (lines 4235-4237) to obtain the Benincasa-Dowker action (eq. 235) |
+| G3 | 6076-6124 (eqs. 384-387) | replaces "the assumption of weak ergodicity of the causal graph dynamics with the much stronger assumption of uniform Poisson distribution of the rewrite events" (lines 6079-6081). The Benincasa-Dowker limit (eq. 387) is stated under zero surface terms and a vanishing contribution from outside the Riemann normal neighbourhood, with numerical support from Cunningham (lines 6110-6120) |
+| G4 | 4713-4735 | restates the chain and concludes that "any Wolfram model rule which is causal invariant, weakly ergodic and asymptotically dimension preserving will be consistent with the Einstein field equations in the continuum limit" (lines 4733-4735) |
 
-Verdict **⚠ ill-defined / ○ open**. The overall conclusion (Einstein field equations emerge) inherits all the failures of its component steps. No single step has been repaired by any successor paper; each new paper reuses the broken argument.
+Lean: `Refutations/F1NoMetric.lean` and `Refutations/F5Illdefined.lean` are VACUOUS with respect to G1 (statements about a function type and about the sequence $1/(n+1)$). The findings rest on the reading.
 
-### Error 4 — "Asymptotic dimensionality preservation" is tautological
+## Finding 4. Asymptotic dimension preservation is stated as the Euler-Lagrange equation
 
-JGORARD defines this condition by Eq 87 (G1), which is "$\delta S/\delta g^{ab} \to 0$" — the very equation needed to derive Einstein's equations by calculus of variations. This is not a verifiable physical/combinatorial condition; it's a pre-written conclusion.
+G1 lines 2203-2211 state that asymptotic dimensionality preservation "corresponds to the statement" $\delta S[g^{ab}]/\delta g^{ab}\to0$ (eq. 87). This is the Euler-Lagrange equation of $S$, from which the Einstein equations follow by the standard variation (eqs. 89-91).
 
-Appears in G1 (line 890), G2 (§5), G3 (§5). **All three papers.**
+| Paper | Lines |
+|---|---|
+| G1 | 2170-2211 (eq. 87) |
+| G2 | 4125-4133 (eq. 228: $\lim_{\rho_c\to\infty}\delta S/\delta g^{ab}=0$ as the condition for convergence to a finite dimension) |
+| G3 | 150-152 and 271-273 (refer to rules that satisfy weak ergodicity and asymptotic dimension preservation) |
+| G4 | 4726-4735 |
 
-### Error 5 — Fiat orthonormality on hypergraphs
+Lean: `asymptoticDimPreservation_iff_eulerLagrange` (`Refutations/F3Tautology.lean`) is PROVED by `Iff.rfl`. Both sides are the project's encoding `P.variation g = 0`. The encoding of eq. 87 is the READ finding.
 
-"We also assume that all pairs of hyperedges which are not parallel (i.e. incident to the same set of vertices) can be considered to be orthonormal" — declaring orthonormality without constructing an inner product.
+## Finding 5. Orthonormality of non-parallel hyperedges is assumed without a bilinear form
 
-Appears in G1 (line 840), G2 (§5), G3 (§5). **All three papers.**
+G1 lines 2063-2065: "We also assume that all pairs of hyperedges which are not parallel (i.e. incident to the same set of vertices) can be considered to be orthonormal." G1 defines no bilinear form on hyperedges. The sentence occurs in G1 only. G2 (line 3981) and G3 (line 5794) use orthonormality of tangent vectors in the Riemannian definition of sectional curvature.
 
-### Error 6 — $\varepsilon = \delta = 1$ in asymptotic expansions
+Lean: `Refutations/F2Orthonormality.lean` is VACUOUS with respect to G1 (statements about forms on `Bool`).
 
-Using Riemannian expansions valid as $\varepsilon \to 0$ at the discrete edge length $\varepsilon = 1$ — breaks the very expansion it claims to apply.
+## Finding 6. Expansions stated for ε, δ → 0 are applied with ε = δ = 1
 
-Appears in G1 (line 840), G2 (§5), G3 (§5). **All three papers.**
+G1 lines 2059-2061 set all hyperedges to unit length and take $\varepsilon=\delta=1$ "in all of the definitions given above", which include expansions stated for $\varepsilon,\delta\to0$ (eqs. 79-80). G1 line 1790 states that the ball-volume expansion eq. 64 holds "for any sufficiently small value of r (with exactness when r = 1)". These sentences occur in G1 only.
 
-### Error 7 — The specific rule claimed to "provably satisfy EFE in the continuum limit"
+## Finding 7. The rule of G3 line 6202
 
-$\{\{x,y\},\{y,z\},\{z,w\},\{w,v\}\} \to \{\{y,u\},\{u,v\},\{w,x\},\{x,u\}\}$. $|LHS|=|RHS|=4$, so edge count is conserved; empirically produces 1D causal graphs on every seed tested (see `results/phase1_selfaudit`). Cannot possibly satisfy Einstein's equations as a continuum limit.
+G3 states that the rule $\{\{x,y\},\{y,z\},\{z,w\},\{w,v\}\}\to\{\{y,u\},\{u,v\},\{w,x\},\{x,u\}\}$ "provably satisfies the Einstein field equations in the continuum limit" (abstract, lines 50-52) and uses it in the §6 comparison (line 6202, Figures 73-84). G4 §5 uses the same rule (figure captions, lines 5140-5217) and describes it as a rewriting system that "provably satisfies the Einstein field equations in the continuum limit" (lines 4594-4598). Neither paper gives a proof for this rule (READ).
 
-- Appears in G3 (line 6202).
-- Referenced / assumed valid in G4.
+- PROVED: $|LHS|=|RHS|=4$, so every evolution preserves the edge count (`Refutations.gorardNamedRule_applications_preserve_size`). In every evolution from $N$ hyperedges, with any update order, every antichain of the causal graph has at most $N/4$ events (`CausalHistory.gorardNamedRule_antichain_card_le`) and at most $5^t$ events lie within directed distance $t$ of an event (`CausalHistory.gorardNamedRule_ball_card_le`).
+- MEASURED: on cycles, paths and 3D grids of up to 300 edges and 2000 events, the log-log cone-growth exponent lies between 0.77 and 1.26 and depends on the update order (SetReplace 0.3.196 and `scripts/python/`; [`notes/empirical_refutation.md`](empirical_refutation.md) §4). On the 4-cycle and the 4-edge path the rule fires once and halts.
+- OPEN: linear cone growth, stated as `CausalHistory.GorardNamedRuleConeGrowthLinear`.
 
-Verdict **✗ refuted** by independent Python rewriter + SetReplace + structural $|LHS|=|RHS|$ argument.
+## Per-paper summary
 
-## Summary table: per-paper refutation status
+| Paper | Material added in the paper | Findings present |
+|---|---|---|
+| G1 | §3.3 argument for the discrete Einstein equations; Ollivier-Ricci curvature on directed hypergraphs; discrete ADM | 1, 3, 4, 5, 6 |
+| G2 | tube-volume formula; causal-set d'Alembertian and Benincasa-Dowker action | 1, 2, 3, 4 |
+| G3 | CCZ4 on a hypergraph mesh; Ψ4 extraction; comparison with evolution under the rule of line 6202 | 1, 2, 3, 4 (by reference), 7 |
+| G4 | continuum WKB and Ernst-equation collapse analysis; numerical runs; comparison with evolution under the same rule | 3, 4, 7, and F8 of `MAJOR_FLAWS.md` (the title names discrete singularity theorems, and lines 76-78 and 351-357 state them as open) |
 
-| Paper | Novel content | Repeats errors from | Body delivers title-claim? |
-|---|---|---|---|
-| G1 (2004.14810) | §3.3 discrete EFE "derivation"; Ollivier discrete Ricci on hypergraphs; ADM reframing | originator of Errors 1, 3, 4, 5, 6 | ✗ — "derivation" rests on undefined discrete objects and unproven limits |
-| G2 (2011.12174) | tube formula; d'Alembertian for causal graphs; links to causal-set theory | repeats 1 (3 copies!), 3, 4, 5, 6; originator of 2 | partially — causal-set link is valid on its own terms but inherits G1's undefined discrete EFE apparatus |
-| G3 (2102.09363) | CCZ4-on-hypergraph-mesh code; gravitational-wave extraction via Newman–Penrose; specific named rule | repeats 1, 2, 3, 4, 5, 6; originator of 7 | ✗ — "provably satisfies EFE" assumes Poisson-distributed rewrite events, and the comparison starts from initial data sampled from the target geometry. The named rule conserves edge count, with measured cone exponents 0.985 to 1.256 |
-| G4 (2303.07282) | continuum WKB/LTB/Ernst collapse analysis + numerical validation | inherits 1–7; also non-delivers on title | ✗ — title promises "discrete singularity theorems", body has none |
+## Summary
 
-## The overall picture
-
-The corpus advertises a program that *derives* general relativity from hypergraph rewriting. Across four papers and ~400 pages:
-
-- **Standard continuum material (~70–80% of equations in G1; ~85% in G2–G3)** is correctly quoted from textbooks.
-- **Discrete-side definitions** are mostly coherent when translating known constructions (Ollivier-Ricci for directed hypergraphs follows Eidi-Jost 2019; discrete d'Alembertian follows Benincasa-Dowker 2010).
-- **Discrete–continuum bridge claims** are systematically un-supported:
-  - Ollivier identity stated with wrong Ricci (scalar vs directional) — **4 × across 3 papers**.
-  - Tube formula stated with wrong coefficient — **2 × across 2 papers**.
-  - The §3.3 Einstein-equations "derivation" uses ill-defined objects and unproven convergences — **originating in G1, reused without repair in G2, G3, G4**.
-- **The one specific rule advertised as "provably" satisfying the Einstein field equations is structurally incapable of doing so**, with the refutation confirmed by two independent implementations (SetReplace and our Python rewriter).
-- **Several title-promised results are not delivered in-body** (most conspicuously the "discrete singularity theorems" of G4, acknowledged as future work in the paper's own conclusions).
-
-None of this constitutes data fabrication, but the cumulative pattern is **systematic overclaim across a 4-paper corpus**:
-1. Physics-style "derivations" written with the grammar of mathematical proof;
-2. Errors copied verbatim across papers without repair, even after the errors are re-stated in a third paper — suggesting none of the papers was independently checked against the cited Ollivier / Gray / Benincasa–Dowker literature;
-3. A central promised theorem (discrete Einstein equations) that rests on objects that have never been constructed;
-4. A central example rule that cannot possibly satisfy the claimed property.
-
-Taken as a corpus, the work is best described as a physics research program (ideas, analogies, numerical experiments) published with the rhetorical register of mathematical derivation. Any downstream work citing these papers as having **established** the derivation of GR from Wolfram-model rewriting is citing something that has not been established.
+- The continuum formulas the papers quote agree with the standard references, except the two coefficients of Findings 1 and 2 (READ, with the arithmetic comparisons PROVED).
+- Finding 1 occurs in G1, G2 and G3 at the ten lines listed. Finding 2 occurs in G2 and G3.
+- The §3.3 argument of G1 recurs in G2, G3 and G4. Each version uses an undefined discrete metric and variation, and weak ergodicity or Poisson-distributed events, for the passage from the discrete sum to the Einstein-Hilbert integral (READ). G2 and G3 state the Benincasa-Dowker limit under two assumptions with numerical support from Cunningham (G2 lines 3450-3456, G3 lines 6110-6120).
+- For the rule of G3 line 6202, edge-count conservation and the antichain and cone bounds are PROVED, and linear cone growth is OPEN.

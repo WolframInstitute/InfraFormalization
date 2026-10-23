@@ -1,15 +1,11 @@
-# I02 — Formally-Verified Cycle-to-Circle Gromov–Hausdorff Convergence
+# I02: The scaled n-cycle and the unit circle in Lean
 
-**Thesis.** The sequence of scaled $n$-cycle metric spaces $(C_n, \mathrm{cycleDist}/n)$ converges in the Gromov–Hausdorff sense to the unit circle $(\mathbb{R}/\mathbb{Z}, \mathrm{circleDist})$ as $n \to \infty$. Specifically,
-$$\mathrm{GH\_dist}\bigl((C_n, \mathrm{cycleDist}/n), (\mathbb{R}/\mathbb{Z}, \mathrm{circleDist})\bigr) \le \frac{1}{2n},$$
-witnessed by the lattice embedding $\varphi_n(i) = i/n$, which is exactly isometric and whose image is $(1/(2n))$-Hausdorff-dense in $[0, 1)$. The full chain — $\mathrm{cycleDist}$ is a metric; $\mathrm{circleDist}$ is a metric; $\varphi_n$ is an isometric embedding; the image is $(1/(2n))$-dense — is machine-verified in Lean 4 + Mathlib 4.29.1, all 15 supporting theorems axiom-clean.
+Result. For n > 0, the map φ_n(i) = i/n from the n-cycle with metric cycleDist/n to the circle ℝ/ℤ with metric circleDist, represented on [0, 1), is an isometric embedding, and every point of [0, 1) lies within circle distance 1/(2n) of its image (PROVED: `Infra.cycle_circle_gh_bound`, `Infra/GHBound.lean:26`, from `Infra.latticeEmbed_isometry` and `Infra.latticeEmbed_covers` in `Infra/Circle.lean`). An isometric embedding with ε-dense image bounds the Gromov-Hausdorff distance by ε, so the Gromov-Hausdorff distance between the scaled n-cycle and the circle is at most 1/(2n). This last implication is not formalised: the Lean statement is the embedding and the density bound, and it does not use Mathlib's `GromovHausdorff` distance.
 
-**Significance.** This is, to our knowledge, the first formally-verified Gromov–Hausdorff convergence theorem in the infrageometry programme. It provides a concrete, reusable template (`GHApproximation`) for subsequent discrete-to-continuum convergence results — including the path-to-interval and lattice-to-torus variants presented in companion papers I03 and I04.
+The structure `Infra.GHApproximation` (`Infra/GHApprox.lean:40`) records an isometric embedding with a scale and a density bound ε. The path and torus cases (I03, I04) are instances of it.
 
-**Target venue.** arXiv math.MG + math-ph + formal-methods.
+Target venue: arXiv math.MG, math-ph.
 
-**Sufficient Lean support.** T8–T26, especially T19 (`latticeEmbed_covers`), T20 (`latticeEmbed_isometry`), T21 (`cycle_circle_gh_bound`), T26 (`GHApproximation`).
+Length: 10-15 pages with the Lean listings.
 
-**Length target.** 10–15 pages including the Lean code listings.
-
-**Dependencies on research not yet done.** None. Draftable now.
+Open items before drafting: a statement of the bound in terms of Mathlib's `GromovHausdorff.ghDist`.

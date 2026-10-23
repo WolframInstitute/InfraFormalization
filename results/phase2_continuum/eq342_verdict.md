@@ -1,64 +1,46 @@
-# Phase 2B — Eq 342 audit verdict: ✗ REFUTED
+# G3 eq. 342 and the tube-volume expansion
 
-**Claim (arXiv:2102.09363 Eq 342, = arXiv:2011.12174 Eq 126).** For a geodesic tube of radius $\varepsilon$ around a geodesic segment of length $\delta$ with unit tangent $\hat{\delta x}$ in a $d$-dim Riemannian manifold:
+## Statement in G3
+
+arXiv:2102.09363 eq. 342 (`papers/gorard_2102.09363.txt` line 5276, TeX `papers/tex_2102/NumericalRelativity.tex` line 2607, §6) and arXiv:2011.12174 eq. 126 (`papers/gorard_2011.12174.txt` line 2409, TeX `papers/tex_2011/CausalSetPaper.tex` line 1165) give the volume of a tube of radius ε around a geodesic segment of length δx with unit tangent δx̂ in a d-dimensional Riemannian manifold:
 $$
-\mathrm{Vol}(T_{\varepsilon, \delta x}(p)) = \frac{\pi^{(d-1)/2}}{\Gamma((d+1)/2)}\,\varepsilon^{d-1}\,\delta\;\left(1 - \frac{d-1}{d+1}\Big(R - R_{ij}\hat{\delta x}^i\hat{\delta x}^j\Big)\varepsilon^2 + O(\varepsilon^3 + \varepsilon^2\delta) + \dots\right).
-$$
-
-**Verdict.** Incorrect — both in algebraic structure and in overall scale. Verified by two exact closed-form test cases.
-
-## Four-rail verification
-
-### Rail A. Independent derivation from Fermi normal coordinates
-
-Using Fermi normal coordinates along the geodesic (standard reference: Misner–Thorne–Wheeler §8.7; Manasse–Misner 1963; Gray, *Tubes* 2nd ed. §4), the metric expansion is:
-
-$$
-g_{ss}(s,y) = 1 - R_{s\alpha s\beta}(\gamma(s))\,y^\alpha y^\beta + O(|y|^3)
-$$
-$$
-g_{\alpha\beta}(s,y) = \delta_{\alpha\beta} - \tfrac{1}{3} R_{\alpha\gamma\beta\delta}(\gamma(s))\,y^\gamma y^\delta + O(|y|^3)
+\mathrm{Vol}(T_{\varepsilon, \delta x}(p)) = \frac{\pi^{(d-1)/2}}{\Gamma((d+1)/2)}\,\varepsilon^{d-1}\,\delta x\;\left(1 - \frac{d-1}{d+1}\Big(R - R_{ij}\hat{\delta x}^i\hat{\delta x}^j\Big)\varepsilon^2 + O(\varepsilon^3 + \varepsilon^2\delta x) + \dots\right).
 $$
 
-with $s$ tangential and Greek indices perpendicular. Then
-$$
-\det g = 1 - \tfrac{2}{3}R_{s\alpha s\beta} y^\alpha y^\beta - \tfrac{1}{3} R^\perp_{\alpha\beta} y^\alpha y^\beta + O(|y|^4),
-$$
-where $R^\perp_{\alpha\beta} = R_{\alpha\beta} - R_{s\alpha s\beta}$ is the Ricci tensor restricted to perpendicular indices.
+## Expansion from Fermi normal coordinates
 
-Taking the square root and integrating $y^\alpha y^\beta$ over the $(d-1)$-ball (which yields $\omega_{d-1}\varepsilon^{d+1}\delta^{\alpha\beta}/(d+1)$):
-
+References: Gray, *Tubes*, 2nd ed.; Manasse and Misner (1963); Misner, Thorne and Wheeler §8.7. In Fermi normal coordinates along the geodesic, with s the arc length and Greek indices for the d − 1 normal directions,
 $$
-\int_{|y|\le\varepsilon}\sqrt{\det g}\,d^{d-1}y
-= \omega_{d-1}\varepsilon^{d-1}\left[1 - \frac{\varepsilon^2}{d+1}\left(\tfrac{1}{3}\sum_{\alpha\perp u}R_{s\alpha s\alpha} + \tfrac{1}{6}\sum_{\alpha\perp u}R_{\alpha\alpha}\right)\right] + O(\varepsilon^{d+3}).
+g_{ss}(s,y) = 1 - R_{s\alpha s\beta}\,y^\alpha y^\beta + O(|y|^3),\qquad
+g_{\alpha\beta}(s,y) = \delta_{\alpha\beta} - \tfrac{1}{3} R_{\alpha\gamma\beta\delta}\,y^\gamma y^\delta + O(|y|^3).
 $$
-
-Using $\sum_{\alpha\perp u} R_{s\alpha s\alpha} = \mathrm{Ric}(u,u)$ and $\sum_{\alpha\perp u} R_{\alpha\alpha} = R - \mathrm{Ric}(u,u)$:
-
+Since Σ_α R_αγαδ over normal α equals R_γδ − R_sγsδ,
 $$
-\boxed{\;\mathrm{Vol}(T_\varepsilon(\gamma)) = \omega_{d-1}\varepsilon^{d-1}L\left(1 - \frac{\varepsilon^2}{6(d+1)}\bigl(R + \mathrm{Ric}(u,u)\bigr) + O(\varepsilon^4)\right).\;}
+\sqrt{\det g} = 1 - \tfrac{1}{3}R_{s\alpha s\beta}\, y^\alpha y^\beta - \tfrac{1}{6} R_{\alpha\beta}\, y^\alpha y^\beta + O(|y|^3),
+$$
+where R_αβ is the Ricci tensor at normal indices. The integral of y^α y^β over the (d−1)-ball of radius ε is ω_{d−1} ε^{d+1} δ^{αβ}/(d+1). With Σ_α R_sαsα = Ric(u,u) and Σ_α R_αα = R − Ric(u,u),
+$$
+\mathrm{Vol}(T_\varepsilon(\gamma)) = \omega_{d-1}\varepsilon^{d-1}L\left(1 - \frac{\varepsilon^2}{6(d+1)}\bigl(R + \mathrm{Ric}(u,u)\bigr) + O(\varepsilon^4)\right).
 $$
 
-(Multiplication by $L$ simply integrates along the geodesic since $R, \mathrm{Ric}$ are approximately constant over an infinitesimal segment.)
+## Checks on S² and S³
 
-### Rail B. Symbolic verification in Mathematica
+The tube of radius ε around a great circle (L = 2π) has volume 4π sin ε on the unit S² and 2π² sin² ε on the unit S³. The ratio to the flat value ω_{d−1} ε^{d−1} L has the series 1 − ε²/6 + ε⁴/120 on S² and 1 − ε²/3 + 2ε⁴/45 on S³ (`scripts/test_eq342.wl`, `Series[exact/flat, {eps, 0, 4}]`).
 
-Series expansion of the exact closed-form tube volume on $S^2$ and $S^3$ (around great circles, length $L=2\pi$) reproduces the Rail-A coefficient and disagrees with JGORARD's:
+On S² the tube is the spherical zone between latitudes π/2 − ε and π/2 + ε, with area 2π ∫ sin θ dθ = 4π sin ε. The ratio to 4πε is 1 − ε²/6 + O(ε⁴).
 
-| Manifold | Closed-form volume | $\varepsilon^2$ coeff (series) |
+| | S² (R = 2, Ric(u,u) = 1) | S³ (R = 6, Ric(u,u) = 2) |
 |---|---|---|
-| $S^2$ | $4\pi\sin\varepsilon$ | $1 - \varepsilon^2/6 + \varepsilon^4/120 - \ldots$ |
-| $S^3$ | $2\pi^2\sin^2\varepsilon$ | $1 - \varepsilon^2/3 + 2\varepsilon^4/45 - \ldots$ |
+| ε² coefficient of the exact series | 1/6 | 1/3 |
+| (R + Ric(u,u))/(6(d+1)) | 1/6 | 1/3 |
+| (d−1)(R − Ric(u,u))/(d+1), from eq. 342 | 1/3 | 2 |
+| ratio eq. 342 / exact | 2 | 6 |
 
-See `scripts/test_eq342.wl`; the series are produced by `Series[exact/flat, {eps, 0, 4}]`.
+Ratio of the volume to the flat value at several ε (`scripts/test_eq342.wl`):
 
-### Rail C. Numerical test at several $\varepsilon$
+S²:
 
-Relative error in the tube-volume prediction versus the exact value:
-
-**$S^2$:**
-
-| $\varepsilon$ | exact ratio | Rail-A prediction | JGORARD Eq 342 | \|err\|/exact (JGORARD) |
+| ε | exact | 1 − ε²/6 | eq. 342 | relative difference of eq. 342 |
 |---:|---:|---:|---:|---:|
 | 0.05 | 0.99958 | 0.99958 | 0.99917 | 4.2e-4 |
 | 0.10 | 0.99833 | 0.99833 | 0.99667 | 1.7e-3 |
@@ -66,11 +48,9 @@ Relative error in the tube-volume prediction versus the exact value:
 | 0.20 | 0.99335 | 0.99333 | 0.98667 | 6.7e-3 |
 | 0.30 | 0.98507 | 0.98500 | 0.97000 | 1.5e-2 |
 
-Rail-A prediction matches the exact value to O($\varepsilon^4$); JGORARD's error grows as $\varepsilon^2$, consistent with the coefficient being off by a factor of 2.
+S³:
 
-**$S^3$:**
-
-| $\varepsilon$ | exact ratio | Rail-A prediction | JGORARD Eq 342 | \|err\|/exact (JGORARD) |
+| ε | exact | 1 − ε²/3 | eq. 342 | relative difference of eq. 342 |
 |---:|---:|---:|---:|---:|
 | 0.05 | 0.99917 | 0.99917 | 0.99500 | 4.2e-3 |
 | 0.10 | 0.99667 | 0.99667 | 0.98000 | 1.7e-2 |
@@ -78,40 +58,17 @@ Rail-A prediction matches the exact value to O($\varepsilon^4$); JGORARD's error
 | 0.20 | 0.98674 | 0.98667 | 0.92000 | 6.8e-2 |
 | 0.30 | 0.97036 | 0.97000 | 0.82000 | 1.5e-1 |
 
-At $\varepsilon = 0.3$, JGORARD's Eq 342 gives a 15 % relative error on $S^3$. For comparison, the correct Rail-A formula gives a $4 \times 10^{-4}$ relative error (the residual $\varepsilon^4$ term, exactly as predicted).
+The ratio of the two coefficients is 2 on S² and 6 on S³, so the two expressions differ in form as well as by a constant factor.
 
-### Rail D. Hand-computation on $S^2$
+Lean (PROVED, axioms `propext`, `Classical.choice`, `Quot.sound`; Gray's formula is cited, not formalised): `Infra.gray_vs_gorard_disagree_on_S2` (`lean/InfraFormalization/Infra/GrayTubeStatement.lean:86`) and `Infra.gray_vs_gorard_disagree_on_S3` (`:96`) compare the two leading coefficients on S² (1/6 and 1/3) and S³.
 
-At a great-circle belt of half-width $\varepsilon$ on the unit sphere: parametrize by latitude $\theta \in [\tfrac{\pi}{2}-\varepsilon, \tfrac{\pi}{2}+\varepsilon]$ and longitude $\phi \in [0, 2\pi)$. Area element $\sin\theta \, d\theta \, d\phi$. Integrating:
-$$
-A = 2\pi \int_{\pi/2-\varepsilon}^{\pi/2+\varepsilon}\sin\theta\, d\theta = 2\pi \bigl[\cos(\tfrac{\pi}{2}-\varepsilon) - \cos(\tfrac{\pi}{2}+\varepsilon)\bigr] = 4\pi \sin\varepsilon.
-$$
-Ratio to flat $(2\varepsilon)\cdot(2\pi) = 4\pi\varepsilon$: $\sin\varepsilon/\varepsilon = 1 - \varepsilon^2/6 + O(\varepsilon^4)$. Coefficient **1/6**, matching Rails A–C.
+Substituting (R + Ric(u,u))/(6(d+1)) for the coefficient of eq. 342 gives the expansion above.
 
-## Summary
+## Use of eq. 342
 
-| Rail | What it gives | Matches? |
-|---|---|---|
-| A — Independent derivation | $(R + \mathrm{Ric}(u,u))/(6(d+1))$ | ✓ |
-| B — Symbolic series on $S^2, S^3$ | 1/6 and 1/3 | ✓ |
-| C — Numerical at several $\varepsilon$ | agrees with A to $O(\varepsilon^4)$ | ✓ |
-| D — Hand computation on $S^2$ | 1/6 | ✓ |
-
-**All four rails agree** on the correct value. JGORARD's Eq 342 disagrees on both test manifolds:
-
-| | $S^2$ | $S^3$ |
-|---|---|---|
-| Correct $\varepsilon^2$ coefficient | 1/6 | 1/3 |
-| JGORARD Eq 342 coefficient | 1/3 | 2 |
-| Ratio JGORARD/correct | 2 | 6 |
-
-The ratio JGORARD/correct is not constant across $d$, so Eq 342 is not "off by an overall factor" — its algebraic structure is wrong: $(R - \mathrm{Ric}(u,u))\cdot(d-1)/(d+1)$ vs the correct $(R + \mathrm{Ric}(u,u))/(6(d+1))$.
-
-## Propagation / downstream impact
-
-- Eq 342 is the specialization of a formula given earlier in arXiv:2011.12174 Eq 126; the error thus traces back to that paper.
-- The 2004.14810 main paper does not use the tube formula directly, so Eq 342's error does not invalidate the §3 Einstein-equations sketch there (which fails on other grounds — see `notes/2004.14810_close_reading.md`).
-- Eq 342 is invoked in 2102.09363 §5 to probe "higher-order contractions of the Riemann curvature tensor" on hypergraphs; any hypergraph-dimension or hypergraph-Ricci inference drawn from the tube-volume growth rate using Eq 342 is calibrated against the wrong continuum formula and will systematically mis-estimate curvature in both magnitude and sign sensitivity.
+- G2 eq. 126 states the same formula as G3 eq. 342.
+- arXiv:2004.14810 does not contain the word "tube".
+- G3 states after eq. 342 that "the growth rate of a small geodesic tube in a hypergraph allows us effectively to probe higher-order contractions of its limiting Riemann curvature tensor" (lines 5287-5291). A curvature estimate from tube growth calibrated by eq. 342 uses the coefficient (d−1)(R − Ric(u,u))/(d+1) in place of (R + Ric(u,u))/(6(d+1)).
 
 ## Reproducing
 
@@ -119,4 +76,4 @@ The ratio JGORARD/correct is not constant across $d$, so Eq 342 is not "off by a
 wolframscript -file scripts/test_eq342.wl
 ```
 
-The script produces exact symbolic series, exact numerical values, and side-by-side comparisons for both $S^2$ and $S^3$.
+The script prints the exact series and the numerical values for S² and S³.

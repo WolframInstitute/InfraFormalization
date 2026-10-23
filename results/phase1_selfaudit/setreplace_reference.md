@@ -1,7 +1,6 @@
 # SetReplace reference run log (2026-04-18)
 
-The reference output of SetReplace 0.3.196 on the 9 seeds used for the
-empirical refutation of arXiv:2102.09363 line 6202.
+The output of SetReplace 0.3.196 on the 9 seeds used for the measurements of the rule of arXiv:2102.09363 line 6202 (`notes/empirical_refutation.md`). SetReplace runs this rule with its Wolfram Language implementation, which chooses a match whose last edge in the state list is earliest. The "cone dimension" lines are the log-log slope of the cone count C(r); section 4 of `notes/empirical_refutation.md` gives the slopes under three other update orders.
 
 ## Commands
 

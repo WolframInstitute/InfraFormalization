@@ -1,21 +1,24 @@
-# M02 — Foundations of Infrageometry: Machine-Checked Discrete-to-Continuum Convergence
+# M02: Discrete metric spaces close to continuum ones, in Lean
 
-**Thesis.** We lay down the foundations of *infrageometry* — the programme of rigorously reframing traditional continuous geometric notions (metric, curvature, volume, differential operators) in terms of discrete structures (graphs, hypergraphs, causal sets) and proving convergence theorems between the two. We define a common abstract `GHApproximation` structure capturing discrete-to-continuum Gromov–Hausdorff convergence, and instantiate it for three concrete continuum-limit theorems: the scaled $n$-cycle converging to the unit circle, the scaled path graph converging to the unit interval, and the scaled $n \times n$ lattice converging to the flat 2-torus. All theorems are machine-verified in Lean 4 + Mathlib 4.29.1, axiom-clean.
+Scope. The paper defines the structure `Infra.GHApproximation` (`Infra/GHApprox.lean:40`): an isometric embedding of a discrete metric space, scaled by a constant, into a target space, with every target point within ε of the image. It gives three instances, each PROVED in Lean:
 
-**Significance.** This paper is the positive counterpart to the audit paper M01. Where M01 catalogues what has been incorrectly claimed, M02 shows what can be correctly proved in the same general direction. It is the first installment in what we expect to become a systematic library of machine-checked infrageometric results.
+- The n-cycle with metric cycleDist/n and the circle ℝ/ℤ: ε = 1/(2n) (`Infra.cycle_circle_gh_bound`, `Infra/GHBound.lean:26`).
+- The path on n + 1 vertices with metric pathDist/n and the interval [0, 1]: ε = 1/(2n) (`Infra.path_interval_gh_bound`, `Infra/ScaledPath.lean:184`).
+- The n × n lattice with the maximum of the two cycle distances, divided by n, and the torus ℝ²/ℤ² with the maximum of the two circle distances: ε = 1/(2n) (`Infra.torus_gh_bound`, `Infra/ScaledTorus.lean:89`).
 
-**Content.**
-- §1 — The `GHApproximation` structure and its properties.
-- §2 — Example: scaled cycle to unit circle. Full proof outline.
-- §3 — Example: scaled path to unit interval.
-- §4 — Example: scaled 2D lattice to flat 2-torus.
-- §5 — Toward higher dimensions and non-trivial target curvature.
-- §6 — Extensions: random-geometric-graph samples, causal-set samples, and the open research problem of finding hypergraph-rewriting rules with provable GR limits (→ future paper M03).
+`Infra.ghApprox_of_half_scale` (`Infra/GHApprox.lean:58`) states the common form of the cycle and path cases. An isometric embedding with ε-dense image bounds the Gromov-Hausdorff distance by ε. This implication and a statement in terms of Mathlib's `GromovHausdorff` distance are not formalised.
 
-**Target venue.** arXiv math.MG + math-ph + formal-methods.
+Sections.
 
-**Sufficient Lean support.** The full Phase-3 library plus the `GHApproximation` abstraction: T8–T26, T40.
+- §1 The `GHApproximation` structure.
+- §2 The cycle and the circle.
+- §3 The path and the interval.
+- §4 The lattice and the torus with the maximum metric.
+- §5 Higher dimensions and targets with curvature (OPEN).
+- §6 Random geometric graphs, causal sets, and the problem of a hypergraph rewriting rule with a proved general-relativistic limit (OPEN; planned paper M03).
 
-**Length target.** 25–35 pages including Lean appendix.
+Target venue: arXiv math.MG, math-ph.
 
-**Dependencies on research not yet done.** Strengthenable by formally proving ε-density ⇒ GH-convergence against Mathlib's full `GromovHausdorff` API; not required for the paper to stand.
+Length: 25-35 pages with a Lean appendix.
+
+Open items: the Gromov-Hausdorff statement in Mathlib's `GromovHausdorff` API; the torus with the Euclidean product metric.

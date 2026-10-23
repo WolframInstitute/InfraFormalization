@@ -1,81 +1,70 @@
-# Continuum-limit toolkit
+# Continuum-limit results in the literature
 
-An inventory of the actual mathematical results that *could* make a JGORARD-style "discrete → continuum GR" derivation rigorous. For each tool, the status matters: *proved theorem*, *conjecture with numerical support*, *heuristic only*. This matters because JGORARD's papers repeatedly use "in the continuum limit" as if a single such limit exists — in reality there are several distinct notions and they do not agree.
+This note lists published results that bear on a passage from discrete structures to continuum geometry, with the status of each: theorem, numerical support, or open. G1-G3 use the phrase "in the continuum limit" without stating which notion of convergence is meant (`FINDINGS.md` S4 #10). The notions below differ from one another.
 
-## 1. Ollivier–Ricci for metric-measure spaces
+Paper files: G1 = `papers/gorard_2004.14810.txt`, G3 = `papers/gorard_2102.09363.txt`.
 
-**Theorem (Ollivier, JFA 2009).** Let $(M,g)$ be a smooth Riemannian manifold and let $m^\varepsilon_x$ be the uniform distribution on the closed ball $B_\varepsilon(x)$. For $q = \exp_x(\varepsilon v)$ with $|v|=1$:
+## 1. Ollivier-Ricci curvature of metric measure spaces
+
+Theorem (Ollivier, J. Funct. Anal. 2009). Let (M, g) be a smooth n-dimensional Riemannian manifold and let m_x^ε be the uniform measure on the ball B_ε(x). For y = exp_x(δv) with |v| = 1,
 $$
-\kappa(x,q)\;=\;1-\frac{W_1(m^\varepsilon_x, m^\varepsilon_q)}{d(x,q)}\;=\;\frac{\varepsilon^2}{2(n+2)}\,\mathrm{Ric}(v,v)+O(\varepsilon^3).
+\kappa(x,y)\;=\;1-\frac{W_1(m^\varepsilon_x, m^\varepsilon_y)}{d(x,y)}\;=\;\frac{\varepsilon^2}{2(n+2)}\,\mathrm{Ric}(v,v)+O(\varepsilon^3+\varepsilon^2\delta).
 $$
-This is the theorem JGORARD invokes in §3.1 of 2004.14810 (his Eq 48). Note the RHS is the **directional Ricci curvature** $\mathrm{Ric}(v,v)$, *not* the scalar curvature $R$. JGORARD's prose in Def 31 says "reduces to the standard Riemannian Ricci scalar curvature $R(p,q)$" — there is no such object. The theorem recovers $\mathrm{Ric}(v,v)$ along the $p \to q$ direction. This is a live-ammunition error — a serious referee would reject on this.
 
-**Discrete analogue (Lin–Lu–Yau 2011; Ollivier 2007; Eidi–Jost 2019 for directed hypergraphs).** On a graph or (directed) hypergraph one defines $\kappa$ using a discrete Wasserstein $W_1$ between simple-random-walk distributions. JGORARD's Def 33 is essentially Eidi–Jost specialized to a particular in/out-measure choice.
+G1 eq. 48 (line 1468, §3.1) states the corresponding average-distance expansion with the scalar curvature R in place of Ric(v,v). G1 Definition 31 (lines 1521-1534) states that κ(p, q) "reduces (up to some arbitrary scaling factor) to the standard Riemannian Ricci scalar curvature R(p, q)". Ollivier's theorem gives Ric(v,v) in the direction of the geodesic from p to q. The arithmetic comparison of the two leading terms is PROVED (`Infra.ollivier_gorard_agree_iff`, `results/phase2_continuum/eq344_verdict.md`).
 
-**What is *not* proved for discrete $\kappa$.** A convergence theorem of the form
-$$
-\text{graph sequence } G_n \to (M,g) \text{ in GH / spectral / … } \implies \kappa_{G_n} \to \mathrm{Ric}_{(M,g)}
-$$
-is **not** a theorem. Partial results exist for very specific constructions (Cristofaro-Gardiner & Viazovska-style lattices, or random geometric graphs on a Riemannian manifold in the $\varepsilon \to 0$ limit — van der Hofstad 2017ff, Trillos–Slepčev 2018). None applies to general causal-invariant hypergraph rewriting.
+Discrete versions: Ollivier (2007, 2009) and Lin, Lu and Yau (2011) define κ on graphs with W_1 between random-walk measures. Eidi and Jost (2019) define it on directed hypergraphs. G1 Definition 33 (line 1592) defines the Ollivier-Ricci curvature of a directed hyperedge and cites Eidi and Jost (G1 reference [44]).
 
-**Implication for JGORARD.** Even reading the term "scalar" charitably, a convergence theorem for *JGORARD's directed-hyperedge $\kappa$ applied to the causal graph of a Wolfram-model evolution* does not exist in the literature.
+Open in the literature: a theorem that κ_{G_n} → Ric for a sequence of graphs G_n converging to (M, g) in a general sense. Convergence results exist for random geometric graphs on a manifold (García Trillos and Slepčev 2018 and related work). No result covers the causal graphs or spatial hypergraphs of a Wolfram model evolution.
 
-## 2. Benincasa–Dowker action on causal sets
+## 2. The Benincasa-Dowker action on causal sets
 
-**Setup (Sorkin 2007, Benincasa–Dowker 2010).** For a causal set $C$ Poisson-sampled in $(M,g)$ at density $\rho_c$, define a local discrete d'Alembertian $B^{(d)}_\rho$ as a weighted sum over $k$-nearest-past-neighbors ($k = 0,1,2,3$), with specific alternating-sign coefficients $c_k^{(d)}$ dimensionally tuned so that
+Setup (Sorkin 2007; Benincasa and Dowker 2010). For a causal set C obtained by Poisson sampling of (M, g) at density ρ_c, the discrete d'Alembertian B^(d) is a weighted sum over the k-th nearest past neighbours (k = 0, 1, 2, 3 in four dimensions) with coefficients chosen so that
 $$
 \left\langle B^{(d)}_\rho \phi \right\rangle \xrightarrow{\rho\to\infty} \Box\phi - \tfrac{1}{2} R\,\phi
 $$
-in expectation, in Riemann normal coordinates. Setting $\phi\equiv 1$ yields the discrete scalar curvature. Summing over events yields the **Benincasa–Dowker action** $S_{\mathrm{BD}}$.
+in Riemann normal coordinates. With φ ≡ 1 this gives a discrete scalar curvature, and its sum over the events is the Benincasa-Dowker action S_BD.
 
-**Status of $\langle S_{\mathrm{BD}} \rangle \to S_{\mathrm{EH}}$.**
-- Pointwise convergence of $\langle B^{(d)}_\rho \phi(x)\rangle \to \Box\phi(x) - \tfrac{1}{2}R(x)\phi(x)$: **proved** (Benincasa–Dowker 2010) under Poisson sampling in Riemann normal coordinates, with technical assumptions on $\phi$'s support relative to the light cone of $x$.
-- Convergence of the *integrated action* $\langle S^{(d)}_\rho \rangle \to S_{\mathrm{EH}}$: **not proved**. Issues:
-  - The sum picks up contributions from far down the light cone, which require a "non-locality cut-off" $l_k$ (Sorkin 2007) that has to be tuned — JGORARD (2102.09363, Eq 388) sets $l_k \ll l^{\tfrac{2}{3}} L^{\tfrac{1}{3}}$ by fiat.
-  - "Zero surface terms" is needed; this is natural only in asymptotically flat or compact spacetimes.
-  - Fluctuations: $\mathrm{Var}(S^{(d)}_\rho)$ grows with $\rho$ (Dowker 2019, Sorkin 2020), which makes the Monte-Carlo-style "expectation converges" claim weaker than one would like. Dowker and collaborators have developed a smearing / thermodynamic-limit argument, but it remains **conjectural**.
-- Cunningham 2018 (cited by JGORARD) gave numerical support for the conjecture; not a proof.
+Status:
 
-**Implication for JGORARD.** What he calls "a hypergraph substitution rule that provably satisfies the Einstein field equations in the continuum limit" is at best the Poisson-sampling / BD convergence conjecture, one step removed. It says nothing about the dynamics of any specific Wolfram rule; it is a statement about the *kinematics of Poisson-sampling a causal set from a given $(M,g)$*. The direction of inference is backwards from what a derivation of GR would need.
+- The limit of the expectation of B^(d) φ(x) at a point is derived by Benincasa and Dowker (2010) under Poisson sampling, in Riemann normal coordinates, with assumptions on the region of the past light cone that contributes.
+- The convergence of the expectation of the integrated action to S_EH is not proved. It requires zero surface terms and a vanishing contribution from the region of the light cone outside the Riemann normal neighbourhood. Sorkin (2007) introduced the intermediate non-locality scale l_k to reduce the fluctuations of the discrete operator. G3 eq. 388 (line 6133, TeX line 2927) chooses l_k with l_k ≫ (l² L)^{1/3}.
+- Cunningham (2018, PhD thesis, G3 reference [108], lines 7139-7141) gives numerical support. G3 states the convergence "as proposed by Sorkin, Benincasa and Dowker, and demonstrated numerically by Cunningham" (lines 6110-6112).
 
-## 3. Gromov–Hausdorff convergence
+G3 describes the rule of line 6202 as one "that provably satisfies the Einstein field equations in the continuum limit" (abstract, lines 50-52). The argument of G3 §6 replaces weak ergodicity "with the much stronger assumption of uniform Poisson distribution of the rewrite events" (line 6080) and then applies the Benincasa-Dowker convergence. The steps concern a causal set obtained by Poisson sampling of a given (M, g). G3 gives no proof that the causal graph of the rule is distributed as such a causal set.
 
-**Theorem (Fukaya 1987; Cheeger–Colding 1997–2000).** A pointed GH limit of a sequence of Riemannian manifolds with uniformly bounded Ricci curvature below is a metric-measure space with rectifiable structure. Various rigidity, volume-comparison, and regularity results.
+## 3. Gromov-Hausdorff convergence
 
-**For graphs.** A finite graph $(V,d_G)$ is a metric space; we can ask whether a sequence $G_n$ converges in GH to $(M,d_g)$. For specific sampled constructions (random geometric graphs, Poisson point processes with proximity graphs, Delaunay-type triangulations) such convergence has been proved (Trillos, Slepčev, García-Trillos–Gerlach–Hein–Slepčev). For Wolfram-model hypergraph rewriting there is *no* such result, nor any obvious route to one without either (a) proving the graph sequence comes from a Poisson sample, or (b) identifying an embedding into a fixed manifold and passing to an $\varepsilon \to 0$ limit.
+Riemannian case: Fukaya (1987) and Cheeger and Colding (1997-2000) describe Gromov-Hausdorff limits of Riemannian manifolds with Ricci curvature bounded below, with rectifiability, volume comparison and regularity results.
 
-**Lorentzian GH.** Noldus 2004; Bombelli–Noldus 2004; Minguzzi–Suhr 2020+. The Lorentzian version replaces $d$ by the Lorentzian time-separation $\tau$. This is the right framework for causal-graph continuum limits, but it is still young mathematics. Noldus–Suhr 2022 established convergence of sampled causal sets to Lorentz manifolds under hypotheses essentially matching BD. This is the nearest-to-rigorous precedent for what JGORARD claims.
+Graphs: a finite graph with its path metric is a metric space, and one can ask whether a sequence G_n converges to (M, d_g) in Gromov-Hausdorff distance. For random geometric graphs and proximity graphs of Poisson point processes, convergence results are known (García Trillos, Slepčev and coauthors). For Wolfram model hypergraph rewriting no such result is known.
+
+Lorentzian case: Noldus (2004), Bombelli and Noldus (2004) and Minguzzi and Suhr (2022) define Gromov-Hausdorff distances for Lorentzian spaces with the time separation τ in place of the distance d.
 
 ## 4. Spectral convergence of graph Laplacians
 
-**Theorem (Belkin–Niyogi 2008; Singer 2006; García-Trillos et al. 2020).** For points sampled iid from a density on a compact Riemannian manifold, an appropriately normalized graph Laplacian converges (pointwise, spectrally, and in operator norm) to the Laplace–Beltrami operator as $n\to\infty$, $\varepsilon\to 0$ at the right rate.
+Theorem (Singer 2006; Belkin and Niyogi 2008; García Trillos and coauthors 2020). For points sampled independently from a density on a compact Riemannian manifold, a normalised graph Laplacian converges to the Laplace-Beltrami operator as n → ∞ and ε → 0 at a suitable rate, pointwise and spectrally.
 
-**Implication.** If the Wolfram-model evolution produced hypergraphs whose shadow on a fixed manifold looked like iid samples from a smooth density, one could invoke spectral convergence. But for general causal-invariant rules there is no mechanism ensuring this — the hypergraph has intrinsic discrete dynamics, not a probabilistic sampling structure.
+These theorems require independent sampling from a density. No theorem states that the hypergraphs of a Wolfram model evolution have this form.
 
-## 5. Causal-set Lorentz invariance
+## 5. Lorentz invariance of causal sets
 
-**Theorem (Bombelli–Henson–Sorkin 2009).** A Poisson-sampled causal set in Minkowski space is statistically Lorentz invariant — there is no distinguished "rest frame" emerging from the discretization, even though individual samples look irregular.
+Theorem (Bombelli, Henson and Sorkin 2009). A Poisson-sampled causal set in Minkowski space does not determine a preferred frame: the Poisson process is Lorentz invariant in distribution. A regular lattice does not have this property. The Benincasa-Dowker step of G3 §6 uses Poisson sampling (line 6080).
 
-**Relevance.** This is the actual rigorous result behind the Wolfram-model slogan "discrete spacetime without a preferred frame." It requires Poisson sampling (so the point process is LI in distribution), not arbitrary discretization. A regular lattice would violate LI in the continuum limit; a Poisson sample does not. JGORARD uses this implicitly by invoking BD, but does not separate out what is actually being used.
+## 6. Limits of graph sequences
 
-## 6. Graphon / dense graph limits
+Dense graphs: Lovász and Szegedy (2006) and Borgs, Chayes, Lovász, Sós and Vesztergombi (2008) show that Cauchy sequences of dense graphs in the cut distance converge to graphons.
 
-**Theorem (Lovász–Szegedy 2006; Borgs–Chayes–Lovász–Sós–Szegedy 2008).** Cauchy sequences of dense graphs under the cut-distance converge to graphons. This is a well-developed theory for dense graphs.
+Sparse graphs: Benjamini and Schramm (2001) define local weak convergence, whose limit is a random rooted graph. In the causal graph of a rule, the in-degree of an event is at most |LHS| and the out-degree at most |RHS| (the out-degree bound is PROVED as `CausalHistory.History.succ_card_le`), so the causal graphs are sparse and the dense theory does not apply to them. No application of sparse-graph limits to hypergraph rewriting is known.
 
-**Relevance.** Of limited use for Wolfram model, whose graphs are sparse (polynomial-volume growth tracking spacetime dimension). Sparse-graph-limit theory (Benjamini–Schramm 1999; local weak convergence) is the right one, but it gives a "tangent space" picture (limit = rooted random graph) that doesn't obviously approach a manifold. Lyons–Nazarov 2011, Szegedy 2014 on sparse limits are active research; no applications to hypergraph rewriting exist.
+## Statements needed for a continuum theorem
 
-## What would a real JGORARD-style theorem look like?
+A theorem of the form "a rule R that is causal invariant and asymptotically dimension preserving has a continuum limit that satisfies the vacuum Einstein equations" needs each of the following. Each is OPEN.
 
-To make "Wolfram model rule $R$ (causal-invariant, asymptotically dimension-preserving) has a continuum limit satisfying the vacuum Einstein equations" into a real theorem, one would need all of the following:
+1. A notion of convergence on a space that contains finite causal graphs and Lorentzian manifolds, for example a Lorentzian Gromov-Hausdorff distance.
+2. A theorem that the evolution of R produces causal graphs whose events are distributed, in the limit, as a Poisson process on a Lorentzian manifold, or as another process that is Lorentz invariant in distribution.
+3. The Benincasa-Dowker convergence for the distribution in item 2.
+4. A variational statement: minimisers of the discrete action converge to solutions of the Einstein equations, for example by Γ-convergence (Braides 2002; Alicandro and Cicalese 2004).
+5. A rule for which item 2 holds.
 
-1. **Precise limit notion**: a topology on a space containing both finite hypergraphs/causal graphs and pseudo-Riemannian manifolds. Lorentzian-GH (Noldus–Suhr) is the most plausible candidate, but needs extension to handle the non-Poisson case.
-2. **Distribution control on the dynamics**: a theorem that iterated application of $R$ to a large hypergraph produces causal graphs whose vertex density converges to a Poisson measure on some limiting manifold, or at least to a measure with the statistical-Lorentz-invariance property.
-3. **BD-convergence in that limit**: an upgrade of Benincasa–Dowker's expectation result to the concrete measure produced by $R$. This is where Cunningham's numerical work would need to be proved.
-4. **Variational characterization of EFE in the limit**: minimization of the discrete BD action converges (in Γ-convergence or related sense) to minimization of the EH action. Γ-convergence of discrete-to-continuum actions is a mature theory (Braides 2002, Alicandro–Cicalese 2004) and this step is probably the most tractable.
-5. **Construction of an explicit rule satisfying (2).** Currently no rule is known for which (2) is proved.
-
-Any of (1)–(5) being unproved means the overall chain is unproved. JGORARD's papers contain at most plausibility arguments for each step independently; none are linked into a rigorous chain.
-
-## Practical conclusion
-
-The tools exist. Causal-set theory has been building them for 20+ years and has genuine partial results. JGORARD's contribution relative to that literature, in the specific matter of "deriving GR from discrete spacetime," is **almost entirely absent** — every load-bearing step he uses is due to Sorkin, Benincasa, Dowker, Bombelli, Henson, and collaborators. What is JGORARD's own is the reformulation using directed hypergraphs and the narrative that this emerges from a *specific Wolfram-model rewriting rule*. The latter is the claim with no rigorous backing.
+G1-G3 give arguments for the individual steps and give no proof that links them.

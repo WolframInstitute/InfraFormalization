@@ -1,187 +1,72 @@
-# Plan: deep review of JGORARD's GR-from-rewriting claims
+# Plan for the review of G1-G4
 
-**Mission.** Examine JGORARD's claimed derivation of general relativity from hypergraph rewriting (arXiv:2004.14810, 2102.09363, 2303.07282). For every load-bearing claim: determine *correctness* with *certainty*. Correct claims → formalize in Lean and extend toward an actual discrete-to-continuum geometry theorem. Incorrect claims → document precisely, with counterexample or correct-statement side-by-side, so the error is unambiguous.
+The review examines the derivation of general relativity from hypergraph rewriting in arXiv:2004.14810 (G1), 2011.12174 (G2), 2102.09363 (G3) and 2303.07282 (G4). For each claim the review records what the paper states and what holds. Statements that hold are formalised in Lean where the library allows it. Statements that differ from a cited source are recorded with both formulas.
 
-## Ground rules (non-negotiable)
+Paper files: `papers/gorard_*.txt`; TeX sources in `papers/tex_*`. Status labels follow `STATUS_OF_GORARD_CLAIMS.md`: PROVED, PROVED-WITH-NATIVE-DECIDE, VACUOUS, MEASURED, READ, OPEN.
 
-1. **Triple-redundant verification for every claim we make.** Any statement of the form "JGORARD's Eq N is wrong" requires:
-   - **(A)** independent re-derivation from scratch, cross-checked against ≥2 independent references;
-   - **(B)** symbolic verification (Mathematica / SymPy);
-   - **(C)** numerical test on a nontrivial case where the correct answer is known;
-   - **(D)** at least one manually-worked small case.
-   If any of (A)–(D) disagree, we stop and find the bug in our own work before concluding anything.
-2. **Independent re-implementation for every empirical finding.** If SetReplace says X, we re-derive X in Python from the rule's semantics and check that they agree on ≥ 5 seeds. Any disagreement blocks publication of the finding.
-3. **Name the exact line.** Every critique of a claim cites the TeX line / arxiv equation number. No paraphrases without the verbatim quote adjacent.
-4. **Separate JGORARD-specific claims from imported-from-the-literature claims.** Many "provable" moves in 2102.09363 (Benincasa–Dowker, Ollivier, Gray, Ollivier, ADM) are *imports* of known results. Their correctness is not JGORARD's contribution. We judge each on its own terms and note the attribution.
-5. **Never conflate "loose rhetoric" with "computational error."** If a claim is a rhetorical overclaim but the equation is correct, note both. If a computation is wrong, prove it.
+## Method
 
-## Phase 0 — Catalog (prerequisite for everything else)
+1. A statement that a formula differs from a standard result is checked by an independent derivation, by a symbolic computation, by a numerical test on a case with a known answer, and by a hand computation on a small case.
+2. A measurement from SetReplace is reproduced by an independent Python implementation of the rewriting semantics. Differences are traced to their cause before the measurement is reported.
+3. Every statement about a paper cites the line in `papers/*.txt` and quotes the text.
+4. Results from the literature that a paper uses (Benincasa-Dowker, Ollivier, Gray, ADM) are checked against their sources and attributed to them.
+5. A formula that is correct and a claim in the prose around it are assessed separately.
 
-**Deliverable.** `notes/claims_catalog.md` — every numbered equation, labeled definition, and prose assertion from the three papers, with:
-- TeX line / arxiv eqn number.
-- Verbatim statement.
-- Classification: **DEF** / **LEM-from-lit** / **EQ-continuum** / **EQ-discrete** / **BRIDGE** (discrete↔continuum) / **CONCL** (claimed conclusion).
-- Proof status as stated: *proved here / cited / sketched / asserted / asserted by analogy*.
-- First-pass verdict + what verification is needed.
+## Phase 0: catalogue
 
-This is the spine. Everything in Phases 1–4 references entries in the catalog by ID.
+`notes/claims_catalog.md` lists the numbered equations, definitions and prose claims of G1 with their TeX and text lines and a classification. Status: present.
 
-## Phase 1 — Audit our own empirical work (self-verification first)
+## Phase 1: checks of the measurements
 
-Before trusting a single of our findings against JGORARD, verify our tools.
+Results: `results/phase1_selfaudit/README.md`, `results/phase1_selfaudit/setreplace_reference.md`, `notes/empirical_refutation.md`.
 
-### 1A. Re-implement the named EFE rule from scratch in Python.
-- `scripts/py_rewriter.py`: minimal single-way rewriter operating on multisets of hyperedges, no SetReplace.
-- Run on the same 8 seeds used in `empirical_refutation.md`.
-- Compare: event count, final state size, causal-graph |V|, causal-graph |E|, cone-growth table C(r).
-- **Pass criterion:** exact agreement on event count and state size for all 8 seeds; causal-graph |V|, |E| agree; C(r) within ±2 for $r \le 20$ (may differ slightly due to event-ordering tiebreakers).
-- Disagreement → find the bug, do not publish until resolved.
+- 1A. `scripts/python/rewriter.py` reimplements the rule of G3 line 6202 with hyperedge identities. On the 9 seeds it agrees with SetReplace 0.3.196 on events fired, final state size and causal-graph vertex count, and on causal-graph edge count on 7 of 9 seeds. The cone-growth exponents differ because the two tools use different update orders. `scripts/python/setreplace_order.py` reimplements the SetReplace order and reproduces its cone counts on the 6-cycle, 8-cycle and 10-path. MEASURED: exponents between 0.77 and 1.26 across four update orders.
+- 1B. Hand traces of the 4-cycle and the 4-edge path, on which the rule fires once: in `results/phase1_selfaudit/README.md`.
+- 1C. Edge-by-edge comparison of the causal graphs of the two tools on the 6-cycle: not run.
+- 1D. A second estimate of the exponent from the ratio C(2r)/C(r), and its spread over perturbed seeds: not run.
 
-### 1B. Manual trace on the two dead-end seeds.
-- Hand-trace 4-cycle → {{2,u},{u,1},{4,1},{1,u}} → check no length-4 chain remains (already done, notes/empirical_refutation.md).
-- Hand-trace 4-path similarly.
-- Write out the trace in the notes so it's a reproducible witness, not just a claim.
+## Phase 2: continuum equations of G3 §6
 
-### 1C. Visualize a small causal graph independently.
-- For the 6-cycle, 50-event run: export causal graph to GraphViz from SetReplace, separately export from Python re-implementation.
-- Diff the edge lists.
-- **Pass criterion:** identical up to vertex-renaming.
+- 2A. Ball-volume expansion, G3 eq. 340 (line 5241) and eq. 343 (line 5306). G3 eq. 343 agrees with Gray (1973) (READ, `FINDINGS.md`, Standard material). The symbolic and numerical checks on S^d and H^d: not run.
+- 2B. Tube-volume expansion, G3 eq. 342 (line 5276) and G2 eq. 126 (line 2409). G3 gives the coefficient (d−1)(R − Ric(u,u))/(d+1). The expansion from Fermi normal coordinates gives (R + Ric(u,u))/(6(d+1)), confirmed by the exact series on S² and S³. The comparison of the two coefficients on S² and S³ is PROVED. Result: `results/phase2_continuum/eq342_verdict.md`.
+- 2C. Ollivier's theorem, G3 eq. 344 (line 5340). G3 has the scalar curvature R where Ollivier (2009, Example 7) has Ric(v,v). The comparison of the leading terms is PROVED. A Monte Carlo estimate at N = 600 does not resolve the difference (MEASURED). Result: `results/phase2_continuum/eq344_verdict.md`.
+- 2D. Volume-element expansion, G3 eq. 338 (line 5210, TeX line 2587). The sum is written over i only and leaves the index j free (READ). Symbolic check on a concrete metric: not run.
+- 2E. Cone-volume formula, G3 eq. 369 (line 5774): Vol(C_t(p)) = a t^n [1 − (1/6) R_ij t^i t^j + O(‖t‖³)]. Its relation to the coefficient R/(6(d+2)) of eq. 340: OPEN.
+- 2F. Benincasa-Dowker d'Alembertian and action, G3 eqs. 378-387 (lines 5984-6124). G3 replaces weak ergodicity by "the much stronger assumption of uniform Poisson distribution of the rewrite events" (line 6080), and states the convergence of eq. 387 "as proposed by Sorkin, Benincasa and Dowker, and demonstrated numerically by Cunningham" under zero surface terms and a vanishing contribution from outside the Riemann normal neighbourhood (lines 6110-6116) (READ). Comparison with the statements in Benincasa and Dowker (2010): OPEN.
 
-### 1D. Nail down the cone-growth exponent with a second method.
-- Ratio test: $C(2r)/C(r)$ should approach $2^n$ for growth of exponent $n$. If $n=1$, ratio → 2.
-- Bootstrap the fit across 10 random-seeded variations (vary the initial condition slightly) and check the exponent is stable.
+## Phase 3: discrete equations of G3 §6
 
-**Phase 1 delivers a verified empirical claim** or surfaces a bug. Without this we cannot trust Phase 4 conclusions.
+- 3A. Discrete Ollivier-Ricci curvature of directed hypergraphs, G3 eqs. 348-356 (lines 5430-5574), citing Eidi and Jost (arXiv:1907.04727). Comparison with Eidi and Jost, and computation of κ on the hypergraphs of Figures 66-68: not run.
+- 3B. Discrete ADM decomposition, G3 eqs. 333-336 (lines 5139-5179): the spatial metric from Δl² = γ_ij Δx^i Δx^j "for some choice of assignments of spatial coordinates", the lapse from Δτ = αΔt and the shift from x^i(t + Δt) = x^i(t) − β^i(t) (READ). Whether these quantities are determined by the hypergraph and causal graph, and whether they converge: OPEN.
+- 3C. Sectional-curvature distance formula, G3 eq. 372 (TeX line 2809): d(exp_x(v_x), exp_y(ε v_y)) = δ(1 − (ε²/2) K(u,v) + O(ε³ + ε²δ)). It uses the sectional curvature K(u,v) of the plane of u and v. Comparison with the Riemannian formula: OPEN.
 
-## Phase 2 — Audit JGORARD's continuum-side equations
+## Phase 4: passages from discrete to continuum
 
-Every equation on the smooth-manifold side is a statement in Riemannian geometry that is either standard or not. For each one we apply the triple check.
+Notes: `notes/continuum_limit_claims.md`, `notes/limit_toolkit.md`.
 
-### 2A. Gray ball-volume expansion (JGORARD Eqs 340, 343)
-- Standard: Gray (1973); Gray–Vanhecke (1979); Chavel, *Riemannian Geometry: A Modern Introduction*, Ch. III.6.
-- **Symbolic check:** use Mathematica's built-in `RicciTensor` on a metric and compute $\int_B \sqrt{\det g}\, d^d x$ by Taylor expansion; compare coefficient.
-- **Numerical check:** on $S^d$ (known $R = d(d-1)$) and on hyperbolic $\mathbb{H}^d$ (known $R = -d(d-1)$), compute the small-ball volume directly and compare to the formula.
-- **Expected verdict:** Eqs 340 & 343 are correct standard results.
+- 4A. Convergence of discrete Ollivier-Ricci curvature to Ricci curvature. Results exist for random geometric graphs (García Trillos and Slepčev 2018). G1-G3 cite no convergence theorem for hypergraph rewriting (READ).
+- 4B. "Provably satisfies the Einstein field equations in the continuum limit" (G3 lines 50-52). The argument in G3 §6 assumes Poisson-distributed rewrite events (line 6080) and the Benincasa-Dowker convergence (lines 6110-6124), and samples the initial hypergraph from the target geometry (lines 6148-6152, 6179) (READ). G3 gives no proof that the evolution of the rule of line 6202 produces Poisson-distributed events.
+- 4C. Benincasa-Dowker action on a Poisson sprinkling of a Schwarzschild region, compared with the Einstein-Hilbert action: not run.
+- 4D. The statement needed: for a rule R with stated properties, the causal graph of the evolution from a seed converges, as the number of events grows, to a Poisson sample of a Lorentzian manifold. OPEN for every rule. For the rule of G3 line 6202, linear cone growth (`CausalHistory.GorardNamedRuleConeGrowthLinear`) is OPEN, and the measured exponents lie between 0.77 and 1.26 (MEASURED).
 
-### 2B. Gray tube-volume expansion (JGORARD Eq 342)
-- Standard: Gray, *Tubes*, 2nd ed., §4; also Weyl (1939) for Euclidean case, Hotelling (1939), Gray–Vanhecke (1979).
-- Correct formula (to be verified from Gray): $V(T_\varepsilon(\gamma)) = \omega_{d-1}\varepsilon^{d-1}L\left(1 - \frac{\varepsilon^2}{2(d+1)}(R - \mathrm{Ric}(u,u)) + O(\varepsilon^4)\right)$.
-- JGORARD's coefficient: $\frac{d-1}{d+1}$ (no 1/2, no factor-of-2, different combinatorial form).
-- **Symbolic check:** compute on $S^2$ directly, expand exactly.
-- **Numerical check:** $S^2$ great-circle tube is a spherical zone of area $4\pi\sin\varepsilon$; expand and compare.
-- **Expected verdict (pending full verification):** Eq 342 coefficient is wrong by factor $2(d-1)$.
-- **If confirmed:** this is the first *computational* error in the paper (not just rhetoric). Document as `notes/eq342_error.md` with the correct Gray derivation step-by-step.
+## Phase 5: second check of every finding
 
-### 2C. Ollivier's theorem (JGORARD Eq 344)
-- Standard: Ollivier, *Ricci curvature of Markov chains on metric spaces*, JFA 256 (2009), Theorem 6 + Example 7.
-- Ollivier's statement: $W_1(m_p^\varepsilon, m_q^\varepsilon) = \delta(1 - \frac{\varepsilon^2}{2(d+2)}\mathrm{Ric}(v,v) + O(\varepsilon^4 + \varepsilon^2 \delta^2))$ with $v = (q-p)/\|q-p\|$.
-- JGORARD's statement: same prefactor but $R$ (scalar) instead of $\mathrm{Ric}(v,v)$.
-- **Numerical check:** on $S^2$, $R=2$, $\mathrm{Ric}(v,v) = 1$ ⇒ predictions differ by factor 2. Compute $W_1$ numerically (optimal transport between two small spherical cap measures) and see which matches.
-- **Expected verdict:** JGORARD's Eq 344 has a directional-vs-scalar confusion.
-- **If confirmed:** the error propagates to JGORARD's discrete Ollivier–Ricci argument throughout §3.
+Each finding that a formula differs from its source is rederived by a second route. Each formula recorded as standard is checked against a second reference. Status: the findings are collected in `FINDINGS.md`, `MAJOR_FLAWS.md` and `STATUS_OF_GORARD_CLAIMS.md`. A separate second-check record does not exist.
 
-### 2D. Metric-in-geodesic-normal-coords (Eqs 337, 338, 772–773, 777)
-- Standard: any differential-geometry text; Gray's book has the expansion explicitly.
-- **Symbolic check:** Mathematica with a concrete 2D metric (e.g. upper half-plane), verify the expansion.
-- Spot check: Eq 338 as printed has a free index $j$ in `\sum_{i=1}^d R_{ij} \delta x^i \delta x^j` — sums over $i$ only, leaving $j$ free. Likely a TeX typo; cross-check with the PDF rendering.
+## Phase 6: Lean
 
-### 2E. Cone-volume formula (Eq 792)
-$V(C_t(p)) = a t^n [1 - \frac{1}{6} R_{ij} t^i t^j + O(\|t\|^3)]$
-- Standard: cone integration of the ball expansion.
-- **Verify coefficient:** the $\frac{1}{6}$ vs $\frac{1}{6(d+2)}$ issue — the coefficient in 343 has $(d+2)$, but in 792 it's just $\frac{1}{6}$. Check if these reconcile under the right integration measure.
+| Target | Status |
+|---|---|
+| Edge-count conservation for rules with \|LHS\| = \|RHS\| | PROVED: `Application.size_result_of_conservative`, `size_preserved_by_applications`, `Refutations.gorardNamedRule_applications_preserve_size` |
+| Antichain bound k·\|A\| ≤ N for \|LHS\| = \|RHS\| = k | PROVED: `CausalHistory.RuleHistory.antichain_card_le`, `CausalHistory.gorardNamedRule_antichain_card_le` |
+| Cone bound 5^t for the rule of G3 line 6202 | PROVED: `CausalHistory.gorardNamedRule_ball_card_le` |
+| Linear cone growth for the rule of G3 line 6202 | OPEN: `CausalHistory.GorardNamedRuleConeGrowthLinear` |
+| G1 §3.3 applied to the rule of G3 line 6202 | OPEN: needs linear or polynomial cone growth and a notion of convergence that G1 does not state |
+| Comparison of the tube and Ollivier coefficients | PROVED as arithmetic: `Infra.gray_vs_gorard_disagree_on_S2`, `Infra.gray_vs_gorard_disagree_on_S3`, `Infra.ollivier_gorard_agree_iff`; Gray's and Ollivier's theorems are cited, not formalised |
+| Gray's tube formula and Ollivier's theorem in Lean | OPEN |
 
-### 2F. Each standard-reference theorem cited
-Benincasa–Dowker d'Alembertian eq 378–383, Sorkin action eq 384–387. Each needs a correct-citation-check: does JGORARD state the result as Sorkin/Benincasa/Dowker do? In particular, line 6080's *swap of weak ergodicity for Poisson* is critical.
+## Phase 7: further directions
 
-**Phase 2 delivers** `notes/continuum_eqs_audit.md` with a triple-check verdict on every continuum equation in §§3.1–3.3 of 2102.09363 (and equivalents in 2004.14810).
-
-## Phase 3 — Audit JGORARD's discrete-side equations
-
-### 3A. Discrete Ollivier–Ricci on directed hypergraphs (Eqs 348–356)
-- Cited: Eidi–Jost, *Ollivier Ricci Curvature of Directed Hypergraphs*, arXiv:1907.04727.
-- **Check:** JGORARD's definitions match Eidi–Jost?
-- **Verify by direct computation:** compute $\kappa$ for the tested hypergraphs (Figures 66, 67, 68: asymptotically flat / positive / negative), check the sign matches JGORARD's claim.
-- This is an auditable numerical experiment: construct the specific rule from each caption, evolve, compute discrete Ollivier–Ricci, report value.
-
-### 3B. Discrete causal graph + ADM decomposition
-- Check the discrete ADM claim (Eqs 333–336) as a *definition*-level consistency check: is the proposed identification of $\alpha, \beta^i, \gamma_{ij}$ with causal-graph quantities well-defined? Does it converge?
-- This is the same tautology I flagged in 2004.14810 — but now with a specific line-by-line TeX trace.
-
-### 3C. Discrete-sectional-curvature formula (Eq 808)
-$d(\exp_x(\mathbf{v}_x), \exp_y(\varepsilon \mathbf{v}_y)) = \delta(1 - \frac{\varepsilon^2}{2} K(\mathbf{u},\mathbf{v}) + O(\varepsilon^3 + \varepsilon^2 \delta))$
-- This **does** have the directional form ($K(\mathbf{u},\mathbf{v})$ is a sectional curvature, two-argument).
-- Check whether this is consistent with JGORARD's other formulas (2C) and with standard Riemannian sectional-curvature formulas.
-
-### 3D. Discrete Einstein–Hilbert (Eqs on causal-set / Benincasa–Dowker)
-- Separate what JGORARD imports from Sorkin/Benincasa/Dowker from what he asserts.
-- The critical step 6080 (Poisson replaces weak ergodicity) is the hinge.
-
-**Phase 3 delivers** `notes/discrete_eqs_audit.md` with each discrete-side equation triple-checked.
-
-## Phase 4 — Audit the bridge (discrete → continuum)
-
-The load-bearing claims. Each needs **precise formal statement** and **explicit proof-status verdict**.
-
-### 4A. "Convergence of Ollivier–Ricci to Ricci for discrete hypergraphs"
-- Is there a convergence theorem? In the literature (Lin–Lu–Yau 2011, Ollivier 2007, Trillos–Slepčev 2018 for random geometric graphs): yes, under specific sampling hypotheses.
-- Does JGORARD's §3 invoke such a theorem? **Check line by line.**
-
-### 4B. "Provably satisfies EFE in the continuum limit"
-- This is the crux. The line trace (lines 6080 / 6152 / 6202 of the TeX) gave a specific chain: Poisson sampling in a known manifold + BD conjecture.
-- Question: does the literature *prove* ⟨S_BD⟩ → S_EH? Dowker–Surya line of work + Cunningham numerics — still conjectural.
-- Our verdict should be precise: the chain is *valid as a hypothetical implication* from a known conjecture; what fails is the "Wolfram-model dynamics" link.
-
-### 4C. Empirical direct test
-- Build a direct test: pick a small spacetime (Schwarzschild metric near the horizon), Poisson-sample into it, compute the discrete BD action, compare to the EH action evaluated on the continuum metric.
-- If agreement is good → confirms the BD/Poisson side of the argument (known, but good to reproduce).
-- The test *does not* touch the Wolfram-dynamics claim.
-
-### 4D. The Wolfram-dynamics gap
-- Identify the missing theorem: "For Wolfram-model rule R with properties P, the causal graph arising from evolution from seed S converges, in the limit of large T, to a Poisson sample of some Lorentzian manifold $(M,g)$."
-- **No such theorem exists, and the named EFE rule cannot satisfy it (see Phase 1 / our empirical refutation).**
-
-**Phase 4 delivers** `notes/bridge_claims_audit.md`: for each bridge claim, *exact formal statement + proof-status verdict with citation*.
-
-## Phase 5 — Independent double-check of every verdict
-
-After Phases 1–4, we have a catalog of correct, incorrect, and open claims. Before the final verdict, every one gets a second-pass check:
-
-- Each "incorrect" verdict is re-derived by a fresh path (separate script, fresh set of references).
-- Each "correct" verdict is rechecked by trying to break it (can we find a counterexample? a reference that states it differently?).
-- Each "open" verdict is recontextualized (who has the strongest positive / negative evidence in the literature?).
-
-This phase exists because the cost of publishing a wrong "JGORARD got this wrong" is high.
-
-**Phase 5 delivers** `notes/verdicts_final.md` with each claim's status double-signed.
-
-## Phase 6 — Formalize what's correct in Lean
-
-For each claim that survives Phase 5 as *correct*:
-
-1. State precisely in Lean (using Mathlib where possible).
-2. Prove it, or connect to an existing Mathlib theorem.
-3. Commit with the claim-catalog ID in the commit message.
-
-Particular targets for Lean:
-- **Theorem A** (edge conservation for $|LHS|=|RHS|$ rules).
-- **Theorem B** (linear-cone bound for conservative rules).
-- **Theorem C** (|LHS|=|RHS| ⇒ JGORARD §3.3 cannot apply).
-- The correct Gray tube formula (if Mathlib's differential geometry has enough infrastructure).
-- The correct Ollivier theorem for directional Ricci (more speculative — Mathlib's OT + differential geometry isn't quite there yet).
-
-The Lean library becomes **the formal statement of what is and isn't true about Wolfram-model geometry**.
-
-## Phase 7 — Our own direction
-
-Once we know what is actually true, we formulate a positive program.
-
-Candidates:
-- **Positive theorem:** for random geometric graphs on a Riemannian manifold (Poisson sampling + proximity edges + $\varepsilon$-scaling), the discrete Ollivier–Ricci converges to $\frac{\mathrm{Ric}(v,v)}{2(d+2)}$ in the appropriate limit. This is Trillos–Slepčev-style but for Ollivier–Ricci specifically.
-- **Negative theorem:** no |LHS|=|RHS| rule in the Wolfram-model class can yield a $d \ge 2$ causal graph. Structural, provable, refutes a wide subclass of JGORARD's claims in one shot.
-- **Lean contribution:** formalization of the correct Gray ball-volume expansion + Ollivier directional statement + the Wolfram-model-as-conservation-system link.
-
-## Concrete next step
-
-Start at **Phase 1A** (Python re-implementation) to bug-audit the empirical work — without a verified empirical basis, we cannot trust Phase 4D's refutation. I'll then move to **Phase 2B / 2C** (numerical test of Eq 342 and Eq 344 on $S^2$), since both are already-suspect equations and the test is cheap.
-
-After each phase I'll come back with a short status report; you can redirect the plan if the findings suggest a different priority.
+- For random geometric graphs on a Riemannian manifold (Poisson sampling, proximity edges, scale ε → 0), convergence of the discrete Ollivier-Ricci curvature to Ric(v,v)/(2(d+2)). OPEN.
+- For rules with |LHS| = |RHS|, an upper bound on the growth of causal cones. The antichain bound is PROVED. A bound linear in the radius is OPEN even for the rule of G3 line 6202.
+- Lean statements of Gray's ball and tube expansions and of Ollivier's theorem. OPEN.

@@ -1,95 +1,64 @@
-# Which of JGORARD's claims are established, and which are working hypotheses?
+# Classification of the main claims of G1, G3 and G4
 
-This is a synthesis addressing the central question raised by the user: the Wolfram Institute internally doubts JGORARD's GR-from-hypergraph-rewriting results; we cannot verify them; is he deceiving, or is he right about a hunch he has not rigorously proved?
+This document assigns each main claim of G1 (arXiv:2004.14810), G3 (arXiv:2102.09363) and G4 (arXiv:2303.07282) to one category, with the lines it rests on. Line numbers refer to `papers/gorard_*.txt`. Per-claim status with axiom lists is in [`STATUS_OF_GORARD_CLAIMS.md`](../STATUS_OF_GORARD_CLAIMS.md), and the paper-by-paper occurrences are in [`corpus_audit.md`](corpus_audit.md).
 
-The honest answer is **neither**, and both, in different parts of the corpus. Below I break down the claims by type and assign each one to one of four categories:
+Categories:
 
-- **(T) True, proved elsewhere** — a correct mathematical statement, usually imported from causal-set theory or classical differential geometry.
-- **(C) Conjectural** — plausibly true, with partial numerical or analytical support, but not proven.
-- **(H) Hunch relabeled as theorem** — a plausibility argument that JGORARD presents with the rhetoric of a derivation, despite no proof. This category matters most: it involves no invented data, but it blurs the distinction between "I believe" and "I have shown."
-- **(X) Definitionally empty** — a claim whose content is a rephrasing of a definition, presented as a theorem. Not false; just empty.
+- (S) Standard result, cited from differential geometry, numerical relativity or causal-set theory.
+- (A) Stated under an assumption or a conjecture that the paper names.
+- (N) Stated without proof: the step uses an object the paper does not construct, or an analogy.
+- (D) Holds by the definitions the paper uses.
+- (F) A formula that differs from the cited source.
+- (T) Named in the title or abstract, and stated in the body as open.
 
-I mark each major claim from the three most load-bearing papers.
+Each classification is READ unless a PROVED, MEASURED or OPEN label is given.
 
-## The claims
+## G1, arXiv:2004.14810
 
-### 2004.14810 — "Some Relativistic and Gravitational Properties"
-
-| # | Claim (paraphrased) | Category | Note |
+| # | Claim | Category | Lines and note |
 |---|---|---|---|
-| A1 | Causal invariance ⇔ discrete general covariance | **X** | Both sides are defined as foliation/update-order independence; the biconditional is tautological by definition. |
-| A2 | "Flat hypersurfaces" correspond to inertial frames ⇒ discrete Lorentz covariance | **H** | Uses the speed of light as an axiom (unit edge length = discrete light cone). No propagation result is derived from dynamics. |
-| A3 | Ollivier–Ricci κ(p,q) "reduces to Riemannian Ricci scalar R(p,q)" | **Error** | Ollivier's theorem (JFA 2009) says κ recovers **directional** Ricci Ric(v,v), not scalar R. "R(p,q)" is not a standard object. Either a loose paraphrase or a genuine misunderstanding. |
-| A4 | Non-parallel hyperedges are "orthonormal" (the fiat) | **H** | Orthonormality requires a bilinear form; none is constructed. The assumption is the geometric content, not a consequence. |
-| A5 | Discrete volume-of-ball expansion Vol(B_r) = a r^n(1 − R r²/(6(n+2)) + …) on hypergraph | **H** | Obtained "by analogy" with the Riemannian formula; the analogy is not a convergence proof, and ε = δ = 1 invalidates the asymptotic regime. |
-| A6 | δS/δg^ab → 0 gives vacuum Einstein equations in continuum limit | **H** | "δ/δg^ab" is never defined on discrete g. The argument is a rewriting of the EH→Einstein continuum derivation in front of an undefined discrete object. |
-| A7 | Chapman–Enskog analogy to discrete molecular dynamics | **H (analogy)** | Presented as proof; actually an analogy. |
+| A1 | Causal invariance corresponds to discrete general covariance | D | Lines 1063-1075 describe both as independence of the outcome from the updating order (foliation). `causalInvariance_iff_discreteGeneralCovariance` (`Refutations/F4Tautology.lean`) is PROVED by `Iff.rfl` for the project's encoding. |
+| A2 | Causal invariance gives discrete Lorentz covariance | D | Lines 1079-1089: the constancy of the speed of light "is enforced axiomatically by our definition of the edge lengths in causal graphs, this completes the proof". |
+| A3 | The Ollivier-Ricci curvature reduces to "the standard Riemannian Ricci scalar curvature R (p, q)" | F | Lines 1468 (eq. 48), 1532-1534, 2054 (eq. 80). Ollivier (2009) has the directional Ricci curvature Ric(v,v). PROVED as an arithmetic comparison: `Infra.ollivier_gorard_agree_iff`. |
+| A4 | Non-parallel hyperedges "can be considered to be orthonormal" | N | Lines 2063-2065. No bilinear form on hyperedges is defined. |
+| A5 | Hypergraph ball counts satisfy N(r) = a rⁿ(1 − R r²/(6(n+2)) + O(r⁴)) | N | Lines 1772-1798 (eqs. 64-65) infer this from A3, "for any sufficiently small value of r (with exactness when r = 1)" (line 1790). No derivation for hypergraphs is given. |
+| A6 | δS/δg^ab → 0 gives the vacuum Einstein equations in the continuum limit | N, D | Lines 2168-2264 (eqs. 86-91). The discrete metric of Def 15 (lines 786-788) and the variation of a discrete sum are not constructed, and "becomes" (line 2214) has no stated notion of convergence. Eq. 87 states dimension preservation as the Euler-Lagrange equation (D); `asymptoticDimPreservation_iff_eulerLagrange` is PROVED by `Iff.rfl` for the project's encoding. |
+| A7 | The derivation is a Chapman-Enskog expansion | N | Line 2437 calls the derivation "formally analogous" to the Chapman-Enskog expansion, and lines 2514-2516 call it "essentially equivalent" to one, with C(t) of eq. 109 as the distribution function. No theorem is stated. |
 
-### 2102.09363 — "Hypergraph Discretization of the Cauchy Problem"
+## G3, arXiv:2102.09363
 
-| # | Claim (paraphrased) | Category | Note |
+| # | Claim | Category | Lines and note |
 |---|---|---|---|
-| B1 | CCZ4 Einstein-PDE evolution can be run on an unstructured hypergraph mesh | **T** | This is standard numerical relativity with a flexible mesh topology. Not a derivation of GR — a solver for GR. |
-| B2 | Gravitational-wave extraction via null-tetrad projection onto numerical Weyl tensor | **T** | Baker–Campanelli–Lousto 2002. Standard. Tetrad lives on the continuum metric, not on the hypergraph. |
-| B3 | "A hypergraph substitution rule that provably satisfies EFE in the continuum limit" | **H + sampled initial data** | The chain (now confirmed by close reading, notes/2102.09363_close_reading.md): (a) cite BD d'Alembertian; (b) replace "weak ergodicity of the Wolfram model" with **uniform Poisson distribution** (line 6080 verbatim) — this drops the Wolfram-model dynamics entirely; (c) invoke ⟨S_BD⟩ → S_EH under zero surface terms and vanishing far-light-cone tails, with numerical support from Cunningham; (d) **construct the initial hypergraph by Poisson-sampling points from the Brill-Lindquist initial data** (lines 6148-6152, 6179). The initial data is taken from the target geometry. |
-| B3' | The specific "rule that satisfies EFE" is `{{x,y},{y,z},{z,w},{w,v}} → {{y,u},{u,v},{w,x},{x,u}}` | **MEASURED, bound OPEN** | First named at line 6202. We ran it in SetReplace (see `notes/empirical_refutation.md`, scripts in `scripts/`): on small 4-cycle/4-path seeds it halts after 1 firing; on larger cycles/paths it conserves edge count exactly; measured cone-growth exponents 0.985 to 1.256 (6-cycle, 8-cycle, 10-path, 20-cycle, figure-8, 3×3×3, 4×4×4, 5×5×5 grids), with SetReplace and Python disagreeing on 8 of 9 shared seeds. `\|LHS\|=\|RHS\|=4` gives edge conservation (PROVED). No bound on cone growth is proved. JGORARD's §3.3 machinery needs `n=4`. |
-| B4 | Pure-Wolfram evolution agrees with CCZ4-on-mesh evolution on benchmarks | **numerical only** | ≈2nd-order agreement on Tables 6–7. Agreement is between two evolutions of the same initial data, sampled from the target geometry. Does not establish that the rule encodes GR. |
-| B5 | Validation against Schwarzschild / Kerr / binary mergers | **T (as NR validation)** | Real numerical work using CCZ4; but this validates the *PDE solver*, not the derivation of GR from the Wolfram model. |
+| B1 | The CCZ4 equations can be evolved on a hypergraph mesh | S | §2-§5 (lines 310-4779). The hypergraph serves as the mesh of a finite-difference solver for the Einstein equations. |
+| B2 | Gravitational waves are extracted through the Weyl scalar Ψ4 | S | Lines 3960-4345 (eq. 267 onward): Newman-Penrose projection with a null tetrad built from the evolved metric. See [`null_tetrad_resolution.md`](null_tetrad_resolution.md). |
+| B3 | "a hypergraph substitution rule that provably satisfies the Einstein field equations in the continuum limit" | A | Abstract lines 50-52. Lines 6079-6081 replace weak ergodicity by "uniform Poisson distribution of the rewrite events". The Benincasa-Dowker limit (eq. 387, lines 6110-6124) is stated under zero surface terms and a vanishing contribution from outside the Riemann normal neighbourhood, with numerical support from Cunningham. G3 gives no proof that the rule of line 6202 produces Poisson-distributed events. |
+| B3' | The rule is {{x,y},{y,z},{z,w},{w,v}} → {{y,u},{u,v},{w,x},{x,u}} | PROVED, MEASURED, OPEN | Line 6202. PROVED: edge-count conservation (`Refutations.gorardNamedRule_applications_preserve_size`), antichains of at most N/4 events (`CausalHistory.gorardNamedRule_antichain_card_le`), at most 5^t events within directed distance t (`CausalHistory.gorardNamedRule_ball_card_le`), for every update order. MEASURED: on cycles, paths and 3D grids of up to 300 edges and 2000 events the cone-growth exponent lies between 0.77 and 1.26 and depends on the update order; on the 4-cycle and 4-edge path the rule fires once ([`empirical_refutation.md`](empirical_refutation.md)). OPEN: linear cone growth, `CausalHistory.GorardNamedRuleConeGrowthLinear`. |
+| B4 | The pure Wolfram model evolution reproduces the numerical solution for binary black holes | A | §6 (lines 6146-6463). The initial hypergraph is a Poisson sample of the Brill-Lindquist data (lines 6148-6152, 6179), with an unstated cut-off distance (line 6176). Figures 73-77 and 79-83 show the direct numerical solution and the pure Wolfram model evolution side by side. Tables 6 and 7 (lines 6226-6246, 6383-6392) report approximately second-order convergence of the Hamiltonian constraint of the pure Wolfram model evolution at 100 to 1600 vertices. |
+| B5 | Convergence tests for Schwarzschild, Kerr and binary black holes | S | §5 (lines 2530-4779), Tables 1-5: approximately fourth-order convergence of the finite-difference scheme. These tests concern the PDE solver. |
 
-### 2303.07282 — "Discrete Singularity Theorems"
+## G4, arXiv:2303.07282
 
-Close-reading now in `notes/2303.07282_close_reading.md`. **The paper does not contain what its title promises.** Zero labeled theorems / propositions / definitions; the words "shear" and "vorticity" appear zero times in the body; no discrete Raychaudhuri equation, no discrete expansion scalar θ, no discrete energy condition, no discrete stress-energy tensor, no discrete trapped surface is constructed. The "rigorous mathematical analysis" the abstract advertises (lines 453, 4331) is exclusively continuum: WKB expansions for spherical collapse (following Gonçalves–Moss) and Ernst-equation derivations for axial rotating collapse (Neugebauer–Meinel). Both are correct continuum GR, neither is discrete.
+G4 contains no labelled theorems, propositions or definitions, and the words "shear" and "vorticity" do not occur in it. Close reading: [`2303.07282_close_reading.md`](2303.07282_close_reading.md).
 
-| # | Claim (paraphrased) | Category | Note |
+| # | Claim | Category | Lines and note |
 |---|---|---|---|
-| C1 | Discrete analog of Raychaudhuri equation on causal graphs | **Not delivered** | Promised by title, conceded as open problem in the abstract (lines 38–49) and conclusions (lines 5369–5381). |
-| C2 | Discrete singularity theorem (Penrose-like) | **Not delivered** | Same — acknowledged as future work. |
-| C3 | Asymptotic convergence to Schwarzschild / Kerr (spherical / axial collapse) | **T (continuum) + numerical validation** | Standard Gonçalves–Moss + Neugebauer–Meinel continuum GR, validated numerically on the CCZ4-on-hypergraph mesh. Correct, but not about hypergraph→manifold convergence. |
-| C4 | Ollivier–Ricci scalar substituted into a curved-space Green's-function formula | **H** | §5 substitutes the discrete Ollivier–Ricci scalar into continuum formulas **without proving the substitution is legitimate**. Inherits all three unproved hypotheses from 2004.14810 (causal invariance, weak ergodicity, asymptotic dimension preservation). |
+| C1 | A discrete analogue of the Raychaudhuri equation | T | Title lines 1-3. The abstract (lines 37-41) calls it "subtle to formulate", and lines 351-357 call it "somewhat non-obvious". G4 does not construct it. |
+| C2 | A discrete singularity theorem | T | The abstract (lines 76-78) states that the results "offer hope that a more general, perhaps ultimately “Penrose-like”, singularity theorem may be provable". The conclusions (lines 5377-5391) name a global topological theorem and discrete energy conditions as directions for further work. |
+| C3 | Collapse of a massive scalar field converges to Schwarzschild or extremal Kerr | S, A | §3 follows Gonçalves and Moss (line 1756) and §4 follows Neugebauer and Meinel (line 3188): continuum analysis, with numerical runs. The conclusions (lines 5359-5361) state that both solutions "may be recovered as limiting cases of a pure Wolfram model/hypergraph rewriting evolution"; §5 uses the rule of G3 line 6202 (lines 5140-5217) and the G1 chain with weak ergodicity and asymptotic dimension preservation (lines 4713-4735). |
+| C4 | Green's functions of a massive scalar field on Wolfram model causal graphs | N | Lines 5040-5046 replace "the continuum Ricci scalar R (x) with the discrete (Ollivier-Ricci) scalar curvature" in a continuum formula, and refer to [28] for details. |
 
-## What pattern does this reveal?
+## Counts
 
-Tabulating:
+- S: B1, B2, B5, and the continuum part of C3.
+- A: B3, B4, and the Wolfram-model part of C3.
+- N: A4, A5, A6, A7, C4.
+- D: A1, A2, and eq. 87 within A6.
+- F: A3.
+- T: C1, C2.
 
-- **(T) True, proved elsewhere**: B1, B2, B5. These are standard numerical relativity or standard differential geometry. JGORARD's contribution is exposition and software integration, not derivation.
-- **(C) Conjectural**: B3 (the big one — reduces to the BD conjecture in causal-set theory, with numerical support only).
-- **(H) Hunch relabeled as theorem**: A2, A4, A5, A6, A7. These are the heart of 2004.14810's "derivation of GR." Every single one is a plausibility move.
-- **(X) Definitionally empty**: A1. Presented as a discovery, but it's a rephrasing.
-- **Error**: A3. A genuine misstatement of what Ollivier's theorem says.
+## Lean formalisation of these findings
 
-## The honest verdict
-
-**The published texts claim more than their arguments establish, and contain no fabricated data.** There is no evidence of invented numerical data or simulation results — the CCZ4-on-mesh validation against Schwarzschild/Kerr is real NR work, and the references to Sorkin/Benincasa/Dowker are correct. What *is* present in the published corpus:
-
-  * a "provably satisfies" claim whose numerical support starts from initial data sampled from the target geometry (2102.09363 §6, lines 6148-6152 and 6179),
-  * title/abstract claims that the body does not deliver (2303.07282 promises discrete singularity theorems and delivers none; the paper's own conclusions concede this),
-  * load-bearing conjectures (Sorkin–Benincasa–Dowker) cited in contexts that read as if the conjecture were settled,
-  * a verbatim Ollivier-curvature misstatement (scalar where Ollivier's theorem has directional Ric(v,v)) reused across four papers,
-  * fiat orthonormality and an undefined discrete metric tensor that carry the weight of the §3.3 "Einstein equations" derivation.
-
-Whether each is "an error of register" or "a deliberate choice" is a question about authorial intent which is outside the mathematical record. What *is* in the mathematical record is that the papers, read literally, do not deliver what the titles and abstracts claim; and that the §6 comparison starts from initial data sampled from the target geometry.
-
-**The pattern is not incidental.** The same fiat orthonormality assumption (G1 §3.2 line 840, reused in G2 §5 and G3 §5), the same undefined discrete `g^ab` (G1 Def 15, reused in G2 §5 and G3 §5), the same treatment of the Sorkin–Benincasa–Dowker conjecture as if it were a settled theorem, and the same Poisson-sprinkle-then-reconstruct procedure recur across four papers over three years. In the published texts, the gap between plausibility argument and derivation, between open conjecture and theorem, between sample-consistency check and "provably satisfies the Einstein field equations" is consistently collapsed in the direction that favours the stronger claim. Whether this is best explained by shorthand, by institutional publication pressure, or by something else is outside the mathematical record; what *is* on the record is the repetition, its direction, and its consequence. The derivations, read as written, are not derivations.
-
-**The §6 comparison in 2102.09363 starts from initial data sampled from the target geometry (READ).** The procedure is:
-1. Pick a target initial-data geometry (Brill-Lindquist, line 6179).
-2. Poisson-sample vertices into it (lines 6148-6152).
-3. Link vertices closer than a cut-off distance whose value is not stated (line 6176).
-4. Evolve the hypergraph with the named rule and compare it with the CCZ4 evolution of the same initial data (Figures 73-84, Tables 6-7).
-No rewriting rule is used to produce the initial hypergraph. The paper does not run the rule from initial data that does not encode the target geometry. `Refutations/F6Circularity.lean` does not model this procedure (see `STATUS_OF_GORARD_CLAIMS.md`, Claim 2).
-
-**Systematic overclaim.** The word "derivation" is used where "plausibility argument" would be accurate. The word "provably" is used where "conjecturally, via a result of Sorkin–Benincasa–Dowker on Poisson causal sets" would be accurate. The phrase "in the continuum limit" is used as if it denoted a single well-defined limit, when in fact it would have to be one of several (GH, Lorentzian-GH, spectral, graphon, Poisson–BD) and JGORARD does not commit to one.
-
-**Overclaim extends to paper titles.** The pattern of 2303.07282 is especially revealing: the title and abstract advertise "Discrete Singularity Theorems in Wolfram Model Systems," the body contains neither a discrete Raychaudhuri equation nor a discrete singularity theorem, and JGORARD himself concedes in the conclusion that these are future work. The paper delivers standard continuum GR collapse arguments plus numerical validation on a hypergraph mesh; it does not deliver a discrete theorem. A reader who saw only the title would come away with a false picture of the paper's content.
-
-**Hunches that might well be true.** The underlying intuition — that *some* coarse-graining of causal graphs produced by a well-behaved rewriting rule should behave like a Lorentzian manifold satisfying GR — is not crazy. Causal-set theory has been operating on the same intuition since Bombelli–Lee–Meyer–Sorkin 1987, with genuine partial results. JGORARD's hunch is in good company; what distinguishes his papers is the rhetoric. He writes as if the results are established when in fact they are inherited from causal-set theory (and still conjectural there) or genuinely new and unproved.
-
-**Why the Institute is right to be skeptical.** Because the papers read like derivations and are cited as if they are. If a Wolfram-Institute colleague asked "has JGORARD derived GR?" the honest answer is *no one has*, and what JGORARD has done is present a reformulation that (a) imports a causal-set conjecture as if it were a Wolfram-model theorem, (b) treats several plausibility steps as proofs, and (c) contains at least one outright misstatement (A3). The appearance of rigor outruns the substance by a wide margin.
-
-**What this project should do.**
-1. Formalize the setup in Lean so that the *gap between what is defined and what is concluded* becomes visible at the type level. This alone will make most of category (H) impossible to state without committing to the missing hypotheses.
-2. Import (or wait for) Mathlib's differential-geometry and Lorentz-manifold libraries and state the target theorem (convergence to GR) in full. An unproved Lean goal records what is open. A refutation needs a proof of the negation.
-3. State the weakest version of "hypergraph → GR" that one could hope to prove — along the BD line — and either prove it (a real contribution) or show its obstruction.
-4. Stay honest in the output: call hunches hunches, call conjectures conjectures, reserve "theorem" for theorems.
-
-The cleanest way to describe what JGORARD did, without accusing him of misconduct, is: **he wrote physics-style derivations and called them mathematical ones**. This is an error of register, not of data integrity. It is nonetheless an error that makes the papers unverifiable in the form they are written, which is exactly what the user's colleagues report.
+- `Refutations/F3Tautology.lean` and `Refutations/F4Tautology.lean`: PROVED by `Iff.rfl` about the project's encodings of A6 (eq. 87) and A1.
+- `Refutations/F1NoMetric.lean`, `F2Orthonormality.lean`, `F5Illdefined.lean`, `F6Circularity.lean`: VACUOUS with respect to the papers. They state facts about a function type, about forms on `Bool`, about the sequence 1/(n+1), and a restated hypothesis.
+- `Refutations/F7NamedRuleStructure.lean` and `CausalHistory.lean`: PROVED results about the rule of G3 line 6202, listed under B3'.
+- The findings about the papers are READ findings with the line numbers above.
