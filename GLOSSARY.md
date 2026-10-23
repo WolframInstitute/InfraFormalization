@@ -1,36 +1,36 @@
 # Glossary
 
-Definitions used throughout this project. Organized by topic. Terms JGORARD uses in his corpus are marked with ★; our additions are unmarked.
+Definitions used in this project, by topic. Terms used in G1-G4 are marked ★. Paper files: G1 = `papers/gorard_2004.14810.txt`, G3 = `papers/gorard_2102.09363.txt`.
 
 ## Hypergraph rewriting
 
-**Hypergraph (directed).** A pair $H = (V, E)$ where $V$ is a set of vertices and $E$ is a multiset of *ordered* tuples of vertices ("hyperedges"). In our Lean formalisation, `Hyperedge V` is a nonempty `List V`; `Hypergraph V` is a `Multiset (Hyperedge V)`.
+**Hypergraph (directed).** A pair $H = (V, E)$ where $V$ is a set of vertices and $E$ is a multiset of ordered tuples of vertices (hyperedges). In Lean, `Hyperedge V` is a nonempty `List V` and `Hypergraph V` is a `Multiset (Hyperedge V)`.
 
-**Rule.** A pair $(LHS, RHS)$ of hypergraphs on a common *pattern-vertex* type. When a rule fires, a subhypergraph matching $LHS$ is replaced by $RHS$.
+**Rule.** A pair $(LHS, RHS)$ of hypergraphs on a common type of pattern vertices. Applying a rule replaces a subhypergraph matching $LHS$ by $RHS$.
 
-**Match.** An assignment of pattern vertices to target vertices such that the image of $LHS$ sits in the target as a submultiset. Pattern vertices in $RHS$ that are not in $LHS$ are *fresh* and allocate new target vertices on firing.
+**Match.** An assignment of pattern vertices to target vertices such that the image of $LHS$ is a submultiset of the target. Pattern vertices of $RHS$ that do not occur in $LHS$ are fresh and receive new target vertices when the rule is applied.
 
-**Application.** A match plus the choice of fresh-vertex bindings. Each application has a `consumed` multiset (the LHS image) and a `produced` multiset (the RHS image).
+**Application.** A match together with the bindings of the fresh vertices. Each application has a `consumed` multiset (the image of $LHS$) and a `produced` multiset (the image of $RHS$).
 
-**Conservative rule.** A rule with $|LHS| = |RHS|$. Edge count is preserved by every application. Keystone of our P1 / P2 structural findings.
+**Conservative rule.** A rule with $|LHS| = |RHS|$. Every application preserves the edge count (`Application.size_result_of_conservative`, PROVED). The rule of G3 line 6202 is conservative. The term is this project's, not G1-G4's.
 
-**State size.** The multiset cardinality of the hypergraph's edge multiset. For a conservative rule, the state size is constant along every trajectory.
+**State size.** The cardinality of the edge multiset. For a conservative rule it is constant along every trajectory (`trajectory_size_invariant`, PROVED).
 
-★ **Single-way evolution.** A linear sequence $s_0 \to s_1 \to \ldots$ where each step picks one match per rule per step. The result is one causal graph. Determined by a scheduler (SetReplace's `EventOrderingFunction`).
+★ **Single-way evolution.** A sequence of states $s_0 \to s_1 \to \ldots$ in which each event applies one match. The order of events is fixed by an update order, for example SetReplace's `EventOrderingFunction`. `MultiwayExec.singleWayStep` applies a maximal set of edge-disjoint matches per step, chosen greedily in enumeration order.
 
-★ **Multi-way evolution graph (MWEG).** The directed acyclic graph of *all* possible states reachable from $s_0$ via legal applications, with edges to every possible successor. Every path through the MWEG is a legal single-way evolution.
+★ **Multiway evolution graph.** The directed graph of all states reachable from $s_0$ by applications, with an edge from each state to each of its successors. Every path in it is a single-way evolution.
 
-★ **Branchial graph.** A graph on states at the same "generation" of the MWEG; edges connect states sharing a common ancestor. Intended to encode a quantum-mechanical notion of "branchial distance."
+★ **Branchial graph.** A graph on the states at one step of the multiway evolution, with an edge between two states that have a common immediate predecessor (`BranchialRelated`, `Branchial.lean`). The "branchial" relation of `BranchialEventTrace.lean` is same-step consumed-edge contention and differs from this graph.
 
-★ **Causal graph.** A directed graph whose vertices are events (rule firings) along a single-way evolution, with an edge $A \to B$ iff some expression produced by $A$ is consumed by $B$. See also *causal precedence*.
+★ **Causal graph.** A directed graph whose vertices are the events of a single-way evolution, with an edge $A \to B$ when $B$ consumes a hyperedge produced by $A$. `CausalHistory.lean` defines it on hyperedge identities. `causallyPrecedes` (`Causal.lean`) relates events through hyperedge values and differs from the causal graph when a state holds two equal hyperedges.
 
-★ **Causal precedence / light-cone structure.** The partial order $\prec$ on events induced by the causal graph.
+★ **Causal precedence.** The partial order on events generated by the causal graph.
 
-★ **Causal invariance.** Property of a rewriting system: all causal graphs produced by every path through the MWEG are isomorphic (or "eventually isomorphic"). A multi-way property. Analogous to confluence in abstract rewriting.
+★ **Causal invariance.** A property of a rewriting system: the causal graphs of all paths through the multiway evolution graph are isomorphic. G1 relates it to confluence.
 
-★ **Confluence (Church–Rosser).** Standard ARS property: divergent rewrites reconverge. Necessary condition for causal invariance.
+★ **Confluence (Church-Rosser).** The abstract-rewriting property that any two rewrites from a common state can be continued to a common state.
 
-★ **Asymptotic dimensionality preservation.** JGORARD's condition (G1 §3.3): the "dimension anomaly" of the causal graph $\to 0$ as the graph grows. Defined by JGORARD as $\delta S[g^{ab}] / \delta g^{ab} \to 0$. Our audit classifies this as tautological (S3) because the definition is the Euler-Lagrange equation of the claimed action.
+★ **Asymptotic dimensionality preservation.** The condition of G1 §3.3. G1 lines 2203-2206 state that it "corresponds to the statement" $\delta S[g^{ab}] / \delta g^{ab} \to 0$ (eq. 87), which is the Euler-Lagrange equation of $S$ (READ; see [`MAJOR_FLAWS.md`](MAJOR_FLAWS.md) F3).
 
 ## Continuum geometry
 
@@ -38,68 +38,62 @@ Definitions used throughout this project. Organized by topic. Terms JGORARD uses
 
 **Lorentzian manifold** $(M, g)$. A smooth manifold with a metric of signature $(-,+,+,+)$.
 
-**Metric tensor** $g_{ab}$ / **inverse metric tensor** $g^{ab}$. Standard.
+**Metric tensor** $g_{ab}$, **inverse metric tensor** $g^{ab}$. Standard.
 
 **Christoffel symbols** $\Gamma^\rho_{\mu\nu}$. Components of the Levi-Civita connection.
 
-**Riemann tensor** $R_{abcd}$ / **Ricci tensor** $R_{ab} = R^c_{acb}$ / **scalar curvature** $R = g^{ab} R_{ab}$. Standard.
+**Riemann tensor** $R_{abcd}$, **Ricci tensor** $R_{ab} = R^c_{acb}$, **scalar curvature** $R = g^{ab} R_{ab}$. Standard.
 
-**Directional Ricci** $\mathrm{Ric}(v, v) = R_{ab} v^a v^b$ for a unit vector $v$. *Not* the same as $R$ in general. The conflation of $\mathrm{Ric}(v,v)$ with $R$ is S1 in our taxonomy.
+**Directional Ricci curvature** $\mathrm{Ric}(v, v) = R_{ab} v^a v^b$ for a unit vector $v$. It differs from $R$ in general.
 
 **Einstein field equations.** $R_{ab} - \tfrac{1}{2} R g_{ab} + \Lambda g_{ab} = 8\pi T_{ab}$.
 
-**ADM formalism.** A 3+1 decomposition of a Lorentzian spacetime: lapse $\alpha$, shift $\beta^i$, spatial metric $\gamma_{ij}$; line element $ds^2 = -\alpha^2 dt^2 + \gamma_{ij}(dx^i + \beta^i dt)(dx^j + \beta^j dt)$.
+**ADM formalism.** A 3+1 decomposition of a Lorentzian spacetime into lapse $\alpha$, shift $\beta^i$ and spatial metric $\gamma_{ij}$, with line element $ds^2 = -\alpha^2 dt^2 + \gamma_{ij}(dx^i + \beta^i dt)(dx^j + \beta^j dt)$.
 
-**BSSN / CCZ4.** Specific hyperbolic re-formulations of the Einstein PDEs used in numerical relativity. Not specific to the Wolfram program.
+**BSSN, CCZ4.** Hyperbolic formulations of the Einstein equations used in numerical relativity.
 
-**Null tetrad** $\{\ell, n, m, \bar m\}$. A basis of $T_p M$ at each point of a Lorentzian 4-manifold satisfying $\ell \cdot n = -1$, $m \cdot \bar m = 1$, all other inner products zero. Requires a tangent space. **Does not exist intrinsically on a hypergraph** — see [`notes/null_tetrad_resolution.md`](notes/null_tetrad_resolution.md).
+**Null tetrad** $\{\ell, n, m, \bar m\}$. A basis of $T_p M$ at each point of a Lorentzian 4-manifold with $\ell \cdot n = -1$, $m \cdot \bar m = 1$ and all other inner products zero. It requires a tangent space. A hypergraph has no tangent space, so a null tetrad on a hypergraph requires an additional construction; see [`notes/null_tetrad_resolution.md`](notes/null_tetrad_resolution.md).
 
-**Newman–Penrose formalism.** Decomposition of Weyl/Riemann tensor via the null tetrad. $\Psi_4$ = outgoing gravitational radiation.
+**Newman-Penrose formalism.** Decomposition of the Weyl tensor in a null tetrad. $\Psi_4$ describes outgoing gravitational radiation.
 
-**Kinnersley tetrad.** A particular null tetrad aligned with the principal null directions of the Kerr Weyl tensor. Used for black-hole perturbation theory.
+**Kinnersley tetrad.** A null tetrad aligned with the principal null directions of the Kerr Weyl tensor, used in black-hole perturbation theory.
 
 ## Metric-measure geometry
 
-**1-Wasserstein distance** $W_1(\mu, \nu)$. The optimal transport distance between probability measures on a metric space: $\inf_\pi \int d(x,y) d\pi(x,y)$ over couplings $\pi$ of $\mu$ and $\nu$.
+**1-Wasserstein distance** $W_1(\mu, \nu)$. The optimal-transport distance $\inf_\pi \int d(x,y)\, d\pi(x,y)$ over couplings $\pi$ of probability measures $\mu$ and $\nu$ on a metric space.
 
-**Ollivier–Ricci curvature** $\kappa(x,y) = 1 - W_1(m_x, m_y) / d(x,y)$ for a random walk $m$ on a metric space $(X, d)$. For a Riemannian manifold with uniform-ball random walk, Ollivier (JFA 2009, Example 7) proved $\kappa = \varepsilon^2 \mathrm{Ric}(v,v) / (2(d+2)) + O(\varepsilon^3)$ where $v$ = unit vector from $x$ to $y$.
+**Ollivier-Ricci curvature** $\kappa(x,y) = 1 - W_1(m_x, m_y) / d(x,y)$ for a random walk $m$ on a metric space $(X, d)$. For a Riemannian manifold with the uniform-ball random walk, Ollivier (JFA 2009, Example 7) proves $\kappa = \varepsilon^2 \mathrm{Ric}(v,v) / (2(d+2)) + O(\varepsilon^3)$, where $v$ is the unit vector from $x$ to $y$. G1 eq. 80 and G3 eq. 344 use $R$ in place of $\mathrm{Ric}(v,v)$ ([`FINDINGS.md`](FINDINGS.md) S1).
 
-**Directional vs scalar Ollivier.** Ollivier's Riemannian identity yields $\kappa$ ∝ directional Ricci $\mathrm{Ric}(v,v)$. JGORARD consistently writes scalar $R$ where $\mathrm{Ric}(v,v)$ should appear — S1.
+**Benincasa-Dowker action.** A counting functional $S_{BD}(C)$ on a causal set $C$. Its continuum limit under Poisson sprinkling into a Lorentzian manifold has numerical support (Cunningham 2018) and no proof.
 
-**Benincasa–Dowker action.** A discrete counting functional $S_{BD}(C)$ on a causal set $C$, whose expectation under Poisson sampling in a continuum spacetime converges to (conjecturally) the Einstein–Hilbert action.
+## Limits and convergence
 
-## Limit / convergence
+**Gromov-Hausdorff (GH) convergence.** Convergence in the Gromov-Hausdorff distance on compact metric spaces. The library proves GH approximation bounds for cycles, paths and tori (`Infra.cycle_circle_gh_bound`, `Infra.path_interval_gh_bound`, `Infra.torus_gh_bound`, `Infra.dTorus_gh_bound`, PROVED).
 
-**Gromov–Hausdorff (GH) convergence.** A topology on the space of compact metric spaces. Standard for comparing sequences of discrete approximations to manifolds.
+**Lorentzian Gromov-Hausdorff.** An extension of GH distance to Lorentzian spaces using the time separation function in place of the distance (Noldus 2004; Minguzzi and Suhr).
 
-**Lorentzian Gromov–Hausdorff.** Extension of GH to Lorentzian (pseudo-Riemannian) spaces using the Lorentzian time-separation in place of the Riemannian distance. Young theory — Noldus 2004, Minguzzi–Suhr 2020.
+**Γ-convergence.** A notion of convergence for functionals under which minimisers of the discrete functionals approach minimisers of the limit functional (Braides 2002).
 
-**Γ-convergence.** Variational notion of convergence for functionals; ensures that minimisers of the discrete functional approach minimisers of the continuum functional. Proper tool for discrete-to-continuum variational claims (Braides 2002).
+**Poisson sprinkling.** A random point set in a measure space whose number of points in a region $V$ is Poisson distributed with mean $\rho \mathrm{Vol}(V)$. G3 line 6080 replaces "the assumption of weak ergodicity of the causal graph dynamics with the much stronger assumption of uniform Poisson distribution of the rewrite events".
 
-**Poisson sampling / sprinkling.** Drawing a countable point set in a measure space whose number-of-points-in-$V$ distribution is Poisson$(\rho \mathrm{Vol}(V))$. Standard in causal-set theory. In G3 §5 this is what replaces "Wolfram-model dynamics" by fiat.
+**Continuum limit.** G1 line 2214 states that a sum "becomes" an integral in the continuum limit "subject to a weak ergodicity assumption". G1 does not state a notion of convergence for this passage (READ).
 
-**Continuum limit.** Informal phrase used throughout JGORARD's corpus. Never formally defined. Could mean GH, spectral, measure-space, Γ-convergence, or several other things; the papers do not commit.
+## Research programme
 
-## Research program
+**Infrageometry.** The study of discrete analogues of continuum geometric notions (curvature, metric, volume, differential operators, connection, holonomy) on combinatorial structures (hypergraphs, causal sets, directed multigraphs), related to classical geometry by convergence theorems. See [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md).
 
-**Infrageometry.** The study of discrete analogues of continuous geometric notions (curvature, metric, volume, differential operators, connection, holonomy) on combinatorial structures (hypergraphs, causal sets, directed multigraphs), made rigorous by *convergence theorems* linking the discrete objects to classical continuum geometry. The long-term research direction that hosts this repository; see [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md).
+**Discrete-to-continuum bridge.** A theorem stating that a sequence of discrete objects $X_n$ with parameter $\varepsilon_n \to 0$ converges in a specified topology to a continuum object $X$, and that discrete invariants on $X_n$ converge to the corresponding invariants on $X$. See [`BRIDGE_MACHINERY.md`](BRIDGE_MACHINERY.md).
 
-**Discrete-to-continuum bridge.** A theorem of the form: "sequence of discrete objects $X_n$ with parameter $\varepsilon_n \to 0$ converges (in a specified topology) to a continuum object $X$, and discrete invariants defined on $X_n$ converge to the corresponding classical invariants on $X$." The object of phases 3–6 of the research program.
+**Origin obligation.** A Lean Prop such as `HypergraphMetricOriginObligation target`. The origin obligations do not depend on their target and hold for every target (`Curvature.any_metric_has_strong_obligation_witness`). Theorems that inhabit them are VACUOUS.
 
-**Parallel-layer bound / Parallel schedule width.** For a conservative rule (|LHS|=|RHS|=k) evolving from seed of size N, the greedy-parallel-schedule decomposition of the causal DAG has each layer containing ≤ ⌊N/k⌋ events. Provable from conservation; distinct from (and weaker than) "linear BFS-cone growth," which requires rule-specific structure.
+**Antichain bound.** For a rule with $|LHS| = |RHS| = k$ evolving from $N$ hyperedges, every antichain $A$ of the causal graph satisfies $k \cdot |A| \le N$, for every update order (`CausalHistory.RuleHistory.antichain_card_le`, PROVED; for the rule of G3, `CausalHistory.gorardNamedRule_antichain_card_le`). Linear growth of causal cones is a separate statement, OPEN for the rule of G3 as `CausalHistory.GorardNamedRuleConeGrowthLinear`.
 
-## Our project vocabulary
+## Project vocabulary
 
-**Rail (verification).** One of four independent ways we verify a claim: (A) literature re-derivation, (B) symbolic check, (C) numerical check, (D) manual hand-check. A claim must pass ≥ 3 to be published as verified.
+**Verification methods (A-D).** The four ways a claim is checked: (A) re-derivation from the literature, (B) symbolic check, (C) numerical check, (D) manual check by hand. A claim is recorded as verified when it passes at least three.
 
-**Corpus (G1–G4).** The four JGORARD papers under audit: 2004.14810 (G1), 2011.12174 (G2), 2102.09363 (G3), 2303.07282 (G4).
+**G1-G4.** The four papers under audit: 2004.14810 (G1), 2011.12174 (G2), 2102.09363 (G3), 2303.07282 (G4).
 
-**Severity class (S1–S6).** Defined in [`notes/severity_taxonomy.md`](notes/severity_taxonomy.md). S1 = false statement; S2 = ill-defined; S3 = tautology; S4 = unsupported bridge; S5 = refuted specific; S6 = claim not delivered in the body.
+**Groups S1-S6.** Defined in [`notes/severity_taxonomy.md`](notes/severity_taxonomy.md) and used in [`FINDINGS.md`](FINDINGS.md): S1 formulas that differ from the cited sources; S2 objects used without a definition; S3 equivalences that hold by definition; S4 passages from discrete to continuum without a proof; S5 statements about the rule of G3 line 6202; S6 titles and abstracts that name results the body does not prove.
 
-**Verdict status.** ✓ verified, ✗ refuted, ⚠ ill-defined, ⊘ tautology, ○ open.
-
-**Conservative rule.** $|LHS| = |RHS|$ — Wolfram-model-specific term (not JGORARD's; ours). The named rule of G3 is conservative.
-
-**Directional Ricci conflation.** Our label for the S1 error pattern — treating $\mathrm{Ric}(v,v)$ as if it were the scalar $R$.
-
-**Claim not delivered in the body.** S6 — a title or abstract states a result that the body does not deliver.
+**Status labels.** PROVED, PROVED-WITH-NATIVE-DECIDE, VACUOUS, MEASURED, READ, OPEN, as defined in [`STATUS_OF_GORARD_CLAIMS.md`](STATUS_OF_GORARD_CLAIMS.md).

@@ -1,715 +1,531 @@
-# Infrageometry — research program and Lean coverage map
+# Infrageometry: research programme and Lean coverage
 
-## 1. What Infrageometry is
+Status labels in this file: PROVED, PROVED-WITH-NATIVE-DECIDE, VACUOUS, READ, OPEN, as in [`STATUS_OF_GORARD_CLAIMS.md`](STATUS_OF_GORARD_CLAIMS.md), and DEFINED for a Lean definition with no theorem attached. Per-theorem axiom lists are in [`THEOREM_STATUS.md`](THEOREM_STATUS.md).
 
-**Infrageometry** is the study of the intrinsic geometry of hypergraphs arising in hypergraph rewriting. It is the backbone of the Wolfram Physics Project interpreted as *reconstruction* (the inverse of discretization): a small hypergraph is consistent with many continuum geometries; rewriting progressively refines which one. Smooth structure is expected only in the thermolimit of many updates.
+## 1. What infrageometry is
 
-Strategic contrasts:
+Infrageometry is the study of the intrinsic geometry of hypergraphs arising in hypergraph rewriting. It treats the Wolfram Physics Project as reconstruction, the inverse of discretisation: a small hypergraph is consistent with many continuum geometries, and rewriting narrows the set. Smooth structure is expected only in the limit of many updates.
 
-- In contrast to the "the hypergraph determines the metric" framing (JGORARD corpus): infrageometry explicitly *refuses* uniqueness. "Small graphs support multiple geometries." Scale-dependent phenomena are the rule, not the exception.
-- Against diffusion geometry: that program is probabilistic, infrageometry is exact computational; complementary, not competing.
-- Against causal-set theory: inherits sprinkling language and the BD action but treats the discrete substrate as the fundamental object rather than a sampled image of a Lorentzian manifold.
-- Against lattice gauge theory: operates at the *infra*-scale (no labels, just combinatorics); mesoscale labeled graphs are the coarse-graining target for RG flow into LGT.
+Relation to other programmes:
 
-## 2. Named subprojects of the program
+- G1 treats the metric as determined by the hypergraph. Infrageometry allows a small graph to support several geometries and treats scale-dependent behaviour as expected.
+- Diffusion geometry is probabilistic. Infrageometry uses exact combinatorial constructions. The two are complementary.
+- Causal-set theory treats the discrete set as a sample of a Lorentzian manifold. Infrageometry uses the sprinkling language and the Benincasa-Dowker action but treats the discrete structure as fundamental.
+- Lattice gauge theory works with labelled lattices. Infrageometry works at the unlabelled combinatorial scale and treats labelled mesoscale graphs as the target of coarse-graining.
 
-| Program | Scope | Status in colleagues' work | Our Lean coverage |
+## 2. Named subprojects
+
+| Programme | Scope | Work by colleagues | Lean coverage |
 |---|---|---|---|
-| **Synthetic Infrageometry** | Axiomatic construction of lines, circles, subspaces, spheres on hypergraphs (Euclid-style). `InfrageometricScene` handles multi-constructions. Hausdorff distance on branchial graph of construction instances. | Implementation in Wolfram paclet; extremal orthogonal axes; coordinatization via intersection of spheres (dual to intersection of lines). | None yet. Task group S below. |
-| **Infracausality** | Axiomatic special relativity from causal graphs. Observer chains, light rays, spatial-reconstruction hypergraph, Cauchy foliations, Ehlers–Pirani–Schild axioms, Marzke–Wheeler clocks. | "Axiomatic Relativity from Causal Graphs" paper in progress; EPS identified as the most discrete-compatible scheme. | Partial — `Causal.lean`, `CausalLevel.lean`, `Infra/LorentzLattice`, `Infra/TrajectoryLorentz`, `Infra/ScaledLorentz`. No EPS axiomatization yet. Task group IC. |
-| **InfraGaugeTheory** | Fibered graphs, sections, connections, parallel transport, Wilson loops, holonomy, moduli of connections, quantum corrections. | Paclet `resources/InfraGaugeTheory` is live (PPOKORNY). `RandomFiberedGraph`, `ConnectionQ`, `HolonomyMatrix`, `FlatConnectionQ`, `FindHorizontalLeaf`, `GraphTangentBundle`. | None yet. Task group IG below. |
-| **Infraanalysis** | Multi-variate calculus on graphs coordinatized by bundles of directed acyclic subgraphs; built-in renormalization via blowups; forms→cochains integration map. | 1D calculus on directed graphs as blowups of ℝ; cotangent bundle + de Rham complex in progress. | Partial — `DiscreteCalculus`, `DiscreteCalculusSymm`, `HypergraphCalculus` (grad/div/SBP), `LaplacianBridge` (scaled 2nd difference → `f''`), `HypergraphCycleBridge` (explicit hypergraph anchor). No DAG-coordinatization yet. Task group IA. |
-| **Ruliology / EME tracking** | Catalog rules by their geometric signatures; track eme (vertex) lifetimes across multiway branches as persistence signals. | Community paper in preparation; efficient-rewriting engine (RASSAR) for GPU-parallel multiway. | None yet. Task group R. |
+| Synthetic infrageometry | Axiomatic construction of lines, circles, subspaces and spheres on hypergraphs; `InfrageometricScene` for multiple constructions; Hausdorff distance on the branchial graph of construction instances | `SyntheticInfrageometry` paclet (PHAJEK): extremal orthogonal axes, coordinatization via intersections of spheres | `SyntheticGeometry.lean`, `SyntheticAxiomatic.lean`, `InfrageometricScene.lean` (DEFINED). Group IS. |
+| Infracausality | Axiomatic special relativity from causal graphs: observer chains, light rays, spatial reconstruction, Cauchy foliations, Ehlers-Pirani-Schild axioms, Marzke-Wheeler clocks | "Axiomatic Relativity from Causal Graphs" paper in progress (CZAPATA, SAHMED); EPS identified as the scheme closest to the discrete setting | `CausalGraphType.lean`, `CausalFoliation.lean`, `EPSAxioms.lean`, `MarzkeWheeler.lean`, `SpatialReconstruction.lean`, `Infra/LorentzLattice.lean`, `Infra/ScaledLorentz.lean`. Group IC. |
+| InfraGaugeTheory | Fibred graphs, sections, connections, parallel transport, Wilson loops, holonomy, moduli of connections | `InfraGaugeTheory` paclet (`PacletInfo` `Creator`: Pavel Pokorny; git committer: PHAJEK): `RandomFiberedGraph`, `ConnectionQ`, `HolonomyMatrix`, `FlatConnectionQ`, `FindHorizontalLeaf`, `GraphTangentBundle` | `FiberedGraph.lean`, `Holonomy.lean`, `FiberBundle.lean` (DEFINED). Group IG. |
+| Infraanalysis | Multivariate calculus on graphs coordinatized by bundles of directed acyclic subgraphs; renormalisation via blowups; integration map from forms to cochains | `InfraAnalysis` paclet (PHAJEK): 1D calculus on directed graphs as blowups of ℝ; cotangent bundle and de Rham complex in progress | `DiscreteCalculus`, `DiscreteCalculusSymm`, `HypergraphCalculus`, `LaplacianBridge`, `HypergraphCycleBridge`, `DagBlowup`, `DagCalculus`, `DeRham`, `FormCochainIntegration`. Group IA. |
+| Ruliology and EME tracking | Catalogue rules by geometric signature; track vertex lifetimes across multiway branches | Community paper in preparation; `HypergraphRewritingEngine` (RASSAR) for multiway evolution | `RuleSignature.lean`, `StructuralRuleBounds.lean`, `EMETracker.lean`. Group IR. |
 
-## 3. Technical primitives — colleague definitions
+## 3. Technical primitives from colleagues' work
 
-### Dimension (multiple, compatibility as a geometricity test)
+### Dimension
 
-- **Wolfram–Hausdorff dimension.** `d(v) := lim_{r→∞} log V_v(r) / log r` where `V_v(r)` is the number of vertices within graph distance `r` of `v`. Plateau across scales marks the "real" dimension; small r shows local irregularities, large r shows finiteness effects.
-- **Homology-based dimension.** Top Betti number that survives persistence across a plateau of scales on the Vietoris–Rips complex.
-- **Coordinatization-based dimension.** Number of extremal orthogonal axes that coordinatize a local neighborhood. Distinguishes compact from non-compact directions.
-- **Causal-graph dimension.** Derived from longest-antichain / foliation-thickness analysis of the causal graph.
-- **Model-rules dimension.** Classify a rule by the dimension it tends to produce.
-- **Compatibility principle.** Different notions should agree for "physically admissible" rules; discrepancies flag pathological cases.
+- Wolfram-Hausdorff dimension: `d(v) := lim_{r→∞} log V_v(r) / log r`, where `V_v(r)` is the number of vertices within graph distance `r` of `v`. A plateau across a range of scales gives the dimension. Small `r` shows local irregularity and large `r` shows finite size.
+- Homology dimension: the top Betti number that persists across a plateau of scales of the Vietoris-Rips complex.
+- Coordinatization dimension: the number of extremal orthogonal axes that coordinatize a neighbourhood. It distinguishes compact from non-compact directions.
+- Causal-graph dimension: from longest-antichain and foliation-thickness analysis of the causal graph.
+- Rule dimension: the dimension a rule tends to produce.
+- Compatibility: the notions are expected to agree for admissible rules, and disagreement marks pathological cases.
 
-### Topology (Vietoris–Rips + persistence)
+### Topology
 
-- **Latschev theorem** (cited): for any closed Riemannian manifold *M*, there exists `ε₀` such that for any `ε < ε₀` there exists `δ` such that for every metric space *X* with `d_GH(X, M) < δ`, the Vietoris–Rips complex `VR_ε(X)` is homotopy equivalent to *M*.
-- Application: given a hypergraph, take cliques of hyperedges → 1-skeleton → `VR_ε` at scales `ε = 1, 2, …` → persistence barcode → recover topology of limiting manifold.
-- **Scale-dependence phenomenon.** Quantum scale `ε < ε₁`: fully discrete. Mesoscale `ε₁ < ε < ε₂`: homology matches intuition. Coarse scale `ε > ε₂`: collapses. This is an intrinsic feature, not a bug.
-- **Hodge Laplacian on VR.** Spectral invariants of the vertex and edge Gram matrices give further geometric signature. Oriented versions support discrete Chern–Simons (IBL-∞) for loop-space information.
+- Latschev's theorem (cited): for a closed Riemannian manifold M there is ε₀ such that for every ε < ε₀ there is δ such that every metric space X with d_GH(X, M) < δ has a Vietoris-Rips complex VR_ε(X) homotopy equivalent to M.
+- Application: from a hypergraph, take the clique complex, compute VR_ε at ε = 1, 2, ..., and read the topology of a limiting manifold from the persistence barcode.
+- Scale dependence: below a scale ε₁ the complex is discrete; between ε₁ and ε₂ its homology matches the expected topology; above ε₂ it collapses.
+- Hodge Laplacian on VR: spectral invariants of the vertex and edge Gram matrices. Oriented versions support a discrete Chern-Simons theory (IBL-∞).
 
-### Fibered / gauge constructions
+### Fibred and gauge constructions
 
-- **Fibered graph** = `(total: Graph, proj: total → base)`. Vertical edges live inside fibers, horizontal edges are transverse.
-- **Fiber bundle predicate** `FiberBundleQ`: isomorphic fibers + edge-lifting property + at-most-one-edge-lift + local triviality (trivial holonomy on cycles in each vertex neighborhood).
-- **Connection** = subgraph of transverse edges with unique edge-lifting (`AtMostOneEdgeLiftQ`) and completeness.
-- **Section** = map base → total with `proj ∘ section = id`. Smooth iff adjacency-respecting.
-- **Parallel transport** along a base path = fold horizontal lifts; returns an association on fibers.
-- **Holonomy matrix** = permutation matrix around a loop; `HolonomyMatrices` covers basis cycles.
-- **Wilson loop** = trace of holonomy.
-- **Flat connection** = trivial holonomy on all loops.
-- **Tangent bundle** `GraphTangentBundle[g, r]` = fibers are `r`-neighborhoods; horizontal edges are "maximal transverse bipartite matchings."
-- **Exponential map** (proposal): `exp_v(e) = ∑_u [(#shortest paths v→u starting with edge e) / (total #shortest paths v→u)] · u`.
+- Fibred graph: a total graph with a projection to a base graph. Vertical edges lie in fibres and horizontal edges are transverse.
+- Fibre-bundle predicate `FiberBundleQ`: isomorphic fibres, edge-lifting property, at most one edge lift, and trivial holonomy on cycles in each vertex neighbourhood.
+- Connection: a subgraph of transverse edges with unique edge lifting (`AtMostOneEdgeLiftQ`) and completeness.
+- Section: a map from base to total with `proj ∘ section = id`. Smooth when it respects adjacency.
+- Parallel transport along a base path: the fold of horizontal lifts.
+- Holonomy matrix: the permutation matrix around a loop. `HolonomyMatrices` covers a cycle basis.
+- Wilson loop: the trace of the holonomy.
+- Flat connection: trivial holonomy on every loop.
+- Tangent bundle `GraphTangentBundle[g, r]`: fibres are `r`-neighbourhoods, horizontal edges are maximal transverse bipartite matchings.
+- Exponential map (proposal): `exp_v(e) = Σ_u [(#shortest paths v→u starting with e) / (#shortest paths v→u)] · u`.
 
-### Infracausality primitives
+### Infracausality
 
-- Minimal model of observer = causal edge.
-- Minimal model of spatial closeness = shared immediate common ancestor.
-- Foliation = decomposition into successive antichains ≡ Cauchy surfaces.
-- Light ray from point *p* = subgraph where causal interval `[p, q]` is degenerate for every `q` in the ray.
-- Spatially reconstructed hypergraph = events in same foliation slice connected when they share an immediate common-ancestor event in the previous slice.
-- Multi-fibrations arise because shortest-path projections are non-unique: one fiber element lies over multiple base points. Standard fibrations are the wrong model; multi-fibrations are honest.
-- Proper time = longest-path foliation (candidate).
-- Further goals: event horizon, inertial frames, Lorentz transformation, mass, axiomatic special relativity (EPS scheme), Marzke–Wheeler clocks on transitively-reduced causal graphs.
+- An observer is modelled by a causal edge.
+- Spatial closeness is modelled by a shared immediate common ancestor.
+- A foliation is a decomposition into successive antichains, the analogue of Cauchy surfaces.
+- A light ray from p is a subgraph in which the causal interval [p, q] is degenerate for every q on the ray.
+- The spatially reconstructed hypergraph joins events of one foliation slice that share an immediate common ancestor in the previous slice.
+- Shortest-path projections are not unique, so one fibre element can lie over several base points. The resulting structures are multi-fibrations.
+- Candidate proper time: the longest-path foliation.
+- Further targets: event horizons, inertial frames, Lorentz transformations, mass, the EPS scheme, Marzke-Wheeler clocks on transitively reduced causal graphs.
 
-### Branchial / quantum
+### Branchial and quantum
 
-- Branchial graph at slice *n*: states sharing an immediate common ancestor.
-- Connected components = superposition classes; self-adjoint adjacency → Hilbert space in limit.
-- **Elementary blowups**: rules with single-hyperedge LHS. Their commutator is causal-branchial-trivial, so they form a Lie algebra on isomorphism classes of hypergraphs.
-- Unary-edge blowups = **insertion Lie algebra** of perturbative QFT. Graded version exists.
-- Poisson bracket on formal functions ⟹ Hamiltonian mechanics on ruliad, with canonical functions `#V`, `#E`.
-- Moduli space of connections → path-integral weights via causal-branchial-graph time evolution.
-- Fisher metric on branchial graph → Fubini–Study in limit (HVLE direction).
+- Branchial graph at step n: states with an immediate common ancestor.
+- Connected components are superposition classes. A self-adjoint adjacency operator gives a Hilbert space in the limit.
+- Elementary blowups are rules with a single-hyperedge LHS. Their commutator has no causal-branchial component, so they form a Lie algebra on isomorphism classes of hypergraphs.
+- Blowups of unary edges form the insertion Lie algebra of perturbative QFT. A graded version exists.
+- A Poisson bracket on formal functions gives Hamiltonian mechanics on the ruliad, with canonical functions #V and #E.
+- Moduli of connections give path-integral weights through causal-branchial time evolution.
+- The Fisher metric on the branchial graph is expected to give the Fubini-Study metric in the limit (HVLE).
 
-### Synthetic / axiomatic
+### Synthetic
 
-- Synthetic Euclidean analogs: circle = equidistant set from a point; line = shortest-path center; sphere, cylinder, plane.
-- Fréchet-eccentricity selection for canonical straight lines.
-- Multi-constructions ensemble treated as a branchial object with Hausdorff metric.
-- Axiomatic formulation planned.
+- Synthetic Euclidean analogues: a circle is the set of points equidistant from a centre, a line is a set of shortest-path centres, and spheres, cylinders and planes are built similarly.
+- Fréchet eccentricity selects canonical straight lines.
+- An ensemble of constructions is treated as a branchial object with the Hausdorff metric.
+- An axiomatic formulation is planned.
 
-## 4. Coverage map — what this repo currently has
+## 4. Lean coverage
 
-### Fully Lean-formalized (axiom-clean)
-- Hypergraph calculus: `laplacianHyper` + linearity / self-adjointness / Dirichlet-PSD / divergence theorem; `hyperedgeGradient`, `hypergraphDiv`, discrete Stokes.
-- PDE ladder on `Hypergraph V`: heat (mass conservation + L² decay + long-time decay to constant), wave (energy), Klein–Gordon (energy + mass), Schrödinger (unitarity), scalar field Lagrangian + Euler–Lagrange.
-- Cycle bridge: `cycleHypergraph n` + matrix Laplacian + `exp(t · Δ)` heat kernel + C² Taylor convergence of the scaled second difference to `f''`.
-- Flat continuum limits: scaled cycle → S¹, path → interval, 2-torus, d-torus, discrete Lorentz → Minkowski.
-- Infracausality: `CausalGraph V` as TR-DAG, `ObserverChain`, `LightRay`, `Foliation` from successive antichains, EPS axioms, Marzke–Wheeler clock construction, `SpatiallyReconstructedHypergraph`, multi-fibration from non-unique shortest paths.
-- Fibered-graph machinery: `FiberedGraph`, `Section`, `Connection`, `ParallelTransport`, `HolonomyMatrix`, `WilsonLoop`, `FlatConnection`, `FiberBundle`, `GraphTangentBundle`, `MultiFiberedGraph`.
-- Hypergraph connection: `HypergraphConnection H G` with `flat`, `IsSymmetric`, `transportWalk`, `holonomy`, `IsFlat`, and the monoid-hom property `transportWalk_append`.
-- Infradimension: Wolfram–Hausdorff (ID1), plateau detection (ID2), homology dimension (ID3), coordinatization (ID4), causal-graph (ID5), compatibility `V(v, r) = 2r + 1` on cycle hypergraphs (ID6 `dimensionCompatibilityObligation_holds`).
-- Infratopology: `VietorisRipsComplex`, persistence diagram / barcode (IT4), Hodge Laplacian on VR 0- and 1-forms (IT2) with spectrum (IT3), Latschev obligation for cycles (IT5), scale trichotomy for cycles (IT6).
-- Ruliology (IR): `RuleSignature V`, `hypergraphSignature`, conservation theorem (IR2 — |LHS|=|RHS| bounds dimension), planar rules have dim ≤ 2 (IR4), tree-producing rules have log-branching dimension (IR3), product-rule additivity (IR5), candidate-rule database + screens (IR6), refined reverse-engineering obligation (IR7; over-strong form provably FALSE).
-- Blowup/Poisson (IB): `ElementaryBlowup`, blowup operations, `BlowupLieAlgebra`, insertion Lie (IB4), Poisson bracket on formal functions (IB5), radial/laminar blowup (IB6).
-- Branchial/quantum (IQ): finite `BranchialSlice` (I1), uniform measure (I2), ℂ-amplitudes + Born rule (I3), ℓ²(slice) Hilbert space + self-adjoint ℂ-linear adjacency (I4), unitary Schrödinger evolution (I5), Hermitian observables (I6) + expectation values (I7), Fisher metric on branchial (IQ5), Fubini-Study / Bhattacharyya bound (IQ6), EME persistence baseline (IQ8), path-integral baseline (IQ9).
-- Synthetic axiomatic (IS): circle, line, sphere (IS1); `InfrageometricScene` (IS2); axiomatic-synthetic layer (IS3).
-- Continuum targets (local-coord): Schwarzschild component functions + all eight Christoffels on the exterior; Schwarzschild as `PartialMetricData 4` (B1, B5); FLRW `flrwPartial a da` (B6); Reissner-Nordström `rnPartial M Q` (B8); de Sitter; 2-sphere; warpedDiag2.
-- Bundle-level metric predicates: `DiagRiemannianMetric` + Euclidean witness (C1); `DiagLorentzianMetric` + Minkowski witness (C2).
-- Hypergraph-origin obligations: every continuum metric in the GR zoo carries a `HypergraphMetricOriginObligation` Prop with flat-case witness; `LorentzianManifoldOriginObligation`, `ConnectionDataOriginObligation`, `EFEOriginObligation` similarly; `minkowski4_flat_vacuum_EFE_originated_global` is the first complete rule → metric → connection → EFE chain.
-- Refutations: F1 (no canonical metric), F2 (fiat orthonormality), F3 (dim-preservation tautology), F4 (causal-invariance ⇔ GC tautology), F5 (ill-defined "becomes"), F6 (G3 initial data sampled from the target geometry, Lean file restates its own hypothesis), F7 (named-rule edge conservation; no cone bound proved); F8 Raychaudhuri statement level.
-- Ollivier–JGORARD quantitative discrepancy: `ollivier_minus_gorard_leading` with S² worked example `s2_gorard_error = δε²/8`.
+### PROVED results
 
-### Partially formalized
-- A6 weak-convergence lift: polynomials up to degree 3 done; general continuous via Weierstrass pending.
-- D6 long-time convergence of the heat equation: non-constant eigenmodes decay; full result for arbitrary initial data needs eigenbasis-spanning.
-- P20 Rodkey classification of graphs with pointwise-constant Wolfram–Hausdorff dimension: sufficient chain `AdjTransitive → DistTransitive → BallVolumeVertexUniform → LocalDimensionVertexUniform` and necessary-regularity direction proved on cycle/path; general classification open.
-- IB2 causal-branchial-trivial commutator theorem: predicate-level placeholder; real theorem statement needed.
+- Hypergraph calculus: linearity, self-adjointness and the Dirichlet inequality for `laplacianHyper`; Σ Δf = 0; `hyperedgeGradient`, `hypergraphDiv` and `summation_by_parts`; discrete Stokes `stokes_zero_to_one` (`DeRham.lean`).
+- PDEs on `Hypergraph V`: heat equation (existence and forward uniqueness, mass conservation, L² decay, decay of non-constant cycle modes), wave equation (energy conservation), Klein-Gordon (energy conservation), Schrödinger (probability conservation), scalar-field Euler-Lagrange equation (`KG_EulerLagrange_iff_KleinGordonSolution`).
+- Cycle family: matrix Laplacian, heat kernel `exp(t·Δ)`, eigenvalue equation and the limit n²·λ_k(n) → −(2πk)² (`cycleEigenvalue_scaled_tendsto`); C² convergence of the scaled second difference to f'' (`scaledSecondDiff_tendsto_iteratedDeriv_C2`).
+- Fixed-family approximation bounds: an isometric embedding with 1/(2n)-dense image for the scaled cycle in ℝ/ℤ (`Infra.cycle_circle_gh_bound`), the path in [0, 1] (`Infra.path_interval_gh_bound`), the n×n lattice in the 2-torus (`Infra.torus_gh_bound`) and the (Fin n)^(d+1) lattice in the (d+1)-torus (`Infra.dTorus_gh_bound`); preservation of causal order by the embedding of the integer Lorentz lattice in Minkowski space (`Infra.lorentzIntEmbed_preserves_causal_iff`, `Infra.scaledLorentzEmbed_preserves_causal_iff`).
+- Infracausality: `stablyCausal_hasFoliation`, `mwClock_implies_causallyPrecedes`, `eps_worldline_not_light`. `CausalGraph V` (transitively reduced DAG), `IsFoliation`, `spatialReconstructionAdj`, `EPSAxioms` and `MWClock` are DEFINED.
+- Causal histories (`CausalHistory.lean`): an identity is consumed by at most one event; the out-degree of an event is at most the number of identities it creates; for |LHS| = |RHS| = k with N initial hyperedges, k·|A| ≤ N for every antichain A; for the rule of G3 line 6202, 4·|A| ≤ N (`CausalHistory.gorardNamedRule_antichain_card_le`) and at most 5^t events within directed distance t of an event (`CausalHistory.gorardNamedRule_ball_card_le`). These hold for every update order.
+- Hypergraph connection: `transportWalk_append` for `HypergraphConnection H G`.
+- Dimension: `dimensionCompatibilityObligation_holds`, V(v, r) = 2r + 1 on `cycleHypergraph n` for 2r + 1 ≤ n (ID6). Rodkey chain on cycles: `cycleHypergraph_rodkey_chain` (`RodkeyClassification.lean`), with `AdjTransitive → DistTransitive → BallVolumeVertexUniform → LocalDimensionVertexUniform`, and `pathHypergraph_not_ballVolumeVertexUniform`.
+- Topology: `latschevObligation_holds` states that distances on `cycleHypergraph n` are less than n + 1; it does not state Latschev's theorem. `scaleTrichotomyObligation_holds` covers the scales ε = 0 and ε = n on cycles. `vrHodge0_has_zero_eigenvalue`, `vrHodge0_symm` for the VR Hodge Laplacian on 0-forms.
+- Ruliology: edge-count invariance for conservative rules (`RuleSignature.edgeCount_invariant_of_conservative`, `trajectory_size_invariant`). `not_reverseEngineeringObligation` proves that the unrestricted reverse-engineering statement is false. `reverseEngineeringObligationRefined_holds` holds with the zero-step trajectory of the empty rule list starting at the target hypergraph.
+- Branchial and quantum: self-adjointness of the slice adjacency (`branchialAdjLM_inner`), probability conservation (`branchialSchrodinger_unitary_evolution`), expectation values (`expectationValue_re_of_symm`), `branchial_qm_is_rewriting_grounded`. `fubiniStudyBhattacharyya_bound` is the inequality |⟨ψ, φ⟩| ≤ Σ_s |ψ_s|·|φ_s|. `EMEPersistenceObligation` and `PathIntegralObligation` are PROVED with the zero vector and the zero amplitude.
+- Continuum targets in local coordinates: Schwarzschild Christoffel symbols on the exterior, FLRW Christoffel symbols and Ricci components (`FLRWRicci.lean`), Reissner-Nordström lapse identities, `warpedDiag2_einstein`, `minkowski4_satisfies_vacuum_EFE`.
+- Bundle-level metric predicates: `euclidean_diagRiemannian`, `minkowski4_diagLorentzian`.
+- Coefficient comparisons with the literature: `Infra.ollivier_minus_gorard_leading`, `Infra.ollivier_gorard_agree_iff`, and the S² case `Infra.s2_gorard_error` (difference δε²/8); `Infra.gray_vs_gorard_disagree_on_S2`, `Infra.gray_vs_gorard_disagree_on_S3`.
 
-### Still open
-- IG10 exponential map via weighted shortest-path counts.
-- ID7 heat-trace small-`t` asymptotics for spectral dimension.
-- C3–C8 bundle connection / Levi-Civita existence-uniqueness (Koszul) / scaled-discrete-connection → Levi-Civita convergence.
-- Curved-GR witnesses: Schwarzschild/Kerr/FLRW Ricci computations (B2/B3/B4, B7, B9); second Bianchi for Einstein tensor (B11); Ricci symmetry (B10).
-- G2 discrete gauge field (uses Rung 4).
-- E5 ADM decomposition, E6 Lorentzian-Gromov–Hausdorff, E7 discrete causal → continuum Lorentzian convergence.
-- D11 Cauchy problem for Einstein evolution (Choquet-Bruhat 1952).
-- A7 Wasserstein-1 convergence rate; A8 d-torus measure lift.
-- Branchial quantum continuum: I8 branchial-Hilbert continuum limit, I10 path-integral / unitary-evolution equivalence.
-- Full infrageometry obligations bundled in `all_obligations_hold`; the open items above are those left after that bundling.
+### DEFINED
 
-## 5. Lean task groups — full program coverage
+- Fibred graphs: `FiberedGraph`, `IsSection`, `FiberedGraph.Connection`, `ParallelTransportList`, `Holonomy`, `wilsonLoop`, `IsFlatConnection`, `IsFiberBundle`, `GraphTangentBundle`, `MultiFiberedGraph`.
+- Dimension: `IsPlateau` (ID2), `HasNontrivialHomology` (ID3), `HasCoordinatizationDim` (ID4), `HasChainToDepth` (ID5).
+- Topology: `VietorisRipsEdge`, `VietorisRipsSimplex`, `vietorisRipsGraph`, `PersistenceBarcode`, `firstBettiZ`, `spatialB0`, `IsSpatiallyConnected`.
+- Ruliology: `RuleSignature V`, `hypergraphSignature`, `RewritingSystem.ProducesTrees`, `RewritingSystem.ProducesPlanar` (via the necessary condition |E| ≤ 3|V| − 6), `IsDirectConcatSystem`, `IsProductSystem`. No dimension bound for tree-producing, planar or product rules is proved.
+- Blowups: `ElementaryBlowup`, `BlowupLieAlgebraStructure`, `PoissonBracket`, radial and laminar blowups. `ElementaryBlowup.CommutatorVanishesCausalBranchial` is a predicate; the commutator theorem (IB2) is OPEN.
+- Synthetic: `SyntheticCircle`, `SyntheticLineSegment`, `SyntheticSphere`, `InfrageometricScene`, `Between` and the axioms of `SyntheticAxiomatic.lean`.
+- Angles and metric primitives (`HypergraphDistance.lean`): `Hypergraph.elementaryAngle` (AT0), `cosAngle` (AT1), `IsOrthoApprox` (AT6), `GeodesicallyUnique` (AT8), `infraSphere`, `infraDisk`, `perpBisector`, `voronoiCell`, `midpoint`, `nearMidpoint`, `HasTopologicalHyperplane`. `Hypergraph.scalarCurvatureAt` (AT9, `DiscreteRicci.lean`). `AngularScreener`, `CombinedScreener` (AT7, `RuleSignatureScreener.lean`).
 
-These are added as tasks (see next commit). Each group is ordered so that early tasks unblock later ones.
+### VACUOUS
 
-### Group IA — Infraanalysis (discrete calculus on hypergraphs + DAGs)
-- IA1. `dagAsBlowupOfInterval` — `Hypergraph V` where `V = Fin n` with linear orientation as a 1D-coordinate blowup of `[0, 1]`.
-- IA2. Calculus on coordinate DAGs: `dagDerivative`, `dagIntegral`, fundamental theorem.
-- IA3. De Rham complex on `Hypergraph V`: 1-form, 2-form, `d` operator, `d² = 0`.
-- IA4. Integration map forms → cochains on clique complex; `∫_γ ω` is cochain of γ.
-- IA5. Blowup / refinement operator as a `Hypergraph V → Hypergraph W` map; commutes with calculus up to `O(1/n)`.
-- IA6. Scaled second-difference → `f''` for `C²` functions (closes /).
-- IA7. `C^k` uniform convergence on compacts (closes).
+- Origin obligations. `HypergraphMetricOriginObligation`, `HypergraphMetricOriginObligationStrong`, the partial-metric forms, `ConnectionDataOriginObligation`, `LorentzianManifoldOriginObligation`, `HypergraphQuantumOriginObligationStrong` and `HypergraphBBHOriginObligationStrong` do not depend on their target and hold for every target (`Curvature.any_metric_has_strong_obligation_witness` and the corresponding theorems). `EFEOriginObligation` is equivalent to `EinsteinEqLambda` (`Curvature.EFEOriginObligation_iff_EinsteinEqLambda`), so `minkowski4_flat_vacuum_EFE_originated_global` is the flat-vacuum Einstein equation with VACUOUS origin clauses. The Milestone Props are satisfied by the zero discrepancy; `Milestone.GR_emerges_from_hypergraph_holds` proves `GR_emerges_from_hypergraph target` for every target. Details: [`BRIDGE_MACHINERY.md`](BRIDGE_MACHINERY.md).
+- `all_obligations_hold` (`RemainingObligations.lean`) bundles ID6 (PROVED with content), the scale endpoints of IT6, the inequality of IQ6, the zero witnesses of IQ8 and IQ9, and the trivial witness of refined IR7.
 
-### Group IG — InfraGaugeTheory (port from PPOKORNY's paclet to Lean)
-- IG1. `FiberedGraph V W : Type` with projection `π : V → W` and type classes for fibers.
-- IG2. `Section π` := `σ : W → V` with `π ∘ σ = id`.
-- IG3. `Connection π` := `Finset (V × V)` with at-most-one-edge-lift.
-- IG4. `ParallelTransport` along a base path.
-- IG5. `HolonomyMatrix` on a loop.
-- IG6. `WilsonLoop := trace HolonomyMatrix`.
-- IG7. `FlatConnectionQ` predicate.
-- IG8. `FiberBundleQ` predicate.
-- IG9. `GraphTangentBundle` as a specific `FiberedGraph`.
-- IG10. `ExponentialMap` via weighted shortest-path counts.
-- IG11. Multi-fibrations: `MultiFiberedGraph` where `π` is multi-valued.
+### Lean files on G1-G4
 
-### Group IC — Infracausality (axiomatic SR from causal graphs)
-- IC1. Type `CausalGraph` = transitively-reduced DAG.
-- IC2. `ObserverChain` = causal edge / maximal chain.
-- IC3. `LightRay` as a degenerate-interval subgraph.
-- IC4. `Foliation` = successive antichains; `ProperTime` := longest-path height.
-- IC5. `SpatiallyReconstructedHypergraph` from causal graph + foliation.
-- IC6. Multi-fibration structure from non-unique shortest-path projection.
-- IC7. EPS axiom set (as Props): light-structure, particle-structure, compatibility.
-- IC8. `MarzkeWheelerClock` construction + determinism theorem.
-- IC9. Lorentz-transformation emergence for scaled causal DAGs converging to Minkowski.
-- IC10. Extension to curved targets (open obligation, similar to `SchwarzschildObligationMet`).
+- F3 and F4: PROVED by `Iff.rfl` about the project's encodings (`asymptoticDimPreservation_iff_eulerLagrange`, `causalInvariance_iff_discreteGeneralCovariance`).
+- F1, F2, F5, F6: VACUOUS with respect to the papers. They state facts about function types, `Bool`, the sequence 1/(n+1) and a restated hypothesis.
+- F7: PROVED edge-count conservation for the rule of G3 line 6202; the causal-graph bounds are in `CausalHistory.lean` (above).
+- The findings about the papers are READ findings with line numbers; see [`MAJOR_FLAWS.md`](MAJOR_FLAWS.md).
 
-### Group IT — Infratopology (Vietoris–Rips, Hodge, persistence)
-- IT1. `VietorisRipsComplex (H : Hypergraph V) (ε : ℕ) : AbstractSimplicialComplex V`.
-- IT2. `hodgeLaplacian` on 0-forms and 1-forms of VR.
-- IT3. Spectrum of Hodge Laplacian — eigenvalues, multiplicities.
-- IT4. `persistenceDiagram (H : Hypergraph V) : PersistenceDiagram`.
-- IT5. `BettiNumber VR_ε k` computation.
-- IT6. Latschev-theorem statement as a `Prop` obligation (+ proof for cycle → S¹).
-- IT7. Scale-dependence signature: formal statement of the quantum / meso / coarse trichotomy as a theorem on Betti-number function of ε.
+### Partial
 
-### Group ID — Infradimension (multiple notions + compatibility)
-- ID1. `wolframHausdorffDimension (H : Hypergraph V) (v : V) : ℝ`.
-- ID2. Plateau detection: `wolframHausdorffDimension` as a function of neighborhood radius range.
-- ID3. `homologyDimension` from top surviving Betti number in persistence.
-- ID4. `coordinatizationDimension` via extremal orthogonal axes.
-- ID5. `causalGraphDimension` from longest-antichain analysis.
-- ID6. Compatibility theorem: on regular lattices, all notions agree with the lattice dimension.
-- ID7. Incompatibility as a pathology detector: rules where notions disagree are flagged.
+- A6: lattice Riemann sums converge to the integral for polynomials of degree at most 3 (`A6Holds_poly_deg3`, PROVED). OPEN for every continuous function.
+- D6: decay to the constant mode on cycles is PROVED for finite eigen-combinations. OPEN for arbitrary initial data.
 
-### Group IB — Infrablowup / renormalization
-- IB1. `ElementaryBlowup (e : Hyperedge V) : Hypergraph V → Hypergraph V`.
-- IB2. Commutator `[B₁, B₂]` on isomorphism classes; theorem: causal-branchial component vanishes for LHS-single-hyperedge rules.
-- IB3. `BlowupLieAlgebra` structure.
-- IB4. Insertion Lie algebra for unary edges ≅ pQFT insertion algebra.
-- IB5. Poisson bracket on `ℝ[V_count, E_count]`; Hamiltonian vector fields.
-- IB6. Radial and laminar blowup operations, commuting with calculus up to `O(1/n)` (IA5 generalization).
+### OPEN
+
+- IG10: exponential map via weighted shortest-path counts.
+- ID7: small-t heat-trace asymptotics for spectral dimension.
+- C3-C8: covariant derivative on smooth sections, Levi-Civita existence and uniqueness (Koszul formula), convergence of scaled discrete connections to Levi-Civita.
+- Curved GR: Schwarzschild and Kerr Ricci tensors and vacuum Einstein equations; FLRW Einstein equations with perfect fluid; second Bianchi identity; Ricci symmetry for a general Levi-Civita connection.
+- G2: discrete gauge field.
+- E5-E7: ADM decomposition, Lorentzian Gromov-Hausdorff distance, convergence of discrete causal graphs to a Lorentzian manifold.
+- D11: Cauchy problem for the Einstein equations (Choquet-Bruhat 1952).
+- A7, A8: W₁ convergence rate, d-torus measure lift.
+- I8, I10: continuum limit of branchial Hilbert spaces, path-integral formulation.
+- Linear cone growth for the rule of G3 line 6202, stated as `CausalHistory.GorardNamedRuleConeGrowthLinear`.
+
+## 5. Lean task groups
+
+Each group lists its items in dependency order.
+
+### Group IA. Infraanalysis
+
+- IA1. `dagAsBlowupOfInterval`: `Fin n` with the linear orientation as a 1D-coordinate blowup of [0, 1]. DEFINED.
+- IA2. Calculus on coordinate DAGs: `dagDerivative`, `dagPrefixSum`, fundamental theorem.
+- IA3. De Rham complex on `Hypergraph V`: 1-forms, 2-forms, `d`, `d² = 0`.
+- IA4. Integration map from forms to cochains on the clique complex.
+- IA5. Blowup operator `Hypergraph V → Hypergraph W` commuting with calculus up to O(1/n).
+- IA6. Scaled second difference → f'' for C² functions. PROVED (`scaledSecondDiff_tendsto_iteratedDeriv_C2`).
+- IA7. Uniform convergence on C^k compacts. OPEN.
+
+### Group IG. InfraGaugeTheory (port of the `InfraGaugeTheory` paclet)
+
+- IG1. `FiberedGraph V W` with projection `π : V → W`.
+- IG2. Sections: `σ : W → V` with `π ∘ σ = id`.
+- IG3. Connections with at most one edge lift.
+- IG4. Parallel transport along a base path.
+- IG5. Holonomy on a loop.
+- IG6. Wilson loop as the trace of the holonomy.
+- IG7. Flat-connection predicate.
+- IG8. Fibre-bundle predicate.
+- IG9. `GraphTangentBundle` as a fibred graph.
+- IG10. Exponential map via weighted shortest-path counts.
+- IG11. Multi-fibrations: `MultiFiberedGraph` with multi-valued `π`.
+
+### Group IC. Infracausality
+
+- IC1. `CausalGraph` as a transitively reduced DAG.
+- IC2. Observer chains.
+- IC3. Light rays as degenerate-interval subgraphs.
+- IC4. Foliations by successive antichains; proper time as longest-path height.
+- IC5. Spatially reconstructed hypergraph from a causal graph and a foliation.
+- IC6. Multi-fibration from non-unique shortest-path projection.
+- IC7. EPS axioms as Props: light structure, particle structure, compatibility.
+- IC8. Marzke-Wheeler clock and a determinism theorem.
+- IC9. Lorentz transformations for scaled causal DAGs converging to Minkowski space.
+- IC10. Curved targets, with `SchwarzschildObligationMet` as the model statement.
+
+### Group IT. Infratopology
+
+- IT1. `VietorisRipsComplex (H : Hypergraph V) (ε : ℕ)`.
+- IT2. Hodge Laplacian on 0-forms and 1-forms of VR.
+- IT3. Spectrum of the Hodge Laplacian.
+- IT4. Persistence diagram.
+- IT5. Betti numbers of VR_ε.
+- IT6. Latschev's theorem as a Prop, with a proof for cycle → S¹. The current `LatschevObligation` is a distance bound and does not state Latschev's theorem.
+- IT7. The scale trichotomy as a theorem about the Betti-number function of ε.
+
+### Group ID. Infradimension
+
+- ID1. Wolfram-Hausdorff dimension at a vertex.
+- ID2. Plateau detection over a range of radii.
+- ID3. Homology dimension from the top persistent Betti number.
+- ID4. Coordinatization dimension via extremal orthogonal axes.
+- ID5. Causal-graph dimension from longest-antichain analysis.
+- ID6. Compatibility on regular lattices. PROVED for cycles (`dimensionCompatibilityObligation_holds`).
+- ID7. Rules on which the notions disagree.
+
+### Group IB. Blowups and renormalisation
+
+- IB1. `ElementaryBlowup`.
+- IB2. The commutator of two blowups on isomorphism classes, with vanishing causal-branchial component for single-hyperedge LHS. OPEN.
+- IB3. `BlowupLieAlgebraStructure`.
+- IB4. Insertion Lie algebra for unary edges and its isomorphism with the pQFT insertion algebra.
+- IB5. Poisson bracket on ℝ[#V, #E]; Hamiltonian vector fields.
+- IB6. Radial and laminar blowups commuting with calculus up to O(1/n).
 - IB7. Graded version.
 
-### Group IQ — Branchial / quantum
-- IQ1. `BranchialGraph` type + `Fintype` instance for finite systems (closes).
-- IQ2. Branchial ℓ² Hilbert space (closes).
-- IQ3. Unitary evolution on branchial ℓ² (closes).
-- IQ4. Amplitudes and observables (closes).
-- IQ5. Fisher metric on branchial graph.
-- IQ6. Fubini–Study metric as limit of Fisher metric on refined branchial graphs.
-- IQ7. Branchial continuum limit → Hilbert space (closes).
-- IQ8. EME-tracking: persistence of a vertex across multiway branches as a branchial observable.
-- IQ9. Path integral as a sum over singleway causal-graph classes.
+### Group IQ. Branchial and quantum
 
-### Group IS — Synthetic infrageometry
-- IS1. `SyntheticCircle`, `SyntheticLine`, `SyntheticSphere` from equidistant/shortest-path constructions.
-- IS2. `InfrageometricScene` type for multi-constructions.
-- IS3. Branchial structure on scenes with Hausdorff metric.
-- IS4. Axiom set (Euclid-flavored) for synthetic infrageometry.
-- IS5. Incidence / collinearity / concurrency theorems.
-- IS6. Tropical-geometry translation (algebraization direction).
+- IQ1. Finite branchial slices.
+- IQ2. Branchial ℓ² Hilbert space.
+- IQ3. Unitary evolution.
+- IQ4. Amplitudes and observables.
+- IQ5. Fisher metric on the branchial graph.
+- IQ6. Fubini-Study metric as the limit of the Fisher metric on refined branchial graphs. OPEN; the current `FubiniStudyLimitObligation` is a triangle inequality.
+- IQ7. Branchial continuum limit to a Hilbert space. OPEN.
+- IQ8. EME tracking: persistence of a vertex across multiway branches as an observable.
+- IQ9. Path integral as a sum over single-way causal-graph classes.
 
-### Group IR — Ruliology
-- IR1. `RuleSignature (R : RewritingSystem P) : DimensionTuple × GrowthTuple × CurvatureTuple × …`.
-- IR2. Conservation theorem: `|LHS| = |RHS|` ⇒ bounded Wolfram–Hausdorff dimension (formalizes `empirical_refutation_key_rule`).
-- IR3. Tree-producing rules ⇒ dimension = `log(branching)`.
-- IR4. Planar rules ⇒ dimension ≤ 2 via Euler-formula.
-- IR5. Candidate-rule database and screening pipeline.
-- IR6. Product rules `R₁ × R₂` → dimension additivity (under confluence).
-- IR7. Computable hypergraph invariants → Lean-verifiable check list.
+### Group IS. Synthetic infrageometry
 
-### Group KN — Oliver Knill quantum-calculus track (#237–#256, added 2026-04-24)
+- IS1. `SyntheticCircle`, `SyntheticLineSegment`, `SyntheticSphere`.
+- IS2. `InfrageometricScene`.
+- IS3. Branchial structure on scenes with the Hausdorff metric.
+- IS4. Euclid-style axioms.
+- IS5. Incidence, collinearity and concurrency theorems.
+- IS6. Tropical-geometry translation.
 
-Formalisation in Lean of Knill's discrete-geometry program as catalogued in
-[`resources/Infrageometry/QuantumCalculus.md`](resources/Infrageometry/QuantumCalculus.md).
-Each task has an upstream Mathematica counterpart in
-[`resources/Infrageometry/Infrageometry/Kernel/QuantumCalculus.wl`](resources/Infrageometry/Infrageometry/Kernel/QuantumCalculus.wl)
-(290 lines; functions `WaveEquationSolution`, `WuCharacteristic`,
-`IsospectralDeformation`, `DiracZetaFunction`, `IndexExpectationCurvature`, …).
+### Group IR. Ruliology
 
-Knill's program is **strict finitism applied to differential geometry**:
-every continuum concept gets a purely combinatorial counterpart on finite
-abstract simplicial complexes (or delta sets / quivers). Bosonic vs Fermionic
-invariants (volumes order-blind vs cohomology orientation-aware) are tracked
-separately. The McKean–Singer supersymmetry of `H = D²` between even / odd
-forms underwrites both Euler–Poincaré and Brouwer–Lefschetz.
+- IR1. `RuleSignature`: dimension, growth and curvature data of a rule.
+- IR2. Edge count is constant for |LHS| = |RHS|. PROVED (`trajectory_size_invariant`). A dimension bound for such rules is OPEN.
+- IR3. Tree-producing rules have dimension log(branching). OPEN.
+- IR4. Planar rules have dimension at most 2. OPEN.
+- IR5. Candidate-rule database and screening.
+- IR6. Dimension additivity for product rules under confluence. OPEN.
+- IR7. Computable hypergraph invariants as a Lean-checkable list.
 
-- KN1. Wave equation d'Alembert solution `u(t) = cos(D t) u₀ + t · sinc(D t) v₀` via matrix functions on the Dirac matrix.
-- KN2. Discrete-time wave step (leapfrog) + unitary wave propagator `exp(i D t)`.
-- KN3. Wu characteristic `ω_m(G) = ∑_{x_1 ∩ ⋯ ∩ x_m ≠ ∅} ω(x_1) ⋯ ω(x_m)` and Wu cohomology with fusion inequality.
-- KN4. Isospectral Lax-pair deformation `D' = [d − d*, D]` of the Dirac operator + extracted diagonal mass term.
-- KN5. Connes spectral distance `d(x, y) = sup{|f(x) − f(y)| : ‖[D, f]‖ ≤ 1}`; bridge to `Hypergraph.dist`.
-- KN6. Dynamical connection matrix `L(T)` and Green function `g(T) = L(T)⁻¹` under graph automorphism; unimodularity `det(L) = ±1` (Fermi); energy theorem `∑ g(x, y) = χ(H)`; hydrogen operator `L − L⁻¹` for 1D.
-- KN7. Curvature generalisations — index expectation (`K(x) = E[i_f(x)]`), sectional, form curvature (curvature on k-forms), boundary curvature.
-- KN8. Dirac / Connection / Lefschetz zeta functions; bridge to "elementary dyadic Riemann hypothesis" for circular graphs.
-- KN9. Analytic torsion `log T(H) = ½ ∑_k (−1)^{k+1} k · log det'(H_k)` + spectral monotonicity under barycentric refinement.
-- KN10. Wave-front exterior derivative + spherical-average non-local `d` (Knill 2025–2026 wave-front calculus).
-- KN11. Geodesic gas + cellular-automaton geodesic evolution on triangulated 2D lattices (Hopf–Rinow workaround on finite complexes).
-- KN12. Delta sets / quivers — face-map exterior derivative + cohomology; Gauss–Bonnet, Brouwer–Lefschetz, supersymmetry on delta sets.
-- KN13. Soft barycentric refinement (random subdivision) + Fisk-manifold predicate (every codim-2 face has even number of top-dim faces).
-- KN14. McKean–Singer supersymmetry: non-zero spectrum even↔odd forms equal; super-trace deformation derives Euler–Poincaré + Brouwer–Lefschetz from one fact.
-- KN15. Atiyah-Singer / Atiyah-Bott analog in finite geometry (Knill 1708.06070): `index(D) = χ(H)`; isolated-fixed-points `L(T) = ∑ ω(x)`.
-- KN16. Cartan's magic formula `L_X = i_X d + d i_X` (discrete) — Knill 1811.10125.
-- KN17. Bosonic / Fermionic distinction in the type system — separating order-blind from orientation-aware invariants.
-- KN18. Brouwer fixed-point for graph endomorphisms via Lefschetz-number computation (Knill 1206.0782).
-- KN19. Deformed exterior derivatives `d_h` continuous family for `h ∈ ℝ` (Knill 1306.5597).
-- KN20. Level sets + Euler characteristic — discrete Morse-theory bridge (Knill 2401.07435).
+### Group KN. Knill quantum calculus (#237-#256)
 
-**Key Knill papers** (catalogue in `QuantumCalculus.md §5`):
+Lean formalisation of Knill's discrete-geometry programme as catalogued in [`resources/Infrageometry/QuantumCalculus.md`](resources/Infrageometry/QuantumCalculus.md). Each task has a Mathematica counterpart in [`resources/Infrageometry/Infrageometry/Kernel/QuantumCalculus.wl`](resources/Infrageometry/Infrageometry/Kernel/QuantumCalculus.wl) (290 lines; functions `WaveEquationSolution`, `WuCharacteristic`, `IsospectralDeformation`, `DiracZetaFunction`, `IndexExpectationCurvature` and others).
+
+Knill's programme gives each continuum concept a combinatorial counterpart on finite abstract simplicial complexes, delta sets or quivers. Order-blind (bosonic) and orientation-aware (fermionic) invariants are tracked separately. The McKean-Singer symmetry of H = D² between even and odd forms gives both Euler-Poincaré and Brouwer-Lefschetz.
+
+- KN1. d'Alembert solution `u(t) = cos(D t) u₀ + t · sinc(D t) v₀` via matrix functions of the Dirac matrix.
+- KN2. Discrete-time wave step (leapfrog) and the unitary propagator `exp(i D t)`.
+- KN3. Wu characteristic `ω_m(G) = Σ_{x_1 ∩ ⋯ ∩ x_m ≠ ∅} ω(x_1) ⋯ ω(x_m)` and Wu cohomology. PROVED: `wuCharacteristic₂_eq_chi_sq_sub_disjoint`.
+- KN4. Isospectral Lax deformation `D' = [d − d*, D]` with the extracted diagonal mass term.
+- KN5. Connes spectral distance `d(x, y) = sup{|f(x) − f(y)| : ‖[D, f]‖ ≤ 1}` and its relation to `Hypergraph.dist`.
+- KN6. Connection matrix `L(T)` and Green function `g(T) = L(T)⁻¹`; unimodularity `det(L) = ±1`; energy theorem `Σ g(x, y) = χ(H)`; hydrogen operator `L − L⁻¹` in 1D.
+- KN7. Index-expectation, sectional, form and boundary curvature.
+- KN8. Dirac, connection and Lefschetz zeta functions; the dyadic Riemann hypothesis for circular graphs.
+- KN9. Analytic torsion `log T(H) = ½ Σ_k (−1)^{k+1} k · log det'(H_k)` and its behaviour under barycentric refinement.
+- KN10. Wave-front exterior derivative and spherical-average non-local `d`.
+- KN11. Geodesic gas and cellular-automaton geodesic evolution on triangulated 2D lattices.
+- KN12. Delta sets and quivers: face-map exterior derivative, cohomology, Gauss-Bonnet, Brouwer-Lefschetz.
+- KN13. Soft barycentric refinement and the Fisk-manifold predicate.
+- KN14. McKean-Singer symmetry. PROVED ingredients: `KnillCore.dSquared_eq_zero`, `hodgeOnG_psd`.
+- KN15. Atiyah-Singer and Atiyah-Bott analogues (Knill 1708.06070).
+- KN16. Discrete Cartan formula `L_X = i_X d + d i_X` (Knill 1811.10125).
+- KN17. Bosonic and fermionic invariants as separate types.
+- KN18. Brouwer fixed-point theorem for graph endomorphisms via the Lefschetz number (Knill 1206.0782).
+- KN19. Deformed exterior derivatives `d_h`, h ∈ ℝ (Knill 1306.5597).
+- KN20. Level sets and Euler characteristic (Knill 2401.07435). PROVED ingredient: `eulerCharacteristic_eq_alt_sum_kSkeleton`.
+
+Knill papers (catalogue in `QuantumCalculus.md` §5):
 
 | arXiv | Year | Topic |
 |---|---|---|
-| [1206.0782](https://arxiv.org/abs/1206.0782) | 2012 | Brouwer fixed-point (KN18) |
-| [1205.0306](https://arxiv.org/abs/1205.0306) | 2012 | Index expectation curvature (KN7a) |
-| [1301.1408](https://arxiv.org/abs/1301.1408) | 2013 | Discrete supersymmetry / McKean-Singer (KN14) |
+| [1206.0782](https://arxiv.org/abs/1206.0782) | 2012 | Brouwer fixed point (KN18) |
+| [1205.0306](https://arxiv.org/abs/1205.0306) | 2012 | Index expectation curvature (KN7) |
+| [1301.1408](https://arxiv.org/abs/1301.1408) | 2013 | Discrete supersymmetry, McKean-Singer (KN14) |
 | [1306.5597](https://arxiv.org/abs/1306.5597) | 2013 | Deformed exterior derivatives (KN19) |
 | [1312.4239](https://arxiv.org/abs/1312.4239) | 2013 | Zeta functions of circular graphs (KN8) |
-| [1708.06070](https://arxiv.org/abs/1708.06070) | 2017 | Atiyah-Singer/Atiyah-Bott in finite geometry (KN15) |
+| [1708.06070](https://arxiv.org/abs/1708.06070) | 2017 | Atiyah-Singer and Atiyah-Bott in finite geometry (KN15) |
 | [1801.04639](https://arxiv.org/abs/1801.04639) | 2018 | Elementary dyadic Riemann hypothesis (KN8) |
-| [1811.10125](https://arxiv.org/abs/1811.10125) | 2018 | Cartan's magic formula, discrete (KN16) |
+| [1811.10125](https://arxiv.org/abs/1811.10125) | 2018 | Discrete Cartan formula (KN16) |
 | [2205.14097](https://arxiv.org/abs/2205.14097) | 2022 | Graphs, groups and geometry |
 | [2401.07435](https://arxiv.org/abs/2401.07435) | 2024 | Level sets and Euler characteristic (KN20) |
 | [2501.14611](https://arxiv.org/abs/2501.14611) | 2025 | Wave front density conjectures (KN10) |
 
-### Group IGE — Lean port of upstream `Infrageometry` Mathematica paclet (#257–#261)
-
-The `resources/Infrageometry/Infrageometry/` paclet is the reference Wolfram-Language
-implementation of the Knill / quantum-calculus + infrageometry toolkit. The IGE
-group ports it **module by module** to Lean so that every Mathematica function
-has a Lean counterpart we can prove theorems about (and so KN-tasks have stable
-foundations).
-
-- IGE1. Lean port of `Infrageometry.wl` core (351 lines): `complexClosure`, `simplexCardinalities`, `complexEulerCharacteristic`, `complexFermiCharacteristic`, `simplexUnitSphere`, `simplexStar`, `simplexCore`, `complexIncidenceMatrix`, `connectionMatrix L`, `greenFunctionMatrix g = L⁻¹`, `diracHodgeMatrix D = d + d*`, `hodgeMatrix H = D²`, `bettiVector`, `lefschetzNumber`, `lefschetzCurvature`, `simplicialMap`, `complexPolynomial`, `dehnSommervilleQ`, `barycentricRefinement`, `faceGraph`, `superTrace`, `superDeterminant`, `pseudoDeterminant`, `complexJoin`, `complexDual`. Foundation for the whole KN-track.
-- IGE2. `SimplicialSet.wl` Lean port (315 lines): face/degeneracy maps + delta-complex morphisms; bridges KN12 + IA1–IA5.
-- IGE3. `TDA.wl` Lean port (242 lines): VR / Čech / persistence on infrageometry hypergraphs; aligns with IT1–IT4.
-- IGE4. `Mesh.wl` Lean port (248 lines): mesh-generation primitives + chain-of-meshes refinement; geometric realisation of a hypergraph + coordinatisation as a mesh.
-- IGE5. `Chains.wl` Lean port (63 lines): formal chain complex (integer-coefficient combinations of simplices, boundary, sum, scaling) underlying cohomology computations.
-
-### Group SIG — Synthetic infrageometry, expanded (#262–#266)
-
-Parallel to IS1–IS6 above, the SIG group adds module-level Lean ports of the
-[`resources/SyntheticInfrageometry/`](resources/SyntheticInfrageometry/) paclet
-plus the branching-stability research questions from its README.
-
-- SIG1. `Tools.wl` Lean port — primitive constructions (`Line`, `Ray`, `Segment`, `Perpendicular`, `Parallel`) the infra-observer can use, each branching to a multi-set of `InfrageometricScene` (existing IS2). Foundation for SIG2/SIG3.
-- SIG2. `Postulates.wl` Lean port — Euclid-style axioms (5 postulates + common notions) as `Prop`s on a hypergraph + scene; enables ruliological study `for each rule r: which postulates hold on every state of singleWayEvolve r seed n?`. Bridges to existing IS3 axiomatic infrageometry. **Empirical question**: does the parallel postulate hold on regular tilings? On Wolfram-rule outputs?
-- SIG3. `Predicates.wl` Lean port — geometric predicates (`collinear`, `concyclic`, `perpendicular`, `congruentSegment`, `betweenness`); decidable for finite hypergraphs; used by SIG2 to check axioms.
-- SIG4. `Coordinatization.wl` Lean port — analytisation/algebraisation of synthetic infrageometry via shortest-path counts / Cayley-style embedding; bridges ID4 (CoordinatizationDimension) and IGE1 (Cayley-graph structure).
-- SIG5. **Branching-construction stability** (per SyntheticInfrageometry README): `SceneDistance s₁ s₂ : ℝ` (Wasserstein-style distance between scenes via #214), and `ConstructionStability c r := tendency of branching scenes from construction c on rule-r outputs to converge under refinement`. First concrete instance: subdivision rule (#234) on path/cycle.
-
-#### Conceptual framing for SIG2/SIG3 (synthetic geometry → graph theory bridge)
-
-The SIG2/SIG3 ports should *not* be a line-by-line transcription of the Mathematica paclet. They should implement the following **research-level framing** that connects axiomatic synthetic geometry to graph-theoretic primitives we already have. Adding this here so the eventual Lean implementation lands the right way the first time.
-
-**1. Tarski reduction to two predicates.** Tarski's axiomatisation of Euclidean geometry uses only two primitive predicates: **betweenness** `B(a, b, c)` and **equidistance** `Cong(ab, cd)`. With `Hypergraph.dist` in hand (which we have, `HypergraphDistance.lean`), both become 1-line graph-theoretic definitions:
-```
-def Tarski.Between (H : Hypergraph V) (a b c : V) : Prop :=
-  H.dist a b + H.dist b c = H.dist a c
-def Tarski.Cong (H : Hypergraph V) (a b c d : V) : Prop :=
-  H.dist a b = H.dist c d
-```
-Once these are stated, **Tarski's first 8 axioms (T1–T8 — incidence + congruence + segment construction) are universally quantified Props on `Hypergraph.dist`**, decidable for any finite hypergraph. SIG2 should *implement these directly* rather than chase the 5-postulate / common-notion structure of Euclid's Elements (which is harder to bound and entangles definitions with theorems).
-
-**2. The angle problem — full tower.** Tarski's first 8 axioms cover incidence + congruence + extension. Beyond that — angles, perpendicularity, parallel uniqueness — graph theory **stops being enough**. We've now identified that "angle" is not a single concept but a **multi-flavour, multi-abstraction tower**. The thirteen flavour-columns and their abstraction levels (each tracked as an `AT` task #285–#314):
-
-**Column M — Metric** (needs only `Hypergraph.dist`):
-- M0 / **AT0** *SWOLF chord-ratio* `d(A,B)/d(O,A)` (equidistant `A,B`). Pure-counts, no √, no arccos. Equals `2 sin(θ/2)` for the geometric angle.
-- M1 / **AT1** *Law-of-cosines* `arccos((d²+d²−d²)/2dd)`. Standard radian θ.
-- M2 / **AT2** *Forman vertex defect* `2π − Σ_v incident-pair-angles`. Gauss-Bonnet curvature density.
-- M3 / **AT3** *Toponogov asymptotic* `lim_{r→∞} d(γ₁(r),γ₂(r))/r`. CAT(κ) angle.
-- M4 *Coarse Gromov product* `(d(O,A)+d(O,B)−d(A,B))/2`. Hyperbolic angle.
-
-**Column S — Spectral** (needs Hodge `d, d*`, Dirac `D`):
-- S1 / **AT4** *Knill / Connes* `⟨df_v, dg_v⟩ / (‖df_v‖·‖dg_v‖)`. Riemannian cotangent angle.
-- S2 / **AT17** *Heat-kernel scale-resolved* `⟨e^{−tH}f, g⟩ / (‖e^{−tH/2}f‖·‖e^{−tH/2}g‖)`. Spectrum t→0 to t→∞.
-- S3 *Cycle/cocycle angle* `⟨c₁, c₂⟩_{H¹(G;ℝ)}`. Cohomology angle.
-
-**Column Y — Synthetic** (predicates only):
-- Y0 / **AT10** *Tarski strict `Cong`* `H.dist A B = H.dist C D`.
-- Y1 / **AT5** *`AngleCong` via SAS* — Schwabhäuser-style triple-equivalence.
-- **Y2 / AT18** *Projective cross-ratio (Cayley-Klein)* `½ log [A,B; C,D]`. **Sidesteps SWOLF's straight-lines requirement** — needs only `Between` + `dist` ratios, not unique geodesics. **Possibly the right starting point for non-`GeodesicallyUnique` hypergraphs.**
-
-**Column T — Transport** (needs Wasserstein):
-- T1 / **AT12** *Ollivier-W₁ angle* `W₁(μ_A, μ_B)` between geodesic-ball measures.
-- T2 *OT-map angle* — direction of optimal transport plan (variant of T1).
-
-**Column Q — Branchial / QM** (needs `BranchialHilbert`):
-- Q1 / **AT13** *Hilbert / Bures* `cos θ = |⟨ψ|ϕ⟩|` or `(tr √(√ρ σ √ρ))²`. Born / fidelity.
-- Q2 / **AT24** *Maslov / symplectic* — Lagrangian index.
-
-**Column L — Causal / Lorentzian** (needs causal-interval data):
-- L1 / **AT14** *Rapidity* `arctanh((Δt − Δx)/(Δt + Δx))`. Boost angle in `SO(1,1)`.
-- L2 *Causal cone-axis angle* — between two future-cones at a vertex (variant of L1).
-- L3 *Lorentzian-GH angle* — analog of M3 in Lorentzian setting (gates #213).
-
-**Column G — Gauge / fibre** (needs `FiberedGraph` + `Connection`):
-- G1 / **AT15** *Holonomy angle* `arccos(tr HolonomyMatrix γ / 2)`. Rotation around a loop.
-- G2 *Wilson-loop angle* `arg(WilsonLoop γ)` for U(1).
-- G3 / **AT22** *Connection 1-form* `ω ∈ Ω¹(M; so(d))` per-edge.
-- G4 *Curvature 2-form* `Ω = dω + ω∧ω`. Riemann tensor.
+### Group IGE. Lean port of the `Infrageometry` paclet (#257-#261)
 
-**Column I — Information-geometric** (needs `FisherMetric`):
-- I1 / **AT16** *Fisher angle* — cotangent angle on statistical manifold.
-- I2 *Bregman / e-connection* — divergence-based.
-- I3 *KL-divergence angle* — derivative-based.
-
-**Column H — Higher-dim** (k-tuples, k ≥ 3):
-- H1 / **AT19** *Solid angle* — `k`-volume of spherical simplex from `k+1` rays.
-- H2 / **AT20** *Regge deficit* `2π − Σ dihedral angles around (n−2)-simplex`. **THE numerical-GR variable for Phase D BBH.**
-- H3 *Dihedral angle* — between two `n−1`-simplices sharing an `n−2`-face.
+The paclet `resources/Infrageometry/Infrageometry/` is the Wolfram Language implementation of the Knill and infrageometry toolkit (Creator: NMURZIN). The IGE group ports it module by module.
 
-**Column K — Conformal**:
-- K1 / **AT23** *Conformal class* `[g] := {λ²·g | λ : V → ℝ_{>0}}`. **Angles ARE the conformal data; lengths are extra structure.**
-- K2 *Pure-angle theory* = conformal geometry without length scale.
-- K3 *Lorentzian conformal* — conformal class + light-cone field.
-
-**Column F — Higher-form completion**:
-- F1 / **AT21** *Discrete metric tensor* `g_{ij}(v)` bilinear. Then `cos θ = g(X,Y)/√(g(X,X)·g(Y,Y))` is angle as a 2-tensor.
-- F2 *Riemann tensor* — full curvature 2-form components.
-- F3 *Holonomy group* — image of parallel-transport in `SO(d)`.
+- IGE1. `Infrageometry.wl` core (351 lines): `complexClosure`, `simplexCardinalities`, `complexEulerCharacteristic`, `complexFermiCharacteristic`, `simplexUnitSphere`, `simplexStar`, `simplexCore`, `complexIncidenceMatrix`, connection matrix `L`, Green function `g = L⁻¹`, Dirac matrix `D = d + d*`, Hodge matrix `H = D²`, `bettiVector`, `lefschetzNumber`, `lefschetzCurvature`, `simplicialMap`, `complexPolynomial`, `dehnSommervilleQ`, `barycentricRefinement`, `faceGraph`, `superTrace`, `superDeterminant`, `pseudoDeterminant`, `complexJoin`, `complexDual`.
+- IGE2. `SimplicialSet.wl` (315 lines, PHAJEK): face and degeneracy maps, delta-complex morphisms.
+- IGE3. `TDA.wl` (242 lines): Vietoris-Rips, Čech, persistence.
+- IGE4. `Mesh.wl` (248 lines): mesh generation and refinement; geometric realisation of a hypergraph.
+- IGE5. `Chains.wl` (63 lines): integer chain complex of simplices.
 
-**Column N — Non-standard**:
-- N1 / **AT27** *Tropical / max-plus angle* — cone-vertex angle on polyhedral fan.
-- N2 *p-adic / non-archimedean* — tree-distance ratio on `T_∞`.
-- N3 *Cayley-graph character angle* — on abelian covers.
+### Group SIG. Synthetic infrageometry, expanded (#262-#266)
 
-**Column C — Scale-spectrum**:
-- C1 / **AT25** *Angular profile* `r ↦ angle(r)` for any definition. Function, not number.
-- C2 *Multi-scale signature* — parametric family.
+Module-level ports of the [`resources/SyntheticInfrageometry/`](resources/SyntheticInfrageometry/) paclet (PHAJEK), with the branching-stability questions from its README.
 
-**Column U — Multivalued** (when geodesics aren't unique):
-- U1 / **AT26** *Multiset chord-ratio* — `{d(A,B)/d(O,A) : geodesic choices}`.
-- U2 *Distribution-over-angles* — probability-measure-valued angle.
+- SIG1. `Tools.wl`: constructions `Line`, `Ray`, `Segment`, `Perpendicular`, `Parallel`, each producing a multiset of `InfrageometricScene`s.
+- SIG2. `Postulates.wl`: Euclid-style axioms as Props on a hypergraph and scene. Question: for which rules r do the postulates hold on every state of `singleWayEvolve r seed n`?
+- SIG3. `Predicates.wl`: `collinear`, `concyclic`, `perpendicular`, `congruentSegment`, `betweenness`, decidable on finite hypergraphs.
+- SIG4. `Coordinatization.wl`: analytisation of synthetic infrageometry via shortest-path counts and Cayley-style embeddings; relates ID4 and IGE1.
+- SIG5. Stability of branching constructions: a distance between scenes and a predicate stating that branching scenes of a construction on the outputs of a rule converge under refinement. First instance: the subdivision rule on paths and cycles.
 
-**Beyond angle**:
-- Conformal (K1) = pure-angle data.
-- Riemannian (F1+M1) = angles + length.
-- Lorentzian (L1+conformal) = rapidities + light cones (this is GR).
-- Kähler (Q3) = angles + complex structure.
-- Symplectic (Q2 + 2-form) = Lagrangian-relative angles.
+#### Design notes for SIG2 and SIG3
 
-**Three structural observations:**
-1. **Y2 (projective cross-ratio) is more elementary than M0 (chord-ratio).** Needs only `Between`, no `dist`. SWOLF's "no angle without straight lines" objection is dodged by working in projective Cayley-Klein from the start.
-2. **K1 (conformal structure) IS pure-angle data.** A pure-infrageometric-angle theory IS conformal geometry; metric-rich theories add a length scale on top.
-3. **H2 (Regge deficit) is THE variable used in actual numerical-GR.** Phase D BBH = Regge calculus on a triangulated 4-manifold. Sum of deficit angles around each 2-face = stress-energy. **Gating, not optional.**
+1. Tarski's axiomatisation of Euclidean geometry uses two primitive predicates, betweenness `B(a, b, c)` and equidistance `Cong(ab, cd)`. With `Hypergraph.dist` they are one-line definitions: `B a b c := dist a b + dist b c = dist a c` and `Cong a b c d := dist a b = dist c d`. `Hypergraph.Between` (`SyntheticAxiomatic.lean`) is DEFINED in this form, and `segment_is_between` (PROVED) identifies it with membership in `SyntheticLineSegment`. Tarski's axioms T1-T8 (incidence, congruence, segment construction) are then decidable Props on any finite hypergraph. SIG2 implements these in place of Euclid's five postulates.
 
-SIG3's `perpendicular` predicate should pick from this tower (probably AT4 spectral or AT0 chord-ratio with `≈ √2` tolerance) and document the choice; the other definitions become cross-validation predicates.
+2. Angles. Graph distance gives Tarski's first eight axioms. Angles, perpendicularity and parallel uniqueness need more structure. The angle tasks AT0-AT27 (#285-#314) and AT-W (#319) are organised by the structure each definition needs:
 
-**2.5 SWOLF's straight-lines caveat + path-vs-walk distinction.**
+| Column | Structure needed | Definitions (task) |
+|---|---|---|
+| M, metric | `Hypergraph.dist` | chord ratio d(A,B)/d(O,A) for equidistant A, B, equal to 2 sin(θ/2) in the plane (AT0, SWOLF); law of cosines (AT1); Forman vertex defect 2π − Σ angles (AT2); Toponogov angle lim d(γ₁(r), γ₂(r))/r (AT3); Gromov product |
+| S, spectral | Hodge `d, d*`, Dirac `D` | Knill-Connes angle ⟨df, dg⟩/(‖df‖·‖dg‖) (AT4); heat-kernel angle at scale t (AT17); cohomology angle |
+| Y, synthetic | predicates | Tarski `Cong` (AT10); `AngleCong` via SAS (AT5); projective cross-ratio ½ log[A,B;C,D] (AT18) |
+| T, transport | Wasserstein | Ollivier W₁ angle (AT12); optimal-transport direction |
+| Q, quantum | `BranchialHilbert` | Hilbert and Bures angle (AT13); Maslov index (AT24) |
+| L, Lorentzian | causal intervals | rapidity arctanh((Δt − Δx)/(Δt + Δx)) (AT14); cone-axis angle; Lorentzian GH angle |
+| G, gauge | `FiberedGraph`, connection | holonomy angle arccos(tr Hol/2) (AT15); Wilson-loop phase; connection 1-form (AT22); curvature 2-form |
+| I, information | `FisherMetric` | Fisher angle (AT16); Bregman; Kullback-Leibler |
+| H, higher | k-tuples | solid angle (AT19); Regge deficit 2π − Σ dihedral angles (AT20); dihedral angle |
+| K, conformal | conformal class | conformal class [g] (AT23); length-free angle theory; Lorentzian conformal structure |
+| F, tensor | bilinear form | discrete metric tensor g_{ij}(v) (AT21); Riemann tensor; holonomy group |
+| N, other | | tropical angle (AT27); p-adic; Cayley-graph character angle |
+| C, scale | | angle as a function of radius (AT25); multi-scale signature |
+| U, multivalued | non-unique geodesics | multiset of chord ratios (AT26); distribution over angles |
+| W, sheaf | cellular sheaf | ⟨r₁, r₂⟩/(‖r₁‖·‖r₂‖) for restriction maps (AT-W) |
 
-SWOLF's view: you can't really get angle without first identifying *a* unique direction from `O` toward each target — i.e. a *non-overlapping path* (vertex `Nodup`). On a generic hypergraph, geodesics branch (`MultiFibrationProjection`, IC6) so there isn't *a* canonical direction.
+The projective cross-ratio (AT18) needs only `Between` and distance ratios and does not need unique geodesics. A conformal class (AT23) consists of angle data; a metric adds a length scale. Regge calculus uses deficit angles (AT20) as its curvature variable. SIG3's `perpendicular` predicate uses one definition from this table (AT4 or AT0 with tolerance √2) and the others serve as cross-checks.
 
-**Three responses, all valid:**
-1. **The chord-ratio (M0/AT0) is unconditionally definable** — `d(A,B)/d(O,A)` is a number computed from `Hypergraph.dist`, regardless of geodesic uniqueness. The *interpretation* as "the angle at O" requires unique geodesics; the *number* doesn't. So we land the number, then gate the angle-interpretation theorems on `H.GeodesicallyUnique` (AT8).
-2. **Multivalued angles** (AT26) — accept that on non-`GeodesicallyUnique` hypergraphs the angle is a `Multiset ℝ` over geodesic choices. The *spread* of values is itself a curvature-branching signature.
-3. **Projective Cayley-Klein angle (Y2/AT18)** — works without straight lines at all. Needs only `Between` + a cross-ratio of distances. **This is the route that fully sidesteps SWOLF's objection.**
+3. Straight lines (SWOLF). SWOLF's position is that an angle at O needs a unique direction from O to each target, that is, a simple path. On a general hypergraph geodesics branch (IC6). Three responses: the chord ratio (AT0) is a number defined from `Hypergraph.dist` whether or not geodesics are unique, and its reading as an angle is gated on `Hypergraph.GeodesicallyUnique` (AT8); on hypergraphs without unique geodesics the angle is a multiset over geodesic choices (AT26); the projective cross-ratio (AT18) does not use straight lines.
 
-**The path-vs-walk distinction at the substrate level (PATH1 / PATH2):** SWOLF's "non-overlapping path" requires `Nodup` vertex sequence — a *simple path*, not a *walk*. We have it partially:
-- `SubdivisionPath.IsPathOf H vs := 2 ≤ vs.length ∧ vs.Nodup ∧ H = pathEdges vs` — exact match for SWOLF's notion, but tied to `ExecHG ℕ` and subdivision-rule trajectories.
-- `SimpleGraph.Walk.IsPath` after `Hypergraph.toSimpleGraph` reflection — works numerically but the clique-expansion *silently* drops self-loops (`loopless`), collapses multi-edges, and loses the structural fact "*one* rewrite step touched *one* hyperedge". 
-- `Hypergraph.dist` uses Mathlib's `SimpleGraph.dist` which is `shortest-walk-length` — but the shortest walk is automatically a simple path (excise cycles), so `dist` IS the shortest-simple-path length. Numerically right; type-level primitive missing.
+4. Paths and walks (PATH1, PATH2). `SubdivisionPath.IsPathOf H vs` (a nodup vertex list with `H = pathEdges vs`) matches the simple-path notion but is tied to `ExecHG ℕ`. `SimpleGraph.Walk.IsPath` after `Hypergraph.toSimpleGraph` drops self-loops, merges multi-edges and loses which hyperedge a step used. `Hypergraph.dist` is Mathlib's `SimpleGraph.dist`, the length of a shortest walk, which equals the length of a shortest simple path. PATH1: a type `Hypergraph.SimplePath u v` carrying a nodup vertex list and the hyperedge sequence. PATH2: whether the hyperedge-aware distance equals `Hypergraph.dist`, given that clique expansion treats a hyperedge of arity at least 3 as a complete graph. PATH1 is a prerequisite for AT3, AT8, AT26 and the extraction of causal and branchial graphs (#228, #229).
 
-**Native primitive needed (PATH1):** a first-class `Hypergraph.SimplePath u v` carrying both a `Nodup` vertex list AND the actual hyperedge sequence (so multi-arity structure isn't collapsed). Bridge theorem (PATH2): is the hyperedge-aware distance the same as `Hypergraph.dist`? Edge cases that surface: ≥3-arity hyperedges treated as `K_n` by clique-expansion (any pair-step inside a 3-edge is one step); multi-edges in the `Multiset`; self-loops within a hyperedge.
+5. Units. In a hypergraph, distance r and ball volume V(r) are both counts. A length scale a per step gives r_phys = a·r, V_phys = a^d·V in a flat regime of dimension d, and R_phys = a^(−2)·R. The exponent −2 of scalar curvature corresponds to the order of the curvature term in the expansion V(r) = Ω_d r^d [1 − R r²/(6(d+2)) + O(r⁴)]. This expansion gives the discrete estimator `Hypergraph.scalarCurvatureAt v d r := (6(d+2)/r²)·(1 − V/V_flat)` (AT9), with d from the Wolfram-Hausdorff dimension. Chord ratios (AT0) and normalised inner products (AT4) are dimensionless. AT11 is a record of the length scale and the unit-conversion maps, with the theorem that each count-level identity lifts to dimensional form by substitution. OPEN.
 
-This native type is **prerequisite** for AT3, AT8, AT26, and the angle-interpretation theorems gating on geodesic uniqueness. It also recovers structural information for causal/branchial-graph extraction (#228, #229) that the clique-expansion currently destroys.
+6. Postulate V. On a hypergraph, lines are maximal geodesics and branching geodesics give several parallels through a point. The question is for which rules the limit satisfies Postulate V. Proposed predicate: `ParallelUniqueAtRule sys s₀ := Tendsto (fun n => parallelMultiplicity (singleWayEvolve sys s₀ n)) atTop (𝓝 1)`, where `parallelMultiplicity H` is the largest number of geodesic parallels through a point not on a line. Not formalised.
 
-**3. Units are emergent, not fundamental.**
+7. Postulate II. Segments end at boundary vertices of a finite hypergraph, so segment extension fails there. Proposed predicate: every geodesic in state n extends to a geodesic in some later state. Expected to hold for the subdivision rule and to fail for fixed finite cycles. Not formalised.
 
-Deep observation: in continuum physics, `[length] = L`, `[volume] = L^d`, `[scalar curvature] = L^{-2}`. Dimensional analysis depends on these distinctions. **In a hypergraph, `r` (geodesic distance, step count) and `V(r)` (vertex count) are both `ℕ`-valued counts — same kind of thing.** There is no `L`, no `L^d`, no `L^{-2}`. *Everything is a count of discrete things.*
+8. Bachmann's groups of motions. Synthetic geometry can be axiomatised through a group of motions generated by reflections (Bachmann 1959). For graphs the motions are automorphisms. An alternative SIG implementation defines a predicate `GroupOfMotions H` in place of Tarski's axioms. It relates to group IG because `Aut(graph)` acts as a discrete gauge group.
 
-**Consequences:**
+9. Graph classes (OPEN for each class). Conjectures: on path-shaped hypergraphs (`pathHypergraph n`, subdivision trajectories) T1-T8, Pasch (T9) and parallel uniqueness (T11) hold, and segment extension fails at endpoints. On cycles and lattices T1-T10 hold, and T11 holds for large n. On hypergraphs produced by general rules T1-T8 hold and T11 fails. The research question is which property of a rule corresponds to which axiom holding in the limit.
 
-(a) **Units are emergent under continuum rescaling.** Introducing a length scale `a` (per rewrite step) gives:
-   - `r_phys = a · r_count`
-   - `V_phys = a^d · V_count` (in flat regime, dimension `d`)
-   - `R_phys = a^{-2} · R_count` (scalar curvature)
-   
-   The dimensions of physical quantities are *artifacts of the rescaling map* `a → 0`, not properties of the underlying object. The bare hypergraph theory has *no* dimensions; *every* dimensional physical quantity is `a^k · (count-level quantity)` for an integer `k` determined by the Taylor-expansion order at which the quantity sits in the `r`-expansion of `V(r)`.
+10. Inputs for SIG2 and SIG3: `Hypergraph.dist` (`HypergraphDistance.lean`), the Hodge Laplacian (`KnillCore.lean`), `geodesicBall`, `IsPathOf` (`SubdivisionPath.lean`), `InfrageometricScene` and `MultiwayCausalGraph`.
 
-(b) **The "−2" exponent on scalar curvature is intrinsic, not arbitrary.** Why does curvature have units `L^{-2}`? Because it's the *second-order Taylor coefficient* of `V(r)/r^d`. In the count picture: the second-order term of `log V` against `log r`. The exponent `−2` and the coefficient `R` are, structurally, *the same fact*: the second-order Taylor coefficient.
+## 5b. Topology before metric
 
-(c) **Bishop-Gromov in dimensionless form.** `V(r) = Ω_d r^d [1 − R r²/(6(d+2)) + O(r⁴)]` gives the discrete recipe (AT9):
-   `R_disc(v, r) := (6(d+2)/r²) · [V_flat(d, r) − V(v, r)] / V_flat(d, r)`
-   where `V_flat(d, r)` is the regular d-lattice baseline. **The Wolfram-Hausdorff dimension `d` for this formula is exactly what we extract from `wolframHausdorffDimension`.** So scalar curvature comes free given Bishop-Gromov + an existing primitive.
+SWOLF proposes that topological structure be built before metric, volume or region structure. The layers below use no `Hypergraph.dist` and no `geodesicBallVolume`.
 
-(d) **Angles are dimensionless to begin with.** AT0 (chord-ratio) is `count/count`, AT4 (spectral) is normalised inner-product, AT2 (Forman defect) is `2π − sum of dimensionless contributions`. Angle quantities are units-free already, consistent with the no-units philosophy. In a curved space, *deviation* of measured chord-ratio from the flat-baseline `√2` is the curvature; sum/integrate to recover Ricci scalar.
+Layer −1, connectedness (TOP4, #326). Four notions:
 
-(e) **Background independence — the structural meaning.** No metric, no clock, no ruler are assumed; geometry is *derived* from rewriting structure. Shared with causal-set / LQG approaches, but pushed further: even *dimension* is emergent (from `V(r)/r^d` plateau), not chosen. The information-theoretic content: bare quantities are essentially `log #(states satisfying condition)` — entropies. Curvature is a *second-cumulant of an entropy-density function*. Consistent with Jacobson "Einstein equation from thermodynamics" and Verlinde "entropic gravity".
+- Spatial: `H.toSimpleGraph.Connected`, on one state. `IsSpatiallyConnected` and `spatialB0` are DEFINED.
+- Causal: directed, on events of one trajectory.
+- Branchial: symmetric, on states sharing an ancestor in the multiway graph.
+- Rewriting reachability: directed, on states connected by finitely many steps.
 
-This is formalised as **AT11 — Dimensionless ↔ dimensional bridge**: a `DimensionAssignment a` record bundling the length scale and the unit-conversion maps; consistency theorem stating every count-level identity (Bishop-Gromov, Gauss-Bonnet, etc.) lifts to dimensional form by uniform substitution.
+None implies another: spacelike-separated events are spatially but not causally connected, and sibling branches are branchially related but not mutually reachable.
 
-**4. Postulate V (parallel uniqueness) → branching characterization.** In continuum geometry the parallel postulate says exactly one line through a non-incident point is parallel to a given line. On a hypergraph, "lines" are maximal geodesics, and **branching geodesics give multiple parallels through a point by default** — Postulate V *fails generically*. The interesting research question is: **for which rule trajectories does the limit satisfy Postulate V**? That's exactly the characterisation of "Euclidean / flat" rules. Concrete Lean predicate:
-```
-def ParallelUniqueAtRule (sys : RewritingSystem P) (s₀ : Hypergraph V) : Prop :=
-  Filter.Tendsto (fun n => parallelMultiplicity (singleWayEvolve sys s₀ n)) atTop (𝓝 1)
-```
-where `parallelMultiplicity H` counts the worst-case number of geodesic-parallels through a non-incident point in `H`. A rule is "asymptotically Euclidean" iff this multiplicity tends to 1.
+Layer 0, cells and incidence: vertices, hyperedges, simplicial, Δ-complex and CW structures, computed per connected component.
 
-**6. Postulate II (segment extension) → boundary obstruction.** Postulate II says segments can be extended indefinitely. On a finite hypergraph this *fails* at boundary vertices (geodesics terminate). On the inverse / refinement limit it can hold. Lean predicate: `def SegmentExtensionAtRule (sys, s₀) := ∀ n, ∀ geodesic γ in singleWayEvolve sys s₀ n, ∃ extension γ' in singleWayEvolve sys s₀ (n+k) for some k`. Closed under the subdivision rule (#234) by construction; fails for finite cycle hypergraphs.
+Layer 1, paths: `Hypergraph.SimplePath u v` (PATH1, #300); hyperedge-aware against clique-expansion paths (PATH2, #301).
 
-**7. Bachmann's group-of-motions framing.** Synthetic geometry can also be axiomatised via a group of "motions" (= isometries, Bachmann 1959). For graphs, motions = `Aut(graph)` acting on vertices. A **synthetic geometry** is a graph plus a designated reflection-generated subgroup of automorphisms (Coxeter-style). This is an alternative SIG implementation path: instead of T1–T11 Props, define a `GroupOfMotions H` predicate. Pairs naturally with **IG (FiberedGraph)** infrastructure since `Aut(graph)` is a discrete gauge group.
+Layer 2, polygons: `Hypergraph.Polygon`, a cyclic sequence of segments with arbitrary `Finset V` intersections between consecutive segments (POLY1, #316); Euclidean polygons are the case where every intersection has one point. Cellular k-chains with sheaf coefficients (POLY2, #317). Spin networks and spin foams (POLY3, #318).
 
-**8. Class-of-graphs trichotomy** (the structural research target for SIG2). For each graph class, identify which Tarski/Hilbert axioms hold:
-   - **Path-shape hypergraphs** (e.g. `pathHypergraph n`, `subdivisionTrajectory n`): T1–T8 hold; T11 (parallel uniqueness) trivially holds because there's only one geodesic between any two points; T9 (Pasch) holds; segment-extension (T2-style) fails at endpoints, recovers in the refinement limit.
-   - **Cycle / lattice hypergraphs** (`cycleHypergraph n`, d-torus): T1–T10 hold; T11 holds for n large enough; uniformly Euclidean in the limit.
-   - **Branching / random hypergraphs** (Wolfram-rule outputs generally): T1–T8 hold; T11 fails (multiple parallels); convergence to Euclidean is a *non-trivial* convergence property of the rule.
+Layer 3, cellular sheaves (CELL1, #315): a cellular sheaf F on `Hypergraph V` with restriction maps F(σ) → F(τ) for τ ⊂ σ. Cycles sharing points correspond to equalizer conditions at the shared stalk. PHAJEK proposes reading closed strings as 1-cycles, interaction vertices as equalizers at common points, and worldsheets as cellular k-chains (§5d). The sheaf angle is column W of the angle table (AT-W, #319).
 
-The trichotomy itself is the research deliverable: identifying *which structural property of the rule* corresponds to *which Tarski axiom holding in the limit* would give a Wolfram-side classification of "geometricity" rules.
+Layer 4, contractibility (CONTRACT1, #329): `Hypergraph.IsContractible γ`, in a static form (γ bounds a 2-cell) and a dynamic form (rewriting produces the 2-cell), and a scale-indexed form `IsContractibleAtScale γ r` given by the death time in the IT4 barcode.
 
-**9. Connection to existing infrastructure.** SIG2/SIG3 should consume:
-   - `Hypergraph.dist` (`HypergraphDistance.lean`) for `Between` / `Cong`.
-   - `Hodge laplacian` (`KnillCore.lean`) for spectral-angle perpendicularity.
-   - `geodesicBall` (existing) for circles.
-   - `IsPathOf` (`SubdivisionPath.lean`) for segments.
-   - `InfrageometricScene` (IS2) + `MultiwayCausalGraph` (J1) for branching scenes.
+Layer 5, elementary path moves: deformations (DEFORM1, #330: insertion and removal of backtracks, substitution across a 2-cell boundary or a hyperedge) and extensions (DEFORM2, #331: appending or prepending an edge). Together they generate a fundamental category. `SubdivisionPath` is a concrete extension scheme.
 
-The **research handle** for the SIG track:
-> Synthetic geometry is what survives in the asymptotic regime where graph distance approximates a Riemannian metric and angles emerge from spectral data. Knill's "infrageometry" = the regime where this approximation is happening.
+Layer 6, homotopy invariants: first Betti number b₁ = E − V + C (TOP1, #323; `firstBettiZ` DEFINED); higher Betti numbers via Hodge decomposition (TOP2, #324); π₁ (TOP3, #325); π_k (TOP5, #327); genus and crossing number (TOP6, #328).
 
-## 5b. Topology before metric — the layered combinatorial-topology toolkit
+Layer 7, linking: linking numbers and Borromean detection (KNOT1, #320); Massey products (KNOT2, #321); Yamada and Jones polynomials via coloured spin networks (KNOT3, #322).
 
-SWOLF's structural insight: **topological information should be available BEFORE metric / volume / region structure**. The hypergraph has a natural layered topology hierarchy that doesn't need `Hypergraph.dist` or `geodesicBallVolume`:
+Layer 8, hyperplanes and regions (PHAJEK, SWOLF):
 
-**Layer −1 — Connectedness ("is every point reachable from every other") — SWOLF's actual most-elementary primitive, the partition that EVERY OTHER topological invariant sits inside.**
+- MEMBER1 (#346): decidable membership in `Finset V` and predicate-defined regions.
+- HYPER1 (#338): vertex separators as pre-metric hyperplanes; Menger's theorem.
+- HYPER2 (#339): perpendicular bisector {M | dist A M = dist B M}. `perpBisector` DEFINED.
+- HYPER3 (#340): Voronoi decomposition. `voronoiCell` DEFINED.
+- HYPER4 (#341): `perpBisector` ⊃ `IsGeodesicHyperplane` ⊃ `IsTopologicalHyperplane`.
+- MIDPT1 (#342): midpoints, possibly several or none. `midpoint`, `nearMidpoint` DEFINED.
+- POLYTOPE1 (#343): polytopes as cells of a hyperplane arrangement.
+- INOUT1 (#344): inside and outside of a cycle, by contractibility, volume, orientation or causal future.
+- BOUND1 (#345): boundedness and diameter in the four connectedness notions.
+- COMPACT1 (#347): compactness of limits.
+- SPHERE1-4 (#334-#337): infra-spheres and infra-disks. `infraSphere`, `infraDisk` DEFINED.
 
-Four distinct flavours on a hypergraph (none subsumes the others):
-- **Spatial** — `∀ u v, ∃ Hypergraph.SimplePath u v` — symmetric, single-state-level. Standard `H.toSimpleGraph.Connected`.
-- **Causal** — directed, event-level — "is v in the causal future of u" within one trajectory.
-- **Branchial** — symmetric, equivalence-class-level — "share an ancestor in the multiway".
-- **Rewriting-reachable** — directed, state-level — "rewrite from A to B in finitely many `MultiStep`s".
+Layer 8b, surfaces (SURFACE1, #348): the shell `H.infraSphere O r` as an induced subhypergraph, and the Knill-Fisk recursive predicate: `IsFiskManifold n H` when every unit sphere is `IsFiskManifold (n−1)` and every unit ball is contractible. A tree's shell at positive radius is disconnected; a cycle's shell is two points (S⁰); the shell of the Z² lattice at large radius is a cycle. Tracking shell topology along a trajectory screens for rules that produce manifold-like hypergraphs. Relates to KN13 (#249).
 
-`b_0` is then *four distinct invariants*, one per graph-flavour. Spatial-connected does NOT imply causally-connected (spacelike-separated events). Branchially-connected does NOT imply rewriting-reachable (sibling branches). Refinement-stability adds a scale-indexed variant. Tracked as TOP4 (#326).
+Layer 8c, topologies (OPEN1, #349; NBHD1, #350): discrete, Alexandrov, metric, star, Vietoris-Rips-indexed and causal Alexandrov topologies; neighbourhood bases `{H.geodesicBall v r}`. A manifold-like hypergraph has neighbourhood bases that stabilise to disks; a tree does not.
 
-**Layer 0 — Cells and incidence (requires only the hypergraph structure, takes connectedness as base):**
-- Vertices, hyperedges, simplicial / Δ-complex / CW extension
-- Per-component analysis of all higher invariants (everything below is computed per connected component)
+Layer 9, reflection groups: reflections in perpendicular bisectors (HYPER2) generate an isometry group; translations and rotations are products of two reflections; a reflection-closed set gives a Coxeter group, a root system and a Lie algebra (IB5, #150).
 
-**Layer 1 — Paths and cycles (requires PATH1 native simple-path type):**
-- `Hypergraph.SimplePath u v` carrying `Nodup` vertices + hyperedge sequence — PATH1 (#300)
-- Hyperedge-aware vs clique-expansion equivalence — PATH2 (#301)
-- Standard graph-theoretic simple-paths via `Mathlib.SimpleGraph.Walk.IsPath`
+The metric layer follows: `Hypergraph.dist`, balls, the angle table, curvature.
 
-**Layer 2 — Polygons (closed cycles of simple paths, with SWOLF-style extended intersections):**
-- `Hypergraph.Polygon` — cyclic sequence of segments with arbitrary `Finset V` intersection loci between consecutive segments — POLY1 (#316)
-- Generalised polygon shape invariants `(|I_1|, ..., |I_n|)` — Euclidean is the special case `|I_i| = 1`
-- Cellular k-chains in Δ-complex with sheaf coefficients (the full categorical generalisation) — POLY2 (#317)
-- Spin networks / spin foams (LQG primitive, knot-invariant home via Witten/Reshetikhin-Turaev) — POLY3 (#318)
+## 5c. Angle table
 
-**Layer 3 — Cellular sheaves and cycles-with-common-points:**
-- Cellular sheaf F on Hypergraph V, restriction maps `F(σ) → F(τ)` for `τ ⊂ σ` — CELL1 (#315)
-- Cycles-sharing-common-points = equalizer condition at the shared stalk
-- Sheaf-cohomology IS the topology with non-trivial gluing data
-- **PHAJEK's framing**: this IS string theory on the graph — closed strings = 1-cycles, interaction vertices = common-point equalizers, worldsheets = cellular k-chains
-- Sheaf-angle (Column W of the angle tower) — AT-W (#319) — `cos θ = ⟨r₁, r₂⟩_{F(common)} / (‖r₁‖·‖r₂‖)` for the restriction maps; generalises Knill/Connes spectral angle
+The angle table is in §5, design note 2. The tasks are AT0-AT27 (#285-#314) and AT-W (#319).
 
-**Layer 4 — Contractibility (binary, scale-indexed predicate on cycles):**
-- `Hypergraph.IsContractible γ : Prop` — γ deformable to trivial loop — CONTRACT1 (#329)
-- Two natural variants: cellular/static (γ bounds a 2-cell) and multiway/dynamic (rewriting produces the 2-cell)
-- Scale-indexed via VR-complex: `IsContractibleAtScale γ r` — death-time in IT4 persistence barcode
-- For BBH (Phase D): black-hole horizon = non-contractible cycle; merger = moment cycle becomes contractible
+## 5d. Cellular sheaves and PHAJEK's string correspondence
 
-**Layer 5 — Elementary path moves (the generating set for path-equivalence):**
-- **Deformations** (DEFORM1 #330) — homotopy-generating: backtrack insertion/removal, 2-cell-boundary substitution, hyperedge-transit substitution
-- **Extensions** (DEFORM2 #331) — path-category-generating: forward/backward edge or hyperedge-transit append/prepend
-- Together: **deformations + extensions = fundamental category** (Quillen / ∞-groupoid construction)
-- `SubdivisionPath/SubdivisionTrajectory` IS already a concrete elementary-extension scheme in the codebase
-- **Tietze / Whitehead / Reidemeister style**: the moves are the data; topology is the consequence
-
-**Layer 6 — Homotopy-theoretic invariants (consequence of layer 5):**
-- `b_1` first Betti / cycle rank `E − V + C` — TOP1 (#323)
-- `b_k` higher Betti via Hodge decomposition — TOP2 (#324)
-- `π_1` fundamental group (non-abelian, strictly richer than `b_1`) — TOP3 (#325)
-- `π_k` higher homotopy — TOP5 (#327)
-- Genus / crossing number — TOP6 (#328)
-
-**Layer 7 — Linking and knot invariants (cellular-cohomology with twisted coefficients):**
-- Linking number for disjoint cycles, Borromean detection — KNOT1 (#320)
-- Massey products for higher / Brunnian linking — KNOT2 (#321)
-- Yamada / Jones polynomial via colored spin-network evaluation (Witten/RT) — KNOT3 (#322)
-- For BBH: horizon-merger IS a knot-cobordism (linked cycles → unlinked); for AdS/CFT: bulk-Wilson-line link invariants ARE the holographic dictionary
-
-**Then comes the metric layer (`Hypergraph.dist`):**
-- Geodesic balls, ball volumes, the angle tower (M, S, Y, T, Q, L, G, I, H, K, F, N, C, U columns)
-- Wolfram-Hausdorff dimension (ID1)
-- Bishop-Gromov scalar curvature from log V(r) — AT9 (#294)
-- Forman-Ricci, Ollivier-Ricci, full Riemannian/Lorentzian geometry
-
-**The structural point**: every layer above is built from the previous layers WITHOUT requiring metric / measure / region structure. The metric layer (and everything geometric) sits on top. **This is what "infrageometry" is supposed to mean structurally**: the pre-metric topological substrate from which metric geometry emerges in the continuum limit.
-
-## 5c. The full angle tower in one place (cross-reference to §2)
-
-See §2 above for the complete table of angle definitions across 14 flavour-columns × abstraction levels. Tasks AT0–AT27 (#285–#314) plus AT-W (#319) cover the full tower. Three structural anchors recap:
-1. **AT18 (projective Cayley-Klein cross-ratio) needs only `Between` + `dist` ratios** — sidesteps SWOLF's geodesic-uniqueness requirement; possibly the right starting point on non-`GeodesicallyUnique` hypergraphs.
-2. **AT23 (conformal class) IS pure-angle data** — angles alone define conformal geometry; lengths are extra structure.
-3. **AT20 (Regge deficit) IS the actual numerical-GR variable** — gates Phase D BBH simulation.
-
-## 5d. Cellular sheaves and PHAJEK's "string theory on the graph"
-
-The cellular-sheaf framework (CELL1) is the natural categorical home for cycles-with-common-points (SWOLF) and string-theory-on-the-graph (PHAJEK). Translation table:
+The cellular-sheaf framework (CELL1) treats cycles with common points (SWOLF) and PHAJEK's proposed correspondence with string theory. Proposed correspondence:
 
 | String-theory object | Hypergraph object |
 |---|---|
 | Closed string | 1-cycle in the cellular complex |
-| Open string | path with endpoints |
-| Worldsheet | cellular k-chain (k≥2) with sheaf data |
-| String-vertex interaction | common-stalk equalizer (multiple cycles meeting) |
-| Pants diagram | three cycles meeting at a common boundary loop |
-| Loop-level amplitude | higher-genus cellular cover |
-| String field theory | cellular sheaf with associative-multiplication-on-stalks |
-| D-brane | distinguished 0/1-cell anchor for open-string endpoints |
-| Vertex operator algebra | algebra structure on stalks at interaction points |
+| Open string | Path with endpoints |
+| Worldsheet | Cellular k-chain (k ≥ 2) with sheaf data |
+| Interaction vertex | Equalizer at a common stalk |
+| Pants diagram | Three cycles meeting at a common boundary loop |
+| Loop amplitude | Higher-genus cellular cover |
+| String field theory | Cellular sheaf with associative multiplication on stalks |
+| D-brane | Distinguished 0- or 1-cell for open-string endpoints |
+| Vertex operator algebra | Algebra structure on stalks at interaction points |
 
-**The hypergraph IS the combinatorial skeleton of the worldsheet.** The cellular sheaf assigns target-space data to each cell. String amplitudes = sheaf-cohomology computations. Phase D BBH = closed-string black-hole physics on a coarse-grained Regge-skeleton 4-manifold.
+None of these correspondences is formalised.
 
-## 5e. The structural sequence of primitives (SWOLF's order)
+## 5e. Order of primitives (SWOLF)
 
-SWOLF's framing identifies the right *order of primitives* — each layer needs only the previous:
+0. TOP4: connectedness in four forms.
+1. PATH1: simple paths.
+2. POLY1: cycles and generalised polygons.
+3. CONTRACT1: contractibility, scale-indexed via VR.
+4. DEFORM1, DEFORM2: elementary moves.
+5. HOM1, HOM2: path homotopy as the equivalence closure of DEFORM1; fundamental groupoid.
+6. TOP3: π₁.
+7. TOP1: b₁ as the abelianisation of π₁.
+8. TOP2, TOP5, TOP6: higher Betti numbers, π_k, genus.
+9. KNOT1-3: linking, Massey products, knot polynomials.
 
-0. **TOP4 (b_0, connectedness)** → "is every point reachable from every other" — partition that EVERY OTHER invariant sits inside; four flavours (spatial, causal, branchial, rewriting-reachable).
-1. **PATH1** → simple paths (the substrate; SWOLF's "non-overlapping paths").
-2. **POLY1** → cycles (closed simple paths) — and SWOLF's polygon generalisation with arbitrary intersection sequences.
-3. **CONTRACT1** → contractibility predicate (binary, scale-indexed via VR-complex).
-4. **DEFORM1 / DEFORM2** → elementary moves (the *witnesses* of contractibility / extension; Tietze/Whitehead/Reidemeister style).
-5. **HOM1 / HOM2** → path-homotopy `EqvGen DEFORM1`, fundamental groupoid Π_1(H).
-6. **TOP3 (π_1)** → homotopy classes of loops under DEFORM1 — first non-abelian invariant.
-7. **TOP1 (b_1)** → abelianization of π_1 — first cellular invariant.
-8. **TOP2 (b_k), TOP5 (π_k), TOP6 (genus)** → higher cellular and homotopy invariants.
-9. **KNOT1/2/3** → linking, Massey products, Yamada/Jones (cellular cohomology with twisted coefficients).
+## 5f. Planned route from hypergraphs to differential geometry (SWOLF)
 
-**Layer 8 — Hyperplane / polytope / inside-outside / set-theoretic primitives** (PHAJEK + SWOLF, the bridge between metric and synthetic geometry):
-
-- **TOP4 connectedness reuse** (the most basic primitive — already at Layer −1).
-- **MEMBER1 (#346)** — decidable membership `v ∈ R` for `Finset V` and predicate-defined regions. Foundational, comes free.
-- **HYPER1 (#338)** — vertex-separator (PHAJEK's pre-metric "hyperplane"); Menger's theorem framework.
-- **HYPER2 (#339)** — perpendicular bisector `{M | dist A M = dist B M}` — the metric hyperplane.
-- **HYPER3 (#340)** — Voronoi decomposition / closest-point partition.
-- **HYPER4 (#341)** — equidistant-set vs separator equivalence (three increasing strengths: `perpBisector` ⊃ `IsGeodesicHyperplane` ⊃ `IsTopologicalHyperplane`); finite-vs-infinite hyperplane distinction recovers in continuum limit.
-- **MIDPT1 (#342)** — midpoint of two points (multivalued, possibly empty).
-- **POLYTOPE1 (#343)** — polytope as cell of hyperplane arrangement; foundation for AT19 / AT20 / BBH triangulation.
-- **INOUT1 (#344)** — inside-outside / Jordan separator on cycles — *not automatic*; depends on contractibility AND separator status. Four "which side is inside" criteria: contractibility, volume, orientation (ribbon-graph), causal-future. **For BBH: causal-future-of-singularity defines inside.**
-- **BOUND1 (#345)** — bounded / diameter (four flavours: spatial, causal, branchial, rewriting), trivial on `Fintype V` but structural at limits.
-- **COMPACT1 (#347)** — compactness, only meaningful at the limit (GH / multiway / causal-set).
-- **SPHERE1–4 (#334–#337)** — infra-sphere / infra-disk types with topology and surface-area Bishop-Gromov extraction.
-
-**Layer 8b — Surfaces and manifold-detection (SWOLF's "what is a surface", Knill / Fisk recursive predicate):**
-
-- **SURFACE1 (#348)** — Hyperspherical shell `H.shell O r := H.infraSphere O r` viewed as induced sub-hypergraph. **Knill/Fisk recursive manifold-predicate**: `IsFiskManifold n H` iff every vertex's unit sphere is `IsFiskManifold (n-1)` AND every unit ball is contractible. **Diagnostic test**: a tree's shell at any positive radius is *disconnected* (one component per branch direction) — fails Knill at any positive dim; tree is NOT a 2-manifold-like hypergraph. Cycle's shell = `S^0` (two disconnected points) — passes 1-manifold criterion. Z²-lattice shell at large r ≈ cycle ≈ `S^1` — passes 2-manifold criterion asymptotically. **Empirical rule-screener for "produces manifold-like hypergraph"**: track shell-connectivity / shell-topology along trajectory states. Subsumes / sharpens KN13 (#249) "Soft barycentric refinement + Fisk-manifold predicate".
-
-**Layer 8c — Open sets / neighbourhoods / local topology (SWOLF + PHAJEK pivot to formal topology):**
-
-- **OPEN1 (#349)** — Multiple natural topologies on a hypergraph: discrete, Alexandrov (closed under one-step neighbour-expansion), metric (via `Hypergraph.dist`, on discrete reduces to discrete), cellular / star (open = star of a simplex in Δ-complex), VR-scale-indexed, causal (Alexandrov from `causallyPrecedes`). Each yields different compactness/continuity theorems.
-- **NBHD1 (#350)** — Neighbourhood basis at each vertex `{H.geodesicBall v r}_{r ∈ ℕ}` or `{VR(v, r)}` etc. **SWOLF's "locally has neighbourhoods" intuition for surfaces** = neighbourhood basis stabilises to disk-shapes. Tree fails this; manifold-like hypergraphs pass.
-
-**Layer 9 — Bachmann motions / reflection group → isometry / Lie structure** (the bridge to Lie theory):
-
-- Reflections through perpendicular bisectors (HYPER2) generate the *isometry group*.
-- Translation = composition of two parallel reflections.
-- Rotation = composition of two intersecting reflections.
-- Glide reflection = translation + perpendicular reflection.
-- Closed under reflection → Coxeter group / root system / Weyl group → Lie algebra (#150 IB5).
-- **The constructive route from elementary moves to the full Lie-theoretic isometry structure of differential geometry.**
-
-**Then comes the metric layer**: `Hypergraph.dist` → balls → angles (the 14-column tower) → curvature.
-
-**The whole pre-metric topology hierarchy lives below the metric layer.** This is what "topology before metric" buys you structurally — and it's exactly the Tietze / Whitehead / Reidemeister style: **the moves are the data; topology is the consequence.**
-
-## 5f. The constructive route to differential geometry — SWOLF's program statement
-
-SWOLF: "we're going to get all the way to differential geometry". The full bottom-up route from hypergraph primitives to differential geometry, with no metric / measure / region structure assumed at the bottom and full Riemannian / Lorentzian / gauge structure emerging at the top:
+SWOLF states the aim of reaching differential geometry from hypergraph primitives. Planned steps:
 
 | Step | Adds | Yields |
 |---|---|---|
-| 1 | Hypergraph + connectedness | Discrete topological structure (b_0) |
-| 2 | Native paths (PATH1) | Path category, geodesic substrate |
-| 3 | Cycles (POLY1) + cellular sheaves (CELL1) | Topology objects, PHAJEK's "string theory on the graph" |
-| 4 | Contractibility (CONTRACT1) + elementary moves (DEFORM1/2) | Path-equivalence, Tietze/Whitehead generators |
-| 5 | Path-homotopy (HOM1) + groupoid (HOM2) | Fundamental groupoid Π_1 |
-| 6 | π_1 (TOP3), π_k (TOP5), Betti numbers (TOP1/2) | Algebraic topology |
-| 7 | Knots / linking / Massey (KNOT1–3) | Higher cohomology with twisted coefficients |
-| 8 | Hyperplanes (HYPER1–4), midpoints (MIDPT1), polytopes (POLYTOPE1) | Synthetic-geometric primitives |
-| 9 | Inside-outside (INOUT1), bounded/compact (BOUND1, COMPACT1) | Region structure |
-| 10 | Reflections through hyperplanes | Isometry group (Bachmann motions) |
-| 11 | Closed reflection set | Coxeter / Weyl group → root system |
-| 12 | Linearisation at identity | Lie algebra (IB5 #150) |
-| 12.5 | Surface / manifold predicate (SURFACE1) + neighbourhood basis (NBHD1) + open sets (OPEN1) | Local-Euclidean detection; tree-vs-manifold diagnostic |
-| 13 | Add metric `Hypergraph.dist` | Spheres (SPHERE1), Voronoi cells (HYPER3), distances |
-| 14 | Angles (AT0–AT27, AT-W) | The full 14-column angle tower |
-| 15 | Bishop-Gromov + log V(r) (AT9) | Scalar curvature |
-| 16 | Cellular metric tensor (AT21) | Bilinear-form-at-point structure |
-| 17 | Connection 1-form (AT22) | Christoffel / parallel transport |
+| 1 | Hypergraph and connectedness | b₀ |
+| 2 | Simple paths (PATH1) | Path category |
+| 3 | Cycles (POLY1), cellular sheaves (CELL1) | Cycles with gluing data |
+| 4 | Contractibility (CONTRACT1), moves (DEFORM1/2) | Path equivalence |
+| 5 | Path homotopy (HOM1), groupoid (HOM2) | Fundamental groupoid |
+| 6 | π₁ (TOP3), π_k (TOP5), Betti numbers (TOP1/2) | Algebraic topology |
+| 7 | Linking, Massey products (KNOT1-3) | Twisted cohomology |
+| 8 | Hyperplanes (HYPER1-4), midpoints (MIDPT1), polytopes (POLYTOPE1) | Synthetic primitives |
+| 9 | Inside and outside (INOUT1), bounded and compact (BOUND1, COMPACT1) | Regions |
+| 10 | Reflections in hyperplanes | Isometry group |
+| 11 | Reflection-closed sets | Coxeter and Weyl groups |
+| 12 | Linearisation at the identity | Lie algebra (IB5, #150) |
+| 12.5 | Surface predicate (SURFACE1), neighbourhood bases (NBHD1), open sets (OPEN1) | Local Euclidean detection |
+| 13 | `Hypergraph.dist` | Spheres (SPHERE1), Voronoi cells (HYPER3) |
+| 14 | Angles (AT0-AT27, AT-W) | Angle table |
+| 15 | Ball growth (AT9) | Scalar curvature estimator |
+| 16 | Discrete metric tensor (AT21) | Bilinear form at a point |
+| 17 | Connection 1-form (AT22) | Christoffel symbols, parallel transport |
 | 18 | Curvature 2-form (AT22) | Riemann tensor |
-| 19 | Solid angle (AT19), Regge deficit (AT20) | Higher-dim curvature |
-| 20 | Tangent bundle (IG9) + connection (IG3) + holonomy (IG5) | Full Riemannian / Lorentzian / gauge structure |
-| 21 | Fisher metric (IQ5) + Bures angle (AT13) | Quantum / information-geometric structure |
-| 22 | Continuum limit + units (AT11) | Smooth differential geometry |
-| 23 | Specific GR metrics (#25–#29) + EFE (#62) | General relativity |
-| 24 | Spin networks (POLY3) + LQG bridge (#98) | Quantum gravity |
-| 25 | BBH from hypergraph (#80–#83) | THE ENDGAME — actual binary-black-hole merger from a discrete combinatorial substrate |
+| 19 | Solid angle (AT19), Regge deficit (AT20) | Higher-dimensional curvature |
+| 20 | Tangent bundle (IG9), connection (IG3), holonomy (IG5) | Riemannian, Lorentzian and gauge structure |
+| 21 | Fisher metric (IQ5), Bures angle (AT13) | Information geometry |
+| 22 | Continuum limit and units (AT11) | Smooth differential geometry |
+| 23 | GR metrics (#25-#29), Einstein equations (#62) | General relativity |
+| 24 | Spin networks (POLY3), LQG comparison (#98) | Quantum gravity |
+| 25 | Binary black holes from hypergraphs (#80-#83) | Binary black hole evolution |
 
-Each step is one short Lean definition or one bridge theorem on top of the previous. Nothing is hand-waved; every layer has a corresponding task. **This IS the constructive route SWOLF is calling out: "all the way to differential geometry".** And on past it to GR, QM, and the BBH merger that motivates the program.
+Steps 13 to 15 have DEFINED primitives (`infraSphere`, `voronoiCell`, `elementaryAngle`, `cosAngle`, `scalarCurvatureAt`). Steps 22 to 25 have no PROVED result for any rewriting evolution.
 
-## 5g. Cross-reference with NMURZIN "Geometry on Combinatorial Objects" (2026-04-26)
+## 5g. Cross-reference with NMURZIN, "Geometry on Combinatorial Objects" (2026-04-26)
 
-NMURZIN's 11-page paper *"Geometry on Combinatorial Objects: From Angle Defect to Cellular Sheaves"* (Wolfram Cloud, dated today, almost certainly the in-progress write-up of the SWOLF-PHAJEK-NMURZIN meeting we tracked) provides an external classification we should align against.
+NMURZIN's 11-page document "Geometry on Combinatorial Objects: From Angle Defect to Cellular Sheaves" (Wolfram Cloud, 2026-04-26) classifies geometric constructions on combinatorial objects. Its central statement is that each geometric construction on a combinatorial object corresponds to a structural commitment, and that cellular sheaves make the commitment explicit.
 
-**Coverage alignment (~60-70% of the document maps to existing tasks):**
-
-| NMURZIN section | Our coverage |
+| Section of the document | Item in this repository |
 |---|---|
-| §2.1 Descartes / Gauss-Bonnet defect; Regge action | AT2 (#287); AT20 (#307); KnillCore Euler-char ✓ |
-| §2.2 Knill recursive `K(v) = Σ(−1)^k V_{k-1}(v)/(k+1)` | KN13 (#249), SURFACE1 (#348) ✓ |
-| §3.1 Forman-Ricci `F(e) = 4 − deg(u) − deg(v) + 3·#triangles` | `DiscreteRicci.formanRicciHypergraph` ✓ |
-| §3.2 Ollivier-Ricci | #220 ✓, AT12 (#297) ✓ |
-| §3.4 Bishop-Gromov ball-growth | AT9 (#294), SPHERE4 (#337) ✓ |
-| §4 DEC (cochains, coboundary, δ² = 0, Hodge decomp) | KnillCore d, d*, D, H = D²; #277 ✓ |
-| §4 Lim's Hodge Laplacians on graphs | IT3, HodgeLaplacianBounds, HodgeVR ✓ |
-| §6 Cellular sheaves | CELL1 (#315) ✓ logged |
-| §6.3 Lattice gauge sheaf example | IG3-IG7, DiscreteGaugeField ✓ (but not in sheaf framing — see SHEAF-CHOICE6 #356) |
+| §2.1 Descartes and Gauss-Bonnet defect; Regge action | AT2 (#287); AT20 (#307); `KnillCore` Euler characteristic (PROVED results) |
+| §2.2 Knill recursive curvature K(v) = Σ(−1)^k V_{k−1}(v)/(k+1) | KN13 (#249), SURFACE1 (#348) |
+| §3.1 Forman-Ricci F(e) = 4 − deg(u) − deg(v) + 3·#triangles | `DiscreteRicci.formanRicciHypergraph` (DEFINED) |
+| §3.2 Ollivier-Ricci | #220; AT12 (#297) |
+| §3.4 Ball growth (Bishop-Gromov) | AT9 (#294); SPHERE4 (#337) |
+| §4 Discrete exterior calculus (cochains, coboundary, δ² = 0, Hodge decomposition) | `KnillCore` d, d*, D, H = D²; `KnillCore.dSquared_eq_zero` (PROVED) |
+| §4 Hodge Laplacians on graphs (Lim) | IT3; `HodgeLaplacianBounds.lean`; `HodgeVR.lean` |
+| §6 Cellular sheaves | CELL1 (#315) |
+| §6.3 Lattice gauge sheaf | IG3-IG7; `DiscreteGaugeField.lean` (not in sheaf form; SHEAF-CHOICE6, #356) |
 
-**Gaps logged as new tasks (#351–#368):**
+Items in the document with no earlier task, added as #351-#368:
 
-- **§7 — Choosing-restriction-maps classification** (the document's structural payoff): SHEAF-CHOICE1–7 (#351–#357) for constant / Hodge / `S_k`-equivariant / diffusion / order / gauge / tensor-contraction sheaves; SHEAF-CLASSIFICATION (#358) for the meta-table mapping structural commitments to canonical sheaf-types.
-- **§3.3 Effective-resistance curvature** (Devriendt-Lambiotte 2022) — EFFRES1 (#359) — third independent curvature notion between Forman and Ollivier on the trade-off curve.
-- **§4 explicit Hodge star ⋆** between primal/dual cochains — DEC1 (#360).
-- **§4 explicit wedge product ∧** on cochains — DEC2 (#361) — required for AT22 Cartan structure equations.
-- **§5 Closure problem** (downward / clique / nerve as explicit choices) — CLOSURE1 (#362).
-- **§6 Hansen-Ghrist sheaf-Cheeger inequalities** — CHEEGER1 (#363).
-- **§2.1 Christiansen 2024 distributional → smooth scalar curvature** in Regge — REGGE-CONV1 (#364).
-- **§2.2 CDT** (Causal Dynamical Triangulations) — CDT1 (#365).
-- **§2.2 Stone's discrete Myers** — MYERS1 (#366).
-- **§2.2 Higuchi planar-graph curvature** — HIGUCHI1 (#367).
-- **§3.2 Ollivier-Ricci hypergraph multi-marginal** (Eidi-Jost 2020) — OLLIVIER-HG (#368).
+- §7 choice of restriction maps: SHEAF-CHOICE1-7 (#351-#357) for constant, Hodge, S_k-equivariant, diffusion, order, gauge and tensor-contraction sheaves; SHEAF-CLASSIFICATION (#358).
+- §3.3 effective-resistance curvature (Devriendt-Lambiotte 2022): EFFRES1 (#359).
+- §4 Hodge star between primal and dual cochains: DEC1 (#360).
+- §4 wedge product on cochains: DEC2 (#361), needed for the Cartan structure equations of AT22.
+- §5 closure (downward, clique, nerve): CLOSURE1 (#362).
+- §6 Hansen-Ghrist sheaf Cheeger inequalities: CHEEGER1 (#363).
+- §2.1 Christiansen 2024, distributional to smooth scalar curvature in Regge calculus: REGGE-CONV1 (#364).
+- §2.2 causal dynamical triangulations: CDT1 (#365).
+- §2.2 Stone's discrete Myers theorem: MYERS1 (#366).
+- §2.2 Higuchi planar-graph curvature: HIGUCHI1 (#367).
+- §3.2 multi-marginal Ollivier-Ricci for hypergraphs (Eidi-Jost 2020): OLLIVIER-HG (#368).
 
-**The document's central thesis** — *"every geometric construction on a combinatorial object corresponds to a specific structural commitment, and cellular sheaves make this commitment explicit"* — IS exactly the synthesis SWOLF and PHAJEK converged on in the meeting we tracked. The §6.3 lattice-gauge-sheaf example IS PHAJEK's "string theory on the graph"; the §7 restriction-map classification IS the categorical-organisation layer that makes all our angle / curvature / topology choices explicit. **Our task list now subsumes the document's full coverage** — every concept it identifies has either a corresponding existing infrastructure or a logged task.
+## 6. Relation to the audit of G1-G4
 
-## 6. How this relates to the JGORARD-refutation track
+The audit and the infrageometry programme share the library.
 
-The refutation work in `Refutations/F1–F5` + `MAJOR_FLAWS.md` is **not** subsumed — it becomes one arm of a larger program:
+- Audit: what G1-G4 state and what holds, recorded in [`FINDINGS.md`](FINDINGS.md), [`MAJOR_FLAWS.md`](MAJOR_FLAWS.md) and [`STATUS_OF_GORARD_CLAIMS.md`](STATUS_OF_GORARD_CLAIMS.md).
+- Infrageometry: discrete constructions on hypergraphs and their relation to continuum geometry (this file).
+- Continuum statements: `ContinuumLimitStatement.lean` states the limits to be proved. `SchwarzschildObligationMet`, `KerrObligationMet` and `FLRWObligationMet` are OPEN. The origin obligations of `HypergraphMetricBridges.lean` and related files hold for every target and are not among these statements.
 
-- **Refutation arm:** pin down what the 2004.14810 / 2102.09363 / 2303.07282 corpus actually proves vs. claims. Publishable as P1–P5.
-- **Positive arm (this file):** build the genuine infrageometry the corpus gestures at. Publishable as P6–P9.
-- **Bridge arm:** the `ContinuumLimitStatement` Props state the *concrete* obligations a future rule must satisfy. Any positive construction lives as a term of one of those Props. Any refutation lives as a `¬ obligation`.
+The discrete side of the quantum track (probability conservation on finite branchial slices, self-adjoint Laplacians) is PROVED; its continuum limit (group IQ) is OPEN.
 
-Concretely:
-- GR continuum limits (Schwarzschild, Kerr, FLRW) remain open obligations (`SchwarzschildObligationMet`, etc.). Group IC task IC10 extends to curved targets.
-- QM via branchial (unitary evolution, Hilbert-space limit) is formalized on the discrete side (Schrödinger unitarity, self-adjoint Laplacian) and obligated to converge via Group IQ.
-- The hypergraph Laplacian is already the backbone of both sides. Every continuum object we add must factor through it.
-
-## 7. Ongoing external work to track
+## 7. External work
 
 | Item | Person | Relevance |
 |---|---|---|
-| Axiomatic Relativity from Causal Graphs paper | CZAPATA, SAHMED | Input for IC7 (EPS axioms) and IC8 (Marzke–Wheeler) |
-| InfraGaugeTheory paclet (`resources/`) | PPOKORNY | Reference implementation to port — Group IG |
+| Axiomatic Relativity from Causal Graphs (paper) | CZAPATA, SAHMED | Input for IC7 (EPS axioms) and IC8 (Marzke-Wheeler) |
+| `InfraGaugeTheory` paclet (`resources/`) | `PacletInfo` `Creator`: Pavel Pokorny; git committer: PHAJEK | Reference implementation for group IG |
 | EME tracking (WWS26) | SAHMED, PHAJEK | Input for IQ8 |
-| Infragauge intern project (Apr–Jun 2026) | IMILEA | Moduli of connections, gauge dynamics on causal graphs |
-| Infrageometry paclet (differential forms, fibered graphs) | PHAJEK | Reference for IA3–IA4 |
-| Austin conference (Apr 17–19, 2026) | many | Publication window for P1, P6 |
-| Srní / Madrid / Mathematical Institute talks | PHAJEK | Public statements of program; verbatim definitions available in `/tmp/infrageom/srni.txt`, `/tmp/infrageom/madrid.txt` (cached locally for reference) |
-| Winter School Srní 2027 | SWOLF (invited) | Bridge to Czech differential-geometry community |
-| HVLE Austin talk | HVLE | Input for IQ5–IQ6 (Fisher → Fubini–Study) |
-| HKOLCZ MBQC / Lie–Poisson | HKOLCZ, PHAJEK | Input for IB5 (Poisson on ruliad) and IQ9 |
-| JPULLMAN IBL-∞ / BV | JPULLMAN | Input for IT2 (Hodge Laplacian on VR, higher-order info) |
-| Diffusion Geometry (Srní speaker) | external | Complementary framework; feeds into IT + IR as validation |
-| Tropical geometry | PPOKORNY | IS6 — algebraization of synthetic |
+| InfraGaugeTheory internship (April to June 2026) | IMILEA | Moduli of connections, gauge dynamics on causal graphs |
+| Paclet work on differential forms and fibred graphs | PHAJEK | Reference for IA3-IA4 |
+| Srní, Madrid and Mathematical Institute talks | PHAJEK | Definitions of the programme (transcripts not in the repository) |
+| Winter School Srní 2027 | SWOLF (invited) | Contact with the Czech differential-geometry community |
+| Austin talk | HVLE | Input for IQ5-IQ6 (Fisher and Fubini-Study metrics) |
+| MBQC and Lie-Poisson structures | HKOLCZ, PHAJEK | Input for IB5 and IQ9 |
+| IBL-∞ and BV structures | JPULLMAN | Input for IT2 |
+| Diffusion geometry (Srní speaker) | external | Comparison framework for IT and IR |
+| Tropical geometry | none recorded | IS6 |
 
-## 8. Grounding principle (unchanged)
+## 8. Grounding principle
 
-Every continuum object in the Lean library must have an explicit hypergraph origin — either a proved theorem or a `Prop` obligation with explicit `False`. No continuous islands. Schwarzschild, Kerr, FLRW remain open obligations; PDE ladder and flat continuum limits are proved; fibered/gauge/branchial objects must all factor through `Hypergraph V`.
-
-The program is not about faster theorems — it is about *right theorems*. Every claim carries a proof or a precisely stated open.
+Each continuum object in the library is to be related to hypergraph data by a PROVED theorem. The current ties are recorded in [`GROUNDING_AUDIT.md`](GROUNDING_AUDIT.md). PROVED ties exist for objects defined on hypergraphs (PDEs, calculus, causal graphs, branchial slices) and for flat limits of fixed graph families (cycles, paths, tori, lattices). The origin obligations attached to curved metrics, connections, Lorentzian manifolds and the Einstein equations do not depend on their target and hold for every target, so they establish no tie. Schwarzschild, Kerr and FLRW limits are OPEN.

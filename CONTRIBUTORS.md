@@ -1,20 +1,12 @@
 # Contributors index
 
-Canonical handle → identity mapping for everyone referenced in this project.
+This file maps each handle used in the project to a person.
 
-**Convention.** A handle is uppercase first-initial + surname (`PHAJEK` =
-Pavel Hajek). Exception: `SWOLF` for Stephen Wolfram (historical). Project
-docs and Lean comments refer to people by handle; the canonical full
-identity lives here.
+Convention. A handle is the first initial followed by the surname in capitals (`PHAJEK` = Pavel Hajek). `SWOLF` (Stephen Wolfram) is an exception. Project documents and Lean comments refer to people by handle.
 
-**Evidence policy.** This file states verifiable facts only, with citation
-and the date the source was checked. Project-internal claims (e.g. "X
-proposed Y in a meeting") are recorded in the relevant project doc, not
-here. Where this file is silent on a person's affiliation or role, the
-correct interpretation is "I have not verified this", not "they have no
-affiliation".
+Evidence policy. This file states facts that can be checked against a cited source, with the date the source was checked. Statements about who proposed what in a meeting are recorded in the relevant project document. Where this file gives no affiliation or role for a person, the affiliation or role has not been checked.
 
-Last verified against external sources: **2026-05-01**.
+Last checked against external sources: 2026-05-01.
 
 ---
 
@@ -41,13 +33,13 @@ Last verified against external sources: **2026-05-01**.
 
 Source for the /people column: <https://wolframinstitute.org/people> retrieved 2026-05-01.
 
-"not listed" means the person is not on the Wolfram Institute /people page as of 2026-05-01. It does not imply they are not affiliated, only that I have not independently verified affiliation.
+"not listed" means the person is not on the Wolfram Institute /people page as of 2026-05-01. It states nothing about other affiliations, which have not been checked.
 
 ---
 
 ## Per-handle records
 
-Each entry lists what is verifiable from external evidence. Project-internal references (M-task ownership, meeting-recorded ideas, etc.) live in their own files (INFRAGEOMETRY.md, NEXT_STEPS.md, INDEX.md, task tracker) and use the handle for cross-reference.
+Each entry lists facts from external sources. Project-internal references (task ownership, ideas recorded from meetings) are in INFRAGEOMETRY.md, NEXT_STEPS.md, INDEX.md and the task tracker, which use the handle.
 
 ### `SWOLF` — Stephen Wolfram
 
@@ -58,7 +50,7 @@ Each entry lists what is verifiable from external evidence. Project-internal ref
 
 - Wolfram Institute FELLOW per <https://wolframinstitute.org/people> (2026-05-01).
 - Owner of this project (`infra_formalization`).
-- Owner of `HypergraphRewritingEngine` (`efficient_rewriting_final/`) — the rule-search/multiway evolution engine the Lean executor cross-checks against.
+- Owner of `HypergraphRewritingEngine` (`efficient_rewriting_final/`), the multiway evolution engine whose test cases `MultiwayExecTests.lean` checks the Lean executor against.
 
 ### `PHAJEK` — Pavel Hajek
 
@@ -82,7 +74,7 @@ Each entry lists what is verifiable from external evidence. Project-internal ref
 - Wolfram Institute FELLOW per <https://wolframinstitute.org/people> (2026-05-01).
 - Per /people page: quantum computation, machine learning, Wolfram Language development.
 - Paclet authorship:
-  - `Infrageometry` — Creator (upstream `PacletInfo.wl`); principal substantive committer per git log (commits 2025-10-02 onward: hypergraph functionality, TDA, popular networks, complex hypergraph functionality, geodesics, Quantum Calculus module, testing framework, etc.).
+  - `Infrageometry` — Creator (upstream `PacletInfo.wl`); committer with the most commits per git log (commits 2025-10-02 onward: hypergraph functionality, TDA, popular networks, complex hypergraph functionality, geodesics, Quantum Calculus module, testing framework, etc.).
 
 ### `CZAPATA` — Carlos Zapata-Carratalá
 
@@ -96,7 +88,7 @@ Each entry lists what is verifiable from external evidence. Project-internal ref
 - GitHub: <https://github.com/Zaffer> (commits to the `Infrageometry` paclet appear under this account, email format `51871197+Zaffer@users.noreply.github.com`).
 - Personal site: <https://jameswiles.com/>.
 - Paclet contributions (per git log):
-  - `Infrageometry` — initial repository commits (2024-04-19): initial commit, README + image, drawing; plus "Notebook additions" (2024-06-28). Repository was dormant from June 2024 until `NMURZIN` began substantive contributions in October 2025.
+  - `Infrageometry` — initial repository commits (2024-04-19): initial commit, README and image, drawing; and "Notebook additions" (2024-06-28). The git log has no commits between June 2024 and the first `NMURZIN` commit in October 2025.
 
 ### `DHAMMOCK` — Dugan Hammock
 
@@ -111,13 +103,13 @@ Each entry lists what is verifiable from external evidence. Project-internal ref
 ### `JGORARD` — Jonathan Gorard
 
 - Wolfram Institute Alumnus per <https://wolframinstitute.org/people> (2026-05-01).
-- Subject of the audit arm of this project (papers arXiv:2004.14810, arXiv:2102.09363, arXiv:2303.07282, arXiv:2011.12174, arXiv:2308.07508, arXiv:2401.14209).
+- Author of the papers audited in this project ( arXiv:2004.14810, arXiv:2102.09363, arXiv:2303.07282, arXiv:2011.12174, arXiv:2308.07508, arXiv:2401.14209).
 
 ### `PPOKORNY` — Pavel Pokorny
 
-- **Not listed** on the Wolfram Institute /people page as of 2026-05-01.
-- Cited in upstream `resources/InfraGaugeTheory/InfraGaugeTheory/PacletInfo.wl` as `Creator -> "Pavel Pokorny"`. The `git log` of the same submodule shows no commits under the name "Pavel Pokorny"; all commits are by Pavel Hajek (see `PHAJEK`).
-- Discrepancy noted; not resolved by external sources I have access to.
+- Not listed on the Wolfram Institute /people page as of 2026-05-01.
+- Named in upstream `resources/InfraGaugeTheory/InfraGaugeTheory/PacletInfo.wl` as `Creator -> "Pavel Pokorny"`. The `git log` of the same submodule has no commits under the name "Pavel Pokorny"; all commits are by Pavel Hajek (see `PHAJEK`).
+- The external sources checked do not explain the difference between the `Creator` field and the git log.
 
 ### `HVLE` — Hông Vân Lê
 
@@ -170,7 +162,6 @@ PacletInfo source files (clones in `resources/`): each `PacletInfo.wl` has a sin
 
 ## How to use this file
 
-- All project docs and Lean comments should refer to people by handle (`PHAJEK`, etc.).
-- Bare first names in legacy docs (e.g. "Pavel said X") are being migrated to handles.
-- Adding a new contributor: add a row to the handles table, then add a per-handle record below with verifiable evidence and citation.
-- If you change a person's role at Wolfram Institute, re-fetch <https://wolframinstitute.org/people>, update the row, and bump the "Last verified" date at the top.
+- Project documents and Lean comments refer to people by handle (`PHAJEK`, etc.).
+- To add a contributor, add a row to the handles table and a per-handle record with sources.
+- To change a person's Wolfram Institute role, re-fetch <https://wolframinstitute.org/people>, update the row, and update the "Last checked" date at the top.
