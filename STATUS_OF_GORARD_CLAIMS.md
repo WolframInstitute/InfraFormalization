@@ -29,13 +29,22 @@ PROVED:
 |---|---|---|---|
 | `CandidateCatalog.gorardNamedRule` | `lean/InfraFormalization/CandidateRuleCatalog.lean:91` | Encoding of the rule with x=0, y=1, z=2, w=3, v=4, u=5 | definition |
 | `CandidateCatalog.gorardNamedRule_isConservative` | `CandidateRuleCatalog.lean:103` | \|LHS\| = \|RHS\| = 4 | `propext` |
-| `Application.size_result_of_conservative` | `Conservation.lean:27` | One application of a conservative rule preserves edge count | `propext`, `Classical.choice`, `Quot.sound` |
-| `size_preserved_by_applications` | `Conservation.lean:48` | A chain of applications of a conservative rule preserves edge count | same |
+| `Application.size_result_of_conservative` | `Conservation.lean:21` | One application of a conservative rule preserves edge count | `propext`, `Classical.choice`, `Quot.sound` |
+| `size_preserved_by_applications` | `Conservation.lean:42` | A chain of applications of a conservative rule preserves edge count | same |
 | `trajectory_size_invariant` | `RuleDimensionBounds.lean:61` | Every state of a step-consistent trajectory of conservative rules has the edge count of the initial state | same |
 | `Refutations.gorardNamedRule_application_preserves_size` | `Refutations/F7NamedRuleStructure.lean:33` | One application of the named rule preserves edge count | same |
 | `Refutations.gorardNamedRule_applications_preserve_size` | `Refutations/F7NamedRuleStructure.lean:41` | A chain of applications of the named rule preserves edge count | same |
 
-The rule is edge-count conserving. No theorem in the repository bounds the growth or the dimension of the rule's causal graph.
+PROVED (causal graph, `lean/InfraFormalization/CausalHistory.lean`). A `RuleHistory` is an evolution of a rule with hyperedge identities: each event consumes live identities and creates new ones, and its labels are an application of the rule. The causal graph has an edge from event i to event j when j consumes an identity created by i. The results hold for every update order.
+
+| Theorem | Statement | Axioms |
+|---|---|---|
+| `CausalHistory.History.consumer_unique` | An identity is consumed by at most one event | `propext`, `Classical.choice`, `Quot.sound` |
+| `CausalHistory.History.succ_card_le` | The out-degree of an event is at most the number of identities it creates | same |
+| `CausalHistory.History.antichain_ins_sum_le_init` | If every event consumes as many identities as it creates, the identities consumed by an antichain number at most the initial ones | same |
+| `CausalHistory.RuleHistory.state_step` | Event k is an `Application` of the rule to the state after k events, with result the state after k+1 events | same |
+| `CausalHistory.gorardNamedRule_antichain_card_le` | For the rule, 4·\|A\| ≤ N for every antichain A, where N is the initial edge count | same |
+| `CausalHistory.gorardNamedRule_ball_card_le` | For the rule, at most 5^t events lie within directed distance t of an event | same |
 
 MEASURED (cone-growth exponent of the causal graph): the exponent is the slope of a least-squares fit of log C(r) against log r, where C(r) is the number of events within directed graph distance r of the first event, over the middle half of the radii.
 
@@ -52,18 +61,19 @@ MEASURED (cone-growth exponent of the causal graph): the exponent is the slope o
 | 5x5x5 grid | 300 | 2000 | 1.014 | 1.055 | 7703 / 7700 |
 
 - SetReplace column: `scripts/run_seeds_v3.wl`, `scripts/causal_dimension.wl`, `scripts/grid3d_test.wl` with SetReplace 0.3.196, as recorded in `notes/empirical_refutation.md` and `results/phase1_selfaudit/setreplace_reference.md`. Not rerun on 2026-10-23.
-- Python column: `scripts/python/run_all_seeds.py`, rerun on 2026-10-23. The script exits with status 1 and prints "MISMATCHES DETECTED" for the causal edge counts of the 3x3x3 and 5x5x5 grids.
-- The two tools disagree on the exponent for every seed except the 6-cycle. The largest difference is on the 4x4x4 grid, 0.985 against 1.256, with equal event and causal-edge counts. The first cone counts differ there: SetReplace C(r) = 4, 11, 21, 33, 45, 55, 65, 74, and Python C(r) = 1, 3, 7, 15, 26, 43, 61, 82, 99, 118, 138. The cause of the disagreement is not determined.
+- Python column: `scripts/python/run_all_seeds.py`, rerun on 2026-10-23. Event and state counts equal SetReplace on every seed. Causal edge counts differ on the 3x3x3 and 5x5x5 grids.
+- Cause of the differences: the two tools use different update orders. `rewriter.py` takes the first match in lexicographic order of the state positions of the matched edges (`find_match`, lines 140-178). SetReplace 0.3.196 runs `"PatternRules"` with its Wolfram Language implementation, which matches `Shortest` over the ordered state and so chooses a match whose last edge is earliest (`Kernel/setSubstitutionSystem$wl.m`, `toNormalRules`). `scripts/python/setreplace_order.py` reimplements this order and reproduces the SetReplace cone counts and exponents on the 6-cycle, 8-cycle and 10-path. Its two tie-breaking rules do not reproduce the 20-cycle and grid runs.
+- The exponent depends on the update order. Across the four orders of `notes/empirical_refutation.md` §4 it ranges from 0.77 to 1.10 on the 3x3x3 grid and from 0.99 to 1.26 on the 4x4x4 grid.
 - A figure-8 seed (14 edges, 1000 events) was run with SetReplace only.
 - The largest run has 2000 events. The rule was not run on a Poisson sprinkling of Brill-Lindquist data, the initial data G3 uses.
 - An edge-count conserving rule keeps every spatial hypergraph at its initial size, so the spatial ball count is bounded on each run. A bounded ball count holds for every finite hypergraph and does not distinguish this rule from any other. G3 compares runs at 200, 400, 800 and 1600 vertices, a sequence of initial states of growing size, which edge-count conservation within one run does not constrain.
 
 OPEN:
 
-- O1. A bound on the causal-graph cone growth of the rule. Statement needed: for every initial hypergraph with N edges and every single-way evolution of the rule from it, every event e and every t satisfy C_e(t) ≤ c(N)·(t+1), where C_e(t) is the number of events within directed distance t of e and c depends only on N. Out-degree in the causal graph is at most 4, which gives only C_e(t) ≤ (4^(t+1)-1)/3.
-- O2 (P2a in `FINDINGS.md`). Statement needed: in a single-way evolution with N edges, every antichain of the causal graph has at most N/4 events. Proof outline: the inputs of an antichain are present together in the state reached by applying the events of its strict down-set. O2 bounds the number of events at each longest-path distance from e. O2 does not bound C_e(t), which counts shortest-path distance, so O2 does not imply O1.
-- O3. Neither O1 nor O2 can be stated in the library yet. `causallyPrecedes` (`Causal.lean:35`) and `isCausalPred` with `level` (`CausalLevel.lean`) relate two applications when a hyperedge value produced by one is consumed by the other. When a state holds two equal hyperedges, this relation differs from the causal graph, which needs hyperedge identities. The library has no hyperedge identities (`Causal.lean:44`).
-- O4. The cause of the SetReplace and Python exponent disagreement (table above).
+- O1. Linear cone growth, stated in Lean as `CausalHistory.GorardNamedRuleConeGrowthLinear`: for every N there is c such that in every valid `RuleHistory` of the rule with N initial hyperedges, every event i and every t satisfy |ball i t| ≤ c·(t+1). The statement quantifies over all update orders. PROVED bounds: |ball i t| ≤ 5^t, and every antichain has at most N/4 events. The antichain bound limits the events at each longest-path distance from i, while the ball counts shortest-path distance, so it does not imply O1.
+- O2 (closed). The antichain bound is PROVED as `CausalHistory.gorardNamedRule_antichain_card_le`.
+- O3 (closed). `CausalHistory.lean` defines the causal graph on hyperedge identities. `causallyPrecedes` (`Causal.lean`), `isCausalPred` (`CausalLevel.lean`) and `CausalEventTrace.deriveCausalEdges` relate events through hyperedge values, and differ from the causal graph when a state holds two equal hyperedges.
+- O4 (closed). The SetReplace and Python exponents differ because the tools use different update orders (MEASURED above).
 - O5. A run of the rule on a Poisson sprinkling of Brill-Lindquist initial data at the resolutions of G3 Table 6.
 - The repository does not prove Claim 1 false. Claim 1 does not state a convergence notion, so there is no precise statement to refute (see Claim 3, F5).
 
@@ -99,9 +109,9 @@ Lean (all axiom-clean):
 | Theorem | File:line | Status |
 |---|---|---|
 | `asymptoticDimPreservation_iff_eulerLagrange` | `Refutations/F3Tautology.lean:57` | PROVED by `Iff.rfl`. Both sides are the project's encoding `P.variation g = 0`. The encoding of eq. 87 is a READ finding. |
-| `hypergraph_does_not_determine_metric`, `metric_construction_is_never_unique`, `no_canonical_metric_from_hypergraph_alone`, `action_depends_on_construction_choice` | `Refutations/F1NoMetric.lean:110, 125, 137, 147` | VACUOUS: the function type `DHyp V → V → V → ℝ` has more than one element |
-| `orthonormality_depends_on_form`, `orthonormalising_form_not_unique` | `Refutations/F2Orthonormality.lean:63, 79` | VACUOUS: facts about functions on `Bool × Bool` |
-| `becomes_is_underdetermined`, `claim_is_vacuous_without_convergence_notion`, `different_notions_give_different_limits` | `Refutations/F5Illdefined.lean:127, 134, 142` | VACUOUS: facts about the sequence 1/(n+1) and the constant-`True` predicate |
+| `hypergraph_does_not_determine_metric`, `metric_construction_is_never_unique`, `no_canonical_metric_from_hypergraph_alone`, `action_depends_on_construction_choice` | `Refutations/F1NoMetric.lean:111, 126, 138, 148` | VACUOUS: the function type `DHyp V → V → V → ℝ` has more than one element |
+| `orthonormality_depends_on_form`, `orthonormalising_form_not_unique` | `Refutations/F2Orthonormality.lean:64, 80` | VACUOUS: facts about functions on `Bool × Bool` |
+| `becomes_is_underdetermined`, `claim_is_vacuous_without_convergence_notion`, `different_notions_give_different_limits` | `Refutations/F5Illdefined.lean:128, 135, 143` | VACUOUS: facts about the sequence 1/(n+1) and the constant-`True` predicate |
 
 ## Claim 4. Causal invariance corresponds to discrete general covariance
 
@@ -123,4 +133,26 @@ These theorems are PROVED arithmetic comparisons. The correct coefficients come 
 
 ## Execution engine
 
-`MultiwayExec.singleWayStep` fires every match of a step, including overlapping matches. On the 4-cycle seed the named rule has four overlapping matches, and the edge count after one step is not 4 (`RuleSignatureExecCorpus.lean:216`, `native_decide`). A Wolfram model single-way update applies non-overlapping matches. Results computed with `singleWayStep` on seeds with overlapping matches are therefore not Wolfram model evolutions of the rule.
+`MultiwayExec.singleWayStep` applies a maximal set of edge-disjoint matches, chosen greedily in enumeration order; edges created in a step are not matched in the same step. On the 4-cycle seed it fires one of the four matches of the rule and the edge count stays 4 (`RuleSignatureExecCorpus.lean`, `native_decide`). `allMatches` enumerates distinct bindings, so a state with two equal edges gives one match for a one-edge left-hand side where the Wolfram model gives two.
+
+`MultiwayExec.fireAllStep` applies every match of every rule found in the input state, including matches that share edges. It is not a Wolfram model update when matches overlap. Under `singleWayStep`, the five Knill values of two-rule systems in `MultiRuleDiscovered` change, and the proofs in `StepZeroAncestor` about the structure of the traced step do not apply. These two modules, and the modules that build on them, state their results with `fireAllStep`, `fireAllEvolve`, `tracedFireAllEvolve`, `causalDAGOfFireAll` or `branchialDAGOfFireAll`: `H9Bridge`, `H9BridgeStepProof`, `H9Closure`, `H9StructuralProgress`, `DistinctEdgeAPI`, `DistinctEdgeIdentity`, `PartitionClosure`, the multi-rule section of `UniversalAdditivity`, and the `BBH*`, `Branchial*`, `Discrete*`, `EnhancedPsi4`, `CurvatureDensityLimit`, `MultiRuleDepthTrajectory`, `Phase_D_FrameworkOverview` and `VacuumLikeUniversal` modules. These results concern the fire-all operator and do not describe Wolfram model evolutions. Single-rule results in these modules that agree under both operators were not separated out.
+
+## Reproducing the binary black hole experiment of arXiv:2102.09363
+
+G3 §6 (lines 6146-6290) states the experiment as follows (READ):
+
+- Initial data: points of a Poisson process of density ρ_c in a spatial slice of the Brill-Lindquist data for two Schwarzschild black holes of mass 0.5M each, separated by 1M (lines 6152-6181, eqs. 389-390). Two vertices are joined by a hyperedge when their points lie within "a certain cut-off distance (defined relative to the discretization cut-off V_c = ρ_c^-1)" (lines 6174-6176). A second run uses two Kerr black holes with a/M = 0.6 (lines 6269-6285).
+- Rule: {{x,y},{y,z},{z,w},{w,v}} → {{y,u},{u,v},{w,x},{x,u}} (line 6202).
+- Outputs: hypergraphs at t = 0, 6M, 12M and 24M coloured by the analytic conformal factor ψ of eq. 391 (lines 6185-6192, Figures 73-77); the real part of the l = 2, m = 0 mode of rΨ4 at t = 12M on a sphere of radius 6M at 200, 400 and 800 vertices (lines 6212-6218, Figure 78); L1, L2 and L∞ norms of the Hamiltonian constraint at t = 24M at 100 to 1600 vertices, with convergence orders between 1.11 and 2.83 (Table 6 at lines 6226-6235, text at lines 6243-6246).
+
+G3 does not state the cut-off distance, the orientation of the hyperedges (the rule matches directed paths of length 4), the update order, the number of events per unit of t, or the procedures that compute ψ, rΨ4 and the Hamiltonian constraint from a hypergraph.
+
+The repository contributes the following to a reproduction:
+
+- PROVED, for every evolution of the rule and every update order (`CausalHistory.lean`): the edge count stays at its initial value N; every antichain of the causal graph has at most N/4 events; at most 5^t events lie within directed distance t of an event. A run with N initial hyperedges therefore has at most N/4 events in any set of mutually independent events, which bounds the number of events that a foliation slice can contain.
+- PROVED (`RuleHistory.state_step`): a history with hyperedge identities projects to a chain of `Application`s of the rule. This is the interface for checking an engine trace event by event.
+- OPEN: linear cone growth (O1), which would bound the causal-graph dimension of every evolution by 1.
+- MEASURED: on cycles, paths and 3D grids of up to 300 edges and 2000 events, cone-growth exponents between 0.77 and 1.26, depending on the update order (`notes/empirical_refutation.md`). These runs do not use G3's initial data.
+- MEASURED: on a 4-cycle and a 4-edge path the rule fires once and halts. An initial hypergraph must contain directed paths of four distinct edges for the rule to fire.
+- READ: the list of unstated parameters above. A reproduction has to choose each of them and record the choice.
+- Tooling: `scripts/python/rewriter.py` and `scripts/python/setreplace_order.py` run the rule in two update orders with hyperedge identities and compute the causal graph and C(r).
