@@ -143,11 +143,12 @@ small seeds and does not prove a dimension bound.
 **Editorial note.** The pattern recurs across the corpus: the papers
 state results with more certainty than their arguments establish, and
 the status of the programme is presented as further advanced than the
-proofs support.
-The Lean files prove statements
-about the project's encodings and edge-count conservation of the named
-rule. The findings about the papers are readings of the text with line
-numbers.
+proofs support. The formal record exists in machine-checkable form, so
+a reader can check each statement with `lake build` and
+`#print axioms`.
+The Lean files prove statements about the project's encodings and the
+edge-count conservation of the named rule. The findings about the papers
+are readings of the text with line numbers.
 
 ---
 
