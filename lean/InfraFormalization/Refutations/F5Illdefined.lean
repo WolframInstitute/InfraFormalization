@@ -17,26 +17,28 @@ ergodicity" hypothesis. As written, it specifies:
   - no regularity class for the integrand,
   - no precise definition of "weak ergodicity".
 
-The closest rigorous version — Benincasa–Dowker 2010 (for the d'Alembertian
-on a Poisson sprinkling) — is a *conjectural* statement in causal set theory
-with only partial numerical support (Cunningham 2018). It is also not what
-G1 Eq 88 says: BD work in expectation over Poisson ensembles, while JGORARD
-writes a pointwise limit over a single deterministic hypergraph.
+The closest results are in causal set theory. Benincasa–Dowker 2010
+compute the continuum limit of the expectation of the causal-set
+d'Alembertian over Poisson sprinklings of a fixed Lorentzian manifold.
+Convergence of the Benincasa–Dowker action to the Einstein-Hilbert
+action is supported numerically (Cunningham 2018). G1 Eq 88 concerns a
+single causal graph produced by a rewriting rule, not an expectation
+over Poisson sprinklings.
 
-**What this file does.** Formalises the observation that *without* specifying
-a convergence notion, the statement "sequence *becomes* value" is ambiguous:
-there is a sequence for which one natural notion says "yes" and another
-says "no", both being acceptable readings of English "becomes".
+**What this file proves.** Facts about predicates on real sequences.
+`becomes_is_underdetermined`: `n ↦ 1/(n+1)` tends to `0` and is not
+eventually equal to `0`. `claim_is_vacuous_without_convergence_notion`
+and `different_notions_give_different_limits` use the constant-`True`
+predicate. None of these theorems mentions arXiv:2004.14810. The
+finding about the paper, that line 898 states no notion of convergence,
+is a reading of the paper text and is not a Lean theorem.
 
 Concretely: the sequence `n ↦ 1 / (n + 1)` converges to `0` in the standard
 sense (`Tendsto _ atTop (𝓝 0)`) but is never eventually equal to `0`.
 Both are reasonable interpretations of "the sum becomes 0 in the limit";
 JGORARD's prose does not distinguish them.
 
-The point of this file is *not* to claim JGORARD meant `EventuallyEq`.
-It is to demonstrate formally that "becomes" under-determines the claim,
-so the F5 statement is not a mathematical assertion until a convergence
-notion is supplied.
+The file does not claim that JGORARD meant `EventuallyEq`.
 
 **Sharpening (2026-05, macro-observer note; see
 `notes/phajek_macro_observer_notes.txt`).** Beyond the unspecified
@@ -121,28 +123,22 @@ theorem invSucc_not_eventuallyEquals_zero : ¬ EventuallyEquals invSucc 0 := by
 integral" under-determines its own content: there exists a real sequence
 and a candidate limit such that one natural convergence notion
 (`StandardLimit`) affirms the limit while another (`EventuallyEquals`)
-denies it. Absent a specified notion of convergence, the G1 Eq 88 claim
-is not a well-defined mathematical assertion. -/
+denies it. -/
 theorem becomes_is_underdetermined :
     ∃ (s : ℕ → ℝ) (L : ℝ),
       StandardLimit s L ∧ ¬ EventuallyEquals s L :=
   ⟨invSucc, 0, invSucc_standardLimit_zero, invSucc_not_eventuallyEquals_zero⟩
 
 /-- **F5 stronger form.** For any sequence `s` and any candidate limit `L`,
-there is a convergence notion under which `s` converges to `L`. In
-particular, the trivial notion "everything converges to everything"
-satisfies the English phrase "the sum becomes L" equally well as any
-substantive notion. JGORARD's prose does not rule out such a reading, so
-the claim carries no content absent specification. -/
+the constant-`True` predicate holds of `(s, L)`. -/
 theorem claim_is_vacuous_without_convergence_notion
     (s : ℕ → ℝ) (L : ℝ) :
     ∃ (C : ConvergenceNotion), C s L :=
   ⟨fun _ _ => True, trivial⟩
 
 /-- **F5 non-uniqueness.** For the *same* sequence, there are convergence
-notions affirming any two distinct candidate limits `L₁, L₂`. Thus
-"the sum becomes …" is not a function of the sequence alone; it depends
-on the convergence notion. -/
+notions affirming any two candidate limits `L₁, L₂` (both are the
+constant-`True` predicate). -/
 theorem different_notions_give_different_limits
     (s : ℕ → ℝ) (L₁ L₂ : ℝ) :
     ∃ (C₁ C₂ : ConvergenceNotion), C₁ s L₁ ∧ C₂ s L₂ :=

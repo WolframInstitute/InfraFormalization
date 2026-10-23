@@ -17,20 +17,18 @@ both causal-invariant and asymptotically dimensionality preserving
 … the limiting manifold must satisfy the vacuum Einstein field
 equations."
 
-**The structural issue.** Eq 87 *defines* "asymptotic dim preservation"
-as the Euler-Lagrange equation. Saying "asymptotic dim preservation
-⇒ EL-equation" is saying "X ⇒ X". JGORARD's abstract makes this
-sound like a substantive derivation; it is not. The only non-trivial
-content in §3.3 is Eq 88 (the limit "becomes" an integral), which
-depends on an undefined "continuum limit" notion and an unspecified
-"weak ergodicity" hypothesis — see F5 and `notes/limit_toolkit.md`
-for the causal-set-theory status of this convergence.
+**Paper text.** `papers/gorard_2004.14810.txt` lines 2203-2206 state
+that asymptotic dimensionality preservation "corresponds to the
+statement" that `δS/δg^{ab} → 0` (Eq 87). The Euler-Lagrange equation
+of `S` is the same condition. The step from there to the vacuum
+Einstein equations rests on Eq 88, the claim that the sum becomes the
+Einstein-Hilbert integral (see F5).
 
-**What this file does.** Formalises the tautological implication at
-the level of an abstract action / variational operator. We do not
-need the actual discrete metric tensor (which is F1: never
-constructed); we just need to name the functional form of the
-implication.
+**What this file proves.** The file encodes both conditions as
+`P.variation g = 0` and proves they are equivalent. The equivalence
+holds by `Iff.rfl` because the two definitions have the same body. The
+reading of Eq 87 that justifies this encoding is a reading of the
+paper text and is not a Lean theorem.
 -/
 
 import Mathlib.Data.Real.Basic
@@ -54,52 +52,12 @@ point: the condition that the variation vanishes. -/
 def EulerLagrange {M : Type*} (P : VariationalSetup M) (g : M) : Prop :=
   P.variation g = 0
 
-/-- **F3 as a theorem.** In JGORARD's §3.3, "asymptotic dim
-preservation" is *defined* to be the vanishing of the action's
-variation. The Euler-Lagrange equation of the same action is the
-same condition. The two are therefore equivalent by definitional
-unfolding alone.
-
-Any implication of the form "asymptotic dim preservation ⇒
-Euler-Lagrange equations of the action" is thus logically trivial;
-all non-trivial content must come from elsewhere — specifically,
-from proving the action converges to the Einstein-Hilbert action
-(Eq 88), which is separately flawed (see F5). -/
-theorem gorard_dim_preservation_is_euler_lagrange
+/-- `AsymptoticDimPreservation P g` and `EulerLagrange P g` are
+equivalent, by `Iff.rfl`: both are defined as `P.variation g = 0`. -/
+theorem asymptoticDimPreservation_iff_eulerLagrange
     {M : Type*} (P : VariationalSetup M) (g : M) :
     AsymptoticDimPreservation P g ↔ EulerLagrange P g :=
   Iff.rfl
-
-/-- **F3 in equation-chain form.** Given any variational setup and
-target configuration `g`, the implication
-
-  AsymptoticDimPreservation P g → EulerLagrange P g
-
-holds by definition — no structural content about `P` or `g` is
-used. -/
-theorem gorard_dim_preservation_trivially_implies_euler_lagrange
-    {M : Type*} (P : VariationalSetup M) (g : M) :
-    AsymptoticDimPreservation P g → EulerLagrange P g :=
-  id
-
-/-- **Contextual consequence.** Every instance of JGORARD's §3.3
-argument (whatever the interpretation of M and of `variation`) is
-of this form. In particular, even a JGORARD-style chain of the form
-
-  (conservative + causal-invariant + asymp.-dim.-pres.) ⇒ vacuum EFE
-
-reduces, on the "asymp.-dim.-pres. ⇒ vacuum EFE" leg, to
-definitional equivalence: having stipulated that the variation
-vanishes, stating the Euler-Lagrange equation (= vanishing variation)
-is re-stating the same fact. The Einstein field equations enter the
-picture only via the *identification* of the discrete action's
-limit with the Einstein-Hilbert action (JGORARD Eq 88), which is
-unproven. -/
-theorem gorard_section_3_3_contentless
-    {M : Type*} (P : VariationalSetup M) (g : M)
-    (_conservative : True) (_causal_invariant : True)
-    (hpres : AsymptoticDimPreservation P g) :
-    EulerLagrange P g := hpres
 
 end Refutations
 end InfraFormalization

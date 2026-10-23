@@ -572,9 +572,8 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.discreteAction_smul
 #print axioms InfraFormalization.discreteAction_zero
 #print axioms InfraFormalization.discreteEL_zero
-#print axioms InfraFormalization.Refutations.gorard_dim_preservation_is_euler_lagrange
-#print axioms InfraFormalization.Refutations.gorard_section_3_3_contentless
-#print axioms InfraFormalization.Refutations.gorard_causal_invariance_is_general_covariance
+#print axioms InfraFormalization.Refutations.asymptoticDimPreservation_iff_eulerLagrange
+#print axioms InfraFormalization.Refutations.causalInvariance_iff_discreteGeneralCovariance
 #print axioms InfraFormalization.Refutations.becomes_is_underdetermined
 #print axioms InfraFormalization.Refutations.claim_is_vacuous_without_convergence_notion
 #print axioms InfraFormalization.Refutations.different_notions_give_different_limits
@@ -584,7 +583,6 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.Refutations.action_depends_on_construction_choice
 #print axioms InfraFormalization.Refutations.orthonormality_depends_on_form
 #print axioms InfraFormalization.Refutations.orthonormalising_form_not_unique
-#print axioms InfraFormalization.Refutations.gorard_orthonormality_is_non_canonical
 #print axioms InfraFormalization.branchial_symm
 #print axioms InfraFormalization.branchial_refl_of_has_predecessor
 #print axioms InfraFormalization.nStep_zero_iff
@@ -698,8 +696,7 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.cycleEigenvalue_four_spectrum
 #print axioms InfraFormalization.cycleEigenvalue_periodic
 #print axioms InfraFormalization.cycleEigenvector_zero_eq_one
-#print axioms InfraFormalization.Refutations.circular_reconstruction_has_no_content
-#print axioms InfraFormalization.Refutations.circular_procedure_is_identity
+#print axioms InfraFormalization.Refutations.CircularReconstruction.comp_eq_id
 #print axioms InfraFormalization.Refutations.gorardNamedRule_application_preserves_size
 #print axioms InfraFormalization.Refutations.gorardNamedRule_applications_preserve_size
 #print axioms InfraFormalization.branchialSliceAdj_symm

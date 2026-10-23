@@ -36,8 +36,11 @@ constructions are compatible with "using only hypergraph data" — so
 3. `metric_construction_is_never_unique`: for *any* candidate
    construction `Φ`, another construction `Ψ ≠ Φ` exists.
 
-This is the impossibility theorem backing the claim that `g^{ab}`, as
-used in G1 §3, is not a well-defined object on hypergraphs.
+These theorems are statements about the function type
+`DHyp V → V → V → ℝ`: it has more than one element. They do not
+mention arXiv:2004.14810. The finding about the paper, that Def 15
+(line 325) gives no construction of `g^{ab}` from the hypergraph, is a
+reading of the paper text and is not a Lean theorem.
 
 **Sharpening (2026-05, macro-observer note; see
 `notes/phajek_macro_observer_notes.txt`).** The non-uniqueness is not
@@ -103,9 +106,7 @@ abbrev MetricConstruction (V : Type*) : Type _ :=
 /-- **F1 formal statement.** The type `MetricConstruction V` of
 possible "hypergraph-to-metric" assignments has at least two distinct
 elements — the constant-zero construction and the constant-one
-construction. Therefore the phrase "the metric `g^{ab}` of the
-hypergraph" (G1 Def 15, §3.3) does not refer to a canonical object;
-an additional choice of construction is required. -/
+construction. -/
 theorem hypergraph_does_not_determine_metric
     (V : Type*) [Inhabited V] :
     ∃ (Φ Ψ : MetricConstruction V), Φ ≠ Ψ := by
@@ -120,8 +121,7 @@ theorem hypergraph_does_not_determine_metric
 
 /-- **F1 stronger form.** For *any* candidate metric construction `Φ`,
 there is another construction `Ψ ≠ Φ`: concretely, `Ψ H u v := Φ H u v + 1`.
-Hence no individual construction is singled out — JGORARD's `g^{ab}` is
-always a *choice*, never a canonical consequence of the hypergraph. -/
+-/
 theorem metric_construction_is_never_unique
     (V : Type*) [Inhabited V] (Φ : MetricConstruction V) :
     ∃ Ψ : MetricConstruction V, Ψ ≠ Φ := by
@@ -132,11 +132,8 @@ theorem metric_construction_is_never_unique
     exact this
   linarith
 
-/-- **F1 in impossibility form.** There is no function
-`H ↦ g_H` assigning a bilinear form to every hypergraph that
-is singled out by the hypergraph data alone: for any such function,
-a non-equal alternative exists, and both are equally "from the
-hypergraph" in the weak sense JGORARD invokes. -/
+/-- **F1 in impossibility form.** No element of `MetricConstruction V`
+is equal to every element of `MetricConstruction V`. -/
 theorem no_canonical_metric_from_hypergraph_alone
     (V : Type*) [Inhabited V] :
     ¬ ∃ (Φ : MetricConstruction V),
@@ -145,12 +142,8 @@ theorem no_canonical_metric_from_hypergraph_alone
   obtain ⟨Ψ, hne⟩ := metric_construction_is_never_unique V Φ
   exact hne (hΦ Ψ)
 
-/-- **F1 applied to the §3.3 action.** Any "discrete action"
-`S : MetricConstruction V → ℝ` can distinguish distinct constructions.
-Therefore the symbol `δS/δg^{ab}` in G1 Eq 87 is not a function of the
-hypergraph; it is a function of the hypergraph *together with* a choice
-of construction. JGORARD's prose treats this choice as absent, which is
-the F1 structural flaw. -/
+/-- For an injective `S : MetricConstruction V → ℝ` and any
+construction `Φ`, some construction `Ψ` has `S Ψ ≠ S Φ`. -/
 theorem action_depends_on_construction_choice
     (V : Type*) [Inhabited V]
     (S : MetricConstruction V → ℝ)

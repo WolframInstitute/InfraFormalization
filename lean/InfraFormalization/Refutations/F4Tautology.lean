@@ -18,9 +18,13 @@ equivalence principle. But in his framework, "update order" and
 object. Calling the same property by two different names does not
 make their equivalence a substantive theorem.
 
-**What this file does.** Formalises the biconditional as `Iff.rfl`
-at the level where both conditions are defined by the same underlying
-predicate.
+**What this file proves.** The file defines `CausalInvariance` and
+`DiscreteGeneralCovariance` with the same body and proves them
+equivalent by `Iff.rfl`. The paper text identifies the two
+(`papers/gorard_2004.14810.txt` lines 1066-1075: causal invariance
+"is a discretized version of the principle of general covariance").
+That identification is a reading of the paper and is not a Lean
+theorem.
 -/
 
 import Mathlib.Data.Real.Basic
@@ -42,23 +46,13 @@ def DiscreteGeneralCovariance {UpdateOrder CausalGraph : Type*}
     (cg : UpdateOrder → CausalGraph) : Prop :=
   ∀ u v : UpdateOrder, cg u = cg v
 
-/-- **F4 as a theorem.** The two conditions are definitionally
-identical. The "causal invariance ⇔ general covariance" biconditional
-of G1 §2.3 is `Iff.rfl`. -/
-theorem gorard_causal_invariance_is_general_covariance
+/-- `CausalInvariance cg` and `DiscreteGeneralCovariance cg` are
+equivalent, by `Iff.rfl`: both are defined as `∀ u v, cg u = cg v`. -/
+theorem causalInvariance_iff_discreteGeneralCovariance
     {UpdateOrder CausalGraph : Type*}
     (cg : UpdateOrder → CausalGraph) :
     CausalInvariance cg ↔ DiscreteGeneralCovariance cg :=
   Iff.rfl
-
-/-- **Two-sided form.** Both directions hold trivially. -/
-theorem gorard_causal_invariance_iff_general_covariance
-    {UpdateOrder CausalGraph : Type*}
-    (cg : UpdateOrder → CausalGraph) :
-    (CausalInvariance cg ↔ DiscreteGeneralCovariance cg) ∧
-    (DiscreteGeneralCovariance cg → CausalInvariance cg) ∧
-    (CausalInvariance cg → DiscreteGeneralCovariance cg) :=
-  ⟨Iff.rfl, id, id⟩
 
 end Refutations
 end InfraFormalization

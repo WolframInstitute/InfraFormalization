@@ -22,23 +22,18 @@ if one is *free* to choose `g`, then the statement carries no
 geometric content: any proposition about the hyperedges can be made
 true by a sufficiently accommodating `g`.
 
-**What this file does.** Formalises two complementary facts:
+**What this file proves.** Two facts about real-valued functions on
+`Bool × Bool`:
 
-1. `orthonormality_requires_bilinear_form` — without a bilinear form
-   `g`, the predicate "orthonormal" has no content: it is a property
-   of `g`, not of the hyperedges alone. Any two constructions of `g`
-   can assign the same hyperedge pair different orthonormality
-   verdicts.
+1. `orthonormality_depends_on_form`: one function makes the pair
+   `(true, false)` orthonormal and another does not.
 
-2. `orthonormality_over_determined` — demanding that *every* pair of
-   non-parallel hyperedges be orthonormal (with unit norm) forces
-   specific numerical constraints `g(e_i, e_j) = δ_{ij}` which, on a
-   hypergraph with `n` non-parallel hyperedges, require the bilinear
-   form to satisfy `n² − n` off-diagonal zero conditions and `n`
-   unit-norm conditions simultaneously. For any finite hypergraph with
-   at least two non-parallel hyperedges, multiple inequivalent `g`
-   satisfy these conditions — so "the orthonormal `g`" is not unique
-   either.
+2. `orthonormalising_form_not_unique`: two distinct functions both make
+   the pair `(true, false)` orthonormal.
+
+Neither theorem mentions arXiv:2004.14810. The finding about the paper,
+that line 840 asserts orthonormality without defining a bilinear form,
+is a reading of the paper text and is not a Lean theorem.
 -/
 
 import Mathlib.Data.Real.Basic
@@ -97,19 +92,6 @@ theorem orthonormalising_form_not_unique :
     simp at hv
   · refine ⟨?_, ?_, ?_⟩ <;> simp
   · refine ⟨?_, ?_, ?_⟩ <;> simp
-
-/-- **F2 applied to the §3.2 assumption.** JGORARD's statement
-"all non-parallel hyperedges are orthonormal" does not single out a
-unique geometric structure: for any set of hyperedges it either (a)
-constrains an underlying form that is not uniquely determined (this
-theorem), or (b) is vacuous absent an underlying form
-(`orthonormality_depends_on_form'`). -/
-theorem gorard_orthonormality_is_non_canonical :
-    ∃ (g₁ g₂ : Form Bool),
-      g₁ ≠ g₂ ∧
-      Orthonormal g₁ true false ∧
-      Orthonormal g₂ true false :=
-  orthonormalising_form_not_unique
 
 end Refutations
 end InfraFormalization
