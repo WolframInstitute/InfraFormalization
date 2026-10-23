@@ -2,26 +2,22 @@
 Parallel schedules and the layer-width bound.
 
 For a conservative rule (`|LHS|=|RHS|=k`) evolving from a seed of size
-`N`, the greedy-parallel-schedule decomposition of the causal DAG has
-every layer containing at most `⌊N/k⌋` events. This file states the
-target theorem and establishes the direct building blocks.
+`N`, the target statement is that every layer of the greedy parallel
+schedule of the causal DAG contains at most `⌊N/k⌋` events. The
+statement is OPEN and is not stated in Lean: the causal relation of
+`Causal.lean` compares hyperedge values, and the bound needs hyperedge
+identities. This file proves the in-degree and out-degree facts.
 
 **Distinction from BFS-cone growth.** The parallel-layer bound is a
 statement about antichains *induced by the greedy-schedule level
 function*. It is NOT the same as "BFS-cone growth is linear in
-radius" — events in a BFS cone of radius `t` from a fixed source can
-have arbitrarily high parallel-level via long alternate causal paths,
-so cones are not contained in bounded bands of layers. The linear
-cone growth observed empirically for JGORARD's named rule is
-rule-and-seed-specific structure, not a corollary of the parallel-
-layer bound.
+radius": an event within shortest-path distance `t` of a source can
+have a high parallel level through a longer causal path, so the layer
+bound does not bound the cone count.
 
-**Status of this file.** We state the parallel-layer bound as a
-proposition (no proof, no `sorry` — it's just a target). We prove the
-direct immediate facts: each event consumes `|LHS|` expressions
-(therefore has in-degree at most `|LHS|` in the multi-edge causal
-graph), and the consumption cardinalities multiply out correctly for
-conservative rules.
+**Proved here.** Each event consumes `|LHS|` expressions and produces
+`|RHS|`, and the total consumption equals the total production for a
+conservative rule.
 
 See `INFRAGEOMETRY.md` Phase 1 for the broader research agenda.
 -/
@@ -31,20 +27,6 @@ import InfraFormalization.Causal
 namespace InfraFormalization
 
 variable {P V : Type*} [DecidableEq V]
-
-/-- **Parallel-layer bound (target proposition, to be proved).** For
-a conservative rule with `|LHS| = k` and a seed of size `N`, at every
-level `s` of the greedy-parallel schedule of any trajectory, the set
-of events at that level contains at most `⌊N / k⌋` events.
-
-Formally, this requires the construction of a level function, which in
-turn requires a recursive definition over event predecessors with
-careful termination. Both pieces are planned formalisation work (see
-`NEXT_STEPS.md`). The proposition is stated here so downstream work
-can refer to it symbolically. -/
-def ParallelLayerBound {sys : RewritingSystem P} {init : Hypergraph V}
-    (_τ : Trajectory sys init) (_r : Rule P) : Prop :=
-  True  -- placeholder, to be fleshed out once `level` is defined
 
 /-- **In-degree equality (proved).** Every event in the causal graph
 of any trajectory consumes exactly `r.lhsSize` expressions. Equivalently,
