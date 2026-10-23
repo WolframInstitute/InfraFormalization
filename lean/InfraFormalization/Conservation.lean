@@ -1,16 +1,10 @@
 /-
-The Edge Conservation Theorem.
+Edge-count conservation.
 
-**Statement.** If a rewrite rule `r` is conservative (its LHS and RHS
-have the same number of hyperedges), then every application of `r`
-preserves the size of the state.
-
-This is Theorem A of the project's verified-results track. It is the
-structural fact that drives the empirical refutation of the
-"EFE-satisfying" rule in arXiv:2102.09363: the rule has `|LHS| = |RHS|
-= 4`, so the spatial hypergraph size is a conserved quantity — it
-cannot grow as $r^d$ for any $d > 0$, which is a necessary condition for
-JGORARD's §3.3 continuum-Einstein argument to even begin.
+If a rule has as many hyperedges on its right-hand side as on its left
+(`Rule.IsConservative`), every application preserves the number of
+hyperedges of the state (`Application.size_result_of_conservative`), and
+so does every chain of applications (`size_preserved_by_applications`).
 -/
 
 import InfraFormalization.Application

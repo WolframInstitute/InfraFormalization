@@ -1,17 +1,11 @@
 /-
-Axiom-cleanliness check.
+`#print axioms` for a selected list of theorems.
 
-`#print axioms T` prints the axioms a theorem depends on. For any
-proof we want to certify as purely constructive, the output should
-contain only Lean's three standard axioms:
-  propext, Quot.sound, Classical.choice
-(we use Classical.choice implicitly via `Decidable.decide` in some
-places; for the linear-arithmetic proofs here we stay in the `omega`
-decision procedure which does not touch it.)
-
-Never acceptable:
-  sorryAx, lcProof
-(these indicate `sorry` or `native_decide` respectively.)
+An axiom-clean theorem depends on at most `propext`, `Classical.choice` and
+`Quot.sound`. A proof that uses `sorry` depends on `sorryAx`; a proof that
+uses `native_decide` depends on `Lean.ofReduceBool`. `THEOREM_STATUS.md` at
+the repository root lists the status of every theorem cited in the
+documentation.
 -/
 
 import InfraFormalization.Demo

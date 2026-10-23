@@ -1,14 +1,11 @@
 /-
-Causal graph construction.
+Trajectories and a value-based causal relation.
 
-Given a trajectory — a finite list of applications, each applied to the
-previous state — the causal graph is defined as follows: an event is a
-single application; there is a directed edge from event `i` to event
-`j > i` iff some hyperedge produced by `i` is consumed by `j`.
-
-This file sketches the construction at the type level; exact
-extraction-of-structure work is deferred to when it's needed downstream
-(e.g. for the proof of `Growth.bounded_cone_of_conservative_CLAIM`).
+`causallyPrecedes τ i j` holds when `i < j` and some hyperedge value
+produced by application `i` is consumed by application `j`. When a state
+holds two equal hyperedges, this relation differs from the causal graph
+of the evolution. `CausalHistory.lean` defines the causal graph on
+hyperedge identities.
 -/
 
 import InfraFormalization.Multiway
@@ -39,10 +36,5 @@ def causallyPrecedes {sys : RewritingSystem P} {init : Hypergraph V}
     let ai := τ.applications.get ⟨i, hi⟩
     let aj := τ.applications.get ⟨j, hj⟩
     ∃ e, e ∈ ai.2.2.produced ∧ e ∈ aj.2.2.consumed
-
-/- **TODO.** The causal graph can then be defined as a simple graph on
-`Fin τ.applications.length` with edge relation `i → j ↔ causallyPrecedes τ i j`.
-Skipping the `SimpleGraph` instance here to keep the file
-Mathlib-version-agnostic. -/
 
 end InfraFormalization
