@@ -1,90 +1,71 @@
-# Findings — canonical one-line summary of every claim audited
+# Findings: one line per audited claim
 
-Grouped by severity (S1 most severe, S6 least). See [`INDEX.md`](INDEX.md) for document navigation, and [`notes/severity_taxonomy.md`](notes/severity_taxonomy.md) for the full taxonomy.
+Paper files: G1 = `papers/gorard_2004.14810.txt`, G2 = `papers/gorard_2011.12174.txt`, G3 = `papers/gorard_2102.09363.txt`, G4 = `papers/gorard_2303.07282.txt`. Line numbers refer to these text files.
 
-Each row: verdict, short form of claim, citations in the corpus, link to the verdict file.
+Status labels: PROVED (Lean, kernel-checked, sorry-free, axioms at most `propext`, `Classical.choice`, `Quot.sound`), MEASURED, READ, OPEN. Per-claim detail with axiom lists: [`STATUS_OF_GORARD_CLAIMS.md`](STATUS_OF_GORARD_CLAIMS.md). Groups S1-S6 follow [`notes/severity_taxonomy.md`](notes/severity_taxonomy.md).
 
-Status key: ✗ refuted | ⚠ ill-defined | ⊘ tautology | ○ open conjecture | ✓ verified correct
+## S1. Formulas that differ from the cited sources
 
----
-
-## S1 — False statements contradicting cited sources
-
-| # | Verdict | Claim | Where | Verdict file |
-|---|---|---|---|---|
-| 1 | ✗ | Wasserstein distance between $\varepsilon$-balls on parallel-transport uses scalar $R$ — but Ollivier's cited JFA 2009 theorem has directional $\mathrm{Ric}(v,v)$. | G1 eq at line 604; G2 lines 1668/1699/1882; G3 Eq 344 / line 2645 | [eq344_verdict.md](results/phase2_continuum/eq344_verdict.md) |
-| 2 | ✗ | Tube-volume coefficient $(d-1)/(d+1) \cdot (R - \mathrm{Ric}(u,u))$ — correct is $(R + \mathrm{Ric}(u,u))/(6(d+1))$. Off by factor 2 on $S^2$, factor 6 on $S^3$. | G2 Eq 126; G3 Eq 342 | [eq342_verdict.md](results/phase2_continuum/eq342_verdict.md) |
-
-## S2 — Ill-defined load-bearing objects / operations
-
-| # | Verdict | Claim | Where |
+| # | Claim | Where | Status |
 |---|---|---|---|
-| 3 | ⚠ | "Discrete Einstein–Hilbert action" $S[g^{ab}] = \sum d\mu_g R$ written down; $g^{ab}$ and $d\mu_g$ never constructed on a discrete state. | G1 Eq 86; G2 §5; G3 §5 |
-| 4 | ⚠ | "Functional derivative" $\delta S / \delta g^{ab}$ applied to a discrete sum — continuum variational calculus on an undefined discrete metric. | G1 Eq 87; G2 §5; G3 §5 |
-| 5 | ⚠ | "All non-parallel hyperedges are orthonormal" — declaring orthonormality without a bilinear form. | G1 line 840; G2 §5; G3 §5 |
-| 6 | ⚠ | Asymptotic expansion valid as $\varepsilon \to 0$ used at unit edge length $\varepsilon = \delta = 1$. | G1 line 840; G2 §5; G3 §5 |
+| 1 | The Wasserstein distance between ε-balls transported along a geodesic has leading curvature term in the scalar curvature R. Ollivier (2009), which G3 cites, has the Ricci curvature Ric(v,v) in the direction of the geodesic. | G1 eq. 80 (lines 2045-2056); G3 eq. 344 (line 5340) | PROVED as an arithmetic comparison (`Infra.ollivier_gorard_agree_iff`); [eq344_verdict.md](results/phase2_continuum/eq344_verdict.md) |
+| 2 | Tube-volume coefficient (d−1)(R − Ric(u,u))/(d+1). Gray (1973) gives (R + Ric(u,u))/(6(d+1)). The two differ by a factor of 2 on S² and 6 on S³. | G2 eq. 126 (line 2409); G3 eq. 342 (line 5276) | PROVED as an arithmetic comparison (`Infra.gray_vs_gorard_disagree_on_S2`, `Infra.gray_vs_gorard_disagree_on_S3`); [eq342_verdict.md](results/phase2_continuum/eq342_verdict.md) |
 
-Each is a keystone of the §3.3 Einstein-equations "derivation" and none is rescued by any later paper.
+## S2. Objects used without a definition
 
-## S3 — Tautologies presented as derivations
-
-| # | Verdict | Claim | Why tautological |
+| # | Claim | Where | Status |
 |---|---|---|---|
-| 7 | ⊘ | "Causal invariance ⇒ discrete general covariance" | Both defined as update-order independence of the causal structure. Definitions identical. |
-| 8 | ⊘ | "Causal invariance ⇒ discrete Lorentz covariance" | Constancy of $c$ axiomatised via edge lengths, then "recovered." |
-| 9 | ⊘ | "Asymptotic dimensionality preservation ⇒ Einstein equations" | The preservation condition is *defined* as $\delta S/\delta g^{ab} \to 0$, which is the Euler-Lagrange equation of the action. |
+| 3 | The discrete Einstein-Hilbert action S[g^ab] = Σ dμ_g R uses a metric g^ab and a measure dμ_g that are not constructed from the hypergraph. | G1 eq. 86 (line 2200), Def 15 (line 786) | READ |
+| 4 | The functional derivative δS/δg^ab is applied to a discrete sum. | G1 eq. 87 (lines 2203-2211) | READ |
+| 5 | Non-parallel hyperedges "can be considered to be orthonormal"; no bilinear form is defined. | G1 lines 2061-2063 | READ |
+| 6 | The expansions of eqs. 64-65 and eq. 80 hold as r → 0 and as ε, δ → 0. G1 sets ε = δ = 1 and states that the ball-volume expansion holds "with exactness when r = 1". | G1 lines 1788, 2056-2060 | READ |
 
-## S4 — Unsupported bridge claims (discrete ↔ continuum)
+## S3. Equivalences that hold by definition
 
-| # | Verdict | Claim | Status in the literature |
+| # | Claim | Where | Status |
 |---|---|---|---|
-| 10 | ○ | "$\sum d\mu_g R$ becomes $\int d^4x \sqrt{-g} R$ in the continuum limit." | Unproven even for causal-set theory (Sorkin–Benincasa–Dowker conjecture, partial numerical support from Cunningham 2018). |
-| 11 | ○ | "Named rule provably satisfies EFE in continuum limit." | No proof for the rule is given in G3. G3 replaces weak ergodicity by an assumption of Poisson-distributed rewrite events (line 6080) and samples the initial hypergraph from the target geometry (lines 6148-6152, 6179). The repository does not prove the claim false. See [`STATUS_OF_GORARD_CLAIMS.md`](STATUS_OF_GORARD_CLAIMS.md), Claim 1. |
-| 12 | ○ | "Ollivier–Ricci scalar on directed hypergraphs converges to Ricci in continuum limit." | Asserted. Convergence theorems exist only for specific random-geometric-graph constructions (Trillos–Slepčev 2018), not for Wolfram-model-rewriting evolutions. |
+| 7 | Causal invariance corresponds to discrete general covariance. Both are update-order independence of the causal graph. | G1 lines 1066-1075 | READ; the project's encoding is PROVED by `Iff.rfl` (`causalInvariance_iff_discreteGeneralCovariance`) |
+| 8 | Causal invariance gives discrete Lorentz covariance. The constancy of the speed of light "is enforced axiomatically by our definition of the edge lengths". | G1 lines 1083-1088 | READ |
+| 9 | Asymptotic dimension preservation "corresponds to the statement" δS/δg^ab → 0, the Euler-Lagrange equation of S. | G1 lines 2203-2211 | READ; the project's encoding is PROVED by `Iff.rfl` (`asymptoticDimPreservation_iff_eulerLagrange`) |
 
-## S5 — Refuted specific claims
+## S4. Passages from discrete to continuum without a proof
 
-| # | Verdict | Claim | Evidence |
+| # | Claim | Where | Status |
 |---|---|---|---|
-| 13 | MEASURED | The rule $\{\{x,y\},\{y,z\},\{z,w\},\{w,v\}\} \to \{\{y,u\},\{u,v\},\{w,x\},\{x,u\}\}$ produces a 3+1-dim causal graph. | Measured cone-growth exponents lie between 0.985 and 1.256 on cycles, paths and 3D grids up to 300 edges and 2000 events. SetReplace and the Python rewriter disagree on the exponent for 8 of 9 seeds (4x4x4 grid: 0.985 against 1.256), cause not determined. Edge-count conservation is PROVED. A bound on cone growth is OPEN. |
-| 14 | ✗ | Discrete $N(r) = ar^n(1 - Rr^2/(6(n+2)) + O(r^4))$ on hypergraphs. | Obtained "by analogy," not derived. In combination with the Ollivier and tube-formula mis-statements above, the "curvatures" computed from hypergraphs are calibrated against a formula that is itself unjustified or wrong. |
+| 10 | Σ dμ_g R "becomes" ∫ d⁴x √−g R "subject to a weak ergodicity assumption". No notion of convergence is stated. For causal sets, the corresponding Benincasa-Dowker limit has numerical support (Cunningham 2018) and no proof. | G1 line 2214 (eq. 88) | READ, OPEN |
+| 11 | The rule {{x,y},{y,z},{z,w},{w,v}} → {{y,u},{u,v},{w,x},{x,u}} "provably satisfies the Einstein field equations in the continuum limit". G3 gives no proof for this rule. G3 assumes Poisson-distributed rewrite events (line 6080) and samples the initial hypergraph from the target geometry (lines 6148-6152, 6179). | G3 lines 50-52, 6202 | READ; see [`STATUS_OF_GORARD_CLAIMS.md`](STATUS_OF_GORARD_CLAIMS.md), Claims 1-2 |
+| 12 | The Ollivier-Ricci curvature of directed hypergraphs converges to the Ricci curvature in the continuum limit. Convergence theorems exist for random geometric graphs (García Trillos and Slepčev 2018), not for hypergraph rewriting evolutions. | G1 §3.2 | READ, OPEN |
 
-## S6 — Claims in titles and abstracts not delivered in the body
+## S5. The rule of G3 line 6202
 
-| # | Verdict | Claim | Evidence |
-|---|---|---|---|
-| 15 | ✗ (title-body gap) | Title: "Non-Vacuum Solutions, Gravitational Collapse and **Discrete Singularity Theorems** in Wolfram Model Systems." | Body has no discrete Raychaudhuri, no discrete expansion scalar, no discrete energy condition, no discrete stress-energy tensor; zero occurrences of "shear" or "vorticity." Conclusion acknowledges these as future work. |
-| 16 | ✗ (wording overclaim) | "A hypergraph substitution rule that **provably** satisfies the Einstein field equations in the continuum limit." | "Provably" is applied to a chain that assumes Poisson-distributed rewrite events (G3 line 6080) and the zero-surface-term and vanishing-tail assumptions of the Benincasa–Dowker action limit (lines 6110-6120). G3 gives no proof for the named rule. |
-
-## Verified correct (✓)
-
-The standard continuum material quoted in JGORARD's papers is correct. Specifically:
-
-- All Riemannian ball-volume expansion formulas (Eq 47 / 343 of G3): match Gray 1973.
-- All metric/Christoffel/Riemann/Ricci definitions: match standard GR textbooks (MTW, Hawking–Ellis, Wald).
-- Einstein–Hilbert action variation (continuum, G1 Eqs 89–91): standard Hilbert 1915.
-- Abstract rewriting systems / Church–Rosser / confluence definitions: standard (Baader–Nipkow).
-- Ollivier–Ricci on metric-measure spaces (the definitional framework, distinct from the claimed identity with scalar $R$): standard (Ollivier 2009).
-- ADM decomposition, FLRW metric, geodesic equation, Lovelock higher-derivative gravity, Chapman–Enskog expansion, Benincasa–Dowker d'Alembertian: all standard, correctly cited.
-
-These are Lean-formalisation targets (see [`lean/InfraFormalization/`](lean/InfraFormalization/)).
-
-## Positive Wolfram-model findings we have confirmed
-
-| # | Finding | Status |
+| # | Claim | Status |
 |---|---|---|
-| P1 | `\|LHS\| = \|RHS\|` rule ⇒ state size is conserved along any evolution. | PROVED. `Application.size_result_of_conservative` (`Conservation.lean:27`), `size_preserved_by_applications` (`Conservation.lean:48`), and for the named rule `Refutations.gorardNamedRule_applications_preserve_size` (`Refutations/F7NamedRuleStructure.lean:41`). Axioms: `propext`, `Classical.choice`, `Quot.sound`. |
-| P2a | `\|LHS\| = \|RHS\|` = k rule with N edges ⇒ every antichain of the causal graph of a single-way evolution has at most ⌊N/k⌋ events. | OPEN. The library has no causal graph with hyperedge identities (`Causal.lean:35-44`), so the statement cannot yet be written in Lean. |
-| P2b | The named rule's causal graph has cone growth C(t) ≤ c(N)·(t+1). | OPEN. MEASURED exponents 0.985 to 1.256 on 9 seeds, with the two tools disagreeing (row 13). P2a does not imply P2b: P2a bounds events by longest-path distance and the cone counts shortest-path distance. |
-| P3 | JGORARD's §3.3 dimension-$n$ argument cannot apply to the named rule. | OPEN. Depends on P2b and on a convergence notion G1 does not state. |
+| 13 | The rule's evolution has a 3+1-dimensional causal graph. | MEASURED: log-log cone-growth exponents between 0.77 and 1.26 on cycles, paths and 3D grids up to 300 edges and 2000 events, with up to 0.3 variation between update orders. PROVED: edge-count conservation, an antichain bound N/4 and a cone bound 5^t. OPEN: linear cone growth. |
+| 14 | Hypergraph ball counts satisfy N(r) = a rⁿ (1 − R r²/(6(n+2)) + O(r⁴)). G1 transfers the Riemannian ball-volume expansion to vertex counts and gives no derivation for hypergraphs. | READ: G1 lines 1780-1796 |
 
-## Where this leaves the headline claim
+## S6. Titles and abstracts
 
-The headline claim — that general relativity is derived from hypergraph rewriting — is **unsupported in the corpus**. Specifically:
+| # | Claim | Status |
+|---|---|---|
+| 15 | G4's title names "Discrete Singularity Theorems". G4 contains no discrete Raychaudhuri equation, expansion scalar or energy condition, and states a discrete singularity theorem as a hope (lines 76-78). | READ: G4 lines 1-3, 76-78, 351-357 |
+| 16 | "Provably" in G3's abstract applies to a chain that assumes Poisson-distributed rewrite events (line 6080) and the zero-surface-term and Riemann-normal-neighbourhood assumptions of the Benincasa-Dowker limit (lines 6110-6120). | READ |
 
-- The main §3.3 argument of G1 uses undefined objects (S2) and a tautological definition (S3).
-- G3 gives no proof for its named rule. The rule conserves edge count (PROVED), and its measured cone-growth exponents lie between 0.985 and 1.256 on small seeds (MEASURED, S5).
-- The "provably satisfies EFE" claim assumes Poisson-distributed rewrite events and the assumptions of the Benincasa–Dowker action limit, and G3's comparison starts from initial data sampled from the target geometry (S4).
-- The Riemannian identities used to calibrate hypergraph curvatures are mis-stated (S1) by non-trivial factors on simple test manifolds.
+## Standard material
 
-None of the errors is fabrication. All are public and checkable. The corpus is best described as *systematic overclaim with embedded mathematical errors*.
+The continuum material quoted in G1-G3 agrees with the standard references: the Riemannian ball-volume expansion (G3 eq. 343, Gray 1973), the metric, Christoffel, Riemann and Ricci definitions, the variation of the Einstein-Hilbert action (G1 eqs. 89-91), the definitions of abstract rewriting systems and confluence (Baader and Nipkow), the Ollivier-Ricci curvature of metric measure spaces (Ollivier 2009), the ADM decomposition, the FLRW metric and the Benincasa-Dowker d'Alembertian. This is READ, not formalised.
+
+## Results about the Wolfram model
+
+| # | Result | Status |
+|---|---|---|
+| P1 | A rule with \|LHS\| = \|RHS\| preserves the edge count along every evolution. | PROVED: `Application.size_result_of_conservative` (`Conservation.lean`), `size_preserved_by_applications`, `Refutations.gorardNamedRule_applications_preserve_size` |
+| P2a | For a rule with \|LHS\| = \|RHS\| = k and N initial hyperedges, every antichain of the causal graph has at most N/k events, for every update order. | PROVED: `CausalHistory.RuleHistory.antichain_card_le`; for the rule of G3, `CausalHistory.gorardNamedRule_antichain_card_le` (4·\|A\| ≤ N) |
+| P2b | The causal graph of the rule of G3 has cone growth C(t) ≤ c(N)·(t+1). | OPEN, stated as `CausalHistory.GorardNamedRuleConeGrowthLinear`. PROVED: C(t) ≤ 5^t (`CausalHistory.gorardNamedRule_ball_card_le`). P2a bounds the events at each longest-path distance, and C(t) counts shortest-path distance, so P2a does not imply P2b. |
+| P3 | G1's §3.3 argument for dimension n applies to the rule of G3. | OPEN. It needs P2b and a notion of convergence that G1 does not state. |
+
+## Summary
+
+- G1's §3.3 argument uses a metric, a measure and orthonormality that are not constructed from the hypergraph (S2), and states dimension preservation as the Euler-Lagrange equation (S3).
+- G3 gives no proof that the rule of line 6202 satisfies the Einstein equations. The rule conserves edge count and its causal graph satisfies the antichain and cone bounds above (PROVED). Its measured cone-growth exponents are near 1 (MEASURED).
+- G3's comparison with numerical relativity assumes Poisson-distributed rewrite events and starts from initial data sampled from the target geometry (S4).
+- Two curvature coefficients differ from the cited sources by factors of 2 and 6 on S² and S³ (S1).

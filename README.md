@@ -1,71 +1,36 @@
 # InfraFormalization
 
-A Lean 4 / Mathlib formalisation of the Wolfram-model → general-relativity / quantum-mechanics bridge programme, coupled with a machine-checked audit of JGORARD's principal publications on deriving GR from hypergraph rewriting.
+A Lean 4 / Mathlib library on hypergraph rewriting (the Wolfram model) and its relation to general relativity and quantum mechanics, with an audit of four papers by Jonathan Gorard on the derivation of general relativity from hypergraph rewriting.
 
-The project runs on three parallel axes:
+The repository has three parts:
 
-1. **Positive construction** — a 10-rung bridge ladder from hypergraph primitives to Einstein's equations, with every continuous object anchored to a hypergraph origin by an obligation Prop.
-2. **Audit of the JGORARD corpus** — a line-by-line reading of four papers, eight recorded flaws (F1–F8), and axiom-clean Lean statements about the project's encodings of them. The status of each conclusion (PROVED, MEASURED, READ, OPEN) is in [`STATUS_OF_GORARD_CLAIMS.md`](STATUS_OF_GORARD_CLAIMS.md).
-3. **Infrageometry programme** — 57-task / 9-group research programme for the Wolfram Institute, covering colleagues' work (PHAJEK, NMURZIN, JWILES, HVLE, HKOLCZ, JPULLMAN, CZAPATA, SAHMED, IMILEA, DHAMMOCK, UBAJAJ, SRODKEY). Handle index in [`CONTRIBUTORS.md`](CONTRIBUTORS.md).
+1. A Lean library of discrete structures (hypergraphs, rewriting rules, trajectories, causal graphs, discrete calculus, metric and curvature data, branchial Hilbert spaces) and of statements that relate them to continuum targets.
+2. An audit of G1-G4 (arXiv:2004.14810, 2011.12174, 2102.09363, 2303.07282): close readings with line numbers, Lean statements about the project's encodings, and measurements of the rule of G3. The status of each conclusion is in [`STATUS_OF_GORARD_CLAIMS.md`](STATUS_OF_GORARD_CLAIMS.md).
+3. The infrageometry task list of the Wolfram Institute ([`INFRAGEOMETRY.md`](INFRAGEOMETRY.md)), with contributors indexed in [`CONTRIBUTORS.md`](CONTRIBUTORS.md).
 
-`lake build` is fully green. Every theorem reduces to Lean's three standard axioms `{propext, Classical.choice, Quot.sound}` — no `sorry`, no `native_decide`, no custom axioms, certified by `#print axioms` in `AxiomCheck.lean`.
+## Status of the Lean library
 
-## Contents
+`lake build` completes without errors and without `sorry`. [`THEOREM_STATUS.md`](THEOREM_STATUS.md) lists every theorem cited in the documentation with its status from `#print axioms`: PROVED (axioms at most `propext`, `Classical.choice`, `Quot.sound`), PROVED-WITH-NATIVE-DECIDE (depends on `Lean.ofReduceBool`; about 100 files use `native_decide`), or VACUOUS (proved, but the statement does not concern the object its name refers to). `scripts/theorem_status.sh` regenerates the table.
 
-- A Lean library built on the primitives `Hypergraph V`, `RewritingSystem P`, and `Trajectory sys init`, with every downstream object (graph Laplacian, discrete PDEs, metric/connection data, Lorentzian structures, causal foliations, branchial Hilbert spaces, Ricci and Einstein machinery) reduced to those primitives or to an explicit hypergraph-origin obligation Prop.
-- A documentation set: [`ROADMAP.md`](ROADMAP.md) (phase-sorted full-program sequencing), [`STATUS.md`](STATUS.md), [`NEXT_STEPS.md`](NEXT_STEPS.md), [`INDEX.md`](INDEX.md), [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md), [`COVERAGE_MAP.md`](COVERAGE_MAP.md), [`BRIDGE_MACHINERY.md`](BRIDGE_MACHINERY.md), [`MAJOR_FLAWS.md`](MAJOR_FLAWS.md), [`GROUNDING_AUDIT.md`](GROUNDING_AUDIT.md), [`MILESTONES.md`](MILESTONES.md).
-- An audit trail for the JGORARD papers (G1 2004.14810, G2 2011.12174, G3 2102.09363, G4 2303.07282): close-readings, cross-paper corpus audit, row-level claims catalog, severity taxonomy, continuum-limit claim ledger, per-claim corpus assessment.
-- Empirical scripts (Wolfram Language + Python) that independently re-implement the mechanics of JGORARD's claims and test them against his rules, including a SetReplace-vs-Python cross-check on the named EFE rule.
+Two classes of statements are VACUOUS:
 
-## Motivation
+- The origin obligations (`HypergraphMetricOriginObligationStrong` and its quantum, BBH and connection forms) do not depend on their target and hold for every target (`Curvature.any_metric_has_strong_obligation_witness`). The theorems in `GREmergence.lean`, `QMEmergence.lean`, `BBHEmergence.lean` and `HypergraphMetricBridges.lean` that discharge them do not state convergence to any metric, quantum system or black hole.
+- The milestone statements of `Milestone.lean` hold for every target: `Milestone.GR_emerges_from_hypergraph_holds`, `Milestone.QM_emerges_from_hypergraph_holds`, `Milestone.BBH_emerges_from_hypergraph_holds`.
 
-The published Wolfram-model-to-GR derivations make a strong claim: that a specific rewriting rule "provably satisfies the Einstein field equations in the continuum limit" (2102.09363). The machinery of the claim is a chain of informally-stated approximations through Ollivier–Ricci, Gray-tube expansions, and a Poisson-sprinkle reconstruction. No part of this chain is machine-checked. Several steps, once separated from their prose, reduce to `Iff.rfl` or to mis-stated continuum identities.
+`MultiwayExec.singleWayStep` applies a maximal set of edge-disjoint matches per step. `MultiwayExec.fireAllStep` applies every match, including overlapping ones, and is not a Wolfram model update when matches overlap; the modules that use it are listed in [`STATUS_OF_GORARD_CLAIMS.md`](STATUS_OF_GORARD_CLAIMS.md), section "Execution engine".
 
-The project exists to settle, formally, what is actually true in this corpus and what remains open, and to build the substantive bridge machinery that would have to be in place for any future claim of this form.
+## Audit of G1-G4
 
-## Status headline (2026-04-27, late)
+Paper files: G1 = `papers/gorard_2004.14810.txt`, G2 = `papers/gorard_2011.12174.txt`, G3 = `papers/gorard_2102.09363.txt`, G4 = `papers/gorard_2303.07282.txt`.
 
-**Pre-metric topology + curvature/hyperplane substrate + MILESTONE statements land.** 12 tasks closed in 7 commits this push (`c1447bc` → `683633c`):
+- G1 §3.3 (lines 2168-2240) uses a discrete metric, a volume measure and orthonormal hyperedges that are not constructed from the hypergraph (READ, G1 line 786 and lines 2061-2063), and states asymptotic dimension preservation as the Euler-Lagrange equation of the action (READ, lines 2203-2211). The passage from sum to integral (line 2214) states no notion of convergence.
+- G1 identifies causal invariance with discrete general covariance (READ, lines 1066-1075). The project's encodings of this equivalence and of the one above hold by `Iff.rfl` (PROVED).
+- G3 eq. 342 and eq. 344 differ from Gray (1973) and Ollivier (2009) by factors of 2 and 6 on S² and S³ (PROVED as arithmetic comparisons; [`results/phase2_continuum/`](results/phase2_continuum/)).
+- G3 states that the rule {{x,y},{y,z},{z,w},{w,v}} → {{y,u},{u,v},{w,x},{x,u}} "provably satisfies the Einstein field equations in the continuum limit" (lines 50-52) and gives no proof for this rule. Its comparison with numerical relativity assumes Poisson-distributed rewrite events (line 6080) and starts from a hypergraph sampled from the Brill-Lindquist initial data (lines 6148-6152, 6179).
+- The rule conserves edge count, and in every evolution from N hyperedges, with any update order, every antichain of its causal graph has at most N/4 events and at most 5^t events lie within directed distance t of an event (PROVED, `CausalHistory.lean`). Linear cone growth is OPEN (`CausalHistory.GorardNamedRuleConeGrowthLinear`). Measured cone-growth exponents on cycles, paths and 3D grids up to 2000 events lie between 0.77 and 1.26 and depend on the update order (MEASURED, [`notes/empirical_refutation.md`](notes/empirical_refutation.md)).
+- G4's title names discrete singularity theorems, and its abstract states such a theorem as a hope (READ, lines 1-3, 76-78).
 
-- **MILESTONE-GR / -QM / -BBH (#369–#371)** — `Milestone.lean`: closed Lean signatures for the program-completion theorems. `GR_emerges_from_hypergraph` six-conjunct Prop; specialisations `_minkowski`/`_schwarzschild`/`_flrw`/`_some`. **Three Lean-verifiable signals of completion** documented (no `sorry` / clean `#print axioms` / term-witnessed existential). Anyone reading the file can see exactly what "got to GR" means in the formal-proof sense.
-- **AT0 / AT1 angle primitives (#285, #286)** — `Hypergraph.elementaryAngle` (SWOLF's chord-ratio = `2 sin(θ/2)`), `cosAngle`, `angle := Real.arccos cosAngle`, `IsOrthoApprox`. Foundation of the 14-column angle tower.
-- **AT6 (#291)** — `CoordinatizationDimension.AreOrthogonalAxes` `True`-stub replaced with `IsOrthoApprox` chord-ratio ≈ √2.
-- **AT7 (#292)** — angular-deviation screener, `CombinedScreener` triple. **Phase B screener pipeline complete on both curvature and angular sides.**
-- **AT9 (#294)** — `Hypergraph.scalarCurvatureAt v d r` Bishop-Gromov scalar curvature. Cross-checks Forman-Ricci.
-- **TOP1 / TOP4 (#323, #326)** — new `HypergraphTopology.lean`: `firstBettiZ` cycle rank, `spatialB0` (SWOLF's "is every point reachable from every other"), `IsSpatiallyConnected`. **Pre-metric topology surfaced as first-class.**
-- **SPHERE1 (#334)** — `infraSphere`, `infraDisk`, `infraSphereVolume`. SWOLF's "all points equidistant from a point".
-- **HYPER2 / HYPER3 / MIDPT1 (#339, #340, #342)** — `perpBisector`, `voronoiCell`, `midpoint`, `nearMidpoint`, `HasTopologicalHyperplane` stub. **Bachmann motion-group substrate for the constructive route to differential geometry's Lie structure.**
-
-84 new tasks logged this session (#285–#368) covering the full angle / topology / cellular-sheaf / knot framework + the NMURZIN "Geometry on Combinatorial Objects" cross-reference + 18 gap-tasks. Plus 3 milestone-tasks #369–#371. Build clean (3532 jobs).
-
-Previous landings (2026-04-26, late):
-
-**Sprint critical path closed (`#234` W_1 obligation discharged) + first formal exec ↔ abstract bridge (`#231`) + d²=0 cochain-complex axiom + Hodge PSD foundation.** Headline landings since the previous status:
-
-- **`d ∘ d = 0`** — `KnillCore.dSquared_eq_zero` proves the cochain-complex axiom for the signed boundary on oriented simplices, axiom-clean (#277). Plus `(d*)² = 0` codual, Hodge PSD (`hodgeOnG_psd`), Hodge ↔ Dirac kernel iff (`isDiracKernel`), Hodge diagonal sum-of-squares. Foundation for KN14 McKean-Singer, KN15 Atiyah-Singer, KN16 Cartan, KN18 Brouwer-Lefschetz.
-- **First W_1 obligation discharge** — `#234` `subdivisionDiscrepancy n := 1/2^n ≤ 1/n` discharges `WassersteinRateObligation` for the canonical subdivision-rule trajectory (`#284 / Route D`). First end-to-end machine-checked rule-trajectory → continuum-target convergence certificate.
-- **First formal exec ↔ abstract bridge** — `MultiwayExecBridge.lean` (#231): `ExecRule.toRule`, `Fin.embedSuffix`, single-rule `ExecSystem` cast. Closes the architectural gap between the executable engine (`MultiwayExec`) and the abstract `Rule P` / `Step` / `MultiStep` track.
-- **KN3/KN8** — Wu inclusion-exclusion identity + Euler-Poincaré f-vector identity proven in `KnillCore.lean`.
-- **Synthetic-geometry framing** — INFRAGEOMETRY.md gains a Tarski-reduction / spectral-angles / parallel-postulate-as-branching framing for SIG2/SIG3.
-- **ROADMAP.md** — full-program sequencing (Phase A → B → C → D → BBH merger from hypergraph IC).
-
-- **Size** (rough): ~150 Lean files, ~25k LOC; ~900 theorems, ~440 definitions. Numbers move every session; build is fully green (3526 jobs).
-- **Axiom cleanliness**: every `#print axioms`-certified theorem reduces to `{propext, Classical.choice, Quot.sound}` (many to `{propext, Quot.sound}` only). No `sorry`, no `native_decide`, no custom axioms.
-- **Infrageometry obligations — all seven proved**. `RemainingObligations.lean` bundles them in `all_obligations_hold`: IT5 Latschev, IT6 scale trichotomy, ID6 cycle compatibility (`V(v,r) = 2r + 1` exact), IQ6 Fubini-Study / Bhattacharyya bound, IQ8 EME persistence, IQ9 path-integral baseline, IR7 realisability-restricted reverse-engineering. The over-strong unrefined IR7 is provably false (`not_reverseEngineeringObligation`). Remaining open infrageometry tasks are IG10 (exponential map via weighted shortest-path counts) and IB2 (causal-branchial commutator theorem, predicate-level).
-- **Substantive new results since the weekly report** (187 commits, 24k LOC):
-    - **ID6 `cycleHypergraph_ballVolume_exact`**: `V(v, r) = 2r + 1` on every cycle hypergraph for all `r` with `2r + 1 ≤ n`. Upper bound via walk-structural induction — every walk-endpoint lands in the forward/backward shift set — plus composition lemmas `F^[j] ∘ F`, `G^[j] ∘ G`, cross-cancellations. Lower bound via disjoint shift-family Finsets with left-cancellation injectivity.
-    - **`dimensionCompatibilityObligation_holds`**: lifts that to the obligation Prop for every `n ≥ 3`.
-    - **C7 `HypergraphConnection`**: discrete connection on a hypergraph with group-valued transport, flat baseline, walk-transport as a monoid homomorphism (`transportWalk_append`), holonomy, `IsFlat` predicate; hypergraph analog of `FiberedGraph.Connection`.
-    - **C1 `DiagRiemannianMetric` / C2 `DiagLorentzianMetric`**: positive-definite and `(−,+,+,+)` predicates on `MetricData n` with Euclidean and Minkowski witnesses.
-    - **J1 `MultiwayCausalGraph`**: joint structure bundling a rewriting system, initial hypergraph, and causal DAG on events — the "multiway causal graph" of Wolfram physics at the formalization level.
-    - **H1 `CandidateRuleCatalog`**: JGORARD's named rule (arXiv:2102.09363) plus four other literature rules as concrete `Rule P` instances with `LiteratureSource` citations and machine-checked conservation theorems.
-    - **Cycle-hypergraph distance infrastructure**: closed-form `.val` for iterated ±1 shifts, injectivity on admissible ranges, forward/backward disjointness, parallel-transport walk composition — feeds C8 (scaled → Levi-Civita).
-- **Grounding audit**: all four action items closed. No free-floating continuum islands at the obligation level (see [`GROUNDING_AUDIT.md`](GROUNDING_AUDIT.md)).
-- **Refutations**: F1–F7 have Lean files that prove facts about the project's own definitions (see [`STATUS_OF_GORARD_CLAIMS.md`](STATUS_OF_GORARD_CLAIMS.md)). F8 is documentary.
-- **Flat bridges proved**: cycle → circle, path → interval, 2-torus, d-torus, discrete Lorentz → Minkowski.
-- **Continuum-target GR zoo**: Minkowski, Schwarzschild, FLRW, Reissner-Nordström, Kerr, 2-sphere, de Sitter — all formalised with hypergraph-origin obligations attached.
-- **Branchial QM**: finite slice → ℂ-Hilbert → self-adjoint adjacency → unitary Schrödinger → Born rule → observables → expectation values.
-- **First complete chain**: `minkowski4_flat_vacuum_EFE_originated_global` — rule → metric → connection → EFE satisfaction, every ingredient inhabited by a concrete hypergraph-side witness.
+Details: [`MAJOR_FLAWS.md`](MAJOR_FLAWS.md) (findings F1-F8), [`FINDINGS.md`](FINDINGS.md) (one line per claim), [`STATUS_OF_GORARD_CLAIMS.md`](STATUS_OF_GORARD_CLAIMS.md) (status per claim, and the section on reproducing the binary black hole experiment of G3).
 
 ## How it is structured
 
@@ -81,7 +46,8 @@ lean/
     Application.lean                 — Application r; size preservation
     Conservation.lean                — |LHS|=|RHS| ⇒ size preserved on trajectories
     Multiway.lean                    — RewritingSystem, Step, MultiStep
-    Causal.lean                      — Trajectory sys init, causallyPrecedes
+    Causal.lean                      — Trajectory sys init, causallyPrecedes (on hyperedge values)
+    CausalHistory.lean               — evolutions with hyperedge identities; causal graph; antichain and cone bounds
     CausalLevel.lean                 — level function, antichain at each level
     Branchial.lean, BranchialCanonical.lean
     ParallelSchedule.lean, Demo.lean
@@ -190,7 +156,7 @@ lean/
     RemainingObligations.lean        — all seven infrageometry obligations; all_obligations_hold
 
     # Continuum-limit Props for targets currently open
-    ContinuumLimitStatement.lean     — Schwarzschild/Kerr/FLRW obligations (guarded ∧ False)
+    ContinuumLimitStatement.lean     — Schwarzschild/Kerr/FLRW continuum-limit statements
     ContinuumBridgeDemo.lean, WolframPhysicsBridgeDemo.lean, GrandTour.lean
 
     # Refutations
@@ -199,185 +165,76 @@ lean/
     Refutations/F7NamedRuleStructure.lean
 
     # Axiom-cleanliness certification
-    AxiomCheck.lean                  — #print axioms over every theorem cited above
+    AxiomCheck.lean                  — #print axioms for a hand-picked list of theorems
 ```
 
 ### Documentation
 
-| File | Purpose |
+| File | Content |
 |---|---|
-| [`STATUS.md`](STATUS.md) | Live snapshot — rung table, obligation status, latest closures |
-| [`COVERAGE_MAP.md`](COVERAGE_MAP.md) | Per-module coverage map (single source of truth for what's in each file) |
-| [`GROUNDING_AUDIT.md`](GROUNDING_AUDIT.md) | Item-by-item audit: what is hypergraph-grounded, what is continuum-target-only, with per-object status |
-| [`BRIDGE_MACHINERY.md`](BRIDGE_MACHINERY.md) | 10-rung ladder from discrete calculus to Einstein equations |
-| [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md) | Infrageometry programme description (9 groups IA–IR) |
-| [`MAJOR_FLAWS.md`](MAJOR_FLAWS.md) | F1–F8 structural-flaw registry with Lean-formalisation status |
-| [`MILESTONES.md`](MILESTONES.md) | Phase-level checkbox tracker |
-| [`NEXT_STEPS.md`](NEXT_STEPS.md) | Done, in progress, waiting — including P-group mapping of colleague work |
-| [`RULE_SEARCH.md`](RULE_SEARCH.md) | Rule-search pipeline design |
-| [`PUBLISHABLE.md`](PUBLISHABLE.md) | Paper targets with dependencies |
-| [`FINDINGS.md`](FINDINGS.md) | Canonical one-line summary of every audited claim |
-| [`GLOSSARY.md`](GLOSSARY.md) | Technical terms |
-| [`INDEX.md`](INDEX.md) | Full document tree |
-| [`LEAN_PHYSICS.md`](LEAN_PHYSICS.md) | HepLean / Mathlib conventions |
-| [`INFRAFORMALIZATION_WEEKLY_REPORT_2026-04-23.md`](INFRAFORMALIZATION_WEEKLY_REPORT_2026-04-23.md) | Most recent Wolfram-Institute-facing weekly report (full; `_SHORT` and `_PARAGRAPH` variants also present) |
-| [`POST_WEEKLY_UPDATES_2026-04-23.md`](POST_WEEKLY_UPDATES_2026-04-23.md) | Post-weekly-report delta log (current running list of closures since the weekly) |
+| [`STATUS_OF_GORARD_CLAIMS.md`](STATUS_OF_GORARD_CLAIMS.md) | Status of each conclusion about G1-G4 |
+| [`THEOREM_STATUS.md`](THEOREM_STATUS.md) | Status of every theorem cited in the documentation |
+| [`MAJOR_FLAWS.md`](MAJOR_FLAWS.md) | Findings F1-F8 with paper lines and Lean files |
+| [`FINDINGS.md`](FINDINGS.md) | One line per audited claim |
+| [`STATUS.md`](STATUS.md) | State of the library by area |
+| [`COVERAGE_MAP.md`](COVERAGE_MAP.md) | Content of each module |
+| [`GROUNDING_AUDIT.md`](GROUNDING_AUDIT.md) | Which objects are defined from hypergraph data |
+| [`BRIDGE_MACHINERY.md`](BRIDGE_MACHINERY.md) | The ten areas from discrete calculus to the Einstein equations |
+| [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md) | Infrageometry task list (groups IA-IR) |
+| [`MILESTONES.md`](MILESTONES.md) | Phase tracker |
+| [`NEXT_STEPS.md`](NEXT_STEPS.md) | Open work |
+| [`RULE_SEARCH.md`](RULE_SEARCH.md) | Rule-search pipeline |
+| [`PUBLISHABLE.md`](PUBLISHABLE.md) | Paper targets |
+| [`GLOSSARY.md`](GLOSSARY.md) | Terms |
+| [`INDEX.md`](INDEX.md) | Document tree |
+| [`LEAN_PHYSICS.md`](LEAN_PHYSICS.md) | Conventions shared with Mathlib physics and HepLean |
+
+Dated weekly reports (`INFRAFORMALIZATION_WEEKLY_REPORT_*.md`, `POST_WEEKLY_UPDATES_*.md`, `weekly_email_*.txt`) record the state on their dates.
 
 ### Audit notes (`notes/`)
 
-- `plan.md` — 7-phase verification plan
-- `severity_taxonomy.md` — S1–S6 taxonomy; "How the errors recur"
-- `corpus_audit.md` — cross-paper map of repeated errors
-- `claims_catalog.md` — 184-row G1 equation audit
-- `singleway_vs_multiway.md` — single-way vs multi-way
-- `corpus_assessment.md` — synthesis verdict
-- `2004.14810_close_reading.md`, `2102.09363_close_reading.md`, `2303.07282_close_reading.md`
+- `plan.md`: verification plan
+- `severity_taxonomy.md`: groups S1-S6 of the findings
+- `corpus_audit.md`: errors repeated across G1-G4
+- `claims_catalog.md`: G1 equation by equation
+- `singleway_vs_multiway.md`: single-way and multiway evolution
+- `corpus_assessment.md`: per-claim assessment
+- `2004.14810_close_reading.md`, `2102.09363_close_reading.md`, `2303.07282_close_reading.md`: close readings
 - `null_tetrad_resolution.md`, `limit_toolkit.md`, `empirical_refutation.md`, `continuum_limit_claims.md`
 
 ### Results (`results/`)
 
-- `phase1_selfaudit/` — Python rewriter ↔ SetReplace agreement on the JGORARD named rule; causal-dimension measurements on 9 seeds.
-- `phase2_continuum/` — Eq 342 (Gray tube), Eq 344 (Ollivier) verdict files with symbolic + numeric computation.
-
-### Scripts (`scripts/`)
-
-Wolfram Language + Python scripts that reproduce every empirical verdict in `results/`.
-
-## The bridge ladder (10 rungs)
-
-Every continuum object in the project lives on a rung of this ladder, and every rung is anchored to its predecessor by an explicit convergence theorem or obligation Prop.
-
-Legend for the Status column:
-
-- **proved** — the content of the rung is a machine-checked theorem.
-- **partial** — some of the rung's content is proved; specific sub-items remain open.
-- **flat case proved; curved case open** — proved when the underlying spacetime is flat (Minkowski, cycle, torus, lattice); the proof for a curved target (Schwarzschild, Kerr, FLRW) is open.
-- **flat case proved end-to-end; curved case has the obligation Prop attached but the curved bridge theorem is open** — every continuum GR target has a hypergraph-side obligation Prop; flat-case witnesses are inhabited; curved-case witnesses are not.
-
-| Rung | Content | Key theorem | Status |
-|---|---|---|---|
-| 1 | Discrete calculus | Self-adjoint `Δ_H`, Dirichlet form, PSD, discrete Stokes | proved |
-| 2 | Operator convergence | `scaledSecondDiff → f''` for every C²; cycle-spectrum → circle-spectrum | proved |
-| 3 | Measure limits | Counting measure + pushforward (A5); A6 weak convergence complete for polynomials ≤ deg 3; **A7 Wasserstein-1 concrete rates landed** — project-own W_1 on `TransportPlan` supports with cycle-hypergraph anchor; `W_1_scaled(δ_v, δ_{v+1}) = 1/n` (sharp) and `W_1_scaled(μ, μ∘shift) ≤ 1/n` for any probability measure μ; A8 d-torus lift open | partial |
-| 4 | Connections | Local-coordinate Christoffel proved; project-own bundle formulation in `VectorBundleConnection.lean` — C1, C2, C3, C4, C6, C7 substantive; C5 (Koszul existence/uniqueness) and C8 (curved convergence) tracked as own open tasks | partial |
-| 5 | Riemann / Ricci | Riemann, Ricci, Einstein tensors; full GR metric zoo | proved |
-| 6 | ODE / PDE on Hypergraph V | Heat, wave, Klein-Gordon, Schrödinger unitary, Euler-Lagrange | proved |
-| 7 | Fields / gauge | Scalar field proved; discrete gauge field (G2) substantive via `DiscreteGaugeField` + Wilson-loop holonomy | partial |
-| 8 | Lorentzian geometry | LorentzLattice, Minkowski, `DiagLorentzianManifold` (E1), discrete Cauchy foliation (E5); continuum Lorentzian Gromov-Hausdorff open | flat case proved; curved case open |
-| 9 | Einstein equations | `EinsteinEqLambda`; Minkowski + flat connection solves vacuum EFE; flat connection forces Λ = 0 | flat case proved; curved case open |
-| 10 | Hypergraph → GR | Flat bridges proved end-to-end (cycle → circle, path → interval, 2-torus, d-torus, lattice → Minkowski); every continuum GR target has an origin-obligation Prop; flat-case witnesses are inhabited; curved-case witnesses are not | flat case proved end-to-end; curved case has the obligation Prop attached but the curved bridge theorem is open |
-
-See [`BRIDGE_MACHINERY.md`](BRIDGE_MACHINERY.md) for the full description.
-
-## Grounding principle (non-negotiable)
-
-Every continuous structure in the repository must either:
-
-1. be defined directly from hypergraph primitives (`Hypergraph V`, `RewritingSystem P`, `Trajectory sys init`, `CausalGraph V`), or
-2. be the target of an explicit convergence theorem starting from such primitives, or
-3. carry an explicit `…OriginObligation` Prop binding it to a hypergraph-side existence claim.
-
-No category-(3) obligation is allowed to sit as an open `True ∧ False` stub — every one carries a predicate with real mathematical content, and flat-case witnesses are inhabited by concrete hypergraph-side constructions. The audit of this principle lives in [`GROUNDING_AUDIT.md`](GROUNDING_AUDIT.md).
-
-## Refutation track (JGORARD corpus)
-
-### The four audited papers
-
-- **G1 — arXiv:2004.14810** — *Some Relativistic and Gravitational Properties of the Wolfram Model.* Foundational. §3.3 is the claimed Einstein-equations derivation; §3.1 states the Ollivier–Ricci identity; §3.2 introduces the fiat-orthonormality convention.
-- **G2 — arXiv:2011.12174** — *Algorithmic Causal Sets and the Wolfram Model.* Reuses G1 §5; introduces Eq 126 (tube-volume coefficient) used later in G3 Eq 342.
-- **G3 — arXiv:2102.09363** — *Hypergraph Discretization of the Cauchy Problem in GR via Wolfram Model Evolution.* Contains the "provably satisfies EFE" claim and the named rule. Builds its initial hypergraph by Poisson sampling from the target initial-data geometry (text lines 6080, 6148-6152, 6179).
-- **G4 — arXiv:2303.07282** — *Non-Vacuum Solutions, Gravitational Collapse and Discrete Singularity Theorems.* Title-body gap: no discrete Raychaudhuri, no discrete expansion scalar, no discrete energy condition, no discrete stress-energy tensor, no "shear" or "vorticity" in the text.
-
-Supporting papers referenced: 2308.07508, 2401.14209.
-
-### General patterns
-
-- **Objects introduced by analogy, not by construction.** Discrete metric `g^{ab}`, volume form `d\mu_g`, functional derivative `δ/δg^{ab}`, orthonormal hyperedges — all named, none defined.
-- **Mis-stated cited continuum identities.** Ollivier's theorem uses directional `Ric(v,v)`; the papers write scalar `R`. Gray's tube coefficient is `(R + Ric(u,u))/(6(d+1))`; the papers write `(d−1)(R − Ric(u,u))/(d+1)`. Factor-2 off on S², factor-6 off on S³.
-- **Definitions restated as theorems.** "Causal invariance ⇔ discrete general covariance" is an identification of two definitions. Asymptotic dimensionality preservation is defined as the Euler-Lagrange equation of S, and the step from there to the EFE rests on the unproved limit of eq. 88. The project's encodings of both equivalences hold by `Iff.rfl`.
-- **Informal bridge prose.** "Becomes" (which topology?), "weak ergodicity" (precise definition?), "provably" (applied to a chain that assumes Poisson-distributed rewrite events and the assumptions of the Benincasa–Dowker action limit).
-- **Sampled initial data in G3.** The initial hypergraph is built by Poisson sampling from the target initial-data geometry (G3 lines 6148-6152, 6179), and the figures are coloured with the analytic conformal factor (lines 6185-6192). The rule is not run from initial data that does not encode the target geometry.
-- **Named rule.** `|LHS| = |RHS| = 4` gives edge-count conservation (PROVED). The measured cone-growth exponent lies between 0.985 and 1.256 on 9 small seeds, and the two implementations disagree on 8 of them (MEASURED). A cone-growth bound is OPEN.
-
-### Lean files for the audit
-
-| Flaw | Lean module | Theorems | What they prove |
-|---|---|---|---|
-| F1 — discrete `g^{ab}` never constructed | `Refutations/F1NoMetric.lean` | `metric_construction_is_never_unique`; `no_canonical_metric_from_hypergraph_alone`; `action_depends_on_construction_choice` | The function type `DHyp V → V → V → ℝ` has more than one element |
-| F2 — fiat orthonormality | `Refutations/F2Orthonormality.lean` | `orthonormality_depends_on_form`; `orthonormalising_form_not_unique` | Facts about functions on `Bool × Bool` |
-| F3 — "dim preservation ⇒ EFE" | `Refutations/F3Tautology.lean` | `asymptoticDimPreservation_iff_eulerLagrange := Iff.rfl` | Two project definitions with the same body are equivalent |
-| F4 — "causal invariance ⇔ general covariance" | `Refutations/F4Tautology.lean` | `causalInvariance_iff_discreteGeneralCovariance := Iff.rfl` (no axioms) | Two project definitions with the same body are equivalent |
-| F5 — "becomes" ill-defined | `Refutations/F5Illdefined.lean` | `becomes_is_underdetermined`; `claim_is_vacuous_without_convergence_notion`; `different_notions_give_different_limits` | Facts about 1/(n+1) and the constant-`True` predicate |
-| F6 — G3 sampled initial data | `Refutations/F6Circularity.lean` | `CircularReconstruction.comp_eq_id` | Restates its own hypothesis. Does not model G3 |
-| F7 — named rule | `Refutations/F7NamedRuleStructure.lean` | `gorardNamedRule_application_preserves_size`; `gorardNamedRule_applications_preserve_size` | The named rule conserves edge count. No dimension bound |
-
-The link from each file to the paper is a reading of the paper text. **F8** (G4 title-body gap): not a formal claim but a documentary finding; JGORARD concedes the gap in the paper's conclusion.
-
-### Measurements of the named rule
-
-- 2102.09363 named rule: `{{x,y},{y,z},{z,w},{w,v}} → {{y,u},{u,v},{w,x},{x,u}}`.
-- SetReplace and an independent Python rewriter on 9 seeds (cycles, paths, 3D grids up to 300 edges, at most 2000 events): cone-growth exponents between 0.985 and 1.256. The two tools disagree on 8 of 9 seeds (4x4x4 grid: 0.985 against 1.256), cause not determined. Table: [`STATUS_OF_GORARD_CLAIMS.md`](STATUS_OF_GORARD_CLAIMS.md), Claim 1.
-- Edge-count conservation is PROVED. A bounded ball count holds for every finite hypergraph and does not distinguish this rule.
-
-### Summary verdict
-
-Overclaim in multiple load-bearing places, with embedded arithmetic errors. The §3.3 Einstein-equations derivation uses objects that are never constructed (F1, F2). The logical spine reduces, in multiple places, to `Iff.rfl` (F3, F4). The continuum-limit step is left informal (F5). G3's comparison starts from initial data sampled from the target geometry and gives no proof for the named rule (F6). The named rule conserves edge count, and its measured cone-growth exponent on small seeds is between 0.985 and 1.256 (F7). The cited continuum identities are mis-stated by non-trivial factors on simple test manifolds. All errors are in the public record and checkable.
-
-See [`MAJOR_FLAWS.md`](MAJOR_FLAWS.md), [`FINDINGS.md`](FINDINGS.md), [`notes/corpus_assessment.md`](notes/corpus_assessment.md), and the close-reading notes for paper-by-paper detail.
-
-## The research programme (infrageometry)
-
-57 tasks across 9 groups, covering the Wolfram-Institute infrageometry programme:
-
-| Group | Topic | Lead / collaborator | Closed | Total |
-|---|---|---|---|---|
-| IA | Infraanalysis | PHAJEK (`InfraAnalysis` paclet) | 5 | 5 |
-| IG | InfraGaugeTheory | `InfraGaugeTheory` paclet — PacletInfo Creator: PPOKORNY; sole git committer: PHAJEK (see CONTRIBUTORS.md) | 11 | 11 |
-| IC | Infracausality | CZAPATA + SAHMED (paper); `InfraCausality` paclet — PHAJEK | 8 | 8 |
-| IT | Infratopology (VR + Latschev) | PHAJEK | 6 | 6 |
-| ID | Infradimension | — | 7 | 7 |
-| IB | Infrablowup (Lie algebra, Poisson) | HKOLCZ | 6 | 6 |
-| IQ | Branchial / quantum | HVLE, SAHMED | 4 | 4 |
-| IS | Synthetic axiomatic | PHAJEK (`SyntheticInfrageometry` paclet) | 3 | 3 |
-| IR | Ruliology | — | 7 | 7 |
-
-See [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md) for per-task descriptions.
+- `phase1_selfaudit/`: Python rewriter and SetReplace runs of the G3 rule; cone-growth measurements on 9 seeds.
+- `phase2_continuum/`: G3 eq. 342 (Gray tube) and eq. 344 (Ollivier) with symbolic and numeric computation.
 
 ## Building
 
-Prerequisites: Lean 4 via `elan`, `lake`, and a Mathlib build (~1 hour first time).
+Prerequisites: Lean 4 via `elan`, `lake`, and a Mathlib build.
 
 ```bash
 cd lean
 lake update            # first-time Mathlib setup
-lake build             # ~3500 jobs; green
+lake build
 ```
 
-## Reproducing the empirical checks
+## Reproducing the measurements
 
-Prerequisites: `wolframscript` (Wolfram Engine or Mathematica), SetReplace paclet 0.3+, Python 3.10+.
+Prerequisites: `wolframscript` with SetReplace 0.3 or later, Python 3.10 or later.
 
 ```bash
-# 1) Empirical refutation of the G3 named rule (SetReplace)
+# SetReplace runs of the G3 rule
 wolframscript -file scripts/run_seeds_v3.wl
 wolframscript -file scripts/causal_dimension.wl
 wolframscript -file scripts/grid3d_test.wl
 
-# 2) Independent Python re-implementation (no SetReplace)
+# Python runs in two update orders
 cd scripts/python && python3 run_all_seeds.py
+python3 setreplace_order.py --tie pos
 
-# 3) Eq 342 (Gray tube) audit on S², S³
+# G3 eq. 342 on S² and S³
 wolframscript -file scripts/test_eq342.wl
 ```
 
-Every verdict is reproducible to the precision quoted in `results/`.
-
-## Methodology
-
-Every claim about the JGORARD corpus is checked against four independent rails (close-reading, symbolic computation, Lean formalisation, independent empirical re-implementation) before being accepted into the repository. Correct claims are verified; incorrect claims are documented precisely, with counter-example witnesses and corrected statements side by side.
-
-Verdicts are labelled precisely ("overclaim", "misstatement", "ill-defined", "tautology", "error", "conjectural", "hunch"). The goal is to have a load-bearing, verifiable answer to: *what in this corpus is actually true, and how is it linked (if at all) to general relativity?*
-
 ## License
 
-MIT — see [`LICENSE.md`](LICENSE.md). JGORARD paper sources in `papers/` are the original authors' and included only for reference.
+MIT, see [`LICENSE.md`](LICENSE.md). The papers in `papers/` belong to their authors and are included for reference.
