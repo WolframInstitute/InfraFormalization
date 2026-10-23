@@ -9,9 +9,7 @@ and surfaces the **real research findings**:
 
   - **JGORARD's named rule** (arXiv:2102.09363): `{{x,y},{y,z},{z,w},{w,v}}
     → {{y,u},{u,v},{w,x},{x,u}}`. The 4-edge-LHS rule JGORARD claims
-    "provably satisfies EFE". Conservative (|LHS|=|RHS|=4). Refuted by
-    F7 (causal-graph cone-growth dim ≤ 1 — structurally impossible to
-    yield 4D continuum).
+    "provably satisfies EFE". Conservative (|LHS|=|RHS|=4).
   - **Triangle-closure**: `{{x,y},{y,z}} → {{x,y},{y,z},{x,z}}`. Adds
     the third edge of every length-2 path. Produces *flat 2D Euclidean*
     curvature signatures on path seeds (Higuchi → 0, degVar → 0) in
@@ -62,9 +60,7 @@ private def mkE {n : Nat} (i j : Fin n) : Hyperedge (Fin n) :=
 /-- **JGORARD's named rule** (arXiv:2102.09363):
 `{{x,y},{y,z},{z,w},{w,v}} → {{y,u},{u,v},{w,x},{x,u}}`.
 Path-of-4 LHS rewires into a path-of-4 RHS with fresh `u`.
-Conservative (|LHS|=|RHS|=4). The F7 structural refutation shows
-causal-graph cone-growth dimension is ≤ 1 — structurally impossible
-to produce 4D continuum, contradicting JGORARD's claim. -/
+Conservative (|LHS|=|RHS|=4). -/
 def jgorardNamedRule : ExecRule where
   numBound := 5
   numFresh := 1
@@ -133,7 +129,7 @@ def path5Seed : ExecHG ℕ :=
 
 The full 5-scalar trace on each (rule × seed) cell, `native_decide`-pinned. -/
 
-/-! ### JGORARD's named rule on path5 — the F7 structural witness -/
+/-! ### JGORARD's named rule on path5 -/
 
 /-- JGORARD's rule on `path5Seed` (the LHS-fitting seed) at depth 2.
 The rule fires once; conservative |LHS|=|RHS|=4. After firing,
@@ -151,9 +147,8 @@ example : (canonicalDossier jgorardNamedRule path5Seed 2).squareCountTrace
 
 /-! ### JGORARD's named rule on triangle — VACUUM STABLE
 
-The 4-edge path LHS doesn't match the 3-vertex triangle (insufficient
-vertices). Result: traces are CONSTANT — gorardRule + triangle is a
-literature-provenance VACUUM-STABLE witness. -/
+The triangle seed has 3 edges and the left-hand side needs 4, so the
+rule has no match and every trace is constant. -/
 
 example : (canonicalDossier jgorardNamedRule triangleSeed 2).formanScalarTrace
     = [18, 18, 18] := by native_decide
@@ -220,8 +215,9 @@ example : (canonicalDossier triangulationRule edge12 2).squareCountTrace
 /-! ## Rate-bounded certifications for VACUUM-STABLE literature witnesses
 
 `jgorardNamedRule` on `triangleSeed` and `triangleClosureRule` on
-`triangleSeed` both have all 5 scalar traces constant — they're
-literature-grade `c = 0` rate-bounded witnesses. -/
+`triangleSeed` both have all 5 scalar traces constant. For
+`jgorardNamedRule` the traces are constant because the rule does not
+fire on `triangleSeed`. -/
 
 theorem jgorardNamedRule_triangle_forman_rateBounded :
     rateBounded (canonicalDossier jgorardNamedRule triangleSeed 2).formanScalarTrace
@@ -253,48 +249,8 @@ theorem triangleClosureRule_triangle_higuchi_rateBounded :
 
 /-! ## Named GR-zoo discharges via LITERATURE rules
 
-The genuinely interesting alternative-witness discharges: JGORARD's
-own published rule and the triangle-closure rule, used as rate-bounded
-witnesses for the strong GR-origin obligations. -/
-
-/-- **Minkowski 4 — Forman discharge via JGORARD's published rule**
-on the triangle seed. The rule has literature provenance (arXiv:
-2102.09363); the triangle seed makes it vacuum-stable (4-edge path
-LHS doesn't match 3-vertex triangle). This is a literature-grade
-alternative witness for the Minkowski-4 strong obligation. -/
-theorem minkowski4_strong_from_jgorardNamedRule_triangle :
-    HypergraphMetricOriginObligationStrong minkowski4 :=
-  strong_obligation_from_exec_rate_with_trace minkowski4
-    jgorardNamedRule triangleSeed 2 18 0
-    jgorardNamedRule_triangle_forman_rateBounded
-
-/-- **Minkowski 4 — Transport discharge via JGORARD's rule on triangle**. -/
-theorem minkowski4_strong_from_jgorardNamedRule_triangle_transport :
-    HypergraphMetricOriginObligationStrong minkowski4 :=
-  strong_obligation_from_transport_rate minkowski4
-    jgorardNamedRule triangleSeed 2 (-30) 0
-    jgorardNamedRule_triangle_transport_rateBounded
-
-/-- **Minkowski 4 — Higuchi discharge via JGORARD's rule on triangle**. -/
-theorem minkowski4_strong_from_jgorardNamedRule_triangle_higuchi :
-    HypergraphMetricOriginObligationStrong minkowski4 :=
-  strong_obligation_from_higuchi_rate minkowski4
-    jgorardNamedRule triangleSeed 2 0 0
-    jgorardNamedRule_triangle_higuchi_rateBounded
-
-/-- **Minkowski 4 — DegVariance discharge via JGORARD's rule on triangle**. -/
-theorem minkowski4_strong_from_jgorardNamedRule_triangle_degvariance :
-    HypergraphMetricOriginObligationStrong minkowski4 :=
-  strong_obligation_from_degvariance_rate minkowski4
-    jgorardNamedRule triangleSeed 2 0 0
-    jgorardNamedRule_triangle_degvariance_rateBounded
-
-/-- **Minkowski 4 — SquareCount discharge via JGORARD's rule on triangle**. -/
-theorem minkowski4_strong_from_jgorardNamedRule_triangle_squarecount :
-    HypergraphMetricOriginObligationStrong minkowski4 :=
-  strong_obligation_from_squarecount_rate minkowski4
-    jgorardNamedRule triangleSeed 2 0 0
-    jgorardNamedRule_triangle_squarecount_rateBounded
+The triangle-closure rule, used as a rate-bounded witness for the
+strong Minkowski-4 origin obligation. -/
 
 /-- **Minkowski 4 — Forman discharge via TRIANGLE-CLOSURE on triangle**.
 The fixpoint case (already-closed triangle stays closed). -/
@@ -303,24 +259,6 @@ theorem minkowski4_strong_from_triangleClosureRule_triangle :
   strong_obligation_from_exec_rate_with_trace minkowski4
     triangleClosureRule triangleSeed 2 18 0
     triangleClosureRule_triangle_forman_rateBounded
-
-/-! ## Bundled literature-witness discharge
-
-Five independent material discharges for Minkowski 4 using JGORARD's
-own published rule on the triangle seed. This is the literature-grade
-five-fold bundle. -/
-
-def minkowski4_jgorardNamedRule_triangle_quintDischarge :
-    HypergraphMetricOriginObligationStrong minkowski4
-    ∧ HypergraphMetricOriginObligationStrong minkowski4
-    ∧ HypergraphMetricOriginObligationStrong minkowski4
-    ∧ HypergraphMetricOriginObligationStrong minkowski4
-    ∧ HypergraphMetricOriginObligationStrong minkowski4 :=
-  ⟨minkowski4_strong_from_jgorardNamedRule_triangle,
-   minkowski4_strong_from_jgorardNamedRule_triangle_transport,
-   minkowski4_strong_from_jgorardNamedRule_triangle_higuchi,
-   minkowski4_strong_from_jgorardNamedRule_triangle_degvariance,
-   minkowski4_strong_from_jgorardNamedRule_triangle_squarecount⟩
 
 /-! ## Research-finding summary
 

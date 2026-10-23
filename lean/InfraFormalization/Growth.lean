@@ -1,31 +1,17 @@
 /-
-Ball-growth and cone-growth counting for hypergraphs and causal graphs.
+Ball-count and cone-count functions for hypergraphs and causal graphs.
 
-This is the quantitative infrastructure behind "dimension" in the
-Wolfram-model sense: for a spatial hypergraph `H`,
-  `N_H(v, r) = |B_r(v)|`
-is the ball count at a chosen center, and one calls `H` "asymptotically
-d-dimensional at v" when `N_H(v, r) / r^d → const`. For a causal graph,
-the analog is `C(t) = |{events within directed distance t from the
-source}|`, and we say the causal graph has "dimension n" when
-`C(t) / t^n → const`.
+For a spatial hypergraph `H`, `N_H(v, r) = |B_r(v)|` is the number of
+vertices within distance `r` of `v`. For a causal graph,
+`C(t)` is the number of events within directed distance `t` of a
+source event (`coneCount`). `GrowthExponentAtMost f d` states that
+`f n ≤ C · n^d` for some constant `C` and all `n > 0`.
 
-This file provides the counting functions and the abstract
-"dimension-at-rate" predicate. The two structural theorems we can
-prove—
-
-  * **Edge conservation (from `Conservation.lean`)**: any conservative
-    rule preserves the spatial state size, so `N_H(v, r) ≤ |state|`
-    for all `r`, which yields a *bounded* ball count (asymptotic
-    dimension 0 for the spatial hypergraph).
-
-  * **Linear causal cone bound (stated here, proof sketch)**: under
-    edge conservation with initial state size `N`, the causal graph's
-    cone `C(t)` satisfies `C(t) ≤ N · t`, yielding cone dimension at
-    most 1.
-
-— together imply that *no* conservative Wolfram-model rule can produce
-a limit with cone dimension ≥ 2. This is Theorem B/C in the plan.
+`growthExponentAtMost_of_linear` proves that a function bounded by
+`C · n` has growth exponent at most 1. No theorem in this file bounds
+the cone count of the causal graph of any rule. The statement such a
+bound needs for the rule of arXiv:2102.09363 is listed as OPEN in
+`STATUS_OF_GORARD_CLAIMS.md`.
 -/
 
 import InfraFormalization.GraphMetric
@@ -79,74 +65,5 @@ theorem growthExponentAtMost_of_linear
   have h2 : ((C * n : ℕ) : ℝ) = (C : ℝ) * (n : ℝ) := by push_cast; ring
   have h3 : (C : ℝ) * (n : ℝ) = (C : ℝ) * (n : ℝ) ^ 1 := by ring
   linarith [h1, h2.symm, h3]
-
-/-- **Bounded-cone obligation (stated at the structural level).**
-
-For any conservative rule, the causal-graph cone-count function derived
-from any trajectory has growth exponent at most 1. Stated here as a
-Prop-level obligation since the trajectory-to-causal-graph
-construction is not yet re-exported from `Causal.lean` as a cone-count
-function.
-
-**Proof strategy.** Each application consumes exactly `r.lhsSize`
-edges; under edge conservation, the total edge count is preserved; so
-the number of events at radius `t` is bounded linearly in `t`.
-Empirical confirmation on seven distinct seeds (see
-`results/phase1_selfaudit`): cone-growth exponent ≈ 1 for JGORARD's
-named rule.
-
-Status: **real-content obligation** (no longer a `True` stub). -/
-def BoundedConeOfConservativeObligation {P : Type*}
-    (r : Rule P) : Prop :=
-  r.IsConservative → ∃ C : Nat, ∀ (f : Nat → Nat),
-    (∀ t, f t ≤ C * t + 1) → GrowthExponentAtMost f 1
-
-/-- **Boundedness trivially holds when a bound is given** — the
-hypothesis directly supplies the linear bound on `f`, and
-`growthExponentAtMost_of_linear` completes the chain. Witnesses the
-obligation for every conservative rule. -/
-theorem boundedConeOfConservativeObligation {P : Type*}
-    (r : Rule P) : BoundedConeOfConservativeObligation r := by
-  intro _hcons
-  refine ⟨1, fun f hf => ?_⟩
-  have hbound : ∀ n, f n ≤ 1 * n + 1 := fun n => by simpa using hf n
-  -- Convert `f n ≤ n + 1` to `GrowthExponentAtMost f 1` via a slightly
-  -- larger linear bound.
-  refine ⟨2, fun n hn => ?_⟩
-  have h1 : (f n : ℝ) ≤ (n : ℝ) + 1 := by
-    have := hbound n
-    have : f n ≤ n + 1 := by omega
-    exact_mod_cast this
-  have h2 : ((n : ℝ) + 1) ≤ 2 * (n : ℝ)^1 := by
-    have hn_pos : (1 : ℝ) ≤ n := by exact_mod_cast hn
-    have : (n : ℝ) + 1 ≤ (n : ℝ) + (n : ℝ) := by linarith
-    calc (n : ℝ) + 1 ≤ (n : ℝ) + (n : ℝ) := this
-      _ = 2 * (n : ℝ) := by ring
-      _ = 2 * (n : ℝ) ^ 1 := by ring
-  linarith
-
-/-- **No-higher-dim obligation (stated).** A conservative rule's
-causal graphs cannot have continuum-limit dimension `≥ 2`. Specifically,
-the cone-count function cannot be bounded below by a super-linear
-polynomial. JGORARD's §3.3 argument (arXiv:2004.14810) requires
-`C(t) = a t^n` with `n = 4`; the statement below asserts the exponent
-obstruction directly. -/
-def NoHigherDimLimitObligation {P : Type*} (r : Rule P) : Prop :=
-  r.IsConservative →
-    ∀ (f : Nat → Nat), (∀ t, f t ≤ t + 1) → GrowthExponentAtMost f 1
-
-/-- **No-higher-dim follows from the bounded-cone obligation.** -/
-theorem noHigherDimLimitObligation {P : Type*}
-    (r : Rule P) : NoHigherDimLimitObligation r := by
-  intro hcons f hf
-  refine ⟨2, fun n hn => ?_⟩
-  have hn_pos : (1 : ℝ) ≤ n := by exact_mod_cast hn
-  have h1 : (f n : ℝ) ≤ (n : ℝ) + 1 := by exact_mod_cast hf n
-  have h2 : (n : ℝ) + 1 ≤ 2 * (n : ℝ) ^ 1 := by
-    have : (n : ℝ) + 1 ≤ (n : ℝ) + (n : ℝ) := by linarith
-    calc (n : ℝ) + 1 ≤ (n : ℝ) + (n : ℝ) := this
-      _ = 2 * (n : ℝ) := by ring
-      _ = 2 * (n : ℝ) ^ 1 := by ring
-  linarith
 
 end InfraFormalization

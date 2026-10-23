@@ -121,8 +121,6 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.Application.size_result_of_conservative
 #print axioms InfraFormalization.size_preserved_by_applications
 #print axioms InfraFormalization.growthExponentAtMost_of_linear
-#print axioms InfraFormalization.boundedConeOfConservativeObligation
-#print axioms InfraFormalization.noHigherDimLimitObligation
 #print axioms InfraFormalization.zero_stressEnergyTensor_trace
 #print axioms InfraFormalization.zero_stressEnergyTensor_energyDensity
 #print axioms InfraFormalization.wec_implies_nec
@@ -529,7 +527,6 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.trajectory_states_zero
 #print axioms InfraFormalization.trajectory_size_invariant
 #print axioms InfraFormalization.Hypergraph.geodesicBallVolume_le_card
-#print axioms InfraFormalization.trajectory_conservative_ballVolume_bounded
 #print axioms InfraFormalization.FiberedGraph.mem_fiber
 #print axioms InfraFormalization.FiberedGraph.self_mem_fiber
 #print axioms InfraFormalization.FiberedGraph.disjoint_fibers
@@ -703,8 +700,8 @@ import InfraFormalization.WolframPhysicsBridgeDemo
 #print axioms InfraFormalization.cycleEigenvector_zero_eq_one
 #print axioms InfraFormalization.Refutations.circular_reconstruction_has_no_content
 #print axioms InfraFormalization.Refutations.circular_procedure_is_identity
-#print axioms InfraFormalization.Refutations.namedRule_trajectory_edge_count_fixed
-#print axioms InfraFormalization.Refutations.isConservative_implies_structurallyOneDim
+#print axioms InfraFormalization.Refutations.gorardNamedRule_application_preserves_size
+#print axioms InfraFormalization.Refutations.gorardNamedRule_applications_preserve_size
 #print axioms InfraFormalization.branchialSliceAdj_symm
 #print axioms InfraFormalization.branchialSliceHamiltonian_isSymm
 #print axioms InfraFormalization.branchial_qm_is_rewriting_grounded

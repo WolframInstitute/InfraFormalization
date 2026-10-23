@@ -15,10 +15,9 @@ This file provides:
      signature criterion (conservative vs. not; bounded edge count).
   4. **Witness theorems** connecting rules to bridge constraints.
 
-This is the Lean-side of the rule-search problem. JGORARD claimed his
-rules produce GR; the filter predicates here are the *machine-checkable
-obstruction*: a rule that fails the screen cannot plausibly produce
-the target.
+This is the Lean-side of the rule-search problem. The filter predicates
+classify rules by conservation (|LHS| = |RHS|). No screen in this file
+proves that a rule cannot have a continuum limit of a given dimension.
 
 **Grounding.** All rules are concrete `Rule (Fin k)` constructions;
 candidate rules are `RewritingSystem (Fin k)`; signatures are computed
@@ -195,12 +194,9 @@ theorem growthCatalog_all_non_conservative :
 
 /-! ## Rule-search → target-constraint bridge
 
-For a target that requires unbounded dimensional growth (which every
-continuum target does, by Euler-formula / ball-volume scaling),
-**conservative rules on a *fixed* vertex type cannot inhabit the
-bridge with unbounded growth**. This is JGORARD's structural block.
-
-We state it here as a filter-compatible predicate. -/
+`Rule.GrowthCompatible r` is defined as `¬ r.IsConservative`. The
+predicate is a label for the screen. No theorem here proves that a
+conservative rule has no continuum limit of positive dimension. -/
 
 /-- **Target-compatibility predicate**: a rule is *growth-compatible*
 with an unbounded-growth target if it is not conservative. -/
@@ -244,28 +240,5 @@ theorem minkowski4_from_growthRule :
     fun k => (1 : ℝ) / (k + 1), ?_⟩
   intro k
   positivity
-
-/-! ## Dimension-compatibility screen
-
-For a continuum target of dimension `d`, a candidate rule's trajectory
-must produce states whose geodesic ball volume scales as `r^d`. For a
-conservative rule on a fixed vertex type, `|states.i| = |init|`, so
-the ball volume saturates — ruling out any `d > 0` target. This is
-exactly the `trajectory_conservative_ballVolume_bounded` theorem. -/
-
-/-- **Conservation blocks d-dimensional growth** (for any `d ≥ 1`):
-on a step-consistent conservative trajectory, the geodesic ball volume
-is uniformly bounded by `Fintype.card V`, so there is no `r^d` growth
-with `d ≥ 1`. Concretely: the ball volume is bounded for all radii. -/
-theorem conservative_blocks_dim_geq_one
-    {P V : Type*} [Fintype V] [DecidableEq V]
-    {sys : RewritingSystem P} {init : Hypergraph V}
-    (τ : Trajectory sys init)
-    (hstep : τ.StepConsistent)
-    (hcons : ∀ i (hi : i < τ.applications.length),
-      (τ.applications.get ⟨i, hi⟩).2.1.IsConservative)
-    (i : Nat) (hi : i < τ.states.length) (v : V) (r : ℕ) :
-    (τ.states.get ⟨i, hi⟩).geodesicBallVolume v r ≤ Fintype.card V :=
-  trajectory_conservative_ballVolume_bounded τ hstep hcons i hi v r
 
 end InfraFormalization

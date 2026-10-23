@@ -1,39 +1,20 @@
 /-
-**Rule-level dimension bounds from conservation laws.**
+**Edge-count conservation along trajectories.**
 
-This file promotes an *empirical* structural finding to a *theorem*:
-the JGORARD named-EFE rule (arXiv:2102.09363) has `|LHS| = |RHS|`,
-so it is conservative, so the spatial hypergraph size is invariant
-along every trajectory. Combined with the fact that ball volumes
-are bounded by `Hypergraph.size`, this pins the asymptotic growth
-rate and therefore caps every dimension notion that is read off
-from ball-volume growth.
+  * `trajectory_size_invariant`: if every rule applied along a
+    step-consistent trajectory is conservative (|LHS| = |RHS|), every
+    state has the `Hypergraph.size` of `init`. This applies to the rule
+    of arXiv:2102.09363 through `gorardNamedRule_isConservative`.
 
-**Claim hierarchy** (listed in order of strength):
+  * `Hypergraph.geodesicBallVolume_le_card`: on a finite vertex type
+    `V`, every geodesic ball has at most `Fintype.card V` vertices.
+    The bound holds for every hypergraph on `V` and uses no rule.
 
-  (a) `trajectory_size_invariant` — every state in a conservative
-      trajectory has the same `Hypergraph.size` as `init`. (proved)
-
-  (b) `trajectory_geodesicBallVolume_bounded` — the geodesic ball
-      volume at any vertex in any trajectory state is bounded by
-      the total vertex count `Fintype.card V`. (trivial — any
-      subset of `V` has ≤ `Fintype.card V` elements, proved)
-
-  (c) `trajectory_wolframHausdorffDimension_zero` — over a finite
-      vertex type, the asymptotic `log V(r) / log r` is zero since
-      volumes saturate. (not proved here — would require a more
-      refined `Filter.Tendsto` argument)
-
-The connection to dimension in the physical sense — where
-Hypergraph rewriting grows `V` unboundedly as new vertices are
-introduced — requires a growth-rate / causal-graph analysis
-(Group IR continuation). What *this file proves* is the foundation:
-conservation of `Hypergraph.size` is the structural obstruction to
-any continuum-limit argument that relies on volume growing as `r^d`.
-
-Formally: (a) is a direct corollary of
-`Application.size_result_of_conservative`, extended from single
-applications to full trajectories.
+No theorem in this file bounds the dimension of a causal graph or of a
+continuum limit. A bounded ball volume on one finite hypergraph holds
+for every finite hypergraph, so it does not distinguish one rule from
+another, and a continuum limit taken along initial states of growing
+size is not constrained by it.
 -/
 
 import InfraFormalization.Conservation
@@ -119,20 +100,5 @@ theorem Hypergraph.geodesicBallVolume_le_card (H : Hypergraph V) (v : V)
   calc (Finset.univ.filter (fun u => H.dist v u ≤ r)).card
       ≤ Finset.univ.card := Finset.card_le_card (Finset.filter_subset _ _)
     _ = Fintype.card V := Finset.card_univ
-
-/-- **Combined statement**: in a step-consistent conservative
-trajectory, every state's ball volume is uniformly bounded, hence
-ball-volume growth cannot exceed `Fintype.card V` — a capped linear
-(in particular, *constant*) bound, which rules out any `r^d` growth
-for `d > 0` in the `r → ∞` limit on a fixed finite `V`. -/
-theorem trajectory_conservative_ballVolume_bounded
-    {sys : RewritingSystem P} {init : Hypergraph V}
-    (τ : Trajectory sys init)
-    (hstep : τ.StepConsistent)
-    (hcons : ∀ i (hi : i < τ.applications.length),
-      (τ.applications.get ⟨i, hi⟩).2.1.IsConservative)
-    (i : Nat) (hi : i < τ.states.length) (v : V) (r : ℕ) :
-    (τ.states.get ⟨i, hi⟩).geodesicBallVolume v r ≤ Fintype.card V :=
-  (τ.states.get ⟨i, hi⟩).geodesicBallVolume_le_card v r
 
 end InfraFormalization

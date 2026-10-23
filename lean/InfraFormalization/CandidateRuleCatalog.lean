@@ -11,24 +11,22 @@ type `P`), a `LiteratureSource` citation, and its conservation status.
 
 **Purpose**. This catalog is the input stream for the IR6 screening
 pipeline (`CandidateRuleDatabase.lean`) — every candidate below has its
-conservation status classified here so that `IR2` (conservative ⟹
-bounded dimension) and related dimensional-screening theorems apply
-automatically. Closing H1 gives H2/H3 a concrete list of rules to
+conservation status classified here so that the edge-count
+conservation theorems of `Conservation.lean` apply to it. Closing H1 gives H2/H3 a concrete list of rules to
 run signature screens against.
 
 **Disclaimer**. Inclusion here is *not* an endorsement of the rule's
-dimensional claims. Several rules are known (or proved) to be
-structurally unable to produce higher-dimensional causal graphs;
-those are flagged as such.
+dimensional claims. No theorem in this file or its importers bounds
+the dimension of any catalogued rule's causal graph.
 
 **Sources catalogued**.
   * `gorardNamedRule`: arXiv:2102.09363 line 6202. JGORARD's "provably
-    EFE-satisfying" rule. |LHS|=|RHS|=4 ⟹ conservative ⟹ causal-dim ≤ 1
-    (F7 refutation). Refuted empirically on every seed tested.
+    EFE-satisfying" rule. |LHS|=|RHS|=4, so the rule is conservative
+    (`gorardNamedRule_isConservative`). Measured cone-growth exponents
+    are in `results/phase1_selfaudit/README.md`. A proof of any bound
+    on its causal-graph growth is OPEN (`STATUS_OF_GORARD_CLAIMS.md`).
   * `edgeDoublingRule`: trivial WPP "rule 0" — doubles each edge. Non-
-    conservative; produces exponential edge growth; causal-graph
-    polynomial-growth dimension is 1 (same path length at every
-    event-level).
+    conservative; produces exponential edge growth.
   * `edgeAppendRule`: `{{x,y}} → {{x,y},{y,z}}` — simple linear-
     extension rule from early WPP enumerations; non-conservative.
   * `tripleExpansionRule`: `{{x,y}} → {{x,y},{y,z},{z,w}}` — triple
@@ -89,9 +87,7 @@ path of length 4 with one fresh vertex `u`.
 
 Pattern-vertex encoding (`Fin 6`): `x=0, y=1, z=2, w=3, v=4, u=5`.
 
-**Conservation status**: conservative (|LHS| = |RHS| = 4).
-**Consequence**: causal-graph cone-growth dimension ≤ 1
-(F7 refutation — structurally impossible to produce 4D continuum). -/
+**Conservation status**: conservative (|LHS| = |RHS| = 4). -/
 def gorardNamedRule : Rule P6 :=
   { lhs := mkHypergraph [edge 0 1, edge 1 2, edge 2 3, edge 3 4],
     rhs := mkHypergraph [edge 1 5, edge 5 4, edge 3 0, edge 0 5] }
@@ -101,7 +97,7 @@ def gorardNamedRule_source : LiteratureSource :=
   { author := "JGORARD"
     year := 2021
     identifier := "arXiv:2102.09363"
-    note := "\"provably satisfies EFE in the continuum limit\" — structurally refuted (F7)" }
+    note := "\"provably satisfies EFE in the continuum limit\" (abstract, line 51)" }
 
 /-- **JGORARD's rule is conservative**: |LHS| = |RHS| = 4. -/
 theorem gorardNamedRule_isConservative :
@@ -192,8 +188,7 @@ rules spanning the conservative / non-conservative spectrum. -/
 def catalogSize : Nat := 5
 
 /-- **Conservative catalogued rules**: `gorardNamedRule`,
-`trivialIdentityRule`. Both are structurally bounded in causal-graph
-cone dimension by IR2 conservation theorem. -/
+`trivialIdentityRule`. Both have |LHS| = |RHS|. -/
 theorem catalog_conservative_rules :
     Rule.IsConservative gorardNamedRule
     ∧ Rule.IsConservative trivialIdentityRule :=
