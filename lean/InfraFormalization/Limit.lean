@@ -13,9 +13,8 @@ We frame a continuum-limit theorem as follows:
   to their continuum analogues (topological dimension, Ricci curvature
   tensor).
 
-This file does not itself prove any convergence theorem. It provides
-the *type-level scaffolding* so that convergence theorems about
-Wolfram-model rewriting can be stated in a Mathlib-compatible way.
+This file defines sequences of scaled hypergraphs and metric-measure
+targets. It states no convergence theorem.
 
 Mathlib's relevant pieces:
 * `Metric.HausdorffDist` and friends (Gromov–Hausdorff).
@@ -56,26 +55,5 @@ structure MetricMeasureTarget where
   μ : MeasureTheory.Measure carrier
 
 attribute [instance] MetricMeasureTarget.metric MetricMeasureTarget.measurable
-
-/-- Placeholder: "the sequence `S` converges to `T` in pointed Gromov–
-Hausdorff sense, with basepoint map `b`". We leave this as a
-parameterised predicate and fill in the precise Mathlib-level statement
-later (Mathlib's pointed-GH API is still evolving). -/
-def ConvergesToPGH
-    (S : HypergraphSequence V) (T : MetricMeasureTarget) : Prop :=
-  True   -- placeholder
-
-/-- **Claim template (not proved).** If the scaled hypergraphs come
-from iterating a causal-invariant and asymptotically-dimension-
-preserving conservative rule, and the induced sequence converges to a
-Riemannian manifold in pointed Gromov–Hausdorff sense, then [...].
-
-This is exactly the type signature JGORARD's §3.3 claim would have to
-inhabit to be a theorem. We phrase it with a hypothesis `¬ r.IsConservative`
-because of `NonConservativeNeededForHigherDim` below — conservative
-rules can never yield a higher-dim limit. -/
-def ContinuumLimitClaim
-    (_r : Rule V) (_S : HypergraphSequence V) (_T : MetricMeasureTarget) : Prop :=
-  True   -- placeholder
 
 end InfraFormalization

@@ -103,17 +103,7 @@ theorem firstBettiZ_lower_bound (H : Hypergraph V) :
 
 `b_k` for `k ≥ 2` requires a chosen cellular structure (the closure
 problem CLOSURE1 #362). The `Hodge Laplacian on k-forms` from KnillCore
-gives one route once we surface the kernel-dimension API. Placeholder
-predicate left here as a target. -/
-
-/-- **k-th Betti number obligation**: for a chosen cellular extension of
-`H`, the `k`-th Hodge-Laplacian kernel has dimension `n`. Placeholder
-until KnillCore exposes the kernel-dimension extractor (TOP2 #324). -/
-def HasBetti (H : Hypergraph V) (k : ℕ) (_n : ℕ) : Prop :=
-  -- Will be: `Fintype.card (Module.End.eigenspace (hodgeLaplacian k) 0) = n`.
-  -- Currently a Prop placeholder; the spectral apparatus exists in IT3
-  -- but has not been packaged as a `bettiNumber` extractor yet.
-  H.size ≥ 0  -- trivially true; placeholder content
+gives one route once a kernel-dimension API exists. -/
 
 /-! ## Connection to MILESTONE / topology-before-metric layering -/
 

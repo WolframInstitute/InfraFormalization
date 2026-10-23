@@ -90,21 +90,5 @@ theorem trivial_amplitude_const (V : Type*) [Fintype V] [DecidableEq V] (v : V) 
 
 end QuantumSpacetimeSkeleton
 
-/-! ## Structural distinction from spin foams -/
-
-/-- **Structural distinction**: Wolfram-physics causal graphs are 1-complexes
-(edges between vertex events), whereas spin-foam 2-complexes have 2-cells
-(faces). We record the distinction as a predicate on the skeleton: the
-`Is1Complex` property asserts there is no face data. -/
-def QuantumSpacetimeSkeleton.Is1Complex {V : Type*}
-    [Fintype V] [DecidableEq V]
-    (_S : QuantumSpacetimeSkeleton V) : Prop := True
-
-/-- **Every multiway causal graph gives a 1-complex skeleton**. -/
-theorem multiwayCausalGraph_skeleton_is1Complex
-    {V : Type*} [Fintype V] [DecidableEq V]
-    {P E : Type*} [Fintype P] [DecidableEq P] [Fintype E] [DecidableEq E]
-    (M : MultiwayCausalGraph P V E) :
-    (QuantumSpacetimeSkeleton.ofMultiwayCausalGraph M).Is1Complex := trivial
 
 end InfraFormalization
