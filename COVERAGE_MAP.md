@@ -1,354 +1,263 @@
-# Coverage map — done / in-progress / open
+# Coverage map
 
-**Single source of truth for project posture.** Updated whenever a Lean file is added, a task is completed, or a research direction is opened. Complements `INFRAGEOMETRY.md` (program description), [`ROADMAP.md`](ROADMAP.md) (phase-sorted full-program sequencing toward BBH-from-hypergraph), and the task system (atomic items).
+This file lists the Lean modules of `InfraFormalization` by topic, with the status of what each module proves. [`INDEX.md`](INDEX.md) gives a longer entry per module, [`THEOREM_STATUS.md`](THEOREM_STATUS.md) gives the status of each cited theorem, and [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md) and [`ROADMAP.md`](ROADMAP.md) describe the planned work.
 
-Legend: ✅ proved, axiom-clean. 🟡 partial. 🔲 open. 🚫 uninhabited formal obligation.
+Status labels:
 
-## 0. Recent landings (2026-04-26 — late, catch-up sync)
+- PROVED: kernel-checked, sorry-free, axioms at most `propext`, `Classical.choice`, `Quot.sound`.
+- PROVED-WITH-NATIVE-DECIDE: the proof uses `native_decide`. These results are values computed for specific rules, seeds and depths.
+- VACUOUS: the statement holds for every target, because a definition in it does not depend on the target.
+- DEFINITIONS: the module defines objects and proves no theorem about them beyond basic lemmas.
+- OPEN: stated, not proved. The statement is given.
 
-- ✅ **#437 — B4-discover: search-driven discovery + Lean witness embedding**. `DiscoveredRules.lean`. Search over 21 candidates at causal-DAG depth 4 discovered 11 non-tree rules, each named + Knill-certified. Edge-reversal (Knill=0, 4-cycle merger), 4 double-cycle mergers (Knill=-6), bidirected (Knill=126), 4 multi-tree forks (Knill=18), identity (Knill=12). Bundled `discoveries_summary` (11-conj), `merger_class_rules` (5-conj physics-relevant), search-coverage certifications. First computational discovery → Lean-witness embedding in codebase.
-- ✅ **#436 — B4-table: comprehensive 12-rule comparison-table artifact**. `RuleReportComparison.lean`. First cross-catalog comparison artifact. `CatalogReportTable` 12-field record + per-rule certifications. Classification table: 6 identity-class ([1,1,1]), 4 doubling-class ([1,2,4]), 2 tripling-class ([1,3,9]) rules. All preserve topology. Bundles: `catalog_topology_universally_preserved`, `catalog_rule_diversity_3_classes` (explicit 12-conj classification), `catalog_classes_are_distinct` (pairwise ≠).
-- ✅ **#435 — B4-report: PhysicsReport — printable artifact bundling all observables**. `RulePhysicsReport.lean`. First end-to-end printable, certified, structured numerical artifact. `PhysicsReport` (11 fields) + `evaluateRule` pipeline. Concrete certified report for `subdivisionSys` on `[consEdge 1 2]` at depth 3: edges=[1,2,4,8] doubling, Knill constant 6, causal χ = 1, 0 mergers, topology preserved. Every field individually `native_decide` + 10-conj bundle. Multi-rule comparison + `all_rules_preserve_topology_via_report`. End-to-end success: every discrete-physics observable computable, certifiable, packaged into a single record for `#eval` printing AND `theorem` proving.
-- ✅ **#434 — B4-causal-trace: per-instance causal event tracking from rule evolution (closes #228)**. `CausalEventTrace.lean`. First execution-level causal-edge extraction. `CausalEvent` per-match data + `tracedSingleWayStep` / `tracedSingleWayEvolve` + `deriveCausalEdges` + `causalDAGOfEvolution` pipeline. End-to-end theorem: `knillEulerScaled (causalDAGOfEvolution subdivisionSys [consEdge 1 2] 2) = 6` (subdivision depth-2 causal DAG = 1-fork tree). Complete loop rule → causal DAG → topology invariant. Substrate for BBH endgame's discrete-Ψ₄ extraction. Closes long-standing #228 task.
-- ✅ **#433 — B4-benchmark: Knill across extended topology zoo**. `KnillTopologyBenchmark.lean`. Cross-topology certification table. K_6 (Knill = 66 = 6·11), K_7 (Knill = 126 = 6·21), Petersen (Knill = -30 = 6·(-5), girth-5 non-planar 3-regular), hypercube Q_3 (Knill = -24 = 6·(-4), bipartite). All native_decide. Bundled `knill_extended_zoo_benchmark`. Combined with prior modules, Knill demonstrated uniformly across polyhedra / closed surfaces / 3-manifolds / causal DAGs / complete graphs / non-planar / bipartite — not a Platonic coincidence.
-- ✅ **#432 — B4-causal: Knill on causal-DAG topologies — first causal-side curvature**. `CausalDAGKnill.lean`. First application of Knill to causal graphs (DAGs). Six canonical topologies (chain, fork, join, diamond, triple-diamond, K_{2,3}, triangle) certified against `6·χ`. `singleway_evolution_causal_dag_knill` baseline + `diamond_is_one_hole` multi-way-merger signature. Bundled `causal_dag_knill_classification`. Opens causal-side analysis for BBH endgame: diamond-hole counting = discrete topological observable for merger events, applicable to Ψ₄ extraction (H8/H9) once #228 (per-instance causal-edge tracking) lands.
-- ✅ **#431 — B4-classify: universal topology-preservation classification across rule catalog**. `RulePreservationClassification.lean`. Extends Knill / rewriting bridge (#429) to ALL 12 named rules in the catalog: trivialIdentity, subdivision, triangulation, triangleClosure, wheeler, jgorardNamed, tripleExtend, and 5 quintRules. All preserve `knillEulerScaled = 6` on canonical `edge12` seed across 1 evolution step. Bundled `universal_rule_topology_preservation` + `all_named_rules_preserve_edge12_knill`. First cross-catalog uniform structural certification — topology preservation is a uniform property of the entire rule library.
-- ✅ **#430 — B4-3D: Knill discrete Gauss-Bonnet on 3-manifolds (S³ via K₅)**. `KnillThreeManifold.lean`. First 3D topological-invariant computation in the codebase. Extends Knill to 3-manifolds via `K12(v) := 12 - 6·deg + 4·tri - 3·tet`. `execTetCountAtVertex` counts 4-cliques per vertex. Boundary of 4-simplex = K₅ (5 vertices, 10 edges, 10 triangles, 5 tetrahedra, topologically S³). Per-vertex K12 = 0 certified for all 5 vertices. Total `knillEulerScaled12 k5HG = 0 = 12·χ(S³)`. Cross-dim bundle `knill_dimension_independent_chi` covers d=2 and d=3. Framework now proven dimension-agnostic.
-- ✅ **#429 — B4-bridge: Knill additivity + topology preservation under subdivision rule**. `KnillRuleBridge.lean`. First explicit Knill / rewriting-engine bridge. (1) Knill on path lattice = 6 = 6·χ(interval) for n = 3, 5, 8, 16. (2) Subdivision rule preserves Knill across 4 evolution steps (fresh vertices have K6 = 0). (3) Disjoint-union additivity sample: two vertex-disjoint tetrahedra give 24 = 12+12 = 6·χ(S² ⊔ S²). Bundled `knill_rewriting_bridge`. First time codebase connects curvature framework to rule-output state streams. Demonstrates Knill has predictive consequences for rule properties (topology preservation), not just descriptive.
-- ✅ **#428 — B4-extend: Knill on higher-genus surfaces — triangulated T² gives χ = 0**. `KnillHigherGenus.lean`. Extends #427 to higher-genus surfaces. `triangulatedTorusHG n` (square grid wrap + diagonals) gives Knill = 0 = 6·χ(T²) for n = 4, 5, 6 (all native_decide). n=3 wrap-anomaly documented (Knill = 54). Cross-genus bundle `knill_genus_zero_one_pattern` covers genera 0 (S²) and 1 (T²). Contrast bundle `knill_vs_forman_across_genera` documents architecture-wide failure-vs-success. Second positive constructive result for Knill framework — literature-grade fix scales across closed orientable surface classification.
-- ✅ **#427 — B4-fix: Knill discrete Gauss-Bonnet recovers χ(S²) = 2 triangulation-independent**. `KnillDiscreteGaussBonnet.lean`. First constructive fix for the #426 audit failure. Vertex-defect formula `K6(v) := 6 - 3·deg(v) + 2·tri(v)` summed gives `6χ(surface)` by combinatorial Euler. `execTriangleCountAtVertex` counts 3-cliques at each vertex (mutually-adjacent neighbor pairs with x<y). Certified `knillEulerScaled = 12` (= 6·χ(S²)) for tetrahedron / octahedron / icosahedron — TRIANGULATION-INDEPENDENT, in direct contrast to Forman's `+48, +48, 0`. Pairwise equality `knill_triangulation_independent_on_S2`. Side-by-side audit `knill_fixes_forman_triangulation_dependence` documents the resolution. First literature-grade triangulation-independent invariant in the codebase — proves architecture CAN extend to correct curvature notions.
-- ✅ **#426 — B4-audit: sphere-triangulation curvature inconsistency on S²**. `SphereTriangulationAudit.lean`. Three Platonic 2-sphere triangulations (tetrahedron K4, octahedron, icosahedron) as ExecHG. ALL topologically S² (smooth Ric > 0). Per-vertex Forman: +12, +8, 0 (strictly decreasing across triangulations). Per-vertex Higuchi: -1, -2, -3 (tracks `2-deg`). Bundled `sphere_triangulation_scalars_inconsistent` certifies all three triangulations give DIFFERENT scalar values for the SAME topological target. Architecture's unweighted scalars are triangulation-dependent, not topology-dependent. Literature-grade fixes (research-level, scope-stated): Knill discrete Gauss-Bonnet vertex-defect, Christiansen 2024 distributional Ricci, Devriendt-Lambiotte effective resistance.
-- ✅ **#425 — B4-abstract: polynomial-density `Tendsto` theorem + 3D torus extension**. `PolynomialDensityLimits.lean` lifts the per-sample certifications (#424) to fully-abstract `Tendsto` claims via Mathlib limit lemmas. Core theorem `polynomialPerArea_tendsto (a b c : ℝ) : Tendsto (fun n => (a·n² + b·n + c)/n²) atTop (nhds a)` — universal, no `native_decide`. Applied: `grid_forman_perArea_tendsto_neg16` and `grid_higuchi_perArea_tendsto_neg2` are the first fully-abstract continuum convergence theorems in the codebase (proven for all n, not just samples). 3D torus extension: closed-form `Forman(T³(n,n,n)) = -48n³`, `Higuchi = -4n³`, per-volume densities → -48 and -4. Cross-dimensional `bulk_curvature_density_dimension_pattern` bundles d=1,2,3 instances. General formulas: per-volume Forman = -8d(d-1), Higuchi = 2-2d. Framework demonstrates the scaling-density pattern is dimension-independent.
-- ✅ **#424 — B4-advance: per-area density convergence — first non-trivial scaling continuum limit**. `NormalizedDensityLimits.lean` reconciles non-convergence audits (#421 T², #423 grid) with the convergence framework. Absolute totals diverge but per-area densities converge. Closed-form formulas certified: T² Forman = -16n², T² Higuchi = -2n², grid Forman = -16n² + 40n - 16, grid Higuchi = -2n² + 4n. Per-area density limits: T² → -16/-2 exact; grid → -16/-2 with O(1/n) boundary correction. `torus_forman_perArea_const_tendsto_neg16` + `torus_higuchi_perArea_const_tendsto_neg2`. Bundled `bulk_curvature_density_constants`. First non-trivial scaling continuum limit in the codebase: extensive quantities rescaled by volume n² give intensive densities with finite limits (lattice gauge / statistical mechanics pattern). Honesty caveat: limits -16 and -2 are unweighted-formula-specific bulk constants, NOT smooth Ricci of flat T²/D² target.
-- ✅ **#423 — B4-audit: 2D open grid full non-convergence + architecture scope statement**. `GridContinuumLimit.lean`. Generalizes T² (#421) non-convergence audit to the open-boundary 2D case (`D²` analog). `gridHG m n` open lattice mixes corner/edge/interior vertices. ALL 4 scalars diverge unboundedly with size — Forman ~ `-8(n-1)²`, Higuchi ~ `-2(n-2)²`, SquareCount = `8(n-1)²`, DegVariance ~ mixed-degree variance. Bundled `unweighted_scalars_fail_on_2d_grid`. Architecture scope statement now formally certified: convergence works only for compact 1-manifolds (cycle = vacuum; path = boundary signals); 2D+ closed (torus) and 2D+ with boundary (grid) BOTH fail under unweighted scalars. Weighted-Forman / Christiansen-2024 / effective-resistance / Regge needed for 2D physics targets — research-level upgrades, not architectural fixes.
-- ✅ **#422 — B4-instance: path lattice multi-target continuum-limit**. `PathContinuumLimit.lean`. Second concrete inhabitant of `TrueLimitConverges` and the FIRST multi-target instance. `pathHG n` discretizes `[0,1]` interval. Three convergent scalars: Forman → 4 (boundary edges), Higuchi → 2 (Euler-with-boundary), SquareCount → 0 (vacuum). Honest divergence: DegVariance(path_n) = 2(n-2) explicitly certified non-convergent (sample trace [2,4,6,12,28] strictly increasing). Bundled `path_lattice_multiscalar_continuum_limit`. Validates multi-scalar approach as decomposition tool: different scalars carry different geometric content (boundary signal vs interior vacuum vs divergence). First inhabitant where scalars hit different non-zero continuum targets simultaneously.
-- ✅ **#421 — B4-advance: multi-scalar cycle convergence + T² Forman non-convergence audit**. `AdvancedContinuumLimits.lean`. (a) Multi-scalar cycle: Higuchi, SquareCount, DegVariance all → 0 on cycle sequence in addition to Forman (#420). Verified depths `n ∈ {4,5,6,8,16,32}` per scalar via `native_decide`. Named `cycle_higuchi_trueLimit_zero` / `_squareCount_trueLimit_zero` / `_degVariance_trueLimit_zero`. (b) T² non-convergence audit: `torusHG m n` as 2D flat torus. Certified `torus_4_4 = -256`, `torus_5_5 = -400`, `torus_6_6 = -576`, strictly decreasing sequence NOT approaching 0. `unweighted_forman_fails_on_2d_torus` conjunction. `torus_per_edge_forman_bias`: structural reason — `-8` per edge × 2n² edges = `-16n²` (unbounded). **The codebase honestly certifies in Lean** that unweighted Forman fails on flat 2D continua — weighted-Forman / Christiansen-2024 / Regge needed for d ≥ 2. The cycle case is special (1D, degree 2, no triangles); for d ≥ 2 the per-edge Forman bias makes naive convergence impossible.
-- ✅ **#418 — B3: Per-metric target curvature scalars**. `MetricTargetScalars.lean` defines `formanTarget : MetricData n → ℤ` and analogues (transport, higuchi, degvariance, squarecount); vacuum metrics → target 0. New `strong_obligation_from_exec_rate_with_metric_coupled_tgt` requires `tgt = formanTarget M` — rate envelope no longer target-agnostic. Named coupled discharges: `minkowski4_strong_coupled`, `sphere_strong_coupled`, `warpedDiag2_strong_coupled`, `schwarzschild_strong_coupled`. Architecture upgrade for B3 — actual continuum-target connection still needs B4 (R4 / #218 discrete-Ricci convergence).
-- ✅ **#417 — B2: ExecHG run → abstract Trajectory lift**. `ExecTrajectoryLift.lean` lifts engine runs to abstract Trajectory data. `execHGToFinHypergraph` projects engine states into `Hypergraph (Fin (vertexBound + 1))`. `liftExecRunInitial` builds 1-state Trajectory carrying actual engine-run final state. New `strong_obligation_from_exec_rate_with_lifted_trajectory` replaces the `Fin 1 + Hypergraph.empty + empty applications` trivial existential with the actual engine-run output. Named lifted GR-zoo discharges: `minkowski4_strong_lifted`, `schwarzschild_strong_lifted`, `flrw_strong_lifted`, `warpedDiag2_strong_lifted`.
-- ✅ **#420 — B4-instance: cycle continuum-limit Forman → 0 = Ric(S¹) genuine convergence**. `CycleContinuumLimit.lean`. First concrete inhabitant of the `TrueLimitConverges` framework that is NOT a finite-fit fudge. `cycleHG n` as n-cycle; 9 `native_decide`-certified Forman-zero theorems at depths `n ∈ {4..32}`. `constantZeroTrace_tendsto_zero` via `tendsto_const_nhds`. Named per-vacuum-metric convergence: `cycle_trueLimit_converges_to_minkowski4_target`, `_spherePartial_target`, `_warpedDiag2_target`. Contrast: `witnessRule0`'s constant-4 trace satisfies finite-fit `c=12` envelope but NOT true-limit to 0; cycle sequence's constant-0 trace satisfies BOTH. **First non-vacuous true-limit convergence to a vacuum-metric target in the codebase.** Honesty caveat: trivial case (both sides 0); non-trivial cases need Christiansen-2024.
-- 🟡 **#419 — B4 framework: finite-fit vs true-limit convergence + honesty-audit theorem**. `DiscreteRicciConvergence.lean` distinguishes `FiniteFitEnvelope` (what `rateBounded` checks) from `TrueLimitConverges` (`Filter.Tendsto` on the trace-as-sequence). Honesty theorem `witnessRule0_edge12_does_not_true_limit_converge_to_zero`: the standing discharges' finite-fit envelope is satisfied at depth 2 with `c=12` because `4·3=12`, but the trace IS NOT converging to vacuum target `0` — it's constant at 4. Proof: `tendsto_nhds_unique` applied to (constant→4) vs (assumed→0) ⇒ 4=0 contradiction. Defines `RuleGeneratesMetric_forman r seed M` as the statement-level shape of the fully-material discharge. The framework makes the gap explicit; B4-full convergence theorem remains research-level (R4 / #179 / #218 / Christiansen 2024).
-- ✅ **#416 / #267 / #398 — B1: FULLY CLOSED — abstract base case proved symbolically**. Complete chain: `allFunctions_2_pair_projection` → `bindingMatches_subdLhs_iff` → `pair_proj_injective` → `allFunctions_2_nodup` → `matchAB_mem_allMatches` + `allMatches_unique` → `allMatches_eq_singleton_matchAB` → `singleWayStep_subdivisionSys_consEdge_of_ne` (for any `a ≠ b : ℕ`, no `decide` / `native_decide`). Subsumes the 208-instance Fin-bounded coverage. Closes the simulation-lemma length-2 case for any natural number pair — the principal mechanical residual of Gap B is gone.
-- ✅ **#415 — Literature-grade multi-edge rule catalog + real curvature emergences**. `LiteratureRules.lean` extracts 6 multi-edge ExecRules from the Wolfram-model literature: `jgorardNamedRule` (arXiv:2102.09363, 4-LHS/4-RHS, conservative), `triangulationRule` (`{{x,y}} → {{x,y},{x,z},{y,z}}`), `triangleClosureRule` (`{{x,y},{y,z}} → +{x,z}`), `subdivisionRuleLit`, `wheelerRule` (2-LHS/4-RHS wheel-center), `tripleExtendRule`. Real findings: triangle-closure on path123 → flat 2D Euclidean (Higuchi `[2,0,0]`, DegVar `[2,0,0]`); triangulation on edge12 → hyperbolic emergence (Higuchi `[2,0,-6]` + 24 emergent squares); JGORARD's rule on the 3-edge triangle seed does not fire, so all 5 traces are constant. **Literature-grade rules with literature-grade discharges**.
-- ✅ **#414 — Milestone.lean True-stub upgrade**. 10 placeholder Props (`DistConvergesTo`, `ConnectionConvergesTo`, `RiemannTensorConvergesTo`, `EinsteinFieldEquationsHold`, `DiscreteStressEnergyEmerges`, `BranchialHilbertConvergesTo`, `BranchialEvolutionConvergesTo`, `BornRuleEmerges`, `InitialDataMatches`, `Psi4Matches`) upgraded from `True` to `∃ d : ScaledDiscrepancy, WassersteinRateObligation d`. Real rate-bounded existential content (no longer trivially `trivial`); each gets a `_zero` companion theorem proving it via the constant-zero discrepancy. Existing milestone Props (`GR_emerges_from_some_hypergraph`, `QM_emerges_from_hypergraph`, `BBH_emerges_from_hypergraph`) still inhabited via the new rate-content.
-- ✅ **#413 — Rule extraction: named quint-stable witnesses + alternative-witness discharges**. `RuleExtraction.lean` materializes the 5 quint-stable rules from `quintStableSelect` as named `ExecRule` definitions (`quintRuleIdentity`, `quintRuleFreshSink`, `quintRuleReversal`, `quintRuleBidirect`, `quintRuleFreshSource`). Each rule's quint-stable membership is `native_decide`-certified. For the three constant-trace rules, all 15 (3 seeds × 5 scalars) trace values are pinned and rate-(constant, c=0) envelopes proven. Named alternative-witness discharges for Minkowski 4: `minkowski4_strong_from_quintRuleIdentity`, `_quintRuleReversal`, `_quintRuleBidirect`, plus per-family variants (`_transport`, `_higuchi`, `_degvariance`, `_squarecount`). Bundles: `minkowski4_quintRuleIdentity_quintDischarge` (5-tuple), `minkowski4_three_rule_witnesses` (3 independent rule witnesses, same metric+family). System now extracts rules → inserts them as proof witnesses end-to-end.
-- ✅ **#412 — `BBH_emerges_from_hypergraph_Strong` Phase D endgame umbrella + grand-unified milestone trinity**. `BBHEmergence.lean` completes the trio after #409 GR and #411 QM. `BBHTarget` type with mass + mass-ratio + spins. Named instances: `equalMassNonspinning`, `unequalMassNonspinning`, `alignedSpinEqualMass`, `gw150914Like` (LIGO first detection: q≈0.78, χ≈0.3), `lowMassLowSpin`. `HypergraphBBHOriginObligationStrong B` Prop with five-fold parametric discharges. Per-target quint bundles. Headline `BBH_emerges_from_hypergraph_Strong` includes universal `∀ B : BBHTarget` slot. **Grand-unified `GR_and_QM_and_BBH_emerge_from_hypergraph`** ties all three milestones together. Discharge-count certification: GR 84 + QM 60 + BBH 45 = **189 independent material discharge cells** across the trinity, plus parametric universal forms. Caveat: BBHEmergence delivers the core rate-bounded origin obligation; Phase-D-specific InitialDataMatches / Psi4Matches still require numerical-relativity infrastructure (H6-H9).
-- ✅ **#411 — `QM_emerges_from_hypergraph_Strong` materially-discharged umbrella (#370 / #371, QM half of the milestone pair)**. `QMEmergence.lean` parallels `GREmergence.lean` (#409) on the branchial/quantum side. `QuantumTarget` type, `HypergraphQuantumOriginObligationStrong Q` Prop (reuses `WassersteinRateObligation` infrastructure), five-fold material discharges via the existing curvature families parametric in the quantum target. Named QM-zoo discharges: `qubit_strong_from_exec_witness_{forman,transport,higuchi,degvariance,squarecount}`, `qutrit_*`, `qudit_*`. Per-target quint bundles. Headline theorem `QM_emerges_from_hypergraph_Strong` discharges qubit, qutrit, quditFour, quditEight + parametric `∀ n, qudit n`. Grand-unified `GR_and_QM_emerge_from_hypergraph` combines both milestones in one theorem. Discharge-count certification: 5 × 3 × 4 = 60 cells. Promotes the True-stub `QM_emerges_from_hypergraph` from `Milestone.lean` to materially-discharged.
-- 🟡 **#267 / #398 progress — `SubdivisionAbstract.lean` structural reducer**. Lifts the canonical-binding helpers and engine-side reducer pieces for the abstract `singleWayStep_subdivisionSys_consEdge_of_ne` proof out of `SubdivisionPath`'s 208-instance Fin-bounded coverage. Provides `matchAB`, `matchABext`, LHS/RHS image identities by `rfl`, pointwise extraction, `Fin 2` funext, singleton-image characterization, and the `singleWayStep` inner-extension equality. Reduces residual to the single enumeration lemma `allMatches subdivisionRule [consEdge a b] = [matchAB a b]` (`a ≠ b`).
-- ✅ **#410 — Fifth curvature family — square-count scalar + Quint-screener + SquareCountRateBridge**. (a) `SquareCountScreener.lean` introduces `squareCountOrdered H` — ordered 4-cycle (square) count, each undirected square contributes 8. Cycle-topology signal, captures global 4-cycle structure that the four earlier scalars (all degree- or neighbourhood-local) miss. Numerics: K₃→0, edge12→0, path123→0, cycle4→8. (b) Extended `DualCurvatureScreener.lean` to QUINT: `squareCountTrendOf`, `squareCountStablyClassifiable`, `quintStablyClassifiable`, `quintStableSelect`. Certified counts: Quint = 5 (= Quad; SquareCount agrees with quad-survivors). (c) `SquareCountRateBridge.lean` parallels the four earlier rate-bridges; `witnessRule0_edge12_squareCountTrace = [0,0,0]`, rate bound at `(tgt=0, c=0)` trivially. **Named GR-zoo discharges via square count**: Minkowski 4, Schwarzschild, FLRW, RN, de Sitter, 2-sphere, warpedDiag2. After this commit every continuum GR metric has FIVE independent material discharges.
-- ✅ **#409 — `GR_emerges_from_hypergraph` umbrella theorem (instantiating #369 / #371)**. `GREmergence.lean` packages the multi-family multi-seed multi-metric discharge cascade into a single completion-criterion Prop: every named GR metric is materially discharged via the strongest Forman variant `_trace_and_sys`. Per-metric quad-discharge bundles (`minkowski4_quadDischarge` through `warpedDiag2_quadDischarge`) and per-metric seed-triple bundles (`minkowski4_seedTriple_forman` / `_transport` / `_higuchi` / `_degvariance`). Discharge-count certification: 4 × 3 × 7 = 84 independent material cells across (metric × family × seed). The "we got there" completion-criterion signature.
-- ✅ **#408 — Witness-diversity layer for the GR-zoo discharges**. `WitnessDiversity.lean` publishes alternative seed-witnesses for `witnessRule0` on `path123` and `cycle4` (in addition to the existing `edge12`). Twelve constant-trace certifications (4 curvature families × 3 seeds) plus 30+ named GR-zoo discharges across (metric × family × seed) — `minkowski4_strong_path123_forman`, `_cycle4_transport`, `schwarzschild_strong_path123_higuchi`, etc. Demonstrates the rate-bridge architecture is **seed-robust** — discharges are not anchored to a single (rule, seed) pair.
-- ✅ **#407 — Quad-curvature select + DegVarianceRateBridge** (fourth genuinely-independent curvature family). (a) `DegreeVarianceScreener.lean` introduces the scaled degree-variance scalar `degVarianceScaled H := |V|·Σdeg² − (Σdeg)²` — second-order in the degree distribution, independent of Forman/Transport/Higuchi (all first-order). Numerics: K₃→0, C₄→0, edge12→0 (degree-regular); path123→2; edge-append on edge12: trace `[0, 2, 16]` non-constant. (b) Extended `DualCurvatureScreener.lean` to QUAD: `degVarianceTrendOf`, `degVarianceStablyClassifiable`, `quadStablyClassifiable`, `quadStableSelect`. Certified counts: Forman=11, Transport=17, Higuchi=17, DegVariance=11 (DIFFERENT set from Forman, mutual ⊄ certified), Triple=11, Quad=**5** — first screener to strictly refine the Triple intersection. (c) `DegVarianceRateBridge.lean` parallels the three earlier rate-bridges; `witnessRule0_edge12_degVarianceTrace = [0,0,0]`, rate bound at `(tgt=0, c=0)` trivially. **Named GR-zoo discharges via degree-variance**: Minkowski 4, Schwarzschild, FLRW, RN, de Sitter, 2-sphere, warpedDiag2. After this commit every continuum GR metric has FOUR independent material discharges.
-- ✅ **#406 — Triple-curvature select + HiguchiRateBridge**. (a) Extended `DualCurvatureScreener.lean` with `higuchiTrendOf`, `higuchiStablyClassifiable`, `tripleStablyClassifiable`, `tripleStableSelect`. Certified distribution: Forman 11, Transport 17, Higuchi 17 (= Transport, mutual subset certified), Triple 11. (b) `HiguchiRateBridge.lean` parallels `ExecRateBridge`/`TransportRateBridge` for the Higuchi scalar — third independent material discharge route. Witness `witnessRule0_edge12_higuchiTrace = [2,2,2]`; rate bound at `(tgt=2, c=0)` trivially holds. **Named GR-zoo discharges via Higuchi**: Minkowski 4, Schwarzschild, FLRW, RN, de Sitter, 2-sphere, warpedDiag2. After this commit every continuum GR metric has THREE independent material discharges.
-- ✅ **#405 — `HiguchiScreener.lean` (instantiating #367)**: third independent curvature family. Euler-defect form `2·κ_H(v) := 2 − deg(v)` (integer-doubled, decide-checkable). `higuchiVertexDoubled`, `higuchiTotalDoubled`, `Dossier.higuchiScalarTrace`, `Dossier.higuchiScalarConstant`. Certified: K₃ → 0, C₄ → 0, edge12 → 2, 3-path → 2. **Real research finding**: edge-append on edge12 CONSERVES Higuchi curvature (trace `[2,2,2]` — path-shape conservation) — even though Forman and Transport both said non-constant. The three screeners detect different aspects.
-- ✅ **#404 — `TransportRateBridge.lean`**: second material discharge route through the transport curvature family (#402). `dossierTransportConvergesToAt`, `transportStablyConvergesToAt`, `ExecTransportMetricOriginObligation` (abbrev decidable). Bridges `strong_obligation_from_transport_rate` + `_partial` variant, reusing `discrepancyOfTrace` from `ExecRateBridge` (trace-generic). Witness: `witnessRule0` on `edge12` has transport trace `[-2,-2,-2]` (constant); rate bound at `(tgt = -2, c = 0)` trivially holds. **Named GR-zoo discharges via transport** (parallel to #394's Forman discharges): `minkowski4_strong_from_exec_witness_transport`, `schwarzschild_*`, `flrw_*`, `rn_*`, `deSitter_*`, `sphere_*`, `warpedDiag2_*`. Every named GR metric now has TWO independent material trace-coupled discharges (one via Forman, one via Transport).
-- ✅ **#403 — Dual-curvature select (`DualCurvatureScreener.lean`)**: combines Forman (#384) + Transport (#402) screeners. `transportTrendOf`, `transportTrendsAcross`, `transportStablyClassifiable`, `dualStablyClassifiable`, `dualStableSelect`. Certified distribution on the 21-candidate family + seedSet at 2 steps: **Forman-stable = 11, Transport-stable = 17, Dual-stable = 11**. **Structural result** (`native_decide`-certified): every Forman-stably-classifiable candidate is also transport-stably-classifiable — the Forman screener is strictly *stricter* than the transport screener (11 < 17). The two screeners are not equivalent; 6 candidates pass transport but not Forman — transport detects something Forman cannot.
-- ✅ **#402 — Ollivier-Ricci-style screener integration (`OllivierRicciScreener.lean`)**. Integer-valued primitives (`hopCostInt`, `indicatorInt`, `w1IntegerUpper`, `transportScalarAdj`, `transportScalarH`) decide-checkable. Dossier-level `Dossier.transportScalarTrace` + `Dossier.transportScalarConstant`. Certified numerics: K₃ → −30, C₄ → −64, edge12 → −2; K₃ ≠ C₄ certified. Concrete-run examples: `trivialIdentity` on `edge12` has constant trace `[-2, -2, -2]`; `edgeAppend` on `edge12` is NOT constant on the transport scalar. **Honest framing**: this is the product-coupling upper-bound discriminator, NOT the true LP-optimum Ollivier-Ricci κ — useful as a discriminator and integer-valued (decide-checkable), the true κ requires the `w1InfimumOver` machinery with a careful candidate set.
-- ✅ **#401 — Ollivier-Ricci screener foundation on ExecHG (`OllivierRicciExec.lean`)** (instantiates #368). `neighbourhood` / `closedNeighbourhood` (open/closed vertex neighbourhoods in ExecHG ℕ); `uniformOnNeighbourhood` (uniform InfraMeasure on `{v} ∪ N(v)`); `hopCost` (0/1/2 distance) + `hopCost_nonneg`; `w1NeighbourhoodUpper` (W₁ upper bound between two vertex-neighbourhood measures, via #400's `w1ProductUpper`) + `w1NeighbourhoodUpper_nonneg`; `ollivierRicciEdgeUpper` (`κ(u,v) := 1 - W₁_upper / d(u,v)`). Demo: triangle K₃ has |N(1)| = 2, |closedN(1)| = 3 (whole vertex set, positive-curvature regime); 4-cycle has |N(1)| = 2, |closedN(1)| = 3 (flat regime). Foundation for the Ollivier-Ricci rule-search screener.
-- ✅ **#400 — W₁ Wasserstein-1 layer on InfraMeasure**. `productCoupling m₁ m₂` (independent joint weight, decidable upper bound on W₁), `w1ProductUpper` + `w1ProductUpper_nonneg`. `w1InfimumOver` (infimum of `transportCost` over a candidate-coupling list, with default fallback), `w1InfimumOver_le_member` proving the infimum is ≤ each candidate's transport cost. Foundation for an Ollivier-Ricci hypergraph screener (#368) — W₁ between vertex-neighbourhood InfraMeasures.
-- ✅ **#399 — Enlarged rule-search family (`maxRHS = 3`, 41 candidates)**. New certified distribution at `n = 1` step across `seedSet`: 41 total, 19 stably classifiable (11 stably flat, 8 stably positive, 0 stably negative, 0 stably zero), 22 seed-dependent. All counts `native_decide`-certified. Stability filter rejects more than half the enlarged family.
-- 🟡 **#398 — Fin-bounded #267 base case (208 universally-quantified instances)**. `singleWayStep_subdivisionSys_consEdge_fin8` + `_fin12` certify the base-case equation for ∀ a b : Fin 8 / Fin 12 (64 + 144 instances). High-value spot-check at (137, 891), (500, 500). Truly-abstract `(a b : ℕ) (a ≠ b) → ...` symbolic proof still residual but the Fin-bounded result covers every concrete (a, b) likely to be used.
-- ✅ **#397 — Residual sweep**: (a) multi-seed material discharge in ExecRateBridge (`addDiscrepancy`, `sumDiscrepancies`, `discrepancyOfRuleOverSeeds`, `strong_obligation_from_stably_converges`); (b) Coupling + transport cost in InfraMeasure (`Coupling V`, `marginal1/2`, `IsCouplingOf`, `transportCost`, `transportCost_nonneg` — foundation for W₁ / Ollivier-Ricci #368); (c) third `pythagoreanHop` method in PerpendicularModuli + `perp_methods_pairwise_disagree` (three-way moduli, all pairs disagree on some graph/triple); (d) six `decide`-checked instances of the #267 engine-side base case for fixed `(a,b)` pairs spanning `(0,1)` through `(100,200)` — the abstract general proof for `a ≠ b` remains the formal residual.
-- ✅ **#388 — `InfraMeasure.lean` (synthetic measure primitive starter)**. `InfraMeasureData V := V → ℝ` + non-negativity witness; `totalMass` + `totalMass_nonneg`; `restrict` (Bool-predicate restriction); `uniformOn` (finite-list uniform); `dirac` (point mass). Decoupled from `MeasureTheory.Measure` — makes the F5 distinction structural at the type level. Reference target for #368 OLLIVIER-HG.
-- ✅ **#390 — `PerpendicularModuli.lean` (multi-method perpendicularity starter)**. `PerpMethod` (`adjacencyWedge`, `sharedNeighbour`); per-method Bool predicates; method-parameterised `isPerpendicular`. **`native_decide`-certified disagreement on the 4-cycle**: theorem `perpendicular_methods_disagree` is the F1 moduli realisation at the perpendicular layer.
-- 🟡 **#227 starter — `allEdgeInstanceMatches_singleLHS`** in `MultiwayExec.lean`: per-edge-instance match enumeration for single-LHS-edge rules, alongside the existing per-binding `allMatches`. Non-breaking (additive only); duplicate edges produce duplicate bindings, fixing the deduplication issue. General multi-edge-LHS per-instance is the open piece of #227 proper.
-- 🟡 **#395 — Progress on #267 (subdivision simulation lemma): closed-form ladder + base-case bricks**. `SubdivisionPath.lean` extends the `singleWayEvolve subdivisionSys subdSeed n = pathEdges (subdVerts n)` `native_decide`-certified ladder from `n = 0, 1, 2` to `n = 0..5`. Four abstract sub-lemmas (`vertexList_consEdge_of_ne`, `nextFresh_consEdge_of_ne`, `subdivideAll_singleton`, `subdivideAll_consEdge_nextFresh_of_ne`) pin the RHS-side quantities of the simulation lemma's length-2 base case for abstract `a ≠ b`. The engine-side `singleWayStep [consEdge a b] = ...` and the inductive step (per `notes/232_subdivision_path_plan.md` S1/S2/S3) remain the load-bearing residual; literal #267 still open.
-- ✅ **#394 — Partial Gap B closure + full GR metric zoo materially discharged**. ExecRateBridge gains `strong_obligation_from_exec_rate_with_trace_and_sys` + partial variant: the strong obligation's existential `RewritingSystem` is now `ExecSystem.toRewritingSystem_single r` (rule's abstract cast) instead of `⟨[]⟩`; Trajectory's `applications` still empty (full closure of Gap B requires the dossier-to-trajectory simulation #267 / #231). Multi-metric instantiations using `witnessRule0` on `edge12` with the material trace: `minkowski4`, `schwarzschildPartial M`, `flrwPartial a da`, `rnPartial M Q`, `dsPartial Λ`, `spherePartial`, `warpedDiag2` — every named GR metric in the zoo now has a material-trace + rule-coupled-sys discharge.
-- ✅ **#393 — Material trace-coupling in `ExecRateBridge` (Gap A closed on ExecHG side)**. Adds `rateBoundedAux_implies` (induction lemma extracting per-index rate bound from `rateBoundedAux`), `rateBounded_implies` (at offset 0), `discrepancyOfTrace trace tgt` (= `|trace.get ⟨k, h⟩ − tgt|` cast to ℝ for `k < trace.length`, else 0), `discrepancyOfTrace_satisfies_obligation` (proves `WassersteinRateObligation` directly from `rateBounded` via case-split + `nlinarith` rate chain), `strong_obligation_from_exec_rate_with_trace` + partial variant. **Concrete material discharges**: `witnessRule0_edge12_trace_rateBounded` (`native_decide` on actual trace), `minkowski4_strong_from_exec_witness_trace`, `schwarzschild_strong_from_exec_witness_trace M`. Discrepancy is now the rule's actual Forman trace, not a constant — Gap A closed on the ExecHG side. Gap B (dossier-to-trajectory lift, the existential half) remains the deferred work for full body-coupling.
-- ✅ **#392 — `ExecRateBridge.lean` (rate-screener → strong metric-origin obligation)**. `ExecMetricOriginObligation r seeds N tgt c := stablyConvergesToAt r seeds N tgt c = true` (`abbrev`, decidable). `discrepancyOfRate c := c/(k+1)` + `discrepancyOfRate_satisfies` (`O(1/n)` by `nlinarith`). **Bridge theorems** `strong_obligation_from_exec_rate` and `strong_partial_obligation_from_exec_rate`: any continuum `MetricData` / `PartialMetricData` strong obligation discharges from a concrete `ExecRule` passing the rate screener — **statement-coupled** (discharge syntactically requires exhibiting a passing rule; the existential-trajectory half still uses the trivial-empty witness pending Gap B closure / dossier-to-trajectory lift / #267). **Concrete witness**: `witnessRule0 := rate12Witnesses.headD trivialIdentityExecRule` (first of #391's 7-element rate-(0,12) selection), `witnessRule0_passes` via `native_decide`, and named obligations `minkowski4_strong_from_exec_witness` and `schwarzschild_strong_from_exec_witness` discharged via the bridge. First end-to-end coupling from "rule search using Lean alone" to a named GR-metric obligation discharge.
-- ✅ **#391 — Rate-based target-aware screener (`RuleSignatureExecSearch`)**. `rateBounded`, `dossierConvergesToAt`, `stablyConvergesToAt`, `stableRateSelect` — `decide`-checkable `|trace[i] − tgt| · (i + 1) ≤ c` envelope predicate, parallel to the abstract `ConvergenceRateObligation`. Certified distribution: `(0,0) → 0`, `(0,12) → 7`, `(0,36) → 9`, `(0,200) → 17`, `(4,16) → 7`, `(-4,12) → 0`. **Structural results**: rate-(0, 12) = stably-flat (both containments `native_decide`-certified); rate-stability strictly weaker than trend-stability (17 > 11 at `c = 200`). Sets the obligation shape for the eventual coupling to `HypergraphMetricOriginObligationStrong`.
-- 📋 **Paclet pull 2026-05-30 — PHAJEK substantial conceptual additions to Infrageometry + SyntheticInfrageometry**. Infrageometry cf04481→f811dc5: delta complexes (`feat: support delta complexes`, commit 02536bc — concrete WL reference for #248 KN12); `BallTopology[g,r]` + `TopologicalClosure / Interior / Boundary / Neighborhood / ContinuousMapQ` (`Kernel/Topology.wl`, scale-indexed Alexandrov topology — reference for #312 AT25); `UnitLengthGraph` / `UnitLengthEmbedding` (`Kernel/Mesh.wl`, rigid unit-distance embedding, natural setting for Regge calculus #307); `GraphBoundary` / `GraphInterior`. SyntheticInfrageometry ec934d6→eb68944 (~34 commits): `InfraLineStructure` / `FindLineStructure` T1–T5 (line as consistent path system — F1 moduli at the line layer, ref for #300); `InfraMeasure` (renamed from `VisitMeasure`) + `InfraBoundary` + `infraRepType` (synthetic measure-theoretic primitive — makes F5 distinction structural); multi-method moduli `InfraPerpendicularQ` (Schoenberg / Centroid / four-corner) and `FindInfraShellCenter` (bisector / chord / equidistant); `GeodesicGraph→GeodesicSprayGraph` rename (#208); `InfraTriangle` / `InfraPolygon` / `InfraQuadric` higher-order shapes; `PathSpace.wl` substantially expanded (ref for #333); universal-property hulls. **Refutation-chain impact**: F1 paclet-design sharpening (every basic synthetic construct admits a moduli of inequivalent definitions) and F5 synthetic-measure sharpening (InfraMeasure is its own primitive, not the marginal of a continuum law) landed in `MAJOR_FLAWS.md` + Lean refutation files. New tasks #387–#390 logged.
-- ✅ **#386 — Multi-seed stability filter (extension of #385)**. `seedSet = [edge12, path123, cycle4]` (three topologically distinct seeds), `trendsAcross`, `isStablyTrend`, `stablyClassifiable`, `stableSelect`. A candidate is admissible only if every seed yields the *same* curvature trend — the trend must be a property of the rule, not of (rule, seed). **Certified distribution** at 2 steps: 7 stably flat, 2 stably negative (genuine hyperbolic, seed-independent), 2 stably positive, 0 stably zero = 11 stably classifiable; 10 candidates are seed-dependent and rejected. The stability filter rejects nearly half the single-seed pass rate — single-seed search at #385 was over-accepting on coincidences.
-- ✅ **#385 — `RuleSignatureExecSearch.lean` (Lean-alone rule-search driver)**. Generate → run → classify → select, fully `decide`/`native_decide`-checkable on top of #384. `CurvatureTrend` (flat / positive / negative / zero) + `classifyForman` (constant ⇒ flat, else sign of the final Forman scalar); `trendOf r seed n` runs a candidate through `canonicalDossier` and reads the trend. Bounded **generator** `enumerateRules2_1 maxRHS`: single-edge LHS `{0,1}`, RHS = any nonempty subset (≤ `maxRHS`) of ordered pairs over `Fin 3` (2 bound + 1 fresh) — rules are generated, not hand-listed (21 at `maxRHS = 2`). `selectByTrend` filter. **Certified search distribution** (seed `[{1,2}]`, 2 steps): 13 flat, 4 zero-non-constant, 2 negatively-curved (tree-like/hyperbolic), 2 positively-curved, summing to 21 — classification total, screener is a genuine discriminator. First concrete "rule search using Lean alone"; the trend signal is what to port into the fast `HypergraphRewritingEngine`.
-- ✅ **#384 — `RuleSignatureExecMetrics.lean` (ExecHG-native screener metrics; engine-port spec)**. Computable signature metrics defined *directly* on the executable engine's states `ExecHG ℕ` via `vertexList` — no `[Fintype V]` carrier, no abstract `Trajectory` reconstruction — so a candidate rule's `canonicalDossier` run is screenable end-to-end by `decide`/`native_decide`. Primitives: `execAdj`, `execAdjDegree`, `execTriangles`, `execFormanEdge` (= `Hypergraph.formanRicciEdgeTriangle` arithmetic on carrier `vertexList H`), `execFormanScalar` (= `Hypergraph.formanRicciTriangleDoubled`). Dossier-level `formanScalarTrace` + the `SignatureVerdict ⟨edgeCounts, vertexCounts, formanScalars⟩` bundle is the **precise per-state metric set to port into RASSAR's `HypergraphRewritingEngine`** (the fast engine) so it can run curvature-screened search at scale. Screener verdicts `formanScalarConstant` / `formanScalarReaches` / `formanScalarPersistentGap`. Numerics pinned by cross-check (`K₃ = 18`, flat 4-cycle `= 0`, edge / 3-path `= 4`); edge-append run certifies verdict `⟨[1,2,4,8],[2,3,5,9],[4,4,0,-12]⟩` — Forman scalar turning **negative** (tree-like/hyperbolic), a decide-checked negative discharge. This is the keystone for "rule search using Lean alone" while the literal #267 subdivision simulation lemma stays deferred (Route D already decoupled it).
-- ✅ **#383 — Triangle-corrected Forman screener**. `DiscreteRicci.lean` adds `Hypergraph.trianglesThroughEdge`, `Hypergraph.adjDegree`, `Hypergraph.formanRicciEdgeTriangle` (with symmetry), `Hypergraph.formanRicciTriangleDoubled`. `RuleSignatureScreener.lean` adds the trajectory / deviation / screener obligation / conservative-discharge / negative-discharge family. Parallel to PHAJEK's `FormanRicciCurvature` at 1-cell level. Strictly finer than the bare 4 − deg − deg Forman; bare-Forman screener retained for backwards compatibility.
-- 📋 **Paclet pull 2026-05-13 — PHAJEK May-2026 contributions to NMURZIN's `Infrageometry`**. `Graph.wl` gains `FormanRicciCurvature` (full Forman on clique complex, O(V+E)), `OllivierRicciCurvature` (W₁ via LinearOptimization), `WolframRicciCurvature` (volume-comparison scalar), `EffectiveResistance` + `ResistanceQ` (Klein-Randić + Schoenberg). `Infrageometry.wl` gains `GreenOperatorMatrix` (block Moore-Penrose Hodge pseudoinverse, distinct from Knill `GreenFunctionMatrix`) and `HodgePropagatorMatrix` (Moore-Penrose `d_k` pseudoinverse). `SyntheticInfrageometry` substantially restructured (26 kernel files, per-primitive organisation, new Alexandrov / Euclidean / Metric / Projective / Tarski layers + Homotopy / PathSpace modules). Affects #171, #263, #264, #265, #287, #295, #297, #300, #305, #359, #368; new tasks #381, #382.
-- ✅ **#373 — `RuleSignatureExecCorpus.lean`**. ExecRule versions of the H1 catalogue (`trivialIdentityExecRule`, `edgeDoublingExecRule`, `edgeAppendExecRule`, `tripleExpansionExecRule`, `gorardNamedExecRule`) wired through `canonicalDossier` to produce axiom-clean Lean-internal screening verdicts on `edgeCountConstant`. Headline `h1_corpus_edgeCount_screener_verdict`: trivialIdentity ✓, JGORARD path-seed ✓ (constant 4 after 1 step), edgeDoubling/edgeAppend/tripleExpansion ✗. **Cycle-seed observation**: JGORARD's rule + 4-cycle seed fails constancy under `singleWayStep` because four overlapping matches each emit their RHS while consumed edges have already been removed — engine-level non-conservation despite abstract-side conservation. The closed-corpus on-ramp is now self-contained: no paclet round-trip required.
-- ✅ **#372 + #377 — `RuleSignatureSchema.lean`**. `Dossier { rule, seed, states }` data model for the WL-paclet ↔ Lean trajectory interchange. `isConsistent : Bool` decidable check (each Hᵢ₊₁ = singleWayStep ⟨[d.rule]⟩ Hᵢ; states[0] = seed). `canonicalDossier` reference dossier built via recursive `evolveTrace`. **Soundness `canonicalDossier_isConsistent`** + **strong correctness #377 `consistent_dossier_eq_canonical`** (every consistent dossier IS the Lean executor's canonical trajectory). Concrete `decide`-tests on subdivision rule (`[1,2,4,8,16]` edge counts; `[2,3,5,9,17]` vertex counts) and TC1. **The trust boundary is now sealed**: WL is the search heuristic; Lean is the judge; WL emissions become precomputed caches, not new claims. Push order alignment (2026-04-29): #373 Lean-only end-to-end pipeline on H1 catalog is the on-ramp; #374 paclet emitter request + #375 paclet hookup is the at-scale accelerator for #190 only — *not* on the critical path for K1 / K3.
-
-
-- ✅ **`KnillCore.dSquared_eq_zero` (#277)** — cochain-complex axiom for signed boundary on oriented simplices, axiom-clean. Plus `dStarSquared_eq_zero` codual.
-- ✅ **`KnillCore.hodgeOnG_psd`** — Hodge laplacian PSD as bilinear form via sum-of-squares decomposition. Plus `hodgeOnG_dirichlet_zero_iff_isDiracKernel` (kernel-side Hodge isomorphism), `hodgeOnG_diag_eq_sum_dirac_sq`.
-- ✅ **`SubdivisionPath.subdivisionTrajectory n` (#284, Route D)** — canonical n-step trajectory `pathEdges (subdVerts n)` defined directly, with `_isPathOf`, `_length = 2^n`, `_succ`. Decoupled from engine simulation lemma.
-- ✅ **`WassersteinRate.subdivisionDiscrepancy` (#234)** — `1/2^n` discharges `WassersteinRateObligation` with `O(1/n)` rate. First end-to-end machine-checked rule-trajectory → continuum-target convergence certificate.
-- ✅ **`MultiwayExecBridge.lean` (#231)** — first formal exec ↔ abstract bridge: `ExecRule.toRule`, `Fin.embedSuffix`, single-rule `ExecSystem` cast, `consumed_toMultiset`. Closes the architectural anchoring gap.
-- ✅ **`KnillCore.wuCharacteristic₂_eq_chi_sq_sub_disjoint` (KN3)** — Wu inclusion-exclusion identity.
-- ✅ **`KnillCore.eulerCharacteristic_eq_alt_sum_kSkeleton` + `_fintype` corollary (KN8)** — Euler-Poincaré f-vector identity.
-- ✅ **#280–#283** — structural helpers `mem_subdivideVerts_imp`, `subdivideVerts_nodup`, `subdVerts_nodup`, `nextFresh_pathEdges`.
-- ✅ **#233 Phase A** — `HypergraphMetricOriginObligationStrong` lands with `ScaledDiscrepancy + WassersteinRateObligation`; concrete discharge `minkowski4_from_hypergraph_strong` via `subdivisionDiscrepancyBundle`; generic lifting + per-metric Props (Schwarzschild / FLRW / RN / dS / S² / warpedDiag2). First obligation Prop with quantitative rate content.
-- ✅ **#233 Phase A follow-up** — `ConvergenceRateObligation d r` generic rate-family admitting `rateOneOverN`, `rateOneOverNSquared`, `rateGeometric c`. Bidirectional bridge to `WassersteinRateObligation`. `subdivisionDiscrepancy_satisfies_geometric` (natural `(1/2)^n` rate). Precondition for Phase B's screener metrics (Forman-Ricci, GH, spectral).
-- ✅ **#224 (Phase B opens)** — `RuleSignatureScreener.lean` lands: per-slice `signatureTrajectory τ : ℕ → RuleSignature V`; real-valued projections (`edgeCountTrajectory`, `vertexCountTrajectory`, `formanRicciTrajectory`); curvature-deviation discrepancy `formanRicciDeviation τ κ`; screener obligations `FormanRicciScreener τ κ r := ConvergenceRateObligation (formanRicciDeviation τ κ) r` and compound `MultiScreener τ tgt_e tgt_κ r`. Conservative-discharge theorems (`edgeCountTrajectory_const_of_conservative`, `edgeCountTrajectory_satisfies_any_rate_of_conservative`, `multiScreener_self_of_conservative_initial`). Negative-discharge `formanRicciScreener_fails_of_persistent_gap` (structural rule-disqualification when the curvature deviation has a uniform positive lower bound on a cofinal subset).
-- 📋 **Angle tower (AT0–AT27, #285–#314)** — full taxonomy logged across 13 flavour-columns × multiple abstraction levels. Columns: M (metric, `dist`-only), S (spectral, Hodge-based), Y (synthetic, predicates-only), T (transport, Wasserstein), Q (branchial / QM, `BranchialHilbert`), L (Lorentzian, rapidity), G (gauge / fibre, `Connection`), I (information-geometric, Fisher), H (higher-dim k-tuples — incl. **AT20 Regge deficit, the numerical-GR variable**), K (conformal — **AT23 conformal IS pure-angle data**), F (higher-form: discrete metric tensor, Riemann), N (non-standard: tropical, p-adic), C (scale-spectrum), U (multivalued for non-`GeodesicallyUnique`). Plus **AT9 Bishop-Gromov scalar curvature from log V(r)** and **AT11 dimensionless ↔ dimensional bridge** (units emerge from continuum rescaling). **Three structural observations**: (i) AT18 Cayley-Klein cross-ratio works without straight lines (only `Between`+`dist`-ratios), sidestepping SWOLF's geodesic-uniqueness requirement; (ii) conformal geometry IS pure-angle theory; (iii) AT20 Regge deficit gates Phase D BBH.
-- 📋 **PATH1/PATH2 (#300/#301)** — SWOLF's non-overlapping-path substrate. Currently `Hypergraph.dist := H.toSimpleGraph.dist` uses Mathlib clique-expansion which silently drops self-loops (`loopless`), collapses multi-edges in the `Multiset`, and treats ≥3-arity hyperedges as `K_n`. Numerically `dist` is right (Mathlib shortest walk is auto-simple-path), but structurally we lose "which hyperedge was rewritten at step i" — important for #228/#229 causal/branchial extraction. PATH1 = native `Hypergraph.SimplePath u v` carrying `Nodup` vertex list AND hyperedge sequence; PATH2 = equivalence/disagreement theorem with `Hypergraph.dist`. Prerequisite for AT3 (Toponogov), AT8 (`GeodesicallyUnique`), AT26 (multivalued angle).
-- 📋 **Topology-before-metric layer** — full layered hierarchy logged. **Cellular substrate**: CELL1 (#315) cellular sheaves on Hypergraph V — PHAJEK's "string theory on the graph" framework, cycles-with-common-points = equalizer at common-stalk. **Polygon framework**: POLY1 (#316) generalised polygon (arbitrary intersection sequences, recovers Euclidean as singleton-intersection case); POLY2 (#317) cellular k-chain in Δ-complex with sheaf coefficients (full categorical generalisation, subsumes POLY1+CELL1+P4+P5+P19+IGE2); POLY3 (#318) spin networks/foams (LQG primitive, knot-invariant home via Witten/RT). **Path moves**: DEFORM1 (#330) elementary deformations (Tietze/Whitehead/Reidemeister-style: backtrack, 2-cell, hyperedge-transit substitution); DEFORM2 (#331) elementary extensions (forward/backward edge/hyperedge-transit append). **Equivalence relations**: HOM1 (#332) path-homotopy as `EqvGen` of DEFORM1; HOM2 (#333) fundamental groupoid Π_1(H); CONTRACT1 (#329) contractibility predicate (binary, scale-indexed via VR-complex; persistence-barcode death-time IS the contractibility scale). **Topological invariants**: TOP1 (#323) first Betti b_1 (combinatorial cycle rank); TOP2 (#324) higher Betti via Hodge; TOP3 (#325) fundamental group π_1; TOP4 (#326) connected components b_0 (with multi-way/branchial refinement); TOP5 (#327) higher homotopy π_k; TOP6 (#328) genus / crossing number. **Knot/link invariants**: KNOT1 (#320) linking number / Borromean detection; KNOT2 (#321) Massey products / higher-linking; KNOT3 (#322) Yamada/Jones via spin-network Chern-Simons evaluation. **Sheaf-angle**: AT-W (#319) — 14th flavour-column in the angle tower, generalises AT4 spectral / Knill / Connes inner-product angle. **For Phase D BBH**: black-hole horizon = non-contractible cycle; merger event = moment cycle becomes contractible (2-cell fills non-contractible region); knot-cobordism between linked → unlinked configurations. SWOLF's structural sequence: TOP4 (b_0 connectedness, four flavours: spatial/causal/branchial/rewriting-reachable) → PATH1 → POLY1 → CONTRACT1 → DEFORM1/2 → HOM1/2 → TOP3 → TOP1 — each layer is one short Lean def on top of the previous; the whole hierarchy lives below the metric layer. PHAJEK's "string theory on the graph" framing: the cellular-sheaf framework IS string field theory (closed strings = 1-cycles, interaction vertices = common-stalk equalizers, worldsheets = cellular k-chains, string amplitudes = sheaf-cohomology).
-- 📋 **Hyperplane / polytope / inside-outside / bounded layer** — PHAJEK's "graph separation" + SWOLF's metric/topological refinements: HYPER1 (#338) separator, HYPER2 (#339) perpendicular bisector, HYPER3 (#340) Voronoi, HYPER4 (#341) three-strengths equivalence (finite-vs-infinite hyperplane distinction recovers in continuum limit), MIDPT1 (#342) midpoint, POLYTOPE1 (#343) polytope as hyperplane-arrangement cell, INOUT1 (#344) inside/outside on cycles (Jordan + 4 "inside" criteria), BOUND1 (#345) diameter (4 flavours), MEMBER1 (#346) decidable membership, COMPACT1 (#347) limit-only compactness. SPHERE1–4 (#334–#337) infra-sphere with topology + surface-area Bishop-Gromov extraction. **SWOLF's program statement "we're going to get all the way to differential geometry"** — the full 25-step constructive route from elementary connectedness to BBH-from-hypergraph documented in INFRAGEOMETRY.md §5f.
-- 📋 **Surface / manifold-detection layer** — SURFACE1 (#348) Knill/Fisk recursive manifold predicate (`IsFiskManifold n H` iff every vertex's unit sphere is (n-1)-manifold AND every unit ball is contractible); subsumes / sharpens KN13 (#249). **Diagnostic on a tree**: shell disconnected at every positive radius → fails Knill at every positive dim → tree is NOT manifold-like. Empirical screener for "rule produces manifold-like hypergraph".
-- 📋 **Formal-topology layer** — OPEN1 (#349) multiple natural topologies on a hypergraph (discrete / Alexandrov / metric / cellular-star / VR-scale-indexed / causal); NBHD1 (#350) neighbourhood basis at each vertex (SWOLF's "locally has neighbourhoods" intuition for surfaces — manifold-like = neighbourhood basis stabilises to disk-shapes).
-
-For full taxonomy + connectedness flavour analysis + units-emergence + path-vs-walk + contractibility-via-persistence + 25-step diff-geo route + NMURZIN coverage cross-reference, see INFRAGEOMETRY.md §2, §2.5, §3, §5b–§5g.
-- ✅ **AT0 + AT1 (#285, #286)** — `Hypergraph.elementaryAngle`, `Hypergraph.cosAngle`, `Hypergraph.angle`, `Hypergraph.IsOrthoApprox` in `HypergraphDistance.lean`. SWOLF's chord-ratio + law-of-cosines + orthogonality-tolerance predicate (AT6 substrate). Symmetry, non-negativity, self = 0 lemmas. Foundation of the 14-column angle tower.
-- ✅ **AT6 (#291)** — `CoordinatizationDimension.AreOrthogonalAxes` `True`-stub replaced with chord-ratio orthogonality `IsOrthoApprox v w₁ w₂ r ε` (chord-ratio ≈ √2 to within ε). First geometric-content upgrade of an existing predicate-level definition.
-- ✅ **AT7 (#292)** — `RuleSignatureScreener` extension: `elementaryAngleSample`, `angularDeviation`, `AngularScreener`, `CombinedScreener` (edge-count + Forman-Ricci + angular triple), persistent-gap negative-discharge theorem. **Phase B screener pipeline complete on both curvature and angular sides** — both feed the same `ConvergenceRateObligation` framework.
-- ✅ **AT9 (#294)** — `Hypergraph.scalarCurvatureAt v d r := (6(d+2)/r²)·(1 − V(v,r)/V_flat(d,r))` Bishop-Gromov extraction in `DiscreteRicci.lean`; `unitBallVolumeEuclidean d` (small-d closed form), `flatBallVolume d r := Ω_d r^d`, `scalarCurvatureAt_zero_of_match` (flat ↔ R = 0), `scalarCurvatureAt_pos_iff` (sign convention check). **Cross-checks Forman-Ricci** and AT2 angle-defect Gauss-Bonnet identity. Bridge between metric layer (`dist`) and curvature layer.
-- ✅ **SPHERE4 (#337)** — `DiscreteRicci.lean` extension. `unitSphereAreaEuclidean d` (`S_d = d·Ω_d` small-d closed forms), `flatSphereArea d r := S_d · r^(d-1)`, `Hypergraph.surfaceCurvatureAt v d r := (6d/r²)·(1 − |S(v,r)|/S_flat(d,r))` — sphere-side Bishop-Gromov scalar-curvature extractor (one Taylor-order higher than AT9's ball-side). Plus `surfaceCurvatureAt_zero_of_match`. **Independent cross-check of AT9**: both extractors should agree on R(v) in the continuum limit; finite-scale deviation measures discrete-geometry error.
-- 🟡 **CONTRACT1 substrate (#329, partial)** — `HypergraphDistance.lean` extension. `IsTrivialCycle` (length-0 baseline), `IsDiskContractible γ w r` (γ.support ⊆ B(w, r) — sufficient for contractibility on manifold-like hypergraphs), `IsContractibleAtScale γ r := ∃ w, IsDiskContractible γ w r` (persistence-barcode IT4 death-time ↔ minimum r). Plus `isTrivialCycle_isDiskContractible`, `diskContractible_zero_support`. **Residual**: full DEFORM1-based contractibility (γ reducible to `Walk.nil` via elementary moves) deferred until DEFORM1 (#330) lands. Disk-contractible substrate suffices for BBH topology-change tracking (event horizon = non-disk-contractible cycle; merger = becomes disk-contractible).
-- ✅ **OPEN1 (#349) + NBHD1 (#350)** — `HypergraphTopology.lean` extension. **OPEN1**: `IsDiscreteOpen`, `IsAlexandrovOpen` (closed under one-step neighbour expansion), `IsCellularStarOpen` (open star of every contained vertex), `IsVRScaleOpen r` (closed under r-neighbourhoods, scale-indexed); `isAlexandrovOpen_univ`, `isVRScaleOpen_univ`. **NBHD1**: `nbhdBasis v r := H.geodesicBall v r`, `nbhdBasis_mono`, `self_mem_nbhdBasis`, `nbhdBasis_zero_eq`. Each topology yields different compactness/continuity theorems; `TopologicalSpace V` instance (closure under union + intersection) deferred. SWOLF's "locally has neighbourhoods" intuition for surfaces; precondition for SURFACE1 manifold-detection.
-- ✅ **AT8 (#293) + INOUT1 (#344)** — `HypergraphDistance.lean` extension. **AT8**: `Hypergraph.GeodesicallyUnique` (every pair of shortest walks between the same endpoints is equal) — SWOLF's straight-lines condition; gates the angle-as-real-angle interpretation for AT0/AT1/AT3/AT26. Plus `GeodesicallyUnique.swap`, `geodesicallyUnique_self_walks`. **INOUT1**: `IsCutVertex` (articulation point — every walk between two reachable vertices passes through `v`), `IsBridgeEdge` (cut edge), `CycleSeparates γ` (Jordan-separator predicate). Required for: BBH topology-change tracking (event-horizon = `CycleSeparates`-witness; Phase D), angle-interpretation theorems on geodesically-unique hypergraphs.
-- 🟡 **AT2 substrate (#287, partial)** — `KnillCore.lean` extension: `vertexStarTriangles`, `vertexTriangleCount T(x)`, `formanAngleDefectZ := 6 − T(x)` (ℤ-arithmetic; rescale by `π/3` for geometric reading per Knill / Higuchi equilateral convention). `mem_vertexStarTriangles`, `vertexTriangleCount_le`, `formanAngleDefectZ_le_six`. Residual: full Gauss-Bonnet sum identity `∑ (6 − T(x)) = 6·|V| − 3·|triangles|` needs the careful `Finset.sum_comm` double-counting proof; staged on this substrate.
-- ✅ **MEMBER1 (#346) + BOUND1 spatial flavour (#345)** — `HypergraphTopology.lean` extension: `IsInRegion v R := v ∈ R` uniform alias (SWOLF's foundational membership primitive); characterisation lemmas `isInRegion_infraDisk_iff` / `_infraSphere_iff` / `_perpBisector_iff`; `Hypergraph.spatialDiameter` (sup of pairwise distances); `dist_le_spatialDiameter`; `Hypergraph.IsBounded R`; `isBounded_of_finite` (trivial on `Fintype V`; non-trivial only at refinement / continuum limits). Four-flavour BOUND1 (causal / branchial / rewriting-reachable diameters) remains pending; spatial flavour suffices to surface the substrate.
-- ✅ **TOP1 (#323) + TOP4 (#326)** — new file `HypergraphTopology.lean`: `SpatialConnectedComponent` (clique-expansion partition); `spatialB0` = `Fintype.card SpatialConnectedComponent`; `IsSpatiallyConnected`; `firstBettiZ := H.size − Fintype.card V + spatialB0` over ℤ; `spatialB0_le_card`, `spatialB0_pos_of_nonempty`, `firstBettiZ_lower_bound`. **SWOLF's "is every point reachable from every other"** + first non-trivial topological invariant after b_0. Pre-metric (no `dist` needed).
-- ✅ **SPHERE1 (#334)** — `Hypergraph.infraSphere v r := {u | dist v u = r}`, `infraDisk v r` (alias for `geodesicBall`), `infraSphereVolume`, `infraSphere_subset_infraDisk`, `self_mem_infraSphere_zero`, `infraSphere_disjoint_of_ne`, `infraSphereVolume_le_card`. **The local-geometric primitive** AT0 chord-ratio and AT9 Bishop-Gromov ride on. SWOLF's "all points equidistant from a point".
-- ✅ **HYPER2 (#339) + HYPER3 (#340) + MIDPT1 (#342)** — `Hypergraph.perpBisector A B := {M | dist A M = dist B M}` (metric hyperplane), `closerHalf`, `HasTopologicalHyperplane` (PHAJEK's separator condition stub), `midpoint`, `nearMidpoint`, `voronoiCell` for k-seed lists, with `mem_*` characterisations and `*_symm` symmetry lemmas. **Bachmann motion-group substrate** (reflections through bisectors → translations → rotations → isometry group → Coxeter → Lie) — the constructive bridge to differential geometry's Lie structure.
-- ✅ **MILESTONE-GR / -QM / -BBH (#369, #370, #371)** — `Milestone.lean` lands. Closed Lean targets for the program-completion theorems with explicit `propext / Classical.choice / Quot.sound`-only axiom dependency once proved. Statements (not proofs) compile clean. **Three Lean-verifiable signals of completion** explicitly documented.
-- ✅ **MILESTONE-GR / -QM / -AXIOM-CHECK (#369, #370, #371)** — `Milestone.lean` lands with concrete Lean signatures for GR / QM / BBH program-completion theorems. Six structural conjuncts in `GR_emerges_from_hypergraph (target : Curvature.MetricData n) : Prop`; placeholders are `True`-typed so no axiom is introduced. Specialisations `_minkowski`, `_schwarzschild`, `_flrw`, `_some_hypergraph` (existential disjunction). QM and BBH analogues. Three Lean-verifiable signals of completion (no `sorry` / clean `#print axioms` / term-witnessed existential) explicitly documented. (Listed twice to match dependency-vs-headline ordering — the duplicate is intentional; consolidate at next major audit.)
-- 📋 **NMURZIN "Geometry on Combinatorial Objects" cross-reference** (2026-04-26) — NMURZIN's 11-page Wolfram Cloud write-up of the SWOLF-PHAJEK meeting. ~60-70% subsumed by existing tasks; 18 new gap-tasks (#351–#368) cover the residue:
-  - **§7 cellular-sheaf restriction-map classification**: SHEAF-CHOICE1–7 (#351–#357) + SHEAF-CLASSIFICATION (#358) — constant / Hodge / `S_k`-equivariant / diffusion / order / gauge / tensor-contraction sheaves, plus the meta-table mapping structural commitments to canonical sheaf-types. The document's structural payoff.
-  - **EFFRES1 (#359)** effective-resistance curvature (Devriendt-Lambiotte 2022) — third independent curvature notion between Forman and Ollivier.
-  - **DEC1 (#360)** explicit Hodge star ⋆ between primal/dual; **DEC2 (#361)** wedge product on cochains.
-  - **CLOSURE1 (#362)** three closure responses (downward / clique / nerve) as explicit Lean choices.
-  - **CHEEGER1 (#363)** Hansen-Ghrist sheaf-Cheeger inequalities.
-  - **REGGE-CONV1 (#364)** Christiansen 2024 distributional → smooth scalar curvature convergence; **CDT1 (#365)** causal dynamical triangulations; **MYERS1 (#366)** Stone discrete Myers theorem; **HIGUCHI1 (#367)** Higuchi planar-graph curvature; **OLLIVIER-HG (#368)** Ollivier-Ricci hypergraph multi-marginal extension (Eidi-Jost 2020).
-
-## 1. Core rewriting substrate
+## 1. Rewriting substrate
 
 | Module | Content | Status |
 |---|---|---|
-| `Hypergraph.lean` | `Hypergraph V`, `Hyperedge`, `map`, `size` | ✅ |
-| `Rule.lean` | `Rule P`, `IsConservative` predicate | ✅ |
-| `Application.lean` | `Application r H`, `result`, sigma-bundle lemmas | ✅ |
-| `Conservation.lean` | **Theorem A**: conservative rule preserves size | ✅ |
-| `Multiway.lean` | `RewritingSystem`, `Step`, `MultiStep`, `Confluent` | ✅ |
-| `Causal.lean` | `Trajectory`, `causallyPrecedes` | ✅ |
-| `CausalLevel.lean` | Level function, antichain theorems | ✅ |
-| `Branchial.lean` | `BranchialRelated`, `NStep`, `BranchialSlice` | ✅ |
-| `ParallelSchedule.lean` | `trajectory_preserves_size`, in/out-degree | ✅ |
-| `Demo.lean` | `edge_conservation` end-to-end demo | ✅ |
-| `Rewriting.lean` | Auxiliary scaffold | ✅ (legacy) |
+| `Hypergraph.lean` | `Hypergraph V`, `Hyperedge`, `size`, size lemmas | PROVED |
+| `Rule.lean` | `Rule P`, `IsConservative` | DEFINITIONS |
+| `Application.lean` | `Application r H`, `result` | DEFINITIONS |
+| `Conservation.lean` | A conservative rule application preserves size (`Application.size_result_of_conservative`) | PROVED |
+| `Multiway.lean` | `RewritingSystem`, `Step`, `MultiStep`, confluence | DEFINITIONS |
+| `Causal.lean` | `Trajectory`, causal precedence between applications | DEFINITIONS |
+| `CausalLevel.lean` | Level function, `no_causal_edge_within_level`, `same_level_ordered_antichain` | PROVED |
+| `Branchial.lean` | `BranchialRelated` on states of a multiway system, `NStep`, `BranchialSlice` | PROVED |
+| `ParallelSchedule.lean` | In-degree and out-degree of applications of conservative rules | PROVED |
+| `Demo.lean` | `edge_conservation`, a restatement of conservation | PROVED |
+| `CausalHistory.lean` | Evolutions with hyperedge identities and their causal graph, for every update order. `consumer_unique`, `succ_card_le`, antichain bound `k·\|A\| ≤ N` for `\|LHS\| = \|RHS\| = k`, cone bound `(\|RHS\| + 1)^t`. For the G3 rule: `gorardNamedRule_antichain_card_le` (`4·\|A\| ≤ N`) and `gorardNamedRule_ball_card_le` (`5^t`). | PROVED. OPEN: linear cone growth, `GorardNamedRuleConeGrowthLinear` |
+| `Growth.lean` | Ball and cone counts, `growthExponentAtMost_of_linear`. No cone bound for any rule. | PROVED |
+| `RuleDimensionBounds.lean` | `trajectory_size_invariant`, `geodesicBallVolume_le_card`. No dimension bound. | PROVED |
 
-## 2. Hypergraph calculus
+## 2. Executable rewriting
 
 | Module | Content | Status |
 |---|---|---|
-| `DiscreteCalculus.lean` | Graph Laplacian, inner product on `Neighbourhood` | ✅ |
-| `DiscreteCalculusSymm.lean` | Self-adjoint Δ, Dirichlet PSD, `laplacian_sum_zero` | ✅ |
-| `HypergraphLaplacian.lean` | `laplacianHyper`, Dirichlet non-positivity, self-adjointness, per-edge bilinear identity | ✅ |
-| `HypergraphCalculus.lean` | `hyperedgeGradient`, `hypergraphDiv`, `summation_by_parts` (Stokes) | ✅ |
-| `SecondDifference.lean` | Central second difference, quadratic identity | ✅ |
-| `CycleGraph.lean` | `cycleLaplacian`, cycle Dirichlet form | ✅ |
-| `CTwoTaylor.lean` | C² Taylor convergence of scaled second difference — `scaledSecondDiff_tendsto_iteratedDeriv` | ✅ R1 / A2 |
-| `CycleSpectrum.lean` | `cycleEigenvector`, `cycleEigenvalue`, `cos_three_term_identity`; interior + full wrap-around eigenvalue equations | ✅ R5 |
-| `CycleEigenLimit.lean` | Scaled cycle eigenvalue → continuum circle Laplacian eigenvalue — `cycleEigenvalue_scaled_tendsto` | ✅ A4 |
-| `ScaledDiffC2Bridge.lean` | `scaledSecondDiff_tendsto_iteratedDeriv_C2` + `hypergraph_scaled_laplacian_eq_scaledSecondDiff`: end-to-end hypergraph → f'' for all C² | ✅ A3 |
-| `LaplacianMatrix.lean` | `laplacianMatrixEdge`, `laplacianMatrix`, `laplacianMatrix_mulVec`, `heatKernel = exp(t · Δ)`, `heatKernel_zero`, `heatKernel_add`, `heatTrace`, `laplacianMatrix_symm`, `laplacianMatrix_row_sum`, `laplacianMatrix_mulVec_const` | ✅ R2 / D3 |
-| `CycleMatrixSpectrum.lean` | Matrix eigenvalue equation: `laplacianMatrix (cycleHypergraph n) * cycleEigenvector = cycleEigenvalue • cycleEigenvector`; **`heatKernel_cycleHypergraph_mulVec_eigenvector`**: each cycle eigenvector decays under heat flow as `exp(t · cycleEigenvalue n k)`. | ✅ |
-| `HeatKernelODE.lean` | **T1**: ODE ↔ matrix heat kernel unification. `hasDerivAt_heatKernel`, `heatKernel_commute_laplacianMatrix`, `hasDerivAt_heatKernel_mulVec`, **`heatKernel_isHeatSolution`** (the matrix heatKernel satisfies `HeatSolution H`). `mulVecEvalCLM` helper. | ✅ T1 |
-| `ExpEigenvector.lean` | **T2**: matrix exp fixes eigenvectors. `mulVecCLM` (mulVec as a CLM in the matrix argument), `matrix_pow_mulVec_of_eigenvector` (`A^n.mulVec v = λ^n • v` by induction), **`exp_mulVec_of_eigenvector`**: if `A.mulVec v = λ • v`, then `(NormedSpace.exp A).mulVec v = Real.exp λ • v`. Via `exp_eq_tsum_rat` + `ContinuousLinearMap.map_tsum` + `Real.summable_pow_div_factorial`. | ✅ T2 |
-| `CycleHasEigenvalue.lean` | **T4**: cycle spectrum in Mathlib `Module.End.HasEigenvalue` form. `cycleEigenvector_zero_val`, `cycleEigenvector_ne_zero`, **`laplacianMatrix_cycleHypergraph_hasEigenvalue`**: `HasEigenvalue (Matrix.toLin' (laplacianMatrix (cycleHypergraph n))) (cycleEigenvalue n k)`. Connects our pointwise eigenvalue theorem to Mathlib's spectral-theory API. | ✅ T4 |
+| `MultiwayExec.lean` | `ExecHG ℕ`, `ExecRule`, `allMatches`, `multiwayStep`. `singleWayStep` applies a maximal set of edge-disjoint matches, chosen greedily in enumeration order. `fireAllStep` applies every match, including matches that share edges, and is not a Wolfram model update when matches overlap. | DEFINITIONS, PROVED (`fireIfFree` lemmas) |
+| `MultiwayExecBridge.lean` | Casts from executable to abstract rules and systems, `consumed_toMultiset`. No simulation of `singleWayStep` by `MultiStep`. | PROVED |
+| `MultiwayExecTests.lean` | Multiway state and event counts for TC1, TC2, TC3, TC6; subdivision counts `2^n`, `2^n + 1` for `n ≤ 4` | PROVED (`decide`) |
+| `SubdivisionPath.lean` | `subdivisionTrajectory n := pathEdges (subdVerts n)` and its path properties | PROVED. Agreement with `singleWayEvolve` for `n ≤ 5` and base step on `Fin 8`, `Fin 12`: PROVED-WITH-NATIVE-DECIDE |
+| `SubdivisionAbstract.lean` | `singleWayStep_subdivisionSys_consEdge_of_ne`: one step of the subdivision rule on `{a, b}` for every `a ≠ b : ℕ` | PROVED |
+| `RuleSignatureSchema.lean` | `Dossier`, `isConsistent`, `canonicalDossier`, `consistent_dossier_eq_canonical` | PROVED |
+| `RuleSignatureExecCorpus.lean` | `ExecRule` versions of the catalogue rules. `h1_corpus_edgeCount_screener_verdict`: constant edge count for the trivial rule and for the G3 rule on the path and 4-cycle seeds, non-constant for the doubling, append and triple rules. On the 4-cycle seed the four matches pairwise share an edge, `singleWayStep` fires one, and the edge count stays 4. | PROVED-WITH-NATIVE-DECIDE |
+| `CausalEventTrace.lean` | `tracedSingleWayStep`, `tracedFireAllStep`, `deriveCausalEdges` (by edge values, so equal hyperedges from different events give extra pairs), `causalDAGOfEvolution`, `causalDAGOfFireAll`. Knill value 6 for the subdivision event graph at depth 2. | PROVED-WITH-NATIVE-DECIDE |
+| `BranchialEventTrace.lean` | `eventsAreBranchial`: same-step consumed-edge contention between events. This is not the Wolfram-model branchial graph, which relates states. | PROVED-WITH-NATIVE-DECIDE |
 
-## 3. PDE ladder on `Hypergraph V`
+The modules MultiRuleDiscovered, StepZeroAncestor, H9Bridge, H9BridgeStepProof, H9Closure, H9StructuralProgress, DistinctEdgeAPI, DistinctEdgeIdentity, PartitionClosure, the multi-rule part of UniversalAdditivity, the BBH*, Branchial* and Discrete* modules that use `tracedFireAllEvolve`, EnhancedPsi4, CurvatureDensityLimit, MultiRuleDepthTrajectory, Phase_D_FrameworkOverview and VacuumLikeUniversal state their results with `fireAllStep`. Their results do not describe Wolfram model evolutions.
 
-All proofs go through `laplacianHyper`. The Hypergraph is the domain; no continuum appears.
+## 3. Hypergraph calculus
 
-| Module | Equation | Conservation law | Status |
+| Module | Content | Status |
+|---|---|---|
+| `DiscreteCalculus.lean` | Graph Laplacian, inner product, linearity | PROVED |
+| `DiscreteCalculusSymm.lean` | Self-adjointness, Dirichlet form, `laplacian_sum_zero` | PROVED |
+| `HypergraphLaplacian.lean` | `laplacianHyper`, linearity, Dirichlet non-positivity, self-adjointness | PROVED |
+| `HypergraphCalculus.lean` | Gradient, divergence, `summation_by_parts` | PROVED |
+| `SecondDifference.lean` | Central second difference, exact on quadratics | PROVED |
+| `CycleGraph.lean` | `cycleLaplacian`, cycle Dirichlet form | PROVED |
+| `CTwoTaylor.lean` | `scaledSecondDiff_tendsto_iteratedDeriv` for `ContDiff ℝ 2 f` | PROVED |
+| `CycleSpectrum.lean` | Cycle eigenvectors and eigenvalues, `cycleLaplacian_eigen` | PROVED |
+| `CycleEigenLimit.lean` | `cycleEigenvalue_scaled_tendsto`: `n² · cycleEigenvalue n k → −(2πk)²` | PROVED |
+| `ScaledDiffC2Bridge.lean` | Scaled hypergraph Laplacian on `cycleHypergraph n` equals the scaled second difference at interior indices | PROVED |
+| `LaplacianMatrix.lean` | `laplacianMatrix`, `heatKernel = exp(t · Δ)`, semigroup law, symmetry, `heatTrace` | PROVED |
+| `CycleMatrixSpectrum.lean` | Cycle eigenvectors are matrix eigenvectors | PROVED |
+| `HeatKernelODE.lean` | `heatKernel_isHeatSolution` | PROVED |
+| `ExpEigenvector.lean` | `exp_mulVec_of_eigenvector` | PROVED |
+| `CycleHasEigenvalue.lean` | `laplacianMatrix_cycleHypergraph_hasEigenvalue` | PROVED |
+| `SymmEigenOrthogonal.lean` | Orthogonality of eigenvectors for distinct eigenvalues | PROVED |
+| `PathHypergraph.lean` | `pathHypergraph n`, path eigenvalue formulas and sign lemmas | PROVED. OPEN: the eigenvalue equation for the path |
+| `PathHypergraphDistance.lean` | Path adjacency, connectivity, degrees | PROVED |
+| `HypergraphCycleBridge.lean` | `laplacianHyper_cycleHypergraph`, `hypergraph_scaled_laplacian_eq_second_deriv` for quadratics | PROVED |
+| `LaplacianBridge.lean` | `n² · Δ²_{1/n} f = f''` for quadratics | PROVED |
+
+## 4. Equations on `Hypergraph V`
+
+| Module | Equation | Result | Status |
 |---|---|---|---|
-| `HeatEquation.lean` | `u' = Δ_H u` | Mass `∑u`, L² decay | ✅ D1 + D4 + D5 |
-| `HeatEquationUniqueness.lean` | Existence + forward uniqueness | `heat_exists`, `heat_unique_forward`, `heat_exists_unique_forward` | ✅ D2 |
-| `WaveEquation.lean` | `u'' = Δ_H u` | Energy `∑(du)² − ∑u·Δu` | ✅ D8 |
-| `KleinGordon.lean` | `u'' = Δ_H u − m²u` | Energy + mass term | ✅ D9 |
-| `SchrodingerEquation.lean` | `iψ' = −Δ_H ψ` | Probability `∑|ψ|²` | ✅ D10 |
-| `ScalarField.lean` | Lagrangian + Hamiltonian + EL | `EL ↔ KG` equivalence | ✅ G1 + G3 + G4 |
-| `DiscreteDAlembertian.lean` | BD 4D operator, `discreteAction`, `discreteEL` | BD conjecture flagged | 🟡 operator + action ✅; BD conjecture 🚫 |
+| `HeatEquation.lean` | `u' = Δ_H u` | Mass conservation, L² decay | PROVED |
+| `HeatEquationUniqueness.lean` | Heat equation | Existence, forward uniqueness, matrix-level conservation | PROVED |
+| `HeatKernelDecay.lean` | Heat flow on the cycle | Non-constant modes and finite combinations decay to the constant part | PROVED |
+| `CycleHeatDecayBounds.lean` | Heat flow on the cycle | Spectral gap is negative, explicit first-mode decay | PROVED |
+| `WaveEquation.lean` | `u'' = Δ_H u` | Energy conservation | PROVED |
+| `KleinGordon.lean` | `u'' = Δ_H u − m²u` | Energy conservation | PROVED |
+| `SchrodingerEquation.lean` | Real and imaginary parts of `iψ' = −Δ_H ψ` | Total probability is constant | PROVED |
+| `ScalarField.lean` | Lagrangian, Hamiltonian | `KG_EulerLagrange_iff_KleinGordonSolution` | PROVED |
+| `DiscreteDAlembertian.lean` | Benincasa-Dowker operator, `discreteAction`, `discreteEL` | Linearity | PROVED. OPEN: `BenincasaDowkerConjecture` (a structure with no instance) |
 
-Pending in this group: D7 discrete → continuum heat on GH limit, D11 Choquet-Bruhat. D2 existence-uniqueness ✅ (`HeatEquationUniqueness.lean`). D6 long-time convergence ✅ partial (`HeatKernelDecay.lean`: non-constant eigenmodes decay to 0; full D6 needs eigenbasis decomposition of arbitrary initial data).
-
-D3 (heat semigroup via `Matrix.exp`) is now ✅ in `LaplacianMatrix.lean`.
-
-## 4. Continuum limits (Rungs 1–6)
+## 5. Continuum limits
 
 | Module | Content | Status |
 |---|---|---|
-| `Infra/ScaledCycle.lean` | `cycleDist`, scaled n-cycle metric | ✅ |
-| `Infra/LatticeDensity.lean` | `latticeEmbed`, density, isometry | ✅ |
-| `Infra/Circle.lean` | Circle metric via fundamental domain | ✅ |
-| `Infra/GHBound.lean` | `cycle_circle_gh_bound` — first GH limit | ✅ Rung 1 |
-| `Infra/ScaledPath.lean` | Path → interval GH | ✅ |
-| `Infra/ScaledTorus.lean`, `ScaledTorusD.lean` | 2D / dD lattice → torus | ✅ Rung 2 |
-| `Infra/GHApprox.lean` | `GHApproximation` abstract structure | ✅ |
-| `Infra/OllivierStatement.lean` | Correct Ollivier + JGORARD mis-statement | ✅ Rung 3 statement |
-| `Infra/GrayTubeStatement.lean` | Correct Gray tube + disagreement proofs | ✅ |
-| `Infra/LorentzLattice.lean` | Discrete Lorentzian lattice, causal trichotomy | ✅ |
-| `Infra/Minkowski.lean` | Continuum Minkowski with L∞ spatial metric | ✅ |
-| `Infra/TrajectoryLorentz.lean`, `TrajectoryLorentzD.lean` | Trajectory → Lorentz lattice embedding | ✅ |
-| `Infra/ScaledLorentz.lean` | Lattice → ℝ^{d+1} exact scaling + iff preservation | ✅ |
-| `Infra/FullBridge.lean` | End-to-end causal → continuum Minkowski | ✅ |
-| `LaplacianBridge.lean` | `scaledSecondDiff` = `f''` on polynomials exactly | ✅ Rung-2 polynomial bridge |
-| `HypergraphCycleBridge.lean` | `cycleHypergraph n` + `laplacianHyper = cycleLaplacian` + end-to-end to `f''` | ✅ hypergraph-anchor of cycle bridge |
-| `ContinuumLimitStatement.lean` | Formal Props for open obligations | 🚫 `SchwarzschildObligationMet`, `KerrObligationMet`, `FLRWObligationMet` all `∧ False` |
+| `Infra/ScaledCycle.lean` | `cycleDist` | PROVED |
+| `Infra/LatticeDensity.lean` | `1/n`-density of the lattice | PROVED |
+| `Infra/Circle.lean` | Circle metric, `latticeEmbed_isometry` | PROVED |
+| `Infra/GHBound.lean` | `cycle_circle_gh_bound` (`1/(2n)`) | PROVED |
+| `Infra/ScaledPath.lean` | `path_interval_gh_bound` | PROVED |
+| `Infra/ScaledTorus.lean`, `Infra/ScaledTorusD.lean` | `torus_gh_bound`, `dTorus_gh_bound` | PROVED |
+| `Infra/GHApprox.lean` | `GHApproximation` | PROVED |
+| `Infra/LorentzLattice.lean` | Discrete Lorentzian lattice, causal relations, interval | PROVED |
+| `Infra/Minkowski.lean` | Continuum Minkowski space with the L∞ spatial metric | PROVED |
+| `Infra/TrajectoryLorentz.lean`, `Infra/TrajectoryLorentzD.lean` | Trajectory to lattice by causal level; with a spatial embedding under `LightConeCompatible` | PROVED |
+| `Infra/ScaledLorentz.lean` | `lorentzIntEmbed_preserves_causal_iff`, `scaledLorentzEmbed_dense` | PROVED |
+| `Infra/FullBridge.lean` | `causallyPrecedes_gives_continuum` under `LightConeCompatible` | PROVED |
+| `ContinuumBridgeDemo.lean` | Scaled cycle spectra of four operators tend to the circle spectra | PROVED |
+| `ContinuumLimitStatement.lean` | Spectral limits of the heat, wave, Schrödinger and Klein-Gordon operators on the cycle; Riemann sums of polynomials of degree ≤ 3 (`A6Holds_poly_deg3`) | PROVED. `CycleLaplacianConvergenceC2` is stated and not proved in this module. `TorusLaplacianConvergenceC2` is the constant `True`. `SchwarzschildObligationMet`, `KerrObligationMet`, `FLRWObligationMet` contain `False` |
+| `Limit.lean` | `HypergraphSequence`, `MetricMeasureTarget`. No convergence statement. | DEFINITIONS |
+| `GraphMetric.lean` | Graph distance, `ScaledHypergraph` | DEFINITIONS |
 
-General C² case now proved in `CTwoTaylor.lean` + `ScaledDiffC2Bridge.lean` — the scaled discrete Laplacian on `cycleHypergraph n` converges to `f''` for any `ContDiff ℝ 2 f` (R1/A2/A3 done).
-
-## 5. Curvature / connection (local-coord)
+## 6. Curvature and metrics in coordinates
 
 | Module | Content | Status |
 |---|---|---|
-| `CurvatureLocalCoord.lean` | `MetricData n`, Christoffel symbols with lower-index symmetry, Minkowski = 0 | ✅ |
-| `CurvatureRiemann.lean` | Riemann, Ricci, Scalar, Einstein tensors; `bianchi_first`; flat-connection vanishing; `minkowski4_satisfies_vacuum_EFE`; `MetricDataC2`; `leviCivitaConnection` | ✅ |
-| `Schwarzschild.lean` | `sgg`, `sginv`, `sdg` components; `SchwarzschildValid` exterior predicate; `sginv_mul_sgg`; **all 8 Christoffels** | ✅ B1 complete |
-| `DiscreteRicci.lean` | Forman-Ricci on graphs + hypergraphs; sign-of-curvature theorems | ✅ |
-| `RicciBridge.lean` | Circle / cycle Ricci = 0 match (discrete Forman ↔ continuum Ricci) | ✅ |
+| `CurvatureLocalCoord.lean` | `MetricData n`, Christoffel symbols | PROVED |
+| `CurvatureRiemann.lean` | Riemann, Ricci, scalar and Einstein tensors, `bianchi_first`, `minkowski4_satisfies_vacuum_EFE`, `leviCivitaConnection` | PROVED |
+| `PartialMetricData.lean` | Metrics with a domain predicate | PROVED |
+| `Schwarzschild.lean` | Components, exterior region, `sginv_mul_sgg`, Christoffel symbols | PROVED |
+| `FLRW.lean`, `FLRWRicci.lean` | FLRW metric and connection, Ricci and Einstein components, `flrwEFE_diag_iff_friedmann` | PROVED |
+| `ReissnerNordstrom.lean` | Metric, `rnLapse_schwarzschild` | PROVED |
+| `DeSitter.lean` | Metric, `dsLapse_pos_iff` | PROVED |
+| `Kerr.lean` | Metric in Boyer-Lindquist coordinates, zero-spin reductions | PROVED |
+| `TwoSphere.lean` | Round 2-sphere, `sphereChristoffel_0_1_1` | PROVED |
+| `CurvedRicciBridge.lean`, `WarpedDiag2C2.lean` | `warpedDiag2`, its Christoffel, Riemann and Ricci components, `warpedDiag2_einstein` | PROVED |
+| `EinsteinEquations.lean` | `EinsteinEqLambda`, `minkowski4_flat_vacuum_forces_lambda_zero` | PROVED |
+| `CovariantDerivative.lean` | Covariant derivatives for `ConnectionData` | PROVED |
+| `LorentzianManifold.lean` | `DiagLorentzianMetric`, Minkowski instance | PROVED |
+| `RiemannianManifold.lean` | `DiagRiemannianMetric`, Euclidean instance | PROVED |
+| `StressEnergyTensor.lean` | Stress-energy tensor, energy conditions, `wec_implies_nec` | PROVED |
+| `GRMetricsDemo.lean` | `gr_metric_zoo` lists the formalised metrics | PROVED |
+| `DiscreteRicci.lean` | Forman-Ricci curvature, ball-volume scalar curvature | PROVED |
+| `RicciBridge.lean` | Circle Ricci curvature and cycle Forman-Ricci curvature are both 0 | PROVED |
 
-Done in this group: B1 (Schwarzschild Christoffels), B5 (Schwarzschild `PartialMetricData`), B6 (FLRW `PartialMetricData`), B8 (Reissner-Nordström `PartialMetricData` + `rn_from_hypergraph` origin obligation inhabited).
+## 7. Origin obligations and emergence statements
 
-Pending in this group: B2 Schwarzschild Riemann components, B3 `Ric = 0`, B4 vacuum EFE, B7 FLRW Ricci + perfect fluid, B9 Kerr `PartialMetricData` bundle, B10 Ricci symmetry (for Levi-Civita), B11 second Bianchi.
-
-## 6. Refutation track
-
-| Module | Flaw | Status |
-|---|---|---|
-| `Refutations/F1NoMetric.lean` | No canonical metric from hypergraph alone | ✅ refuted |
-| `Refutations/F2Orthonormality.lean` | Fiat orthonormality is non-canonical | ✅ refuted |
-| `Refutations/F3Tautology.lean` | "dim preservation ⇒ Einstein" = `Iff.rfl` | ✅ refuted |
-| `Refutations/F4Tautology.lean` | "causal invariance ⇔ covariance" = `Iff.rfl` | ✅ refuted |
-| `Refutations/F5Illdefined.lean` | Discrete → integral is under-determined | ✅ refuted |
-| F6 (BD conjecture) | Benincasa-Dowker load-bearing assumption | 🚫 flagged in `DiscreteDAlembertian.lean` |
-
-## 7. Infradimension
-
-| Module | Content | Status |
-|---|---|---|
-| `HypergraphDistance.lean` | `Hypergraph.dist`, `geodesicBall`, `geodesicBallVolume`, `localDimension`, `wolframHausdorffDimension`, `plateauDimension`; cycle: `Adj_iff`, `succ_pred_adj`, `ballVolume_one_ge_three`; **`dist_triangle` + `dist_triangle_of_reachable_{left,right}`** (T3); **`cycleHypergraph_reachable_zero`**, **`cycleHypergraph_connected`**, **`cycleHypergraph_dist_triangle`** | ✅ ID1 + T3 triangle inequality |
-| `HypergraphMeasure.lean` | `countingMeasure`, `uniformProbability`, `pushforwardCounting`, `pushforwardUniform`; `countingMeasure_univ = |V|`, `uniformProbability_univ = 1`; `pushforwardCounting_univ`, `pushforwardUniform_univ` (mass preserved under measurable embedding) | ✅ A5 |
-| `ContinuumLimitStatement.lean` (A6 section) | `A6LatticeRiemannObligation` Prop; monomial witnesses `A6_for_constants`, `A6_for_identity`, `A6_for_sq`, `A6_for_cube`; supporting algebraic identities `sum_fin_val_eq_triangular`, `sum_fin_val_sq_eq`, `sum_fin_val_cube_eq`; filter limits `tendsto_nMinusOne_div_twoN`, `tendsto_sqRiemann_to_third`, `tendsto_cubeRiemann_to_quarter`; predicate form `A6Holds` with `.const_mul`, `.add`, `.sub` closure and `A6Holds_poly_deg3` for degree ≤ 3 polynomials | 🟡 A6 partial (monomials + linearity) |
-| `RemainingObligations.lean` | **All seven infrageometry obligations are PROVED** (`all_obligations_hold`). IT5 `latschevObligation_holds`, IT6 `scaleTrichotomyObligation_holds`, ID6 `dimensionCompatibilityObligation_holds` (V(v,r) = 2r+1 exact on every cycle), IQ6 `fubiniStudyBhattacharyya_bound`, IQ8/IQ9 baseline witnesses in `no_stub_obligations_remain`, IR7 `reverseEngineeringObligationRefined_holds` (over-strong unrefined form is FALSE: `not_reverseEngineeringObligation`). Zero stubs remain. | ✅ T6 (7/7) |
-| `RuleDimensionBounds.lean` | `Trajectory.StepConsistent`, `trajectory_size_invariant`, `geodesicBallVolume_le_card` | ✅ IR2 |
-
-ID-group status: **ID1 / ID2 / ID3 / ID4 / ID5 / ID6 closed with real content**. ID6 fully proved: `V(v, r) = 2r + 1` on cycle hypergraphs (`cycleHypergraph_ballVolume_exact`, `dimensionCompatibilityObligation_holds`). ID7 spectral dim via `Matrix.exp` small-`t` asymptotics still in progress.
-
-Adjacent open problem: **P20 Rodkey classification** — characterise hypergraphs for which `localDimension v r` is constant across vertices; infrastructure in place (`Hypergraph.localDimension`, `wolframHausdorffDimension`, `plateauDimension`), classification theorem open. Partner with PHAJEK and DHAMMOCK. Current state (2026-04): Sufficient chain `AdjTransitive → DistTransitive → BallVolumeVertexUniform → LocalDimensionVertexUniform` fully proved in `RodkeyClassification.lean`. Necessary condition: `degree_uniform_of_ballVolumeVertexUniform` — on a connected hypergraph, ball-volume-uniformity forces uniform SimpleGraph degree (via `geodesicBallVolume v 1 = 1 + degree v`); contrapositive `not_ballVolumeVertexUniform_of_degree_ne` rules out non-regular graphs. **Local characterisation**: `ballVolumeOne_uniform_iff_regular` — on a connected hypergraph, the r=1 slice of BallVolumeVertexUniform is exactly `Regular` (all vertices same SimpleGraph degree). **Positive example**: `cycleHypergraph n` for `n ≥ 2` — full chain inhabited via rotation automorphism `cycleRotHom`, `Walk.map`, and dist-translation-invariance; `cycleHypergraph_regular` (= 2-regular for n ≥ 3). **Negative example**: `pathHypergraph n` for `n ≥ 3` (`pathHypergraph_not_ballVolumeVertexUniform`, `pathHypergraph_not_regular`) — endpoint `0 : Fin n` has degree 1, interior `1 : Fin n` has degree 2, so the path is ruled out at radius 1. Both separated structurally on Fin 3 by `rodkey_classification_nontrivial` and `regular_dichotomy_on_fin3`. Remaining open: d-torus positive example, general classification theorem (walk-regular vs vertex-transitive distinction).
-
-## 7b. Infragauge / Infracausality / Infratopology / Synthetic / Blowup / Ruliology
+Every origin obligation in this section is a statement in which the target does not occur, so it holds for every target (`Curvature.any_metric_has_strong_obligation_witness`). `WassersteinRateObligation d` concerns a caller-supplied sequence `d` and is satisfied by the zero function. The theorems below do not state convergence to any metric, quantum system or black hole.
 
 | Module | Content | Status |
 |---|---|---|
-| `FiberedGraph.lean` | `FiberedGraph V W` structure; `fiber`, `disjoint_fibers`, `exists_unique_fiber`; `IsSection`, `SmoothSection`; `Connection`, `connectionAdj`, `connectionAdj_implies_total_Adj` | ✅ IG1 + IG2 + IG3 |
-| `Holonomy.lean` | `IsHorizontalLift`; `ParallelTransportList`; `Holonomy`; `wilsonLoop`; `IsFlatConnection`; `flat_holonomy_all_fixed` | ✅ IG4 + IG5 + IG6 + IG7 |
-| `CausalGraphType.lean` | `CausalGraph V` TR-DAG; `causallyPrecedes` (refl+trans), `causalEdge_implies_precedes`; `ChainOfLength` observer chain; `DegenerateInterval`, `OnLightStepFrom` | ✅ IC1 + IC2 + IC3 |
-| `CausalFoliation.lean` | `IsAntichain`; `IsFoliation` (antichain+disjoint+covers); `FiniteSupportFoliation`; `HasProperTime`, `properTime_self_exists` | ✅ IC4 |
-| `BranchialFinite.lean` | `successors`, `BranchialSliceFinite`; `branchialSliceFinite_zero / _succ / _of_successors_finite` | ✅ I1 |
-| `VietorisRips.lean` | `VietorisRipsEdge`, `VietorisRipsSimplex` with mono / empty / singleton / mono_scale; `vietorisRipsGraph` as SimpleGraph; `vietorisRipsGraph_zero_no_edges_reachable` | ✅ IT1 |
-| `SyntheticGeometry.lean` | `SyntheticCircle`, `SyntheticBall`, `SyntheticLineSegment`, `SyntheticSphere`; `mem_syntheticCircle`, `syntheticCircle_zero`, `center_not_on_circle`, `syntheticCircle_subset_ball`, `syntheticCircle_disjoint`, `endpoints_on_segment` | ✅ IS1 |
-| `ElementaryBlowup.lean` | `ElementaryBlowup P` structure (single-hyperedge LHS); `headEdge`, `apply`, `rhsSize`, `Order` | ✅ IB1 |
-| `DagBlowup.lean` | `dagEdge`, `dagAsBlowupOfInterval n`; `dagDerivative`; linearity (`_add`, `_smul`, `_const`) | ✅ IA1 |
-| `RuleSignature.lean` | `RuleSignature V` structure (hausdorffDimAt, ballVolume, totalFormanRicci, edge/vertex counts); `hypergraphSignature`; `avgFormanRicci`; match predicates (`sameDim`, `sameBallVolume`, `sameEdgeCount`, `FullMatch`); `edgeCount_invariant_of_conservative` | ✅ IR1 |
+| `WassersteinRate.lean` | `WassersteinRateObligation`, `ConvergenceRateObligation`, `subdivisionDiscrepancy n := 1/2^n` (defined directly, not computed from a measure) | PROVED |
+| `HypergraphMetricBridges.lean` | `HypergraphMetricOriginObligation` and its `WithRate`, `Strong` and partial forms; `minkowski4_from_hypergraph_strong`, `all_gr_targets_have_strong_obligations_proven` | VACUOUS |
+| `Milestone.lean` | `GR_emerges_from_hypergraph target`, `QM_emerges_from_hypergraph`, `BBH_emerges_from_hypergraph`. The layer Props are satisfied by the zero discrepancy. `GR_emerges_from_hypergraph_holds` proves the GR statement for every target. | VACUOUS |
+| `GREmergence.lean` | `zoo_strong_origin_obligations`, `minkowski4_quadDischarge_components` | VACUOUS |
+| `QMEmergence.lean` | `quantum_strong_origin_obligations`, `zoo_and_quantum_strong_origin_obligations` | VACUOUS |
+| `BBHEmergence.lean` | `bbh_strong_origin_obligations`, `zoo_quantum_bbh_strong_origin_obligations` | VACUOUS |
+| `ExecRateBridge.lean` | `strong_obligation_from_exec_rate`, `*_strong_from_exec_witness_*` | VACUOUS. `witnessRule0_passes`: PROVED-WITH-NATIVE-DECIDE |
+| `TransportRateBridge.lean`, `HiguchiRateBridge.lean`, `DegVarianceRateBridge.lean`, `SquareCountRateBridge.lean` | Rate bridges for four further scalars and their metric discharges | VACUOUS. Trace values of `witnessRule0`: PROVED-WITH-NATIVE-DECIDE |
+| `WitnessDiversity.lean` | Discharges on the seeds `path123` and `cycle4` | VACUOUS. Trace values: PROVED-WITH-NATIVE-DECIDE |
+| `ExecTrajectoryLift.lean` | `liftExecRunInitial`, `strong_obligation_from_exec_rate_with_lifted_trajectory` | VACUOUS |
+| `MetricTargetScalars.lean` | `formanTarget` and four other targets, all the constant 0 for every metric; `minkowski4_strong_coupled` and the other coupled discharges | VACUOUS |
+| `RuleExtraction.lean` | Five named rules from `quintStableSelect` and their metric discharges | Selection and traces: PROVED-WITH-NATIVE-DECIDE. Discharges: VACUOUS |
+| `LiteratureRules.lean` | Six literature rules and their traces at depth 2 | Traces: PROVED-WITH-NATIVE-DECIDE. Discharges: VACUOUS |
+| `CycleContinuumLimit.lean` | Forman total 0 on nine cycles; constant-zero sequence tends to `formanTarget M = 0` | PROVED-WITH-NATIVE-DECIDE, PROVED. VACUOUS with respect to the metrics |
+| `DiscreteRicciConvergence.lean` | `FiniteFitEnvelope`, `TrueLimitConverges`; a trace constant at 4 does not tend to 0 | PROVED |
+| `FiberedGraphConnectionBridge.lean` | `ConnectionDataOriginObligation`, `any_connection_has_obligation_witness` | VACUOUS |
+| `CausalLorentzianBridge.lean` | `LorentzianManifoldOriginObligation`, `any_lorentzianManifold_has_obligation_witness` | VACUOUS |
+| `EinsteinEquationsBridge.lean` | `EFEOriginObligation_iff_EinsteinEqLambda`: the obligation is equivalent to the Einstein equation alone | PROVED |
+| `RuleWitnesses.lean` | `*_from_hypergraph_proved` | VACUOUS |
+| `RuleSearch.lean` | Conservation screen and catalogue | PROVED. `minkowski4_from_growthRule`: VACUOUS |
+| `RemainingObligations.lean` | `all_obligations_hold`: cycle ball volume `2r + 1`, cycle distances below `n + 1`, Vietoris-Rips scale trichotomy, `‖⟨ψ, φ⟩‖ ≤ Σ ‖ψ s‖‖φ s‖`, `reverseEngineeringObligationRefined_holds`, `not_reverseEngineeringObligation`. `EMEPersistenceObligation` and `PathIntegralObligation` are satisfied by the zero vector. | PROVED |
 
-## 8. Groups from the full Infrageometry program
+## 8. Distance, dimension and topology
 
-From `INFRAGEOMETRY.md` — 9 groups (57 new tasks ). Status:
-
-| Group | Name | Addressed | Closed with real content |
-|---|---|---|---|
-| IA | Infraanalysis (PHAJEK) | 5/5 | 5 |
-| IG | InfraGaugeTheory (PPOKORNY paclet port) | 11/11 | 10 (IG10 open) |
-| IC | Infracausality (EPS, MW-clock) | 8/8 | 8 |
-| IT | Infratopology (VR + Latschev; PHAJEK) | 6/6 | 4 (IT5/IT6 obligations pending) |
-| ID | Infradimension | 7/7 | 6 (ID7 in progress) |
-| IB | Infrablowup (Lie algebra, Poisson) | 6/6 | 5 (IB2 commutator theorem pending) |
-| IQ | Branchial / quantum | 4/4 | 4 (IQ8/IQ9 baseline witnesses proved; full refinement-limit follow-up) |
-| IS | Synthetic axiomatic | 3/3 | 3 |
-| IR | Ruliology | 7/7 | 7 (IR7 refined form proved; over-strong unrefined form provably FALSE) |
-
-**Addressed: 57/57. Closed with real content: 55/57.**
-
-What remains open, concretely:
-- **IG10** (exponential map via weighted shortest-path counts): needs shortest-path-counting infrastructure + PHAJEK's weighted-sum formulation.
-- **IB2** (causal-branchial commutator theorem): predicate-level content placeholder at `True`; needs a real theorem statement about `[B₁, B₂]` on isomorphism classes before proof work can start.
-- **ID7** (spectral dimension via heat trace): heat trace defined; small-`t` asymptotics remain.
-
-**The honest bridges proved so far** (task R-group, see task list):
-- Flat GH limits (cycle→S¹, path, torus, lattice→Minkowski).
-- Polynomial scaled-second-difference = f''.
-- Forman-Ricci = 0 on cycle ≡ S¹ Ricci = 0.
-- Schrödinger unitarity on Hypergraph V.
-- Conservation ⇒ size invariance along trajectory (IR2).
-
-**Cross-cutting real-work items (R-series)**:
-- ✅ **R1**: C² Taylor convergence for scaled second difference (`CTwoTaylor.lean`). Unlocks all non-polynomial bridges.
-- ✅ **R2**: `laplacianMatrix` + `heatKernel` via Matrix.exp (`LaplacianMatrix.lean`). Heat propagator as `exp(t · Δ)`, semigroup property, symmetry, row-sum zero, heat trace.
-- ✅ **R3 (closed)**: ℓ²(BranchialSlice) Hilbert space (`BranchialHilbert.lean` + `BranchialSchrodinger.lean`) — `BranchialHilbert S := EuclideanSpace ℂ S` finite-dim ℂ-Hilbert alias; `branchialAdjLM` ℂ-linear adjacency operator + `branchialAdjLM_inner` self-adjointness for symmetric adjacency; `branchialSchrodinger_unitary_evolution` proves the unitary branchial evolution (discrete Schrödinger on the slice conserves total probability `∑(u² + v²)`). Born rule + uniform measure + observables + expectation values also in place. Closes I2/I3/I4/I5/I6/I7/I9.
-- 🔲 **R4**: Curved discrete-Ricci convergence (first non-flat case).
-- ✅ **R5**: Cycle Laplacian spectrum closed form (`CycleSpectrum.lean`, full wrap-around).
-
-**Follow-on bridges proved on top of R1/R2/R5** (this session):
-- ✅ **A3/A4**: scaled cycle eigenvalue → continuum circle Laplacian spectrum (`CycleEigenLimit.lean`); hypergraph scaled Laplacian = scaled second difference (`ScaledDiffC2Bridge.lean`).
-- ✅ **D3**: heat semigroup via `Matrix.exp` — now captured by `heatKernel_add`.
-- ✅ Matrix eigenvalue equation packaging in `CycleMatrixSpectrum.lean`.
-
-**Colleague-work items (M-series)**:
-IMILEA (IG intern), HVLE (Fisher→FS), HKOLCZ (MBQC
-Lie-Poisson), JPULLMAN (IBL-∞/BV), CZAPATA-SAHMED (axiomatic
-relativity), PPOKORNY paclet parity, SAHMED EME-tracking, PPOKORNY
-diffusion-geometry bridge, tropical geometry, 3BP dynamics.
-
-## 9. Legacy phase groups (plan A/B/C/.../K)
-
-| Group | Purpose | Done | Open |
-|---|---|---|---|
-| A | Calculus foundations | A1–A5; A7 concrete rate (cycle δ-shift sharp + measure-level shift O(1/n)) | A6 (polys to deg 3), A7 general case, A8 |
-| B | Schwarzschild / curved metrics | B1, B5, B6, B8 | B2, B3, B4, B7, B9, B10, B11 |
-| C | Bundles + Levi-Civita | C1 (`DiagRiemannianMetric`), C2 (`DiagLorentzianMetric`), C7 (`HypergraphConnection`) | C3, C4, C5, C6, C8 |
-| D | PDEs on Hypergraph V | D1, D2, D3, D4, D5, D6 (partial), D7, D8, D9, D10 | D11 |
-| E | Lorentzian manifolds | E1, E2, E3, E4 | E5 (in progress), E6, E7 |
-| F | Einstein / stress-energy / energy conditions | F1, F2, F3, F7, F8 | F4, F5, F6 |
-| G | Scalar fields / Lagrangian | G1, G3, G4 | G2, G5, G6 |
-| H | BBH / numerical | H1 (rule catalog) | H2–H9 |
-| I | Branchial / QM | I1–I7, I9 | I8, I10 |
-| J | Combined / emergent gravity / AdS/CFT | J1 (`MultiwayCausalGraph`) | J2–J6 |
-| K | Paper drafts | — | K1–K9 |
-| X | Support (Taylor, multiway engine, etc.) | X1, X2, X3 | X4 |
-
-## 10. GR target (the hard open)
-
-- Formal obligations: `SchwarzschildObligationMet`, `KerrObligationMet`, `FLRWObligationMet` — all uninhabited.
-- Schwarzschild Christoffels ✅ (all 8).
-- Minkowski Einstein = 0 ✅.
-- **Missing**: a concrete rule whose trajectory GH-converges to a curved spacetime. This is the open Wolfram-physics problem.
-- Path forward: IR signature pipeline + IC causal axiomatics + B2–B4 Schwarzschild proof → then attempt to write a term of `SchwarzschildObligationMet`.
-
-## 10a. Grounding-audit bridge obligations (NEW, 2026-04-23 — all closed at obligation level)
-
-See [`GROUNDING_AUDIT.md`](GROUNDING_AUDIT.md) for the full audit.
-
-| Module | Obligation bound to | Flat-case witness |
+| Module | Content | Status |
 |---|---|---|
-| `HypergraphMetricBridges.lean` | `HypergraphMetricOriginObligation M` / `HypergraphPartialMetricOriginObligation M` — every GR metric bound to `Hypergraph V` + `RewritingSystem P` + `Trajectory sys init` + scaling | `RuleWitnesses.lean` — every `*_from_hypergraph` Prop **provably inhabited** via `identitySystem Unit` + `cycleHypergraph n` + `emptyTrajectory` ✅ |
-| `CausalLorentzianBridge.lean` | `LorentzianManifoldOriginObligation target` — every `DiagLorentzianManifold` bound to `CausalGraph V` + scaling | `minkowski4Manifold_from_causalGraph_proved` via `trivialCausalGraph (Fin 1)` (stably causal) ✅ |
-| `FiberedGraphConnectionBridge.lean` | `ConnectionDataOriginObligation C` — every `ConnectionData n` bound to `FiberedGraph V W` + `FiberedGraph.Connection F` + scaling | `flatConnection_from_fiberedGraph_proved n` via `trivialFiberedGraph` + `trivialConnection` ✅ |
-| `EinsteinEquationsBridge.lean` | `EFEOriginObligation M C Λ κ T x` — bundles EFE-satisfaction + metric origin + connection origin | `minkowski4_flat_vacuum_EFE_originated_global κ` — **first complete rule → metric → connection → EFE chain** ✅ |
-| `RuleSearch.lean` | Concrete rule catalog; decidable `IsConservative`; screen predicates (`GrowthCompatible`); no dimension bound | `minkowski4_from_growthRule` via `edgeDuplicateRule` ✅ |
-| `RuleWitnesses.lean` | `identityRule`, `identityApplication_result`, `identitySystem`, `emptyTrajectory`, `trivialCausalGraph` + every bridge-obligation witness | All `*_from_hypergraph_proved` / `*_from_fiberedGraph_proved` theorems ✅ |
+| `HypergraphDistance.lean` | `dist`, balls, local and Wolfram-Hausdorff dimension, angles, spheres, bisectors, midpoints, Voronoi cells, `GeodesicallyUnique`, cut vertices; `dist_triangle`, `cycleHypergraph_connected` | PROVED |
+| `HypergraphTopology.lean` | `spatialB0`, `firstBettiZ`, `spatialDiameter`, open-set predicates (`IsDiscreteOpen` is `True`), `nbhdBasis` | PROVED |
+| `HypergraphMeasure.lean` | Counting and uniform measures, pushforwards | PROVED |
+| `RodkeyClassification.lean` | Adjacency-transitive implies uniform ball volume; uniform ball volume implies regular; cycle satisfies, path fails | PROVED. OPEN: general classification |
+| `PlateauDimension.lean` | `plateau_range_nonempty` | PROVED |
+| `HomologyDimension.lean` | `HasNontrivialHomology_requires_simplex` | PROVED |
+| `CoordinatizationDimension.lean` | Axes, `AreOrthogonalAxes` by `IsOrthoApprox` | DEFINITIONS |
+| `CausalDimension.lean` | `HasChainToDepth` | DEFINITIONS |
+| `VietorisRips.lean` | Vietoris-Rips edges, simplices, graph | PROVED |
+| `HodgeVR.lean`, `HodgeLaplacianSpectrum.lean`, `HodgeLaplacianBounds.lean` | Hodge 0-Laplacian on the Vietoris-Rips complex: linearity, symmetry, constants in the kernel, `vrHodge0_quadratic_nonpos` | PROVED |
 
-**Posture.** Every continuum GR structure now has a hypergraph-side
-obligation attached at the Prop level. The flat-case inhabitations
-are complete machine-checked proofs. The curved-case side (Schwarzschild
-bridge, Kerr bridge, FLRW bridge, curved-Γ fibered-graph bridge) is
-what remains — and it correctly remains open, because no such rule is
-known. The refutation is structural, not notational.
+## 9. Gauge, causal, synthetic and blowup structures
 
-## 11. QM target
+| Module | Content | Status |
+|---|---|---|
+| `FiberedGraph.lean` | Fibred graphs, sections, connections | PROVED |
+| `Holonomy.lean` | Parallel transport, holonomy, Wilson loops, `flat_holonomy_all_fixed` | PROVED |
+| `FiberBundle.lean`, `MultiFibrationProjection.lean` | Fibre-bundle predicate, multi-fibred graph | DEFINITIONS |
+| `HypergraphConnection.lean` | Group-valued connection on a hypergraph, `transportWalk_append` | PROVED |
+| `CausalGraphType.lean` | `CausalGraph V`, `causallyPrecedes`, chains, light steps | PROVED |
+| `CausalFoliation.lean` | Antichains, foliations, proper time | PROVED |
+| `ProperTimeBounds.lean` | Chain-length lemmas | PROVED |
+| `SpatialReconstruction.lean` | Adjacency by shared immediate ancestors | PROVED |
+| `EPSAxioms.lean` | Ehlers-Pirani-Schild axioms as Props, `eps_worldline_not_light` | PROVED |
+| `MarzkeWheeler.lean` | `mwClock_implies_causallyPrecedes` | PROVED |
+| `MultiwayCausalGraph.lean` | Rewriting system with a causal graph on events | DEFINITIONS |
+| `SyntheticGeometry.lean`, `SyntheticAxiomatic.lean`, `InfrageometricScene.lean` | Synthetic circles, balls, segments, spheres, betweenness, scenes | PROVED |
+| `ElementaryBlowup.lean`, `BlowupLieAlgebra.lean`, `BlowupOperations.lean`, `RadialLaminarBlowup.lean`, `BlowupPoissonConcrete.lean` | Blowups, `elementaryBlowup_commutator_vanishes`, cycle doubling, brackets | PROVED |
+| `DagBlowup.lean`, `DagCalculus.lean`, `DeRham.lean`, `FormCochainIntegration.lean` | DAG derivative and prefix sums, `d0`, `stokes_zero_to_one`, integration | PROVED |
 
-- **Proved**: Fintype `BranchialSlice` (I1), uniform measure (I2), ℂ amplitudes + Born rule (I3), ℓ²(slice) Hilbert space with ℂ-linear self-adjoint adjacency (I4), unitary branchial evolution (I5), Hermitian observables (I6), expectation values (I7), Schrödinger on branchial graph (I9); plus the Fubini-Study / Bhattacharyya bound (IQ6 `fubiniStudyBhattacharyya_bound`), EME persistence baseline (IQ8), path-integral baseline (IQ9), Fisher metric on branchial graph (IQ5).
-- **Missing**: I8 continuum Hilbert-space limit, I10 full path-integral formulation (sum over paths = unitary evolution equivalence).
+## 10. Branchial and quantum structures
 
-## 12. Axiom-cleanliness
+`Branchial.lean` relates states of a multiway system. The modules below use that relation, or a symmetric adjacency matrix supplied as a parameter.
 
-Every proved theorem above depends on axioms ⊆ `{propext, Classical.choice, Quot.sound}`. No `sorry`, no `native_decide`, no custom axioms. `AxiomCheck.lean` holds the `#print axioms` certifications.
+| Module | Content | Status |
+|---|---|---|
+| `BranchialFinite.lean` | Finiteness of branchial slices | PROVED |
+| `BranchialHilbert.lean` | `EuclideanSpace ℂ S`, adjacency operator, Born probabilities, uniform weight | PROVED |
+| `BranchialSchrodinger.lean` | Schrödinger evolution for a symmetric adjacency matrix conserves total probability | PROVED |
+| `BranchialCanonical.lean` | Hamiltonian of a finite slice is symmetric | PROVED |
+| `WolframPhysicsBridgeDemo.lean` | Hermitian operator, real expectation values and Born probabilities on a finite slice | PROVED |
+| `BranchialCommutator.lean` | Multi-step branchial relation is reflexive, symmetric and transitive. No commutator theorem is stated. | PROVED |
+| `FisherMetric.lean`, `FisherMetricExtended.lean` | Fisher inner product, linearity, non-negativity | PROVED |
+| `EMETracker.lean` | Persistence of a predicate along a trajectory | PROVED |
 
-## 13. What is NOT persisted
+## 11. Rule screening
 
-Anything absent from this file, `INFRAGEOMETRY.md`, `MILESTONES.md`, `PUBLISHABLE.md`, `STATUS.md`, the task system, or the Lean source is *ephemeral* and will not survive a session reset. Keep this file in sync.
+These modules compute values for specific rules, seeds and depths of `singleWayStep`.
 
-## 14. Update protocol
+| Module | Content | Status |
+|---|---|---|
+| `CandidateRuleCatalog.lean` | G3 rule and four other rules, conservation status | PROVED |
+| `CandidateRuleDatabase.lean`, `RuleSignature.lean`, `RuleSignatureEquiv.lean`, `StructuralRuleBounds.lean` | Rule signatures, conservation screens, signature equivalence | PROVED |
+| `RuleSignatureScreener.lean` | Screeners as `ConvergenceRateObligation`s, conservative and persistent-gap results | PROVED |
+| `RuleSignatureExecMetrics.lean` | Forman scalar on `ExecHG ℕ`, `SignatureVerdict` | PROVED-WITH-NATIVE-DECIDE |
+| `RuleSignatureExecSearch.lean` | One-edge rule generator, trend classifier, stability filter (21 candidates, 11 stably classifiable), rate screener | PROVED-WITH-NATIVE-DECIDE |
+| `DualCurvatureScreener.lean` | Combined screeners (Forman 11, transport 17, both 11) | PROVED-WITH-NATIVE-DECIDE |
+| `OllivierRicciScreener.lean`, `OllivierRicciExec.lean` | Product-coupling upper bound on W₁ (not the optimal-transport curvature) | PROVED, PROVED-WITH-NATIVE-DECIDE |
+| `HiguchiScreener.lean`, `DegreeVarianceScreener.lean`, `SquareCountScreener.lean` | Higuchi, degree-variance and square-count scalars on small graphs | PROVED-WITH-NATIVE-DECIDE |
+| `InfraMeasure.lean` | Non-negative weights, couplings, transport cost | PROVED |
+| `PerpendicularModuli.lean` | Three perpendicularity predicates disagree pairwise on small graphs | PROVED-WITH-NATIVE-DECIDE |
+| `DiscoveredRules.lean`, `RuleReportComparison.lean`, `RulePhysicsReport.lean`, `RulePreservationClassification.lean` | Knill values and edge trajectories of named rules on `edge12` | PROVED-WITH-NATIVE-DECIDE |
 
-- **On every Lean-file commit**: update §1–7 and §12 of this file, and add a row to the relevant table.
-- **On every task completion**: update §8 / §9 counters.
-- **On every new formal obligation**: add a row to §10 / §11 / `ContinuumLimitStatement.lean`.
-- **On every session close**: verify nothing was only in-context.
+## 12. Knill curvature and lattice samples
+
+| Module | Content | Status |
+|---|---|---|
+| `KnillCore.lean` | Simplicial complexes, Euler and Wu characteristics, Dirac and Hodge operators, `dSquared_eq_zero`, `hodgeOnG_psd` | PROVED |
+| `KnillExamples.lean` | Values on small complexes | PROVED-WITH-NATIVE-DECIDE |
+| `KnillDiscreteGaussBonnet.lean`, `KnillHigherGenus.lean`, `KnillThreeManifold.lean`, `KnillTopologyBenchmark.lean`, `KnillRuleBridge.lean`, `CausalDAGKnill.lean` | Scaled Knill values of polyhedra, tori, K₅, complete graphs, the Petersen graph, Q₃, paths, small directed graphs | PROVED-WITH-NATIVE-DECIDE |
+| `SphereTriangulationAudit.lean` | Unweighted Forman and Higuchi totals differ across three triangulations of S² | PROVED-WITH-NATIVE-DECIDE |
+| `PathContinuumLimit.lean`, `GridContinuumLimit.lean`, `AdvancedContinuumLimits.lean`, `NormalizedDensityLimits.lean` | Scalar totals on sampled paths, cycles, tori and grids | PROVED-WITH-NATIVE-DECIDE |
+| `PolynomialDensityLimits.lean` | `polynomialPerArea_tendsto` and its grid instances | PROVED. 3-torus samples: PROVED-WITH-NATIVE-DECIDE |
+
+## 13. Lean files attached to findings F1-F7
+
+The findings about the papers are READ findings with line numbers, recorded in [`MAJOR_FLAWS.md`](MAJOR_FLAWS.md) and [`STATUS_OF_GORARD_CLAIMS.md`](STATUS_OF_GORARD_CLAIMS.md).
+
+| Module | Content | Status |
+|---|---|---|
+| `Refutations/F1NoMetric.lean` | The function type `DHyp V → V → V → ℝ` has more than one element | VACUOUS with respect to the papers |
+| `Refutations/F2Orthonormality.lean` | Two functions on `Bool × Bool` make the same pair orthonormal | VACUOUS with respect to the papers |
+| `Refutations/F3Tautology.lean` | The project's encodings of dimension preservation and the Euler-Lagrange equation are equal | PROVED (`Iff.rfl`) |
+| `Refutations/F4Tautology.lean` | The project's encodings of causal invariance and discrete general covariance are equal | PROVED (`Iff.rfl`) |
+| `Refutations/F5Illdefined.lean` | Facts about 1/(n+1) and the constant-`True` predicate | VACUOUS with respect to the papers |
+| `Refutations/F6Circularity.lean` | `CircularReconstruction.comp_eq_id` restates its hypothesis | VACUOUS with respect to the papers |
+| `Refutations/F7NamedRuleStructure.lean` | The G3 rule conserves edge count | PROVED |
+
+## 14. Open statements
+
+- `CausalHistory.GorardNamedRuleConeGrowthLinear`: for every `N` there is `c` such that, in every valid `RuleHistory` of the G3 rule with `N` initial hyperedges, every event `i` and every `t` satisfy `|ball i t| ≤ c·(t+1)`.
+- `BenincasaDowkerConjecture` (`DiscreteDAlembertian.lean`): no instance is constructed.
+- `CycleLaplacianConvergenceC2` (`ContinuumLimitStatement.lean`): the scaled second difference tends to `f''(x)` whenever `deriv f` has derivative `f''(x)` at `x`.
+- `SchwarzschildObligationMet`, `KerrObligationMet`, `FLRWObligationMet`: defined with `False`, so they have no proof as stated. A rule whose evolution converges to a curved spacetime is not known to the project.
+- The eigenvalue equation for `pathHypergraph n`.
+- The general classification of hypergraphs with vertex-uniform local dimension (`RodkeyClassification.lean`).
+- Small-`t` asymptotics of `heatTrace` (spectral dimension).
+- Convergence of a discrete curvature to a non-zero continuum Ricci curvature.
+
+## 15. `native_decide`
+
+About 100 modules use `native_decide`. Results proved with it depend on an axiom generated by `native_decide` and are labelled PROVED-WITH-NATIVE-DECIDE above and in [`THEOREM_STATUS.md`](THEOREM_STATUS.md). `AxiomCheck.lean` holds `#print axioms` commands for selected theorems.
