@@ -1,47 +1,21 @@
 /-
-**B4-psi4-scaling-open: continuum Ψ₄ scaling open question** (#452;
-H9 scaffold).
+Two Props about rescaled sums of squares of `discretePsiFour`.
 
-This module **formalizes as an explicit Prop the continuum-scaling
-question** for the discrete Ψ₄ analog defined in #448. The result is
-NOT proved here; instead, this module:
+`discretePsiFour sys H n` is the list of pairs (change in causal-graph
+Knill value from step k to k+1, number of events at step k) for
+k < n, computed with `causalDAGOfFireAll` and `tracedFireAllEvolve`.
+The evolution is `fireAllStep`, which applies every match of every rule
+found in the state, including matches that share edges. It is not a
+Wolfram model update when matches overlap. `integratedModSq` is the sum
+of `re² + im²` over the list. The name Ψ₄ is a label; the library
+defines no Weyl tensor or waveform.
 
-  1. States the proposition `DiscretePsiFourScalingHolds` precisely.
-  2. Reduces it to a clean statement about the integrated Ψ₄
-     trajectory under depth-scaling.
-  3. Documents what would be needed for its proof, and what fails
-     immediately if it doesn't hold.
-
-**The conjecture**: there exists a scaling function `α(n)` such that
-the depth-`n` integrated `|Ψ₄|²` on the BBH seed, scaled by `α(n)`,
-converges to a finite limit as `n → ∞`.
-
-Formally:
-
-  `∃ α : ℕ → ℝ, ∃ L : ℝ,
-     Tendsto (fun n => α(n) · integratedModSq (discretePsiFour ...)) atTop (𝓝 L)`
-
-**What's known empirically** (from #447, #448):
-
-  * For `edgeReversal + tripleMerger`, per-step flux grows ×3 each
-    step. So integrated Ψ₄ grows at least geometrically.
-  * For `edgeReversal` alone, per-step flux is constant. Integrated
-    grows linearly (sum of 1's).
-
-These two cases have very different scaling. The right α(n) depends
-on which rule.
-
-**The reasonable guess**: for a growth-rate-r rule, `α(n) = r⁻²ⁿ`
-should give convergence. But this needs to be proved per rule.
-
-**Why this matters** (H9 toward closure): without a scaling theorem,
-we have raw discrete data without a continuum limit. With a
-scaling theorem, the discrete Ψ₄ corresponds to actual NR Ψ₄ in the
-continuum limit.
-
-This module establishes the **infrastructure** for H9: the proposition
-is stated, the auxiliary observables are referenced, and the
-analysis problem is precisely scoped.
+  * `DiscretePsiFourScalingHolds sys H`: some `α : ℕ → ℝ` and `L : ℝ`
+    make `α n * integratedModSq (discretePsiFour sys H n)` tend to `L`.
+    It holds for every `sys` and `H` with `α = 0`
+    (`zeroScalingHoldsTrivially`), so it is VACUOUS.
+  * `DiscretePsiFourScalingNonTrivial sys H`: the same with `L ≠ 0`.
+    No instance is proved in the library.
 -/
 
 import InfraFormalization.DiscretePsiFour
@@ -56,72 +30,47 @@ open DiscoveredRules
 open BBHInitialData
 open DiscretePsiFour
 
-/-! ## The scaling proposition -/
+/-! ## The scaling Prop -/
 
-/-- **`DiscretePsiFourScalingHolds`**: there exists a scaling
-function `α : ℕ → ℝ` and a finite limit `L` such that
-
-  `Tendsto (fun n => α(n) · (integratedModSq (discretePsiFour sys H n)).toReal)
-   atTop (𝓝 L)`.
-
-This is the discrete analog of the **continuum limit** of the
-gravitational-wave energy under refinement. -/
+/-- `DiscretePsiFourScalingHolds sys H`: there exist `α : ℕ → ℝ` and
+`L : ℝ` such that
+`α n * integratedModSq (discretePsiFour sys H n)` tends to `L`. -/
 def DiscretePsiFourScalingHolds (sys : ExecSystem) (H : ExecHG ℕ) : Prop :=
   ∃ α : ℕ → ℝ, ∃ L : ℝ,
     Filter.Tendsto (fun n => α n * ((integratedModSq (discretePsiFour sys H n)) : ℝ))
       Filter.atTop (nhds L)
 
-/-! ## What's tractable: a single-rule trivial case -/
+/-! ## The zero choice -/
 
-/-- **`zeroScalingHoldsTrivially`**: any system has the trivial
-scaling `α(n) = 0`, `L = 0`. The interesting question is whether
-there's a *non-trivial* scaling that converges to a *non-zero* limit.
--/
+/-- `zeroScalingHoldsTrivially`: `DiscretePsiFourScalingHolds sys H`
+holds for every `sys` and `H`, with `α = 0` and `L = 0`. -/
 theorem zeroScalingHoldsTrivially (sys : ExecSystem) (H : ExecHG ℕ) :
     DiscretePsiFourScalingHolds sys H := by
   refine ⟨fun _ => 0, 0, ?_⟩
   simp only [zero_mul]
   exact tendsto_const_nhds
 
-/-! ## The non-trivial form: convergence to a non-zero limit -/
+/-! ## The form with a nonzero limit -/
 
-/-- **`DiscretePsiFourScalingNonTrivial`**: there is a scaling
-`α : ℕ → ℝ` and a non-zero finite `L` such that the scaled trajectory
-converges to `L`. -/
+/-- `DiscretePsiFourScalingNonTrivial sys H`: there exist
+`α : ℕ → ℝ` and `L ≠ 0` such that
+`α n * integratedModSq (discretePsiFour sys H n)` tends to `L`. -/
 def DiscretePsiFourScalingNonTrivial (sys : ExecSystem) (H : ExecHG ℕ) : Prop :=
   ∃ α : ℕ → ℝ, ∃ L : ℝ, L ≠ 0 ∧
     Filter.Tendsto (fun n => α n * ((integratedModSq (discretePsiFour sys H n)) : ℝ))
       Filter.atTop (nhds L)
 
-/-! ## What this delivers
+/-! ## Summary
 
-**A precisely-stated open question** for H9:
+  * `DiscretePsiFourScalingHolds`: holds for every `sys` and `H`
+    (`zeroScalingHoldsTrivially`, PROVED). It is VACUOUS.
+  * `DiscretePsiFourScalingNonTrivial`: no theorem in the library
+    proves or refutes it for any instance. For any `sys` and `H` whose
+    value `integratedModSq (discretePsiFour sys H n)` is nonzero for all
+    large `n`, the choice `α(n) = 1 / value` and `L = 1` satisfies it;
+    no Lean statement records this.
 
-  * `DiscretePsiFourScalingHolds` — exists scaling + finite limit
-    (trivially true for zero scaling).
-  * `DiscretePsiFourScalingNonTrivial` — exists scaling + non-zero
-    limit (the interesting question).
-
-**What needs to be proved for H9 closure**:
-
-  1. For each candidate rule class (Tree, Merger, Bidirected),
-     find the rule-class-specific scaling function `α(n)`.
-  2. Prove `DiscretePsiFourScalingNonTrivial` for the BBH seed
-     under the highest-merger-rate combo.
-  3. Show the continuum limit `L` matches the actual NR Ψ₄
-     amplitude in expected units.
-
-These are major analysis problems. This module makes the question
-precise — that's a real contribution toward H9, even though the
-analysis remains open.
-
-**Implications**:
-
-  * Future work can attempt `DiscretePsiFourScalingNonTrivial` for
-    specific rules and seeds.
-  * Failure of this proposition for any rule would be a refutation
-    result — showing that rule class cannot model gravitational
-    radiation in the continuum limit.
+Neither Prop refers to a continuum limit or to a waveform.
 -/
 
 end PsiFourScalingOpen

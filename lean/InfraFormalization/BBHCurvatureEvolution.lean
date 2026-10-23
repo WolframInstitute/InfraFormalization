@@ -1,18 +1,24 @@
 /-
-**B4-bbh-curvature-evolution: BBH-scale R trajectory predicted via
-universal additivity** (#480; cheap BBH calculation).
+Seven times the one-edge R values for two rule pairs.
 
-The universal additivity (#454, #471) implies the BBH-scale R
-evolution is **7× the single-edge baseline at every depth**. This
-module **predicts and certifies** the BBH-scale R trajectories for
-the 4 R-zero classes without expensive BBH probes — using only the
-single-edge baselines + universal additivity multiplier.
+`discreteRicciScalar sys d` is the scaled Knill Euler characteristic
+of `causalDAGOfFireAll sys seedEdge12 d`. The evolution is
+`fireAllStep`, which applies every match of every rule found in the
+state, including matches that share edges. It is not a Wolfram model
+update when matches overlap.
 
-**Predicted BBH-scale R trajectories** (all `native_decide`-certified):
+The theorems below state `7 * discreteRicciScalar sys d` for
+`sys = edgeReversal_tripleMerger_Sys` and
+`sys = edgeReversal_doubleCycle_Sys` at depths 2 to 5. These are
+values on `seedEdge12` multiplied by 7. They are not computed on
+`bbhInitial`. Only `BBH_universal_additivity_at_d3` evaluates the
+fire-all causal graph on `bbhInitial`, for one rule pair at depth 3.
+No theorem states that the factor 7 holds at other depths or for
+other rules. All values are PROVED-WITH-NATIVE-DECIDE.
 
-  For `eR + tripleMerger` (vacuum-init Lorentzian):
+  For `eR + tripleMerger`:
 
-  | d | R_edge12 | R_BBH = 7·R_edge12 |
+  | d | R_edge12 |     7·R_edge12      |
   |---|----------|---------------------|
   | 2 |     0    |          0           |
   | 3 |   -36    |       -252           |
@@ -21,32 +27,16 @@ single-edge baselines + universal additivity multiplier.
 
   For `eR + dCyc`:
 
-  | d | R_edge12 | R_BBH = 7·R_edge12 |
+  | d | R_edge12 |     7·R_edge12      |
   |---|----------|---------------------|
   | 2 |     0    |          0           |
   | 3 |   -24    |       -168           |
   | 4 |  -108    |       -756           |
   | 5 |  -276    |      -1932           |
 
-**Universal additivity invariance** — certifies the prediction.
-
-**Why this matters** (Phase-D BBH-specific characterization):
-
-This module gives the framework's **comprehensive BBH-scale R
-trajectory** across the multi-rule corpus, derived from single-edge
-baselines via universal additivity (no expensive BBH-scale probes).
-
-The result: a Phase-D-ready substrate for BBH-specific curvature
-calculations, with explicit predicted values at d ∈ {2,3,4,5}.
-
-**Computational efficiency observation**:
-
-  * Probing R at BBH directly: requires evaluating
-    `causalDAGOfFireAll sys bbhInitial d` which is slow.
-  * Predicting R at BBH via R(edge12) * 7: O(1) once R(edge12) is known.
-
-The universal additivity (#454) gives the framework a
-**~7× computational speedup** for BBH-scale curvature predictions.
+The column `7·R_edge12` is the product stated in the theorems. It
+equals the value on `bbhInitial` only where a theorem evaluates
+`bbhInitial` directly (depth 3, `eR + tripleMerger`).
 -/
 
 import InfraFormalization.RGrowthRates
@@ -65,16 +55,11 @@ open MultiRuleDiscovered
 open BBHInitialData
 open DiscreteRicciScalar
 
-/-! ## Predicted BBH-scale R for eR + tripleMerger -/
+/-! ## 7 · R for eR + tripleMerger -/
 
-/-- **`BBH_R_eR_tripleMerger_predicted`**: BBH-scale R values for
-`eR + tripleMerger` at depths 2, 3, 4, 5, predicted from edge12
-baselines via universal additivity (7× scaling).
-
-  * d=2: predicted 0 (vacuum init).
-  * d=3: predicted 7 × -36 = -252.
-  * d=4: predicted 7 × -192 = -1344.
-  * d=5: predicted 7 × -660 = -4620. -/
+/-- `BBH_R_eR_tripleMerger_predicted`: `7 * discreteRicciScalar` of
+`edgeReversal_tripleMerger_Sys` at depths 2, 3, 4, 5 is 0, -252,
+-1344, -4620 (one-edge values 0, -36, -192, -660). -/
 theorem BBH_R_eR_tripleMerger_predicted :
     7 * discreteRicciScalar edgeReversal_tripleMerger_Sys 2 = 0 ∧
     7 * discreteRicciScalar edgeReversal_tripleMerger_Sys 3 = -252 ∧
@@ -82,12 +67,11 @@ theorem BBH_R_eR_tripleMerger_predicted :
     7 * discreteRicciScalar edgeReversal_tripleMerger_Sys 5 = -4620 := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
 
-/-! ## Predicted BBH-scale R for eR + dCyc -/
+/-! ## 7 · R for eR + dCyc -/
 
-/-- **`BBH_R_eR_dCyc_predicted`**: BBH-scale R values for
-`eR + dCyc` predicted from edge12 baselines.
-
-  * d=2: 0.  d=3: -168.  d=4: -756.  d=5: -1932. -/
+/-- `BBH_R_eR_dCyc_predicted`: `7 * discreteRicciScalar` of
+`edgeReversal_doubleCycle_Sys` at depths 2, 3, 4, 5 is 0, -168,
+-756, -1932. -/
 theorem BBH_R_eR_dCyc_predicted :
     7 * discreteRicciScalar edgeReversal_doubleCycle_Sys 2 = 0 ∧
     7 * discreteRicciScalar edgeReversal_doubleCycle_Sys 3 = -168 ∧
@@ -95,64 +79,36 @@ theorem BBH_R_eR_dCyc_predicted :
     7 * discreteRicciScalar edgeReversal_doubleCycle_Sys 5 = -1932 := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
 
-/-! ## BBH-scale R = 0 at d=2 for vacuum-init combos -/
+/-! ## 7 · R = 0 at depth 2 -/
 
-/-- **`BBH_R_zero_at_init`**: at depth 2 on BBH, both vacuum-init
-combos give R_BBH = 0 (by universal additivity from R_edge=0). -/
+/-- `BBH_R_zero_at_init`: `7 * discreteRicciScalar` is 0 at depth 2
+for both rule pairs. The value is computed on `seedEdge12`. -/
 theorem BBH_R_zero_at_init :
     7 * discreteRicciScalar edgeReversal_tripleMerger_Sys 2 = 0 ∧
     7 * discreteRicciScalar edgeReversal_doubleCycle_Sys 2 = 0 := by
   refine ⟨?_, ?_⟩ <;> native_decide
 
-/-! ## Direct BBH verification at d=3 (universal additivity sanity check) -/
+/-! ## Direct evaluation on bbhInitial at depth 3 -/
 
-/-- **`BBH_universal_additivity_at_d3`**: directly verify that
-the predicted BBH-scale R (7 × edge12) matches the actual BBH-scale
-Knill at depth 3 — a sanity check on universal additivity. -/
+/-- `BBH_universal_additivity_at_d3`: for `edgeReversal_tripleMerger_Sys`
+at depth 3, the scaled Knill value of the fire-all causal graph on
+`bbhInitial` equals 7 times the value on `seedEdge12`. -/
 theorem BBH_universal_additivity_at_d3 :
     knillEulerScaled (causalDAGOfFireAll edgeReversal_tripleMerger_Sys bbhInitial 3) =
       7 * discreteRicciScalar edgeReversal_tripleMerger_Sys 3 := by
   native_decide
 
-/-! ## What this delivers
+/-! ## Summary
 
-**BBH-scale R evolution prediction**:
+  * `BBH_R_eR_tripleMerger_predicted`: four values of `7 · R` for
+    eR + tripleMerger.
+  * `BBH_R_eR_dCyc_predicted`: four values of `7 · R` for eR + dCyc.
+  * `BBH_R_zero_at_init`: both pairs give 0 at depth 2.
+  * `BBH_universal_additivity_at_d3`: the factor 7 holds on
+    `bbhInitial` for eR + tripleMerger at depth 3.
 
-  * `BBH_R_eR_tripleMerger_predicted`: 4 depth values for combo
-    eR+tripleMerger.
-  * `BBH_R_eR_dCyc_predicted`: 4 depth values for combo eR+dCyc.
-  * `BBH_R_zero_at_init`: both vacuum-init combos have BBH R=0 at
-    d=2.
-  * `BBH_universal_additivity_at_d3`: direct verification of the
-    7× scaling.
-
-**Why this matters** (Phase-D consolidation):
-
-The framework now has **explicit BBH-scale R values** for the
-leading multi-rule combos, derived efficiently from single-edge
-baselines.
-
-**Comparative BBH-scale R at depth 5**:
-
-  * eR + tripleMerger on BBH: R = -4620.
-  * eR + dCyc on BBH: R = -1932.
-  * eR + fork on BBH (from #468 + #457): R = 7 × (-36) = -252.
-
-The **strongest classical-curvature signal** at depth 5 BBH-scale
-comes from `eR + tripleMerger` (R = -4620). This is the framework's
-discrete prediction for the BBH-scale curvature signature at depth 5
-under that combo.
-
-**Implication for BBH endgame**:
-
-For modeling BBH at depth 5+:
-  * eR + tripleMerger gives the strongest curvature signal.
-  * Universal additivity (verified at d=3) would reduce BBH-scale
-    calculations to O(1) if it persists at deeper d; depth-extension
-    is conjectural.
-
-The framework's BBH endgame substrate is now fully predictable
-from single-edge baselines.
+Whether the factor 7 holds at other depths or for other rules is
+OPEN; no theorem in this module states it.
 -/
 
 end BBHCurvatureEvolution

@@ -1,65 +1,35 @@
 /-
-**Partition closure for `fireAllStep` on single-edge-LHS rules**
-(#499 / #495b).
+A rule-class predicate `PartitionPreserving` for single-edge-LHS rules,
+two instances of it, and the statement `PartitionClosureUnderStep` about
+the fire-all evolution.
 
-This module supplies the **rule-class predicate** and the **partition-
-closure obligation** that, combined with `FreshVertexPartition` (#498)
-and `StepZeroAncestor` (#500), discharge the second conjunct (R2) of
-`EdgeCausallyDisjoint` for single-edge-LHS rules.
+The evolution is `tracedFireAllEvolve ⟨[r]⟩ seed d`. `fireAllStep`
+applies every match of every rule found in the state, including matches
+that share edges. It is not a Wolfram model update when matches overlap.
 
-**Mathematical content.** Let `seed` have distinct edges
-`[e_0, …, e_{k-1}]`. After applying `tracedFireAllStep ⟨[r]⟩ seed 0`,
-the events are `event_0, …, event_{k-1}` with `event_m.matchIdx = m`.
-Each `event_m`:
+At step 0, the k-th match of the seed allocates fresh vertices in the
+half-open interval `[baseFresh + k·numFresh, baseFresh + (k+1)·numFresh)`
+(`FreshVertexPartition.freshSlice`). Slices of different matches are
+disjoint (`FreshVertexPartition.freshSlice_disjoint`). A produced edge
+whose RHS pattern uses only bound indices ("seed-only", for example
+`{1,0}` in `edgeReversalRule`) contains no fresh vertex.
+`PartitionPreserving r` states that two different bindings never
+produce the same seed-only edge.
 
-  * consumes the edge bound by the `m`-th match `ρ_m`;
-  * produces edges containing the `m`-th fresh slice
-    `freshSlice baseFresh r.numFresh m`
-    (the half-open interval `[baseFresh + m·numFresh, baseFresh +
-    (m+1)·numFresh)`) **plus** possibly seed-only edges built from
-    `ρ_m`'s vertices alone.
+PROVED without `sorry` or `native_decide`:
 
-Two matches at distinct indices `m ≠ m'` allocate fresh vertices in
-disjoint slices (`FreshVertexPartition.freshSlice_disjoint`). What
-remains is the **seed-only case**: edges produced from purely bound-
-indexed RHS edges (e.g. `[1,0]` in `edgeReversalRule`) carry no fresh
-tag. The **partition-preserving** rule-class predicate below says
-exactly that two distinct bindings produce **distinct** seed-only
-edges, so the seed-only image of the `m`-th match cannot collide with
-the seed-only image of the `m'`-th match.
+  * `seedOnly_map_indep_fresh`: the image of a seed-only RHS edge under
+    `bindingExtend r ρ f` does not depend on `f`.
+  * `PartitionPreserving_edgeReversalRule`,
+    `PartitionPreserving_doubleCycleRule_5`: the two instances.
+  * `partitionClosure_base`: `PartitionClosureUnderStep` at depth 0,
+    where the event list is empty.
 
-**What this module ships** (no `sorry`, no `native_decide`; concrete
-rule instances use `Decidable`-style reasoning at the level of
-`Hyperedge` extensionality):
-
-  * `IsSeedOnlyRhsEdge r e` — predicate: every vertex slot of `e` is
-    a bound index (< `r.numBound`).
-
-  * `bindingExtend r ρ f` — the fresh-aware extension of a binding,
-    matching the inline lambda in `tracedFireAllStep`.
-
-  * `PartitionPreserving r` — single-edge-LHS rule-class predicate:
-    two distinct bindings cannot produce the same seed-only edge.
-
-  * `seedOnly_map_indep_fresh` — the mapping of a seed-only RHS edge
-    under `bindingExtend r ρ f` is independent of `f` (a clean
-    structural identity).
-
-  * `PartitionPreserving_edgeReversalRule` — concrete instance.
-
-  * `PartitionPreserving_doubleCycleRule_5` — concrete instance.
-
-  * `PartitionClosureUnderStep` — the headline Prop obligation: the
-    `stepZeroAncestor` function partitions every event into one of
-    the seed's distinct-edge classes, and every causal edge stays
-    within a single class.
-
-The full induction `PartitionPreserving → PartitionClosureUnderStep`
-across depth is the next multi-session sub-task (it requires
-threading the partition tag through `tracedFireAllEvolve` and
-checking each new event's consumed edge against the prior tag). This
-module discharges the **rule-class half** and states the closure
-obligation cleanly.
+OPEN: `PartitionClosureTheorem`, the statement that for every
+`PartitionPreserving` rule, every seed and every depth d, every causal
+edge `(a, b)` of the fire-all trace satisfies
+`stepZeroAncestor events edges a = stepZeroAncestor events edges b`.
+The case d = 1 (`PartitionClosure_step1`) is also not proved.
 -/
 
 import InfraFormalization.FreshVertexPartition
@@ -78,18 +48,16 @@ open DiscoveredRules
 
 /-! ## Section A: seed-only RHS edges and the fresh-aware extension -/
 
-/-- An RHS edge is **seed-only** if every vertex slot it uses is a
-**bound** pattern index (`< r.numBound`). Under any match `ρ`, the
-mapping of a seed-only RHS edge produces a hyperedge whose vertices
-are all bound to `ρ`'s image and depends only on `ρ` (the fresh
-offset is irrelevant). -/
+/-- An RHS edge is seed-only if every vertex slot it uses is a bound
+pattern index (`< r.numBound`). -/
 def IsSeedOnlyRhsEdge (r : ExecRule)
     (e : Hyperedge (Fin (r.numBound + r.numFresh))) : Prop :=
   ∀ v ∈ e.verts, v.val < r.numBound
 
-/-- Fresh-aware extension of a binding `ρ`, identical to the inline
-lambda in `tracedFireAllStep` (`CausalEventTrace.lean:78-80`). The
-fresh vertex slot `i ≥ numBound` maps to `f + (i.val - numBound)`. -/
+/-- `bindingExtend r ρ f` sends a bound index `i < r.numBound` to `ρ i`
+and a fresh index `i ≥ r.numBound` to `f + (i - r.numBound)`. The
+extension in `CausalEventTrace.tracedFireAllStep` has the same form with
+`f = baseFresh + offset'`. -/
 def bindingExtend (r : ExecRule) (ρ : Fin r.numBound → ℕ) (f : ℕ) :
     Fin (r.numBound + r.numFresh) → ℕ := fun i =>
   if h : i.val < r.numBound then ρ ⟨i.val, h⟩
@@ -116,18 +84,11 @@ theorem seedOnly_map_indep_fresh (r : ExecRule) (ρ : Fin r.numBound → ℕ)
 
 /-! ## Section B: the `PartitionPreserving` rule-class predicate -/
 
-/-- **`PartitionPreserving r`**: the single-edge-LHS rule `r` is
-**partition-preserving** when two distinct bindings cannot produce
-the **same seed-only edge** under any (independent) fresh offsets.
-
-Equivalent informal statement: for any `ρ₁ ≠ ρ₂`, the seed-only
-images of the RHS under `ρ₁` and `ρ₂` are pairwise distinct. This is
-the rule-class side condition that — combined with disjoint fresh
-slices (#498) — closes the partition under one `fireAllStep`.
-
-The hypothesis `r.lhs.length = 1` records the single-edge-LHS
-restriction; the predicate's seed-only-image disjointness is the
-nontrivial structural content. -/
+/-- `PartitionPreserving r` holds when `r.lhs.length = 1` and, for any
+two different bindings `ρ₁ ≠ ρ₂`, any two seed-only RHS edges `e₁`,
+`e₂` and any fresh offsets `f₁`, `f₂`, the image of `e₁` under
+`bindingExtend r ρ₁ f₁` differs from the image of `e₂` under
+`bindingExtend r ρ₂ f₂`. -/
 def PartitionPreserving (r : ExecRule) : Prop :=
   r.lhs.length = 1 ∧
   ∀ (ρ₁ ρ₂ : Fin r.numBound → ℕ),
@@ -165,25 +126,19 @@ theorem bindingExtend_apply_bound (r : ExecRule) (ρ : Fin r.numBound → ℕ) (
   unfold bindingExtend
   rw [dif_pos h]
 
-/-- The verts of `Hyperedge.map f (mkEdgeFin i j)` are `[f i, f j]`.
-Pure `rfl` — independent of the rule-class structure of `bindingExtend`,
-which keeps the rewriter's unifier from having to reduce
-`r.numBound + r.numFresh`. -/
+/-- The vertex list of `Hyperedge.map f (mkEdgeFin i j)` is `[f i, f j]`, by `rfl`. -/
 theorem map_mkEdgeFin_verts {n : ℕ} (f : Fin n → ℕ) (i j : Fin n) :
     (Hyperedge.map f (mkEdgeFin i j)).verts = [f i, f j] := rfl
 
-/-! ## Section E: concrete instance — `edgeReversalRule`
+/-! ## Section E: instance `edgeReversalRule`
 
-For `edgeReversalRule` (numBound = 2, numFresh = 1, rhs = `[{1,0}]`),
-the single seed-only RHS edge is `{1,0}`. Two distinct bindings
-`ρ₁ ≠ ρ₂` produce two distinct hyperedges `[ρ_i 1, ρ_i 0]`. We
-extract the binding's pointwise components via `congrArg
-Hyperedge.verts` (which reduces by `rfl` through `Hyperedge.map`),
-then split the resulting list equality via `List.cons.injEq`, and
-finally undo `bindingExtend` on bound indices via
-`bindingExtend_apply_bound`. -/
+`edgeReversalRule` is `{0,1} → {1,0}` (`numBound = 2`). Its only RHS
+edge `{1,0}` is seed-only. If two bindings `ρ₁`, `ρ₂` give equal images
+`[ρ₁ 1, ρ₁ 0] = [ρ₂ 1, ρ₂ 0]`, then `ρ₁ = ρ₂`. The proof extracts the
+two list components with `congrArg Hyperedge.verts` and
+`List.cons.injEq`, then applies `bindingExtend_apply_bound`. -/
 
-/-- **`edgeReversalRule` is partition-preserving.** -/
+/-- `edgeReversalRule` satisfies `PartitionPreserving`. -/
 theorem PartitionPreserving_edgeReversalRule :
     PartitionPreserving edgeReversalRule := by
   refine ⟨rfl, ?_⟩
@@ -226,7 +181,7 @@ theorem PartitionPreserving_edgeReversalRule :
   | ⟨0, _⟩ => exact h0
   | ⟨1, _⟩ => exact h1
 
-/-! ## Section F: concrete instance — `doubleCycleRule_5` -/
+/-! ## Section F: instance `doubleCycleRule_5` -/
 
 /-- The seed-only RHS edge of `doubleCycleRule_5` is the second one
 `[{1, 0}]` (both indices < `numBound = 2`); the first edge `[{0, 2}]`
@@ -251,9 +206,8 @@ theorem doubleCycleRule_5_seedOnly_iff
     exact absurd h2lt (by decide)
   · exact List.mem_singleton.mp hrest
 
-/-- **`doubleCycleRule_5` is partition-preserving.**
-
-The only seed-only RHS edge is `[{1, 0}]`. Same argument as
+/-- `doubleCycleRule_5` satisfies `PartitionPreserving`. Its only
+seed-only RHS edge is `{1, 0}`, and the proof follows the one for
 `edgeReversalRule`. -/
 theorem PartitionPreserving_doubleCycleRule_5 :
     PartitionPreserving doubleCycleRule_5 := by
@@ -286,25 +240,18 @@ theorem PartitionPreserving_doubleCycleRule_5 :
   | ⟨0, _⟩ => exact h0
   | ⟨1, _⟩ => exact h1
 
-/-! ## Section F: the partition-closure obligation -/
+/-! ## Section G: the statement `PartitionClosureUnderStep` -/
 
-/-- **Partition-closure obligation under `fireAllStep`.**
-
-Given a `PartitionPreserving` rule `r`, the `stepZeroAncestor`
-function (defined in `StepZeroAncestor`) partitions every event of
-`tracedFireAllEvolve ⟨[r]⟩ seed d` into one of the seed's distinct-
-edge classes, and **every causal edge** of the derived causal DAG
-stays within a single class.
-
-Formally: for every causal edge `(a, b)` derived from the event list,
+/-- `PartitionClosureUnderStep r h seed d` states that every causal edge
+`(a, b)` derived from the events of
+`tracedFireAllEvolve ⟨[r]⟩ seed d` satisfies
 `stepZeroAncestor events edges a = stepZeroAncestor events edges b`.
 
-This is the substantive R2 closure condition of `EdgeCausallyDisjoint`;
-the headline implication
-  `PartitionPreserving r → PartitionClosureUnderStep r seed d`
-is the next multi-session sub-task (it requires an induction on `d`
-threading the partition tag through every emitted event's consumed
-edge). -/
+The evolution is the fire-all operator: every match found in the state
+fires, including matches that share edges. The hypothesis `_h` is not
+used in the statement. `partitionClosure_base` proves the case d = 0.
+The implication `PartitionPreserving r → PartitionClosureUnderStep r h
+seed d` for d ≥ 1 is OPEN. -/
 def PartitionClosureUnderStep (r : ExecRule) (_h : PartitionPreserving r)
     (seed : ExecHG ℕ) (d : ℕ) : Prop :=
   let evolution := tracedFireAllEvolve ⟨[r]⟩ seed d
@@ -313,9 +260,8 @@ def PartitionClosureUnderStep (r : ExecRule) (_h : PartitionPreserving r)
   ∀ (a b : ℕ), (a, b) ∈ edges →
     stepZeroAncestor events edges a = stepZeroAncestor events edges b
 
-/-- **Base case `d = 0`.** At depth zero, no events have been emitted
-so the derived causal-edge list is empty and the closure is
-vacuously true. -/
+/-- At depth 0 the event list is empty, so the derived causal-edge list
+is empty and `PartitionClosureUnderStep r h seed 0` holds. -/
 theorem partitionClosure_base (r : ExecRule) (h : PartitionPreserving r)
     (seed : ExecHG ℕ) :
     PartitionClosureUnderStep r h seed 0 := by
@@ -325,96 +271,58 @@ theorem partitionClosure_base (r : ExecRule) (h : PartitionPreserving r)
   -- `(a, b) ∈ []` is `False`.
   simp [tracedFireAllEvolve, deriveCausalEdges] at hab
 
-/-- **Single-step case `d = 1`.** At depth one, all emitted events
-have `step = 0`, and `deriveCausalEdges` requires `i < j` plus a
-shared edge. Since every step-0 event is its own ancestor
-(`stepZeroAncestor_step_zero`), any pair `(a, b)` in the derived
-edges has identical ancestors only when `a = b`. But `(i, j) ∈
-deriveCausalEdges events` forces `i < j`, so any pair witnesses
-distinct events.
-
-We prove the conclusion by showing that the derived causal-edge list
-is in fact **empty** at depth 1 for `PartitionPreserving` rules:
-every step-0 event's consumed edge is distinct from every other
-step-0 event's produced edges by the rule-class condition. -/
+/-- `PartitionClosure_step1 r h seed` is the `Prop`
+`PartitionClosureUnderStep r h seed 1`. The library contains no proof
+of it. -/
 def PartitionClosure_step1 (r : ExecRule) (h : PartitionPreserving r)
     (seed : ExecHG ℕ) : Prop :=
   PartitionClosureUnderStep r h seed 1
 
-/-! ## Section G: full theorem statement and proof scope -/
+/-! ## Section H: the statement `PartitionClosureTheorem` (OPEN) -/
 
-/-- **Partition closure under `fireAllStep` for `PartitionPreserving`
-rules** (headline Prop obligation).
+/-- `PartitionClosureTheorem` (OPEN): for every rule `r` with
+`PartitionPreserving r`, every seed and every depth d,
+`PartitionClosureUnderStep r h seed d` holds.
 
-Given a `PartitionPreserving` rule, the partition-closure property
-holds at every depth. The base case `d = 0` is closed by
-`partitionClosure_base`; the inductive step requires the multi-
-session combinatorial argument outlined in the module header.
-
-The induction strategy: at depth `d+1`, every newly emitted event
-consumes an edge of the depth-`d` state. By the inductive hypothesis,
-this consumed edge is tagged with a unique step-0 ancestor (the
-`stepZeroAncestor` of the producing event). Either:
-
-  (i) The consumed edge contains a fresh vertex from `freshSlice
-      baseFresh r.numFresh m` for some unique `m` — closed by
-      `freshSlice_disjoint`.
-
-  (ii) The consumed edge is seed-only relative to its binding —
-       closed by the `PartitionPreserving` predicate, since two
-       distinct ancestor-bindings cannot produce the same seed-only
-       edge.
-
-Stated as a Prop; the proof is task #501 (R2 partition closure
-finalisation). -/
+`partitionClosure_base` proves the case d = 0. The library contains no
+proof of the inductive step. A possible argument at depth d+1 splits on
+whether the consumed edge of a new event contains a fresh vertex from
+some slice `freshSlice baseFresh r.numFresh m`
+(`FreshVertexPartition.freshSlice_disjoint`) or is seed-only relative to
+its binding (`PartitionPreserving`). This argument is not formalized. -/
 def PartitionClosureTheorem : Prop :=
   ∀ (r : ExecRule) (h : PartitionPreserving r) (seed : ExecHG ℕ) (d : ℕ),
     PartitionClosureUnderStep r h seed d
 
-/-! ## Section H: bundled rule-class certificate
+/-! ## Section I: conjunction of the two instances -/
 
-The pair of concrete instances above package as a single artifact for
-downstream consumers (specifically, the BBH disjointness theorem that
-needs the obligation discharged for the rules in
-`DiscoveredRules.lean`). -/
-
-/-- **Bundled certificate**: both `edgeReversalRule` and
-`doubleCycleRule_5` are `PartitionPreserving`. -/
+/-- `edgeReversalRule` and `doubleCycleRule_5` both satisfy
+`PartitionPreserving`. -/
 theorem partitionPreserving_certified :
     PartitionPreserving edgeReversalRule ∧
     PartitionPreserving doubleCycleRule_5 :=
   ⟨PartitionPreserving_edgeReversalRule,
    PartitionPreserving_doubleCycleRule_5⟩
 
-/-! ## What this module delivers and what remains
+/-! ## Contents
 
-**Delivered** (no `sorry`, no `native_decide`):
+PROVED (no `sorry`, no `native_decide`):
 
-  * `IsSeedOnlyRhsEdge` — RHS-edge classification (bound-only).
-  * `bindingExtend` — engine-mirroring fresh-aware binding extension.
-  * `seedOnly_map_indep_fresh` — structural identity: seed-only
-    images depend only on `ρ`, not on the fresh offset.
-  * `PartitionPreserving` — single-edge-LHS rule-class predicate.
-  * `PartitionPreserving_edgeReversalRule` (concrete instance).
-  * `PartitionPreserving_doubleCycleRule_5` (concrete instance).
-  * `partitionPreserving_certified` (bundled certificate).
-  * `PartitionClosureUnderStep` (Prop obligation, depth-indexed).
-  * `partitionClosure_base` — base case `d = 0` proved
-    unconditionally.
-  * `PartitionClosureTheorem` (Prop obligation, full induction).
+  * `seedOnly_map_indep_fresh`: the image of a seed-only RHS edge does
+    not depend on the fresh offset.
+  * `binding_ne_iff_exists_disagree`, `bindingExtend_apply_bound`,
+    `map_mkEdgeFin_verts`: helper lemmas.
+  * `PartitionPreserving_edgeReversalRule`,
+    `PartitionPreserving_doubleCycleRule_5`, and their conjunction
+    `partitionPreserving_certified`.
+  * `partitionClosure_base`: `PartitionClosureUnderStep r h seed 0`.
 
-**Open** (next sub-task #501):
+Definitions: `IsSeedOnlyRhsEdge`, `bindingExtend`, `PartitionPreserving`,
+`PartitionClosureUnderStep`, `PartitionClosure_step1`,
+`PartitionClosureTheorem`.
 
-  * `PartitionClosureTheorem` itself — the induction on `d`. Uses
-    `freshSlice_disjoint` (case (i)) and `PartitionPreserving` (case
-    (ii)) at each step, threaded by `stepZeroAncestor`.
-
-**Why this matters.** The rule-class half of R2 — the structural
-condition that two distinct bindings cannot produce the same seed-
-only edge — is independently meaningful: it is the discrete analog
-of "rewrite locality" for hypergraph rewriting. Together with the
-fresh-vertex partition (#498), it is the foundation of the per-edge
-causal decomposition that closes BBH per-edge additivity.
+OPEN: `PartitionClosureTheorem`, and `PartitionClosureUnderStep` at
+every depth d ≥ 1.
 -/
 
 end PartitionClosure

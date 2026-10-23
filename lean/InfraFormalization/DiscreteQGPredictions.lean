@@ -1,71 +1,31 @@
 /-
-**B4-discrete-QG-predictions: consolidated framework predictions for
-discrete quantum gravity** (#488; physics-prediction capstone).
+A conjunction of finite computed values from several modules.
 
-This module **bundles the framework's discrete-physics predictions**
-for downstream physics analysis. With Phase-D substrate complete,
-the framework makes the following concrete, falsifiable predictions:
+R is `discreteRicciScalar sys d`, the scaled Knill Euler characteristic
+of `causalDAGOfFireAll sys seedEdge12 d`. B is
+`discreteBranchialDensity sys d`, the scaled Knill Euler characteristic
+of `branchialDAGOfFireAll sys seedEdge12 d`. The branchial graph joins
+two events of the same step that consume a common edge. It is not the
+Wolfram-model branchial graph. The evolution is `fireAllStep`, which
+applies every match of every rule found in the state, including
+matches that share edges. It is not a Wolfram model update when
+matches overlap.
 
-**Prediction 1 (conjectural)**: per-edge curvature density
-universality. Verified at depth 3 for (eR+id, path123); claim 'for
-any rule, seed, and depth' is a conjecture extrapolated from finite
-checks.
+The theorem `discrete_QG_predictions_capstone` collects eleven values
+or comparisons at depths 2 to 6. Each is a statement about one named
+rule system and one depth, PROVED-WITH-NATIVE-DECIDE.
 
-  `Knill(rule, seed, d) = |seed| · R(rule, d)`
-  `Branchial K(rule, seed, d) = |seed| · B(rule, d)`
+The following statements appear in other modules as conjectures and
+are OPEN; this module proves none of them:
 
-  The per-edge density is topology-independent in the verified
-  instances (#454, #462).
+  * For every rule, seed and depth, the causal Knill value on `seed`
+    equals `seed.length * R` (and likewise for B).
+  * `R(fork + dCyc, d) = 0` for every `d ≥ 3`.
+  * `B(d) = 3^(d+1) - 3` for every `d ≥ 2` for
+    `edgeReversal_tripleMerger_Sys` and `fork_doubleCycle_Sys`.
 
-**Prediction 2**: dual-side independence.
-
-  R and B are independent observables (#463). Their values are
-  not related by a simple universal function.
-
-**Prediction 3**: vacuum-like regime structural law.
-
-  `R(fork + dCyc, d) = 0` verified at d ∈ {3,4} (per native_decide
-  cases); persistence at d ≥ 5 is conjectural.
-  B continues to grow.
-
-**Prediction 4**: persistent B equivalence between two combos.
-
-  `B(eR + tripleMerger, d) = B(fork + dCyc, d) = 3^(d+1) - 3`
-  for d ≥ 2 (verified through d=6).
-
-**Prediction 5**: scaling-exponent prediction.
-
-  In the continuum limit, the quantum amplitude scales as
-  `h^{-log_2(3)} ≈ h^{-1.585}`.
-
-**Prediction 6**: balance α* spectrum.
-
-  Multi-rule combos have rational α* values:
-    * eR + id: 4/5.
-    * eR + fork: 7/11.
-    * eR + tripleMerger: 6/13.
-
-**Prediction 7**: signature classification.
-
-  4 R-zero classes: vacuum-init, sign-reversal, persistent-Lorentzian,
-  persistent-vacuum.
-
-**Why this matters** (framework's research output):
-
-These are **concrete, falsifiable physics-level predictions** the
-framework now makes. Any continuum-QG framework that disagrees with
-any of these predictions disagrees with the discrete framework.
-
-**Implication for the user / Wolfram Institute submission**:
-
-The framework's Phase-D structural development produces concrete
-predictions that:
-
-  * Are verifiable by `native_decide` in Lean.
-  * Have closed-form analytical structure (B(d) recurrence + closed form).
-  * Make falsifiable continuum-limit predictions.
-
-This is the substrate for publication-quality physics-level results.
+The module defines no continuum limit, quantum system or gravitational
+field.
 -/
 
 import InfraFormalization.BClosedFormExtended
@@ -93,32 +53,37 @@ open RZeroCrossings
 open CorpusBalanceSpectrum
 open DualSideIndependence
 
-/-! ## Master prediction theorem -/
+/-! ## The conjunction -/
 
-/-- **`discrete_QG_predictions_capstone`**: bundles the framework's
-**concrete physics-level predictions**:
+/-- `discrete_QG_predictions_capstone`: the conjunction of
 
-  1. Universal additivity for R (eR + id BBH at d=3 vs path123).
-  2. Persistent R-degeneracy (fork + dCyc R = 0 at d=4).
-  3. Closed-form B (B = 3^(d+1) - 3 at d=2-6 for persistent class).
-  4. 5-depth B equivalence (eR+tripleMerger == fork+dCyc).
-  5. Rational balance α* = 4/5 for eR + id.
-  6. Dual-side independence (same R different B at d=2).
-  7. R-zero classification (4 distinct classes verified). -/
+  1. `edgeReversal_identity_Sys` at depth 3: the causal Knill value on
+     `seedPath123` is twice R.
+  2. `fork_doubleCycle_Sys`: R = 0 at depth 4.
+  3. `edgeReversal_tripleMerger_Sys`: B = 3^3 - 3 at depth 2 and
+     B = 3^7 - 3 at depth 6.
+  4. At depth 6, B for `edgeReversal_tripleMerger_Sys` equals B for
+     `fork_doubleCycle_Sys`.
+  5. `edgeReversal_identity_Sys` at depth 3: `5R + 4B = 0`.
+  6. At depth 2, `edgeReversal_identity_Sys` and `edgeReversal_fork_Sys`
+     have equal R and different B.
+  7. R = 0 for `edgeReversal_tripleMerger_Sys` at depth 2, R < 0 for
+     `edgeReversal_fork_Sys` at depth 5, and R = 0 for
+     `fork_doubleCycle_Sys` at depth 4. -/
 theorem discrete_QG_predictions_capstone :
-    -- (1) Universal additivity:
+    -- (1) seedPath123 value = 2 × seedEdge12 value:
     knillEulerScaled (causalDAGOfFireAll edgeReversal_identity_Sys
       UniversalAdditivity.seedPath123 3) =
       2 * discreteRicciScalar edgeReversal_identity_Sys 3 ∧
-    -- (2) Persistent R-degeneracy:
+    -- (2) R = 0:
     discreteRicciScalar fork_doubleCycle_Sys 4 = 0 ∧
-    -- (3) Closed-form B at d=2-6 (full 5-depth):
+    -- (3) B = 3^(d+1) - 3 at d = 2 and d = 6:
     discreteBranchialDensity edgeReversal_tripleMerger_Sys 2 = 3^3 - 3 ∧
     discreteBranchialDensity edgeReversal_tripleMerger_Sys 6 = 3^7 - 3 ∧
-    -- (4) 5-depth equivalence:
+    -- (4) Equal B at d = 6:
     discreteBranchialDensity edgeReversal_tripleMerger_Sys 6 =
       discreteBranchialDensity fork_doubleCycle_Sys 6 ∧
-    -- (5) Rational balance α* = 4/5:
+    -- (5) 5R + 4B = 0:
     5 * discreteRicciScalar edgeReversal_identity_Sys 3 +
       4 * discreteBranchialDensity edgeReversal_identity_Sys 3 = 0 ∧
     -- (6) Same R different B:
@@ -126,50 +91,19 @@ theorem discrete_QG_predictions_capstone :
       discreteRicciScalar edgeReversal_fork_Sys 2 ∧
     discreteBranchialDensity edgeReversal_identity_Sys 2 ≠
       discreteBranchialDensity edgeReversal_fork_Sys 2 ∧
-    -- (7) R-zero classification:
-    discreteRicciScalar edgeReversal_tripleMerger_Sys 2 = 0 ∧  -- vacuum-init
-    discreteRicciScalar edgeReversal_fork_Sys 5 < 0 ∧          -- persistent-Lor
-    discreteRicciScalar fork_doubleCycle_Sys 4 = 0 := by         -- persistent-vacuum
+    -- (7) Signs of R:
+    discreteRicciScalar edgeReversal_tripleMerger_Sys 2 = 0 ∧
+    discreteRicciScalar edgeReversal_fork_Sys 5 < 0 ∧
+    discreteRicciScalar fork_doubleCycle_Sys 4 = 0 := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
 
-/-! ## What this delivers
+/-! ## Summary
 
-**Master physics-level prediction capstone**:
-
-  * `discrete_QG_predictions_capstone`: 11-conj theorem bundling
-    7 distinct framework predictions.
-
-**The framework's discrete-QG prediction summary**:
-
-  1. Per-edge curvature density universality (#454, #462).
-  2. Dual-side independence (#463).
-  3. Vacuum-like regime structural law (#474-#476).
-  4. Persistent B equivalence (5 depths) (#484-#487).
-  5. Closed-form B(d) = 3^(d+1) - 3 (#485-#487).
-  6. Scaling exponent log_2(3) ≈ 1.585 (#486).
-  7. Rational α* spectrum (#470).
-  8. 4-class R-zero classification (#478).
-
-**Why this matters** (publication-ready physics output):
-
-These are the framework's **concrete falsifiable physics-level
-predictions** at the conclusion of Phase-D development:
-
-  * All `native_decide`-certified at finite depths (2-6).
-  * All extrapolate to continuum-limit predictions.
-  * All are testable against alternative continuum-QG frameworks.
-
-**For the Wolfram Institute submission**:
-
-The framework now produces concrete physics-level predictions with:
-
-  * Closed-form analytical structure.
-  * Verified-by-native_decide truth values.
-  * Falsifiable continuum-limit content.
-
-This is publication-quality discrete-QG output: the strongest
-single-theorem characterization of the framework's Phase-D physics
-predictions available in the codebase.
+`discrete_QG_predictions_capstone` is a conjunction of 11 integer
+identities and inequalities for named rule systems on `seedEdge12`
+(and `seedPath123` in conjunct 1) at depths 2 to 6. It is
+PROVED-WITH-NATIVE-DECIDE. It states no continuum limit and no
+statement for unbounded depth.
 -/
 
 end DiscreteQGPredictions

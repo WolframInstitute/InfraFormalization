@@ -1,57 +1,28 @@
 /-
-**B4-multi-rule-R-divergence: multi-rule R values don't follow simple
-combination laws** (#458; honest negative finding).
+R at depth 4 for rule pairs, compared with sums and products of the
+single-rule values.
 
-The refined classifier (#450) predicts single-rule `R(sys, depth)`
-correctly. This module **audits whether multi-rule combo R values
-follow a simple combination law** from the constituent single-rule
-R values.
+R is `discreteRicciScalar sys d`, the scaled Knill Euler characteristic
+of `causalDAGOfFireAll sys seedEdge12 d`. The evolution is
+`fireAllStep`, which applies every match of every rule found in the
+state, including matches that share edges. It is not a Wolfram model
+update when matches overlap. For a rule pair with a common LHS, both
+rules fire on the same edge in one step.
 
-**Empirical data** (all `native_decide`-certified):
+Values (PROVED-WITH-NATIVE-DECIDE):
 
-  | Multi-rule combo            | R(combo, 4) | R(rule1) | R(rule2) |
-  |-----------------------------|-------------|----------|----------|
-  | edgeReversal + identity     |      6      |    0     |   12     |
-  | edgeReversal + fork         |    -72      |    0     |   18     |
-  | edgeReversal + doubleCycle  |   -108      |    0     |   -6     |
-  | fork + doubleCycle          |      0      |   18     |   -6     |
-  | edgeReversal + tripleMerger |   -192      |    0     |  -12     |
+  | Rule pair                   | R(pair, 4) | R(rule1, 4) | R(rule2, 4) |
+  |-----------------------------|------------|-------------|-------------|
+  | edgeReversal + identity     |      6     |      0      |     12      |
+  | edgeReversal + fork         |    -72     |      0      |     18      |
+  | edgeReversal + doubleCycle  |   -108     |      0      |     -6      |
+  | fork + doubleCycle          |      0     |     18      |     -6      |
+  | edgeReversal + tripleMerger |   -192     |      0      |    -12      |
 
-**Negative finding**: NO simple combination law (sum, product,
-linear combination) predicts multi-rule R from constituent R values:
-
-  * `R(eR + id) = 6` ≠ `0 + 12 = 12` (sum), `0 * 12 = 0` (product).
-  * `R(eR + fork) = -72` ≠ `0 + 18 = 18` (sum).
-  * `R(eR + dCyc) = -108` ≠ `0 + (-6) = -6` (sum).
-
-**What this tells us**: multi-rule combinations create **emergent
-dynamical regimes** that single-rule R values cannot predict. The
-interaction between rules produces causal-DAG topology fundamentally
-different from either rule in isolation.
-
-**Why this matters**:
-
-  * The classifier (#450) is correct for single rules but cannot be
-    naively extended to multi-rule.
-  * Multi-rule R prediction requires modeling the *interaction* of
-    rules — likely a function of the LHS/RHS overlap structure,
-    not just constituent R's.
-  * This is a real research finding: it tells us where the
-    classifier-driven search hits its current limit.
-
-**Open questions for future work**:
-
-  * Is there a 2-parameter combination law `R(r1, r2) = f(R(r1), R(r2),
-    overlap(r1, r2))` for some overlap measure?
-  * Does the per-edge additivity (#454) still hold for multi-rule
-    combos? Confirmed: yes (#454 extension 3 — edgeReversal+identity
-    at depth 3 has per-edge law with R=-24).
-  * Is the depth-4 R prediction failure specific to depth 4? Other
-    depths may have different combination structure.
-
-This module makes the framework's classifier-driven search **honest
-about its limits**: single-rule R is predictable, multi-rule R is
-not (yet).
+`R_sum_combination_fails` gives three instances where R of the pair
+differs from the sum. `R_product_combination_fails` gives one instance
+where it differs from the product. The module does not consider other
+combination laws, and states nothing about depths other than 4.
 -/
 
 import InfraFormalization.DiscreteRicciScalar
@@ -69,7 +40,7 @@ open DiscoveredRulesExpanded
 open MultiRuleDiscovered
 open DiscreteRicciScalar
 
-/-! ## Multi-rule R values at depth 4 -/
+/-! ## R for rule pairs at depth 4 -/
 
 theorem R_eR_id_4 : discreteRicciScalar edgeReversal_identity_Sys 4 = 6 := by
   native_decide
@@ -86,14 +57,14 @@ theorem R_fork_dCyc_4 : discreteRicciScalar fork_doubleCycle_Sys 4 = 0 := by
 theorem R_eR_tripleMerger_4 : discreteRicciScalar edgeReversal_tripleMerger_Sys 4 = -192 := by
   native_decide
 
-/-! ## Negative-finding theorems: NO simple combination law -/
+/-! ## Comparison with sums and products -/
 
-/-- **`R_sum_combination_fails`**: the sum `R(rule1) + R(rule2)` does
-NOT predict multi-rule `R(combo)`. Three counterexamples:
+/-- `R_sum_combination_fails`: at depth 4, R of the pair differs from
+the sum of the single-rule values in three instances:
 
-  * R(eR + id) = 6 ≠ 0 + 12 = 12.
-  * R(eR + fork) = -72 ≠ 0 + 18 = 18.
-  * R(eR + dCyc) = -108 ≠ 0 + (-6) = -6. -/
+  * R(eR + id) = 6 and 0 + 12 = 12.
+  * R(eR + fork) = -72 and 0 + 18 = 18.
+  * R(eR + dCyc) = -108 and 0 + (-6) = -6. -/
 theorem R_sum_combination_fails :
     discreteRicciScalar edgeReversal_identity_Sys 4 ≠
       discreteRicciScalar edgeReversalSys 4 + discreteRicciScalar identityKeepSys 4 ∧
@@ -103,32 +74,25 @@ theorem R_sum_combination_fails :
       discreteRicciScalar edgeReversalSys 4 + discreteRicciScalar doubleCycleSys_5 4 := by
   refine ⟨?_, ?_, ?_⟩ <;> native_decide
 
-/-- **`R_product_combination_fails`**: the product
-`R(rule1) * R(rule2)` ALSO does NOT predict multi-rule `R(combo)`.
-
-  * R(fork + dCyc) = 0 ≠ 18 * (-6) = -108. -/
+/-- `R_product_combination_fails`: R(fork + dCyc, 4) = 0 differs from
+`R(forkSys_2, 4) * R(doubleCycleSys_5, 4) = 18 * (-6) = -108`. -/
 theorem R_product_combination_fails :
     discreteRicciScalar fork_doubleCycle_Sys 4 ≠
       discreteRicciScalar forkSys_2 4 * discreteRicciScalar doubleCycleSys_5 4 := by
   native_decide
 
-/-! ## Bundled multi-rule R-divergence theorem -/
+/-! ## Ten values -/
 
-/-- **`multi_rule_R_divergence`**: multi-rule `R(combo, 4)` values
-diverge from naive combinations of constituent single-rule R values.
-NO simple algebraic combination law predicts the multi-rule values.
-
-This is a real research finding: multi-rule combinations create
-emergent dynamical regimes that single-rule R values cannot
-predict. -/
+/-- `multi_rule_R_divergence`: R at depth 4 for five rule pairs (6,
+-72, -108, 0, -192) and for five single rules (0, 12, 18, -6, -12). -/
 theorem multi_rule_R_divergence :
-    -- Certified multi-rule R values:
+    -- Rule pairs:
     discreteRicciScalar edgeReversal_identity_Sys 4 = 6 ∧
     discreteRicciScalar edgeReversal_fork_Sys 4 = -72 ∧
     discreteRicciScalar edgeReversal_doubleCycle_Sys 4 = -108 ∧
     discreteRicciScalar fork_doubleCycle_Sys 4 = 0 ∧
     discreteRicciScalar edgeReversal_tripleMerger_Sys 4 = -192 ∧
-    -- Single-rule baselines (for comparison):
+    -- Single rules:
     discreteRicciScalar edgeReversalSys 4 = 0 ∧
     discreteRicciScalar identityKeepSys 4 = 12 ∧
     discreteRicciScalar forkSys_2 4 = 18 ∧
@@ -138,32 +102,20 @@ theorem multi_rule_R_divergence :
    by native_decide, by native_decide, by native_decide,
    by native_decide, by native_decide⟩
 
-/-! ## What this delivers
+/-! ## Summary
 
-**Honest negative finding** about multi-rule R prediction:
+  * Five values of R for rule pairs and five for single rules at
+    depth 4.
+  * `R_sum_combination_fails`: three instances where R of a pair
+    differs from the sum of the single-rule values.
+  * `R_product_combination_fails`: one instance where R of a pair
+    differs from the product.
+  * `multi_rule_R_divergence`: the ten values.
 
-  * 5 certified multi-rule R values + 5 single-rule baselines.
-  * `R_sum_combination_fails`: sum law fails (3 counterexamples).
-  * `R_product_combination_fails`: product law fails (1
-    counterexample).
-  * `multi_rule_R_divergence`: 10-conj bundled result.
-
-**Why this matters**:
-
-  * Tells us where the classifier hits its current limit.
-  * Multi-rule combinations create emergent dynamics; the rule
-    interactions matter, not just the individual class.
-  * This is research integrity: we don't pretend the classifier
-    extends to multi-rule when it doesn't.
-
-**Future research**: identify the right multi-rule combination
-law. Likely candidates: depends on LHS/RHS overlap, depends on
-fresh-vertex conflict, etc. None known yet.
-
-**Note**: per-edge additivity STILL holds for multi-rule combos
-(see `UniversalAdditivity.universal_additivity_multi_rule`). The
-divergence is in **how single-rule R values combine to give the
-combo R**, not in how the combo's R relates to seed structure.
+`UniversalAdditivity.universal_additivity_multi_rule` states, for
+`edgeReversal_identity_Sys` at depth 3, that the Knill value on
+`seedPath123` and `seedTriangle` is 2 and 3 times the value on
+`seedEdge12`.
 -/
 
 end MultiRuleRDivergence

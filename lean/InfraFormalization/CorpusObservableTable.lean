@@ -1,52 +1,31 @@
 /-
-**B4-corpus-observable-table: comprehensive (R, B, signature) table
-for the multi-rule combo corpus** (#473; corpus-level consolidation).
+A table of `discreteRicciScalar` (R) and `discreteBranchialDensity` (B)
+for five two-rule systems at depth 3 on the single edge `seedEdge12`.
 
-This module provides a **comprehensive observable table** for the
-multi-rule combo corpus at depth 3 on `edge12`, listing for each
-combo:
+R is the scaled Knill value of `causalDAGOfFireAll sys seedEdge12 3`. B
+is the scaled Knill value of `branchialDAGOfFireAll sys seedEdge12 3`,
+the graph that links two events of the same step that consume a common
+edge value. This relation is not the branchial graph of the Wolfram
+model. Both graphs come from `tracedFireAllEvolve`, which applies every
+match of every rule found in the state, including matches that share
+edges. It is not a Wolfram model update when matches overlap.
 
-  * `R(combo, 3)` — discrete Ricci scalar (causal density).
-  * `B(combo, 3)` — branchial density.
-  * Signature: Lorentzian (R<0, B>0) vs Riemannian (R>0, B>0) vs
-    degenerate (R=0 or B=0).
+`DiscreteMetricTensor.hasLorentzianSignature sys d` is `true` when R and
+B are nonzero and of opposite sign.
 
-**The corpus table** (all `native_decide`-certified):
+The module computes by `native_decide` (PROVED-WITH-NATIVE-DECIDE):
 
-  | Combo                       | R    | B   | Sig         |
-  |-----------------------------|------|-----|-------------|
-  | edgeReversal + identity      | -24  | 30  | Lorentzian  |
-  | edgeReversal + fork          | -42  | 66  | Lorentzian  |
-  | edgeReversal + doubleCycle_5 | -24  | 42  | Lorentzian  |
-  | fork + doubleCycle_5         |   0  | 78  | degenerate (R=0) |
-  | edgeReversal + tripleMerger  | -36  | 78  | Lorentzian  |
+  | System                       | R    | B   | `hasLorentzianSignature` |
+  |------------------------------|------|-----|--------------------------|
+  | edgeReversal + identityKeep  | -24  | 30  | true                     |
+  | edgeReversal + forkRule_2    | -42  | 66  | true                     |
+  | edgeReversal + doubleCycle_5 | -24  | 42  | true                     |
+  | forkRule_2 + doubleCycle_5   |   0  | 78  | false                    |
+  | edgeReversal + tripleMerger  | -36  | 78  | true                     |
 
-**Observations**:
-
-  * 4 of 5 combos are Lorentzian (R < 0 < B).
-  * `fork + dCyc` is R-degenerate (R = 0) — interaction of two
-    non-trivial single rules cancels classical curvature.
-  * `eR + tripleMerger` and `fork + dCyc` both have B = 78 — same
-    quantum-amplitude scale but different classical-curvature
-    character.
-
-**Why this matters** (final corpus consolidation):
-
-The framework now has a **publication-ready table** of dual-side
-observables across the multi-rule corpus. This is the discrete
-analog of how continuum-GR characterizes solutions by their Ricci
-scalar values at characteristic events.
-
-**Key research findings**:
-
-  * **R-degeneracy from rule interaction**: `fork + dCyc` shows
-    that combining a Tree-class and Merger-class rule can produce
-    R = 0 — classical curvature cancellation.
-  * **Same B different R**: `eR + tripleMerger` and `fork + dCyc`
-    both give B = 78 but differ on R (-36 vs 0).
-
-These dual-side observable patterns are the framework's discrete-QG
-prediction set for rule corpus characterization.
+For `forkRule_2 + doubleCycle_5`, R is 0 while R of each of its two rules
+alone is nonzero. `edgeReversal + tripleMerger` and
+`forkRule_2 + doubleCycle_5` have the same B and different R.
 -/
 
 import InfraFormalization.CorpusBalanceSpectrum
@@ -75,25 +54,22 @@ theorem R_fork_dCyc_3 : discreteRicciScalar fork_doubleCycle_Sys 3 = 0 := by
 theorem B_fork_dCyc_3 : discreteBranchialDensity fork_doubleCycle_Sys 3 = 78 := by
   native_decide
 
-/-- `eR + doubleCycle` at depth 3: R = -24, B = 42. -/
+/-- For `edgeReversal + doubleCycle_5` at depth 3: R = -24 and B = 42. -/
 theorem RB_eR_dCyc_3 :
     discreteRicciScalar edgeReversal_doubleCycle_Sys 3 = -24 ∧
     discreteBranchialDensity edgeReversal_doubleCycle_Sys 3 = 42 := by
   refine ⟨?_, ?_⟩ <;> native_decide
 
-/-! ## The corpus observable table -/
+/-! ## The table -/
 
-/-- **`corpus_observable_table`**: comprehensive (R, B) values for
-the multi-rule combo corpus at depth 3 on edge12. 5 combos with
-distinct dynamical signatures.
+/-- The pairs `discreteMetricTensor sys 3 = (R, B)` for five two-rule
+systems:
 
-  * `eR + id`: (-24, 30) — Lorentzian.
-  * `eR + fork`: (-42, 66) — Lorentzian.
-  * `eR + dCyc`: (-24, 42) — Lorentzian (different B from eR + id).
-  * `fork + dCyc`: (0, 78) — R-degenerate (interaction cancels
-    classical curvature).
-  * `eR + tripleMerger`: (-36, 78) — Lorentzian (same B as
-    fork + dCyc but different R).
+  * `edgeReversal + identityKeep`: (-24, 30).
+  * `edgeReversal + forkRule_2`: (-42, 66).
+  * `edgeReversal + doubleCycle_5`: (-24, 42).
+  * `forkRule_2 + doubleCycle_5`: (0, 78).
+  * `edgeReversal + tripleMerger`: (-36, 78).
 -/
 theorem corpus_observable_table :
     discreteMetricTensor edgeReversal_identity_Sys 3 = (-24, 30) ∧
@@ -103,8 +79,8 @@ theorem corpus_observable_table :
     discreteMetricTensor edgeReversal_tripleMerger_Sys 3 = (-36, 78) := by
   refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
 
-/-- **`corpus_signature_classification`**: 4 of 5 combos are
-Lorentzian; `fork + dCyc` is R-degenerate. -/
+/-- `hasLorentzianSignature sys 3` is `true` for four of the five
+systems and `false` for `forkRule_2 + doubleCycle_5`, whose R is 0. -/
 theorem corpus_signature_classification :
     hasLorentzianSignature edgeReversal_identity_Sys 3 = true ∧
     hasLorentzianSignature edgeReversal_fork_Sys 3 = true ∧
@@ -113,27 +89,22 @@ theorem corpus_signature_classification :
     hasLorentzianSignature edgeReversal_tripleMerger_Sys 3 = true := by
   refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
 
-/-! ## R-degeneracy finding: rule-interaction cancels classical curvature -/
+/-! ## R of `forkRule_2 + doubleCycle_5` and of its two rules -/
 
-/-- **`R_degeneracy_from_interaction`**: at depth 3 on edge12,
-`fork + dCyc` has R = 0 even though both component rules are
-non-trivial (Tree class + Merger class). The combination cancels
-classical curvature at depth 3.
-
-This is a research finding: **rule interaction can cancel classical
-curvature**. The framework demonstrates that combining a Tree-class
-and Merger-class rule can produce an R-zero combo. -/
+/-- At depth 3 on `seedEdge12`, `discreteRicciScalar` is 0 for the
+two-rule system `forkRule_2 + doubleCycle_5`, and is nonzero for each of
+the single-rule systems `forkSys_2` and `doubleCycleSys_5`. -/
 theorem R_degeneracy_from_interaction :
     discreteRicciScalar fork_doubleCycle_Sys 3 = 0 ∧
     discreteRicciScalar forkSys_2 3 ≠ 0 ∧
     discreteRicciScalar doubleCycleSys_5 3 ≠ 0 := by
   refine ⟨?_, ?_, ?_⟩ <;> native_decide
 
-/-! ## Same-B different-R observation -/
+/-! ## Equal B, different R -/
 
-/-- **`same_B_different_R`**: `eR + tripleMerger` (R=-36) and
-`fork + dCyc` (R=0) both give B = 78 — same quantum-amplitude
-scale but different classical-curvature character. -/
+/-- At depth 3, `edgeReversal + tripleMerger` and
+`forkRule_2 + doubleCycle_5` have equal B (78) and different R (-36 and
+0). -/
 theorem same_B_different_R :
     discreteBranchialDensity edgeReversal_tripleMerger_Sys 3 =
       discreteBranchialDensity fork_doubleCycle_Sys 3 ∧
@@ -141,40 +112,18 @@ theorem same_B_different_R :
       discreteRicciScalar fork_doubleCycle_Sys 3 := by
   refine ⟨?_, ?_⟩ <;> native_decide
 
-/-! ## What this delivers
+/-! ## Contents
 
-**Publication-ready 5-combo corpus observable table**:
+  * `R_fork_dCyc_3`, `B_fork_dCyc_3`, `RB_eR_dCyc_3`: four values.
+  * `corpus_observable_table`: the five pairs `(R, B)` at depth 3.
+  * `corpus_signature_classification`: the five values of
+    `hasLorentzianSignature` at depth 3.
+  * `R_degeneracy_from_interaction`: R = 0 for `forkRule_2 + doubleCycle_5`
+    and R ≠ 0 for each of its two rules alone.
+  * `same_B_different_R`: equal B and different R for
+    `edgeReversal + tripleMerger` and `forkRule_2 + doubleCycle_5`.
 
-  * `corpus_observable_table`: 5-conj bundle of (R, B) values.
-  * `corpus_signature_classification`: signature predicate.
-  * `R_degeneracy_from_interaction`: shows rule interaction can
-    cancel classical curvature.
-  * `same_B_different_R`: demonstrates dual-side independence at
-    corpus level.
-
-**Why this matters** (final dual-side characterization):
-
-The framework now has a **discrete-QG observational prediction
-set** with concrete (R, B) values for 5 multi-rule combos. This is
-the substrate for downstream continuum-limit analysis.
-
-**Key research findings**:
-
-  * Rule interaction can **cancel R** (fork + dCyc: R = 0).
-  * Same B can correspond to different R (eR + tripleMerger vs
-    fork + dCyc: both B = 78, R = -36 vs 0).
-  * 4 of 5 combos remain Lorentzian — most multi-rule combos
-    produce GR-like signature.
-
-**For rule selection by physics target**:
-
-  * BBH: `eR + tripleMerger` (lowest α* from #470).
-  * Classical-curvature-zero: `fork + dCyc` (R = 0 baseline).
-  * Maximum amplitude richness: `eR + fork` or `eR + tripleMerger`
-    (both have highest B values 66 / 78).
-
-The multi-rule combo corpus is now fully characterized by its
-dual-side discrete-QG observables.
+All statements concern depth 3 and the seed `seedEdge12`.
 -/
 
 end CorpusObservableTable

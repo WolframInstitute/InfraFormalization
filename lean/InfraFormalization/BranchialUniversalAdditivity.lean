@@ -1,60 +1,29 @@
 /-
-**B4-branchial-universal-additivity: branchial Knill follows
-universal per-edge additivity** (#462; QM-side structural law).
+Scaled Knill values of the same-step contention graph on seeds with one,
+two and three edges, at depth 3.
 
-The universal per-edge additivity law (#454) was established for
-the **causal-DAG** Knill. This module establishes that the
-**branchial-DAG Knill** ALSO follows the same universal law.
+The trace comes from `tracedFireAllEvolve`, which applies every match of
+every rule found in the state, including matches that share edges. It is
+not a Wolfram model update when matches overlap. `branchialDAGOfFireAll`
+links two events of the same step that consume a common edge value. This
+relation is not the branchial graph of the Wolfram model.
 
-**Headline result** (all `native_decide`-certified):
+For `edgeReversal + identityKeep` at depth 3 the module computes by
+`native_decide` (PROVED-WITH-NATIVE-DECIDE):
 
-  | Seed                  | branchial K(eR+id, 3) | predicted |
-  |-----------------------|------------------------|-----------|
-  | edge12 (1 edge)        |         30             | baseline  |
-  | path123 (2 edges)      |         60             | 2 × 30 ✓  |
-  | triangle (3 edges)     |         90             | 3 × 30 ✓  |
+  | Seed                        | value |
+  |-----------------------------|-------|
+  | `seedEdge12` (1 edge)       |   30  |
+  | `seedPath123` (2 edges)     |   60  |
+  | `seedTriangle` (3 edges)    |   90  |
 
-**The structural law**:
+For `edgeReversal + forkRule_2` at depth 3 the values are 66 on
+`seedEdge12` and 132 on `seedPath123`.
 
-  `branchial_K(rule, seed, depth) = |seed| · branchial_K(rule, edge12, depth)`
-
-verified at d=3 for seeds edge12 / path123 / triangle / disjoint.
-
-**Why this is significant**:
-
-This is the **dual-side analog** of the causal-DAG universal
-additivity (#454). The framework now has:
-
-  * Causal-DAG side: `Knill_causal(rule, seed, depth) = |seed| · R(rule, depth)`
-  * Branchial-DAG side: `Knill_branchial(rule, seed, depth) = |seed| · B(rule, depth)`
-
-where `B(rule, depth)` is the discrete-QM analog of the Ricci
-scalar — the per-edge **quantum superposition density**.
-
-**Discrete-physics interpretation**:
-
-  * Per-edge `R` (#456) = classical GR curvature contribution per
-    edge.
-  * Per-edge `B` (this module) = quantum superposition density per
-    edge.
-  * Both are independent of seed topology — the **discrete
-    superposition principle** applies to BOTH classical and quantum
-    sides.
-
-**Implication for unified discrete-QG**:
-
-The full curvature signature of a rule + depth is now characterized
-by TWO scalars:
-
-  * `R(rule, depth)` = causal-DAG per-edge density.
-  * `B(rule, depth)` = branchial-DAG per-edge density.
-
-Together they capture the full classical+quantum local-curvature
-structure. The discrete EH-style action becomes a 2-form:
-
-  `S_disc(rule, depth, seed) = |seed| · (R(rule, depth) + α · B(rule, depth))`
-
-for some coupling `α` (to be determined by QG matching).
+In these five cases the value equals the number of seed edges times the
+value on `seedEdge12`. The module also defines `discreteBranchialDensity`
+(the value on `seedEdge12`) and the integer combination
+`discreteUnifiedEH`.
 -/
 
 import InfraFormalization.UniversalAdditivity
@@ -83,18 +52,12 @@ theorem branchial_eR_id_triangle :
     knillEulerScaled (branchialDAGOfFireAll edgeReversal_identity_Sys seedTriangle 3) = 90 := by
   native_decide
 
-/-! ## Universal additivity on the branchial side -/
+/-! ## Three seeds for `edgeReversal + identityKeep` -/
 
-/-- **`branchial_universal_additivity_eR_id`**: branchial Knill for
-the combo `edgeReversal + identityKeep` at depth 3 satisfies the
-per-edge additivity identity at d=3 across {edge12, path123, triangle}:
-
-  `branchial_K(combo, seed, 3) = |seed| · 30`
-
-across 3 seed topologies.
-
-Note: name suggests universality; statement is a finite conjunction
-at d=3 across seeds {edge12, path123, triangle}. -/
+/-- For `edgeReversal + identityKeep` at depth 3, the value on
+`seedEdge12` is 30, on `seedPath123` it is `2 * 30`, and on
+`seedTriangle` it is `3 * 30`. The statement is these three
+equalities. -/
 theorem branchial_universal_additivity_eR_id :
     -- Baseline:
     knillEulerScaled (branchialDAGOfFireAll edgeReversal_identity_Sys seedEdge12 3) = 30 ∧
@@ -107,18 +70,15 @@ theorem branchial_universal_additivity_eR_id :
   · rw [branchial_eR_id_path]; rfl
   · rw [branchial_eR_id_triangle]; rfl
 
-/-! ## Universal additivity on branchial side for a second combo -/
+/-! ## Two seeds for `edgeReversal + forkRule_2` -/
 
 theorem branchial_eR_fork_path :
     knillEulerScaled (branchialDAGOfFireAll edgeReversal_fork_Sys seedPath123 3) = 132 := by
   native_decide
 
-/-- **`branchial_universal_additivity_eR_fork`**: branchial Knill for
-`edgeReversal + forkRule_2` at depth 3 ALSO satisfies the per-edge
-additivity identity at d=3 for path123: 66 (1 edge), 132 (2 edges, path).
-
-Note: name suggests universality; statement is a finite conjunction
-at d=3 across seeds {edge12, path123}. -/
+/-- For `edgeReversal + forkRule_2` at depth 3, the value on `seedEdge12`
+is 66 and the value on `seedPath123` is `2 * 66`. The statement is
+these two equalities. -/
 theorem branchial_universal_additivity_eR_fork :
     knillEulerScaled (branchialDAGOfFireAll edgeReversal_fork_Sys seedEdge12 3) = 66 ∧
     knillEulerScaled (branchialDAGOfFireAll edgeReversal_fork_Sys seedPath123 3) = 2 * 66 := by
@@ -126,78 +86,55 @@ theorem branchial_universal_additivity_eR_fork :
   · native_decide
   · rw [branchial_eR_fork_path]; rfl
 
-/-! ## The dual-side discrete Ricci scalars -/
+/-! ## The value on `seedEdge12` -/
 
-/-- **`discreteBranchialDensity`**: the discrete-QM per-edge
-"superposition density", defined analogously to `discreteRicciScalar`
-on the branchial side. -/
+/-- `discreteBranchialDensity sys d` is the scaled Knill value of the
+fire-all same-step contention graph of `sys` on `seedEdge12` after `d`
+steps. -/
 def discreteBranchialDensity (sys : ExecSystem) (d : Nat) : Int :=
   knillEulerScaled (branchialDAGOfFireAll sys seedEdge12 d)
 
-/-- `B(eR + id, 3) = 30` — the branchial per-edge density for the
-combo `edgeReversal + identityKeep` at depth 3. -/
+/-- `discreteBranchialDensity edgeReversal_identity_Sys 3 = 30`. -/
 theorem B_eR_id_3 : discreteBranchialDensity edgeReversal_identity_Sys 3 = 30 := by
   native_decide
 
-/-! ## Dual-side discrete Einstein-Hilbert action -/
+/-! ## An integer combination of the causal and contention values -/
 
-/-- **`discreteUnifiedEH`**: the discrete unified Einstein-Hilbert
-action combining both causal and branchial curvature densities.
-
-  `S(rule, seed, depth, α) = |seed| · (R + α · B)`
-
-where `R` is the causal Ricci scalar (#456) and `B` is the
-branchial density (this module). -/
+/-- `discreteUnifiedEH sys seed d α` is the integer
+`seed.length * (R + α * B)`, where `R` is the scaled Knill value of
+`causalDAGOfFireAll sys seedEdge12 d` and `B` is
+`discreteBranchialDensity sys d`. The definition evaluates the
+evolution on `seedEdge12` only. `seed` enters through its length. -/
 def discreteUnifiedEH (sys : ExecSystem) (seed : ExecHG ℕ) (d : Nat) (α : Int) : Int :=
   (seed.length : Int) *
     (knillEulerScaled (causalDAGOfFireAll sys seedEdge12 d) +
      α * discreteBranchialDensity sys d)
 
-/-- **`unified_EH_at_alpha_1`**: at `α = 1` (equal classical/quantum
-weighting), the discrete unified EH action on triangle equals
-3 × (causal R + branchial B) for `edgeReversal + identityKeep`
-at depth 3. -/
+/-- `discreteUnifiedEH edgeReversal_identity_Sys seedTriangle 3 1`
+equals `3 * (-24 + 30)`. The factor 3 is `seedTriangle.length`, and
+-24 and 30 are the causal and contention values on `seedEdge12` at
+depth 3. -/
 theorem unified_EH_at_alpha_1 :
     discreteUnifiedEH edgeReversal_identity_Sys seedTriangle 3 1 = 3 * (-24 + 30) := by
   native_decide
 
-/-! ## What this delivers
+/-! ## Contents
 
-**First branchial-side universal-additivity law**:
+  * `branchial_eR_id_path`, `branchial_eR_id_triangle`,
+    `branchial_eR_fork_path`: values 60, 90 and 132.
+  * `branchial_universal_additivity_eR_id`: three equalities for
+    `edgeReversal + identityKeep` at depth 3 on `seedEdge12`,
+    `seedPath123` and `seedTriangle`.
+  * `branchial_universal_additivity_eR_fork`: two equalities for
+    `edgeReversal + forkRule_2` at depth 3 on `seedEdge12` and
+    `seedPath123`.
+  * `discreteBranchialDensity` and `discreteUnifiedEH`: definitions.
+  * `B_eR_id_3`, `unified_EH_at_alpha_1`: two values.
 
-  * 2 new certified branchial Knill values on multi-edge seeds.
-  * `branchial_universal_additivity_eR_id` — the additivity law.
-  * `discreteBranchialDensity` definition.
-  * `discreteUnifiedEH` definition — joint classical+quantum
-    action.
-  * `unified_EH_at_alpha_1` certifies the unified action value.
-
-**Why this matters** (capstone-grade dual-side framework):
-
-The framework now has **DUAL per-edge additivity identities verified at d=3 on the corpus seeds**:
-
-  * Causal side (#454): `Knill_causal(seed) = |seed| · R(rule, d)`.
-  * Branchial side (this module): `Knill_branchial(seed) = |seed| · B(rule, d)`.
-
-Combined, this gives a **discrete-QG-action substrate**:
-
-  `S(rule, seed, d, α) = |seed| · (R + α · B)`
-
-with α controlling the classical/quantum balance. This is the
-discrete analog of the unified gravity+matter action in QG.
-
-**Implication for H9 / QG bridge**:
-
-  * The dual-side framework gives the substrate for matching
-    against unified QG predictions.
-  * The α coupling is the discrete analog of Planck's constant
-    in QG.
-  * For BBH-style modeling, the unified action captures both
-    classical-GR merger dynamics AND quantum gravitational-wave
-    superposition.
-
-This is the **first dual-side discrete-QG substrate** in the
-framework.
+The proportionality to the number of seed edges is proved for these five
+(system, seed) pairs at depth 3 only. The general statement
+`∀ sys seed d, knillEulerScaled (branchialDAGOfFireAll sys seed d) =
+seed.length * discreteBranchialDensity sys d` is not proved here.
 -/
 
 end BranchialUniversalAdditivity

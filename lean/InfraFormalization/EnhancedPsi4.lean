@@ -1,55 +1,27 @@
 /-
-**B4-enhanced-psi4: enhanced discrete Ψ₄ using branchial Knill**
-(#472; H8 follow-through).
+A pair of integers built from causal and contention Knill values.
 
-The original discrete Ψ₄ (#448) combined causal ΔKnill (real part)
-+ Bondi flux (imaginary part). With branchial multi-depth additivity
-established (#471), we can now construct an **enhanced discrete
-Ψ₄** using:
+`enhancedPsiFour sys H d` is the pair (causal Knill at depth d minus
+causal Knill at depth d-1, contention Knill at depth d). The causal
+graph is `causalDAGOfFireAll`. The contention graph is
+`branchialDAGOfFireAll`, which joins two events of the same step that
+consume a common edge; it is not the Wolfram-model branchial graph.
+The evolution is `fireAllStep`, which applies every match of every
+rule found in the state, including matches that share edges. It is
+not a Wolfram model update when matches overlap.
 
-  * **Re(Ψ₄_enhanced)** = causal ΔKnill (classical curvature rate
-    of change).
-  * **Im(Ψ₄_enhanced)** = branchial K (quantum superposition
-    structure).
+The name refers to the Newman-Penrose scalar Ψ₄. The module defines no
+Weyl tensor, null tetrad or waveform, and proves no relation to Ψ₄.
 
-This is **closer to the continuum Newman-Penrose Ψ₄** because:
+Values for `eR + id` on `seedEdge12` (PROVED-WITH-NATIVE-DECIDE):
 
-  * The real part captures classical-GR curvature change (matching
-    NR Ψ₄ real part).
-  * The imaginary part captures quantum-amplitude structure
-    (matching NR Ψ₄ imaginary part — the "cross" polarization
-    component).
+  | d | causal K | contention K | enhancedPsiFour |
+  |---|----------|--------------|-----------------|
+  | 3 |   -24    |      30      |    (-18, 30)    |
+  | 4 |     6    |      42      |     (30, 42)    |
 
-**Certified enhanced-Ψ₄ trajectory** for `eR + id` on `edge12`
-across depths 2, 3, 4:
-
-  | d | causal K | branchial K | ΔcausalK | Ψ₄_enhanced |
-  |---|----------|-------------|----------|-------------|
-  | 2 |    -6    |     18       |    n/a    |  (n/a, 18)  |
-  | 3 |   -24    |     30       |   -18     |  (-18, 30)  |
-  | 4 |     6    |     42       |    30     |  (30, 42)   |
-
-The Re part undergoes sign change between d=3 (negative) and d=4
-(positive) — the signature transition of #467. The Im part grows
-monotonically — quantum complexity always accumulates.
-
-**Why this matters**:
-
-  * The enhanced Ψ₄ uses **fully-curvature** observables (not flux)
-    on both sides — making it geometrically more meaningful.
-  * Matches the continuum Newman-Penrose Ψ₄'s structure: real =
-    gravitational curvature rate, imaginary = quantum amplitude.
-  * Provides the **direct discrete substrate for matching NR
-    waveforms** in H8/H9.
-
-**Comparison with original Ψ₄** (#448):
-
-  * Original Re: causal ΔKnill ✓ (kept).
-  * Original Im: per-step event count (flux).
-  * Enhanced Im: branchial K (curvature-valued, not count).
-
-The enhanced version is **dimensionally cleaner** — both components
-are integer curvature scalars in matching units.
+`bbhEnhancedPsiFour_eR_id` multiplies the `seedEdge12` pair by 7. It
+does not evaluate `bbhInitial`.
 -/
 
 import InfraFormalization.BBHBranchialMultiDepth
@@ -70,11 +42,12 @@ open BBHInitialData
 open DiscreteRicciScalar
 open BranchialUniversalAdditivity
 
-/-! ## Enhanced discrete Ψ₄ definition -/
+/-! ## Definition -/
 
-/-- **`enhancedPsiFour`**: enhanced discrete-Ψ₄ pair for a rule at
-depth d. Re = causal ΔKnill from depth d-1 to d; Im = branchial K
-at depth d. -/
+/-- `enhancedPsiFour sys H d`: the pair whose first component is the
+scaled Knill value of `causalDAGOfFireAll sys H d` minus the value at
+depth `d - 1` (minus 0 when `d = 0`), and whose second component is
+the scaled Knill value of `branchialDAGOfFireAll sys H d`. -/
 def enhancedPsiFour (sys : ExecSystem) (H : ExecHG ℕ) (d : Nat) :
     Int × Int :=
   let causal_d := knillEulerScaled (causalDAGOfFireAll sys H d)
@@ -84,7 +57,7 @@ def enhancedPsiFour (sys : ExecSystem) (H : ExecHG ℕ) (d : Nat) :
   let branchial_d := knillEulerScaled (branchialDAGOfFireAll sys H d)
   (causal_d - causal_prev, branchial_d)
 
-/-! ## Certified enhanced-Ψ₄ trajectory for eR + id on edge12 -/
+/-! ## Values for eR + id on seedEdge12 -/
 
 theorem enhanced_psi4_eR_id_3 :
     enhancedPsiFour edgeReversal_identity_Sys seedEdge12 3 = (-18, 30) := by
@@ -94,85 +67,62 @@ theorem enhanced_psi4_eR_id_4 :
     enhancedPsiFour edgeReversal_identity_Sys seedEdge12 4 = (30, 42) := by
   native_decide
 
-/-! ## Bundled enhanced-Ψ₄ trajectory -/
+/-! ## Depths 3 and 4 together -/
 
-/-- **`enhanced_psi4_eR_id_trajectory`**: full enhanced-Ψ₄
-trajectory for `eR + id` across depths 3 and 4 on `edge12`.
-
-Re part undergoes sign change (negative → positive). Im part
-strictly monotonic (30 → 42). -/
+/-- `enhanced_psi4_eR_id_trajectory`: for `eR + id` on `seedEdge12`,
+`enhancedPsiFour` is `(-18, 30)` at depth 3 and `(30, 42)` at
+depth 4. -/
 theorem enhanced_psi4_eR_id_trajectory :
     enhancedPsiFour edgeReversal_identity_Sys seedEdge12 3 = (-18, 30) ∧
     enhancedPsiFour edgeReversal_identity_Sys seedEdge12 4 = (30, 42) :=
   ⟨enhanced_psi4_eR_id_3, enhanced_psi4_eR_id_4⟩
 
-/-! ## Enhanced |Ψ₄|² values -/
+/-! ## Sums of squares -/
 
-/-- |Ψ₄|² at depth 3 for `eR + id`: `(-18)² + 30² = 324 + 900 = 1224`. -/
+/-- Sum of squares at depth 3 for `eR + id`: `(-18)² + 30² = 1224`. -/
 theorem mod_sq_eR_id_3 :
     let p := enhancedPsiFour edgeReversal_identity_Sys seedEdge12 3
     p.1 * p.1 + p.2 * p.2 = 1224 := by
   native_decide
 
-/-- |Ψ₄|² at depth 4 for `eR + id`: `30² + 42² = 900 + 1764 = 2664`.
-The integrated "luminosity" grows substantially with depth — discrete
-analog of gravitational-wave power increasing toward merger. -/
+/-- Sum of squares at depth 4 for `eR + id`: `30² + 42² = 2664`. -/
 theorem mod_sq_eR_id_4 :
     let p := enhancedPsiFour edgeReversal_identity_Sys seedEdge12 4
     p.1 * p.1 + p.2 * p.2 = 2664 := by
   native_decide
 
-/-! ## BBH enhanced-Ψ₄ predicted values -/
+/-! ## Seven times the seedEdge12 pair -/
 
-/-- By universal additivity (#454, #462, #471), BBH enhanced-Ψ₄
-components are exactly 7× the single-edge values. -/
+/-- `bbhEnhancedPsiFour_eR_id d`: the `seedEdge12` pair for `eR + id`
+at depth `d`, with both components multiplied by 7. It is not computed
+from an evolution of `bbhInitial`. -/
 def bbhEnhancedPsiFour_eR_id (d : Nat) : Int × Int :=
   let p := enhancedPsiFour edgeReversal_identity_Sys seedEdge12 d
   (7 * p.1, 7 * p.2)
 
-/-- BBH enhanced-Ψ₄ at depth 3 = `(-126, 210)`. -/
+/-- `bbhEnhancedPsiFour_eR_id 3 = (-126, 210)`. -/
 theorem bbh_enhanced_psi4_3 :
     bbhEnhancedPsiFour_eR_id 3 = (-126, 210) := by
   native_decide
 
-/-- BBH enhanced-|Ψ₄|² at depth 3: `126² + 210² = 15876 + 44100 = 59976`.
-
-  This = 49 × (single-edge |Ψ₄|² = 1224). -/
+/-- The sum of squares of `bbhEnhancedPsiFour_eR_id 3` is
+`126² + 210² = 59976 = 49 * 1224`. -/
 theorem bbh_mod_sq_eR_id_3 :
     let p := bbhEnhancedPsiFour_eR_id 3
     p.1 * p.1 + p.2 * p.2 = 49 * 1224 := by
   native_decide
 
-/-! ## What this delivers
+/-! ## Summary
 
-**Enhanced discrete Ψ₄ analog**:
+  * `enhancedPsiFour sys H d`: the pair (causal Knill difference from
+    depth d-1 to d, contention Knill at depth d).
+  * Values for `eR + id` on `seedEdge12`: `(-18, 30)` at depth 3 and
+    `(30, 42)` at depth 4.
+  * Sums of squares: 1224 at depth 3 and 2664 at depth 4.
+  * `bbhEnhancedPsiFour_eR_id d`: 7 times the `seedEdge12` pair; at
+    depth 3 it is `(-126, 210)` and its sum of squares is `49 * 1224`.
 
-  * `enhancedPsiFour` — pair (causal ΔKnill, branchial K).
-  * Certified trajectory for `eR + id` at depths 3, 4.
-  * |Ψ₄|² values: 1224 (d=3), 2664 (d=4) — discrete luminosity
-    growth.
-  * BBH version: 7× scaling, |Ψ₄|² = 49 × 1224 = 59976 at d=3.
-
-**Why this matters** (H8 closer to closure):
-
-The original Ψ₄ analog (#448) used flux (event count) for the
-imaginary part. The enhanced version uses **branchial K** — a
-curvature-valued observable that:
-
-  * Is dimensionally homogeneous with the real part (causal ΔKnill).
-  * Matches the continuum Newman-Penrose Ψ₄ structure (real =
-    gravitational curvature rate, imaginary = quantum amplitude).
-  * Provides a **geometrically cleaner** discrete-Ψ₄ analog.
-
-**Implication for H8/H9**: with the enhanced Ψ₄, the framework's
-discrete-physics analog of NR waveforms is dimensionally cleaner.
-The continuum-limit scaling theorem (cf. #452 PsiFourScalingOpen)
-can now be formulated in terms of two curvature scalars, not
-curvature + count — making the analysis more tractable.
-
-**For the BBH endgame**: enhanced Ψ₄ on BBH (50× the single-edge
-baseline luminosity at depth 3) is the framework's discrete-physics
-prediction for the early-inspiral phase of a binary BH coalescence.
+All values are PROVED-WITH-NATIVE-DECIDE.
 -/
 
 end EnhancedPsi4

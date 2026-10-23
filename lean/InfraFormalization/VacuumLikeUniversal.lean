@@ -1,62 +1,29 @@
 /-
-**B4-vacuum-like-universal: universal additivity holds in persistent
-R-degenerate vacuum-like regime** (#475; consolidated structural law).
+Causal and contention Knill values of `fork_doubleCycle_Sys` on three
+seeds at depths 3 and 4.
 
-Combining persistent R-degeneracy (#474) with universal additivity
-(#454, #462): the framework's discovered "vacuum-like" regime under
-`fork + doubleCycle_5` **maintains both structural laws
-simultaneously**:
+R denotes the scaled Knill value of `causalDAGOfFireAll sys seed d`.
+B denotes the scaled Knill value of `branchialDAGOfFireAll sys seed d`.
+That graph joins two events of the same step that consume a common
+edge. It is not the Wolfram-model branchial graph. The evolution is
+`fireAllStep`, which applies every match of every rule found in the
+state, including matches that share edges. It is not a Wolfram model
+update when matches overlap.
 
-  * **R-persistence**: `R(fork + dCyc, d) = 0` for `d ≥ 3`.
-  * **B-additivity**: `B(fork + dCyc, seed, d) = |seed| · B_edge(d)`.
+Values (PROVED-WITH-NATIVE-DECIDE):
 
-**Headline finding** (all `native_decide`-certified):
+  | d | seed         | R | B   | seed.length · B(seedEdge12) |
+  |---|--------------|---|-----|-----------------------------|
+  | 3 | seedEdge12   | 0 |  78 |            78               |
+  | 3 | seedPath123  | 0 | 156 |          2·78 = 156         |
+  | 3 | seedTriangle | 0 | 234 |          3·78 = 234         |
+  | 4 | seedEdge12   | 0 | 240 |           240               |
+  | 4 | seedPath123  | 0 | 480 |         2·240 = 480         |
+  | 4 | seedTriangle | 0 | 720 |         3·240 = 720         |
 
-For `fork + doubleCycle_5`:
-
-  | d | seed     | R_BBH_like | B_total | predicted (|seed|·B_edge) |
-  |---|----------|------------|---------|-----------------------------|
-  | 3 | edge12   |     0      |    78    |          78                |
-  | 3 | path123  |     0      |   156    |        2·78=156 ✓           |
-  | 3 | triangle |     0      |   234    |        3·78=234 ✓           |
-  | 4 | edge12   |     0      |   240    |         240                |
-  | 4 | path123  |     0      |   480    |       2·240=480 ✓           |
-  | 4 | triangle |     0      |   720    |       3·240=720 ✓           |
-
-**Interpretation**:
-
-The vacuum-like regime maintains universal additivity in B while
-R stays zero. This is the discrete-physics analog of how a vacuum-GR
-solution has zero Ricci scalar everywhere but still has a
-well-defined matter-free stress-energy structure.
-
-**Combined structural relation** observed for one rule
-(fork + doubleCycle_5) at seeds ∈ {edge12, path123, triangle},
-d ∈ {3, 4}:
-
-  `(R, B) = (|seed| · R_edge, |seed| · B_edge)`
-
-'law' framing is informal.
-
-**Why this matters** (genuinely deepens the dual-side framework):
-
-  * Persistence and additivity are **independent** structural laws —
-    both can hold simultaneously.
-  * The vacuum-like regime is a **structurally consistent** discrete-
-    physics regime, not an anomaly.
-  * For BBH-style vacuum modeling, this regime is a well-defined
-    substrate.
-
-**Implication for continuum-limit (H9)**:
-
-If the vacuum-like regime persists under refinement (a question for
-H9 analysis), the framework's discrete-physics prediction is:
-
-  In the continuum limit, vacuum BBH dynamics correspond to
-  R = 0 with non-trivial quantum-amplitude (B) content.
-
-This is consistent with vacuum-GR + quantum-field-theory description
-of exterior BBH dynamics.
+The word "vacuum" in theorem names is a label for R = 0. The module
+defines no metric, field equation or quantum state, and states nothing
+for other seeds or depths.
 -/
 
 import InfraFormalization.PersistentRDegeneracy
@@ -78,7 +45,7 @@ open BranchialUniversalAdditivity
 open UniversalAdditivity
 open PersistentRDegeneracy
 
-/-! ## R = 0 on multi-edge seeds in vacuum-like regime -/
+/-! ## Causal Knill on seedPath123 and seedTriangle -/
 
 theorem fork_dCyc_R_path_3 :
     knillEulerScaled (causalDAGOfFireAll fork_doubleCycle_Sys seedPath123 3) = 0 := by
@@ -96,7 +63,7 @@ theorem fork_dCyc_R_triangle_4 :
     knillEulerScaled (causalDAGOfFireAll fork_doubleCycle_Sys seedTriangle 4) = 0 := by
   native_decide
 
-/-! ## B follows |seed|·B_edge in vacuum-like regime -/
+/-! ## Contention Knill on seedPath123 and seedTriangle -/
 
 theorem fork_dCyc_B_path_3 :
     knillEulerScaled (branchialDAGOfFireAll fork_doubleCycle_Sys seedPath123 3) = 156 := by
@@ -114,17 +81,12 @@ theorem fork_dCyc_B_triangle_4 :
     knillEulerScaled (branchialDAGOfFireAll fork_doubleCycle_Sys seedTriangle 4) = 720 := by
   native_decide
 
-/-! ## Consolidated structural law: R-persistence + B-additivity -/
+/-! ## Conjunctions -/
 
-/-- **`vacuum_like_universal_R_persistence`**: R = 0 verified at
-(seed, depth) ∈ {edge12, path123, triangle} × {3, 4} for
-`fork + doubleCycle_5`:
-
-  * d=3: edge12, path123, triangle all give R = 0.
-  * d=4: edge12, path123, triangle all give R = 0.
-
-Note: theorem name says 'universal'; statement is a 6-conjunct
-over (seed, depth) ∈ {edge12, path123, triangle} × {3, 4}. -/
+/-- `vacuum_like_universal_R_persistence`: for `fork_doubleCycle_Sys`,
+the causal Knill value is 0 on `seedEdge12`, `seedPath123` and
+`seedTriangle` at depths 3 and 4. The name says universal; the
+statement is these six instances. -/
 theorem vacuum_like_universal_R_persistence :
     knillEulerScaled (causalDAGOfFireAll fork_doubleCycle_Sys seedEdge12 3) = 0 ∧
     knillEulerScaled (causalDAGOfFireAll fork_doubleCycle_Sys seedPath123 3) = 0 ∧
@@ -134,14 +96,10 @@ theorem vacuum_like_universal_R_persistence :
     knillEulerScaled (causalDAGOfFireAll fork_doubleCycle_Sys seedTriangle 4) = 0 := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
 
-/-- **`vacuum_like_B_universal_additivity`**: B = |seed| · B_edge
-verified at d ∈ {3, 4} on seeds ∈ {edge12, path123, triangle}.
-
-  * d=3: 78 (edge12), 156=2·78 (path123), 234=3·78 (triangle).
-  * d=4: 240 (edge12), 480=2·240 (path123), 720=3·240 (triangle).
-
-Note: theorem name says 'universal'; statement is a 4-conjunct
-over (seed, depth) ∈ {path123, triangle} × {3, 4}. -/
+/-- `vacuum_like_B_universal_additivity`: for `fork_doubleCycle_Sys`,
+the contention Knill value is `2 * 78` on `seedPath123` and `3 * 78`
+on `seedTriangle` at depth 3, and `2 * 240` and `3 * 240` at depth 4.
+The name says universal; the statement is these four instances. -/
 theorem vacuum_like_B_universal_additivity :
     -- Depth 3:
     knillEulerScaled (branchialDAGOfFireAll fork_doubleCycle_Sys seedPath123 3) = 2 * 78 ∧
@@ -155,58 +113,32 @@ theorem vacuum_like_B_universal_additivity :
   · rw [fork_dCyc_B_path_4]; rfl
   · rw [fork_dCyc_B_triangle_4]; rfl
 
-/-! ## The unified vacuum-like structural law -/
+/-! ## Three-part conjunction -/
 
-/-- **`vacuum_like_unified_structural_law`**: vacuum-like rule
-`fork + doubleCycle_5` satisfies BOTH:
-
-  * R-persistence: `R = 0` at (edge12, d=3) and (triangle, d=4).
-  * B-additivity: `B(triangle, d=4) = 3 · B(edge12, d=4)` (single
-    B-additivity instance in the conjunction). -/
+/-- `vacuum_like_unified_structural_law`: for `fork_doubleCycle_Sys`,
+the causal Knill value is 0 on `seedEdge12` at depth 3 and on
+`seedTriangle` at depth 4, and the contention Knill value on
+`seedTriangle` at depth 4 is 3 times the value on `seedEdge12`. -/
 theorem vacuum_like_unified_structural_law :
-    -- R persistence:
+    -- Causal Knill = 0:
     knillEulerScaled (causalDAGOfFireAll fork_doubleCycle_Sys seedEdge12 3) = 0 ∧
     knillEulerScaled (causalDAGOfFireAll fork_doubleCycle_Sys seedTriangle 4) = 0 ∧
-    -- B additivity:
+    -- Contention Knill on seedTriangle = 3 × seedEdge12:
     knillEulerScaled (branchialDAGOfFireAll fork_doubleCycle_Sys seedTriangle 4) =
       3 * knillEulerScaled (branchialDAGOfFireAll fork_doubleCycle_Sys seedEdge12 4) := by
   refine ⟨?_, ?_, ?_⟩ <;> native_decide
 
-/-! ## What this delivers
+/-! ## Summary
 
-**Consolidated vacuum-like structural law**:
+  * `vacuum_like_universal_R_persistence`: causal Knill 0 for
+    `fork_doubleCycle_Sys` on three seeds at depths 3 and 4.
+  * `vacuum_like_B_universal_additivity`: contention Knill on
+    `seedPath123` and `seedTriangle` equals 2 and 3 times the
+    `seedEdge12` value at depths 3 and 4.
+  * `vacuum_like_unified_structural_law`: a three-part conjunction of
+    these values.
 
-  * 8 certified (R, B) values for `fork + doubleCycle_5` on multiple
-    seeds at depths 3, 4.
-  * `vacuum_like_universal_R_persistence`: R = 0 across all probed
-    configurations.
-  * `vacuum_like_B_universal_additivity`: B scales as `|seed| · B_edge`.
-  * `vacuum_like_unified_structural_law`: both laws hold
-    simultaneously.
-
-**Why this matters** (genuine structural insight):
-
-The persistent R-degeneracy and universal additivity are **structurally
-independent**: both can hold simultaneously. This means:
-
-  * The vacuum-like regime is **internally consistent** as a
-    discrete-physics regime.
-  * For BBH-style vacuum modeling, this regime gives a well-defined
-    substrate.
-  * R = 0 verified on 3 probed seeds; B-additivity verified even
-    where R = 0; 'topology-independent' is informal.
-
-**Continuum-limit prediction**:
-
-If the regime persists under refinement (an H9 question), the
-framework predicts:
-
-  In the continuum limit, vacuum BBH dynamics correspond to
-  R = 0 with non-trivial quantum-amplitude (B) content.
-
-This is consistent with the vacuum-GR + QFT description of exterior
-BBH dynamics — the framework gives a discrete-substrate prediction
-for this regime.
+All statements concern one rule pair, three seeds and depths 3 and 4.
 -/
 
 end VacuumLikeUniversal

@@ -1,47 +1,30 @@
 /-
-**H9 closure: structural-induction proof of the distinct-edge
-tripling conjecture, via explicit triadic combinatorial model**
-(#492 substantive progress; closes the combinatorial half of H9).
+A ternary-tree model `triadList` with `3^d` elements at depth d, and the
+statement `engineMatchesTriad` that relates it to the distinct-edge count
+of the fire-all evolution.
 
-This module **closes the combinatorial half** of the H9 symbolic
-closure. The conjecture splits into two halves:
+The evolution is `fireAllEvolve`. `fireAllStep` applies every match of
+every rule found in the state, including matches that share edges. It is
+not a Wolfram model update when matches overlap. `distinctEdgeCount H`
+is the number of distinct vertex lists among the hyperedges of `H`.
 
-  **(A) Combinatorial half**: an explicit triadic structure has
-       cardinality `3^d` at depth `d`. **Proved in this module.**
+The systems are `edgeReversal + tripleMerger`
+(`edgeReversal_tripleMerger_Sys`) and `forkRule_2 + doubleCycle_5`
+(`fork_doubleCycle_Sys`), both started from `seedEdge12 = [[1, 2]]`.
 
-  **(B) Engine-correspondence half**: the engine's distinct-edge
-       set at depth `d` is in bijection with the combinatorial
-       structure. **Reduced to a single named bridge lemma**
-       (`engineMatchesTriad`); the lemma is stated, not proved here.
+PROVED without `native_decide`:
 
-The combinatorial proof is by *direct structural induction* over a
-specifically-designed inductive type `TriadEdge d` that models a
-ternary-tree expansion of edges: each depth-d edge becomes three
-depth-(d+1) edges (a reverse, two fresh-coupled).
+  * `TriadEdge d` (inductive type) and `triadList d` (an explicit list).
+  * `triadList_length d : (triadList d).length = 3^d`, by induction on
+    `d`.
+  * `H9_conditional_on_bridge`: if `engineMatchesTriad` holds, then
+    `distinctEdgeCount (fireAllEvolve sys seedEdge12 d) = 3^d` for every
+    d and both systems.
 
-**What's proved here**:
+PROVED-WITH-NATIVE-DECIDE: `bridge_at_0` to `bridge_at_7`, the two
+equalities of `engineMatchesTriad` at depths 0 to 7.
 
-  * `TriadEdge d` (inductive type): the combinatorial model.
-  * `triadList d : List (TriadEdge d)`: explicit enumeration.
-  * `triadList_length d : (triadList d).length = 3^d`: cardinality
-    identity via `Nat` induction.
-  * `triadList_nodup d`: all elements distinct.
-  * `H9_combinatorial_closed`: the cardinality result wrapped.
-
-**What's stated as an obligation (the bridge lemma)**:
-
-  * `engineMatchesTriad sys`: the engine's distinct-edge count
-    equals `triadList d`'s length.
-
-**Conditional H9 closure**:
-
-  `H9_conditional_on_bridge`: assuming the bridge, derives
-  `distinctEdgeCount (fireAllEvolve sys edge12 d) = 3^d` for both
-  persistent-class members.
-
-This formalization makes the **status of H9 explicit**: combinatorial
-backbone proven unconditionally; engine-correspondence bridge open
-and isolated to a single named obligation.
+OPEN: `engineMatchesTriad` itself, for all d.
 -/
 
 import InfraFormalization.H9StructuralProgress
@@ -58,14 +41,11 @@ open H9StructuralProgress
 
 /-! ## Section A: The triadic combinatorial model -/
 
-/-- **`TriadEdge d`**: a combinatorial model of "the d-th generation
-of an edge under triadic expansion". At each depth, every edge spawns
-three children: the reverse, and two fresh-coupled extensions
-(`freshA`, `freshB`).
-
-For our persistent-equivalence-class systems, the distinct edges at
-depth `d` of `fireAllEvolve sys edge12 d` are in bijection with
-`TriadEdge d`. -/
+/-- `TriadEdge d` is an inductive type with one element `base` at depth 0
+and three constructors `reverseOf`, `freshA`, `freshB` from depth d to
+depth d+1. The type has no definitional link to the engine. The
+correspondence between distinct edges of the engine and `TriadEdge d` is
+the OPEN statement `engineMatchesTriad`, which compares counts only. -/
 inductive TriadEdge : Nat → Type
   | base : TriadEdge 0
   | reverseOf {d : Nat} (parent : TriadEdge d) : TriadEdge (d+1)
@@ -75,9 +55,9 @@ deriving DecidableEq
 
 /-! ## Section B: Explicit enumeration as a list -/
 
-/-- **`triadList d`**: explicit enumeration of all depth-d
-TriadEdges. By design `triadList (d+1)` is built by triadic
-expansion of `triadList d`. -/
+/-- `triadList d` is a list of elements of `TriadEdge d`: `triadList 0` is
+`[base]`, and `triadList (d+1)` replaces each element `p` of
+`triadList d` by `reverseOf p`, `freshA p`, `freshB p`. -/
 def triadList : (d : Nat) → List (TriadEdge d)
   | 0 => [TriadEdge.base]
   | d+1 => (triadList d).flatMap (fun p =>
@@ -85,48 +65,38 @@ def triadList : (d : Nat) → List (TriadEdge d)
 
 /-! ## The cardinality theorem (proved via List.length induction) -/
 
-/-- **Base case**: `triadList 0` has length 1. -/
+/-- `triadList 0` has length 1. -/
 theorem triadList_length_zero : (triadList 0).length = 1 := by
   simp [triadList]
 
-/-- **`triadList_length_succ`**: each step triples the length.
-Direct from `List.length_flatMap` with constant inner length 3. -/
+/-- `(triadList (d+1)).length = 3 * (triadList d).length`, from
+`List.length_flatMap` with inner length 3. -/
 theorem triadList_length_succ (d : Nat) :
     (triadList (d+1)).length = 3 * (triadList d).length := by
   simp [triadList, List.length_flatMap]
   ring
 
-/-- **`triadList_length`**: `(triadList d).length = 3^d`.
-
-Proved by direct induction on `d`, using `triadList_length_succ`
-at each step. -/
+/-- `(triadList d).length = 3^d`, by induction on `d` using
+`triadList_length_succ`. -/
 theorem triadList_length (d : Nat) : (triadList d).length = 3^d := by
   induction d with
   | zero => simp [triadList]
   | succ d ih => rw [triadList_length_succ, ih, pow_succ]; ring
 
-/-! ## Section D: The combinatorial half of H9 -/
+/-! ## Section D: Length of `triadList` -/
 
-/-- **`H9_combinatorial_closed`**: the combinatorial half of H9.
-
-The triadic combinatorial model has length `3^d` at every depth,
-proved by direct induction. Combined with the bridge lemma in
-Section E, this gives the H9 distinct-edge tripling. -/
+/-- `∀ d, (triadList d).length = 3^d`. This is `triadList_length`. The
+statement concerns the list `triadList` only and does not mention the
+engine. -/
 theorem H9_combinatorial_closed : ∀ d : Nat, (triadList d).length = 3^d :=
   triadList_length
 
-/-! ## Section E: The engine-correspondence bridge (open obligation) -/
+/-! ## Section E: The statement `engineMatchesTriad` (OPEN) -/
 
-/-- **`engineMatchesTriad`** [open obligation]: the engine's
-distinct-edge count at depth d equals `(triadList d).length` for both
-persistent-equivalence members.
-
-This is the bridge lemma. Proving it requires understanding
-`fireAllStep` semantics in detail — `allMatches` deduplicates,
-fresh-vertex offsets, removeEdges multiset-counting — and showing
-the engine's distinct-edge dynamics exactly mirror the triadic model.
-
-Estimated effort: 200–500 lines of Lean, multi-session. -/
+/-- `engineMatchesTriad` (OPEN): for every d, the distinct-edge counts
+of `fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 d` and of
+`fireAllEvolve fork_doubleCycle_Sys seedEdge12 d` both equal
+`(triadList d).length`. This module does not prove it. -/
 def engineMatchesTriad : Prop :=
   ∀ d : Nat,
     distinctEdgeCount (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 d) =
@@ -134,15 +104,11 @@ def engineMatchesTriad : Prop :=
     distinctEdgeCount (fireAllEvolve fork_doubleCycle_Sys seedEdge12 d) =
       (triadList d).length
 
-/-! ## Section F: Conditional H9 closure -/
+/-! ## Section F: Consequence of `engineMatchesTriad` -/
 
-/-- **`H9_conditional_on_bridge`**: assuming the engine-correspondence
-bridge `engineMatchesTriad`, the H9 distinct-edge tripling holds for
-all d ≥ 0 for both persistent-equivalence-class systems.
-
-This is the **conditional closure** of H9. Combined with the
-combinatorial half (`H9_combinatorial_closed`, proved unconditionally),
-the only remaining piece is proving `engineMatchesTriad`. -/
+/-- `engineMatchesTriad` implies, for every d and for both systems, that
+the distinct-edge count of the fire-all evolution of `seedEdge12` after
+`d` steps is `3^d`. The proof rewrites with `triadList_length`. -/
 theorem H9_conditional_on_bridge (h : engineMatchesTriad) :
     ∀ d : Nat,
       distinctEdgeCount (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 d) = 3^d ∧
@@ -152,13 +118,13 @@ theorem H9_conditional_on_bridge (h : engineMatchesTriad) :
   rw [h1, h2, triadList_length]
   exact ⟨rfl, rfl⟩
 
-/-! ## Section G: Verified engine-bridge cases at small depths
+/-! ## Section G: `engineMatchesTriad` at depths 0 to 7
 
-The bridge lemma is verified by `native_decide` at d = 0..4 in
-`H9StructuralProgress`. We collect the verifications here as
-witnesses to the bridge's empirical correctness. -/
+Each theorem below states the two equalities of `engineMatchesTriad` at
+one depth. The proofs rewrite with `triadList_length` and evaluate the
+engine by `native_decide`. -/
 
-/-- The bridge holds at depth 0. -/
+/-- The two equalities of `engineMatchesTriad` at depth 0. -/
 theorem bridge_at_0 :
     distinctEdgeCount (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 0) =
       (triadList 0).length ∧
@@ -166,7 +132,7 @@ theorem bridge_at_0 :
       (triadList 0).length := by
   refine ⟨?_, ?_⟩ <;> (rw [triadList_length]; native_decide)
 
-/-- The bridge holds at depth 1. -/
+/-- The two equalities of `engineMatchesTriad` at depth 1. -/
 theorem bridge_at_1 :
     distinctEdgeCount (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 1) =
       (triadList 1).length ∧
@@ -174,7 +140,7 @@ theorem bridge_at_1 :
       (triadList 1).length := by
   refine ⟨?_, ?_⟩ <;> (rw [triadList_length]; native_decide)
 
-/-- The bridge holds at depth 2. -/
+/-- The two equalities of `engineMatchesTriad` at depth 2. -/
 theorem bridge_at_2 :
     distinctEdgeCount (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 2) =
       (triadList 2).length ∧
@@ -182,7 +148,7 @@ theorem bridge_at_2 :
       (triadList 2).length := by
   refine ⟨?_, ?_⟩ <;> (rw [triadList_length]; native_decide)
 
-/-- The bridge holds at depth 3. -/
+/-- The two equalities of `engineMatchesTriad` at depth 3. -/
 theorem bridge_at_3 :
     distinctEdgeCount (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 3) =
       (triadList 3).length ∧
@@ -190,7 +156,7 @@ theorem bridge_at_3 :
       (triadList 3).length := by
   refine ⟨?_, ?_⟩ <;> (rw [triadList_length]; native_decide)
 
-/-- The bridge holds at depth 4. -/
+/-- The two equalities of `engineMatchesTriad` at depth 4. -/
 theorem bridge_at_4 :
     distinctEdgeCount (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 4) =
       (triadList 4).length ∧
@@ -198,7 +164,7 @@ theorem bridge_at_4 :
       (triadList 4).length := by
   refine ⟨?_, ?_⟩ <;> (rw [triadList_length]; native_decide)
 
-/-- The bridge holds at depth 5. -/
+/-- The two equalities of `engineMatchesTriad` at depth 5. -/
 theorem bridge_at_5 :
     distinctEdgeCount (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 5) =
       (triadList 5).length ∧
@@ -206,7 +172,7 @@ theorem bridge_at_5 :
       (triadList 5).length := by
   refine ⟨?_, ?_⟩ <;> (rw [triadList_length]; native_decide)
 
-/-- The bridge holds at depth 6. -/
+/-- The two equalities of `engineMatchesTriad` at depth 6. -/
 theorem bridge_at_6 :
     distinctEdgeCount (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 6) =
       (triadList 6).length ∧
@@ -214,7 +180,7 @@ theorem bridge_at_6 :
       (triadList 6).length := by
   refine ⟨?_, ?_⟩ <;> (rw [triadList_length]; native_decide)
 
-/-- The bridge holds at depth 7. -/
+/-- The two equalities of `engineMatchesTriad` at depth 7. -/
 theorem bridge_at_7 :
     distinctEdgeCount (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 7) =
       (triadList 7).length ∧
@@ -222,49 +188,28 @@ theorem bridge_at_7 :
       (triadList 7).length := by
   refine ⟨?_, ?_⟩ <;> (rw [triadList_length]; native_decide)
 
-/-! ## What this delivers — H9 status
+/-! ## Contents
 
-**Half-closed**: the combinatorial backbone of H9 is now proved
-unconditionally:
+PROVED without `native_decide`:
 
-  `H9_combinatorial_closed : ∀ d, (triadList d).length = 3^d`
-  `H9_combinatorial_nodup  : ∀ d, (triadList d).Nodup`
+  * `triadList_length : ∀ d, (triadList d).length = 3^d`, and its copy
+    `H9_combinatorial_closed`.
+  * `H9_conditional_on_bridge`: `engineMatchesTriad` implies
+    `distinctEdgeCount (fireAllEvolve sys seedEdge12 d) = 3^d` for all d,
+    for both systems.
 
-via direct `Nat` induction on a `triadList` definition that's
-manifestly triadic. The proof is pure combinatorial Lean.
+PROVED-WITH-NATIVE-DECIDE:
 
-**Empirically verified bridge**: `bridge_at_0` through `bridge_at_4`
-verify the engine-bridge correspondence at five concrete depths,
-giving the same 5-depth coverage as the empirical work in
-`DistinctEdgeIdentity` and `H9StructuralProgress`.
+  * `bridge_at_0` to `bridge_at_7`: the two equalities of
+    `engineMatchesTriad` at depths 0 to 7.
 
-**Open**: the engine-correspondence bridge `engineMatchesTriad` for
-ALL d. Combined with `H9_conditional_on_bridge`, proving this single
-lemma gives full H9 closure.
+OPEN: `engineMatchesTriad`, the statement that for every d,
+`distinctEdgeCount (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 d)`
+and `distinctEdgeCount (fireAllEvolve fork_doubleCycle_Sys seedEdge12 d)`
+both equal `(triadList d).length`.
 
-**The lemma chain to close the bridge**:
-
-  1. `allMatches sys H` produces exactly `distinctEdgeCount H`
-     bindings per rule.
-  2. Each binding produces exactly 3 new distinct edges per the
-     triadic structure (rule-specific computation).
-  3. Fresh-vertex offsets keep produced edges globally distinct.
-  4. `removeEdges` exactly consumes the old distinct edges.
-
-Each lemma is bounded combinatorial work on the engine semantics.
-
-**With the bridge proved**: H9 closes via composition:
-
-  * `H9_conditional_on_bridge` → distinct(d) = 3^d.
-  * The branchial-K-from-distinct-edges derivation gives B(d) =
-    3·B(d−1) + 6 (one more derivation lemma).
-  * The closed-form B(d) = 3^(d+1) − 3 satisfies the recurrence with
-    base B(2) = 24.
-
-**Substantive H9 progress in this session**: the combinatorial backbone
-is now in place, with the bridge isolated to a single named obligation.
-The structural proof of distinct-edge tripling is reduced to proving
-`engineMatchesTriad` symbolically.
+`H9Bridge` reduces `engineMatchesTriad` to the OPEN statement
+`H9Bridge.BridgeStepLemma`.
 -/
 
 end H9Closure

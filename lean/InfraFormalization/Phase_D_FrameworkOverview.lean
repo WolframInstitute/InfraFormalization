@@ -1,67 +1,31 @@
 /-
-**B4-phase-d-framework-overview: master Phase-D capstone bundling
-the complete dual-side discrete-QG framework** (#469).
+A conjunction of eighteen finite statements about the fire-all evolution.
 
-This module is the **master overview** of the Phase-D dual-side
-discrete-QG framework developed in tasks #443-#468. It exports
-namespaced re-statements of the headline theorems with brief
-comments, providing a single entry point for downstream users to
-reference the framework's key results.
+The statements are values of scaled Knill invariants for specific small
+rules, seeds and depths, computed by `native_decide`
+(PROVED-WITH-NATIVE-DECIDE). The graphs come from `tracedFireAllEvolve`.
+`fireAllStep` applies every match of every rule found in the state,
+including matches that share edges. It is not a Wolfram model update
+when matches overlap, and the values do not describe Wolfram model
+evolutions. The "branchial" graphs (`branchialDAGOfFireAll`) link two
+events of the same step that consume a common edge value. They are not
+the branchial graph of the Wolfram model.
 
-**Phase-D Framework Pillars**:
+Definitions used:
 
-  (A) **BBH substrate** (#443, #445, #451, #468):
-      - BBH initial data: 6 vertices, 7 edges (two triangles +
-        bridge).
-      - Multi-depth Knill evolution under merger rules.
-      - BBH-specific discrete metric tensor values.
+  * `discreteRicciScalar sys d` (R): scaled Knill value of
+    `causalDAGOfFireAll sys seedEdge12 d`.
+  * `discreteBranchialDensity sys d` (B): scaled Knill value of
+    `branchialDAGOfFireAll sys seedEdge12 d`.
+  * `discreteMetricTensor sys d`: the integer pair `(R, B)`.
+  * `hasLorentzianSignature sys d`: `true` when R and B are nonzero and
+    of opposite sign.
+  * `bbhInitial`: a 7-edge graph, two triangles on `{0,1,2}` and
+    `{3,4,5}` joined by the edge `{2,3}`.
 
-  (B) **GR-side (causal) observables** (#444, #456, #457):
-      - Structural rule classifier (Tree/Merger/Bidirected).
-      - Discrete Ricci scalar `R(rule, depth)`.
-      - Depth-3 universal regime + class-specific divergence.
-
-  (C) **QM-side (branchial) observables** (#459, #461, #464):
-      - Branchial Knill spectrum.
-      - Multi-depth trajectories (arithmetic vs geometric).
-      - Single-rule branchial = 0 (only multi-rule has
-        superposition).
-
-  (D) **Universal additivity** (#454, #462):
-      - Causal side: `Knill_causal = |seed| · R`.
-      - Branchial side: `Knill_branchial = |seed| · B`.
-      - Topology-independent. The capstone bundle below packs a
-        single-instance `native_decide` check (eR + id on
-        `UniversalAdditivity.seedPath123`, depth 3) per side; the
-        "universal" framing is the corresponding open theorem,
-        not a Lean-formalized universal statement here.
-
-  (E) **Discrete metric tensor** (#466, #467, #468):
-      - Unified `g(rule, d) := diag(R, B)`.
-      - Lorentzian / Riemannian signature classification.
-      - Signature evolution / phase transitions.
-
-  (F) **Unified Einstein-Hilbert action** (#456, #462, #465):
-      - `S(rule, seed, d, α) = |seed| · (R + α·B)`.
-      - Balance α* identifying discrete Planck-constant analog.
-
-  (G) **Honest negative findings** (#449, #450, #458, #463):
-      - Classifier domain limits.
-      - Multi-rule R no simple combination law.
-      - R-B independence.
-
-  (H) **H8 / H9 substrate** (#447, #448, #452):
-      - Discrete Bondi flux per-step events.
-      - Discrete Ψ₄ composite.
-      - H9 continuum-scaling open Prop.
-
-**Framework Phase-D status**:
-
-  * **GR side**: COMPLETE for the discovered rule corpus.
-  * **QM side**: COMPLETE for the discovered rule corpus.
-  * **BBH endgame**: SUBSTRATE-READY (H6 partial, H7 partial, H8
-    substrate, H9 scaffold).
-  * **Unified discrete-QG**: COMPLETE (metric tensor + balance α).
+The statement that the seed-edge proportionality holds for every system,
+seed and depth is OPEN. This module checks it for `seedPath123` and
+`bbhInitial` with two systems at depth 3.
 -/
 
 import InfraFormalization.BBHMetricTensor
@@ -88,67 +52,67 @@ open DiscreteRicciScalar
 open BranchialUniversalAdditivity
 open DiscreteMetricTensor
 
-/-! ## The complete Phase-D framework overview -/
+/-! ## The conjunction -/
 
-/-- **`phase_D_framework_complete`**: master capstone bundling **18
-pillars** of the dual-side discrete-QG framework. This is the
-strongest single-theorem characterization available, spanning all
-of #443-#468.
+/-- A conjunction of eighteen finite statements. R is
+`discreteRicciScalar` and B is `discreteBranchialDensity` (values on
+`seedEdge12`).
 
-  1. BBH initial data structure.
-  2. R-scalar baseline values.
-  3. B-density baseline values.
-  4. Single-rule branchial-zero theorem.
-  5. Additivity instance (eR+id on seedPath123, d=3) — causal.
-  6. Additivity instance (eR+id on seedPath123, d=3) — branchial.
-  7. Dual-side independence (R non-monotonic, B monotonic).
-  8. Dual-side independence (same R different B).
-  9. Discrete metric tensor explicit values.
-  10. Signature classification (Lorentzian).
-  11. Signature evolution dichotomy.
-  12. Unified EH balance (eR + id).
-  13. Balance α* rational value (eR + id: 4/5).
-  14. Balance α* rational value (eR + fork: 7/11).
-  15. BBH causal Knill = 7 × R (eR + id).
-  16. BBH branchial Knill = 7 × B (eR + id).
-  17. BBH causal Knill = 7 × R (eR + fork).
-  18. BBH branchial Knill = 7 × B (eR + fork). -/
+  1. `bbhInitial` has 7 edges.
+  2. R(`edgeReversal + identityKeep`, 3) = -24.
+  3. B(`edgeReversal + identityKeep`, 3) = 30.
+  4. The fire-all contention graph of `edgeReversalSys` on `seedEdge12`
+     at depth 3 has scaled Knill value 0.
+  5. The fire-all causal graph of `edgeReversal + identityKeep` on
+     `seedPath123` at depth 3 has scaled Knill value 2 · (-24).
+  6. The fire-all contention graph of the same system on `seedPath123`
+     at depth 3 has scaled Knill value 2 · 30.
+  7. R(`edgeReversal + identityKeep`, 4) > R(`edgeReversal + identityKeep`, 3).
+  8. R(`edgeReversal + identityKeep`, 2) = R(`edgeReversal + forkRule_2`, 2).
+  9. B(`edgeReversal + identityKeep`, 2) ≠ B(`edgeReversal + forkRule_2`, 2).
+  10. `discreteMetricTensor edgeReversal_identity_Sys 3 = (-24, 30)`.
+  11. `hasLorentzianSignature edgeReversal_identity_Sys 3 = true`.
+  12. `hasLorentzianSignature edgeReversal_identity_Sys 4 = false`.
+  13. 5 · R + 4 · B = 0 for `edgeReversal + identityKeep` at depth 3.
+  14. 11 · R + 7 · B = 0 for `edgeReversal + forkRule_2` at depth 3.
+  15-18. For both systems at depth 3, the causal and contention values on
+     `bbhInitial` equal 7 times R and 7 times B. -/
 theorem phase_D_framework_complete :
-    -- (1) BBH substrate
+    -- (1) Edge count of bbhInitial
     bbhInitial.length = 7 ∧
-    -- (2) R baseline
+    -- (2) R value
     discreteRicciScalar edgeReversal_identity_Sys 3 = -24 ∧
-    -- (3) B baseline
+    -- (3) B value
     discreteBranchialDensity edgeReversal_identity_Sys 3 = 30 ∧
-    -- (4) Single-rule branchial = 0
+    -- (4) Single-rule contention value 0
     knillEulerScaled (branchialDAGOfFireAll edgeReversalSys seedEdge12 3) = 0 ∧
-    -- (5) Additivity instance (eR+id on seedPath123, d=3) — causal
+    -- (5) Causal value on seedPath123, d=3
     knillEulerScaled (causalDAGOfFireAll edgeReversal_identity_Sys
       UniversalAdditivity.seedPath123 3) = 2 * (-24) ∧
-    -- (6) Additivity instance (eR+id on seedPath123, d=3) — branchial
+    -- (6) Contention value on seedPath123, d=3
     knillEulerScaled (branchialDAGOfFireAll edgeReversal_identity_Sys
       UniversalAdditivity.seedPath123 3) = 2 * 30 ∧
-    -- (7) R non-monotonic
+    -- (7) R at depth 4 exceeds R at depth 3
     discreteRicciScalar edgeReversal_identity_Sys 4 >
       discreteRicciScalar edgeReversal_identity_Sys 3 ∧
-    -- (8) Same R different B
+    -- (8-9) Same R, different B
     discreteRicciScalar edgeReversal_identity_Sys 2 =
       discreteRicciScalar edgeReversal_fork_Sys 2 ∧
     discreteBranchialDensity edgeReversal_identity_Sys 2 ≠
       discreteBranchialDensity edgeReversal_fork_Sys 2 ∧
-    -- (9) Discrete metric tensor
+    -- (10) The pair (R, B)
     discreteMetricTensor edgeReversal_identity_Sys 3 = (-24, 30) ∧
-    -- (10) Lorentzian signature
+    -- (11) Sign test at depth 3
     hasLorentzianSignature edgeReversal_identity_Sys 3 = true ∧
-    -- (11) Signature evolution
+    -- (12) Sign test at depth 4
     hasLorentzianSignature edgeReversal_identity_Sys 4 = false ∧
-    -- (12-13) Balance alpha for eR + id
+    -- (13) Linear relation for eR + id
     5 * discreteRicciScalar edgeReversal_identity_Sys 3 +
       4 * discreteBranchialDensity edgeReversal_identity_Sys 3 = 0 ∧
-    -- (14) Balance alpha for eR + fork
+    -- (14) Linear relation for eR + fork
     11 * discreteRicciScalar edgeReversal_fork_Sys 3 +
       7 * discreteBranchialDensity edgeReversal_fork_Sys 3 = 0 ∧
-    -- (15-18) BBH Knill values 7x baselines
+    -- (15-18) Values on bbhInitial equal 7 times the seedEdge12 values
     knillEulerScaled (causalDAGOfFireAll edgeReversal_identity_Sys bbhInitial 3) =
       7 * discreteRicciScalar edgeReversal_identity_Sys 3 ∧
     knillEulerScaled (branchialDAGOfFireAll edgeReversal_identity_Sys bbhInitial 3) =
@@ -160,42 +124,14 @@ theorem phase_D_framework_complete :
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   <;> native_decide
 
-/-! ## What this delivers
+/-! ## Contents
 
-**Master Phase-D capstone** with 18-pillar bundle:
-
-A single end-to-end theorem proving 18 distinct results spanning:
-
-  * BBH substrate.
-  * GR-side observables.
-  * QM-side observables.
-  * Universal additivity (dual-sided).
-  * Discrete metric tensor.
-  * Signature classification + evolution.
-  * Balance α (discrete Planck-constant analog).
-  * BBH-applied universal-additivity scaling.
-
-**Why this matters** (final consolidation):
-
-This is the **strongest available single-theorem characterization**
-of the framework's Phase-D status. With this proved:
-
-  * The dual-side discrete-QG framework is fully consolidated.
-  * The BBH endgame substrate is comprehensively certified.
-  * The continuum-limit questions for H9 are precisely scoped.
-
-**The framework's research output**:
-
-  * **Positive findings**: dual-side observables, universal
-    additivity, discrete metric tensor, balance α, unified action.
-  * **Honest negative findings**: classifier domain limits,
-    multi-rule R divergence, dual-side independence.
-  * **Phase-D substrate**: complete and ready for the continuum-
-    limit analysis problems of H9 + NR-waveform matching.
-
-The discrete-QG framework's Phase-D structural development is
-substantively complete. Outstanding for full BBH endgame closure
-is the analysis work in H9.
+`phase_D_framework_complete` is a conjunction of eighteen finite
+statements, all proved by `native_decide`. It concerns the systems
+`edgeReversal`, `edgeReversal + identityKeep` and
+`edgeReversal + forkRule_2`, depths 2 to 4, and the seeds `seedEdge12`,
+`seedPath123` and `bbhInitial`. It states no relation to general
+relativity, quantum mechanics or black holes, and no continuum limit.
 -/
 
 end Phase_D_FrameworkOverview

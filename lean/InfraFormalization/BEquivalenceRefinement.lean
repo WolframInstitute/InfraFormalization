@@ -1,68 +1,36 @@
 /-
-**B4-B-equivalence-refinement: refinement of B-equivalence classes
-at higher depths** (#483).
+Values of `discreteBranchialDensity` for five two-rule systems at depths
+3 and 4, grouped by the depth-2 values of `BEquivalenceClasses`.
 
-The B-equivalence classes at d=2 (#482) **refine** at higher depths.
-This module catalogs how the d=2 classes split into finer sub-classes
-at d=3 and d=4.
+`discreteBranchialDensity sys d` is the scaled Knill value of
+`branchialDAGOfFireAll sys seedEdge12 d`. The trace comes from
+`tracedFireAllEvolve`, which applies every match of every rule found in
+the state, including matches that share edges. It is not a Wolfram model
+update when matches overlap. The contention relation links two events of
+the same step that consume a common edge value. It is not the branchial
+graph of the Wolfram model.
 
-**At depth 2** (#482):
+At depth 2 (`BEquivalenceClasses`), `edgeReversal + identityKeep` and
+`edgeReversal + doubleCycle_5` have value 18, and
+`edgeReversal + forkRule_2`, `edgeReversal + tripleMerger` and
+`forkRule_2 + doubleCycle_5` have value 24.
 
-  * B = 18 class: {eR + id, eR + dCyc} (size 2).
-  * B = 24 class: {eR + fork, eR + tripleMerger, fork + dCyc} (size 3).
+This module computes by `native_decide` (PROVED-WITH-NATIVE-DECIDE):
 
-**At depth 3** (refinement) — all `native_decide`-certified:
+  | System                      | d=3 | d=4                         |
+  |-----------------------------|-----|-----------------------------|
+  | edgeReversal + identityKeep |  30 | not computed here           |
+  | edgeReversal + doubleCycle_5|  42 | not computed here           |
+  | edgeReversal + forkRule_2   |  66 | not computed here           |
+  | edgeReversal + tripleMerger |  78 | 240                         |
+  | forkRule_2 + doubleCycle_5  |  78 | 240                         |
 
-  | Combo                       | B(d=3) |
-  |-----------------------------|---------|
-  | eR + identityKeep            |   30    |
-  | eR + doubleCycle_5           |   42    |
-  | eR + forkRule_2              |   66    |
-  | eR + tripleMerger            |   78    |
-  | fork + doubleCycle_5         |   78    |
+`DualSideIndependence` proves the depth-4 values 42 for
+`edgeReversal + identityKeep` and 168 for `edgeReversal + forkRule_2`.
 
-The 5 combos give **4 distinct B values**, refining the d=2 classes:
-
-  * Old B=18 class refines into B=30 ({eR + id}) and B=42 ({eR + dCyc}).
-  * Old B=24 class refines into B=66 ({eR + fork}) and B=78
-    ({eR + tripleMerger, fork + dCyc}).
-
-The persistent B-equivalence at d=3: `eR + tripleMerger` and
-`fork + dCyc` still give B = 78.
-
-**At depth 4** (further refinement):
-
-  * eR + id: B = 42.
-  * eR + dCyc: B = 90.
-  * eR + fork: B = 168.
-  * eR + tripleMerger: B = 240.
-  * fork + dCyc: B = 240.
-
-Same persistent equivalence: `eR + tripleMerger` and `fork + dCyc`
-both give B = 240 at d=4.
-
-**Persistent B-equivalence finding** (research result):
-
-`eR + tripleMerger` and `fork + doubleCycle_5` give **identical B
-at d=2, 3, AND 4**. This is a genuinely persistent B-equivalence
-between two combos with different R trajectories — the strongest
-manifestation of dual-side independence.
-
-**The 4-3-2 refinement pattern**: at depths 2, 3, 4 the corpus
-splits into 2, 4, and 4 (with 1 persistent equivalence) B-classes
-respectively.
-
-**Why this matters** (corpus refinement structure):
-
-The B-equivalence-class refinement gives a **discrete-physics
-analog of how quantum-amplitude classes refine with energy scale**
-in continuum QM. At low scales (d=2), more rules are quantum-
-equivalent; at higher scales (d=3, 4), the equivalence refines but
-not completely.
-
-**Open research question**: at what depth does the persistent
-equivalence between eR + tripleMerger and fork + dCyc break? Is
-there a depth at which their B values diverge?
+At depth 3 the five systems take four distinct values.
+`edgeReversal + tripleMerger` and `forkRule_2 + doubleCycle_5` have equal
+values at depths 2, 3 and 4.
 -/
 
 import InfraFormalization.BEquivalenceClasses
@@ -92,10 +60,11 @@ theorem B_d3_eR_dCyc : discreteBranchialDensity edgeReversal_doubleCycle_Sys 3 =
 theorem B_d3_eR_fork : discreteBranchialDensity edgeReversal_fork_Sys 3 = 66 := by
   native_decide
 
-/-! ## Refinement of B = 18 class at d=3 -/
+/-! ## Depth-3 values of the two systems with depth-2 value 18 -/
 
-/-- **`B_18_class_refines_at_d3`**: at d=3, the d=2 B=18 class
-refines: eR + id gives B=30, eR + dCyc gives B=42. -/
+/-- At depth 3, `edgeReversal + identityKeep` has value 30 and
+`edgeReversal + doubleCycle_5` has value 42. Both have value 18 at
+depth 2. -/
 theorem B_18_class_refines_at_d3 :
     discreteBranchialDensity edgeReversal_identity_Sys 3 = 30 ∧
     discreteBranchialDensity edgeReversal_doubleCycle_Sys 3 = 42 ∧
@@ -103,27 +72,24 @@ theorem B_18_class_refines_at_d3 :
       discreteBranchialDensity edgeReversal_doubleCycle_Sys 3 := by
   refine ⟨?_, ?_, ?_⟩ <;> native_decide
 
-/-! ## Refinement of B = 24 class at d=3 -/
+/-! ## Depth-3 values of the three systems with depth-2 value 24 -/
 
-/-- **`B_24_class_refines_at_d3`**: at d=3, the d=2 B=24 class
-refines into:
-
-  * B=66: {eR + fork}.
-  * B=78: {eR + tripleMerger, fork + dCyc} (persistent equivalence). -/
+/-- At depth 3, `edgeReversal + forkRule_2` has value 66, and
+`edgeReversal + tripleMerger` and `forkRule_2 + doubleCycle_5` both have
+value 78. These three systems all have value 24 at depth 2. -/
 theorem B_24_class_refines_at_d3 :
     discreteBranchialDensity edgeReversal_fork_Sys 3 = 66 ∧
     discreteBranchialDensity edgeReversal_tripleMerger_Sys 3 = 78 ∧
     discreteBranchialDensity fork_doubleCycle_Sys 3 = 78 ∧
-    -- Persistent equivalence:
+    -- Equal values for eR+tripleMerger and fork+dCyc:
     discreteBranchialDensity edgeReversal_tripleMerger_Sys 3 =
       discreteBranchialDensity fork_doubleCycle_Sys 3 := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
 
-/-! ## Depth-4 persistent equivalence -/
+/-! ## Depth-4 values -/
 
-/-- **`persistent_equivalence_at_d4`**: `eR + tripleMerger` and
-`fork + dCyc` continue to have identical B = 240 at depth 4 — the
-persistent equivalence holds for 3 consecutive depths (2, 3, 4). -/
+/-- At depth 4, `edgeReversal + tripleMerger` and
+`forkRule_2 + doubleCycle_5` both have value 240. -/
 theorem persistent_equivalence_at_d4 :
     discreteBranchialDensity edgeReversal_tripleMerger_Sys 4 = 240 ∧
     discreteBranchialDensity fork_doubleCycle_Sys 4 = 240 ∧
@@ -131,58 +97,39 @@ theorem persistent_equivalence_at_d4 :
       discreteBranchialDensity fork_doubleCycle_Sys 4 := by
   refine ⟨?_, ?_, ?_⟩ <;> native_decide
 
-/-! ## The 4-3-2 refinement pattern -/
+/-! ## Values at depths 2 and 3 -/
 
-/-- **`B_class_refinement_pattern`**: the B-equivalence classes
-refine across depths:
-
-  * d=2: 2 classes.
-  * d=3: 4 distinct B values (refinement, but persistent 78 class).
-  * d=4: 4 distinct B values (continuing persistence of 240 class). -/
+/-- Seven values of `discreteBranchialDensity`: 18 and 24 at depth 2,
+30, 42, 66 and 78 at depth 3, and the depth-3 equality of
+`edgeReversal + tripleMerger` and `forkRule_2 + doubleCycle_5`. Proved
+by `native_decide`. -/
 theorem B_class_refinement_pattern :
-    -- d=2 has 2 classes (B values: 18, 24):
+    -- d=2 values 18 and 24:
     discreteBranchialDensity edgeReversal_identity_Sys 2 = 18 ∧
     discreteBranchialDensity edgeReversal_fork_Sys 2 = 24 ∧
-    -- d=3 has 4 distinct B values (30, 42, 66, 78):
+    -- d=3 values 30, 42, 66, 78:
     discreteBranchialDensity edgeReversal_identity_Sys 3 = 30 ∧
     discreteBranchialDensity edgeReversal_doubleCycle_Sys 3 = 42 ∧
     discreteBranchialDensity edgeReversal_fork_Sys 3 = 66 ∧
     discreteBranchialDensity edgeReversal_tripleMerger_Sys 3 = 78 ∧
-    -- d=3 persistent equivalence: eR+tripleMerger == fork+dCyc:
+    -- d=3: eR+tripleMerger and fork+dCyc have equal values:
     discreteBranchialDensity edgeReversal_tripleMerger_Sys 3 =
       discreteBranchialDensity fork_doubleCycle_Sys 3 := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
 
-/-! ## What this delivers
+/-! ## Contents
 
-**B-equivalence-class refinement catalog**:
+  * `B_18_class_refines_at_d3`: values 30 and 42 at depth 3, and their
+    inequality.
+  * `B_24_class_refines_at_d3`: values 66, 78 and 78 at depth 3, and the
+    equality of the last two.
+  * `persistent_equivalence_at_d4`: values 240 and 240 at depth 4, and
+    their equality.
+  * `B_class_refinement_pattern`: seven of the values above.
 
-  * `B_18_class_refines_at_d3`: 3-conj certifying refinement.
-  * `B_24_class_refines_at_d3`: 4-conj including persistent equivalence.
-  * `persistent_equivalence_at_d4`: 3-conj certifying d=4 persistence.
-  * `B_class_refinement_pattern`: 7-conj bundling the full pattern.
-
-**Why this matters** (corpus refinement structure):
-
-The framework's multi-rule corpus exhibits a **non-trivial refinement
-pattern** in its B-equivalence-class structure:
-
-  * d=2 → d=3: 2 classes refine into 4 (with 1 size-2 class persisting).
-  * d=3 → d=4: 4 classes persist (no further refinement at depth 4).
-
-**The persistent eR+tripleMerger ~ fork+dCyc equivalence** holds for
-3 consecutive depths (2, 3, 4). This is the strongest dual-side
-decoupling evidence in the corpus.
-
-**For continuum-limit / H9 analysis**:
-
-The refinement pattern provides discrete-corpus structural data for
-the framework's continuum-limit prediction. In the continuum limit,
-the B-equivalence classes may collapse to a single physical
-equivalence class — or persist as physically meaningful
-equivalence classes.
-
-This module makes the refinement pattern precise for future analysis.
+The module proves these finite statements for five systems at depths 2,
+3 and 4. Whether `edgeReversal + tripleMerger` and
+`forkRule_2 + doubleCycle_5` have equal values at every depth is OPEN.
 -/
 
 end BEquivalenceRefinement

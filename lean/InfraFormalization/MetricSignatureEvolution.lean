@@ -1,56 +1,36 @@
 /-
-**B4-metric-signature-evolution: discrete-metric signature changes
-across depth** (#467; geometric phase structure).
+Values of `hasLorentzianSignature` at depths 2, 3 and 4 for two two-rule
+systems on `seedEdge12`.
 
-The discrete metric tensor (#466) gives `(R, B)` at each depth.
-This module **characterizes how the signature evolves with depth**
-across the rule corpus — revealing **geometric phase transitions**
-in the discrete framework.
+`DiscreteMetricTensor.discreteMetricTensor sys d` is the integer pair
+`(R, B)`. R is the scaled Knill value of
+`causalDAGOfFireAll sys seedEdge12 d`. B is the scaled Knill value of
+`branchialDAGOfFireAll sys seedEdge12 d`, the graph that links two
+events of the same step that consume a common edge value. This relation
+is not the branchial graph of the Wolfram model. Both graphs come from
+`tracedFireAllEvolve`, which applies every match of every rule found in
+the state, including matches that share edges. It is not a Wolfram model
+update when matches overlap. `hasLorentzianSignature sys d` is `true`
+when R and B are nonzero and of opposite sign. The names "metric" and
+"Lorentzian" refer to this sign test on two integers.
 
-**Headline finding** (all `native_decide`-certified):
+The module computes by `native_decide` (PROVED-WITH-NATIVE-DECIDE):
 
-For `edgeReversal + identityKeep`, the signature flips between
-depths:
+  `edgeReversal + identityKeep`:
 
-  | depth | R   | B  | signature   |
-  |-------|-----|-----|-------------|
-  |   2   | -6  | 18 | Lorentzian  |
-  |   3   | -24 | 30 | Lorentzian  |
-  |   4   |  6  | 42 | Riemannian (R, B both positive) |
+  | depth | R   | B  | `hasLorentzianSignature` |
+  |-------|-----|----|--------------------------|
+  |   2   | -6  | 18 | true                     |
+  |   3   | -24 | 30 | true                     |
+  |   4   |  6  | 42 | false                    |
 
-This is a **discrete-geometric phase transition** from Lorentzian
-at low depth to Riemannian at higher depth — the discrete analog
-of how some cosmological models transition between Lorentzian and
-Euclidean regimes.
+  `edgeReversal + forkRule_2`:
 
-For `edgeReversal + forkRule_2`:
-
-  | depth | R    | B   | signature   |
-  |-------|------|-----|-------------|
-  |   2   |  -6  |  24 | Lorentzian  |
-  |   3   |  -42 |  66 | Lorentzian  |
-  |   4   |  -72 | 168 | Lorentzian (deeply) |
-
-Stays Lorentzian, with R becoming more negative (more time-like
-dominant).
-
-**Why this matters**:
-
-  * Different rule choices give different geometric phase
-    structures.
-  * Some rules show signature transitions (potential cosmological-
-    model analogs).
-  * Others stay Lorentzian (genuine GR-like dynamics).
-
-**Implication for BBH-style modeling**:
-
-  * For a discrete BBH, we want the signature to stay Lorentzian
-    throughout — `eR + fork` does, making it a strong candidate.
-  * Signature transitions (like `eR + id`) indicate the rule's
-    dynamics don't correspond to consistent classical GR.
-
-This module gives the **first discrete-geometric phase-transition
-characterization** in the framework.
+  | depth | R    | B   | `hasLorentzianSignature` |
+  |-------|------|-----|--------------------------|
+  |   2   |  -6  |  24 | true                     |
+  |   3   |  -42 |  66 | true                     |
+  |   4   |  -72 | 168 | true                     |
 -/
 
 import InfraFormalization.DiscreteMetricTensor
@@ -69,7 +49,7 @@ open DiscreteRicciScalar
 open BranchialUniversalAdditivity
 open DiscreteMetricTensor
 
-/-! ## eR + id signature trajectory: Lorentzian → Riemannian -/
+/-! ## `edgeReversal + identityKeep` -/
 
 theorem eR_id_metric_2 :
     discreteMetricTensor edgeReversal_identity_Sys 2 = (-6, 18) := by
@@ -79,17 +59,18 @@ theorem eR_id_metric_4 :
     discreteMetricTensor edgeReversal_identity_Sys 4 = (6, 42) := by
   native_decide
 
-/-- **`eR_id_signature_changes`**: `eR + id` undergoes a **Lorentzian
-→ Riemannian phase transition** between depths 3 and 4. -/
+/-- `hasLorentzianSignature edgeReversal_identity_Sys d` is `true` for
+d = 2 and d = 3 and `false` for d = 4, where R = 6 and B = 42 are both
+positive. -/
 theorem eR_id_signature_changes :
-    -- Depth 2, 3: Lorentzian (R < 0, B > 0):
+    -- Depths 2 and 3: R < 0 and B > 0:
     hasLorentzianSignature edgeReversal_identity_Sys 2 = true ∧
     hasLorentzianSignature edgeReversal_identity_Sys 3 = true ∧
-    -- Depth 4: Riemannian (R > 0, B > 0 — not Lorentzian by predicate):
+    -- Depth 4: R > 0 and B > 0, so the predicate is false:
     hasLorentzianSignature edgeReversal_identity_Sys 4 = false := by
   refine ⟨?_, ?_, ?_⟩ <;> native_decide
 
-/-! ## eR + fork stays Lorentzian -/
+/-! ## `edgeReversal + forkRule_2` -/
 
 theorem eR_fork_metric_2 :
     discreteMetricTensor edgeReversal_fork_Sys 2 = (-6, 24) := by
@@ -99,68 +80,42 @@ theorem eR_fork_metric_4 :
     discreteMetricTensor edgeReversal_fork_Sys 4 = (-72, 168) := by
   native_decide
 
-/-- **`eR_fork_persistently_lorentzian`**: `eR + fork` maintains
-**Lorentzian signature** across all probed depths (2, 3, 4), with
-R becoming increasingly time-like dominant. -/
+/-- `hasLorentzianSignature edgeReversal_fork_Sys d = true` for
+d = 2, 3, 4. -/
 theorem eR_fork_persistently_lorentzian :
     hasLorentzianSignature edgeReversal_fork_Sys 2 = true ∧
     hasLorentzianSignature edgeReversal_fork_Sys 3 = true ∧
     hasLorentzianSignature edgeReversal_fork_Sys 4 = true := by
   refine ⟨?_, ?_, ?_⟩ <;> native_decide
 
-/-! ## The discriminating phase-transition theorem -/
+/-! ## Four Boolean values at depths 3 and 4 -/
 
-/-- **`signature_evolution_dichotomy`**: between `eR + id` and
-`eR + fork`, the framework distinguishes two **qualitatively
-different geometric phase structures**:
-
-  * `eR + id`: Lorentzian → Riemannian transition (cosmological-
-    model analog).
-  * `eR + fork`: persistently Lorentzian (GR-like). -/
+/-- `hasLorentzianSignature` at depths 3 and 4: `true`, `false` for
+`edgeReversal + identityKeep`, and `true`, `true` for
+`edgeReversal + forkRule_2`. -/
 theorem signature_evolution_dichotomy :
-    -- eR + id has signature change:
+    -- eR + id: true at depth 3, false at depth 4:
     hasLorentzianSignature edgeReversal_identity_Sys 3 = true ∧
     hasLorentzianSignature edgeReversal_identity_Sys 4 = false ∧
-    -- eR + fork stays Lorentzian:
+    -- eR + fork: true at depths 3 and 4:
     hasLorentzianSignature edgeReversal_fork_Sys 3 = true ∧
     hasLorentzianSignature edgeReversal_fork_Sys 4 = true := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
 
-/-! ## What this delivers
+/-! ## Contents
 
-**First geometric phase-transition characterization** in the
-framework:
+  * `eR_id_metric_2`, `eR_id_metric_4`, `eR_fork_metric_2`,
+    `eR_fork_metric_4`: four pairs `(R, B)`.
+  * `eR_id_signature_changes`: `hasLorentzianSignature` is `true` at
+    depths 2 and 3 and `false` at depth 4 for
+    `edgeReversal + identityKeep`.
+  * `eR_fork_persistently_lorentzian`: `hasLorentzianSignature` is `true`
+    at depths 2, 3 and 4 for `edgeReversal + forkRule_2`.
+  * `signature_evolution_dichotomy`: four of these Boolean values.
 
-  * `eR_id_signature_changes`: Lorentzian → Riemannian transition.
-  * `eR_fork_persistently_lorentzian`: stays Lorentzian.
-  * `signature_evolution_dichotomy`: 4-conj dichotomy theorem.
-
-**Why this matters**:
-
-The framework now distinguishes rules by their **geometric phase
-structure**, not just their R or B values individually. This is a
-new structural research direction:
-
-  * Some rules exhibit signature transitions (potential analog of
-    Hartle-Hawking-style cosmological models).
-  * Others stay in a single regime (GR-like or QM-like).
-
-**Implication for BBH-style modeling**:
-
-For modeling a real binary BH coalescence, we want **persistently
-Lorentzian** signature — `eR + fork` qualifies. The discovered
-combos give us a way to filter rule candidates by geometric
-phase structure.
-
-**Implication for continuum-limit**:
-
-In the continuum limit, the signature should reflect the target
-spacetime's geometric character. Rules whose signature transitions
-in finite depth indicate **scale-dependent geometric structure** —
-potentially modeling cosmological evolution.
-
-This is a new lens for understanding the discrete-physics dynamics
-encoded by the rule corpus.
+All statements concern two systems, depths 2 to 4, and the seed
+`seedEdge12`. The module defines no metric on a manifold and states
+nothing about a continuum limit.
 -/
 
 end MetricSignatureEvolution

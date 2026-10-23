@@ -1,49 +1,37 @@
 /-
-**Step-zero ancestor function for `tracedFireAllEvolve`** (#500, #495c).
+Lemmas about the event list of the fire-all evolution, and a function
+`stepZeroAncestor` that walks back to a step-0 event.
 
-This module discharges R1 of the `EdgeCausallyDisjoint` predicate (#495)
-and defines the ancestor function used by R2's partition-closure
-argument (#499/#501).
+The evolution is `tracedFireAllEvolve`. `fireAllStep` applies every match
+of every rule found in the state, including matches that share edges. It
+is not a Wolfram model update when matches overlap.
 
-**What this delivers** (no `sorry`, no `decide`, no `native_decide`):
+PROVED (no `sorry`, no `native_decide`):
 
-  * `step_zero_events_exist` — weak R1: when the evolution has
-    produced any events, at least one of them is a step-0 event. This
-    discharges the first conjunct of the existing `EdgeCausallyDisjoint`
-    obligation.
+  * `tracedFireAllStep_events_step`: every event of
+    `tracedFireAllStep sys H k` has step index `k`.
+  * `tracedFireAllStep_events_length`: the number of events of one step
+    is the sum over rules of `(allMatches r H).length`.
+  * `tracedFireAllStep_events_empty_iff`: one step has no events iff no
+    rule has a match.
+  * `tracedFireAllEvolve_empty_of_no_first_batch`: if step 0 on `seed`
+    has no events, the evolution is `(seed, [])` at every depth.
+  * `tracedFireAllEvolve_first_batch_prefix`: for d ≥ 1, the step-0
+    events are a prefix of the event list at depth d.
+  * `step_zero_events_exist` and `weak_R1_holds`: if the event list at
+    depth d is nonempty, it contains an event with step index 0.
+  * `stepZeroAncestor_step_zero`: for an event with step index 0,
+    `stepZeroAncestor` returns its own index.
+  * `ancestorUnique_unconditional`: `AncestorUnique` holds because
+    `stepZeroAncestor` returns an `Option Nat`.
 
-  * `stepZeroSelf` — for a step-0 event, the ancestor is its own
-    `matchIdx`: that's the index of the seed edge it processed.
+OPEN: `AncestorTotal`, the statement that `stepZeroAncestor` returns
+`some` for every event index.
 
-  * `stepZeroAncestor` — fuel-bounded backward BFS over the causal-edge
-    list that returns the index of the step-0 ancestor (or `none` if
-    the walk fails to find one within fuel).
-
-  * `stepZeroAncestor_step_zero` — for step-0 events the ancestor
-    function returns the event's own index.
-
-  * `AncestorTotal` / `AncestorUnique` — Prop-level obligations
-    expressing the meaningful R1 conditions; totality is the #499/#501
-    closure step. Uniqueness is trivial by `Option Nat` shape.
-
-  * `weak_R1_holds` — the existing `EdgeCausallyDisjoint` first
-    conjunct, proved unconditionally.
-
-**Proof strategy for `step_zero_events_exist`** — case split on whether
-the seed produces any matches at step 0:
-
-  * If `(tracedFireAllStep sys seed 0).2 = []` (no matches anywhere
-    on the seed): the inner `foldl` over `allMatches r seed = []` for
-    every rule `r` returns the initial accumulator, so state and event
-    lists are preserved across the outer rule `foldl`. By induction on
-    depth, `tracedFireAllEvolve sys seed d = (seed, [])` for all `d`,
-    so the hypothesis `i < events.length` is vacuously false.
-
-  * Otherwise: for `d ≥ 1`, the first batch is a prefix of the depth-`d`
-    events. Every event in the first batch has `.step = 0` (by the
-    `events ∋ e ↦ e.step = step` invariant of `tracedFireAllStep`).
-    Hence `events.filter (·.step = 0)` has at least the first batch as
-    a subset and therefore length `≥ 1`.
+`EdgeCausallyDisjointBridge.EdgeCausallyDisjoint` is stated for
+`tracedSingleWayEvolve`. The lemmas of this module concern
+`tracedFireAllEvolve`, so they do not prove any conjunct of
+`EdgeCausallyDisjoint`.
 -/
 
 import InfraFormalization.EdgeCausallyDisjointBridge
@@ -71,8 +59,8 @@ lemma foldl_invariant {α β : Type*} (P : β → Prop) (f : β → α → β)
 
 /-! ## Section B: outer step factorisation of `tracedFireAllStep`
 
-We name the outer per-rule step so we can reason about the rule-list
-`foldl` modularly, in the style of `FreshVertexPartition.innerFoldl`. -/
+`outerStep` is the per-rule step of the outer fold, in the form of
+`FreshVertexPartition.innerFoldl`. -/
 
 /-- Outer per-rule step of `tracedFireAllStep`: run the inner foldl
 over `(allMatches r H)` to process all matches of rule `r`. -/
@@ -143,8 +131,7 @@ theorem outerStep_events_step (H : ExecHG ℕ) (baseFresh step : ℕ)
   simp only
   exact innerFoldl_events_step r baseFresh step (allMatches r H) (s, o, i, es) h0
 
-/-- **Headline:** every event emitted by `tracedFireAllStep sys H k`
-has `e.step = k`. -/
+/-- The events of `tracedFireAllStep sys H k` all have step index `k`. -/
 theorem tracedFireAllStep_events_step (sys : ExecSystem) (H : ExecHG ℕ) (k : ℕ) :
     ∀ e ∈ (tracedFireAllStep sys H k).2, e.step = k := by
   intro e he
@@ -213,9 +200,8 @@ theorem tracedFireAllStep_no_matches (sys : ExecSystem) (H : ExecHG ℕ) (k : �
 /-! ## Section E: length characterisation of the step's event list
 
 The number of events emitted by `tracedFireAllStep sys H k` is the
-sum of match-counts across rules, **independent of `k`**. We need this
-to translate "first-batch empty" (the natural starting hypothesis) into
-"no matches anywhere" (the technical hypothesis above). -/
+sum of match counts across rules and does not depend on `k`. Section F
+uses this to pass from "step 0 has no events" to "no rule has a match". -/
 
 /-- The inner foldl appends exactly `binds.length` events; thus the
 events component's length grows by `binds.length`. -/
@@ -259,7 +245,7 @@ theorem foldl_outerStep_events_length (H : ExecHG ℕ) (baseFresh step : ℕ)
     simp [List.map_cons, List.sum_cons]
     ring
 
-/-- **Length characterisation:** the number of events from
+/-- The number of events of
 `tracedFireAllStep sys H k` equals the total match count and is
 independent of `k`. -/
 theorem tracedFireAllStep_events_length (sys : ExecSystem) (H : ExecHG ℕ) (k : ℕ) :
@@ -349,10 +335,10 @@ theorem tracedFireAllEvolve_first_batch_prefix
     rw [this, hk]
     simp [List.append_assoc]
 
-/-! ## Section H: weak R1 — at least one step-0 event when events exist -/
+/-! ## Section H: a step-0 event exists when the event list is nonempty -/
 
-/-- **Weak R1 (proved).** If `tracedFireAllEvolve sys seed d` has any
-event at all, it has at least one step-0 event. -/
+/-- If the event list of `tracedFireAllEvolve sys seed d` is nonempty,
+it contains an event with step index 0. PROVED. -/
 theorem step_zero_events_exist (sys : ExecSystem) (seed : ExecHG ℕ) (d : ℕ) :
     ∀ i : ℕ, i < (tracedFireAllEvolve sys seed d).2.length →
       0 < ((tracedFireAllEvolve sys seed d).2.filter (·.step = 0)).length := by
@@ -394,23 +380,23 @@ theorem step_zero_events_exist (sys : ExecSystem) (seed : ExecHG ℕ) (d : ℕ) 
         exact h0
       omega
 
-/-! ## Section I: step-0 self-ancestor -/
+/-! ## Section I: `stepZeroSelf` -/
 
-/-- For a step-0 event, its ancestor identifier is its own `matchIdx`
-— the seed-edge index it processed. The hypothesis `h` is recorded for
-documentation; the definition does not depend on it. -/
+/-- `stepZeroSelf e _h` is `e.matchIdx`, the position of `e` in the event
+list of its step (counted across all rules). The hypothesis `_h` is not
+used. -/
 def stepZeroSelf (e : CausalEvent) (_h : e.step = 0) : Nat := e.matchIdx
 
-/-! ## Section J: bounded-fuel backward walk to a step-0 ancestor
+/-! ## Section J: backward walk to a step-0 event
 
-`predOf` (from `EdgeCausallyDisjointBridge`) gives the direct
-predecessors of an event in a causal-edge list. We walk backward,
-taking the first predecessor each step, until reaching a step-0 event
-or running out of fuel. -/
+`EdgeCausallyDisjointBridge.predOf edges i` lists the `j` with `(j, i)`
+in `edges`. The walk follows the first such `j` at each step until it
+reaches a step-0 event or the fuel runs out. -/
 
-/-- Fuel-bounded auxiliary: walk back through predecessors until a
-step-0 event is found, returning its index. Returns `none` if the
-walk runs out of fuel or hits an event with no predecessors. -/
+/-- `stepZeroAncestorAux events edges i fuel` returns `some i` if event
+`i` has step 0. Otherwise it moves to the first entry of
+`predOf edges i` and decreases the fuel. It returns `none` when the fuel
+is 0, when `i` is out of range, or when event `i` has no predecessor. -/
 def stepZeroAncestorAux
     (events : List CausalEvent) (edges : List (Nat × Nat))
     (i : Nat) : Nat → Option Nat
@@ -426,15 +412,15 @@ def stepZeroAncestorAux
     else
       none
 
-/-- Step-0 ancestor: wraps `stepZeroAncestorAux` with `events.length`
-fuel — enough for any acyclic walk. -/
+/-- `stepZeroAncestor events edges i` is `stepZeroAncestorAux` with fuel
+`events.length`. -/
 def stepZeroAncestor
     (events : List CausalEvent) (edges : List (Nat × Nat))
     (i : Nat) : Option Nat :=
   stepZeroAncestorAux events edges i events.length
 
-/-- For step-0 events the ancestor function returns the event's own
-index, regardless of the predecessor structure. -/
+/-- For an event with step index 0, `stepZeroAncestor` returns the
+event's own index. -/
 theorem stepZeroAncestor_step_zero
     (events : List CausalEvent) (edges : List (Nat × Nat)) (i : Nat)
     (hi : i < events.length) (h0 : (events.get ⟨i, hi⟩).step = 0) :
@@ -452,20 +438,20 @@ theorem stepZeroAncestor_step_zero
   rw [dif_pos hi]
   simp only [h0, if_true]
 
-/-! ## Section K: ancestor totality and uniqueness Props -/
+/-! ## Section K: the statements `AncestorTotal` and `AncestorUnique` -/
 
-/-- **Meaningful R1 obligation (totality):** the ancestor function is
-total on `tracedFireAllEvolve` outputs. This requires the partition
-closure of #499/#501 to fully discharge. -/
+/-- `AncestorTotal sys seed` (OPEN): for every depth d and every event
+index i of `tracedFireAllEvolve sys seed d`, `stepZeroAncestor` returns
+`some a` for some `a`. The library contains no proof of it. -/
 def AncestorTotal (sys : ExecSystem) (seed : ExecHG ℕ) : Prop :=
   ∀ d : Nat,
     let events := (tracedFireAllEvolve sys seed d).2
     let edges := deriveCausalEdges events
     ∀ i : ℕ, i < events.length → ∃ a, stepZeroAncestor events edges i = some a
 
-/-- **Meaningful R1 (uniqueness):** the ancestor returned (when
-present) is unique. Holds trivially because `stepZeroAncestor` returns
-an `Option Nat` (single value); kept as a Prop for documentation. -/
+/-- `AncestorUnique sys seed`: two values returned by `stepZeroAncestor`
+for the same index are equal. It holds for every function into
+`Option Nat` (`ancestorUnique_unconditional`). -/
 def AncestorUnique (sys : ExecSystem) (seed : ExecHG ℕ) : Prop :=
   ∀ d : Nat,
     let events := (tracedFireAllEvolve sys seed d).2
@@ -473,21 +459,24 @@ def AncestorUnique (sys : ExecSystem) (seed : ExecHG ℕ) : Prop :=
     ∀ i a₁ a₂, stepZeroAncestor events edges i = some a₁ →
                 stepZeroAncestor events edges i = some a₂ → a₁ = a₂
 
-/-- Uniqueness is provable unconditionally: `Option.some` is injective. -/
+/-- Uniqueness holds because `Option.some` is injective. -/
 theorem ancestorUnique_unconditional (sys : ExecSystem) (seed : ExecHG ℕ) :
     AncestorUnique sys seed := by
   intro d events edges i a₁ a₂ h₁ h₂
   rw [h₁] at h₂
   exact Option.some.inj h₂
 
-/-! ## Section L: bridge to `EdgeCausallyDisjoint`
+/-! ## Section L: relation to `EdgeCausallyDisjoint`
 
-`step_zero_events_exist` is exactly the first conjunct of the existing
-`EdgeCausallyDisjoint` predicate (the part stated as a real proposition;
-the trailing `∧ True` is, well, true). -/
+`EdgeCausallyDisjointBridge.EdgeCausallyDisjoint sys seed` is stated for
+`tracedSingleWayEvolve`. Its first conjunct has the same form as
+`weak_R1_holds`, and its second conjunct is `True`. `weak_R1_holds` is
+stated for `tracedFireAllEvolve`, so it does not prove the first
+conjunct of `EdgeCausallyDisjoint`. -/
 
-/-- **Weak R1 holds for every `(sys, seed)`.** This discharges the
-provable content of `EdgeCausallyDisjoint`'s first conjunct. -/
+/-- For every system, seed and depth d: if the event list of
+`tracedFireAllEvolve sys seed d` is nonempty, it contains an event with
+step index 0. This is `step_zero_events_exist`. -/
 theorem weak_R1_holds (sys : ExecSystem) (seed : ExecHG ℕ) :
     ∀ d : Nat,
       let events := (tracedFireAllEvolve sys seed d).2

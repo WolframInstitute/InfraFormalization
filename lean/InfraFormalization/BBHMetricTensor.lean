@@ -1,53 +1,29 @@
 /-
-**B4-bbh-metric-tensor: BBH-specific discrete metric tensor** (#468;
-focused Phase-D application of the dual-side framework).
+Scaled Knill values of the fire-all causal graph and the fire-all
+same-step contention graph on the seed `bbhInitial` at depth 3, for the
+systems `edgeReversal + identityKeep` and `edgeReversal + forkRule_2`.
 
-The discrete metric tensor (#466) is rule + depth indexed. For the
-BBH seed, by universal additivity (#454, #462), the seed-multiplied
-metric tensor is `7 · (R, B)`. This module characterizes the
-**BBH-specific discrete metric and geometric invariants** for the
-two leading multi-rule candidates.
+`bbhInitial` (from `BBHInitialData`) is a 7-edge graph: two triangles on
+`{0,1,2}` and `{3,4,5}` joined by the edge `{2,3}`. The traces come from
+`tracedFireAllEvolve`, which applies every match of every rule found in
+the state, including matches that share edges. It is not a Wolfram model
+update when matches overlap. `branchialDAGOfFireAll` relates two events
+of the same step that consume a common edge value. This relation is not
+the branchial graph of the Wolfram model.
 
-**Headline result** (all `native_decide`-certified):
+`DiscreteMetricTensor.discreteMetricTensor sys d` is the integer pair
+`(discreteRicciScalar sys d, discreteBranchialDensity sys d)`: the two
+scaled Knill values on the single-edge seed `seedEdge12`. The module
+computes by `native_decide` (PROVED-WITH-NATIVE-DECIDE):
 
-  For `edgeReversal + identityKeep` on BBH at depth 3:
+  * `edgeReversal + identityKeep`, depth 3: causal value -168, contention
+    value 210. These equal 7 × (-24) and 7 × 30.
+  * `edgeReversal + forkRule_2`, depth 3: causal value -294, contention
+    value 462. These equal 7 × (-42) and 7 × 66.
 
-  * BBH causal Knill: 7 × R = 7 × (-24) = -168.
-  * BBH branchial Knill: 7 × B = 7 × 30 = 210.
-  * Discrete line element at `(dτ, dχ) = (1, 1)`: `-168 + 210 = 42`.
-
-  For `edgeReversal + forkRule_2` on BBH at depth 3:
-
-  * BBH causal Knill: 7 × R = 7 × (-42) = -294.
-  * BBH branchial Knill: 7 × B = 7 × 66 = 462.
-  * Discrete line element at `(dτ, dχ) = (1, 1)`: `-294 + 462 = 168`.
-
-**Why this matters** (focused BBH consolidation):
-
-This module gives the **explicit BBH-discrete-metric characterization**
-needed for any Phase-D BBH calculation. With these specific tensor
-values, the framework has:
-
-  * BBH-specific R and B values for both leading multi-rule
-    candidates.
-  * BBH line-element values for distance measurements.
-  * Direct connection to the unified EH action on BBH.
-
-**Key observation**: at the BBH-scale, `eR + fork` gives substantially
-stronger branchial structure (B = 462 vs 210) — indicating it's the
-stronger QM-substrate candidate for modeling binary-merger
-gravitational-wave emission.
-
-**Connection to prior work**:
-
-  * BBH analog certificate (#451): bundled Phase-D observables.
-  * Discrete metric tensor (#466): general framework.
-  * Universal additivity (#454, #462): scales tensor to BBH.
-  * Balance α (#465): gives BBH-specific Planck-constant analog.
-
-This module is the **focused Phase-D substrate-application** that
-connects all the dual-side framework infrastructure directly to the
-BBH endgame.
+The two theorems `bbh_lineElement_*` are the integer identities
+`-168 + 210 = 42` and `-294 + 462 = 168`. They do not mention any
+system or seed.
 -/
 
 import InfraFormalization.DiscreteMetricTensor
@@ -68,7 +44,7 @@ open DiscreteRicciScalar
 open BranchialUniversalAdditivity
 open DiscreteMetricTensor
 
-/-! ## BBH metric values for eR + id at depth 3 -/
+/-! ## Values for `edgeReversal + identityKeep` on `bbhInitial` at depth 3 -/
 
 theorem bbh_causal_eR_id_3 :
     knillEulerScaled (causalDAGOfFireAll edgeReversal_identity_Sys bbhInitial 3) = -168 := by
@@ -78,7 +54,7 @@ theorem bbh_branchial_eR_id_3 :
     knillEulerScaled (branchialDAGOfFireAll edgeReversal_identity_Sys bbhInitial 3) = 210 := by
   native_decide
 
-/-! ## BBH metric values for eR + fork at depth 3 -/
+/-! ## Values for `edgeReversal + forkRule_2` on `bbhInitial` at depth 3 -/
 
 theorem bbh_causal_eR_fork_3 :
     knillEulerScaled (causalDAGOfFireAll edgeReversal_fork_Sys bbhInitial 3) = -294 := by
@@ -88,27 +64,31 @@ theorem bbh_branchial_eR_fork_3 :
     knillEulerScaled (branchialDAGOfFireAll edgeReversal_fork_Sys bbhInitial 3) = 462 := by
   native_decide
 
-/-! ## The BBH metric tensor characterization theorem -/
+/-! ## The four depth-3 values -/
 
-/-- **`bbh_metric_tensor_characterization`**: explicit BBH-discrete-
-metric values for both leading multi-rule candidates at depth 3. -/
+/-- The four depth-3 scaled Knill values on `bbhInitial`: causal and
+contention values for `edgeReversal + identityKeep` and for
+`edgeReversal + forkRule_2`. -/
 theorem bbh_metric_tensor_characterization :
-    -- eR + id on BBH at d=3: g_BBH = (-168, 210)
+    -- eR + id on bbhInitial at d=3: (-168, 210)
     knillEulerScaled (causalDAGOfFireAll edgeReversal_identity_Sys bbhInitial 3) = -168 ∧
     knillEulerScaled (branchialDAGOfFireAll edgeReversal_identity_Sys bbhInitial 3) = 210 ∧
-    -- eR + fork on BBH at d=3: g_BBH = (-294, 462)
+    -- eR + fork on bbhInitial at d=3: (-294, 462)
     knillEulerScaled (causalDAGOfFireAll edgeReversal_fork_Sys bbhInitial 3) = -294 ∧
     knillEulerScaled (branchialDAGOfFireAll edgeReversal_fork_Sys bbhInitial 3) = 462 :=
   ⟨bbh_causal_eR_id_3, bbh_branchial_eR_id_3,
    bbh_causal_eR_fork_3, bbh_branchial_eR_fork_3⟩
 
-/-! ## Universal additivity for the BBH tensor -/
+/-! ## Factor 7 relative to the single-edge seed -/
 
-/-- **`bbh_tensor_universal_additivity`**: BBH metric tensor =
-7 × single-edge metric tensor (per-edge additivity at tensor level).
+/-- At depth 3, for the two systems `edgeReversal + identityKeep` and
+`edgeReversal + forkRule_2`, each scaled Knill value on `bbhInitial`
+equals 7 times the corresponding value on `seedEdge12`:
 
-  * eR + id: BBH = 7 × (-24, 30) = (-168, 210) ✓
-  * eR + fork: BBH = 7 × (-42, 66) = (-294, 462) ✓
+  * `edgeReversal + identityKeep`: (-168, 210) = 7 × (-24, 30).
+  * `edgeReversal + forkRule_2`: (-294, 462) = 7 × (-42, 66).
+
+The statement is these four equalities. Proved by `native_decide`.
 -/
 theorem bbh_tensor_universal_additivity :
     knillEulerScaled (causalDAGOfFireAll edgeReversal_identity_Sys bbhInitial 3) =
@@ -121,59 +101,30 @@ theorem bbh_tensor_universal_additivity :
       7 * discreteBranchialDensity edgeReversal_fork_Sys 3 := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
 
-/-! ## BBH discrete line element -/
+/-! ## Two integer identities -/
 
-/-- For BBH on `eR + id` at depth 3 with `(dτ, dχ) = (1, 1)`:
-line element = `(-168) + 210 = 42` (Riemannian-leaning). -/
+/-- The integer identity `-168 + 210 = 42`. The two summands are the
+depth-3 values for `edgeReversal + identityKeep` on `bbhInitial`. -/
 theorem bbh_lineElement_eR_id_1_1 :
     -168 + 210 = 42 := by decide
 
-/-- For BBH on `eR + fork` at depth 3 with `(dτ, dχ) = (1, 1)`:
-line element = `(-294) + 462 = 168`. -/
+/-- The integer identity `-294 + 462 = 168`. The two summands are the
+depth-3 values for `edgeReversal + forkRule_2` on `bbhInitial`. -/
 theorem bbh_lineElement_eR_fork_1_1 :
     -294 + 462 = 168 := by decide
 
-/-! ## What this delivers
+/-! ## Contents
 
-**BBH-specific discrete metric tensor characterization**:
+  * `bbh_causal_eR_id_3`, `bbh_branchial_eR_id_3`, `bbh_causal_eR_fork_3`,
+    `bbh_branchial_eR_fork_3`: four values computed by `native_decide`.
+  * `bbh_metric_tensor_characterization`: the conjunction of the four.
+  * `bbh_tensor_universal_additivity`: the four equalities with 7 times
+    the `seedEdge12` values at depth 3.
+  * `bbh_lineElement_eR_id_1_1`, `bbh_lineElement_eR_fork_1_1`: two
+    integer identities.
 
-  * 4 certified BBH-scale tensor values for two leading multi-rule
-    candidates.
-  * `bbh_metric_tensor_characterization`: 4-conj bundle.
-  * `bbh_tensor_universal_additivity`: BBH = 7 × single-edge baseline.
-  * Discrete line element values at unit increments.
-
-**Why this matters** (Phase-D consolidation):
-
-This is the **focused BBH application** of the dual-side framework:
-
-  * For any Phase-D BBH calculation, the metric tensor values are
-    now explicit and certified.
-  * The universal additivity at tensor level (7× scaling) means
-    the BBH-specific calculations at the verified depth (d=3) are
-    fully predicted from single-edge baseline.
-  * The line-element values give concrete distance measurements on
-    BBH initial data.
-
-**Implication for H8/H9**:
-
-  * H8 (discrete Ψ₄): combine BBH causal Knill with BBH branchial
-    Knill to get full complex amplitude.
-  * H9 (continuum convergence): the BBH metric tensor should
-    converge to a continuum-Lorentzian metric encoding both
-    classical gravitational and quantum-amplitude information.
-
-**Connection to all prior work**:
-
-The BBH metric tensor unifies:
-  * BBH initial data (#443).
-  * Discrete metric tensor framework (#466).
-  * Universal additivity (#454, #462) — for the 7× scaling.
-  * Balance α (#465) — for the unified action vanishing condition.
-  * Dual-side independence (#463) — for the diagonal structure.
-
-The framework's Phase-D substrate is now consolidated into a
-single BBH-applied discrete geometric tensor.
+The module states nothing about other depths, other rules, other seeds,
+or any continuum metric.
 -/
 
 end BBHMetricTensor

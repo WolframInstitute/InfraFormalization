@@ -1,45 +1,30 @@
 /-
-**B4-bondi-flux: per-step event-count rates as discrete Bondi-flux
-analog** (#447; H8 toward closure).
+Per-step event counts of the fire-all evolution.
 
-Defines `perStepEventCount` — the number of causal events at each
-evolution step — and certifies its values for the discovered single-
-and multi-rule systems on both single-edge and BBH seeds. The
-per-step count is the **discrete analog of instantaneous gravitational
-flux through a Bondi sphere**: each event is a quantum of causal
-information emission, and the per-step count is the analog of dE/dt.
+`perStepEventCount sys H n` lists, for each of the first `n` steps, the
+number of events of `tracedFireAllEvolve sys H n` with that step index.
+`fireAllStep` applies every match of every rule found in the state,
+including matches that share edges. It is not a Wolfram model update
+when matches overlap. The module name refers to the Bondi flux of
+general relativity. The module does not define a flux, an energy or any
+spacetime quantity. It defines and computes the counts below.
 
-**Headline findings** (all `native_decide`-certified):
+The seeds are `seedEdge12` (one edge) and `bbhInitial` (7 edges: two
+triangles on `{0,1,2}` and `{3,4,5}` joined by the edge `{2,3}`). The
+module computes by `native_decide` (PROVED-WITH-NATIVE-DECIDE):
 
-  * `edgeReversal` (linear): constant 7 events/step on BBH.
-  * `doubleCycle_5` (geometric ×2): 7, 14, 28, 56, 112 on BBH.
-  * `edgeReversal + tripleMerger` (geometric ×3): 14, 42, 126, 378
-    on BBH — **exponential merger acceleration**.
-  * `edgeReversal + forkRule_2` (geometric ~×3.5):
-    14, 42, 98, 238, 574 on BBH — fastest event-rate growth.
+  | System                       | seed         | steps | per-step counts           |
+  |------------------------------|--------------|-------|---------------------------|
+  | edgeReversal                 | bbhInitial   | 6     | 7, 7, 7, 7, 7, 7          |
+  | doubleCycle_5                | bbhInitial   | 5     | 7, 14, 28, 56, 112        |
+  | edgeReversal + tripleMerger  | bbhInitial   | 4     | 14, 42, 126, 378          |
+  | edgeReversal + forkRule_2    | bbhInitial   | 5     | 14, 42, 98, 238, 574      |
+  | edgeReversal                 | seedEdge12   | 6     | 1, 1, 1, 1, 1, 1          |
+  | doubleCycle_5                | seedEdge12   | 5     | 1, 2, 4, 8, 16            |
+  | edgeReversal + tripleMerger  | seedEdge12   | 4     | 2, 6, 18, 54              |
 
-**Per-edge additivity verified at the event-count level** for
-{edgeReversal, doubleCycle_5, edgeReversal+tripleMerger} at the
-listed depths.
-
-**Why this matters** (toward H8): in numerical-relativity, the Ψ₄
-extraction at finite radius gives a complex amplitude whose modulus
-integrated over time = total gravitational-wave luminosity. Our
-discrete analog is:
-
-  * Per-step event count = instantaneous flux (discrete dE/dt).
-  * Integrated event count = total causal "energy" through evolution.
-
-The exponential growth in `edgeReversal_tripleMerger` (perfect ×3
-per step) captures the qualitative "chirp" of an accelerating
-binary system — luminosity grows exponentially as the holes spiral
-inward.
-
-This module gives the framework its **first explicit instantaneous-
-rate observable**. Combined with the multi-rule depth trajectories
-(#446) showing IMR phase structure, the discrete framework now
-exposes both the energy-flux growth (this module) and the
-phase-structure peak (#446) of a binary coalescence.
+For the first three systems, the counts on `bbhInitial` are 7 times the
+counts on `seedEdge12` at every computed step.
 -/
 
 import InfraFormalization.BBHInitialData
@@ -58,62 +43,61 @@ open MultiRuleDiscovered
 
 /-! ## Per-step event count definition -/
 
-/-- **`perStepEventCount`**: the number of causal events at each
-step of `tracedFireAllEvolve sys H n`. Discrete analog of
-instantaneous Bondi flux dE/dt. -/
+/-- `perStepEventCount sys H n` is the list, for k = 0, ..., n-1, of the
+number of events with step index k in `tracedFireAllEvolve sys H n`. -/
 def perStepEventCount (sys : ExecSystem) (H : ExecHG ℕ) (n : Nat) :
     List Nat :=
   let (_, events) := tracedFireAllEvolve sys H n
   (List.range n).map (fun k => (events.filter (·.step == k)).length)
 
-/-! ## BBH per-step event-count witnesses -/
+/-! ## Per-step counts on `bbhInitial` -/
 
-/-- `edgeReversal` on BBH: linear flux — constant 7 events/step. -/
+/-- `edgeReversal` on `bbhInitial`: per-step count 7 at each of 6 steps. -/
 theorem edgeReversal_bbh_flux :
     perStepEventCount edgeReversalSys bbhInitial 6 = [7, 7, 7, 7, 7, 7] := by
   native_decide
 
-/-- `doubleCycle_5` on BBH: geometric ×2 — 7, 14, 28, 56, 112. -/
+/-- `doubleCycle_5` on `bbhInitial`: per-step counts 7, 14, 28, 56, 112 over 5 steps. -/
 theorem doubleCycle_5_bbh_flux :
     perStepEventCount doubleCycleSys_5 bbhInitial 5 = [7, 14, 28, 56, 112] := by
   native_decide
 
-/-- `edgeReversal + tripleMerger` on BBH: **exponential ×3** —
-14, 42, 126, 378. Cleanest exponential signature in the corpus. -/
+/-- `edgeReversal + tripleMerger` on `bbhInitial`: per-step counts
+14, 42, 126, 378 over 4 steps. -/
 theorem edgeReversal_tripleMerger_bbh_flux :
     perStepEventCount edgeReversal_tripleMerger_Sys bbhInitial 4 = [14, 42, 126, 378] := by
   native_decide
 
-/-- `edgeReversal + forkRule_2` on BBH: rapid quasi-geometric growth —
-14, 42, 98, 238, 574. Fastest event-rate growth in the multi-rule
-corpus. -/
+/-- `edgeReversal + forkRule_2` on `bbhInitial`: per-step counts
+14, 42, 98, 238, 574 over 5 steps. -/
 theorem edgeReversal_fork_bbh_flux :
     perStepEventCount edgeReversal_fork_Sys bbhInitial 5 = [14, 42, 98, 238, 574] := by
   native_decide
 
-/-! ## Per-edge additivity at the event-count level -/
+/-! ## Per-step counts on `seedEdge12` -/
 
-/-- `edgeReversal` on `edge12`: 1 event/step. -/
+/-- `edgeReversal` on `seedEdge12`: per-step count 1 at each of 6 steps. -/
 theorem edgeReversal_edge12_flux :
     perStepEventCount edgeReversalSys seedEdge12 6 = [1, 1, 1, 1, 1, 1] := by
   native_decide
 
-/-- `doubleCycle_5` on `edge12`: doubles each step — 1, 2, 4, 8, 16. -/
+/-- `doubleCycle_5` on `seedEdge12`: per-step counts 1, 2, 4, 8, 16 over 5 steps. -/
 theorem doubleCycle_5_edge12_flux :
     perStepEventCount doubleCycleSys_5 seedEdge12 5 = [1, 2, 4, 8, 16] := by
   native_decide
 
-/-- `edgeReversal + tripleMerger` on `edge12`: triples each step —
-2, 6, 18, 54. -/
+/-- `edgeReversal + tripleMerger` on `seedEdge12`: per-step counts
+2, 6, 18, 54 over 4 steps. -/
 theorem edgeReversal_tripleMerger_edge12_flux :
     perStepEventCount edgeReversal_tripleMerger_Sys seedEdge12 4 = [2, 6, 18, 54] := by
   native_decide
 
-/-! ## Per-edge additivity theorem at the event-count level -/
+/-! ## Factor 7 between the two seeds -/
 
-/-- **`bbh_flux_equals_7x_baseline`**: BBH per-step event counts are
-exactly 7× the corresponding `edge12` baseline, verified at the 3
-specific (rule, depth) cases below. -/
+/-- For `edgeReversalSys` over 6 steps, `doubleCycleSys_5` over 5 steps
+and `edgeReversal + tripleMerger` over 4 steps, the per-step count list
+on `bbhInitial` equals the list on `seedEdge12` with every entry
+multiplied by 7. -/
 theorem bbh_flux_equals_7x_baseline :
     perStepEventCount edgeReversalSys bbhInitial 6 =
       (perStepEventCount edgeReversalSys seedEdge12 6).map (· * 7) ∧
@@ -126,11 +110,11 @@ theorem bbh_flux_equals_7x_baseline :
   · rw [doubleCycle_5_bbh_flux, doubleCycle_5_edge12_flux]; rfl
   · rw [edgeReversal_tripleMerger_bbh_flux, edgeReversal_tripleMerger_edge12_flux]; rfl
 
-/-! ## Exponential merger growth signature -/
+/-! ## Ratios of consecutive counts -/
 
-/-- **`exponential_merger_growth_x3`**: `edgeReversal + tripleMerger`
-on BBH shows **perfect ×3 per-step event-count growth**:
-14 → 42 → 126 → 378. Each step exactly triples the previous count. -/
+/-- The per-step counts of `edgeReversal + tripleMerger` on `bbhInitial`
+over 4 steps are `[14, 42, 126, 378]`, together with the integer
+identities 42 = 3·14, 126 = 3·42 and 378 = 3·126. -/
 theorem exponential_merger_growth_x3 :
     perStepEventCount edgeReversal_tripleMerger_Sys bbhInitial 4 = [14, 42, 126, 378] ∧
     42 = 3 * 14 ∧
@@ -138,8 +122,9 @@ theorem exponential_merger_growth_x3 :
     378 = 3 * 126 :=
   ⟨edgeReversal_tripleMerger_bbh_flux, by decide, by decide, by decide⟩
 
-/-- **`exponential_merger_growth_x2`**: `doubleCycle_5` on BBH shows
-**perfect ×2 per-step event-count growth**: 7 → 14 → 28 → 56 → 112. -/
+/-- The per-step counts of `doubleCycleSys_5` on `bbhInitial` over 5
+steps are `[7, 14, 28, 56, 112]`, together with the integer identities
+14 = 2·7, 28 = 2·14, 56 = 2·28 and 112 = 2·56. -/
 theorem exponential_merger_growth_x2 :
     perStepEventCount doubleCycleSys_5 bbhInitial 5 = [7, 14, 28, 56, 112] ∧
     14 = 2 * 7 ∧
@@ -148,36 +133,19 @@ theorem exponential_merger_growth_x2 :
     112 = 2 * 56 :=
   ⟨doubleCycle_5_bbh_flux, by decide, by decide, by decide, by decide⟩
 
-/-! ## What this delivers
+/-! ## Contents
 
-**First instantaneous-rate observable** in the framework:
+  * `perStepEventCount`: the number of events at each of the first `n`
+    fire-all steps.
+  * Seven lists of per-step counts on `bbhInitial` and `seedEdge12`.
+  * `bbh_flux_equals_7x_baseline`: for three (system, depth) pairs, the
+    list on `bbhInitial` is the list on `seedEdge12` multiplied by 7.
+  * `exponential_merger_growth_x3`, `exponential_merger_growth_x2`: one
+    computed list each, with the integer identities that each entry is
+    3 (or 2) times the previous one.
 
-  * `perStepEventCount` — discrete dE/dt analog.
-  * 7 certified per-step-count witnesses on BBH and `edge12`.
-  * `bbh_flux_equals_7x_baseline` — per-edge additivity at event-
-    count level.
-  * `exponential_merger_growth_x2` and `_x3` — perfect geometric
-    growth signatures (×2 for doubleCycle_5, ×3 for tripleMerger).
-
-**Why this matters** (toward H8): the framework now has
-**both** observables needed to define a discrete-Ψ₄ analog:
-
-  * Per-step event count = instantaneous flux (this module).
-  * Per-step Knill drop = instantaneous topology change (#440, #446).
-
-These together give a discrete analog of complex-valued Ψ₄ —
-real part = topology delta, imaginary part = event flux.
-
-**Outstanding (H8 full closure)**:
-
-  * Define `discretePsiFour` as the complex-valued combination of
-    these observables.
-  * Show convergence to the continuum Ψ₄ under appropriate scaling.
-
-**Outstanding (H9)**:
-
-  * Match the discrete Bondi-flux exponential against the
-    inspiral-phase NR Ψ₄ amplitude exponential decay.
+The module states nothing about steps beyond those computed, other
+systems or other seeds.
 -/
 
 end DiscreteBondiFlux

@@ -1,16 +1,18 @@
 /-
-**B4-dual-side-independence: R and B are independent observables**
-(#463; structural research finding).
+Values of `discreteRicciScalar` (R) and `discreteBranchialDensity` (B)
+for `edgeReversal + identityKeep` and `edgeReversal + forkRule_2`.
 
-The framework's dual-side discrete-QG observables — causal R-scalar
-(#456) and branchial B-density (#462) — are now characterized via
-universal additivity (#454, #462) and depth trajectories (#457, #461).
+R is the scaled Knill value of `causalDAGOfFireAll sys seedEdge12 d`. B
+is the scaled Knill value of `branchialDAGOfFireAll sys seedEdge12 d`,
+the graph that links two events of the same step that consume a common
+edge value. This relation is not the branchial graph of the Wolfram
+model. Both graphs come from `tracedFireAllEvolve`, which applies every
+match of every rule found in the state, including matches that share
+edges. It is not a Wolfram model update when matches overlap.
 
-This module establishes a key **structural research finding**: R
-and B are **independent observables**. There is no simple universal
-function `f(R, depth) = B` relating them.
-
-**Empirical R-B values** (all `native_decide`-certified):
+Values (PROVED-WITH-NATIVE-DECIDE; the depth-2 and depth-3 values of
+`edgeReversal + forkRule_2` are stated through `same_R_different_B` and
+in other modules):
 
   `edgeReversal + identityKeep`:
 
@@ -24,31 +26,10 @@ function `f(R, depth) = B` relating them.
   |-----|-----|-----|
   | R=-6, B=24 | R=-42, B=66 | R=-72, B=168 |
 
-**Key observations**:
-
-  * Same rule (`eR + id`): R varies non-monotonically (-6 → -24 → 6)
-    while B grows monotonically (18 → 30 → 42).
-  * Different rules at same depth: same R can have different B
-    (both rules have R=-6 at d=2; B = 18 vs 24).
-
-**Conclusion**: R and B carry **independent dynamical information**
-about the rule's causal-vs-branchial structure. The dual-side
-framework is NOT reducible to a single observable.
-
-**Why this matters** (discrete-QG significance):
-
-  * In continuum QG, the classical and quantum sectors are also
-    independent — gravity (curvature) and quantum amplitudes
-    (wavefunction) are separate observables.
-  * The framework's R/B independence mirrors this continuum-QG
-    structure.
-  * The discrete unified EH action `S = |seed| · (R + α · B)`
-    therefore captures **genuinely 2-parameter** dynamics, not
-    1-parameter.
-
-This is the strongest structural evidence yet that the framework's
-dual-side observables genuinely model both classical-GR AND
-quantum-QM dynamics separately.
+For `edgeReversal + identityKeep`, R decreases from depth 2 to 3 and
+increases from depth 3 to 4, while B increases at both steps. At depth 2
+the two systems have equal R and different B. It follows that no
+function f satisfies B = f(R, d) for both systems at d = 2.
 -/
 
 import InfraFormalization.BranchialUniversalAdditivity
@@ -67,9 +48,9 @@ open MultiRuleDiscovered
 open DiscreteRicciScalar
 open BranchialUniversalAdditivity
 
-/-! ## R-vs-B trajectory certifications -/
+/-! ## Values of R and B -/
 
-/-- `eR + id` at depth 2: R = -6, B = 18 (R + B = 12). -/
+/-- `eR + id` at depth 2: R = -6, B = 18. -/
 theorem RB_eR_id_2 :
     discreteRicciScalar edgeReversal_identity_Sys 2 = -6 ∧
     discreteBranchialDensity edgeReversal_identity_Sys 2 = 18 := by
@@ -81,7 +62,7 @@ theorem RB_eR_id_3 :
     discreteBranchialDensity edgeReversal_identity_Sys 3 = 30 := by
   refine ⟨?_, ?_⟩ <;> native_decide
 
-/-- `eR + id` at depth 4: R = 6, B = 42 — note R **non-monotonic**. -/
+/-- `eR + id` at depth 4: R = 6, B = 42. -/
 theorem RB_eR_id_4 :
     discreteRicciScalar edgeReversal_identity_Sys 4 = 6 ∧
     discreteBranchialDensity edgeReversal_identity_Sys 4 = 42 := by
@@ -93,11 +74,10 @@ theorem RB_eR_fork_4 :
     discreteBranchialDensity edgeReversal_fork_Sys 4 = 168 := by
   refine ⟨?_, ?_⟩ <;> native_decide
 
-/-! ## The R-B independence theorems -/
+/-! ## Comparisons -/
 
-/-- **`R_nonmonotonic_B_monotonic`**: for `eR + id`, R is
-non-monotonic (-6 → -24 → 6) while B is monotonic (18 → 30 → 42).
-This shows R and B are **distinct dynamical observables**. -/
+/-- For `edgeReversal + identityKeep`: R is -6, -24, 6 and B is 18, 30,
+42 at depths 2, 3, 4. -/
 theorem R_nonmonotonic_B_monotonic :
     -- R sequence: -6, -24, 6 (non-monotonic):
     discreteRicciScalar edgeReversal_identity_Sys 2 = -6 ∧
@@ -109,10 +89,9 @@ theorem R_nonmonotonic_B_monotonic :
     discreteBranchialDensity edgeReversal_identity_Sys 4 = 42 := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
 
-/-- **`same_R_different_B`**: at depth 2, both `eR + id` and
-`eR + fork` have R = -6, but their B values differ (18 vs 24).
-This shows that the SAME R value can correspond to DIFFERENT B
-values — i.e., R does NOT determine B. -/
+/-- At depth 2, `edgeReversal + identityKeep` and
+`edgeReversal + forkRule_2` have equal R (-6) and different B (18 and
+24). -/
 theorem same_R_different_B :
     discreteRicciScalar edgeReversal_identity_Sys 2 =
       discreteRicciScalar edgeReversal_fork_Sys 2 ∧
@@ -120,15 +99,16 @@ theorem same_R_different_B :
       discreteBranchialDensity edgeReversal_fork_Sys 2 := by
   refine ⟨?_, ?_⟩ <;> native_decide
 
-/-! ## Bundled R-B independence statement -/
+/-! ## Conjunction -/
 
-/-- **`dual_side_independence`**: R and B carry independent
-dynamical information. Bundles:
+/-- A conjunction of six finite statements:
 
-  1. R non-monotonic, B monotonic (rule-specific divergent
-     behavior).
-  2. Same R value can have different B values (R does NOT
-     determine B). -/
+  1. For `edgeReversal + identityKeep`, R at depth 3 is at most R at
+     depth 2, and R at depth 4 is greater than R at depth 3.
+  2. For the same system, B strictly increases from depth 2 to 3 and
+     from depth 3 to 4.
+  3. At depth 2, `edgeReversal + identityKeep` and
+     `edgeReversal + forkRule_2` have equal R and different B. -/
 theorem dual_side_independence :
     -- (1) R can be non-monotonic while B is monotonic:
     discreteRicciScalar edgeReversal_identity_Sys 3 ≤
@@ -146,34 +126,19 @@ theorem dual_side_independence :
       discreteBranchialDensity edgeReversal_fork_Sys 2 := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
 
-/-! ## What this delivers
+/-! ## Contents
 
-**Structural research finding**: R and B carry independent
-dynamical information about the rule's curvature structure.
+  * `RB_eR_id_2`, `RB_eR_id_3`, `RB_eR_id_4`, `RB_eR_fork_4`: pairs of
+    values.
+  * `R_nonmonotonic_B_monotonic`: six values for
+    `edgeReversal + identityKeep` at depths 2, 3 and 4.
+  * `same_R_different_B`: equal R and different B for the two systems at
+    depth 2.
+  * `dual_side_independence`: four order relations and the two depth-2
+    statements.
 
-  * `R_nonmonotonic_B_monotonic`: certifies R/B can diverge in
-    monotonicity for the same rule.
-  * `same_R_different_B`: certifies same R can have different B.
-  * `dual_side_independence`: 6-conj bundle.
-
-**Why this matters** (discrete-QG significance):
-
-This is the strongest structural evidence yet that the framework's
-dual-side observables genuinely model both classical-GR (R) AND
-quantum-QM (B) dynamics SEPARATELY — not as a single observable
-decomposed two ways.
-
-The continuum-QG analog: gravity (curvature) and quantum amplitudes
-(wavefunction) are independent observables — neither determines
-the other. The discrete framework reproduces this independence.
-
-**Implication for the unified EH action**:
-
-  `S(rule, seed, d, α) = |seed| · (R(rule, d) + α · B(rule, d))`
-
-is genuinely 2-parameter dynamics. Different α values give
-genuinely different total-curvature predictions — α plays the
-role of a discrete Planck's constant.
+All statements concern two systems, depths 2 to 4, and the seed
+`seedEdge12`.
 -/
 
 end DualSideIndependence

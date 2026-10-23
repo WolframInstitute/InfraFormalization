@@ -1,58 +1,29 @@
 /-
-**B4-B-closed-form-extended: closed form B(d) = 3^(d+1) - 3 verified
-through depth 6** (#487).
+Branchial-contention Knill values at depth 6 for two rule pairs.
 
-Extends #485 by verifying the closed form `B(d) = 3^(d+1) - 3` for
-the persistent equivalence class `{eR + tripleMerger, fork + dCyc}`
-**at depth 6**.
+`discreteBranchialDensity sys d` is the scaled Knill Euler
+characteristic of `branchialDAGOfFireAll sys seedEdge12 d`. That graph
+joins two events of the same step that consume a common edge. It is
+not the Wolfram-model branchial graph. The evolution is `fireAllStep`,
+which applies every match of every rule found in the state, including
+matches that share edges. It is not a Wolfram model update when
+matches overlap.
 
-**Result** (all `native_decide`-certified):
+Values for `edgeReversal_tripleMerger_Sys` and `fork_doubleCycle_Sys`
+(PROVED-WITH-NATIVE-DECIDE; depth 6 here, depths 2 to 5 in
+`PersistentScalingExponent` and `PersistentBEquivalence`):
 
-  | d | 3^(d+1) - 3 | Actual B |
-  |---|--------------|-----------|
-  | 2 |       24     |     24    |
-  | 3 |       78     |     78    |
-  | 4 |      240     |    240    |
-  | 5 |      726     |    726    |
-  | 6 |     2184     |   2184    |
+  | d | 3^(d+1) - 3 | B (both pairs) |
+  |---|-------------|----------------|
+  | 2 |      24     |       24       |
+  | 3 |      78     |       78       |
+  | 4 |     240     |      240       |
+  | 5 |     726     |      726       |
+  | 6 |    2184     |     2184       |
 
-The closed form holds for **5 consecutive depths** (d = 2, 3, 4, 5, 6).
-
-**Strengthens the scaling-exponent conjecture**:
-
-5-depth verification makes the conjecture
-`B(rule, d) = 3^(d+1) - 3 for all d ≥ 2` extremely well-supported;
-the all-d claim remains a conjecture extrapolated from d ∈ {2..6}.
-
-The log_2(3) ≈ 1.585 scaling exponent prediction is the framework's
-strongest discrete-physics prediction to date.
-
-**Persistent B equivalence also holds at d=6**:
-
-`eR + tripleMerger` and `fork + dCyc` both give B = 2184 at d=6 —
-5-depth persistent equivalence between two structurally different
-combos.
-
-**BBH-scale prediction at d=6**:
-
-By universal additivity, BBH at d=6 gives `B_BBH = 7 × 2184 = 15288`
-for both combos.
-
-**Why this matters**:
-
-The 5-depth verification of B(d) = 3^(d+1) - 3 is extraordinary
-evidence for the closed form. If the formula holds at infinitely
-many depths (as the conjecture posits), it's a complete analytical
-characterization of the branchial dynamics for this rule class.
-
-The framework's prediction:
-
-  In the continuum limit, the quantum amplitude content of vacuum-like
-  BBH dynamics scales as h^{-log_2(3)} where h is the discretization
-  scale.
-
-This is a falsifiable physics-level claim that future analysis can
-prove or disprove.
+The equality `B(d) = 3^(d+1) - 3` for all `d ≥ 2` is OPEN. No theorem
+in the library states it for unbounded `d`. The module states no
+continuum limit and no relation to `bbhInitial` at depth 6.
 -/
 
 import InfraFormalization.PersistentScalingExponent
@@ -80,20 +51,21 @@ theorem B_d6_fork_dCyc :
     discreteBranchialDensity fork_doubleCycle_Sys 6 = 2184 := by
   native_decide
 
-/-! ## Closed-form verification at d=6 -/
+/-! ## The form 3^(d+1) - 3 at depth 6 -/
 
-/-- **`B_closed_form_d6`**: B(d=6) = 3^7 - 3 = 2184. The closed form
-holds at depth 6 for both persistent-equivalence class members. -/
+/-- `B_closed_form_d6`: `discreteBranchialDensity` at depth 6 equals
+`3^7 - 3` for `edgeReversal_tripleMerger_Sys` and for
+`fork_doubleCycle_Sys`. -/
 theorem B_closed_form_d6 :
     discreteBranchialDensity edgeReversal_tripleMerger_Sys 6 = 3^7 - 3 ∧
     discreteBranchialDensity fork_doubleCycle_Sys 6 = 3^7 - 3 := by
   refine ⟨?_, ?_⟩ <;> native_decide
 
-/-! ## 5-depth persistent equivalence -/
+/-! ## Equal B at depths 2 to 6 -/
 
-/-- **`persistent_B_equivalence_5_depths`**: `eR + tripleMerger`
-and `fork + dCyc` have **identical B values at all 5 depths
-2, 3, 4, 5, 6**. -/
+/-- `persistent_B_equivalence_5_depths`: `edgeReversal_tripleMerger_Sys`
+and `fork_doubleCycle_Sys` have equal `discreteBranchialDensity` at
+each of the depths 2, 3, 4, 5, 6. -/
 theorem persistent_B_equivalence_5_depths :
     discreteBranchialDensity edgeReversal_tripleMerger_Sys 2 =
       discreteBranchialDensity fork_doubleCycle_Sys 2 ∧
@@ -107,43 +79,11 @@ theorem persistent_B_equivalence_5_depths :
       discreteBranchialDensity fork_doubleCycle_Sys 6 := by
   refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
 
-/-! ## What this delivers
+/-! ## Summary
 
-**Extended closed-form verification through d=6**:
-
-  * `B_closed_form_d6`: 2-conj certifying the closed form at depth 6.
-  * `persistent_B_equivalence_5_depths`: 5-conj certifying B
-    equivalence across all 5 depths.
-
-**Why this matters** (extraordinary closed-form evidence):
-
-5-depth verification of `B(d) = 3^(d+1) - 3` makes the conjecture
-`B(rule, d) = 3^(d+1) - 3 for all d ≥ 2` overwhelmingly likely.
-
-**The framework's strongest analytical prediction**:
-
-`B(d) = 3^(d+1) - 3` for the persistent equivalence class at every
-probed depth (d ∈ {2..6}); universal-d claim is conjectural.
-
-**Continuum-limit prediction** (conjectural continuum-limit
-extrapolation; no formal proof):
-
-`B(h) ~ 3 · h^{-log_2(3)} ≈ 3 · h^{-1.585}` for h → 0.
-
-**On BBH at depth 6** (by universal additivity):
-
-`B_BBH(d=6) = 7 × 2184 = 15288` for both `eR + tripleMerger` and
-`fork + dCyc`.
-
-**Falsifiability**: any continuum-QG framework that predicts a
-different scaling exponent in this regime disagrees with the discrete
-framework. This makes the framework's prediction concrete and
-testable.
-
-**Phase-D conclusion**: with 5-depth verification of the closed
-form, the framework has its **strongest analytical scaling
-prediction** in the discrete-QG substrate. The H9 continuum-limit
-analysis can use this prediction as a precise target.
+  * `B_closed_form_d6`: both pairs give `B = 3^7 - 3 = 2184` at depth 6.
+  * `persistent_B_equivalence_5_depths`: the two pairs give equal B at
+    each of the depths 2, 3, 4, 5, 6.
 -/
 
 end BClosedFormExtended

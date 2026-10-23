@@ -1,53 +1,27 @@
 /-
-**B4-branchial-R-spectrum: branchial-Knill characterization across
-discovered rules** (#459; QM-side discovery).
+Contention Knill values at depth 3 for two one-rule systems and three
+rule pairs.
 
-The causal-DAG Knill (#444-#458) characterizes the "time-like"
-curvature side of the framework. This module establishes the
-**branchial-Knill spectrum** across the discovered rules — the
-"space-like" / quantum-superposition curvature side.
+The quantity is the scaled Knill Euler characteristic of
+`branchialDAGOfFireAll sys seedEdge12 3`. That graph joins two events
+of the same step that consume a common edge. It is not the
+Wolfram-model branchial graph. The evolution is `fireAllStep`, which
+applies every match of every rule found in the state, including
+matches that share edges. It is not a Wolfram model update when
+matches overlap.
 
-**Headline empirical finding** (all `native_decide`-certified):
+Values (PROVED-WITH-NATIVE-DECIDE):
 
-  * Single-rule branchial Knill at depth 3 on `edge12`: **0**
-    (no contention; deterministic evolution).
-  * Multi-rule combo branchial Knill at depth 3 on `edge12`:
-    **non-zero and grows with rule richness**.
+  | System                        | value at d=3 |
+  |-------------------------------|--------------|
+  | edgeReversalSys               |       0      |
+  | identityKeepSys               |       0      |
+  | edgeReversal + identityKeep   |      30      |
+  | edgeReversal + forkRule_2     |      66      |
+  | edgeReversal + tripleMerger   |      78      |
 
-**Certified values**:
-
-  | System                       | branchial K(3) | contention pts |
-  |------------------------------|----------------|-----------------|
-  | edgeReversalSys (alone)       |       0        |        0        |
-  | identityKeepSys (alone)       |       0        |        0        |
-  | edgeReversal + identityKeep   |      30        |        5        |
-  | edgeReversal + forkRule_2     |      66        |       11        |
-  | edgeReversal + tripleMerger   |      78        |       13        |
-
-**Discrete-QM interpretation**:
-
-  * Among the 2 single-rule systems verified at d=3 on edge12,
-    branchial K = 0; no general single-rule theorem proved.
-  * Multi-rule systems create competing match-applications at the
-    same step. The branchial Knill counts these contentions.
-  * In the discrete-QM analog: branchial structure = quantum
-    superposition. The single-rule "classical" regime has no
-    superposition; multi-rule systems support superposition.
-
-**Why this matters** (toward H8 / QM emergence):
-
-The branchial structure is the framework's discrete analog of the
-QM amplitude superposition. A non-trivial branchial Knill is a
-discrete-physics fingerprint of **quantum-style multi-path dynamics**.
-
-The dual-side characterization is now complete:
-
-  * **Causal-Knill** (R) = time-like curvature, "classical" GR side.
-  * **Branchial-Knill** = space-like contention, "quantum" QM side.
-
-Combined, this gives a unified causal + branchial substrate for
-the discrete BBH analog operating in a **multi-way regime** — the
-right framework for a discrete-QG bridge.
+The module proves no statement about one-rule systems in general. It
+defines no quantum state or superposition.
 -/
 
 import InfraFormalization.BranchialEventTrace
@@ -65,20 +39,21 @@ open DiscoveredRules
 open DiscoveredRulesExpanded
 open MultiRuleDiscovered
 
-/-! ## Single-rule branchial Knill: deterministic regime -/
+/-! ## One-rule systems -/
 
-/-- Single-rule edgeReversal has zero branchial contention at depth 3 —
-deterministic dynamics. -/
+/-- `edgeReversalSys` gives contention Knill value 0 at depth 3 on
+`seedEdge12`. -/
 theorem edgeReversal_branchial_0 :
     knillEulerScaled (branchialDAGOfFireAll edgeReversalSys seedEdge12 3) = 0 := by
   native_decide
 
-/-- Single-rule identityKeep also has zero branchial contention. -/
+/-- `identityKeepSys` gives contention Knill value 0 at depth 3 on
+`seedEdge12`. -/
 theorem identityKeep_branchial_0 :
     knillEulerScaled (branchialDAGOfFireAll identityKeepSys seedEdge12 3) = 0 := by
   native_decide
 
-/-! ## Multi-rule branchial spectrum -/
+/-! ## Two-rule systems -/
 
 theorem eR_id_branchial_30 :
     knillEulerScaled (branchialDAGOfFireAll edgeReversal_identity_Sys seedEdge12 3) = 30 := by
@@ -92,86 +67,51 @@ theorem eR_tripleMerger_branchial_78 :
     knillEulerScaled (branchialDAGOfFireAll edgeReversal_tripleMerger_Sys seedEdge12 3) = 78 := by
   native_decide
 
-/-! ## The single-vs-multi-rule branchial dichotomy -/
+/-! ## One-rule and two-rule systems -/
 
-/-- **`branchial_single_rule_zero`**: edgeReversalSys and identityKeepSys
-have zero branchial Knill at d=3 on edge12.
-
-Note: name suggests universality across single-rule systems; statement
-is a 2-conjunct over named witnesses at d=3. -/
+/-- `branchial_single_rule_zero`: `edgeReversalSys` and
+`identityKeepSys` give 0 at depth 3 on `seedEdge12`. The statement is
+a conjunction over these two systems. -/
 theorem branchial_single_rule_zero :
     knillEulerScaled (branchialDAGOfFireAll edgeReversalSys seedEdge12 3) = 0 ∧
     knillEulerScaled (branchialDAGOfFireAll identityKeepSys seedEdge12 3) = 0 :=
   ⟨edgeReversal_branchial_0, identityKeep_branchial_0⟩
 
-/-- **`branchial_multi_rule_nonzero`**: three specific multi-rule combos
-have non-zero branchial Knill at d=3.
-
-Note: name suggests universality across multi-rule systems; statement
-is a 3-conjunct over named witnesses at d=3. -/
+/-- `branchial_multi_rule_nonzero`: `edgeReversal_identity_Sys`,
+`edgeReversal_fork_Sys` and `edgeReversal_tripleMerger_Sys` give 30, 66
+and 78 at depth 3 on `seedEdge12`. The statement is a conjunction over
+these three systems. -/
 theorem branchial_multi_rule_nonzero :
     knillEulerScaled (branchialDAGOfFireAll edgeReversal_identity_Sys seedEdge12 3) = 30 ∧
     knillEulerScaled (branchialDAGOfFireAll edgeReversal_fork_Sys seedEdge12 3) = 66 ∧
     knillEulerScaled (branchialDAGOfFireAll edgeReversal_tripleMerger_Sys seedEdge12 3) = 78 :=
   ⟨eR_id_branchial_30, eR_fork_branchial_66, eR_tripleMerger_branchial_78⟩
 
-/-! ## Bundled branchial-R spectrum -/
+/-! ## Five values at depth 3 -/
 
-/-- **`branchial_R_spectrum`**: complete branchial-Knill
-characterization at depth 3 across single and multi-rule
-discovered systems. -/
+/-- `branchial_R_spectrum`: the conjunction of the five contention
+Knill values at depth 3 on `seedEdge12`. -/
 theorem branchial_R_spectrum :
-    -- Single-rule deterministic regime:
+    -- One-rule systems:
     knillEulerScaled (branchialDAGOfFireAll edgeReversalSys seedEdge12 3) = 0 ∧
     knillEulerScaled (branchialDAGOfFireAll identityKeepSys seedEdge12 3) = 0 ∧
-    -- Multi-rule superposition regime:
+    -- Rule pairs:
     knillEulerScaled (branchialDAGOfFireAll edgeReversal_identity_Sys seedEdge12 3) = 30 ∧
     knillEulerScaled (branchialDAGOfFireAll edgeReversal_fork_Sys seedEdge12 3) = 66 ∧
     knillEulerScaled (branchialDAGOfFireAll edgeReversal_tripleMerger_Sys seedEdge12 3) = 78 :=
   ⟨edgeReversal_branchial_0, identityKeep_branchial_0,
    eR_id_branchial_30, eR_fork_branchial_66, eR_tripleMerger_branchial_78⟩
 
-/-! ## What this delivers
+/-! ## Summary
 
-**First branchial-side characterization** of the discovered rules:
+  * Five contention Knill values at depth 3 on `seedEdge12`.
+  * `branchial_single_rule_zero`: the two one-rule systems give 0.
+  * `branchial_multi_rule_nonzero`: the three rule pairs give 30, 66, 78.
+  * `branchial_R_spectrum`: the conjunction of the five values.
 
-  * 5 certified branchial-Knill values across single and multi-rule
-    systems.
-  * Single-rule deterministic-regime theorem.
-  * Multi-rule superposition-regime theorem.
-  * `branchial_R_spectrum` 5-conj bundling.
-
-**Why this matters** (QM-side / J5 / I8 connections):
-
-  * Branchial structure = quantum superposition in the discrete-QM
-    analog (#411 QM_emerges_from_hypergraph).
-  * Single-rule systems are "classical" — no superposition support.
-  * Multi-rule systems give the discrete substrate for genuine
-    quantum-style amplitude dynamics.
-
-**Dual-side framework summary**:
-
-  * `discreteRicciScalar` (#456) = causal-DAG R, "classical" GR
-    curvature.
-  * Branchial Knill (this module) = branchial-DAG R, "quantum"
-    superposition curvature.
-  * Universal additivity (#454) = topology-independence on the
-    causal side.
-
-The framework now characterizes **both** the classical-GR side
-(causal Knill, R-scalar, EH action, universal additivity) AND the
-quantum-QM side (branchial Knill spectrum). This is the substrate
-for a discrete-QG bridge.
-
-**Implications**:
-
-  * For BBH-style modeling, multi-rule systems are required to
-    capture quantum-style merger dynamics (cf. #446 IMR phase
-    structure).
-  * Single-rule systems would correspond to "classical" GR
-    (no superposition).
-  * The discovered rules' single-vs-multi-rule branchial
-    distinction is a real physics-emergence finding.
+Every statement is about named systems at depth 3. No theorem states
+that every one-rule system gives 0 or that every rule pair gives a
+nonzero value.
 -/
 
 end BranchialRSpectrum

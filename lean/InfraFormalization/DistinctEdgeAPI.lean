@@ -1,21 +1,20 @@
 /-
-**API for `distinctEdgeCount`** (#492 supporting infrastructure).
+Lemmas about `DistinctEdgeIdentity.distinctEdgeCount`.
 
-Foundational lemmas about `distinctEdgeCount` independent of the
-engine. These compose into the engine-correspondence bridge proof
-(`engineMatchesTriad` in `H9Closure`).
+`distinctEdgeCount H` is the number of distinct vertex lists among the
+hyperedges of `H`. Vertex order matters: `[1,2]` and `[2,1]` count as
+two. The lemmas below do not mention any rule system or evolution
+operator.
 
-**What's proved here**:
-
-  * `distinctEdgeCount_nil`: empty hypergraph has zero distinct edges.
-  * `distinctEdgeCount_singleton`: one edge has one distinct edge.
-  * `distinctEdgeCount_le_length`: distinct count is at most edge count.
-  * `distinctEdgeCount_cons_mem` / `_not_mem` / `_ge` / `_le`:
-    cons behavior.
-  * `distinctEdgeCount_append_le`: subadditivity under concatenation.
-
-These lemmas are reusable for any work involving `distinctEdgeCount`
-and are independent of any specific rule system or engine semantics.
+  * `distinctEdgeCount_nil`: the empty hypergraph has count 0.
+  * `distinctEdgeCount_singleton`: a one-edge hypergraph has count 1.
+  * `distinctEdgeCount_le_length`: the count is at most the number of
+    hyperedges.
+  * `distinctEdgeCount_cons_mem`, `distinctEdgeCount_cons_not_mem`,
+    `distinctEdgeCount_cons_ge`, `distinctEdgeCount_cons_le`: the count
+    after adding one hyperedge at the front.
+  * `distinctEdgeCount_append_le`: the count of a concatenation is at
+    most the sum of the counts.
 -/
 
 import InfraFormalization.DistinctEdgeIdentity
@@ -28,8 +27,8 @@ open DistinctEdgeIdentity
 
 /-! ## Section A: The dedup helper -/
 
-/-- The foldr that builds the deduplicated verts list, factored out
-for direct manipulation. -/
+/-- The right fold that removes repeated vertex lists, keeping the last
+occurrence of each. -/
 def dedupFoldr (xs : List (List ℕ)) : List (List ℕ) :=
   xs.foldr (fun v acc => if v ∈ acc then acc else v :: acc) []
 
@@ -168,23 +167,17 @@ theorem distinctEdgeCount_append_le (H₁ H₂ : ExecHG ℕ) :
       have h_ih := ih
       omega
 
-/-! ## What this delivers
+/-! ## Contents
 
-A clean, reusable API for `distinctEdgeCount`:
+  * Base values (`distinctEdgeCount_nil`, `distinctEdgeCount_singleton`).
+  * Length bound (`distinctEdgeCount_le_length`).
+  * Behaviour under `cons` (`distinctEdgeCount_cons_mem`,
+    `distinctEdgeCount_cons_not_mem`, `distinctEdgeCount_cons_ge`,
+    `distinctEdgeCount_cons_le`).
+  * Subadditivity under concatenation (`distinctEdgeCount_append_le`).
 
-  * Base values (`_nil`, `_singleton`).
-  * Length bound (`_le_length`).
-  * Cons behavior (`_cons_mem`, `_cons_not_mem`, `_cons_ge`, `_cons_le`).
-  * Concatenation subadditivity (`_append_le`).
-
-These are the foundational lemmas the engine-correspondence bridge
-proof (`engineMatchesTriad` in `H9Closure.lean`) will compose to
-prove the H9 distinct-edge tripling symbolically.
-
-**Next step toward H9 closure**: with this API, the bridge proof
-becomes a matter of characterizing `fireAllStep`'s edge-set behavior:
-showing that for our persistent-class systems, the step adds exactly
-3× new distinct edges and consumes exactly the input distinct edges.
+All proofs are by induction and rewriting, without `native_decide`. No
+module in the library imports this one.
 -/
 
 end DistinctEdgeAPI
