@@ -17,7 +17,7 @@ Status labels: PROVED (Lean, kernel-checked, sorry-free, axioms at most `propext
 |---|---|---|---|
 | 3 | The discrete Einstein-Hilbert action S[g^ab] = Σ dμ_g R uses a metric g^ab and a measure dμ_g that are not constructed from the hypergraph. | G1 eq. 86 (line 2200), Def 15 (line 786) | READ |
 | 4 | The functional derivative δS/δg^ab is applied to a discrete sum. | G1 eq. 87 (lines 2203-2211) | READ |
-| 5 | Non-parallel hyperedges "can be considered to be orthonormal"; no bilinear form is defined. | G1 lines 2061-2063 | READ |
+| 5 | Non-parallel hyperedges "can be considered to be orthonormal"; no bilinear form is defined. | G1 lines 2063-2065 | READ |
 | 6 | The expansions of eqs. 64-65 and eq. 80 hold as r → 0 and as ε, δ → 0. G1 sets ε = δ = 1 and states that the ball-volume expansion holds "with exactness when r = 1". | G1 lines 1788, 2056-2060 | READ |
 
 ## S3. Equivalences that hold by definition
@@ -34,7 +34,7 @@ Status labels: PROVED (Lean, kernel-checked, sorry-free, axioms at most `propext
 |---|---|---|---|
 | 10 | Σ dμ_g R "becomes" ∫ d⁴x √−g R "subject to a weak ergodicity assumption". No notion of convergence is stated. For causal sets, the corresponding Benincasa-Dowker limit has numerical support (Cunningham 2018) and no proof. | G1 line 2214 (eq. 88) | READ, OPEN |
 | 11 | The rule {{x,y},{y,z},{z,w},{w,v}} → {{y,u},{u,v},{w,x},{x,u}} "provably satisfies the Einstein field equations in the continuum limit". G3 gives no proof for this rule. G3 assumes Poisson-distributed rewrite events (line 6080) and samples the initial hypergraph from the target geometry (lines 6148-6152, 6179). | G3 lines 50-52, 6202 | READ; see [`STATUS_OF_GORARD_CLAIMS.md`](STATUS_OF_GORARD_CLAIMS.md), Claims 1-2 |
-| 12 | The Ollivier-Ricci curvature of directed hypergraphs converges to the Ricci curvature in the continuum limit. Convergence theorems exist for random geometric graphs (García Trillos and Slepčev 2018), not for hypergraph rewriting evolutions. | G1 §3.2 | READ, OPEN |
+| 12 | The Ollivier-Ricci curvature of directed hypergraphs converges to the Ricci curvature in the continuum limit. Convergence theorems exist for random geometric graphs (García Trillos and Slepčev 2018), not for hypergraph rewriting evolutions. | G1 §3.1 | READ, OPEN |
 
 ## S5. The rule of G3 line 6202
 
@@ -47,7 +47,7 @@ Status labels: PROVED (Lean, kernel-checked, sorry-free, axioms at most `propext
 
 | # | Claim | Status |
 |---|---|---|
-| 15 | G4's title names "Discrete Singularity Theorems". G4 contains no discrete Raychaudhuri equation, expansion scalar or energy condition, and states a discrete singularity theorem as a hope (lines 76-78). | READ: G4 lines 1-3, 76-78, 351-357 |
+| 15 | G4's title names "Discrete Singularity Theorems". G4 contains no discrete Raychaudhuri equation, expansion scalar or energy condition, and states a discrete singularity theorem as a hope (lines 77-79). | READ: G4 lines 1-3, 76-78, 351-357 |
 | 16 | "Provably" in G3's abstract applies to a chain that assumes Poisson-distributed rewrite events (line 6080) and the zero-surface-term and Riemann-normal-neighbourhood assumptions of the Benincasa-Dowker limit (lines 6110-6120). | READ |
 
 ## Standard material

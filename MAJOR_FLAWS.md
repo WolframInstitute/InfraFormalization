@@ -72,7 +72,7 @@ OPEN. Linear cone growth, stated in Lean as `CausalHistory.GorardNamedRuleConeGr
 
 ## F8. G4's title names discrete singularity theorems; the paper states them as open
 
-READ. The title of G4 is "Non-Vacuum Solutions, Gravitational Collapse and Discrete Singularity Theorems in Wolfram Model Systems" (lines 1-3). The abstract (lines 76-78) states that the results "offer hope that a more general, perhaps ultimately “Penrose-like”, singularity theorem may be provable in the discrete spacetime case". Lines 351-357 state that a discrete analog of the Raychaudhuri equation is "somewhat non-obvious" and that there has been "no systematic investigation of discrete analogs of standard general relativistic energy conditions". G4 contains no discrete Raychaudhuri equation, no discrete expansion scalar and no discrete energy condition. Source: [`notes/2303.07282_close_reading.md`](notes/2303.07282_close_reading.md).
+READ. The title of G4 is "Non-Vacuum Solutions, Gravitational Collapse and Discrete Singularity Theorems in Wolfram Model Systems" (lines 1-3). The abstract (lines 77-79) states that the results "offer hope that a more general, perhaps ultimately “Penrose-like”, singularity theorem may be provable in the discrete spacetime case". Lines 351-357 state that a discrete analog of the Raychaudhuri equation is "somewhat non-obvious" and that there has been "no systematic investigation of discrete analogs of standard general relativistic energy conditions". G4 contains no discrete Raychaudhuri equation, no discrete expansion scalar and no discrete energy condition. Source: [`notes/2303.07282_close_reading.md`](notes/2303.07282_close_reading.md).
 
 ## Summary
 

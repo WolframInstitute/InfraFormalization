@@ -13,7 +13,7 @@ The three questions:
 - Two formulas differ from the sources the papers cite. G3 eq. 344 (line 5340, also G1 eq. 80, lines 2045-2056) has the scalar curvature R where Ollivier (2009) has Ric(v,v). G3 eq. 342 (line 5276, also G2 eq. 126, line 2409) has the tube-volume coefficient (d−1)(R − Ric(u,u))/(d+1) where Gray (1973) has (R + Ric(u,u))/(6(d+1)). PROVED as arithmetic comparisons in `Infra/OllivierStatement.lean` and `Infra/GrayTubeStatement.lean`; details in `results/phase2_continuum/`.
 - G3 states that the rule of line 6202 "provably satisfies the Einstein field equations in the continuum limit" (lines 50-52). G3 gives no proof for this rule (READ).
 - G1 §3.3 uses a discrete metric, a volume measure and orthonormal hyperedges without constructing them (READ, G1 line 786, lines 2061-2063, eqs. 86-88).
-- G4's title names discrete singularity theorems; the abstract states such a theorem as a hope (READ, G4 lines 1-3, 76-78).
+- G4's title names discrete singularity theorems; the abstract states such a theorem as a hope (READ, G4 lines 1-3, 77-79).
 
 `MAJOR_FLAWS.md` gives findings F1-F8 with their lines, and `FINDINGS.md` gives one line per claim.
 
