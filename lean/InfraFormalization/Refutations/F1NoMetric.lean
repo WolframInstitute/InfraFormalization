@@ -39,7 +39,8 @@ constructions are compatible with "using only hypergraph data" — so
 These theorems are statements about the function type
 `DHyp V → V → V → ℝ`: it has more than one element. They do not
 mention arXiv:2004.14810. The finding about the paper, that Def 15
-(line 325) gives no construction of `g^{ab}` from the hypergraph, is a
+(`papers/gorard_2004.14810.txt` line 786) gives no construction of
+`g^{ab}` from the hypergraph, is a
 reading of the paper text and is not a Lean theorem.
 
 **Sharpening (2026-05, macro-observer note; see

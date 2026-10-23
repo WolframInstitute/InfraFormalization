@@ -32,7 +32,8 @@ true by a sufficiently accommodating `g`.
    the pair `(true, false)` orthonormal.
 
 Neither theorem mentions arXiv:2004.14810. The finding about the paper,
-that line 840 asserts orthonormality without defining a bilinear form,
+that `papers/gorard_2004.14810.txt` line 2065 asserts orthonormality
+without defining a bilinear form,
 is a reading of the paper text and is not a Lean theorem.
 -/
 

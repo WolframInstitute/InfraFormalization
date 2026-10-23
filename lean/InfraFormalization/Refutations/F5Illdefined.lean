@@ -30,7 +30,8 @@ over Poisson sprinklings.
 eventually equal to `0`. `claim_is_vacuous_without_convergence_notion`
 and `different_notions_give_different_limits` use the constant-`True`
 predicate. None of these theorems mentions arXiv:2004.14810. The
-finding about the paper, that line 898 states no notion of convergence,
+finding about the paper, that `papers/gorard_2004.14810.txt` line 2214
+states no notion of convergence,
 is a reading of the paper text and is not a Lean theorem.
 
 Concretely: the sequence `n ↦ 1 / (n + 1)` converges to `0` in the standard
