@@ -147,8 +147,7 @@ qualitative assertion is structurally false because the rule produces
 **Editorial note.** The pattern recurs across the corpus: the papers
 state results with more certainty than their arguments establish, and
 the status of the programme is presented as further advanced than the
-proofs support.
-The formal record exists in machine-checkable form, so
+proofs support. The formal record exists in machine-checkable form, so
 a reader can check each statement with `lake build` and
 `#print axioms`.
 
