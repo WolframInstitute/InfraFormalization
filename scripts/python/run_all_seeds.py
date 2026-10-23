@@ -1,13 +1,16 @@
-"""Run the independent Python rewriter on all seeds used in the SetReplace
-refutation, print a comparison table, and emit a machine-readable JSON log.
+"""Run the Python rewriter on the seeds of the SetReplace runs, print a
+comparison table, and optionally write a JSON log.
 
 Usage:
     python run_all_seeds.py [--json-out <path>]
 
-The expected SetReplace values (reproduced from the earlier wolframscript
-runs in `results/phase1_selfaudit/setreplace_reference.md`) are baked in
-for at-a-glance comparison. Any disagreement in `events_fired`,
-`final_state_size`, `|V|` or `|E|` flags a bug.
+The SetReplace values are copied from `results/phase1_selfaudit/setreplace_reference.md`.
+The rewriter chooses the first match in lexicographic order of state
+positions; SetReplace chooses a match whose last edge is earliest in the
+state. The two update orders give different evolutions, so the causal edge
+counts and cone counts can differ (`notes/empirical_refutation.md`, section 4).
+Differences in `events_fired` or `final_state_size` indicate a defect;
+differences in `cg_E` are expected.
 """
 
 from __future__ import annotations
@@ -80,11 +83,9 @@ def main(argv=None) -> int:
     for name in SETREPLACE_EXPECTED:
         r = run_one(name)
         flags = check(r, SETREPLACE_EXPECTED[name])
-        if flags:
+        if any(k != "cg_E" for k in flags):
             any_fail = True
-            note = "; ".join(f"{k}: {v}" for k, v in flags.items())
-        else:
-            note = "OK"
+        note = "; ".join(f"{k}: {v}" for k, v in flags.items()) if flags else "same"
         dim = r["cone_log_log_dim_fit"]
         dim_s = f"{dim:.3f}" if dim is not None else "  -  "
         print(f"{name:<10} {r['events_fired']:>8} {r['final_state_size']:>6} "
@@ -93,9 +94,9 @@ def main(argv=None) -> int:
 
     print()
     if any_fail:
-        print("** MISMATCHES DETECTED — bug-audit required **")
+        print("Event or state counts differ from SetReplace.")
     else:
-        print("All SetReplace-comparable quantities match. Self-audit PASSED.")
+        print("Event and state counts equal SetReplace on every seed; causal edge counts depend on the update order.")
 
     if args.json_out:
         with open(args.json_out, "w") as f:

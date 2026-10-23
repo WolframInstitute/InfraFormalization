@@ -48,7 +48,7 @@ C(r) is the number of events within directed graph distance r of the first event
 | 4x4x4 grid | 144 | 1000 | 52 | 0.985 | 1.256 |
 | 5x5x5 grid | 300 | 2000 | 45 | 1.014 | 1.055 |
 
-The Python column was rerun on 2026-10-23. The SetReplace column is the recorded output in `results/phase1_selfaudit/setreplace_reference.md` and was not rerun.
+The Python column was rerun on 2026-10-23. The SetReplace column is the recorded output in `results/phase1_selfaudit/setreplace_reference.md` and was not rerun. Section 4 gives the cause of the differences.
 
 Cone counts recorded by SetReplace:
 
@@ -59,17 +59,39 @@ Cone counts recorded by SetReplace:
 
 Cone counts recorded by the Python rewriter for the 4x4x4 grid: C(r) = 1, 3, 7, 15, 26, 43, 61, 82, 99, 118, 138, 158, 178, 198, 218, 238.
 
-### (4) Disagreement between the two tools
+### (4) Cause of the disagreement between the two tools
 
-The two tools give the same event counts on all 9 shared seeds and the same causal edge counts on 7. The exponents differ on 8 of 9 seeds. On the 4x4x4 grid both tools report 1000 events and 3856 causal edges, but the exponents are 0.985 and 1.256 and the cone counts above differ from r = 0. The cause is not determined. The match chosen at each step and the source event of C(r) have not been compared between the two tools. The exponent of each seed is known only to lie between the two values.
+The two tools apply the rule in different update orders.
+
+- `scripts/python/rewriter.py` (`find_match`, lines 140-178) takes the first match in lexicographic order of the state positions of the edges bound to the four left-hand-side edges, in left-hand-side order.
+- SetReplace 0.3.196 runs a rule given as `"PatternRules"` with its Wolfram Language implementation (`Kernel/setSubstitutionSystem$wl.m`, function `toNormalRules`). The implementation matches `Shortest` over the ordered state with all 24 orderings of the left-hand side, so it chooses a match whose last edge in the state list is earliest.
+
+Both tools append the created edges at the end of the state. Each event consumes 4 edges and creates 4, so the event counts agree on every seed, and the causal edge counts agree on 7 of 9 seeds although the evolutions differ.
+
+`scripts/python/setreplace_order.py` reimplements the SetReplace order with two rules for ties between matches that share their last edge: by left-hand-side ordering (`--tie perm`) and by state positions (`--tie pos`). With `--tie pos` it reproduces the SetReplace cone counts and exponents on the 6-cycle, 8-cycle and 10-path. It does not reproduce the 20-cycle and grid runs, so `Shortest` over `Alternatives` breaks ties by a rule that differs from both.
+
+Exponents under four update orders (MEASURED; Python columns rerun on 2026-10-23):
+
+| Seed | SetReplace | rewriter.py | last edge earliest, `--tie perm` | last edge earliest, `--tie pos` |
+|---|---:|---:|---:|---:|
+| 6-cycle | 0.995 | 0.995 | 0.995 | 0.995 |
+| 8-cycle | 0.991 | 1.000 | 1.000 | 0.991 |
+| 10-path | 1.014 | 0.995 | 1.014 | 1.014 |
+| 20-cycle | 0.995 | 1.028 | 0.991 | 0.998 |
+| 3x3x3 grid | 1.098 | 1.081 | 0.963 | 0.767 |
+| 4x4x4 grid | 0.985 | 1.256 | 1.080 | 1.140 |
+| 5x5x5 grid | 1.014 | 1.055 | 1.011 | 0.988 |
+
+Causal edge counts on the 3x3x3, 4x4x4 and 5x5x5 grids: SetReplace 1146, 3856, 7703; `rewriter.py` 1150, 3856, 7700; `setreplace_order.py` 1148, 3856, 7700 with either tie rule.
+
+On the 3x3x3 grid the exponent ranges from 0.77 to 1.10 across the four orders, and on the 4x4x4 grid from 0.99 to 1.26. At 300 to 2000 events the fit depends on the update order and does not determine an exponent of the rule.
 
 ## Status
 
-- PROVED: the rule conserves edge count.
-- MEASURED: on the seeds above the cone-growth exponent lies between 0.985 and 1.256, with the tool disagreement in (4).
-- OPEN: a bound on the cone growth of the rule's causal graph. Edge-count conservation does not imply such a bound. Each event has out-degree at most 4, which gives only an exponential bound. Statements O1 and O2 in `STATUS_OF_GORARD_CLAIMS.md` give the exact form.
-- OPEN: the cause of the disagreement in (4).
-- Not run: the rule on a Poisson sprinkling of Brill-Lindquist initial data, which is the initial data arXiv:2102.09363 uses (lines 6148-6152, 6179). Not run: other update orders, to test causal invariance.
+- PROVED: the rule conserves edge count. In every evolution from N hyperedges, with any update order, every antichain of the causal graph has at most N/4 events and at most 5^t events lie within directed distance t of an event (`CausalHistory.gorardNamedRule_antichain_card_le`, `CausalHistory.gorardNamedRule_ball_card_le`).
+- MEASURED: on the seeds above the cone-growth exponent lies between 0.77 and 1.26 and depends on the update order (section 4).
+- OPEN: linear cone growth, stated in Lean as `CausalHistory.GorardNamedRuleConeGrowthLinear` (O1 in `STATUS_OF_GORARD_CLAIMS.md`).
+- Not run: the rule on a Poisson sprinkling of Brill-Lindquist initial data, which is the initial data arXiv:2102.09363 uses (lines 6148-6152, 6179).
 
 A bounded spatial ball count holds on every finite hypergraph, so the constant edge count does not give the rule a spatial dimension that differs from any other rule run on a finite state. arXiv:2102.09363 compares runs at 200, 400, 800 and 1600 vertices, and edge-count conservation within a run does not constrain a sequence of initial states of growing size.
 
@@ -77,4 +99,4 @@ The largest run has 2000 events. The measurements do not determine the exponent 
 
 ## Relation to arXiv:2004.14810 §3.3
 
-The §3.3 argument of arXiv:2004.14810 uses a causal-graph cone count of the form $C(t) = a\,t^n(1 - \ldots)$ with $n = 4$ for 3+1 dimensions. On the seeds above the measured exponent is near 1. Whether the exponent of this rule is 1 on all initial data, or at large event counts, is OPEN.
+The §3.3 argument of arXiv:2004.14810 uses a causal-graph cone count of the form $C(t) = a\,t^n(1 - \ldots)$ with $n = 4$ for 3+1 dimensions. On the seeds above the measured exponent is between 0.77 and 1.26. Whether the cone growth of this rule is linear on all initial data is OPEN.

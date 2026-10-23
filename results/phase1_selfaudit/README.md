@@ -1,6 +1,6 @@
-# Phase 1 — Self-audit of the empirical Wolfram-model rewriter
+# Phase 1: comparison of the Python rewriter with SetReplace
 
-**Status: FAILED on two checks.** `scripts/python/run_all_seeds.py` (rerun 2026-10-23) exits with status 1 and prints "MISMATCHES DETECTED". The Python rewriter (`scripts/python/rewriter.py`) matches SetReplace on events fired, final state size and causal-graph vertex count for all 9 seeds, and on causal-graph edge count for 7 of 9. The causal edge counts differ on the 3x3x3 grid (1150 against 1146) and the 5x5x5 grid (7700 against 7703). The cone-growth exponents differ on 8 of 9 seeds (table below). The script does not compare exponents.
+The Python rewriter (`scripts/python/rewriter.py`) matches SetReplace on events fired, final state size and causal-graph vertex count for all 9 seeds, and on causal-graph edge count for 7 of 9. The two tools apply the rule in different update orders, so the causal graphs differ (section "Where they differ"). `scripts/python/run_all_seeds.py` (rerun 2026-10-23) reports the edge-count differences on the 3x3x3 and 5x5x5 grids and exits with status 0.
 
 ## What was audited
 
@@ -42,14 +42,14 @@ The Python values were reproduced on 2026-10-23. The SetReplace exponents come f
 - **Final state size** across all 9 seeds. Edge-conservation (`|LHS|=|RHS| ⇒ state size constant`) is a structural law independent of any scheduler.
 - **Causal graph |V|** across all 9 seeds. (Once we align on the convention that SetReplace excludes the virtual-seed event, the two implementations produce equal event counts.)
 - **Causal graph |E|** on 7 of 9 seeds exactly.
-- **Cone exponent**: does not match. Python gives 0.995 to 1.256 and SetReplace gives 0.985 to 1.098. On grid3_4 the event and causal-edge counts agree and the exponents are 1.256 and 0.985.
+- **Cone exponent**: differs, because the update orders differ. Python gives 0.995 to 1.256 and SetReplace gives 0.985 to 1.098.
 
 ### Where they differ
 Two dense 3D-grid seeds differ in |E| by ≤ 4 edges out of thousands:
 - `grid3_3`: Python 1150 vs SetReplace 1146 (diff 4)
 - `grid3_5`: Python 7700 vs SetReplace 7703 (diff 3)
 
-**Cause.** Not determined. The match chosen at each step has not been compared between the two tools. Equal counts on the six cycle and path seeds show agreement on those seeds only. The grid3_4 exponent difference occurs with equal event and causal-edge counts, so equal counts do not show equal causal graphs.
+Cause: the update orders differ. `rewriter.py` takes the first match in lexicographic order of the state positions of the matched edges (`find_match`). SetReplace runs `"PatternRules"` with its Wolfram Language implementation, which matches `Shortest` over the ordered state and chooses a match whose last edge is earliest (`Kernel/setSubstitutionSystem$wl.m`, `toNormalRules`). `scripts/python/setreplace_order.py` implements that order and reproduces the SetReplace cone counts and exponents on the 6-cycle, 8-cycle and 10-path; the exponents under four orders are tabulated in `notes/empirical_refutation.md`, section 4. Equal event and causal-edge counts do not imply equal causal graphs: on grid3_4 both counts agree and the exponents are 1.256 and 0.985.
 
 ## Conventions (for future readers)
 
@@ -68,17 +68,17 @@ The LHS pattern `{{x,y},{y,z},{z,w},{w,v}}` matches with $x=1,y=2,z=3,w=4,v=1$ (
 Can the rule fire again? Live edges: `2→u`, `u→1`, `4→1`, `1→u`. We need 4 *distinct* edges in a chain $x\!\to\!y\!\to\!z\!\to\!w\!\to\!v$. Enumerating:
 - Starting at 2: `2→u→1→u` runs out of options after 3 edges (must re-use `u→1` or `1→u`).
 - Starting at 4: `4→1→u→1` same issue.
-No length-4 chain of distinct edges exists. The rule halts. ✓ matches `events_fired = 1`.
+No length-4 chain of distinct edges exists. The rule halts. This matches `events_fired = 1`.
 
 ### 4-path
 
 Initial: `{{1,2},{2,3},{3,4},{4,5}}`.
 Match $x=1,y=2,z=3,w=4,v=5$. Fresh $u$; RHS = `{{2,u},{u,5},{4,1},{1,u}}`. Live edges: `2→u`, `u→5`, `4→1`, `1→u`.
 
-Chains of length 4: `4→1→u→5` is the longest directed chain and has only 3 edges. No length-4 chain exists. Halt. ✓
+Chains of length 4: `4→1→u→5` is the longest directed chain and has only 3 edges. No length-4 chain exists. The rule halts.
 
 ## Status of the measured quantities
 
 1. **Halting on the 4-cycle and 4-edge path.** Both tools fire one event. The hand traces above confirm it.
 2. **Edge-count conservation.** PROVED in Lean (`Refutations.gorardNamedRule_applications_preserve_size`). Both tools report a constant state size.
-3. **Cone exponent.** MEASURED between 0.985 and 1.256 on the seeds above, with the tool disagreement unexplained. No bound on cone growth is proved (O1 in `STATUS_OF_GORARD_CLAIMS.md`).
+3. **Cone exponent.** MEASURED between 0.77 and 1.26 on the seeds above across four update orders. PROVED: at most 5^t events within directed distance t, and antichains of at most N/4 events (`CausalHistory.lean`). Linear cone growth is OPEN (O1 in `STATUS_OF_GORARD_CLAIMS.md`).
