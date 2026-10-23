@@ -1,113 +1,105 @@
-# Rule search via the Lean machinery
+# Rule search with the Lean library
 
-Our infrageometry Lean corpus can be used as a **verifier** and **screener** in a rule-search pipeline aimed at finding Wolfram-model rewriting rules whose causal graph converges to a Lorentzian manifold. It does **not** generate rules — that is a separate combinatorial-search problem. What it does is give formal grounds for accepting or rejecting candidates, and quantitative dimensional signatures that drive the rejection phase.
+The Lean library can check and screen candidate Wolfram-model rules in a search for rules whose causal graph approximates a Lorentzian manifold. It does not generate rules beyond the small bounded families described below. It supplies decidable screening predicates and the theorems that hold for every rule.
 
-## What the Lean corpus provides
+Status labels follow `STATUS_OF_GORARD_CLAIMS.md`: PROVED (kernel-checked, axioms at most `propext`, `Classical.choice`, `Quot.sound`), PROVED-WITH-NATIVE-DECIDE, VACUOUS, MEASURED, READ, OPEN.
 
-### Negative screening (fast rejection)
+## Results available to a search
 
-| Mechanism | Lean primitive | What it rules out |
-|---|---|---|
-| Conservation forces constant state size | `Application.size_result_of_conservative` | Rules where the causal graph can grow in density; places an upper bound on cone dimension. Refutes JGORARD's named rule (F7). |
-| Same-level antichain | `same_level_ordered_antichain`, `no_causal_edge_within_level` | Rules whose causal DAG lacks consistent level structure (shouldn't happen for well-formed trajectories, but the formal invariant is available). |
-| Linear cone growth empirically | (combinatorial; driven by level and causal-precedence counts) | Rules with measured cone exponent near 1 on the tested seeds. A measurement on finite seeds does not prove a bound. |
+### Negative screening
+
+| Mechanism | Lean result | Status | Content |
+|---|---|---|---|
+| Edge-count conservation | `Application.size_result_of_conservative`, `trajectory_size_invariant` | PROVED | A rule with \|LHS\| = \|RHS\| keeps the edge count of every state equal to the initial edge count. This does not bound the cone dimension of the causal graph. `Refutations.gorardNamedRule_applications_preserve_size` (F7) states it for the rule of arXiv:2102.09363. |
+| Antichain bound | `CausalHistory.RuleHistory.antichain_card_le` | PROVED | For a rule with \|LHS\| = \|RHS\| = k and N initial hyperedges, every antichain A of the causal graph satisfies k·\|A\| ≤ N, for every update order. |
+| Cone bound | `CausalHistory.RuleHistory.ball_card_le` | PROVED | At most (\|RHS\| + 1)^t events lie within directed distance t of an event. For the rule of arXiv:2102.09363 this is 5^t (`CausalHistory.gorardNamedRule_ball_card_le`). |
+| Same-level antichain | `same_level_ordered_antichain`, `no_causal_edge_within_level` | PROVED | Events at the same causal level have no causal edge between them (value-based causal relation of `CausalLevel.lean`). |
+| Linear cone growth | `CausalHistory.GorardNamedRuleConeGrowthLinear` | OPEN | For every N there is c such that every valid `RuleHistory` of the rule of arXiv:2102.09363 with N initial hyperedges satisfies \|ball i t\| ≤ c·(t+1). |
+| Cone-growth exponent | `scripts/python/run_all_seeds.py`, SetReplace scripts | MEASURED | For the rule of arXiv:2102.09363 on 9 seeds of up to 300 edges and 2000 events, exponents between 0.77 and 1.26 depending on the update order (`notes/empirical_refutation.md` §4). A measurement on finite seeds does not prove a bound. |
 
 ### Quantitative signatures
 
-These are the per-rule observables that should track dimensional expectations:
+These per-rule observables would track dimension if the causal graph approximates a (d+1)-dimensional Minkowski space. They are definitions for a screener. No theorem connects them to a dimension.
 
-1. **Level-growth signature.** For a (d+1)-dim Minkowski target:
-   `|{j : j < N ∧ level τ j ≤ t}|  ~  t^{d+1}` (as `t` grows within the trajectory).
-   Formal grounds: `level_add_one_le_of_isCausalPred`, `level_eq`.
+1. Level growth: `|{j : j < N ∧ level τ j ≤ t}|`, compared against t^{d+1}. Lemmas used: `level_add_one_le_of_isCausalPred`, `level_eq` (PROVED).
+2. Antichain width: `|{j : level τ j = k}|`, compared against k^d. Lemma used: `no_causal_edge_within_level` (PROVED).
+3. Forward-cone volume: `|{j : causallyPrecedes τ i j ∧ level τ j ≤ level τ i + t}|`, compared against t^{d+1}. Lemmas used: `causallyPrecedes_implies_minkowski`, `causallyPrecedes_implies_timelike` (PROVED; they map the causal order into the 1+0-dimensional Lorentz lattice).
+4. Embedding consistency: given a spatial embedding `φ : event-index → Fin d → ℤ`, check that every pair with `causallyPrecedes τ i j` satisfies `Timelike d (fullEmbed φ i) (fullEmbed φ j)`. The check is decidable. In 1+0 dimensions it always holds (`causallyPrecedes_implies_timelike`, PROVED). In d spatial dimensions `fullEmbed_preserves_causal` (PROVED) gives it under the hypothesis `LightConeCompatible τ φ`.
 
-2. **Antichain-width signature.** For d spatial dimensions:
-   `|{j : level τ j = k}|  ~  k^d`.
-   Formal grounds: `no_causal_edge_within_level` (antichain structure).
+### Screening on the executable engine
 
-3. **Forward-cone volume.** `|{j : causallyPrecedes τ i j ∧ level τ j ≤ level τ i + t}|  ~  t^{d+1}`.
-   Formal grounds: `causallyPrecedes_implies_minkowski`, `causallyPrecedes_implies_timelike`.
+`RuleSignatureExecMetrics.lean` screens a candidate rule on the engine's states (`ExecHG ℕ`, lists of hyperedges over ℕ) without building an abstract `Trajectory`. `MultiwayExec.singleWayStep` applies a maximal set of edge-disjoint matches, chosen greedily in enumeration order. For a rule with a one-edge left-hand side every pair of matches on distinct edges is edge-disjoint.
 
-4. **Bridging consistency.** Given a candidate spatial embedding `φ : event-index → Fin d → ℤ`, check that every `causallyPrecedes τ i j` pair satisfies `Timelike d (fullEmbed φ i) (fullEmbed φ j)` in the Lorentz lattice. This is decidable and mechanisable. The 1+0-dim version is already proved automatic (`causallyPrecedes_implies_timelike`); higher-dim is a conditional theorem parameterised by the embedding.
+For a rule `r`, seed `H` and horizon `n`:
 
-### Executable-side screening, Lean-alone (#384)
+1. `d := canonicalDossier r H n` records the run of `singleWayEvolve`. `canonicalDossier_isConsistent` and `consistent_dossier_eq_canonical` (PROVED) state that a dossier passes the consistency check exactly when it equals this run.
+2. `d.signatureVerdict` returns the per-state triple of edge counts, vertex counts and Forman scalars.
+3. Decidable predicates accept or reject: `d.formanScalarConstant`, `d.formanScalarReaches tgt`, `d.formanScalarPersistentGap tgt` (no state attains `tgt`).
 
-`RuleSignatureExecMetrics.lean` makes a candidate rule screenable **without leaving Lean and without reconstructing an abstract `Trajectory`**. The engine's states are `ExecHG ℕ` (ℕ-vertex hyperedge lists); the signature metrics are recomputed on the finite carrier `vertexList H`, so every verdict is `decide`/`native_decide`-checkable.
+The metric primitives are `execAdj`, `execAdjDegree`, `execTriangles`, `execFormanEdge` (equal to `Hypergraph.formanRicciEdgeTriangle`, `4 − deg u − deg w + 3·#triangles`) and `execFormanScalar` (equal to `Hypergraph.formanRicciTriangleDoubled`). Example: the edge-append rule from a single edge gives `⟨[1,2,4,8], [2,3,5,9], [4,4,0,-12]⟩` (PROVED-WITH-NATIVE-DECIDE).
 
-Pipeline per candidate `ExecRule r`, seed `H`, horizon `n`:
-1. `d := canonicalDossier r H n` — run the engine (`singleWayEvolve`), recording the trajectory. `canonicalDossier_isConsistent` guarantees `d` is the genuine engine run; #377 guarantees no other consistent trajectory exists.
-2. `d.signatureVerdict : SignatureVerdict ⟨edgeCounts, vertexCounts, formanScalars⟩` — the per-state metric triple, computed from the run alone.
-3. Accept / reject by decidable predicate:
-   - `d.formanScalarConstant` — conservative / flat-target pass.
-   - `d.formanScalarReaches tgt` — positive verdict (final state hits the target curvature).
-   - `d.formanScalarPersistentGap tgt` — negative discharge (no state ever attains `tgt`; reject for this seed).
+The same triple, computed by these formulas, is the metric set to implement in the HypergraphRewritingEngine for runs at scale.
 
-The metric primitives are `execAdj`, `execAdjDegree`, `execTriangles`, `execFormanEdge` (= `Hypergraph.formanRicciEdgeTriangle`: `4 − deg u − deg w + 3·#△`), and `execFormanScalar` (= `Hypergraph.formanRicciTriangleDoubled`). Worked example: the edge-append rule from a single edge certifies `⟨[1,2,4,8], [2,3,5,9], [4,4,0,-12]⟩` — the Forman scalar going negative is the tree-like / hyperbolic signature, a decide-checked rejection against any flat or positively-curved target.
+### Bounded search loop
 
-**Engine-port spec.** This `SignatureVerdict` triple, computed by exactly these formulas, is the metric set to port into RASSAR's `HypergraphRewritingEngine` (the fast engine). The engine is the at-scale generator+runner; Lean fixes *what* it must compute per state and certifies the screening logic on small instances. Open enumeration (#190) drives candidates through this same screener.
+`RuleSignatureExecSearch.lean` generates, runs, classifies and selects rules.
 
-### A complete Lean-alone search loop (#384 + #385)
+- Generate: `enumerateRules2_1 maxRHS` lists the rules with left-hand side `{0,1}` and right-hand side a nonempty subset, of size at most `maxRHS`, of the ordered pairs over `Fin 3` (two bound vertices and one fresh vertex). There are 21 rules at `maxRHS = 2`.
+- Classify: `trendOf r seed n` reduces the Forman-scalar trace of `canonicalDossier` to a `CurvatureTrend`: `flat` if constant, otherwise the sign of the final scalar (`positive`, `negative`, `zero`).
+- Select: `selectByTrend cands seed n tgt` keeps the rules with the target trend.
 
-`RuleSignatureExecSearch.lean` closes the loop: **generate → run → classify → select**, all `decide`/`native_decide`-checkable.
+On the single-edge seed at two steps the 21 rules split into 13 flat, 4 zero and non-constant, 2 negative and 2 positive (PROVED-WITH-NATIVE-DECIDE). The trend is the sign of the final Forman scalar on a finite run. It is not a convergence statement.
 
-- **Generate.** `enumerateRules2_1 maxRHS` is a bounded rule generator (not a hand-list): single-edge LHS `{0,1}`, RHS any nonempty subset (size ≤ `maxRHS`) of the ordered pairs over `Fin 3` (two bound + one fresh vertex). 21 candidates at `maxRHS = 2`.
-- **Classify.** `trendOf r seed n` runs the candidate (`canonicalDossier`) and reduces its Forman-scalar trace to a `CurvatureTrend` (`flat` if constant, else the sign of the final scalar: `positive` / `negative` / `zero`).
-- **Select.** `selectByTrend cands seed n tgt` keeps the candidates matching a target trend — the search filter.
+### Multi-seed filter
 
-Certified result on the single-edge seed at two steps: the 21 candidates partition into **13 flat, 4 zero-non-constant, 2 negatively-curved (tree-like / hyperbolic), 2 positively-curved** (`13 + 4 + 2 + 2 = 21`, classification total). This is a machine-checked demonstration that the screener discriminates curved from flat rules, and the template for at-scale search once the same `CurvatureTrend` logic runs in the fast engine.
+A rule can show one trend on one seed and another trend on a different seed. `RuleSignatureExecSearch.lean` adds:
 
-This is a finite-horizon, bounded-family search; scaling up the family size, the horizon `n`, and the seed set is mechanical (and the point where the fast engine takes over). The trend is a *coarse* proxy — final-state Forman sign — not yet a convergence-rate verdict; tightening it to a `ConvergenceRateObligation`-style accept criterion is the next refinement.
+- `seedSet = [edge12, path123, cycle4]` (an edge, a path and a 4-cycle);
+- `trendsAcross r seeds n`, the trend on each seed;
+- `isStablyTrend r seeds n tgt`, true when every seed gives `tgt`;
+- `stablyClassifiable r seeds n`, true when every seed gives the same trend;
+- `stableSelect cands seeds n tgt`.
 
-### Multi-seed stability filter (#386)
+On `seedSet` at two steps: 7 rules are flat on every seed, 2 negative on every seed, 2 positive on every seed and 0 zero on every seed, so 11 rules have the same trend on all three seeds. The other 10 rules change trend with the seed (PROVED-WITH-NATIVE-DECIDE).
 
-The single-seed classification above can over-accept: a rule may register `negative` on one seed by coincidence while producing a flat trace on another. A rule's curvature class should be a property of the rule, not of (rule, seed). `RuleSignatureExecSearch` adds a stability layer for this:
+### Checking a candidate rule
 
-- `seedSet = [edge12, path123, cycle4]` — three topologically distinct seeds (edge, path, 4-cycle).
-- `trendsAcross r seeds n` — the trend on each seed.
-- `isStablyTrend r seeds n tgt` — accept iff every seed yields `tgt`.
-- `stablyClassifiable r seeds n` — every seed yields *some* common trend.
-- `stableSelect cands seeds n tgt` — the stable-target filter.
+For a candidate rule:
 
-Certified stability distribution on `seedSet` at two steps: **7 stably flat, 2 stably negative (genuine seed-independent hyperbolic), 2 stably positive, 0 stably zero = 11 stably classifiable**. The remaining **10 candidates are seed-dependent** — their trend changes with the seed, so they have no rule-level curvature class on this family and are inadmissible for a curvature-target search. The stability filter rejects roughly half of the single-seed passes as coincidences. This is the form of the discriminator we want in the fast engine: per-state metrics from `RuleSignatureExecMetrics`, per-seed classification via `classifyForman`, accept only on seed-stable trends.
+- Build a `Trajectory sys init` for sample runs.
+- The level function `level τ` maps events into the 1+0-dimensional Lorentz lattice and preserves causal precedence (`trajectoryToEvent_preserves_causal`, PROVED). Events at the same level map to the same point (`trajectoryToEvent_lossy`, PROVED).
+- These theorems hold for every rule, so no proof is repeated per rule.
+- A chosen spatial embedding can be checked for `Timelike` consistency on every causal pair.
 
-### Verification scaffolding
+## Results the library does not supply
 
-Once a candidate rule is found:
-- Instantiate `Trajectory sys init` for sample trajectories of the rule.
-- Compute `level τ` — it is a formally-valid Minkowski time coordinate (`trajectoryToEvent_preserves_causal`).
-- The bridging theorems (`causallyPrecedes_implies_timelike`, `trajectoryToEvent_lossy`) transfer automatically. No re-proof per rule.
-- Any chosen spatial embedding can be checked for `Timelike`-consistency per causal pair, giving a formal certificate.
+- Rule generation beyond the bounded families above. A separate generator is needed (`../efficient_rewriting_final/`, SetReplace, heuristic search).
+- A spatial embedding constructed from a hypergraph. The library checks an embedding that the user supplies.
+- Curvature of named metrics in general. Ricci tensors are computed for `warpedDiag2` (`WarpedDiag2C2.lean`) and FLRW (`FLRWRicci.lean`). The Schwarzschild Riemann and Ricci tensors are OPEN (B2, B3). The Ollivier and Gray identities are stated, and their leading terms are compared on S² and S³ (`Infra/OllivierStatement.lean`, `Infra/GrayTubeStatement.lean`).
 
-## What the Lean corpus does not provide
+## Pipeline
 
-- **Rule generation.** No enumeration, no evolutionary search, no physics-priors. A separate generator is required (`../efficient_rewriting_final/`, `SetReplace`, heuristic search).
-- **Canonical spatial embedding.** F1 rules this out structurally. The best we can offer is: "given this chosen embedding, Lean certifies Minkowski consistency." The embedding itself is a non-canonical choice.
-- **Curvature certification.** Currently at statement level for Ollivier and Gray, plus proven disagreement of JGORARD's forms on S² and S³; the concrete Ricci / Einstein computation on named metrics is task #217.
+1. Generator: `../efficient_rewriting_final/` writes the initial hypergraph and the sequence of applications for each candidate rule.
+2. Python screener: computes the level distribution, antichain widths and cone-volume growth from the trajectory data.
+3. Growth filter: rejects rules whose growth differs from t^{d+1} and k^d for the target d.
+4. Embedding search: for the remaining rules, tries embeddings into `Fin d → ℤ` (graph layout, spectral embedding, heuristics).
+5. Lean check: imports the trajectory as a `Trajectory`, loads the embedding, and checks `Timelike` consistency on every causal pair.
 
-## Practical pipeline
+## Scope
 
-The natural build-out is a harness:
+The pipeline checks that a candidate rule's causal graph is consistent with a chosen embedding into a Lorentz lattice. The following are OPEN:
 
-1. **Generator** — `../efficient_rewriting_final/` emits trajectory data (initial hypergraph + sequence of applications) per candidate rule.
-2. **Python screener** — computes level distribution, antichain widths, cone-volume growth from the trajectory data.
-3. **Polynomial-growth filter** — rejects rules failing the `t^{d+1}` and `k^d` signatures for targeted `d`.
-4. **Spatial-embedding search** — for surviving rules, attempt embeddings (graph-layout algorithms, spectral embedding, heuristic) into `Fin d → ℤ`.
-5. **Lean certificate** — export the trajectory into Lean's `Trajectory` type, load the chosen embedding, and the bridging theorems produce a formal certificate of Minkowski-consistency.
+- convergence of a rule's causal graph to a Lorentzian manifold, which needs a scaled-trajectory Gromov-Hausdorff theorem;
+- curvature data for the rule's states compared against a continuum metric;
+- that the limit satisfies the Einstein equations, which needs the convergence of the discrete action (F5 in `MAJOR_FLAWS.md`).
 
-Steps 1–4 are engineering; step 5 is the payoff of our current Lean corpus.
-
-## Scope honesty
-
-This pipeline *verifies* that a candidate rule has causal-graph structure consistent with a chosen Lorentzian target. It does not:
-- prove the rule's causal graph *converges* to Lorentzian spacetime (needs a scaled-trajectory GH theorem, not yet formalised);
-- produce curvature data (task #217 — project-own Ricci on named metrics);
-- prove the target is an *Einstein* manifold (needs the action convergence of F5, which is open).
-
-Those are the remaining structural gaps — tracked in `MILESTONES.md` under Phases 4, 5, and 6.
+`MILESTONES.md` lists these under Phases 4, 5 and 6.
 
 ## References
 
-- `lean/InfraFormalization/CausalLevel.lean` — level function + monotonicity + antichain.
-- `lean/InfraFormalization/Infra/TrajectoryLorentz.lean` — 1+0-dim bridging.
-- `lean/InfraFormalization/Infra/LorentzLattice.lean` — `CausalPrecedes`, `Timelike`, `Null`, `Spacelike`, `minkowskiIntervalSq`.
-- `results/phase1_selfaudit/` — empirical cone-dimension rejection of JGORARD's named rule.
-- `MAJOR_FLAWS.md` — F1 (no canonical metric), F2 (fiat orthonormality), F5 (ill-defined limit).
+- `lean/InfraFormalization/CausalLevel.lean`: level function, monotonicity, antichain.
+- `lean/InfraFormalization/CausalHistory.lean`: causal graph on hyperedge identities, antichain and cone bounds, the open statement `ConeGrowthLinear`.
+- `lean/InfraFormalization/Infra/TrajectoryLorentz.lean`: map into the 1+0-dimensional lattice.
+- `lean/InfraFormalization/Infra/LorentzLattice.lean`: `CausalPrecedes`, `Timelike`, `Null`, `Spacelike`, `minkowskiIntervalSq`.
+- `results/phase1_selfaudit/`, `notes/empirical_refutation.md`: cone-exponent measurements for the rule of arXiv:2102.09363.
+- `MAJOR_FLAWS.md`: F1 (no metric construction in G1), F2 (orthonormality assumption), F5 (convergence notion not stated).

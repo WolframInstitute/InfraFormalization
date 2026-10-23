@@ -1,254 +1,234 @@
-# Roadmap — full project sequencing toward BBH-from-hypergraph
+# Roadmap: sequencing toward a binary black hole merger from a hypergraph
 
-End-state: a real binary black hole merger emerging from a hypergraph
-initial condition under a Wolfram rule, with Lean-checked convergence
-to NR waveforms. Not a Poisson sprinkling of the target manifold — actual rule
-dynamics with rigorous bridge to GR.
+Target: a Lean theorem that a hypergraph initial condition, evolved under a Wolfram-model rule, converges to a binary black hole merger spacetime, with the extracted waveform converging to the numerical-relativity waveform. The initial hypergraph is not sampled from the target manifold (G3 samples its initial data from the Brill-Lindquist geometry, READ, G3 lines 6148-6152 and 6179).
 
-This document sorts every pending task into phases by precedence and
-dependency. Each phase's tasks must complete before the next phase's
-critical-path items are unblocked. Parallel streams that don't gate
-the critical path are listed separately.
+This document orders the open tasks into phases by dependency. The critical-path tasks of a phase depend on the previous phase. Parallel streams do not gate the critical path.
 
-Last updated: 2026-04-26 (post-#234 closure, post-#231 type bridge,
-post-INFRAGEOMETRY synthetic-geometry framing).
+Status labels follow `STATUS_OF_GORARD_CLAIMS.md`: PROVED, PROVED-WITH-NATIVE-DECIDE, VACUOUS, MEASURED, READ, OPEN.
 
 ---
 
-## Phase A — Make obligation Props load-bearing
+## Phase A: origin obligations with content
 
-The current `HypergraphMetricOriginObligation` is "∃ rule + scaling" —
-no actual convergence content. This phase upgrades the obligation
-framework to embed real convergence-rate Props, then re-discharges
-flat targets.
+`HypergraphMetricOriginObligation`, `HypergraphMetricOriginObligationStrong`, `...WithRate`, the partial-metric forms and `ConnectionDataOriginObligation` do not depend on their target and hold for every target (`Curvature.any_metric_has_strong_obligation_witness`). `WassersteinRateObligation d` concerns a sequence d supplied by the caller and is satisfied by the zero function. `subdivisionDiscrepancy n = 1/2^n` is defined directly and is not computed from any measure. The discharges of these obligations are VACUOUS. Phase A replaces them with statements that depend on the trajectory and the target.
 
-| # | Task | Deps | Payoff |
+| # | Task | Deps | Status |
 |---|---|---|---|
-| 233 ✓ | Strengthen origin-obligation Props with W_1 / Wasserstein content | #234 ✓ | Obligations gain quantitative teeth — `HypergraphMetricOriginObligationStrong` lands |
-| ✓ | Refactor `WassersteinRateObligation` → generic `ConvergenceRateObligation` family | #233 ✓ | Admits non-W_1 metrics (Forman-Ricci, GH, spectral). Lands with `rateOneOverN`, `rateOneOverNSquared`, `rateGeometric c`, bidirectional bridge to `WassersteinRateObligation`, `subdivisionDiscrepancy_satisfies_geometric` |
-| 233 ✓ | Re-discharge Minkowski targets with subdivisionDiscrepancyBundle | #233 ✓ | `minkowski4_from_hypergraph_strong` proven; `any_metric_has_strong_obligation_witness` lifts to all GR-zoo metrics |
-| — | **NEXT**: Tie discrepancy to actual W_1 of trajectory's pushed measure | #233 ✓ + measure-of-trajectory infra | Strong obligation becomes load-bearing not just statement-level |
+| 233 | `HypergraphMetricOriginObligationStrong`, discharged by `minkowski4_from_hypergraph_strong` and `any_metric_has_strong_obligation_witness` | #234 | VACUOUS: holds for every target |
+| — | `ConvergenceRateObligation d r` for any rate function r (`rateOneOverN`, `rateOneOverNSquared`, `rateGeometric c`), with maps to and from `WassersteinRateObligation` | #233 | VACUOUS: d is supplied by the caller and the zero function satisfies it (`convergenceRateObligation_zero`) |
+| 234 | `subdivisionDiscrepancy_satisfies_obligation` | — | VACUOUS as a convergence result: `subdivisionDiscrepancy n = 1/2^n` is defined directly |
+| — | Define, for a trajectory τ and a target metric g, the discrepancy d_τ,g(n) as the Wasserstein-1 distance between the pushforward of the counting measure of the n-th state and the volume measure of g, and prove d_τ,g(n) ≤ C/n for one flat target and one rule | measure of a trajectory | OPEN |
 
-**Phase A unlocks:** Phase B screener metrics know what shape to take
-(they target the same obligations they'll be screening for).
+Phase A gives Phase B screener metrics a target statement to test against.
 
 ---
 
-## Phase B — Rule-search infrastructure
+## Phase B: rule-search infrastructure
 
-Build the screening pipeline: Lean-side metric definitions matching
-the obligation Props, a signature interchange format, and the
-wolframscript / efficient-C++-engine driver.
+Lean metric definitions, a trajectory interchange format, and the driver for wolframscript and the C++ engine.
 
-| # | Task | Deps | Payoff |
+| # | Task | Deps | Status |
 |---|---|---|---|
-| 224 | Rule-output curvature signature screener (per-slice Forman/Ollivier) | Phase A | Per-rule signature metrics in Lean — **landed**: `RuleSignatureScreener.lean` (`signatureTrajectory`, `formanRicciTrajectory`, `formanRicciDeviation`, `FormanRicciScreener`, `MultiScreener`, conservative-discharge + persistent-gap-failure theorems) |
-| — | RuleSignatureSchema (JSON interchange + Lean validator) | #224 | Engine output → Lean obligation match |
-| 190 | Empirical rule search via wolframscript | #224 + RuleSignatureSchema | Bulk rule evaluation against signatures |
-| 227 | MultiwayExec per-edge-instance match enumeration (TC4/TC5 fix) | — | Internal cross-validation |
-| 228 | MultiwayExec causal edge tracking | #227 | Causal-graph signatures from engine output |
-| 229 | MultiwayExec branchial edge tracking | #227 | Branchial-graph signatures from engine output |
-| 230 | MultiwayExec state canonicalisation modulo isomorphism | #227 | Multiway state dedup |
+| 224 | Curvature signature screener: `RuleSignatureScreener.lean` (`signatureTrajectory`, `formanRicciTrajectory`, `formanRicciDeviation`, `FormanRicciScreener`, `MultiScreener`, `AngularScreener`, `CombinedScreener`) | — | PROVED (definitions and screening lemmas) |
+| 372, 377 | `RuleSignatureSchema.lean`: dossier format, `canonicalDossier_isConsistent`, `consistent_dossier_eq_canonical` | #224 | PROVED |
+| 384-386 | Screening and bounded search on the executable engine (`RuleSignatureExecMetrics.lean`, `RuleSignatureExecSearch.lean`) | #224 | PROVED-WITH-NATIVE-DECIDE |
+| 190 | Rule search via wolframscript at scale | #224, schema | OPEN |
+| 227 | Per-edge-instance match enumeration in `MultiwayExec` | — | OPEN |
+| 228 | Causal edge tracking in `MultiwayExec` | #227 | `CausalEventTrace.lean` relates events through hyperedge values. `CausalHistory.lean` defines the causal graph on hyperedge identities. An engine trace with identities is OPEN |
+| 229 | Branchial edge tracking in `MultiwayExec` | #227 | OPEN. The relation of `BranchialEventTrace` is same-step consumed-edge contention, not the Wolfram-model branchial graph |
+| 230 | State canonicalisation up to isomorphism | #227 | OPEN |
 
-**Phase B unlocks:** for any rule R in a corpus, can we *cheaply* check
-whether R's trajectory satisfies obligation O_target? If yes, R becomes
-a discharge candidate.
+Engine semantics. `MultiwayExec.singleWayStep` applies a maximal set of edge-disjoint matches, chosen greedily in enumeration order. `MultiwayExec.fireAllStep` applies every match, including matches that share edges, and is not a Wolfram model update when matches overlap. Modules that state results with `fireAllStep` are listed in `STATUS_OF_GORARD_CLAIMS.md` (Execution engine).
 
----
-
-## Phase C — Curved-target discharge + GR thesis
-
-This is the headline result: discharge a real curved 4D Lorentzian
-metric obligation with a found rule. Substantial.
-
-| # | Task | Deps | Payoff |
-|---|---|---|---|
-| R4 | Curved discrete-Ricci convergence beyond flat | #224 | Curved-Ricci formal status per metric |
-| 218 | Prove or disprove curved-target Ricci convergence (per metric) | R4 | Per-metric verdict |
-| 217 | Project-own curvature tensors end-to-end on named GR metrics | — | No Mathlib dependency for diff geom |
-| 220 | Ollivier-Ricci convergence on a concrete discretisation | R4 | Alternative curvature route |
-| 225 | Multi-way → continuum bridge (MultiwayCausalGraph convergence) | #231 ✓ + Phase B | Abstract convergence semantics |
-| 235 | Anchoring audit (every Lean module to ExecHG / Multiway / hypergraph-grounded) | #231 ✓ | No continuum islands |
-| 236 | Rule-based discharge of curved-target obligations | Phase A + Phase B + R4 | Actual discharge of one curved metric |
-| 213 | Lorentzian-GH distance (Noldus/Suhr style) | — | Lorentzian convergence type |
-| E6 | Lorentzian Gromov-Hausdorff | #213 | Lorentzian metric on causal graphs |
-| E7 | Discrete-causal-DAG → continuum Lorentzian convergence | #213 + E6 | Causal-side convergence theorem |
-| 222 | Pointed-GH and metric-measure-GH (project-own) | — | Convergence framework |
-| 221 | PDE solution-level convergence, not just eigenvalues | — | Strong PDE convergence |
-| 219 | Discrete Hamiltonian / momentum constraint residuals | E5 | ADM constraint preservation |
-| H4 | Scaled trajectory → continuum manifold convergence | Phase B | Generic rule → manifold theorem |
-| H5 | Curved-target RicciBridge extensions | R4 + #218 | Bridge for each metric |
-
-**Phase C unlocks:** at least one GR metric has a real
-`(rule, trajectory, convergence-proof)` discharge. The bridge ladder
-becomes load-bearing.
+Phase B gives a check, for a rule R from a corpus, of whether R's trajectory meets a target statement from Phase A.
 
 ---
 
-## Phase D — BBH merger thesis
+## Phase C: curved targets
 
-The actual research deliverable. Take everything above and produce a
-binary black hole merger from hypergraph IC.
+Prove a convergence statement from Phase A for one curved 4D Lorentzian metric and one rule.
 
-| # | Task | Deps | Payoff |
-|---|---|---|---|
-| D11 | Cauchy problem for Einstein evolution (Choquet-Bruhat) | E5 + Phase C | Existence-uniqueness for Einstein evolution |
-| KN1 | Wave equation D'Alembert solution `u(t) = cos(Dt) u₀ + t·sinc(Dt) v₀` | d²=0 ✓ | Discrete-time propagator |
-| KN2 | Discrete-time wave step + unitary wave propagator | KN1 | Wave evolution on hypergraph |
-| H6 | BBH initial data as hypergraph | Phase C + KN1/KN2 | Two-BH IC (Kerr-Schild approx) |
-| H7 | BBH evolution under candidate rule | H6 + #236 | Real Wolfram dynamics, not Poisson |
-| H8 | Discrete Ψ₄ extraction matching NR waveforms | H7 | Waveform observables |
-| H9 | Convergence to BBH merger spacetime | H8 + Phase C | NR-comparison theorem |
+| # | Task | Deps |
+|---|---|---|
+| R4 | Convergence of a scaled discrete Ricci curvature to a nonzero continuum Ricci curvature | #224 |
+| 218 | Per-metric proof or disproof of Ricci convergence | R4 |
+| 217 | Curvature tensors of the named GR metrics in the project's local-coordinate library | — |
+| 220 | Ollivier-Ricci convergence on a concrete discretisation | R4 |
+| 225 | Convergence statement for the multiway causal graph | #231, Phase B |
+| 235 | Each Lean module tied to `ExecHG`, the multiway system or `Hypergraph V` | #231 |
+| 236 | A rule and a proof for one curved-target statement | Phase A, Phase B, R4 |
+| 213 | Lorentzian Gromov-Hausdorff distance (Noldus, Suhr) | — |
+| E6 | Lorentzian Gromov-Hausdorff on causal graphs | #213 |
+| E7 | Convergence of a discrete causal DAG to a continuum Lorentzian manifold | #213, E6 |
+| 222 | Pointed and metric-measure Gromov-Hausdorff | — |
+| 221 | PDE convergence of solutions, beyond eigenvalues | — |
+| 219 | Discrete Hamiltonian and momentum constraint residuals | E5 |
+| H4 | Scaled trajectory converges to a continuum manifold | Phase B |
+| H5 | Ricci bridges for curved targets | R4, #218 |
 
-**End state:** Lean-checked theorem `bbh_merger_from_hypergraph_IC :
-∃ rule R, hypergraph_IC : ExecHG ℕ, NRwaveform : ℝ → ℂ,
-discreteWaveform R IC tendsto NRwaveform`.
-
----
-
-## Parallel streams (don't gate critical path; do whenever a good landing presents)
-
-### Knill theorem catalogue (KN-track)
-Build out the publication-ready Knill discrete-geometry theorems on
-top of d²=0 / Hodge foundation. Each is an independent landing.
-
-- KN3 ✓ (partial): Wu inclusion-exclusion + worked examples done.
-- KN8 ✓ (partial): Euler-Poincaré f-vector identity done.
-- **KN14** McKean-Singer supersymmetry — direct from d²=0; needs spectral / dim-graded form spaces. Foundational.
-- **KN16** Cartan magic formula `L_X = i_X d + d i_X`. Needs vector field + interior product infrastructure.
-- **KN18** Brouwer-Lefschetz fixed-point. Needs hypergraph endomorphism + Lefschetz number.
-- **KN15** Atiyah-Singer / Atiyah-Bott analog. Top of the Knill program.
-- KN4, KN5, KN6, KN7, KN9-13, KN17, KN19, KN20 — extensions.
-
-### Synthetic geometry (SIG-track)
-Per the INFRAGEOMETRY.md framing just added.
-
-- **SIG3 partial** — Tarski `Between` + `Cong` predicates as 1-line defs on `Hypergraph.dist`. T1–T8 as decidable Props on finite hypergraphs. Quick win.
-- **SIG2** — Tarski / Hilbert axioms as Props; per-class verdicts (path / lattice / branching).
-- **SIG1** — primitive constructions (`Line`, `Ray`, `Segment`, `Perpendicular`, `Parallel`).
-- **SIG4** — coordinatization via shortest-path counts / Cayley embedding.
-- **SIG5** — branching-construction stability (uses #234 W_1).
-
-### Bridge architecture (deepening #231)
-- **#231 heavier** — `Application` constructor from executable matches; full `singleWayStep` ↔ `MultiStep` correspondence.
-- **#267** — `singleWayStep subdivisionSys H = subdivideAll H (nextFresh H)` simulation lemma. Closes the engine ↔ canonical-trajectory gap for all n.
-- **#268** — Route C existential path-shape preservation fallback.
-
-### Mathlib-equivalent infrastructure (T-track)
-- **T5** Path and d-torus Laplacian spectrum closed forms.
-- **#214** Wasserstein-1 distance — already substantial; some closure remaining.
-- **#215** Real d-torus Wasserstein O(1/n).
-- **#216** Scrub all "await Mathlib" excuses.
-
-### IGE-track (Knill paclet port)
-- **#273** Super-trace / pseudo-determinant / super-determinant.
-- **#274** Betti vector + Lefschetz number from Hodge blocks. Direct from d²=0 + KN14.
-- **IGE2** SimplicialSet (face/degeneracy + delta-complex).
-- **IGE3** TDA (VR / Čech / persistence on infrageometry hypergraphs).
-- **IGE4** Mesh-generation primitives.
-- **IGE5** Formal-chain complex.
-
-### P-track (substantive structural work, mostly future)
-P1–P20 — each is a paper's worth of work. P3 (Chern-Simons), P4 (ribbon), P5 (sheaves), P6 (Koszul), P7 (homotopy colimit), P9 (action principle), P11 (interaction diagrams), P14 (blowup → RG), P19 (1-skeleton + clique-complex), etc.
-
-### M-track (collaborator-coupled work)
-- **M3** HKOLCZ Lie-Poisson MBQC.
-- **M4** JPULLMAN IBL-∞ / BV.
-- **M6** PPOKORNY Infrageometry paclet parity.
-- **M7** SAHMED EME-tracking community post.
-- **M8** PPOKORNY diffusion-geometry bridge.
-- **M9** Tropical-geometry synthetic infrageometry.
-- **M10** 3BP / dynamical-systems dimension signature.
-- **M1** IMILEA gauge-intern coordination.
-
-### Specific GR metrics (B-track)
-- **B2** Schwarzschild Riemann tensor components.
-- **B3** Schwarzschild Ricci ≡ 0.
-- **B4** `schwarzschild_satisfies_vacuum_EFE`.
-- **B10** Ricci symmetry for Levi-Civita connection.
-- **B11** Second Bianchi identity `∇_μ G^{μν} = 0`.
-- **C5** Levi-Civita existence-uniqueness (Koszul).
-- **C8** Scaled discrete connection → Levi-Civita.
-- **F4** Schwarzschild as explicit vacuum solution.
-- **F6** Kerr as vacuum solution.
-
-### Continuum field limits (G-track)
-- **G5** Continuum limits of discrete fields.
-- **G6** HepLean integration.
-
-### Branchial / quantum (I-track residual)
-- **I8** Branchial → QM Hilbert space continuum limit.
-- **IQ8** EME persistence as branchial observable.
-- **IQ9** Path integral over singleway causal graphs.
-
-### Causal / Lorentzian (E-track residual)
-- **E5** Cauchy surfaces + ADM decomposition (in progress).
-
-### Heat / spectral (D / T residual)
-- **D6** Long-time convergence to uniform.
-- **A6** Weak convergence counting_n → Lebesgue on [0,1).
-- **A7** Wasserstein-1 convergence rate O(1/n) (in progress).
-- **A8** Lift measure convergence to d-torus.
-- **ID7** Spectral dimension via heat-kernel trace.
-
-### Other multiway-engine streams
-- **J2** Path integral over causal graphs.
-- **J3** Emergent-gravity (Jacobson/Verlinde style).
-- **J5** LQG spin-foam comparison.
-- **J6** AdS/CFT analog in Wolfram model.
-
-### Publication outputs (K-track)
-- **K1** P1 audit paper draft.
-- **K2** P2 corrected identities paper.
-- **K3** P3 infrageometry continuum-limits paper.
-- **K4** P4 structural library paper.
-- **K5** P5 Wolfram-to-GR bridge paper. ← *This is the BBH paper.*
-- **K6** P6 branchial QM audit + formalization paper.
-- **K7** P7 BBH via hypergraph paper. ← *Companion to K5.*
-- **K8** P8 discrete d'Alembertian + BD-flag paper.
-- **K9** P9 refutation-chain paper.
+Phase C ends with one GR metric that has a rule, a trajectory and a convergence proof.
 
 ---
 
-## Critical-path summary
+## Phase D: binary black hole merger
+
+| # | Task | Deps |
+|---|---|---|
+| D11 | Cauchy problem for the Einstein equations (Choquet-Bruhat) | E5, Phase C |
+| KN1 | Wave equation solution u(t) = cos(Dt) u₀ + t·sinc(Dt) v₀ | d² = 0 (PROVED) |
+| KN2 | Discrete-time wave step and unitary wave propagator | KN1 |
+| H6 | Binary black hole initial data as a hypergraph | Phase C, KN1, KN2 |
+| H7 | Evolution of that data under the Phase C rule | H6, #236 |
+| H8 | Discrete Ψ₄ extraction compared with numerical-relativity waveforms | H7 |
+| H9 | Convergence to the merger spacetime | H8, Phase C |
+
+Target statement (OPEN): `∃ rule R, hypergraph_IC : ExecHG ℕ, NRwaveform : ℝ → ℂ, discreteWaveform R IC tendsto NRwaveform`, where `discreteWaveform` is computed from the evolution of `hypergraph_IC` under R.
+
+The `BBH*.lean` modules state their results with `fireAllStep` and the 6-vertex graph `bbhInitial`. They are not steps of Phase D. `Milestone.BBH_emerges_from_hypergraph` holds by `BBH_emerges_from_hypergraph_holds` with zero discrepancies and is VACUOUS.
+
+---
+
+## Parallel streams
+
+### Knill theorems (KN)
+
+- KN3: Wu inclusion-exclusion `wuCharacteristic₂_eq_chi_sq_sub_disjoint`. PROVED. Wu cohomology and the fusion inequality are OPEN.
+- KN8: Euler-Poincaré f-vector identity `eulerCharacteristic_eq_alt_sum_kSkeleton`. PROVED. The zeta functions are OPEN.
+- KN14: McKean-Singer supersymmetry. Needs dimension-graded form spaces. OPEN.
+- KN16: Cartan formula L_X = i_X d + d i_X. Needs vector fields and interior products. OPEN.
+- KN18: Brouwer-Lefschetz fixed-point theorem. Needs hypergraph endomorphisms and the Lefschetz number. OPEN.
+- KN15: Atiyah-Singer and Atiyah-Bott analogues. OPEN.
+- KN4, KN5, KN6, KN7, KN9-KN13, KN17, KN19, KN20. OPEN.
+
+### Synthetic geometry (SIG)
+
+- SIG3: Tarski `Between` and `Cong` as definitions on `Hypergraph.dist`, with the axioms T1-T8 as decidable Props on finite hypergraphs. OPEN.
+- SIG2: Tarski and Hilbert axioms as Props, decided per class (path, lattice, branching). OPEN.
+- SIG1: constructions `Line`, `Ray`, `Segment`, `Perpendicular`, `Parallel`. OPEN.
+- SIG4: coordinates from shortest-path counts or a Cayley embedding. OPEN.
+- SIG5: stability of branching constructions under refinement. OPEN.
+
+### Engine and abstract rewriting
+
+- #231 extension: an `Application` built from an executable match, and the correspondence between `singleWayStep` and `MultiStep`. OPEN.
+- #267: `singleWayStep subdivisionSys H = subdivideAll H (nextFresh H)` for every path-shaped H. The single-edge case `singleWayStep_subdivisionSys_consEdge_of_ne` (any a ≠ b) is PROVED. The closed form `singleWayEvolve subdivisionSys subdSeed n = pathEdges (subdVerts n)` is PROVED for n ≤ 2 by `decide` and PROVED-WITH-NATIVE-DECIDE for n = 3, 4, 5. The statement for every path-shaped H is OPEN.
+- #268: existential preservation of path shape (Route C). OPEN.
+
+### Infrastructure (T)
+
+- T5: closed forms of the path and d-torus Laplacian spectra. The path eigenvalue at k = 0 is PROVED. General k is OPEN.
+- #214: Wasserstein-1 distance. Pseudometric axioms and the Lipschitz bound are PROVED. The convergence rate of the scaled counting measure is OPEN.
+- #215: Wasserstein-1 rate O(1/n) on the d-torus. OPEN.
+- #216: replace every statement deferred to future Mathlib with a project proof or an OPEN statement.
+
+### Knill paclet port (IGE)
+
+- #273: super-trace, pseudo-determinant, super-determinant. `superTrace_diag_one` is PROVED. The determinants are OPEN.
+- #274: Betti vector and Lefschetz number from the Hodge blocks. OPEN.
+- IGE2: simplicial sets (face and degeneracy maps, delta-complex morphisms). OPEN.
+- IGE3: Vietoris-Rips, Čech and persistence on hypergraphs. OPEN.
+- IGE4: mesh primitives. OPEN.
+- IGE5: formal chain complex. OPEN.
+
+### P-track
+
+P1-P20 in `NEXT_STEPS.md` are open: P3 (Chern-Simons), P4 (ribbon graphs), P5 (sheaves), P6 (Koszul signs), P7 (homotopy colimit), P9 (action principle), P11 (interaction diagrams), P14 (blowup rules and renormalisation), P19 (1-skeleton and clique complex), and others.
+
+### M-track (collaborators)
+
+- M1: IMILEA gauge-intern coordination.
+- M3: HKOLCZ Lie-Poisson MBQC.
+- M4: JPULLMAN IBL-∞ and BV formalism.
+- M6: NMURZIN `Infrageometry` paclet, Lean port parity (see `CONTRIBUTORS.md`).
+- M7: SAHMED EME-tracking community post.
+- M8: diffusion-geometry bridge, attribution under review (see `CONTRIBUTORS.md`).
+- M9: tropical-geometry synthetic infrageometry.
+- M10: three-body problem and dimension signatures.
+
+### Named GR metrics (B)
+
+- B2: Schwarzschild Riemann tensor components. OPEN.
+- B3: Schwarzschild Ricci tensor equal to 0 on the exterior. OPEN.
+- B4: Schwarzschild satisfies the vacuum Einstein equations on the exterior. No theorem exists. OPEN.
+- B10: symmetry of the Ricci tensor of the Levi-Civita connection for every `MetricDataC2`. PROVED for `warpedDiag2`. OPEN in general.
+- B11: second Bianchi identity ∇_μ G^{μν} = 0 for the Levi-Civita connection. PROVED for the flat connection and for `warpedDiag2`. OPEN in general.
+- C5: existence and uniqueness of the Levi-Civita connection (Koszul). OPEN.
+- C8: a scaled discrete connection converges to the Levi-Civita connection. OPEN.
+- F4: Schwarzschild as an explicit vacuum solution. OPEN.
+- F6: Kerr as a vacuum solution. OPEN.
+
+### Continuum field limits (G)
+
+- G5: continuum limits of discrete fields. OPEN.
+- G6: HepLean integration. OPEN.
+
+### Branchial and quantum (I, IQ)
+
+- I8: Hilbert-space continuum limit of branchial slices. OPEN.
+- IQ8: EME persistence as a branchial observable. `EMEPersistenceObligation` holds with a zero witness (VACUOUS). The statement with content is OPEN.
+- IQ9: path integral over single-way causal graphs. `PathIntegralObligation` holds with a zero amplitude (VACUOUS). The statement with content is OPEN.
+
+### Causal and Lorentzian (E)
+
+- E5: foliation existence is PROVED (`stablyCausal_hasFoliation`). The lapse-shift decomposition is OPEN.
+
+### Heat and spectra (D, A, ID)
+
+- D6: convergence of every heat solution on the cycle to its mean. Decay of finitely many nonconstant modes is PROVED (`heatKernel_cycleHypergraph_multi_mode_tendsto`). The eigenbasis decomposition of arbitrary initial data is OPEN.
+- A6: weak convergence of the scaled counting measure to Lebesgue measure on [0,1). PROVED for polynomials of degree at most 3 (`A6Holds_poly_deg3`). The continuous case is OPEN.
+- A7: Wasserstein-1 rate O(1/n) for the scaled counting measure. OPEN.
+- A8: measure convergence on the d-torus. OPEN.
+- ID7: spectral dimension from the heat-kernel trace. OPEN.
+
+### Multiway engine
+
+- J2: path integral over causal graphs. OPEN.
+- J3: emergent gravity (Jacobson, Verlinde). OPEN.
+- J5: comparison with LQG spin foams. OPEN.
+- J6: AdS/CFT analogue in the Wolfram model. OPEN.
+
+### Papers (K)
+
+- K1: P1 audit paper.
+- K2: P2 corrected identities.
+- K3: P3 continuum-limit templates.
+- K4: P4 structural library.
+- K5: P5 Wolfram-to-GR rule.
+- K6: P6 branchial QM audit and formalisation.
+- K7: P7 binary black hole paper, after K5.
+- K8: P8 discrete d'Alembertian.
+- K9: P9 analysis of the G1 derivation.
+
+### Angles and topology (AT, PATH, POLY, CELL, TOP, KNOT)
+
+Definitions in place: `Hypergraph.elementaryAngle`, `cosAngle`, `angle`, `IsOrthoApprox` (AT0, AT1, AT6), `AngularScreener` and `CombinedScreener` (AT7), `Hypergraph.scalarCurvatureAt` (AT9, scalar curvature from the ball-volume ratio), `spatialB0` and `firstBettiZ` with lower bounds (TOP4, TOP1), `infraSphere` and `infraDisk` (SPHERE1), `perpBisector`, `closerHalf`, `midpoint`, `nearMidpoint` and `voronoiCell` (HYPER2, HYPER3, MIDPT1). PROVED (definitions with lemmas).
+
+Open tasks in this stream (task numbers #285-#342):
+
+- angle definitions AT2-AT27 and AT-W (sheaf angle);
+- paths PATH1, PATH2;
+- polygons POLY1 (polygon with arbitrary intersection sequence), POLY2 (cellular k-chains with sheaf coefficients), POLY3 (spin networks);
+- cellular sheaves CELL1;
+- contractibility CONTRACT1 (scale-indexed, through the Vietoris-Rips complex);
+- path moves DEFORM1, DEFORM2;
+- homotopy HOM1 (path homotopy), HOM2 (fundamental groupoid);
+- invariants TOP2 (higher Betti numbers), TOP3 (fundamental group), TOP5 (higher homotopy groups), TOP6 (genus);
+- knots KNOT1 (linking number), KNOT2 (Massey products), KNOT3 (Yamada and Jones polynomials).
+
+---
+
+## Critical path
 
 ```
-Phase A (#233 + refactor + Minkowski re-discharge)
+Phase A (statements that depend on the trajectory and the target)
    ↓
-Phase B (#224 + RuleSignatureSchema + #190 + MultiwayExec cleanup)
+Phase B (#190, #227-#230, screeners)
    ↓
-Phase C (R4 + #218 + #217 + #225 + #235 + #236 + Lorentzian-GH track)
+Phase C (R4, #218, #217, #225, #235, #236, Lorentzian GH)
    ↓
-Phase D (D11 + KN1/KN2 + H6 + H7 + H8 + H9)
+Phase D (D11, KN1, KN2, H6, H7, H8, H9)
    ↓
-END: BBH merger from hypergraph IC, K5 + K7 papers.
+Target theorem; papers K5 and K7.
 ```
 
-**Currently sitting at (2026-04-27, late): Phase B opened with #224 + #292 — both curvature (Forman-Ricci) and angular (chord-ratio) sides of the screener pipeline complete. Plus AT0/AT1 angle primitives (#285/#286), AT6 orthogonality (#291), AT9 Bishop-Gromov scalar curvature (#294), TOP1/TOP4 pre-metric topology (#323/#326), SPHERE1 infra-sphere (#334), HYPER2/HYPER3/MIDPT1 Bachmann substrate (#339/#340/#342), and MILESTONE-GR/-QM/-BBH statements (#369–#371). 12 tasks closed in 7 commits this push. Next Phase B steps: (a) `RuleSignatureSchema` JSON interchange + Lean validator; (b) #190 wolframscript driver to feed empirical signatures into the screener. Phase A follow-up (tie discrepancy to actual trajectory W_1, needs measure-of-trajectory infra) remains staged.**
-
-**Angle-tower workstream opens** (parallel to Phase B critical path). 29 tasks `AT0`–`AT27` + `AT-W` (#285–#314, #319) across 14 flavour-columns × multiple abstraction levels. `PATH1`/`PATH2` (#300/#301) for SWOLF's non-overlapping-path substrate. Three structural anchors: (1) **AT18 projective Cayley-Klein angle is more elementary than AT0 chord-ratio** — sidesteps SWOLF's straight-lines requirement; (2) **AT23 conformal structure IS pure-angle data** — angles alone define conformal geometry; (3) **AT20 Regge deficit angle IS the numerical-GR variable** — gating for Phase D BBH (#106 K7). Plus **AT9 Bishop-Gromov scalar curvature** from log V(r) growth, **AT11 dimensionless-↔-dimensional bridge** formalising units-emergence under continuum rescaling, and **AT-W (#319) cellular-sheaf angle** — the 14th flavour-column from PHAJEK's "string theory on the graph" framing. Recommended landing order: AT0 → AT1 → AT9 → AT6 → AT7 → PATH1 → AT8 → AT3 → AT26 → AT20 → spectral/branchial/Lorentzian columns.
-
-**Topology-before-metric workstream opens** (parallel to angle-tower). SWOLF's structural framing: pre-metric topological invariants come BEFORE balls/volumes/regions. Layered hierarchy (each layer one short Lean def on top of previous):
-- **Layer −1: Connectedness (b_0)** — TOP4 (#326) — four flavours: spatial / causal / branchial / rewriting-reachable. Partition that EVERY OTHER topological invariant sits inside.
-- **Layer 1: Paths** — PATH1 (#300), PATH2 (#301).
-- **Layer 2: Polygons** — POLY1 (#316) generalised polygon with arbitrary intersection sequences (recovers Euclidean as singleton-intersection special case); POLY2 (#317) cellular k-chain in Δ-complex with sheaf coefficients (full categorical generalisation); POLY3 (#318) spin networks/foams (LQG primitive, knot-invariant home via Witten/RT).
-- **Layer 3: Cellular sheaves** — CELL1 (#315) — PHAJEK's "string theory on the graph" framework, AT-W (#319) sheaf-angle.
-- **Layer 4: Contractibility** — CONTRACT1 (#329) — binary, scale-indexed via VR-complex; persistence-barcode death-time IS the contractibility scale.
-- **Layer 5: Path moves** — DEFORM1 (#330) deformations (backtrack, 2-cell, hyperedge-transit substitution); DEFORM2 (#331) extensions (forward/backward edge or hyperedge-transit append). Tietze/Whitehead/Reidemeister style.
-- **Layer 6: Equivalence** — HOM1 (#332) path-homotopy `EqvGen DEFORM1`; HOM2 (#333) fundamental groupoid Π_1(H).
-- **Layer 7: Topological invariants** — TOP1 (#323) b_1; TOP2 (#324) higher Betti; TOP3 (#325) π_1 (non-abelian); TOP5 (#327) higher π_k; TOP6 (#328) genus.
-- **Layer 8: Knot/link** — KNOT1 (#320) linking number / Borromean; KNOT2 (#321) Massey products; KNOT3 (#322) Yamada/Jones via spin-network Chern-Simons.
-
-For Phase D BBH specifically: black-hole horizon = non-contractible cycle; merger = moment cycle becomes contractible (a new 2-cell fills the previously-non-contractible region); knot-cobordism between linked → unlinked horizon configurations. Cellular-sheaf cohomology change at the merger is the topological signature.
-
-Active streams in parallel (will keep landing as opportunities arise):
-KN14/16/18 (Hodge consequences), SIG3 partial (Tarski quick win),
-#231 heavier (bridge deepening).
-
----
-
-## Working principle
-
-Per directive: don't think in sessions / time / context. Decompose.
-Document. Attack the task list. Phase A first because it makes
-everything downstream meaningful.
+Current state: the Phase A obligations and the `Milestone` statements are VACUOUS. The Phase B screeners and the bounded search of `RuleSignatureExecSearch.lean` exist (PROVED-WITH-NATIVE-DECIDE for the search counts). The next Phase B task is #190. The Phase A statement with content is OPEN.
