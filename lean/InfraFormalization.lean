@@ -41,6 +41,8 @@ import InfraFormalization.MultiwayExecBridge
 import InfraFormalization.Causal
 import InfraFormalization.CausalLevel
 import InfraFormalization.CausalHistory
+import InfraFormalization.KnillExamples
+import InfraFormalization.AxiomCheck
 import InfraFormalization.Branchial
 import InfraFormalization.ParallelSchedule
 import InfraFormalization.Demo
