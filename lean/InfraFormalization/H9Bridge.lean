@@ -24,7 +24,7 @@ H9 closure follow.
         fresh vertices at the next step start at M+1.
 
 **Why ψ suffices for tripling**: when ψ holds for H with distinct count
-n, applying `singleWayStep sys H` produces:
+n, applying `fireAllStep sys H` produces:
   - For each distinct edge `[a, b]` of H: exactly 3 new distinct
     edges `{[b, a], [a, f], [b, f]}` where `f` is fresh per binding.
   - All old distinct edges of H are fully consumed (multiplicity 2 →
@@ -40,7 +40,7 @@ n, applying `singleWayStep sys H` produces:
   * `psi : ExecHG ℕ → Prop` — the structural invariant.
   * `psi_seedEdge12 : ψ seedEdge12` — base case, trivial.
   * `BridgeStepLemma : Prop` — the open step lemma:
-    `∀ H, ψ H → distinctEdgeCount (singleWayStep sys H) = 3·distinctEdgeCount H ∧ ψ (singleWayStep sys H)`
+    `∀ H, ψ H → distinctEdgeCount (fireAllStep sys H) = 3·distinctEdgeCount H ∧ ψ (fireAllStep sys H)`
   * `BridgeStepLemma → engineMatchesTriad` — the closure.
 
 This decomposes the H9 bridge into a SINGLE substantive open lemma
@@ -124,44 +124,44 @@ theorem psi_seedEdge12 : Psi seedEdge12 := by
 
 /-- **`BridgeStepLemma`** [open obligation]: the central remaining
 piece of H9 closure. For both persistent-equivalence-class systems,
-applying `singleWayStep` to any ψ-satisfying state both:
+applying `fireAllStep` to any ψ-satisfying state both:
   - exactly triples the distinct edge count, and
   - preserves ψ for the next iteration.
 
 This is what remains to be proved symbolically. The structural
 invariant ψ is now precisely identified; proving this lemma reduces
-to careful unfolding of `singleWayStep`'s nested `foldl` over rules
+to careful unfolding of `fireAllStep`'s nested `foldl` over rules
 and matches. Estimated 300–500 lines of Lean. -/
 def BridgeStepLemma : Prop :=
   ∀ (sys : ExecSystem),
     sys = edgeReversal_tripleMerger_Sys ∨ sys = fork_doubleCycle_Sys →
     ∀ (H : ExecHG ℕ),
       Psi H →
-      distinctEdgeCount (singleWayStep sys H) = 3 * distinctEdgeCount H ∧
-      Psi (singleWayStep sys H)
+      distinctEdgeCount (fireAllStep sys H) = 3 * distinctEdgeCount H ∧
+      Psi (fireAllStep sys H)
 
 /-! ## Section D: From the step lemma to the bridge -/
 
 /-- Helper: ψ is preserved along the entire engine trajectory for
 each persistent-class system, given the bridge step lemma. -/
 theorem psi_preserved_eR_tripleMerger (step : BridgeStepLemma) :
-    ∀ d : Nat, Psi (singleWayEvolve edgeReversal_tripleMerger_Sys seedEdge12 d) := by
+    ∀ d : Nat, Psi (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 d) := by
   intro d
   induction d with
   | zero => exact psi_seedEdge12
   | succ d ih =>
     have := step edgeReversal_tripleMerger_Sys (Or.inl rfl)
-      (singleWayEvolve edgeReversal_tripleMerger_Sys seedEdge12 d) ih
+      (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 d) ih
     exact this.2
 
 theorem psi_preserved_fork_dCyc (step : BridgeStepLemma) :
-    ∀ d : Nat, Psi (singleWayEvolve fork_doubleCycle_Sys seedEdge12 d) := by
+    ∀ d : Nat, Psi (fireAllEvolve fork_doubleCycle_Sys seedEdge12 d) := by
   intro d
   induction d with
   | zero => exact psi_seedEdge12
   | succ d ih =>
     have := step fork_doubleCycle_Sys (Or.inr rfl)
-      (singleWayEvolve fork_doubleCycle_Sys seedEdge12 d) ih
+      (fireAllEvolve fork_doubleCycle_Sys seedEdge12 d) ih
     exact this.2
 
 /-- **`bridge_from_step`**: given the step lemma, derive the full bridge
@@ -177,9 +177,9 @@ theorem bridge_from_step (step : BridgeStepLemma) : engineMatchesTriad := by
     | succ d ih =>
       have hPsi := psi_preserved_eR_tripleMerger step d
       have hstep := step edgeReversal_tripleMerger_Sys (Or.inl rfl)
-        (singleWayEvolve edgeReversal_tripleMerger_Sys seedEdge12 d) hPsi
-      show distinctEdgeCount (singleWayStep edgeReversal_tripleMerger_Sys
-        (singleWayEvolve edgeReversal_tripleMerger_Sys seedEdge12 d)) = (triadList (d+1)).length
+        (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 d) hPsi
+      show distinctEdgeCount (fireAllStep edgeReversal_tripleMerger_Sys
+        (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 d)) = (triadList (d+1)).length
       rw [hstep.1, triadList_length_succ]
       rw [triadList_length] at ih
       rw [triadList_length]
@@ -192,9 +192,9 @@ theorem bridge_from_step (step : BridgeStepLemma) : engineMatchesTriad := by
     | succ d ih =>
       have hPsi := psi_preserved_fork_dCyc step d
       have hstep := step fork_doubleCycle_Sys (Or.inr rfl)
-        (singleWayEvolve fork_doubleCycle_Sys seedEdge12 d) hPsi
-      show distinctEdgeCount (singleWayStep fork_doubleCycle_Sys
-        (singleWayEvolve fork_doubleCycle_Sys seedEdge12 d)) = (triadList (d+1)).length
+        (fireAllEvolve fork_doubleCycle_Sys seedEdge12 d) hPsi
+      show distinctEdgeCount (fireAllStep fork_doubleCycle_Sys
+        (fireAllEvolve fork_doubleCycle_Sys seedEdge12 d)) = (triadList (d+1)).length
       rw [hstep.1, triadList_length_succ]
       rw [triadList_length] at ih
       rw [triadList_length]
@@ -207,8 +207,8 @@ distinct-edge tripling conjecture is fully proved unconditionally
 for all `d ≥ 0` for both persistent-equivalence-class members. -/
 theorem H9_closure_from_step (step : BridgeStepLemma) :
     ∀ d : Nat,
-      distinctEdgeCount (singleWayEvolve edgeReversal_tripleMerger_Sys seedEdge12 d) = 3^d ∧
-      distinctEdgeCount (singleWayEvolve fork_doubleCycle_Sys seedEdge12 d) = 3^d := by
+      distinctEdgeCount (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 d) = 3^d ∧
+      distinctEdgeCount (fireAllEvolve fork_doubleCycle_Sys seedEdge12 d) = 3^d := by
   exact H9_conditional_on_bridge (bridge_from_step step)
 
 /-! ## What this delivers — H9 status update
@@ -234,18 +234,18 @@ on depth, the use of ψ to lift step to evolve — is proved.
 
 **Why ψ works**: under ψ, the engine produces 3 new distinct edges
 per existing distinct edge. The fresh-vertex offset machinery in
-`singleWayStep` ensures all 3·n new edges are globally distinct.
+`fireAllStep` ensures all 3·n new edges are globally distinct.
 Old distinct edges are fully consumed (their multiplicities ≤ 2 are
 exactly matched by the two rules' consumptions).
 
 **What remains**: prove `BridgeStepLemma`. This requires unfolding
-`singleWayStep` and accounting for the multiplicity-aware semantics
+`fireAllStep` and accounting for the multiplicity-aware semantics
 of `removeEdges`, the binding-deduplication of `allMatches`, and
 the per-rule offset increment. Estimated 300–500 lines of Lean.
 
 When done, `H9_closure_from_step step_proof` immediately yields:
 
-  `distinctEdgeCount (singleWayEvolve sys seedEdge12 d) = 3^d` for all d
+  `distinctEdgeCount (fireAllEvolve sys seedEdge12 d) = 3^d` for all d
 
 — the full symbolic closure of the H9 conjecture.
 -/

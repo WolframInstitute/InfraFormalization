@@ -121,12 +121,12 @@ theorem phase_D_framework_complete :
     -- (3) B baseline
     discreteBranchialDensity edgeReversal_identity_Sys 3 = 30 ∧
     -- (4) Single-rule branchial = 0
-    knillEulerScaled (branchialDAGOfEvolution edgeReversalSys seedEdge12 3) = 0 ∧
+    knillEulerScaled (branchialDAGOfFireAll edgeReversalSys seedEdge12 3) = 0 ∧
     -- (5) Additivity instance (eR+id on seedPath123, d=3) — causal
-    knillEulerScaled (causalDAGOfEvolution edgeReversal_identity_Sys
+    knillEulerScaled (causalDAGOfFireAll edgeReversal_identity_Sys
       UniversalAdditivity.seedPath123 3) = 2 * (-24) ∧
     -- (6) Additivity instance (eR+id on seedPath123, d=3) — branchial
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_identity_Sys
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_identity_Sys
       UniversalAdditivity.seedPath123 3) = 2 * 30 ∧
     -- (7) R non-monotonic
     discreteRicciScalar edgeReversal_identity_Sys 4 >
@@ -149,13 +149,13 @@ theorem phase_D_framework_complete :
     11 * discreteRicciScalar edgeReversal_fork_Sys 3 +
       7 * discreteBranchialDensity edgeReversal_fork_Sys 3 = 0 ∧
     -- (15-18) BBH Knill values 7x baselines
-    knillEulerScaled (causalDAGOfEvolution edgeReversal_identity_Sys bbhInitial 3) =
+    knillEulerScaled (causalDAGOfFireAll edgeReversal_identity_Sys bbhInitial 3) =
       7 * discreteRicciScalar edgeReversal_identity_Sys 3 ∧
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_identity_Sys bbhInitial 3) =
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_identity_Sys bbhInitial 3) =
       7 * discreteBranchialDensity edgeReversal_identity_Sys 3 ∧
-    knillEulerScaled (causalDAGOfEvolution edgeReversal_fork_Sys bbhInitial 3) =
+    knillEulerScaled (causalDAGOfFireAll edgeReversal_fork_Sys bbhInitial 3) =
       7 * discreteRicciScalar edgeReversal_fork_Sys 3 ∧
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_fork_Sys bbhInitial 3) =
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_fork_Sys bbhInitial 3) =
       7 * discreteBranchialDensity edgeReversal_fork_Sys 3 := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   <;> native_decide

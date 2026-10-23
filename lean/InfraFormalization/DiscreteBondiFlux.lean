@@ -59,11 +59,11 @@ open MultiRuleDiscovered
 /-! ## Per-step event count definition -/
 
 /-- **`perStepEventCount`**: the number of causal events at each
-step of `tracedSingleWayEvolve sys H n`. Discrete analog of
+step of `tracedFireAllEvolve sys H n`. Discrete analog of
 instantaneous Bondi flux dE/dt. -/
 def perStepEventCount (sys : ExecSystem) (H : ExecHG ℕ) (n : Nat) :
     List Nat :=
-  let (_, events) := tracedSingleWayEvolve sys H n
+  let (_, events) := tracedFireAllEvolve sys H n
   (List.range n).map (fun k => (events.filter (·.step == k)).length)
 
 /-! ## BBH per-step event-count witnesses -/

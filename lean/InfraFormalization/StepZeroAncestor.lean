@@ -1,5 +1,5 @@
 /-
-**Step-zero ancestor function for `tracedSingleWayEvolve`** (#500, #495c).
+**Step-zero ancestor function for `tracedFireAllEvolve`** (#500, #495c).
 
 This module discharges R1 of the `EdgeCausallyDisjoint` predicate (#495)
 and defines the ancestor function used by R2's partition-closure
@@ -32,16 +32,16 @@ argument (#499/#501).
 **Proof strategy for `step_zero_events_exist`** — case split on whether
 the seed produces any matches at step 0:
 
-  * If `(tracedSingleWayStep sys seed 0).2 = []` (no matches anywhere
+  * If `(tracedFireAllStep sys seed 0).2 = []` (no matches anywhere
     on the seed): the inner `foldl` over `allMatches r seed = []` for
     every rule `r` returns the initial accumulator, so state and event
     lists are preserved across the outer rule `foldl`. By induction on
-    depth, `tracedSingleWayEvolve sys seed d = (seed, [])` for all `d`,
+    depth, `tracedFireAllEvolve sys seed d = (seed, [])` for all `d`,
     so the hypothesis `i < events.length` is vacuously false.
 
   * Otherwise: for `d ≥ 1`, the first batch is a prefix of the depth-`d`
     events. Every event in the first batch has `.step = 0` (by the
-    `events ∋ e ↦ e.step = step` invariant of `tracedSingleWayStep`).
+    `events ∋ e ↦ e.step = step` invariant of `tracedFireAllStep`).
     Hence `events.filter (·.step = 0)` has at least the first batch as
     a subset and therefore length `≥ 1`.
 -/
@@ -69,12 +69,12 @@ lemma foldl_invariant {α β : Type*} (P : β → Prop) (f : β → α → β)
   | nil => exact h0
   | cons x xs ih => exact ih (f init x) (hStep init x h0)
 
-/-! ## Section B: outer step factorisation of `tracedSingleWayStep`
+/-! ## Section B: outer step factorisation of `tracedFireAllStep`
 
 We name the outer per-rule step so we can reason about the rule-list
 `foldl` modularly, in the style of `FreshVertexPartition.innerFoldl`. -/
 
-/-- Outer per-rule step of `tracedSingleWayStep`: run the inner foldl
+/-- Outer per-rule step of `tracedFireAllStep`: run the inner foldl
 over `(allMatches r H)` to process all matches of rule `r`. -/
 def outerStep (H : ExecHG ℕ) (baseFresh step : ℕ)
     (acc : InnerAcc) (r : ExecRule) : InnerAcc :=
@@ -83,9 +83,9 @@ def outerStep (H : ExecHG ℕ) (baseFresh step : ℕ)
     (state, offset, ruleIdx, events)
   (matchRes.1, matchRes.2.1, ruleIdx + 1, matchRes.2.2.2)
 
-/-- `tracedSingleWayStep` expressed via the outer foldl over rules. -/
-theorem tracedSingleWayStep_eq_outer (sys : ExecSystem) (H : ExecHG ℕ) (k : ℕ) :
-    tracedSingleWayStep sys H k =
+/-- `tracedFireAllStep` expressed via the outer foldl over rules. -/
+theorem tracedFireAllStep_eq_outer (sys : ExecSystem) (H : ExecHG ℕ) (k : ℕ) :
+    tracedFireAllStep sys H k =
       let baseFresh := nextFresh H
       let final := sys.rules.foldl (outerStep H baseFresh k) (H, 0, 0, [])
       (final.1, final.2.2.2) := by
@@ -143,12 +143,12 @@ theorem outerStep_events_step (H : ExecHG ℕ) (baseFresh step : ℕ)
   simp only
   exact innerFoldl_events_step r baseFresh step (allMatches r H) (s, o, i, es) h0
 
-/-- **Headline:** every event emitted by `tracedSingleWayStep sys H k`
+/-- **Headline:** every event emitted by `tracedFireAllStep sys H k`
 has `e.step = k`. -/
-theorem tracedSingleWayStep_events_step (sys : ExecSystem) (H : ExecHG ℕ) (k : ℕ) :
-    ∀ e ∈ (tracedSingleWayStep sys H k).2, e.step = k := by
+theorem tracedFireAllStep_events_step (sys : ExecSystem) (H : ExecHG ℕ) (k : ℕ) :
+    ∀ e ∈ (tracedFireAllStep sys H k).2, e.step = k := by
   intro e he
-  rw [tracedSingleWayStep_eq_outer] at he
+  rw [tracedFireAllStep_eq_outer] at he
   simp only at he
   refine foldl_invariant
     (P := fun acc : ExecHG ℕ × Nat × Nat × List CausalEvent =>
@@ -201,18 +201,18 @@ theorem foldl_outerStep_no_matches (H : ExecHG ℕ) (baseFresh step : ℕ)
     simp
     ring
 
-/-- If no rule has any match on `H`, `tracedSingleWayStep sys H k` is
+/-- If no rule has any match on `H`, `tracedFireAllStep sys H k` is
 the identity on state and produces no events. -/
-theorem tracedSingleWayStep_no_matches (sys : ExecSystem) (H : ExecHG ℕ) (k : ℕ)
+theorem tracedFireAllStep_no_matches (sys : ExecSystem) (H : ExecHG ℕ) (k : ℕ)
     (h : ∀ r ∈ sys.rules, allMatches r H = []) :
-    tracedSingleWayStep sys H k = (H, []) := by
-  rw [tracedSingleWayStep_eq_outer]
+    tracedFireAllStep sys H k = (H, []) := by
+  rw [tracedFireAllStep_eq_outer]
   simp only
   rw [foldl_outerStep_no_matches H (nextFresh H) k sys.rules (H, 0, 0, []) h]
 
 /-! ## Section E: length characterisation of the step's event list
 
-The number of events emitted by `tracedSingleWayStep sys H k` is the
+The number of events emitted by `tracedFireAllStep sys H k` is the
 sum of match-counts across rules, **independent of `k`**. We need this
 to translate "first-batch empty" (the natural starting hypothesis) into
 "no matches anywhere" (the technical hypothesis above). -/
@@ -260,25 +260,25 @@ theorem foldl_outerStep_events_length (H : ExecHG ℕ) (baseFresh step : ℕ)
     ring
 
 /-- **Length characterisation:** the number of events from
-`tracedSingleWayStep sys H k` equals the total match count and is
+`tracedFireAllStep sys H k` equals the total match count and is
 independent of `k`. -/
-theorem tracedSingleWayStep_events_length (sys : ExecSystem) (H : ExecHG ℕ) (k : ℕ) :
-    (tracedSingleWayStep sys H k).2.length =
+theorem tracedFireAllStep_events_length (sys : ExecSystem) (H : ExecHG ℕ) (k : ℕ) :
+    (tracedFireAllStep sys H k).2.length =
       (sys.rules.map (fun r => (allMatches r H).length)).sum := by
-  rw [tracedSingleWayStep_eq_outer]
+  rw [tracedFireAllStep_eq_outer]
   simp only
   rw [foldl_outerStep_events_length H (nextFresh H) k sys.rules (H, 0, 0, [])]
   simp
 
 /-- Empty first-batch events ↔ every rule has empty `allMatches`. -/
-theorem tracedSingleWayStep_events_empty_iff (sys : ExecSystem) (H : ExecHG ℕ) (k : ℕ) :
-    (tracedSingleWayStep sys H k).2 = [] ↔
+theorem tracedFireAllStep_events_empty_iff (sys : ExecSystem) (H : ExecHG ℕ) (k : ℕ) :
+    (tracedFireAllStep sys H k).2 = [] ↔
       ∀ r ∈ sys.rules, allMatches r H = [] := by
   constructor
   · intro h
-    have hlen : (tracedSingleWayStep sys H k).2.length = 0 := by
+    have hlen : (tracedFireAllStep sys H k).2.length = 0 := by
       rw [h]; rfl
-    rw [tracedSingleWayStep_events_length] at hlen
+    rw [tracedFireAllStep_events_length] at hlen
     -- sum of nonnegative ℕ list = 0 → every element = 0
     intro r hr
     have hzero : (allMatches r H).length = 0 := by
@@ -290,79 +290,79 @@ theorem tracedSingleWayStep_events_empty_iff (sys : ExecSystem) (H : ExecHG ℕ)
         (le_of_eq_of_le rfl (this ▸ List.le_sum_of_mem hmem))
     exact List.length_eq_zero_iff.mp hzero
   · intro h
-    rw [tracedSingleWayStep_no_matches sys H k h]
+    rw [tracedFireAllStep_no_matches sys H k h]
 
 /-! ## Section F: propagation — empty first batch yields empty evolution -/
 
-/-- If the first batch on `seed` is empty, then `tracedSingleWayEvolve`
+/-- If the first batch on `seed` is empty, then `tracedFireAllEvolve`
 returns `(seed, [])` at every depth.
 
-The argument: emptiness of `(tracedSingleWayStep sys seed 0).2` is
+The argument: emptiness of `(tracedFireAllStep sys seed 0).2` is
 equivalent to "no rule matches on `seed`", which is independent of the
-step parameter. So `tracedSingleWayStep sys seed n = (seed, [])` at
+step parameter. So `tracedFireAllStep sys seed n = (seed, [])` at
 every `n`. Induct on the depth. -/
-theorem tracedSingleWayEvolve_empty_of_no_first_batch
+theorem tracedFireAllEvolve_empty_of_no_first_batch
     (sys : ExecSystem) (seed : ExecHG ℕ)
-    (h0 : (tracedSingleWayStep sys seed 0).2 = []) :
-    ∀ d, tracedSingleWayEvolve sys seed d = (seed, []) := by
+    (h0 : (tracedFireAllStep sys seed 0).2 = []) :
+    ∀ d, tracedFireAllEvolve sys seed d = (seed, []) := by
   -- Lift `h0` to the rule-level "no matches" hypothesis.
   have hnm : ∀ r ∈ sys.rules, allMatches r seed = [] :=
-    (tracedSingleWayStep_events_empty_iff sys seed 0).mp h0
+    (tracedFireAllStep_events_empty_iff sys seed 0).mp h0
   intro d
   induction d with
   | zero => rfl
   | succ d ih =>
-    show tracedSingleWayEvolve sys seed (d + 1) = (seed, [])
+    show tracedFireAllEvolve sys seed (d + 1) = (seed, [])
     -- Unfold; the state at depth `d` is `seed` by IH, so the next step
-    -- is also `(seed, [])` by `tracedSingleWayStep_no_matches`.
-    have hstep : tracedSingleWayStep sys seed d = (seed, []) :=
-      tracedSingleWayStep_no_matches sys seed d hnm
-    simp only [tracedSingleWayEvolve, ih, hstep, List.append_nil]
+    -- is also `(seed, [])` by `tracedFireAllStep_no_matches`.
+    have hstep : tracedFireAllStep sys seed d = (seed, []) :=
+      tracedFireAllStep_no_matches sys seed d hnm
+    simp only [tracedFireAllEvolve, ih, hstep, List.append_nil]
 
 /-! ## Section G: the depth-`d` event list contains the first batch as a prefix
 
-For `d ≥ 1`, the events of `tracedSingleWayEvolve sys seed d` factor as
-`(tracedSingleWayStep sys seed 0).2 ++ rest_d`, so the filter on
-`step = 0` has length at least `(tracedSingleWayStep sys seed 0).2.length`. -/
+For `d ≥ 1`, the events of `tracedFireAllEvolve sys seed d` factor as
+`(tracedFireAllStep sys seed 0).2 ++ rest_d`, so the filter on
+`step = 0` has length at least `(tracedFireAllStep sys seed 0).2.length`. -/
 
-/-- The events of `tracedSingleWayEvolve sys seed (d+1)` have the first
+/-- The events of `tracedFireAllEvolve sys seed (d+1)` have the first
 batch as a prefix. -/
-theorem tracedSingleWayEvolve_first_batch_prefix
+theorem tracedFireAllEvolve_first_batch_prefix
     (sys : ExecSystem) (seed : ExecHG ℕ) :
-    ∀ d, ∃ rest, (tracedSingleWayEvolve sys seed (d + 1)).2 =
-      (tracedSingleWayStep sys seed 0).2 ++ rest := by
+    ∀ d, ∃ rest, (tracedFireAllEvolve sys seed (d + 1)).2 =
+      (tracedFireAllStep sys seed 0).2 ++ rest := by
   intro d
   induction d with
   | zero =>
     refine ⟨[], ?_⟩
-    simp [tracedSingleWayEvolve]
+    simp [tracedFireAllEvolve]
   | succ k ih =>
     obtain ⟨rest_k, hk⟩ := ih
     refine ⟨rest_k ++
-      (tracedSingleWayStep sys (tracedSingleWayEvolve sys seed (k + 1)).1 (k + 1)).2,
+      (tracedFireAllStep sys (tracedFireAllEvolve sys seed (k + 1)).1 (k + 1)).2,
       ?_⟩
-    show (tracedSingleWayEvolve sys seed (k + 2)).2 = _
-    have : (tracedSingleWayEvolve sys seed (k + 2)).2 =
-      (tracedSingleWayEvolve sys seed (k + 1)).2 ++
-      (tracedSingleWayStep sys (tracedSingleWayEvolve sys seed (k + 1)).1 (k + 1)).2 := by
+    show (tracedFireAllEvolve sys seed (k + 2)).2 = _
+    have : (tracedFireAllEvolve sys seed (k + 2)).2 =
+      (tracedFireAllEvolve sys seed (k + 1)).2 ++
+      (tracedFireAllStep sys (tracedFireAllEvolve sys seed (k + 1)).1 (k + 1)).2 := by
       rfl
     rw [this, hk]
     simp [List.append_assoc]
 
 /-! ## Section H: weak R1 — at least one step-0 event when events exist -/
 
-/-- **Weak R1 (proved).** If `tracedSingleWayEvolve sys seed d` has any
+/-- **Weak R1 (proved).** If `tracedFireAllEvolve sys seed d` has any
 event at all, it has at least one step-0 event. -/
 theorem step_zero_events_exist (sys : ExecSystem) (seed : ExecHG ℕ) (d : ℕ) :
-    ∀ i : ℕ, i < (tracedSingleWayEvolve sys seed d).2.length →
-      0 < ((tracedSingleWayEvolve sys seed d).2.filter (·.step = 0)).length := by
+    ∀ i : ℕ, i < (tracedFireAllEvolve sys seed d).2.length →
+      0 < ((tracedFireAllEvolve sys seed d).2.filter (·.step = 0)).length := by
   intro i hi
   -- Case-split on whether the first batch is empty.
-  by_cases h0 : (tracedSingleWayStep sys seed 0).2 = []
+  by_cases h0 : (tracedFireAllStep sys seed 0).2 = []
   · -- Empty first batch ⇒ entire evolution is empty ⇒ hypothesis is false.
     exfalso
-    have : tracedSingleWayEvolve sys seed d = (seed, []) :=
-      tracedSingleWayEvolve_empty_of_no_first_batch sys seed h0 d
+    have : tracedFireAllEvolve sys seed d = (seed, []) :=
+      tracedFireAllEvolve_empty_of_no_first_batch sys seed h0 d
     rw [this] at hi
     simp at hi
   · -- Non-empty first batch: for `d ≥ 1`, the events contain the first
@@ -371,25 +371,25 @@ theorem step_zero_events_exist (sys : ExecSystem) (seed : ExecHG ℕ) (d : ℕ) 
     cases d with
     | zero =>
       exfalso
-      simp [tracedSingleWayEvolve] at hi
+      simp [tracedFireAllEvolve] at hi
     | succ d' =>
       obtain ⟨rest, hrest⟩ :=
-        tracedSingleWayEvolve_first_batch_prefix sys seed d'
+        tracedFireAllEvolve_first_batch_prefix sys seed d'
       rw [hrest]
       -- filter on step=0 of (first_batch ++ rest) has at least
       -- first_batch.filter (·.step = 0) = first_batch elements.
       rw [List.filter_append]
       rw [List.length_append]
       -- first_batch.filter (·.step = 0) = first_batch (every event has step = 0).
-      have hfb : (tracedSingleWayStep sys seed 0).2.filter (·.step = 0) =
-                 (tracedSingleWayStep sys seed 0).2 := by
+      have hfb : (tracedFireAllStep sys seed 0).2.filter (·.step = 0) =
+                 (tracedFireAllStep sys seed 0).2 := by
         apply List.filter_eq_self.mpr
         intro e he
-        have : e.step = 0 := tracedSingleWayStep_events_step sys seed 0 e he
+        have : e.step = 0 := tracedFireAllStep_events_step sys seed 0 e he
         simp [this]
       rw [hfb]
-      -- (tracedSingleWayStep sys seed 0).2.length > 0 since h0 says it's non-empty.
-      have hpos : 0 < (tracedSingleWayStep sys seed 0).2.length := by
+      -- (tracedFireAllStep sys seed 0).2.length > 0 since h0 says it's non-empty.
+      have hpos : 0 < (tracedFireAllStep sys seed 0).2.length := by
         rw [List.length_pos_iff_ne_nil]
         exact h0
       omega
@@ -455,11 +455,11 @@ theorem stepZeroAncestor_step_zero
 /-! ## Section K: ancestor totality and uniqueness Props -/
 
 /-- **Meaningful R1 obligation (totality):** the ancestor function is
-total on `tracedSingleWayEvolve` outputs. This requires the partition
+total on `tracedFireAllEvolve` outputs. This requires the partition
 closure of #499/#501 to fully discharge. -/
 def AncestorTotal (sys : ExecSystem) (seed : ExecHG ℕ) : Prop :=
   ∀ d : Nat,
-    let events := (tracedSingleWayEvolve sys seed d).2
+    let events := (tracedFireAllEvolve sys seed d).2
     let edges := deriveCausalEdges events
     ∀ i : ℕ, i < events.length → ∃ a, stepZeroAncestor events edges i = some a
 
@@ -468,7 +468,7 @@ present) is unique. Holds trivially because `stepZeroAncestor` returns
 an `Option Nat` (single value); kept as a Prop for documentation. -/
 def AncestorUnique (sys : ExecSystem) (seed : ExecHG ℕ) : Prop :=
   ∀ d : Nat,
-    let events := (tracedSingleWayEvolve sys seed d).2
+    let events := (tracedFireAllEvolve sys seed d).2
     let edges := deriveCausalEdges events
     ∀ i a₁ a₂, stepZeroAncestor events edges i = some a₁ →
                 stepZeroAncestor events edges i = some a₂ → a₁ = a₂
@@ -490,7 +490,7 @@ the trailing `∧ True` is, well, true). -/
 provable content of `EdgeCausallyDisjoint`'s first conjunct. -/
 theorem weak_R1_holds (sys : ExecSystem) (seed : ExecHG ℕ) :
     ∀ d : Nat,
-      let events := (tracedSingleWayEvolve sys seed d).2
+      let events := (tracedFireAllEvolve sys seed d).2
       (∀ i : Nat, i < events.length →
         0 < (events.filter (·.step = 0)).length) := by
   intro d

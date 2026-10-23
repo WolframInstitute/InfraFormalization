@@ -67,22 +67,22 @@ open UniversalAdditivity
 /-- For `doubleCycle_5` at depth 4, the per-edge density is exactly
 `-6` for every seed topology probed in #454. -/
 theorem density_doubleCycle_5_edge12 :
-    knillEulerScaled (causalDAGOfEvolution doubleCycleSys_5 seedEdge12 4) /
+    knillEulerScaled (causalDAGOfFireAll doubleCycleSys_5 seedEdge12 4) /
       (Int.ofNat seedEdge12.length) = -6 := by
   native_decide
 
 theorem density_doubleCycle_5_path :
-    knillEulerScaled (causalDAGOfEvolution doubleCycleSys_5 seedPath123 4) /
+    knillEulerScaled (causalDAGOfFireAll doubleCycleSys_5 seedPath123 4) /
       (Int.ofNat seedPath123.length) = -6 := by
   native_decide
 
 theorem density_doubleCycle_5_triangle :
-    knillEulerScaled (causalDAGOfEvolution doubleCycleSys_5 seedTriangle 4) /
+    knillEulerScaled (causalDAGOfFireAll doubleCycleSys_5 seedTriangle 4) /
       (Int.ofNat seedTriangle.length) = -6 := by
   native_decide
 
 theorem density_doubleCycle_5_bbh :
-    knillEulerScaled (causalDAGOfEvolution doubleCycleSys_5 bbhInitial 4) /
+    knillEulerScaled (causalDAGOfFireAll doubleCycleSys_5 bbhInitial 4) /
       (Int.ofNat bbhInitial.length) = -6 := by
   native_decide
 
@@ -97,13 +97,13 @@ This is the per-edge curvature density value for the merger
 rule. It captures the "elementary merger rate" in discrete-physics
 units. -/
 theorem density_doubleCycle_5_universal :
-    knillEulerScaled (causalDAGOfEvolution doubleCycleSys_5 seedEdge12 4) /
+    knillEulerScaled (causalDAGOfFireAll doubleCycleSys_5 seedEdge12 4) /
       (Int.ofNat seedEdge12.length) = -6 ∧
-    knillEulerScaled (causalDAGOfEvolution doubleCycleSys_5 seedPath123 4) /
+    knillEulerScaled (causalDAGOfFireAll doubleCycleSys_5 seedPath123 4) /
       (Int.ofNat seedPath123.length) = -6 ∧
-    knillEulerScaled (causalDAGOfEvolution doubleCycleSys_5 seedTriangle 4) /
+    knillEulerScaled (causalDAGOfFireAll doubleCycleSys_5 seedTriangle 4) /
       (Int.ofNat seedTriangle.length) = -6 ∧
-    knillEulerScaled (causalDAGOfEvolution doubleCycleSys_5 bbhInitial 4) /
+    knillEulerScaled (causalDAGOfFireAll doubleCycleSys_5 bbhInitial 4) /
       (Int.ofNat bbhInitial.length) = -6 :=
   ⟨density_doubleCycle_5_edge12,
    density_doubleCycle_5_path,
@@ -113,12 +113,12 @@ theorem density_doubleCycle_5_universal :
 /-! ## Bidirected density: 126 per edge -/
 
 theorem density_bidirected_edge12 :
-    knillEulerScaled (causalDAGOfEvolution bidirectedEdgeSys seedEdge12 4) /
+    knillEulerScaled (causalDAGOfFireAll bidirectedEdgeSys seedEdge12 4) /
       (Int.ofNat seedEdge12.length) = 126 := by
   native_decide
 
 theorem density_bidirected_triangle :
-    knillEulerScaled (causalDAGOfEvolution bidirectedEdgeSys seedTriangle 4) /
+    knillEulerScaled (causalDAGOfFireAll bidirectedEdgeSys seedTriangle 4) /
       (Int.ofNat seedTriangle.length) = 126 := by
   native_decide
 
@@ -128,9 +128,9 @@ verified at depth 4 for seeds ∈ {edge12, triangle}.
 Note: theorem name says 'universal'; statement is a finite
 conjunction over 2 seed topologies at depth 4. -/
 theorem density_bidirected_universal :
-    knillEulerScaled (causalDAGOfEvolution bidirectedEdgeSys seedEdge12 4) /
+    knillEulerScaled (causalDAGOfFireAll bidirectedEdgeSys seedEdge12 4) /
       (Int.ofNat seedEdge12.length) = 126 ∧
-    knillEulerScaled (causalDAGOfEvolution bidirectedEdgeSys seedTriangle 4) /
+    knillEulerScaled (causalDAGOfFireAll bidirectedEdgeSys seedTriangle 4) /
       (Int.ofNat seedTriangle.length) = 126 :=
   ⟨density_bidirected_edge12, density_bidirected_triangle⟩
 
@@ -142,9 +142,9 @@ well-defined per-edge curvature density across any seed family
 
 This Prop captures the discrete continuum-density limit. -/
 def CurvatureDensityWellDefined (sys : ExecSystem) (d : Nat) (c : Int) : Prop :=
-  knillEulerScaled (causalDAGOfEvolution sys seedEdge12 d) = c ∧
+  knillEulerScaled (causalDAGOfFireAll sys seedEdge12 d) = c ∧
   ∀ seed : ExecHG ℕ, seed.length ≠ 0 →
-    knillEulerScaled (causalDAGOfEvolution sys seed d) =
+    knillEulerScaled (causalDAGOfFireAll sys seed d) =
       (Int.ofNat seed.length) * c
 
 /-! ## What this delivers

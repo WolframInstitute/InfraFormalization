@@ -36,7 +36,7 @@ depth-(d+1) edges (a reverse, two fresh-coupled).
 **Conditional H9 closure**:
 
   `H9_conditional_on_bridge`: assuming the bridge, derives
-  `distinctEdgeCount (singleWayEvolve sys edge12 d) = 3^d` for both
+  `distinctEdgeCount (fireAllEvolve sys edge12 d) = 3^d` for both
   persistent-class members.
 
 This formalization makes the **status of H9 explicit**: combinatorial
@@ -64,7 +64,7 @@ three children: the reverse, and two fresh-coupled extensions
 (`freshA`, `freshB`).
 
 For our persistent-equivalence-class systems, the distinct edges at
-depth `d` of `singleWayEvolve sys edge12 d` are in bijection with
+depth `d` of `fireAllEvolve sys edge12 d` are in bijection with
 `TriadEdge d`. -/
 inductive TriadEdge : Nat → Type
   | base : TriadEdge 0
@@ -122,16 +122,16 @@ distinct-edge count at depth d equals `(triadList d).length` for both
 persistent-equivalence members.
 
 This is the bridge lemma. Proving it requires understanding
-`singleWayStep` semantics in detail — `allMatches` deduplicates,
+`fireAllStep` semantics in detail — `allMatches` deduplicates,
 fresh-vertex offsets, removeEdges multiset-counting — and showing
 the engine's distinct-edge dynamics exactly mirror the triadic model.
 
 Estimated effort: 200–500 lines of Lean, multi-session. -/
 def engineMatchesTriad : Prop :=
   ∀ d : Nat,
-    distinctEdgeCount (singleWayEvolve edgeReversal_tripleMerger_Sys seedEdge12 d) =
+    distinctEdgeCount (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 d) =
       (triadList d).length ∧
-    distinctEdgeCount (singleWayEvolve fork_doubleCycle_Sys seedEdge12 d) =
+    distinctEdgeCount (fireAllEvolve fork_doubleCycle_Sys seedEdge12 d) =
       (triadList d).length
 
 /-! ## Section F: Conditional H9 closure -/
@@ -145,8 +145,8 @@ combinatorial half (`H9_combinatorial_closed`, proved unconditionally),
 the only remaining piece is proving `engineMatchesTriad`. -/
 theorem H9_conditional_on_bridge (h : engineMatchesTriad) :
     ∀ d : Nat,
-      distinctEdgeCount (singleWayEvolve edgeReversal_tripleMerger_Sys seedEdge12 d) = 3^d ∧
-      distinctEdgeCount (singleWayEvolve fork_doubleCycle_Sys seedEdge12 d) = 3^d := by
+      distinctEdgeCount (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 d) = 3^d ∧
+      distinctEdgeCount (fireAllEvolve fork_doubleCycle_Sys seedEdge12 d) = 3^d := by
   intro d
   obtain ⟨h1, h2⟩ := h d
   rw [h1, h2, triadList_length]
@@ -160,65 +160,65 @@ witnesses to the bridge's empirical correctness. -/
 
 /-- The bridge holds at depth 0. -/
 theorem bridge_at_0 :
-    distinctEdgeCount (singleWayEvolve edgeReversal_tripleMerger_Sys seedEdge12 0) =
+    distinctEdgeCount (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 0) =
       (triadList 0).length ∧
-    distinctEdgeCount (singleWayEvolve fork_doubleCycle_Sys seedEdge12 0) =
+    distinctEdgeCount (fireAllEvolve fork_doubleCycle_Sys seedEdge12 0) =
       (triadList 0).length := by
   refine ⟨?_, ?_⟩ <;> (rw [triadList_length]; native_decide)
 
 /-- The bridge holds at depth 1. -/
 theorem bridge_at_1 :
-    distinctEdgeCount (singleWayEvolve edgeReversal_tripleMerger_Sys seedEdge12 1) =
+    distinctEdgeCount (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 1) =
       (triadList 1).length ∧
-    distinctEdgeCount (singleWayEvolve fork_doubleCycle_Sys seedEdge12 1) =
+    distinctEdgeCount (fireAllEvolve fork_doubleCycle_Sys seedEdge12 1) =
       (triadList 1).length := by
   refine ⟨?_, ?_⟩ <;> (rw [triadList_length]; native_decide)
 
 /-- The bridge holds at depth 2. -/
 theorem bridge_at_2 :
-    distinctEdgeCount (singleWayEvolve edgeReversal_tripleMerger_Sys seedEdge12 2) =
+    distinctEdgeCount (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 2) =
       (triadList 2).length ∧
-    distinctEdgeCount (singleWayEvolve fork_doubleCycle_Sys seedEdge12 2) =
+    distinctEdgeCount (fireAllEvolve fork_doubleCycle_Sys seedEdge12 2) =
       (triadList 2).length := by
   refine ⟨?_, ?_⟩ <;> (rw [triadList_length]; native_decide)
 
 /-- The bridge holds at depth 3. -/
 theorem bridge_at_3 :
-    distinctEdgeCount (singleWayEvolve edgeReversal_tripleMerger_Sys seedEdge12 3) =
+    distinctEdgeCount (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 3) =
       (triadList 3).length ∧
-    distinctEdgeCount (singleWayEvolve fork_doubleCycle_Sys seedEdge12 3) =
+    distinctEdgeCount (fireAllEvolve fork_doubleCycle_Sys seedEdge12 3) =
       (triadList 3).length := by
   refine ⟨?_, ?_⟩ <;> (rw [triadList_length]; native_decide)
 
 /-- The bridge holds at depth 4. -/
 theorem bridge_at_4 :
-    distinctEdgeCount (singleWayEvolve edgeReversal_tripleMerger_Sys seedEdge12 4) =
+    distinctEdgeCount (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 4) =
       (triadList 4).length ∧
-    distinctEdgeCount (singleWayEvolve fork_doubleCycle_Sys seedEdge12 4) =
+    distinctEdgeCount (fireAllEvolve fork_doubleCycle_Sys seedEdge12 4) =
       (triadList 4).length := by
   refine ⟨?_, ?_⟩ <;> (rw [triadList_length]; native_decide)
 
 /-- The bridge holds at depth 5. -/
 theorem bridge_at_5 :
-    distinctEdgeCount (singleWayEvolve edgeReversal_tripleMerger_Sys seedEdge12 5) =
+    distinctEdgeCount (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 5) =
       (triadList 5).length ∧
-    distinctEdgeCount (singleWayEvolve fork_doubleCycle_Sys seedEdge12 5) =
+    distinctEdgeCount (fireAllEvolve fork_doubleCycle_Sys seedEdge12 5) =
       (triadList 5).length := by
   refine ⟨?_, ?_⟩ <;> (rw [triadList_length]; native_decide)
 
 /-- The bridge holds at depth 6. -/
 theorem bridge_at_6 :
-    distinctEdgeCount (singleWayEvolve edgeReversal_tripleMerger_Sys seedEdge12 6) =
+    distinctEdgeCount (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 6) =
       (triadList 6).length ∧
-    distinctEdgeCount (singleWayEvolve fork_doubleCycle_Sys seedEdge12 6) =
+    distinctEdgeCount (fireAllEvolve fork_doubleCycle_Sys seedEdge12 6) =
       (triadList 6).length := by
   refine ⟨?_, ?_⟩ <;> (rw [triadList_length]; native_decide)
 
 /-- The bridge holds at depth 7. -/
 theorem bridge_at_7 :
-    distinctEdgeCount (singleWayEvolve edgeReversal_tripleMerger_Sys seedEdge12 7) =
+    distinctEdgeCount (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 7) =
       (triadList 7).length ∧
-    distinctEdgeCount (singleWayEvolve fork_doubleCycle_Sys seedEdge12 7) =
+    distinctEdgeCount (fireAllEvolve fork_doubleCycle_Sys seedEdge12 7) =
       (triadList 7).length := by
   refine ⟨?_, ?_⟩ <;> (rw [triadList_length]; native_decide)
 

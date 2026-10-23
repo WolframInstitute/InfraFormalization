@@ -1,35 +1,14 @@
 /-
-**B4-causal-trace: per-instance causal event tracking from rule
-evolution** (#434, closing #228).
+Events of a traced single-way evolution and the causal edges derived
+from them.
 
-The earlier `CausalDAGKnill` module (#432) applied Knill to
-hand-encoded causal-DAG topologies. This module closes the loop by
-**deriving causal DAGs directly from rule evolution**: each rule
-application becomes a `CausalEvent` carrying its consumed and
-produced edges, and a causal edge `A → B` is inferred whenever
-event `A` produces an edge that event `B` later consumes.
-
-**What this delivers**:
-
-  * `CausalEvent` structure: (step, matchIndex, ruleIndex, consumed,
-    produced).
-  * `tracedSingleWayStep`: like `singleWayStep` but emits the event
-    list alongside the new state.
-  * `tracedSingleWayEvolve`: runs `n` steps, returns the full event
-    list.
-  * `deriveCausalEdges`: derives causal precedence as edges
-    `(eventIdx_i, eventIdx_j)` when any of event_i's produced edges
-    occurs in event_j's consumed multiset.
-  * `causalDAGOfEvolution`: full pipeline trajectory → causal DAG
-    (as `ExecHG ℕ`, ready for Knill).
-  * Knill-certified examples on subdivision-rule evolutions.
-
-**Why this matters**: this is the **first execution-level extraction
-of causal-edge tracking** from rule output in the codebase, closing
-the long-standing #228 task. Combined with the Knill causal-DAG
-analysis (#432), this enables **end-to-end "rule → causal DAG →
-topological invariant"** pipelines — the substrate the BBH endgame
-(#225, H6-H9) needs for discrete-Ψ₄ extraction.
+`tracedSingleWayStep` returns the state of `singleWayStep` and one
+`CausalEvent` per fired match. `deriveCausalEdges` adds an edge `i → j`
+for `i < j` when an edge value produced by event `i` occurs among the
+edge values consumed by event `j`. The comparison is on edge values, so
+when a state holds equal hyperedges produced by different events the
+derived edges include pairs that are not causal edges of the evolution.
+`CausalHistory.lean` defines the causal graph on hyperedge identities.
 -/
 
 import InfraFormalization.CausalDAGKnill
@@ -57,14 +36,34 @@ structure CausalEvent where
 
 /-! ## Traced single-way step
 
-Mirror `singleWayStep` (lines 222-240 of MultiwayExec.lean) but emit
-per-match events alongside. Same algorithm: enumerate matches per
-rule, apply with fresh-vertex offset, record consumed and produced. -/
+`tracedSingleWayStep` returns the state of `singleWayStep` together with
+one `CausalEvent` per fired match of `stepFold`. -/
 
-/-- Traced version of `singleWayStep`. Returns `(new state, events
-for this step)`. Mirrors `singleWayStep` but emits one
-`CausalEvent` per match. -/
+/-- The state of `singleWayStep sys H` and the events of the step. -/
 def tracedSingleWayStep (sys : ExecSystem) (H : ExecHG ℕ) (step : Nat) :
+    ExecHG ℕ × List CausalEvent :=
+  let acc := stepFold sys H
+  (acc.avail ++ acc.produced,
+   acc.fired.zipIdx.map (fun (f, k) =>
+     { step := step, matchIdx := k, ruleIdx := f.1,
+       consumed := f.2.1, produced := f.2.2 }))
+
+/-- The first component of `tracedSingleWayStep` is `singleWayStep`. -/
+theorem tracedSingleWayStep_fst (sys : ExecSystem) (H : ExecHG ℕ) (step : Nat) :
+    (tracedSingleWayStep sys H step).1 = singleWayStep sys H := rfl
+
+/-- Traced version of `singleWayEvolve`. Returns `(final state, all
+events collected across n steps)`. -/
+def tracedSingleWayEvolve (sys : ExecSystem) (H : ExecHG ℕ) :
+    Nat → ExecHG ℕ × List CausalEvent
+  | 0 => (H, [])
+  | n + 1 =>
+    let (state_n, events_n) := tracedSingleWayEvolve sys H n
+    let (state_n1, events_n1) := tracedSingleWayStep sys state_n n
+    (state_n1, events_n ++ events_n1)
+
+/-- The state of `fireAllStep sys H` and one event per match. -/
+def tracedFireAllStep (sys : ExecSystem) (H : ExecHG ℕ) (step : Nat) :
     ExecHG ℕ × List CausalEvent :=
   let baseFresh := nextFresh H
   let final := sys.rules.foldl
@@ -94,14 +93,13 @@ def tracedSingleWayStep (sys : ExecSystem) (H : ExecHG ℕ) (step : Nat) :
     (H, 0, 0, [])
   (final.1, final.2.2.2)
 
-/-- Traced version of `singleWayEvolve`. Returns `(final state, all
-events collected across n steps)`. -/
-def tracedSingleWayEvolve (sys : ExecSystem) (H : ExecHG ℕ) :
+/-- Iterated `tracedFireAllStep`. -/
+def tracedFireAllEvolve (sys : ExecSystem) (H : ExecHG ℕ) :
     Nat → ExecHG ℕ × List CausalEvent
   | 0 => (H, [])
   | n + 1 =>
-    let (state_n, events_n) := tracedSingleWayEvolve sys H n
-    let (state_n1, events_n1) := tracedSingleWayStep sys state_n n
+    let (state_n, events_n) := tracedFireAllEvolve sys H n
+    let (state_n1, events_n1) := tracedFireAllStep sys state_n n
     (state_n1, events_n ++ events_n1)
 
 /-! ## Causal edge derivation
@@ -125,16 +123,28 @@ def deriveCausalEdges (events : List CausalEvent) : List (Nat × Nat) :=
         acc' ++ [(i, j)]
       else acc') []) []
 
-/-- Convert the causal-edge list to an `ExecHG ℕ` representation
-suitable for Knill computation. -/
-def causalDAGOfEvolution (sys : ExecSystem) (H : ExecHG ℕ) (n : Nat) :
-    ExecHG ℕ :=
-  let (_, events) := tracedSingleWayEvolve sys H n
-  let edges := deriveCausalEdges events
+/-- A list of index pairs as two-vertex hyperedges, dropping loops. -/
+def pairsToExecHG (edges : List (Nat × Nat)) : ExecHG ℕ :=
   edges.filterMap (fun (i, j) =>
     if h : (¬ (i = j)) then
       some ⟨[i, j], List.cons_ne_nil _ _⟩
     else none)
+
+/-- The causal edges of an event list as two-vertex hyperedges. -/
+def causalDAGOfEvents (events : List CausalEvent) : ExecHG ℕ :=
+  pairsToExecHG (deriveCausalEdges events)
+
+/-- Causal edges of `n` traced single-way steps. -/
+def causalDAGOfEvolution (sys : ExecSystem) (H : ExecHG ℕ) (n : Nat) :
+    ExecHG ℕ :=
+  let (_, events) := tracedSingleWayEvolve sys H n
+  causalDAGOfEvents events
+
+/-- Causal edges of `n` traced fire-all steps. -/
+def causalDAGOfFireAll (sys : ExecSystem) (H : ExecHG ℕ) (n : Nat) :
+    ExecHG ℕ :=
+  let (_, events) := tracedFireAllEvolve sys H n
+  causalDAGOfEvents events
 
 /-! ## Subdivision-rule causal DAG examples
 
@@ -187,33 +197,6 @@ theorem causal_pipeline_subdivision_depth2 :
     knillEulerScaled
       (causalDAGOfEvolution subdivisionSys [consEdge 1 2] 2) = 6 := by
   native_decide
-
-/-! ## What this delivers
-
-**First execution-level causal-edge extraction** (closing #228):
-
-  * `CausalEvent` structure: per-match event data.
-  * `tracedSingleWayStep` / `tracedSingleWayEvolve`: emit events
-    alongside state evolution.
-  * `deriveCausalEdges`: edge-dependency-based causal precedence.
-  * `causalDAGOfEvolution`: full pipeline `trajectory → causal DAG`.
-  * Knill-certified on subdivision-rule trajectories at depths 1, 2.
-  * End-to-end pipeline theorem
-    `causal_pipeline_subdivision_depth2`: rule + seed → causal DAG
-    → Knill = 6 = `6·χ(tree)`.
-
-**Why this matters**: combined with #432 (Knill on causal-DAG
-topologies) and #431 (rule-catalog universal topology preservation),
-the codebase now has a **complete loop** from rule definitions to
-topological invariants of their causal evolution. This is the
-infrastructure the BBH endgame (#225, H6-H9) needs: given a rule,
-compute its causal DAG, apply Knill, and read off discrete topology
-observables (Euler characteristic, hole-count, merger-event count).
-
-The subdivision rule's depth-2 causal DAG is a 1-fork (3 events,
-2 causal edges, tree topology). More complex rules will produce
-more intricate causal DAGs — the framework handles them uniformly.
--/
 
 end CausalEventTrace
 end InfraFormalization

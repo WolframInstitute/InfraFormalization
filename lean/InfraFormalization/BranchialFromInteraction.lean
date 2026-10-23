@@ -78,15 +78,15 @@ open DiscoveredRulesExpanded
 /-! ## Single-rule systems all have branchial K = 0 -/
 
 theorem fork_branchial_0 :
-    knillEulerScaled (branchialDAGOfEvolution forkSys_2 seedEdge12 3) = 0 := by
+    knillEulerScaled (branchialDAGOfFireAll forkSys_2 seedEdge12 3) = 0 := by
   native_decide
 
 theorem doubleCycle_5_branchial_0 :
-    knillEulerScaled (branchialDAGOfEvolution doubleCycleSys_5 seedEdge12 3) = 0 := by
+    knillEulerScaled (branchialDAGOfFireAll doubleCycleSys_5 seedEdge12 3) = 0 := by
   native_decide
 
 theorem tripleMerger_branchial_0 :
-    knillEulerScaled (branchialDAGOfEvolution tripleMergerSys seedEdge12 3) = 0 := by
+    knillEulerScaled (branchialDAGOfFireAll tripleMergerSys seedEdge12 3) = 0 := by
   native_decide
 
 /-! ## The universal single-rule branchial-zero theorem -/
@@ -98,11 +98,11 @@ systems have zero branchial Knill at depth 3. Strengthens
 Note: name says "all"; statement is a 5-conjunct over named
 single-rule systems at d=3. -/
 theorem all_single_rules_branchial_zero :
-    knillEulerScaled (branchialDAGOfEvolution edgeReversalSys seedEdge12 3) = 0 ∧
-    knillEulerScaled (branchialDAGOfEvolution identityKeepSys seedEdge12 3) = 0 ∧
-    knillEulerScaled (branchialDAGOfEvolution forkSys_2 seedEdge12 3) = 0 ∧
-    knillEulerScaled (branchialDAGOfEvolution doubleCycleSys_5 seedEdge12 3) = 0 ∧
-    knillEulerScaled (branchialDAGOfEvolution tripleMergerSys seedEdge12 3) = 0 := by
+    knillEulerScaled (branchialDAGOfFireAll edgeReversalSys seedEdge12 3) = 0 ∧
+    knillEulerScaled (branchialDAGOfFireAll identityKeepSys seedEdge12 3) = 0 ∧
+    knillEulerScaled (branchialDAGOfFireAll forkSys_2 seedEdge12 3) = 0 ∧
+    knillEulerScaled (branchialDAGOfFireAll doubleCycleSys_5 seedEdge12 3) = 0 ∧
+    knillEulerScaled (branchialDAGOfFireAll tripleMergerSys seedEdge12 3) = 0 := by
   refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
 
 /-! ## What this delivers

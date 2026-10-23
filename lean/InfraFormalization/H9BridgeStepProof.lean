@@ -25,7 +25,7 @@ For the persistent-class systems on a state `H` with `Psi H` and
      After dedup, this gives exactly 3 new distinct edges per binding:
      `{[b, a], [a, f], [b, f]}`.
 
-  3. The fresh-vertex offsets in `singleWayStep` ensure each binding's
+  3. The fresh-vertex offsets in `fireAllStep` ensure each binding's
      `f` is unique. Under `Psi`'s `NoSelfLoops + NoSymmetricPairs`,
      no `[b, a]` collides with any `[a, b']` for different bindings.
 
@@ -34,7 +34,7 @@ For the persistent-class systems on a state `H` with `Psi H` and
      distinct edge: eR removes 1 instance, tripleMerger removes 1
      more. Old multiplicity ≤ 2 → fully consumed.
 
-  5. Combined: distinct edges of `singleWayStep H` = 3n NEW edges
+  5. Combined: distinct edges of `fireAllStep H` = 3n NEW edges
      (the old n are gone, the 3n new are all globally distinct).
 
 Each step (1)-(5) is a real lemma; the proof of (1) is what this
@@ -43,8 +43,8 @@ module begins.
 **What's actually proved here** (real symbolic content, no decide
 laundering):
 
-  * `singleWayStep_empty_sys`: the empty rule system is identity.
-  * `singleWayStep_empty_sys_corollary` for `distinctEdgeCount`.
+  * `fireAllStep_empty_sys`: the empty rule system is identity.
+  * `fireAllStep_empty_sys_corollary` for `distinctEdgeCount`.
 
   * `bindingMatches_singleEdge_iff`: characterization of when a
     binding matches a single-edge LHS — pure unfolding of
@@ -70,23 +70,23 @@ open H9Bridge
 
 /-! ## Section A: empty-rule-system identity -/
 
-/-- For the empty rule system, `singleWayStep` is the identity.
+/-- For the empty rule system, `fireAllStep` is the identity.
 The outer foldl over `[]` returns its initial accumulator. -/
-theorem singleWayStep_empty_sys (H : ExecHG ℕ) :
-    singleWayStep ⟨[]⟩ H = H := by
-  unfold singleWayStep
+theorem fireAllStep_empty_sys (H : ExecHG ℕ) :
+    fireAllStep ⟨[]⟩ H = H := by
+  unfold fireAllStep
   simp [List.foldl]
 
 /-- Corollary: distinctEdgeCount preserved under empty-system step. -/
 theorem distinctEdgeCount_singleWayStep_empty (H : ExecHG ℕ) :
-    distinctEdgeCount (singleWayStep ⟨[]⟩ H) = distinctEdgeCount H := by
-  rw [singleWayStep_empty_sys]
+    distinctEdgeCount (fireAllStep ⟨[]⟩ H) = distinctEdgeCount H := by
+  rw [fireAllStep_empty_sys]
 
 /-! ## What this module delivers — toward `BridgeStepLemma`
 
 **Proved symbolically** (real engine-semantics theorems):
 
-  * `singleWayStep_empty_sys`: empty rule system = identity step.
+  * `fireAllStep_empty_sys`: empty rule system = identity step.
   * `bindingMatches_singleEdge`: binding match for single-edge LHS
     reduces to edge membership in H. Pure structural unfolding.
 

@@ -67,11 +67,11 @@ open BranchialUniversalAdditivity
 /-! ## BBH branchial K at multiple depths -/
 
 theorem bbh_branchial_eR_id_2 :
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_identity_Sys bbhInitial 2) = 126 := by
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_identity_Sys bbhInitial 2) = 126 := by
   native_decide
 
 theorem bbh_branchial_eR_id_4 :
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_identity_Sys bbhInitial 4) = 294 := by
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_identity_Sys bbhInitial 4) = 294 := by
   native_decide
 
 /-! ## Multi-depth branchial additivity on BBH -/
@@ -81,13 +81,13 @@ additivity holds on BBH at depths 2, 3, AND 4. The 7× per-seed-edge
 scaling is preserved across the full probed depth range. -/
 theorem bbh_branchial_multi_depth_additivity :
     -- Depth 2: BBH = 7 × edge12 baseline (18)
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_identity_Sys bbhInitial 2) =
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_identity_Sys bbhInitial 2) =
       7 * discreteBranchialDensity edgeReversal_identity_Sys 2 ∧
     -- Depth 3: BBH = 7 × edge12 baseline (30)
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_identity_Sys bbhInitial 3) =
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_identity_Sys bbhInitial 3) =
       7 * discreteBranchialDensity edgeReversal_identity_Sys 3 ∧
     -- Depth 4: BBH = 7 × edge12 baseline (42)
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_identity_Sys bbhInitial 4) =
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_identity_Sys bbhInitial 4) =
       7 * discreteBranchialDensity edgeReversal_identity_Sys 4 := by
   refine ⟨?_, ?_, ?_⟩ <;> native_decide
 

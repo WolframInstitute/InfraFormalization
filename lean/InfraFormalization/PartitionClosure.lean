@@ -1,5 +1,5 @@
 /-
-**Partition closure for `singleWayStep` on single-edge-LHS rules**
+**Partition closure for `fireAllStep` on single-edge-LHS rules**
 (#499 / #495b).
 
 This module supplies the **rule-class predicate** and the **partition-
@@ -8,7 +8,7 @@ and `StepZeroAncestor` (#500), discharge the second conjunct (R2) of
 `EdgeCausallyDisjoint` for single-edge-LHS rules.
 
 **Mathematical content.** Let `seed` have distinct edges
-`[e_0, …, e_{k-1}]`. After applying `tracedSingleWayStep ⟨[r]⟩ seed 0`,
+`[e_0, …, e_{k-1}]`. After applying `tracedFireAllStep ⟨[r]⟩ seed 0`,
 the events are `event_0, …, event_{k-1}` with `event_m.matchIdx = m`.
 Each `event_m`:
 
@@ -36,7 +36,7 @@ rule instances use `Decidable`-style reasoning at the level of
     a bound index (< `r.numBound`).
 
   * `bindingExtend r ρ f` — the fresh-aware extension of a binding,
-    matching the inline lambda in `tracedSingleWayStep`.
+    matching the inline lambda in `tracedFireAllStep`.
 
   * `PartitionPreserving r` — single-edge-LHS rule-class predicate:
     two distinct bindings cannot produce the same seed-only edge.
@@ -56,7 +56,7 @@ rule instances use `Decidable`-style reasoning at the level of
 
 The full induction `PartitionPreserving → PartitionClosureUnderStep`
 across depth is the next multi-session sub-task (it requires
-threading the partition tag through `tracedSingleWayEvolve` and
+threading the partition tag through `tracedFireAllEvolve` and
 checking each new event's consumed edge against the prior tag). This
 module discharges the **rule-class half** and states the closure
 obligation cleanly.
@@ -88,7 +88,7 @@ def IsSeedOnlyRhsEdge (r : ExecRule)
   ∀ v ∈ e.verts, v.val < r.numBound
 
 /-- Fresh-aware extension of a binding `ρ`, identical to the inline
-lambda in `tracedSingleWayStep` (`CausalEventTrace.lean:78-80`). The
+lambda in `tracedFireAllStep` (`CausalEventTrace.lean:78-80`). The
 fresh vertex slot `i ≥ numBound` maps to `f + (i.val - numBound)`. -/
 def bindingExtend (r : ExecRule) (ρ : Fin r.numBound → ℕ) (f : ℕ) :
     Fin (r.numBound + r.numFresh) → ℕ := fun i =>
@@ -123,7 +123,7 @@ the **same seed-only edge** under any (independent) fresh offsets.
 Equivalent informal statement: for any `ρ₁ ≠ ρ₂`, the seed-only
 images of the RHS under `ρ₁` and `ρ₂` are pairwise distinct. This is
 the rule-class side condition that — combined with disjoint fresh
-slices (#498) — closes the partition under one `singleWayStep`.
+slices (#498) — closes the partition under one `fireAllStep`.
 
 The hypothesis `r.lhs.length = 1` records the single-edge-LHS
 restriction; the predicate's seed-only-image disjointness is the
@@ -288,11 +288,11 @@ theorem PartitionPreserving_doubleCycleRule_5 :
 
 /-! ## Section F: the partition-closure obligation -/
 
-/-- **Partition-closure obligation under `singleWayStep`.**
+/-- **Partition-closure obligation under `fireAllStep`.**
 
 Given a `PartitionPreserving` rule `r`, the `stepZeroAncestor`
 function (defined in `StepZeroAncestor`) partitions every event of
-`tracedSingleWayEvolve ⟨[r]⟩ seed d` into one of the seed's distinct-
+`tracedFireAllEvolve ⟨[r]⟩ seed d` into one of the seed's distinct-
 edge classes, and **every causal edge** of the derived causal DAG
 stays within a single class.
 
@@ -307,7 +307,7 @@ threading the partition tag through every emitted event's consumed
 edge). -/
 def PartitionClosureUnderStep (r : ExecRule) (_h : PartitionPreserving r)
     (seed : ExecHG ℕ) (d : ℕ) : Prop :=
-  let evolution := tracedSingleWayEvolve ⟨[r]⟩ seed d
+  let evolution := tracedFireAllEvolve ⟨[r]⟩ seed d
   let events := evolution.2
   let edges := deriveCausalEdges events
   ∀ (a b : ℕ), (a, b) ∈ edges →
@@ -320,10 +320,10 @@ theorem partitionClosure_base (r : ExecRule) (h : PartitionPreserving r)
     (seed : ExecHG ℕ) :
     PartitionClosureUnderStep r h seed 0 := by
   intro a b hab
-  -- `tracedSingleWayEvolve ⟨[r]⟩ seed 0 = (seed, [])`, so the events
+  -- `tracedFireAllEvolve ⟨[r]⟩ seed 0 = (seed, [])`, so the events
   -- list is empty, hence `deriveCausalEdges [] = []`.
   -- `(a, b) ∈ []` is `False`.
-  simp [tracedSingleWayEvolve, deriveCausalEdges] at hab
+  simp [tracedFireAllEvolve, deriveCausalEdges] at hab
 
 /-- **Single-step case `d = 1`.** At depth one, all emitted events
 have `step = 0`, and `deriveCausalEdges` requires `i < j` plus a
@@ -343,7 +343,7 @@ def PartitionClosure_step1 (r : ExecRule) (h : PartitionPreserving r)
 
 /-! ## Section G: full theorem statement and proof scope -/
 
-/-- **Partition closure under `singleWayStep` for `PartitionPreserving`
+/-- **Partition closure under `fireAllStep` for `PartitionPreserving`
 rules** (headline Prop obligation).
 
 Given a `PartitionPreserving` rule, the partition-closure property

@@ -7,7 +7,7 @@ conjecture: proving `B(d) = 3^(d+1) − 3` for all `d ≥ 2`.
 The two-step strategy:
 
 1. **Distinct-edge tripling** (this module's core conjecture):
-   `distinctEdgeCount (singleWayStep sys H) = 3 · distinctEdgeCount H`
+   `distinctEdgeCount (fireAllStep sys H) = 3 · distinctEdgeCount H`
    for `sys ∈ {edgeReversal_tripleMerger_Sys, fork_doubleCycle_Sys}`
    on any state H reachable from `edge12` via repeated application.
 
@@ -33,7 +33,7 @@ The two-step strategy:
 That requires:
 
   * A precise structural invariant on reachable states
-  * Proof that the invariant is preserved by `singleWayStep`
+  * Proof that the invariant is preserved by `fireAllStep`
   * Proof that the invariant determines `distinctEdgeCount` exactly
 
 Estimated effort: 200–500 lines of Lean, multiple sessions.
@@ -58,11 +58,11 @@ open DistinctEdgeIdentity
 /-! ## Empirical extension: depth-4 distinct count = 81 -/
 
 theorem distinct_eR_tripleMerger_d4 :
-    distinctEdgeCount (singleWayEvolve edgeReversal_tripleMerger_Sys seedEdge12 4) = 81 := by
+    distinctEdgeCount (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 4) = 81 := by
   native_decide
 
 theorem distinct_fork_dCyc_d4 :
-    distinctEdgeCount (singleWayEvolve fork_doubleCycle_Sys seedEdge12 4) = 81 := by
+    distinctEdgeCount (fireAllEvolve fork_doubleCycle_Sys seedEdge12 4) = 81 := by
   native_decide
 
 /-- **`distinct_identity_5_depths`**: distinct edge count = `3^d`
@@ -74,8 +74,8 @@ Note: theorem name says '5_depths'; statement is the 2-conjunct at
 d=4. Depths 0..3 are in DistinctEdgeIdentity.lean and not re-bundled
 here. -/
 theorem distinct_identity_5_depths :
-    distinctEdgeCount (singleWayEvolve edgeReversal_tripleMerger_Sys seedEdge12 4) = 3^4 ∧
-    distinctEdgeCount (singleWayEvolve fork_doubleCycle_Sys seedEdge12 4) = 3^4 := by
+    distinctEdgeCount (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 4) = 3^4 ∧
+    distinctEdgeCount (fireAllEvolve fork_doubleCycle_Sys seedEdge12 4) = 3^4 := by
   refine ⟨?_, ?_⟩ <;> native_decide
 
 /-! ## Structural invariant (proof strategy, not yet a theorem)
@@ -91,7 +91,7 @@ The invariant that must be proved to close H9:
     sub-trajectory
 
 **Conjecture INV1**: For both persistent-equivalence systems,
-`INV(seedEdge12)` holds initially, and `INV(H) → INV(singleWayStep sys H)`.
+`INV(seedEdge12)` holds initially, and `INV(H) → INV(fireAllStep sys H)`.
 
 **Conjecture INV2**: For any H satisfying INV with k generations
 of fresh vertices, `distinctEdgeCount H = 3^k`.
@@ -112,16 +112,16 @@ def distinct_tripling_conjecture : Prop :=
   ∀ (sys : ExecSystem),
     sys = edgeReversal_tripleMerger_Sys ∨ sys = fork_doubleCycle_Sys →
     ∀ n : Nat,
-      distinctEdgeCount (singleWayEvolve sys seedEdge12 n) = 3^n
+      distinctEdgeCount (fireAllEvolve sys seedEdge12 n) = 3^n
 
 /-- The conjecture is **verified at n = 0..4** (5 depths) by the
 empirical theorems above. -/
 theorem distinct_tripling_holds_through_depth_4 :
-    (distinctEdgeCount (singleWayEvolve edgeReversal_tripleMerger_Sys seedEdge12 0) = 3^0) ∧
-    (distinctEdgeCount (singleWayEvolve edgeReversal_tripleMerger_Sys seedEdge12 1) = 3^1) ∧
-    (distinctEdgeCount (singleWayEvolve edgeReversal_tripleMerger_Sys seedEdge12 2) = 3^2) ∧
-    (distinctEdgeCount (singleWayEvolve edgeReversal_tripleMerger_Sys seedEdge12 3) = 3^3) ∧
-    (distinctEdgeCount (singleWayEvolve edgeReversal_tripleMerger_Sys seedEdge12 4) = 3^4) := by
+    (distinctEdgeCount (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 0) = 3^0) ∧
+    (distinctEdgeCount (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 1) = 3^1) ∧
+    (distinctEdgeCount (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 2) = 3^2) ∧
+    (distinctEdgeCount (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 3) = 3^3) ∧
+    (distinctEdgeCount (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 4) = 3^4) := by
   refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
 
 /-! ## H9 closure outline

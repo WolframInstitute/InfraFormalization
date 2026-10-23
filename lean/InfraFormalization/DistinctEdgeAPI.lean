@@ -182,7 +182,7 @@ proof (`engineMatchesTriad` in `H9Closure.lean`) will compose to
 prove the H9 distinct-edge tripling symbolically.
 
 **Next step toward H9 closure**: with this API, the bridge proof
-becomes a matter of characterizing `singleWayStep`'s edge-set behavior:
+becomes a matter of characterizing `fireAllStep`'s edge-set behavior:
 showing that for our persistent-class systems, the step adds exactly
 3× new distinct edges and consumes exactly the input distinct edges.
 -/

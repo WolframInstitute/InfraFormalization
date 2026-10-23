@@ -87,23 +87,23 @@ def edgeReversal_tripleMerger_Sys : ExecSystem :=
 /-! ## Per-system Knill certifications -/
 
 theorem edgeReversal_identity_knill_neg24 :
-    knillEulerScaled (causalDAGOfEvolution edgeReversal_identity_Sys seedEdge12 3) = -24 := by
+    knillEulerScaled (causalDAGOfFireAll edgeReversal_identity_Sys seedEdge12 3) = -24 := by
   native_decide
 
 theorem edgeReversal_fork_knill_neg42 :
-    knillEulerScaled (causalDAGOfEvolution edgeReversal_fork_Sys seedEdge12 3) = -42 := by
+    knillEulerScaled (causalDAGOfFireAll edgeReversal_fork_Sys seedEdge12 3) = -42 := by
   native_decide
 
 theorem edgeReversal_doubleCycle_knill_neg24 :
-    knillEulerScaled (causalDAGOfEvolution edgeReversal_doubleCycle_Sys seedEdge12 3) = -24 := by
+    knillEulerScaled (causalDAGOfFireAll edgeReversal_doubleCycle_Sys seedEdge12 3) = -24 := by
   native_decide
 
 theorem fork_doubleCycle_knill_zero :
-    knillEulerScaled (causalDAGOfEvolution fork_doubleCycle_Sys seedEdge12 3) = 0 := by
+    knillEulerScaled (causalDAGOfFireAll fork_doubleCycle_Sys seedEdge12 3) = 0 := by
   native_decide
 
 theorem edgeReversal_tripleMerger_knill_neg36 :
-    knillEulerScaled (causalDAGOfEvolution edgeReversal_tripleMerger_Sys seedEdge12 3) = -36 := by
+    knillEulerScaled (causalDAGOfFireAll edgeReversal_tripleMerger_Sys seedEdge12 3) = -36 := by
   native_decide
 
 /-! ## Bundled multi-rule discovery artifact -/
@@ -112,11 +112,11 @@ theorem edgeReversal_tripleMerger_knill_neg36 :
 discovered rules, each producing dramatically richer causal-DAG
 topology than any single rule at depth 3. -/
 theorem multi_rule_discoveries :
-    knillEulerScaled (causalDAGOfEvolution edgeReversal_identity_Sys seedEdge12 3) = -24 ∧
-    knillEulerScaled (causalDAGOfEvolution edgeReversal_fork_Sys seedEdge12 3) = -42 ∧
-    knillEulerScaled (causalDAGOfEvolution edgeReversal_doubleCycle_Sys seedEdge12 3) = -24 ∧
-    knillEulerScaled (causalDAGOfEvolution fork_doubleCycle_Sys seedEdge12 3) = 0 ∧
-    knillEulerScaled (causalDAGOfEvolution edgeReversal_tripleMerger_Sys seedEdge12 3) = -36 :=
+    knillEulerScaled (causalDAGOfFireAll edgeReversal_identity_Sys seedEdge12 3) = -24 ∧
+    knillEulerScaled (causalDAGOfFireAll edgeReversal_fork_Sys seedEdge12 3) = -42 ∧
+    knillEulerScaled (causalDAGOfFireAll edgeReversal_doubleCycle_Sys seedEdge12 3) = -24 ∧
+    knillEulerScaled (causalDAGOfFireAll fork_doubleCycle_Sys seedEdge12 3) = 0 ∧
+    knillEulerScaled (causalDAGOfFireAll edgeReversal_tripleMerger_Sys seedEdge12 3) = -36 :=
   ⟨edgeReversal_identity_knill_neg24,
    edgeReversal_fork_knill_neg42,
    edgeReversal_doubleCycle_knill_neg24,
@@ -138,7 +138,7 @@ qualitative behavior expected during merger coalescence. -/
 multi-rule system with the highest causal-DAG hole count (8 holes)
 at depth 3. -/
 theorem highest_merger_rate_multi_rule :
-    knillEulerScaled (causalDAGOfEvolution edgeReversal_fork_Sys seedEdge12 3) = -42 ∧
+    knillEulerScaled (causalDAGOfFireAll edgeReversal_fork_Sys seedEdge12 3) = -42 ∧
     (1 - (-42 : Int) / 6) = 8 :=
   ⟨edgeReversal_fork_knill_neg42, by decide⟩
 

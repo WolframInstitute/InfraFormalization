@@ -62,45 +62,45 @@ open MultiRuleDiscovered
 
 /-- `edgeReversal + tripleMerger` at depth 2: Knill = 0 (1 hole). -/
 theorem edgeReversal_tripleMerger_depth2 :
-    knillEulerScaled (causalDAGOfEvolution edgeReversal_tripleMerger_Sys seedEdge12 2) = 0 := by
+    knillEulerScaled (causalDAGOfFireAll edgeReversal_tripleMerger_Sys seedEdge12 2) = 0 := by
   native_decide
 
 /-- `edgeReversal + tripleMerger` at depth 4: Knill = -192 (**33 holes**).
 This is the new highest-merger-rate finding in the multi-rule corpus. -/
 theorem edgeReversal_tripleMerger_depth4 :
-    knillEulerScaled (causalDAGOfEvolution edgeReversal_tripleMerger_Sys seedEdge12 4) = -192 := by
+    knillEulerScaled (causalDAGOfFireAll edgeReversal_tripleMerger_Sys seedEdge12 4) = -192 := by
   native_decide
 
 /-! ## edgeReversal + identityKeep — non-monotone merger oscillation -/
 
 /-- `edgeReversal + identityKeep` at depth 2: Knill = -6 (2 holes). -/
 theorem edgeReversal_identity_depth2 :
-    knillEulerScaled (causalDAGOfEvolution edgeReversal_identity_Sys seedEdge12 2) = -6 := by
+    knillEulerScaled (causalDAGOfFireAll edgeReversal_identity_Sys seedEdge12 2) = -6 := by
   native_decide
 
 /-- `edgeReversal + identityKeep` at depth 4: Knill = 6 (0 holes —
 **topology fully closes back**). This is the discrete signature
 of a transient causal bubble. -/
 theorem edgeReversal_identity_depth4_closes :
-    knillEulerScaled (causalDAGOfEvolution edgeReversal_identity_Sys seedEdge12 4) = 6 := by
+    knillEulerScaled (causalDAGOfFireAll edgeReversal_identity_Sys seedEdge12 4) = 6 := by
   native_decide
 
 /-! ## edgeReversal + forkRule_2 — full depth ramp -/
 
 /-- `edgeReversal + forkRule_2` at depth 2: Knill = -6 (2 holes). -/
 theorem edgeReversal_fork_depth2 :
-    knillEulerScaled (causalDAGOfEvolution edgeReversal_fork_Sys seedEdge12 2) = -6 := by
+    knillEulerScaled (causalDAGOfFireAll edgeReversal_fork_Sys seedEdge12 2) = -6 := by
   native_decide
 
 /-- `edgeReversal + forkRule_2` at depth 4: Knill = -72 (**13 holes**). -/
 theorem edgeReversal_fork_depth4 :
-    knillEulerScaled (causalDAGOfEvolution edgeReversal_fork_Sys seedEdge12 4) = -72 := by
+    knillEulerScaled (causalDAGOfFireAll edgeReversal_fork_Sys seedEdge12 4) = -72 := by
   native_decide
 
 /-- `edgeReversal + forkRule_2` at depth 5: Knill = -36 (7 holes —
 partial closure from depth-4 peak). -/
 theorem edgeReversal_fork_depth5_regresses :
-    knillEulerScaled (causalDAGOfEvolution edgeReversal_fork_Sys seedEdge12 5) = -36 := by
+    knillEulerScaled (causalDAGOfFireAll edgeReversal_fork_Sys seedEdge12 5) = -36 := by
   native_decide
 
 /-! ## Three named phenomenology theorems -/
@@ -111,7 +111,7 @@ depth 4 produces 33 holes — the new highest-merger-rate combination.
   hole_count(depth 4) = 1 - (-192)/6 = 33
 -/
 theorem new_high_merger_champion :
-    knillEulerScaled (causalDAGOfEvolution edgeReversal_tripleMerger_Sys seedEdge12 4) = -192 ∧
+    knillEulerScaled (causalDAGOfFireAll edgeReversal_tripleMerger_Sys seedEdge12 4) = -192 ∧
     (1 - (-192 : Int) / 6) = 33 :=
   ⟨edgeReversal_tripleMerger_depth4, by decide⟩
 
@@ -120,9 +120,9 @@ a transient bubble: 2 holes at depth 2, peaks at 5 holes at depth 3,
 fully closes back to 0 holes at depth 4. This is the discrete signature
 of a passing causal pulse. -/
 theorem transient_causal_bubble :
-    knillEulerScaled (causalDAGOfEvolution edgeReversal_identity_Sys seedEdge12 2) = -6 ∧
-    knillEulerScaled (causalDAGOfEvolution edgeReversal_identity_Sys seedEdge12 3) = -24 ∧
-    knillEulerScaled (causalDAGOfEvolution edgeReversal_identity_Sys seedEdge12 4) = 6 :=
+    knillEulerScaled (causalDAGOfFireAll edgeReversal_identity_Sys seedEdge12 2) = -6 ∧
+    knillEulerScaled (causalDAGOfFireAll edgeReversal_identity_Sys seedEdge12 3) = -24 ∧
+    knillEulerScaled (causalDAGOfFireAll edgeReversal_identity_Sys seedEdge12 4) = 6 :=
   ⟨edgeReversal_identity_depth2,
    edgeReversal_identity_knill_neg24,
    edgeReversal_identity_depth4_closes⟩
@@ -136,9 +136,9 @@ structure of an NR BBH coalescence:
   * ringdown (depth 5): 7 holes (partial closure)
 -/
 theorem bbh_phase_structure_signature :
-    knillEulerScaled (causalDAGOfEvolution edgeReversal_fork_Sys seedEdge12 2) = -6 ∧
-    knillEulerScaled (causalDAGOfEvolution edgeReversal_fork_Sys seedEdge12 4) = -72 ∧
-    knillEulerScaled (causalDAGOfEvolution edgeReversal_fork_Sys seedEdge12 5) = -36 :=
+    knillEulerScaled (causalDAGOfFireAll edgeReversal_fork_Sys seedEdge12 2) = -6 ∧
+    knillEulerScaled (causalDAGOfFireAll edgeReversal_fork_Sys seedEdge12 4) = -72 ∧
+    knillEulerScaled (causalDAGOfFireAll edgeReversal_fork_Sys seedEdge12 5) = -36 :=
   ⟨edgeReversal_fork_depth2,
    edgeReversal_fork_depth4,
    edgeReversal_fork_depth5_regresses⟩

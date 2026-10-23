@@ -81,37 +81,37 @@ open PersistentRDegeneracy
 /-! ## R = 0 on multi-edge seeds in vacuum-like regime -/
 
 theorem fork_dCyc_R_path_3 :
-    knillEulerScaled (causalDAGOfEvolution fork_doubleCycle_Sys seedPath123 3) = 0 := by
+    knillEulerScaled (causalDAGOfFireAll fork_doubleCycle_Sys seedPath123 3) = 0 := by
   native_decide
 
 theorem fork_dCyc_R_triangle_3 :
-    knillEulerScaled (causalDAGOfEvolution fork_doubleCycle_Sys seedTriangle 3) = 0 := by
+    knillEulerScaled (causalDAGOfFireAll fork_doubleCycle_Sys seedTriangle 3) = 0 := by
   native_decide
 
 theorem fork_dCyc_R_path_4 :
-    knillEulerScaled (causalDAGOfEvolution fork_doubleCycle_Sys seedPath123 4) = 0 := by
+    knillEulerScaled (causalDAGOfFireAll fork_doubleCycle_Sys seedPath123 4) = 0 := by
   native_decide
 
 theorem fork_dCyc_R_triangle_4 :
-    knillEulerScaled (causalDAGOfEvolution fork_doubleCycle_Sys seedTriangle 4) = 0 := by
+    knillEulerScaled (causalDAGOfFireAll fork_doubleCycle_Sys seedTriangle 4) = 0 := by
   native_decide
 
 /-! ## B follows |seed|·B_edge in vacuum-like regime -/
 
 theorem fork_dCyc_B_path_3 :
-    knillEulerScaled (branchialDAGOfEvolution fork_doubleCycle_Sys seedPath123 3) = 156 := by
+    knillEulerScaled (branchialDAGOfFireAll fork_doubleCycle_Sys seedPath123 3) = 156 := by
   native_decide
 
 theorem fork_dCyc_B_triangle_3 :
-    knillEulerScaled (branchialDAGOfEvolution fork_doubleCycle_Sys seedTriangle 3) = 234 := by
+    knillEulerScaled (branchialDAGOfFireAll fork_doubleCycle_Sys seedTriangle 3) = 234 := by
   native_decide
 
 theorem fork_dCyc_B_path_4 :
-    knillEulerScaled (branchialDAGOfEvolution fork_doubleCycle_Sys seedPath123 4) = 480 := by
+    knillEulerScaled (branchialDAGOfFireAll fork_doubleCycle_Sys seedPath123 4) = 480 := by
   native_decide
 
 theorem fork_dCyc_B_triangle_4 :
-    knillEulerScaled (branchialDAGOfEvolution fork_doubleCycle_Sys seedTriangle 4) = 720 := by
+    knillEulerScaled (branchialDAGOfFireAll fork_doubleCycle_Sys seedTriangle 4) = 720 := by
   native_decide
 
 /-! ## Consolidated structural law: R-persistence + B-additivity -/
@@ -126,12 +126,12 @@ theorem fork_dCyc_B_triangle_4 :
 Note: theorem name says 'universal'; statement is a 6-conjunct
 over (seed, depth) ∈ {edge12, path123, triangle} × {3, 4}. -/
 theorem vacuum_like_universal_R_persistence :
-    knillEulerScaled (causalDAGOfEvolution fork_doubleCycle_Sys seedEdge12 3) = 0 ∧
-    knillEulerScaled (causalDAGOfEvolution fork_doubleCycle_Sys seedPath123 3) = 0 ∧
-    knillEulerScaled (causalDAGOfEvolution fork_doubleCycle_Sys seedTriangle 3) = 0 ∧
-    knillEulerScaled (causalDAGOfEvolution fork_doubleCycle_Sys seedEdge12 4) = 0 ∧
-    knillEulerScaled (causalDAGOfEvolution fork_doubleCycle_Sys seedPath123 4) = 0 ∧
-    knillEulerScaled (causalDAGOfEvolution fork_doubleCycle_Sys seedTriangle 4) = 0 := by
+    knillEulerScaled (causalDAGOfFireAll fork_doubleCycle_Sys seedEdge12 3) = 0 ∧
+    knillEulerScaled (causalDAGOfFireAll fork_doubleCycle_Sys seedPath123 3) = 0 ∧
+    knillEulerScaled (causalDAGOfFireAll fork_doubleCycle_Sys seedTriangle 3) = 0 ∧
+    knillEulerScaled (causalDAGOfFireAll fork_doubleCycle_Sys seedEdge12 4) = 0 ∧
+    knillEulerScaled (causalDAGOfFireAll fork_doubleCycle_Sys seedPath123 4) = 0 ∧
+    knillEulerScaled (causalDAGOfFireAll fork_doubleCycle_Sys seedTriangle 4) = 0 := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
 
 /-- **`vacuum_like_B_universal_additivity`**: B = |seed| · B_edge
@@ -144,11 +144,11 @@ Note: theorem name says 'universal'; statement is a 4-conjunct
 over (seed, depth) ∈ {path123, triangle} × {3, 4}. -/
 theorem vacuum_like_B_universal_additivity :
     -- Depth 3:
-    knillEulerScaled (branchialDAGOfEvolution fork_doubleCycle_Sys seedPath123 3) = 2 * 78 ∧
-    knillEulerScaled (branchialDAGOfEvolution fork_doubleCycle_Sys seedTriangle 3) = 3 * 78 ∧
+    knillEulerScaled (branchialDAGOfFireAll fork_doubleCycle_Sys seedPath123 3) = 2 * 78 ∧
+    knillEulerScaled (branchialDAGOfFireAll fork_doubleCycle_Sys seedTriangle 3) = 3 * 78 ∧
     -- Depth 4:
-    knillEulerScaled (branchialDAGOfEvolution fork_doubleCycle_Sys seedPath123 4) = 2 * 240 ∧
-    knillEulerScaled (branchialDAGOfEvolution fork_doubleCycle_Sys seedTriangle 4) = 3 * 240 := by
+    knillEulerScaled (branchialDAGOfFireAll fork_doubleCycle_Sys seedPath123 4) = 2 * 240 ∧
+    knillEulerScaled (branchialDAGOfFireAll fork_doubleCycle_Sys seedTriangle 4) = 3 * 240 := by
   refine ⟨?_, ?_, ?_, ?_⟩
   · rw [fork_dCyc_B_path_3]; rfl
   · rw [fork_dCyc_B_triangle_3]; rfl
@@ -165,11 +165,11 @@ theorem vacuum_like_B_universal_additivity :
     B-additivity instance in the conjunction). -/
 theorem vacuum_like_unified_structural_law :
     -- R persistence:
-    knillEulerScaled (causalDAGOfEvolution fork_doubleCycle_Sys seedEdge12 3) = 0 ∧
-    knillEulerScaled (causalDAGOfEvolution fork_doubleCycle_Sys seedTriangle 4) = 0 ∧
+    knillEulerScaled (causalDAGOfFireAll fork_doubleCycle_Sys seedEdge12 3) = 0 ∧
+    knillEulerScaled (causalDAGOfFireAll fork_doubleCycle_Sys seedTriangle 4) = 0 ∧
     -- B additivity:
-    knillEulerScaled (branchialDAGOfEvolution fork_doubleCycle_Sys seedTriangle 4) =
-      3 * knillEulerScaled (branchialDAGOfEvolution fork_doubleCycle_Sys seedEdge12 4) := by
+    knillEulerScaled (branchialDAGOfFireAll fork_doubleCycle_Sys seedTriangle 4) =
+      3 * knillEulerScaled (branchialDAGOfFireAll fork_doubleCycle_Sys seedEdge12 4) := by
   refine ⟨?_, ?_, ?_⟩ <;> native_decide
 
 /-! ## What this delivers

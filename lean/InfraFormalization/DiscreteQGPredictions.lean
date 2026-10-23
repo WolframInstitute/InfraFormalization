@@ -107,7 +107,7 @@ open DualSideIndependence
   7. R-zero classification (4 distinct classes verified). -/
 theorem discrete_QG_predictions_capstone :
     -- (1) Universal additivity:
-    knillEulerScaled (causalDAGOfEvolution edgeReversal_identity_Sys
+    knillEulerScaled (causalDAGOfFireAll edgeReversal_identity_Sys
       UniversalAdditivity.seedPath123 3) =
       2 * discreteRicciScalar edgeReversal_identity_Sys 3 ∧
     -- (2) Persistent R-degeneracy:

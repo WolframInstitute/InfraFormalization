@@ -74,12 +74,12 @@ theorem bbh_analog_full_certificate :
     -- 1. Initial data has 7 edges (two triangles + bridge):
     bbhInitial.length = 7 ∧
     -- 2. Multi-depth Knill on BBH under edgeReversal:
-    knillEulerScaled (causalDAGOfEvolution edgeReversalSys bbhInitial 4) = 0 ∧
-    knillEulerScaled (causalDAGOfEvolution edgeReversalSys bbhInitial 5) = -42 ∧
-    knillEulerScaled (causalDAGOfEvolution edgeReversalSys bbhInitial 6) = -126 ∧
+    knillEulerScaled (causalDAGOfFireAll edgeReversalSys bbhInitial 4) = 0 ∧
+    knillEulerScaled (causalDAGOfFireAll edgeReversalSys bbhInitial 5) = -42 ∧
+    knillEulerScaled (causalDAGOfFireAll edgeReversalSys bbhInitial 6) = -126 ∧
     -- 3. Per-edge additivity at every depth (BBH = 7 × edge12):
-    (knillEulerScaled (causalDAGOfEvolution edgeReversalSys bbhInitial 6) =
-      7 * knillEulerScaled (causalDAGOfEvolution edgeReversalSys seedEdge12 6)) ∧
+    (knillEulerScaled (causalDAGOfFireAll edgeReversalSys bbhInitial 6) =
+      7 * knillEulerScaled (causalDAGOfFireAll edgeReversalSys seedEdge12 6)) ∧
     -- 4. Instantaneous flux: constant 7 events/step on BBH:
     perStepEventCount edgeReversalSys bbhInitial 6 = [7, 7, 7, 7, 7, 7] ∧
     -- 5. Predicted BBH luminosity = 49 × edge12 baseline:

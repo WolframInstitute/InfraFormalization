@@ -77,11 +77,11 @@ depth d. Re = causal ΔKnill from depth d-1 to d; Im = branchial K
 at depth d. -/
 def enhancedPsiFour (sys : ExecSystem) (H : ExecHG ℕ) (d : Nat) :
     Int × Int :=
-  let causal_d := knillEulerScaled (causalDAGOfEvolution sys H d)
+  let causal_d := knillEulerScaled (causalDAGOfFireAll sys H d)
   let causal_prev :=
     if d = 0 then 0
-    else knillEulerScaled (causalDAGOfEvolution sys H (d - 1))
-  let branchial_d := knillEulerScaled (branchialDAGOfEvolution sys H d)
+    else knillEulerScaled (causalDAGOfFireAll sys H (d - 1))
+  let branchial_d := knillEulerScaled (branchialDAGOfFireAll sys H d)
   (causal_d - causal_prev, branchial_d)
 
 /-! ## Certified enhanced-Ψ₄ trajectory for eR + id on edge12 -/

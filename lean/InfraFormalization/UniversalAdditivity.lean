@@ -190,12 +190,12 @@ theorem universal_additivity_bidirected :
 /-! ## Multi-rule systems — additivity also extends -/
 
 theorem edgeReversal_identity_path_depth3 :
-    knillEulerScaled (causalDAGOfEvolution
+    knillEulerScaled (causalDAGOfFireAll
       MultiRuleDiscovered.edgeReversal_identity_Sys seedPath123 3) = -48 := by
   native_decide
 
 theorem edgeReversal_identity_triangle_depth3 :
-    knillEulerScaled (causalDAGOfEvolution
+    knillEulerScaled (causalDAGOfFireAll
       MultiRuleDiscovered.edgeReversal_identity_Sys seedTriangle 3) = -72 := by
   native_decide
 
@@ -212,11 +212,11 @@ has baseline `-24` per edge:
 Note: name says 'universal'; statement is a 3-conjunct over seeds
 {edge12, path123, triangle} for edgeReversal+identityKeep at d=3. -/
 theorem universal_additivity_multi_rule :
-    knillEulerScaled (causalDAGOfEvolution
+    knillEulerScaled (causalDAGOfFireAll
       MultiRuleDiscovered.edgeReversal_identity_Sys seedEdge12 3) = -24 ∧
-    knillEulerScaled (causalDAGOfEvolution
+    knillEulerScaled (causalDAGOfFireAll
       MultiRuleDiscovered.edgeReversal_identity_Sys seedPath123 3) = 2 * (-24) ∧
-    knillEulerScaled (causalDAGOfEvolution
+    knillEulerScaled (causalDAGOfFireAll
       MultiRuleDiscovered.edgeReversal_identity_Sys seedTriangle 3) = 3 * (-24) := by
   refine ⟨?_, ?_, ?_⟩
   · exact MultiRuleDiscovered.edgeReversal_identity_knill_neg24

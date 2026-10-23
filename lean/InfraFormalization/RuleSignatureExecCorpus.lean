@@ -189,18 +189,12 @@ example : (gorardPathDossier 1).edgeCountTrace = [4, 4] := by native_decide
 
 example : (gorardPathDossier 1).edgeCountConstant = true := by native_decide
 
-/-! ## Cycle-seed observation: overlap breaks single-way conservation
+/-! ## Cycle seed
 
-A 4-cycle seed `1→2→3→4→1` admits **four** simultaneous matches for
-JGORARD's LHS pattern (one starting at each cycle vertex). Under
-`MultiwayExec.singleWayStep`'s foldl-based "fire all matches" semantics,
-overlapping matches consume already-removed edges (no-ops) but each
-still emits its 4-edge RHS, so edge count grows — even though the rule
-is conservative as a `Rule.IsConservative` Prop. This is a structural
-property of the engine on overlap, **not** a violation of conservation
-in the abstract `RewritingSystem` sense. The cycle-seed dossier is a
-useful negative test: an empirically-conservative rule + overlapping
-seed = non-constant edge count under single-way evolution. -/
+A 4-cycle seed `1→2→3→4→1` admits four matches of the LHS of the rule,
+one starting at each cycle vertex, and every two of them share an edge.
+`singleWayStep` fires the first and skips the other three, so the edge
+count stays 4. -/
 
 def gorardCycleSeed : ExecHG ℕ :=
   [⟨[1, 2], by decide⟩, ⟨[2, 3], by decide⟩, ⟨[3, 4], by decide⟩, ⟨[4, 1], by decide⟩]
@@ -210,26 +204,18 @@ def gorardCycleDossier (n : Nat) : Dossier :=
 
 example : (gorardCycleDossier 1).isConsistent = true := canonicalDossier_isConsistent _ _ _
 
-/-- **Conservative rule + overlapping seed ⇒ edge count *not* constant
-under single-way evolution.** The fire-all-matches foldl semantics
-emits multiple RHSs even when their LHSs share edges. -/
-example : (gorardCycleDossier 1).edgeCountConstant = false := by native_decide
+/-- The edge count of the 4-cycle seed stays 4 after one single-way step. -/
+example : (gorardCycleDossier 1).edgeCountConstant = true := by native_decide
 
-/-! ## Headline summary
+/-! ## Summary -/
 
-The closed H1 corpus screening verdict — the conservation classifier
-mirroring `CandidateCatalog.catalog_conservative_rules`. Every line
-is `decide`/`native_decide`-checked, axiom-clean. -/
-
-/-- **Closed-corpus screening verdict**. Conservative rules with
-non-overlapping matches pass the edge-count screener; non-conservative
-rules fail; conservative rules with overlapping matches fail under the
-fire-all-matches `singleWayStep` (the cycle-seed observation). All
-entries decided from canonical dossiers. -/
+/-- Edge-count screener on the corpus dossiers: the conservative rules
+(trivial rule, named rule on the path and cycle seeds) keep a constant
+edge count; the doubling, append and triple rules do not. -/
 theorem h1_corpus_edgeCount_screener_verdict :
     (trivialDossier 3).edgeCountConstant = true
   ∧ (gorardPathDossier 1).edgeCountConstant = true
-  ∧ (gorardCycleDossier 1).edgeCountConstant = false
+  ∧ (gorardCycleDossier 1).edgeCountConstant = true
   ∧ (doublingDossier 3).edgeCountConstant = false
   ∧ (appendDossier 3).edgeCountConstant = false
   ∧ (tripleDossier 2).edgeCountConstant = false := by

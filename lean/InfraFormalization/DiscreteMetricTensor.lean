@@ -137,9 +137,9 @@ Note: theorem name implies universality; statement is a single
 instance at d=3 for path123. -/
 theorem discreteMetricTensor_universal_additivity_eR_id_path :
     let baselineRB := discreteMetricTensor edgeReversal_identity_Sys 3
-    knillEulerScaled (causalDAGOfEvolution edgeReversal_identity_Sys
+    knillEulerScaled (causalDAGOfFireAll edgeReversal_identity_Sys
       UniversalAdditivity.seedPath123 3) = 2 * baselineRB.1 ∧
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_identity_Sys
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_identity_Sys
       UniversalAdditivity.seedPath123 3) = 2 * baselineRB.2 := by
   refine ⟨?_, ?_⟩ <;> native_decide
 

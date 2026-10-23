@@ -207,24 +207,99 @@ def multiwayEvolve (sys : ExecSystem) (H : ExecHG ℕ) :
 
 /-! ## Single-way evolution
 
-Wolfram's `WolframModel` (single-way) fires **all applicable matches
-simultaneously** in each step, producing one canonical successor
-state per step. For non-overlapping matches (e.g., the subdivision
-rule on a path: each edge subdivides independently) this is
-unambiguous; for overlapping matches it amounts to a "fire-everything"
-rule that's well-defined operationally even if it consumes the same
-edge multiple times.
+One single-way step applies a set of pairwise edge-disjoint matches to
+the input state `H`. Matches are taken in the order of `sys.rules` and,
+within a rule, in the order of `allMatches r H`. A match fires when its
+consumed edges are still contained (with multiplicity) in the edges of
+`H` that earlier matches of the same step left unconsumed; otherwise it
+is skipped. Edges produced in the step are not available to later
+matches of the same step. The fired set is therefore a maximal set of
+edge-disjoint matches, chosen greedily in enumeration order.
 
-For inductive theorems about specific rule trajectories — e.g.,
-"`singleWayEvolve subdivisionRule {[1,2]} n = path of 2^n+1 vertices"
-— this deterministic per-step semantics is what we want. -/
+`allMatches` enumerates distinct bindings, so a state holding two equal
+edges gives one match for a one-edge left-hand side where the Wolfram
+model gives two. -/
 
-/-- One single-way step: enumerate all matches across all rules,
-remove the union-with-multiplicity of consumed edges, append the
-union-with-multiplicity of produced edges. Fresh `ℕ` vertices are
-allocated globally with a per-match offset so distinct matches never
-collide. -/
+/-- Accumulator of one single-way step: edges of the input state not yet
+consumed, edges produced so far, the fresh-vertex offset, and the fired
+matches as `(rule index, consumed edges, produced edges)`. -/
+structure StepAcc where
+  avail : ExecHG ℕ
+  produced : ExecHG ℕ
+  offset : ℕ
+  fired : List (ℕ × ExecHG ℕ × ExecHG ℕ)
+
+/-- Fire the match `ρ` of rule `r` (rule index `ri`) if its consumed
+edges are contained in `acc.avail`; fresh vertices are
+`baseFresh + acc.offset + k`. -/
+def fireIfFree (r : ExecRule) (ri baseFresh : ℕ) (acc : StepAcc)
+    (ρ : Fin r.numBound → ℕ) : StepAcc :=
+  let consumed : ExecHG ℕ := mapPattern ρ r.lhs
+  if edgesContained consumed acc.avail then
+    let ρExt : Fin (r.numBound + r.numFresh) → ℕ := fun i =>
+      if h : i.val < r.numBound then ρ ⟨i.val, h⟩
+      else baseFresh + acc.offset + (i.val - r.numBound)
+    let produced : ExecHG ℕ := mapPattern ρExt r.rhs
+    { avail := removeEdges acc.avail consumed
+      produced := acc.produced ++ produced
+      offset := acc.offset + r.numFresh
+      fired := acc.fired ++ [(ri, consumed, produced)] }
+  else acc
+
+theorem fireIfFree_avail_of_contained (r : ExecRule) (ri baseFresh : ℕ)
+    (acc : StepAcc) (ρ : Fin r.numBound → ℕ)
+    (h : edgesContained (mapPattern ρ r.lhs) acc.avail = true) :
+    (fireIfFree r ri baseFresh acc ρ).avail
+      = removeEdges acc.avail (mapPattern ρ r.lhs) := by
+  simp [fireIfFree, h]
+
+theorem fireIfFree_produced_of_contained (r : ExecRule) (ri baseFresh : ℕ)
+    (acc : StepAcc) (ρ : Fin r.numBound → ℕ)
+    (h : edgesContained (mapPattern ρ r.lhs) acc.avail = true) :
+    (fireIfFree r ri baseFresh acc ρ).produced
+      = acc.produced ++ mapPattern
+          (fun i : Fin (r.numBound + r.numFresh) =>
+            if h : i.val < r.numBound then ρ ⟨i.val, h⟩
+            else baseFresh + acc.offset + (i.val - r.numBound)) r.rhs := by
+  simp [fireIfFree, h]
+
+/-- A match whose consumed edges are not available is skipped. -/
+theorem fireIfFree_of_not_contained (r : ExecRule) (ri baseFresh : ℕ)
+    (acc : StepAcc) (ρ : Fin r.numBound → ℕ)
+    (h : edgesContained (mapPattern ρ r.lhs) acc.avail = false) :
+    fireIfFree r ri baseFresh acc ρ = acc := by
+  simp [fireIfFree, h]
+
+/-- The fold of one single-way step over all rules and matches. -/
+def stepFold (sys : ExecSystem) (H : ExecHG ℕ) : StepAcc :=
+  let baseFresh := nextFresh H
+  (sys.rules.zipIdx.foldl (fun (acc : StepAcc) (rp : ExecRule × ℕ) =>
+    (allMatches rp.1 H).foldl (fireIfFree rp.1 rp.2 baseFresh) acc)
+    ⟨H, [], 0, []⟩)
+
+/-- One single-way step: the unconsumed edges of `H` followed by the
+edges produced by the fired matches. -/
 def singleWayStep (sys : ExecSystem) (H : ExecHG ℕ) : ExecHG ℕ :=
+  let acc := stepFold sys H
+  acc.avail ++ acc.produced
+
+/-- Single-way evolution: deterministic per-step state. -/
+def singleWayEvolve (sys : ExecSystem) (H : ExecHG ℕ) : Nat → ExecHG ℕ
+  | 0 => H
+  | n+1 => singleWayStep sys (singleWayEvolve sys H n)
+
+/-! ## Fire-all step
+
+`fireAllStep` applies every match of every rule found in the input state
+`H`, including matches that share edges. Each match removes its consumed
+edges from the running state where they are still present (`List.erase`
+does nothing on an absent edge) and appends its produced edges. When two
+matches share an edge, the result is not a single-way Wolfram model
+step, and the edge count of a conservative rule can change. Results
+stated with `fireAllStep` are results about this operator. -/
+
+/-- One fire-all step. -/
+def fireAllStep (sys : ExecSystem) (H : ExecHG ℕ) : ExecHG ℕ :=
   let baseFresh := nextFresh H
   let processed := sys.rules.foldl (fun (acc : ExecHG ℕ × Nat) r =>
     (allMatches r H).foldl (fun (acc' : ExecHG ℕ × Nat) ρ =>
@@ -239,10 +314,10 @@ def singleWayStep (sys : ExecSystem) (H : ExecHG ℕ) : ExecHG ℕ :=
   ) (H, 0)
   processed.fst
 
-/-- Single-way evolution: deterministic per-step state. -/
-def singleWayEvolve (sys : ExecSystem) (H : ExecHG ℕ) : Nat → ExecHG ℕ
+/-- Iterated `fireAllStep`. -/
+def fireAllEvolve (sys : ExecSystem) (H : ExecHG ℕ) : Nat → ExecHG ℕ
   | 0 => H
-  | n+1 => singleWayStep sys (singleWayEvolve sys H n)
+  | n+1 => fireAllStep sys (fireAllEvolve sys H n)
 
 /-! ## Signature trace: useful for cross-checking with external engines -/
 

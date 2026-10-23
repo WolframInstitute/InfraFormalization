@@ -393,22 +393,30 @@ delivers the abstract base case for any `a ≠ b : ℕ`. No
 theorem singleWayStep_subdivisionSys_consEdge_of_ne (a b : ℕ) (hab : a ≠ b) :
     singleWayStep subdivisionSys [consEdge a b]
       = [consEdge a (max a b + 1), consEdge (max a b + 1) b] := by
-  show (subdivisionSys.rules.foldl _ ([consEdge a b], 0)).fst = _
-  rw [subdivisionSys_rules]
-  show ((allMatches subdivisionRule [consEdge a b]).foldl _ ([consEdge a b], 0)).fst = _
-  rw [allMatches_eq_singleton_matchAB a b hab]
-  show (removeEdges [consEdge a b] (mapPattern (matchAB a b) subdivisionRule.lhs)
-        ++ mapPattern
-            (fun i : Fin (subdivisionRule.numBound + subdivisionRule.numFresh) =>
-              if h : i.val < subdivisionRule.numBound then
-                matchAB a b ⟨i.val, h⟩
-              else
-                nextFresh [consEdge a b] + 0 + (i.val - subdivisionRule.numBound))
-            subdivisionRule.rhs) = _
-  rw [mapPattern_matchAB_lhs, removeEdges_consEdge_self,
-      nextFresh_consEdge_of_ne a b hab,
-      singleWayStep_inner_extension_eq a b]
-  show [] ++ mapPattern (matchABext a b) subdivisionRule.rhs = _
+  have hc : edgesContained (mapPattern (matchAB a b) subdivisionRule.lhs)
+      [consEdge a b] = true := by
+    rw [mapPattern_matchAB_lhs]; simp [edgesContained, edgeCount]
+  have hfold : stepFold subdivisionSys [consEdge a b]
+      = (allMatches subdivisionRule [consEdge a b]).foldl
+          (fireIfFree subdivisionRule 0 (nextFresh [consEdge a b]))
+          ⟨[consEdge a b], [], 0, []⟩ := rfl
+  show (stepFold subdivisionSys [consEdge a b]).avail
+      ++ (stepFold subdivisionSys [consEdge a b]).produced = _
+  rw [hfold, allMatches_eq_singleton_matchAB a b hab]
+  show (fireIfFree subdivisionRule 0 (nextFresh [consEdge a b])
+          ⟨[consEdge a b], [], 0, []⟩ (matchAB a b)).avail
+      ++ (fireIfFree subdivisionRule 0 (nextFresh [consEdge a b])
+          ⟨[consEdge a b], [], 0, []⟩ (matchAB a b)).produced = _
+  rw [fireIfFree_avail_of_contained _ _ _ _ _ hc,
+      fireIfFree_produced_of_contained _ _ _ _ _ hc]
+  show removeEdges [consEdge a b] [consEdge a b] ++ ([] ++ mapPattern
+      (fun i : Fin (subdivisionRule.numBound + subdivisionRule.numFresh) =>
+        if h : i.val < subdivisionRule.numBound then matchAB a b ⟨i.val, h⟩
+        else nextFresh [consEdge a b] + 0 + (i.val - subdivisionRule.numBound))
+      subdivisionRule.rhs) = _
+  rw [removeEdges_consEdge_self, nextFresh_consEdge_of_ne a b hab,
+    singleWayStep_inner_extension_eq a b]
+  show [] ++ ([] ++ mapPattern (matchABext a b) subdivisionRule.rhs) = _
   rw [mapPattern_matchABext_rhs]
   rfl
 

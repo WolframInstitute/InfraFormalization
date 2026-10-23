@@ -72,7 +72,7 @@ at depth `d`. Defined as the causal-DAG Knill on edge12; if per-edge
 additivity holds (verified at specific instances), this is the
 per-edge density. -/
 def discreteRicciScalar (sys : ExecSystem) (d : Nat) : Int :=
-  knillEulerScaled (causalDAGOfEvolution sys seedEdge12 d)
+  knillEulerScaled (causalDAGOfFireAll sys seedEdge12 d)
 
 /-! ## Certified discrete-Ricci-scalar values -/
 
@@ -121,11 +121,11 @@ at depth 4, the discrete-EH action equals the actual causal-DAG
 Knill on every probed seed topology. -/
 theorem einsteinHilbert_equals_knill_doubleCycle5 :
     discreteEinsteinHilbert doubleCycleSys_5 seedEdge12 4 =
-      knillEulerScaled (causalDAGOfEvolution doubleCycleSys_5 seedEdge12 4) ∧
+      knillEulerScaled (causalDAGOfFireAll doubleCycleSys_5 seedEdge12 4) ∧
     discreteEinsteinHilbert doubleCycleSys_5 seedPath123 4 =
-      knillEulerScaled (causalDAGOfEvolution doubleCycleSys_5 seedPath123 4) ∧
+      knillEulerScaled (causalDAGOfFireAll doubleCycleSys_5 seedPath123 4) ∧
     discreteEinsteinHilbert doubleCycleSys_5 seedTriangle 4 =
-      knillEulerScaled (causalDAGOfEvolution doubleCycleSys_5 seedTriangle 4) := by
+      knillEulerScaled (causalDAGOfFireAll doubleCycleSys_5 seedTriangle 4) := by
   refine ⟨?_, ?_, ?_⟩ <;> native_decide
 
 /-! ## Bundled `discreteRicciScalar` validation -/

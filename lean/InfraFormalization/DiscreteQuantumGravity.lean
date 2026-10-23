@@ -85,8 +85,8 @@ This is the strongest single-theorem result available, bundling:
 theorem discrete_quantum_gravity_certificate :
     -- BBH substrate (Phase-D substrate):
     bbhInitial.length = 7 ∧
-    knillEulerScaled (causalDAGOfEvolution edgeReversalSys bbhInitial 6) =
-      7 * knillEulerScaled (causalDAGOfEvolution edgeReversalSys seedEdge12 6) ∧
+    knillEulerScaled (causalDAGOfFireAll edgeReversalSys bbhInitial 6) =
+      7 * knillEulerScaled (causalDAGOfFireAll edgeReversalSys seedEdge12 6) ∧
     perStepEventCount edgeReversalSys bbhInitial 6 = [7, 7, 7, 7, 7, 7] ∧
     integratedModSq bbhPsiFourPredicted_tripleMerger = 49 * 28912 ∧
     -- GR-side (causal Knill / R-scalar):
@@ -98,8 +98,8 @@ theorem discrete_quantum_gravity_certificate :
     -- Depth-3 universal regime:
     discreteRicciScalar edgeReversalSys 3 = discreteRicciScalar identityKeepSys 3 ∧
     -- QM-side (branchial Knill):
-    knillEulerScaled (branchialDAGOfEvolution edgeReversalSys seedEdge12 3) = 0 ∧
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_tripleMerger_Sys seedEdge12 3) = 78 ∧
+    knillEulerScaled (branchialDAGOfFireAll edgeReversalSys seedEdge12 3) = 0 ∧
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_tripleMerger_Sys seedEdge12 3) = 78 ∧
     -- Multi-rule R divergence (honest):
     discreteRicciScalar edgeReversal_fork_Sys 4 ≠
       discreteRicciScalar edgeReversalSys 4 + discreteRicciScalar forkSys_2 4 := by

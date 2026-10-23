@@ -42,7 +42,7 @@ calculations, with explicit predicted values at d ∈ {2,3,4,5}.
 **Computational efficiency observation**:
 
   * Probing R at BBH directly: requires evaluating
-    `causalDAGOfEvolution sys bbhInitial d` which is slow.
+    `causalDAGOfFireAll sys bbhInitial d` which is slow.
   * Predicting R at BBH via R(edge12) * 7: O(1) once R(edge12) is known.
 
 The universal additivity (#454) gives the framework a
@@ -110,7 +110,7 @@ theorem BBH_R_zero_at_init :
 the predicted BBH-scale R (7 × edge12) matches the actual BBH-scale
 Knill at depth 3 — a sanity check on universal additivity. -/
 theorem BBH_universal_additivity_at_d3 :
-    knillEulerScaled (causalDAGOfEvolution edgeReversal_tripleMerger_Sys bbhInitial 3) =
+    knillEulerScaled (causalDAGOfFireAll edgeReversal_tripleMerger_Sys bbhInitial 3) =
       7 * discreteRicciScalar edgeReversal_tripleMerger_Sys 3 := by
   native_decide
 

@@ -76,11 +76,11 @@ open UniversalAdditivity
 /-! ## Branchial Knill at multiple seed topologies (depth 3) -/
 
 theorem branchial_eR_id_path :
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_identity_Sys seedPath123 3) = 60 := by
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_identity_Sys seedPath123 3) = 60 := by
   native_decide
 
 theorem branchial_eR_id_triangle :
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_identity_Sys seedTriangle 3) = 90 := by
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_identity_Sys seedTriangle 3) = 90 := by
   native_decide
 
 /-! ## Universal additivity on the branchial side -/
@@ -97,11 +97,11 @@ Note: name suggests universality; statement is a finite conjunction
 at d=3 across seeds {edge12, path123, triangle}. -/
 theorem branchial_universal_additivity_eR_id :
     -- Baseline:
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_identity_Sys seedEdge12 3) = 30 ∧
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_identity_Sys seedEdge12 3) = 30 ∧
     -- Path (2 edges):
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_identity_Sys seedPath123 3) = 2 * 30 ∧
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_identity_Sys seedPath123 3) = 2 * 30 ∧
     -- Triangle (3 edges):
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_identity_Sys seedTriangle 3) = 3 * 30 := by
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_identity_Sys seedTriangle 3) = 3 * 30 := by
   refine ⟨?_, ?_, ?_⟩
   · native_decide
   · rw [branchial_eR_id_path]; rfl
@@ -110,7 +110,7 @@ theorem branchial_universal_additivity_eR_id :
 /-! ## Universal additivity on branchial side for a second combo -/
 
 theorem branchial_eR_fork_path :
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_fork_Sys seedPath123 3) = 132 := by
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_fork_Sys seedPath123 3) = 132 := by
   native_decide
 
 /-- **`branchial_universal_additivity_eR_fork`**: branchial Knill for
@@ -120,8 +120,8 @@ additivity identity at d=3 for path123: 66 (1 edge), 132 (2 edges, path).
 Note: name suggests universality; statement is a finite conjunction
 at d=3 across seeds {edge12, path123}. -/
 theorem branchial_universal_additivity_eR_fork :
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_fork_Sys seedEdge12 3) = 66 ∧
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_fork_Sys seedPath123 3) = 2 * 66 := by
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_fork_Sys seedEdge12 3) = 66 ∧
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_fork_Sys seedPath123 3) = 2 * 66 := by
   refine ⟨?_, ?_⟩
   · native_decide
   · rw [branchial_eR_fork_path]; rfl
@@ -132,7 +132,7 @@ theorem branchial_universal_additivity_eR_fork :
 "superposition density", defined analogously to `discreteRicciScalar`
 on the branchial side. -/
 def discreteBranchialDensity (sys : ExecSystem) (d : Nat) : Int :=
-  knillEulerScaled (branchialDAGOfEvolution sys seedEdge12 d)
+  knillEulerScaled (branchialDAGOfFireAll sys seedEdge12 d)
 
 /-- `B(eR + id, 3) = 30` — the branchial per-edge density for the
 combo `edgeReversal + identityKeep` at depth 3. -/
@@ -150,7 +150,7 @@ where `R` is the causal Ricci scalar (#456) and `B` is the
 branchial density (this module). -/
 def discreteUnifiedEH (sys : ExecSystem) (seed : ExecHG ℕ) (d : Nat) (α : Int) : Int :=
   (seed.length : Int) *
-    (knillEulerScaled (causalDAGOfEvolution sys seedEdge12 d) +
+    (knillEulerScaled (causalDAGOfFireAll sys seedEdge12 d) +
      α * discreteBranchialDensity sys d)
 
 /-- **`unified_EH_at_alpha_1`**: at `α = 1` (equal classical/quantum

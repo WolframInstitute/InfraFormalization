@@ -67,21 +67,21 @@ open BranchialRSpectrum
 /-! ## edgeReversal + identityKeep — arithmetic branchial growth -/
 
 theorem eR_id_branchial_d2 :
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_identity_Sys seedEdge12 2) = 18 := by
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_identity_Sys seedEdge12 2) = 18 := by
   native_decide
 
 theorem eR_id_branchial_d4 :
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_identity_Sys seedEdge12 4) = 42 := by
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_identity_Sys seedEdge12 4) = 42 := by
   native_decide
 
 /-! ## edgeReversal + forkRule_2 — geometric branchial growth -/
 
 theorem eR_fork_branchial_d2 :
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_fork_Sys seedEdge12 2) = 24 := by
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_fork_Sys seedEdge12 2) = 24 := by
   native_decide
 
 theorem eR_fork_branchial_d4 :
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_fork_Sys seedEdge12 4) = 168 := by
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_fork_Sys seedEdge12 4) = 168 := by
   native_decide
 
 /-! ## Bundled branchial depth-trajectory -/
@@ -96,23 +96,23 @@ These are the QM-side analogs of the causal-Knill depth trajectories
 (#440, #446, #457). -/
 theorem branchial_depth_trajectory :
     -- eR + identityKeep — arithmetic regime:
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_identity_Sys seedEdge12 2) = 18 ∧
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_identity_Sys seedEdge12 3) = 30 ∧
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_identity_Sys seedEdge12 4) = 42 ∧
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_identity_Sys seedEdge12 2) = 18 ∧
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_identity_Sys seedEdge12 3) = 30 ∧
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_identity_Sys seedEdge12 4) = 42 ∧
     -- eR + forkRule_2 — geometric regime:
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_fork_Sys seedEdge12 2) = 24 ∧
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_fork_Sys seedEdge12 3) = 66 ∧
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_fork_Sys seedEdge12 4) = 168 :=
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_fork_Sys seedEdge12 2) = 24 ∧
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_fork_Sys seedEdge12 3) = 66 ∧
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_fork_Sys seedEdge12 4) = 168 :=
   ⟨eR_id_branchial_d2, eR_id_branchial_30, eR_id_branchial_d4,
    eR_fork_branchial_d2, eR_fork_branchial_66, eR_fork_branchial_d4⟩
 
 /-- **`arithmetic_branchial_regime`**: `eR + identityKeep` shows
 Δ=12 verified at the steps d=2→3 and d=3→4. -/
 theorem arithmetic_branchial_regime :
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_identity_Sys seedEdge12 3) -
-      knillEulerScaled (branchialDAGOfEvolution edgeReversal_identity_Sys seedEdge12 2) = 12 ∧
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_identity_Sys seedEdge12 4) -
-      knillEulerScaled (branchialDAGOfEvolution edgeReversal_identity_Sys seedEdge12 3) = 12 := by
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_identity_Sys seedEdge12 3) -
+      knillEulerScaled (branchialDAGOfFireAll edgeReversal_identity_Sys seedEdge12 2) = 12 ∧
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_identity_Sys seedEdge12 4) -
+      knillEulerScaled (branchialDAGOfFireAll edgeReversal_identity_Sys seedEdge12 3) = 12 := by
   refine ⟨?_, ?_⟩
   · rw [eR_id_branchial_30, eR_id_branchial_d2]; rfl
   · rw [eR_id_branchial_d4, eR_id_branchial_30]; rfl
@@ -122,10 +122,10 @@ theorem arithmetic_branchial_regime :
 (102) exceeds depth-2 to depth-3 difference (42). Between d=2→3 and
 d=3→4, the difference grows from 42 to 102. -/
 theorem geometric_branchial_regime :
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_fork_Sys seedEdge12 4) -
-      knillEulerScaled (branchialDAGOfEvolution edgeReversal_fork_Sys seedEdge12 3) >
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_fork_Sys seedEdge12 3) -
-      knillEulerScaled (branchialDAGOfEvolution edgeReversal_fork_Sys seedEdge12 2) := by
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_fork_Sys seedEdge12 4) -
+      knillEulerScaled (branchialDAGOfFireAll edgeReversal_fork_Sys seedEdge12 3) >
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_fork_Sys seedEdge12 3) -
+      knillEulerScaled (branchialDAGOfFireAll edgeReversal_fork_Sys seedEdge12 2) := by
   rw [eR_fork_branchial_d4, eR_fork_branchial_66, eR_fork_branchial_d2]
   decide
 

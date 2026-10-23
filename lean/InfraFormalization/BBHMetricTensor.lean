@@ -71,21 +71,21 @@ open DiscreteMetricTensor
 /-! ## BBH metric values for eR + id at depth 3 -/
 
 theorem bbh_causal_eR_id_3 :
-    knillEulerScaled (causalDAGOfEvolution edgeReversal_identity_Sys bbhInitial 3) = -168 := by
+    knillEulerScaled (causalDAGOfFireAll edgeReversal_identity_Sys bbhInitial 3) = -168 := by
   native_decide
 
 theorem bbh_branchial_eR_id_3 :
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_identity_Sys bbhInitial 3) = 210 := by
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_identity_Sys bbhInitial 3) = 210 := by
   native_decide
 
 /-! ## BBH metric values for eR + fork at depth 3 -/
 
 theorem bbh_causal_eR_fork_3 :
-    knillEulerScaled (causalDAGOfEvolution edgeReversal_fork_Sys bbhInitial 3) = -294 := by
+    knillEulerScaled (causalDAGOfFireAll edgeReversal_fork_Sys bbhInitial 3) = -294 := by
   native_decide
 
 theorem bbh_branchial_eR_fork_3 :
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_fork_Sys bbhInitial 3) = 462 := by
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_fork_Sys bbhInitial 3) = 462 := by
   native_decide
 
 /-! ## The BBH metric tensor characterization theorem -/
@@ -94,11 +94,11 @@ theorem bbh_branchial_eR_fork_3 :
 metric values for both leading multi-rule candidates at depth 3. -/
 theorem bbh_metric_tensor_characterization :
     -- eR + id on BBH at d=3: g_BBH = (-168, 210)
-    knillEulerScaled (causalDAGOfEvolution edgeReversal_identity_Sys bbhInitial 3) = -168 ∧
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_identity_Sys bbhInitial 3) = 210 ∧
+    knillEulerScaled (causalDAGOfFireAll edgeReversal_identity_Sys bbhInitial 3) = -168 ∧
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_identity_Sys bbhInitial 3) = 210 ∧
     -- eR + fork on BBH at d=3: g_BBH = (-294, 462)
-    knillEulerScaled (causalDAGOfEvolution edgeReversal_fork_Sys bbhInitial 3) = -294 ∧
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_fork_Sys bbhInitial 3) = 462 :=
+    knillEulerScaled (causalDAGOfFireAll edgeReversal_fork_Sys bbhInitial 3) = -294 ∧
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_fork_Sys bbhInitial 3) = 462 :=
   ⟨bbh_causal_eR_id_3, bbh_branchial_eR_id_3,
    bbh_causal_eR_fork_3, bbh_branchial_eR_fork_3⟩
 
@@ -111,13 +111,13 @@ theorem bbh_metric_tensor_characterization :
   * eR + fork: BBH = 7 × (-42, 66) = (-294, 462) ✓
 -/
 theorem bbh_tensor_universal_additivity :
-    knillEulerScaled (causalDAGOfEvolution edgeReversal_identity_Sys bbhInitial 3) =
+    knillEulerScaled (causalDAGOfFireAll edgeReversal_identity_Sys bbhInitial 3) =
       7 * discreteRicciScalar edgeReversal_identity_Sys 3 ∧
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_identity_Sys bbhInitial 3) =
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_identity_Sys bbhInitial 3) =
       7 * discreteBranchialDensity edgeReversal_identity_Sys 3 ∧
-    knillEulerScaled (causalDAGOfEvolution edgeReversal_fork_Sys bbhInitial 3) =
+    knillEulerScaled (causalDAGOfFireAll edgeReversal_fork_Sys bbhInitial 3) =
       7 * discreteRicciScalar edgeReversal_fork_Sys 3 ∧
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_fork_Sys bbhInitial 3) =
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_fork_Sys bbhInitial 3) =
       7 * discreteBranchialDensity edgeReversal_fork_Sys 3 := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
 

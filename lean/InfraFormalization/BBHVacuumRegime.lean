@@ -71,19 +71,19 @@ open BranchialUniversalAdditivity
 /-! ## BBH vacuum-regime values -/
 
 theorem bbh_vacuum_R_3 :
-    knillEulerScaled (causalDAGOfEvolution fork_doubleCycle_Sys bbhInitial 3) = 0 := by
+    knillEulerScaled (causalDAGOfFireAll fork_doubleCycle_Sys bbhInitial 3) = 0 := by
   native_decide
 
 theorem bbh_vacuum_R_4 :
-    knillEulerScaled (causalDAGOfEvolution fork_doubleCycle_Sys bbhInitial 4) = 0 := by
+    knillEulerScaled (causalDAGOfFireAll fork_doubleCycle_Sys bbhInitial 4) = 0 := by
   native_decide
 
 theorem bbh_vacuum_B_3 :
-    knillEulerScaled (branchialDAGOfEvolution fork_doubleCycle_Sys bbhInitial 3) = 546 := by
+    knillEulerScaled (branchialDAGOfFireAll fork_doubleCycle_Sys bbhInitial 3) = 546 := by
   native_decide
 
 theorem bbh_vacuum_B_4 :
-    knillEulerScaled (branchialDAGOfEvolution fork_doubleCycle_Sys bbhInitial 4) = 1680 := by
+    knillEulerScaled (branchialDAGOfFireAll fork_doubleCycle_Sys bbhInitial 4) = 1680 := by
   native_decide
 
 /-! ## BBH vacuum-like regime certification -/
@@ -95,12 +95,12 @@ vacuum-like discrete regime under `fork + doubleCycle_5`:
   * B_BBH = 7 × B_edge at every probed depth. -/
 theorem bbh_vacuum_regime_certified :
     -- R = 0 on BBH:
-    knillEulerScaled (causalDAGOfEvolution fork_doubleCycle_Sys bbhInitial 3) = 0 ∧
-    knillEulerScaled (causalDAGOfEvolution fork_doubleCycle_Sys bbhInitial 4) = 0 ∧
+    knillEulerScaled (causalDAGOfFireAll fork_doubleCycle_Sys bbhInitial 3) = 0 ∧
+    knillEulerScaled (causalDAGOfFireAll fork_doubleCycle_Sys bbhInitial 4) = 0 ∧
     -- B follows 7× per-edge additivity:
-    knillEulerScaled (branchialDAGOfEvolution fork_doubleCycle_Sys bbhInitial 3) =
+    knillEulerScaled (branchialDAGOfFireAll fork_doubleCycle_Sys bbhInitial 3) =
       7 * discreteBranchialDensity fork_doubleCycle_Sys 3 ∧
-    knillEulerScaled (branchialDAGOfEvolution fork_doubleCycle_Sys bbhInitial 4) =
+    knillEulerScaled (branchialDAGOfFireAll fork_doubleCycle_Sys bbhInitial 4) =
       7 * discreteBranchialDensity fork_doubleCycle_Sys 4 := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
 
@@ -109,10 +109,10 @@ the branchial Knill (quantum amplitude analog) grows substantially
 between depths: 546 → 1680 (≈3× per depth step), while R stays
 at 0. -/
 theorem bbh_vacuum_B_growth :
-    knillEulerScaled (branchialDAGOfEvolution fork_doubleCycle_Sys bbhInitial 4) >
-      knillEulerScaled (branchialDAGOfEvolution fork_doubleCycle_Sys bbhInitial 3) ∧
-    knillEulerScaled (causalDAGOfEvolution fork_doubleCycle_Sys bbhInitial 3) =
-      knillEulerScaled (causalDAGOfEvolution fork_doubleCycle_Sys bbhInitial 4) := by
+    knillEulerScaled (branchialDAGOfFireAll fork_doubleCycle_Sys bbhInitial 4) >
+      knillEulerScaled (branchialDAGOfFireAll fork_doubleCycle_Sys bbhInitial 3) ∧
+    knillEulerScaled (causalDAGOfFireAll fork_doubleCycle_Sys bbhInitial 3) =
+      knillEulerScaled (causalDAGOfFireAll fork_doubleCycle_Sys bbhInitial 4) := by
   refine ⟨?_, ?_⟩
   · rw [bbh_vacuum_B_4, bbh_vacuum_B_3]; decide
   · rw [bbh_vacuum_R_3, bbh_vacuum_R_4]

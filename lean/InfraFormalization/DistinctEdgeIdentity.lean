@@ -35,7 +35,7 @@ distinct-edge trajectories produce identical branchial DAGs.
     distinct-edge graphs at the probed depths.
 
 **Towards H9 closure**: the next step (#492) is a structural
-induction proving `distinct(singleWayStep sys H) = 3·distinct H`
+induction proving `distinct(fireAllStep sys H) = 3·distinct H`
 for any H with appropriate invariants. Combined with this identity
 as the base case, it would close the H9 scaling-exponent conjecture.
 
@@ -71,35 +71,35 @@ def distinctEdgeCount (H : ExecHG ℕ) : Nat :=
 /-! ## Identity at small depths -/
 
 theorem distinct_eR_tripleMerger_d0 :
-    distinctEdgeCount (singleWayEvolve edgeReversal_tripleMerger_Sys seedEdge12 0) = 1 := by
+    distinctEdgeCount (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 0) = 1 := by
   native_decide
 
 theorem distinct_eR_tripleMerger_d1 :
-    distinctEdgeCount (singleWayEvolve edgeReversal_tripleMerger_Sys seedEdge12 1) = 3 := by
+    distinctEdgeCount (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 1) = 3 := by
   native_decide
 
 theorem distinct_eR_tripleMerger_d2 :
-    distinctEdgeCount (singleWayEvolve edgeReversal_tripleMerger_Sys seedEdge12 2) = 9 := by
+    distinctEdgeCount (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 2) = 9 := by
   native_decide
 
 theorem distinct_eR_tripleMerger_d3 :
-    distinctEdgeCount (singleWayEvolve edgeReversal_tripleMerger_Sys seedEdge12 3) = 27 := by
+    distinctEdgeCount (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 3) = 27 := by
   native_decide
 
 theorem distinct_fork_dCyc_d0 :
-    distinctEdgeCount (singleWayEvolve fork_doubleCycle_Sys seedEdge12 0) = 1 := by
+    distinctEdgeCount (fireAllEvolve fork_doubleCycle_Sys seedEdge12 0) = 1 := by
   native_decide
 
 theorem distinct_fork_dCyc_d1 :
-    distinctEdgeCount (singleWayEvolve fork_doubleCycle_Sys seedEdge12 1) = 3 := by
+    distinctEdgeCount (fireAllEvolve fork_doubleCycle_Sys seedEdge12 1) = 3 := by
   native_decide
 
 theorem distinct_fork_dCyc_d2 :
-    distinctEdgeCount (singleWayEvolve fork_doubleCycle_Sys seedEdge12 2) = 9 := by
+    distinctEdgeCount (fireAllEvolve fork_doubleCycle_Sys seedEdge12 2) = 9 := by
   native_decide
 
 theorem distinct_fork_dCyc_d3 :
-    distinctEdgeCount (singleWayEvolve fork_doubleCycle_Sys seedEdge12 3) = 27 := by
+    distinctEdgeCount (fireAllEvolve fork_doubleCycle_Sys seedEdge12 3) = 27 := by
   native_decide
 
 /-! ## Bundled identity theorem -/
@@ -108,29 +108,29 @@ theorem distinct_fork_dCyc_d3 :
 `3^d` for both persistent-equivalence members at depths 0, 1, 2, 3. -/
 theorem distinct_edge_identity_at_low_depths :
     -- eR + tripleMerger
-    distinctEdgeCount (singleWayEvolve edgeReversal_tripleMerger_Sys seedEdge12 0) = 3^0 ∧
-    distinctEdgeCount (singleWayEvolve edgeReversal_tripleMerger_Sys seedEdge12 1) = 3^1 ∧
-    distinctEdgeCount (singleWayEvolve edgeReversal_tripleMerger_Sys seedEdge12 2) = 3^2 ∧
-    distinctEdgeCount (singleWayEvolve edgeReversal_tripleMerger_Sys seedEdge12 3) = 3^3 ∧
+    distinctEdgeCount (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 0) = 3^0 ∧
+    distinctEdgeCount (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 1) = 3^1 ∧
+    distinctEdgeCount (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 2) = 3^2 ∧
+    distinctEdgeCount (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 3) = 3^3 ∧
     -- fork + dCyc
-    distinctEdgeCount (singleWayEvolve fork_doubleCycle_Sys seedEdge12 0) = 3^0 ∧
-    distinctEdgeCount (singleWayEvolve fork_doubleCycle_Sys seedEdge12 1) = 3^1 ∧
-    distinctEdgeCount (singleWayEvolve fork_doubleCycle_Sys seedEdge12 2) = 3^2 ∧
-    distinctEdgeCount (singleWayEvolve fork_doubleCycle_Sys seedEdge12 3) = 3^3 := by
+    distinctEdgeCount (fireAllEvolve fork_doubleCycle_Sys seedEdge12 0) = 3^0 ∧
+    distinctEdgeCount (fireAllEvolve fork_doubleCycle_Sys seedEdge12 1) = 3^1 ∧
+    distinctEdgeCount (fireAllEvolve fork_doubleCycle_Sys seedEdge12 2) = 3^2 ∧
+    distinctEdgeCount (fireAllEvolve fork_doubleCycle_Sys seedEdge12 3) = 3^3 := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
 
 /-- **`persistent_class_distinct_equal`**: at each probed depth,
 the distinct edge counts of the two persistent-equivalence members
 are equal. -/
 theorem persistent_class_distinct_equal :
-    distinctEdgeCount (singleWayEvolve edgeReversal_tripleMerger_Sys seedEdge12 0) =
-      distinctEdgeCount (singleWayEvolve fork_doubleCycle_Sys seedEdge12 0) ∧
-    distinctEdgeCount (singleWayEvolve edgeReversal_tripleMerger_Sys seedEdge12 1) =
-      distinctEdgeCount (singleWayEvolve fork_doubleCycle_Sys seedEdge12 1) ∧
-    distinctEdgeCount (singleWayEvolve edgeReversal_tripleMerger_Sys seedEdge12 2) =
-      distinctEdgeCount (singleWayEvolve fork_doubleCycle_Sys seedEdge12 2) ∧
-    distinctEdgeCount (singleWayEvolve edgeReversal_tripleMerger_Sys seedEdge12 3) =
-      distinctEdgeCount (singleWayEvolve fork_doubleCycle_Sys seedEdge12 3) := by
+    distinctEdgeCount (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 0) =
+      distinctEdgeCount (fireAllEvolve fork_doubleCycle_Sys seedEdge12 0) ∧
+    distinctEdgeCount (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 1) =
+      distinctEdgeCount (fireAllEvolve fork_doubleCycle_Sys seedEdge12 1) ∧
+    distinctEdgeCount (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 2) =
+      distinctEdgeCount (fireAllEvolve fork_doubleCycle_Sys seedEdge12 2) ∧
+    distinctEdgeCount (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 3) =
+      distinctEdgeCount (fireAllEvolve fork_doubleCycle_Sys seedEdge12 3) := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
 
 /-! ## What this delivers

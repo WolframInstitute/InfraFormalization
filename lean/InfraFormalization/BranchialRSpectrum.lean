@@ -70,26 +70,26 @@ open MultiRuleDiscovered
 /-- Single-rule edgeReversal has zero branchial contention at depth 3 —
 deterministic dynamics. -/
 theorem edgeReversal_branchial_0 :
-    knillEulerScaled (branchialDAGOfEvolution edgeReversalSys seedEdge12 3) = 0 := by
+    knillEulerScaled (branchialDAGOfFireAll edgeReversalSys seedEdge12 3) = 0 := by
   native_decide
 
 /-- Single-rule identityKeep also has zero branchial contention. -/
 theorem identityKeep_branchial_0 :
-    knillEulerScaled (branchialDAGOfEvolution identityKeepSys seedEdge12 3) = 0 := by
+    knillEulerScaled (branchialDAGOfFireAll identityKeepSys seedEdge12 3) = 0 := by
   native_decide
 
 /-! ## Multi-rule branchial spectrum -/
 
 theorem eR_id_branchial_30 :
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_identity_Sys seedEdge12 3) = 30 := by
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_identity_Sys seedEdge12 3) = 30 := by
   native_decide
 
 theorem eR_fork_branchial_66 :
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_fork_Sys seedEdge12 3) = 66 := by
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_fork_Sys seedEdge12 3) = 66 := by
   native_decide
 
 theorem eR_tripleMerger_branchial_78 :
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_tripleMerger_Sys seedEdge12 3) = 78 := by
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_tripleMerger_Sys seedEdge12 3) = 78 := by
   native_decide
 
 /-! ## The single-vs-multi-rule branchial dichotomy -/
@@ -100,8 +100,8 @@ have zero branchial Knill at d=3 on edge12.
 Note: name suggests universality across single-rule systems; statement
 is a 2-conjunct over named witnesses at d=3. -/
 theorem branchial_single_rule_zero :
-    knillEulerScaled (branchialDAGOfEvolution edgeReversalSys seedEdge12 3) = 0 ∧
-    knillEulerScaled (branchialDAGOfEvolution identityKeepSys seedEdge12 3) = 0 :=
+    knillEulerScaled (branchialDAGOfFireAll edgeReversalSys seedEdge12 3) = 0 ∧
+    knillEulerScaled (branchialDAGOfFireAll identityKeepSys seedEdge12 3) = 0 :=
   ⟨edgeReversal_branchial_0, identityKeep_branchial_0⟩
 
 /-- **`branchial_multi_rule_nonzero`**: three specific multi-rule combos
@@ -110,9 +110,9 @@ have non-zero branchial Knill at d=3.
 Note: name suggests universality across multi-rule systems; statement
 is a 3-conjunct over named witnesses at d=3. -/
 theorem branchial_multi_rule_nonzero :
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_identity_Sys seedEdge12 3) = 30 ∧
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_fork_Sys seedEdge12 3) = 66 ∧
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_tripleMerger_Sys seedEdge12 3) = 78 :=
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_identity_Sys seedEdge12 3) = 30 ∧
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_fork_Sys seedEdge12 3) = 66 ∧
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_tripleMerger_Sys seedEdge12 3) = 78 :=
   ⟨eR_id_branchial_30, eR_fork_branchial_66, eR_tripleMerger_branchial_78⟩
 
 /-! ## Bundled branchial-R spectrum -/
@@ -122,12 +122,12 @@ characterization at depth 3 across single and multi-rule
 discovered systems. -/
 theorem branchial_R_spectrum :
     -- Single-rule deterministic regime:
-    knillEulerScaled (branchialDAGOfEvolution edgeReversalSys seedEdge12 3) = 0 ∧
-    knillEulerScaled (branchialDAGOfEvolution identityKeepSys seedEdge12 3) = 0 ∧
+    knillEulerScaled (branchialDAGOfFireAll edgeReversalSys seedEdge12 3) = 0 ∧
+    knillEulerScaled (branchialDAGOfFireAll identityKeepSys seedEdge12 3) = 0 ∧
     -- Multi-rule superposition regime:
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_identity_Sys seedEdge12 3) = 30 ∧
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_fork_Sys seedEdge12 3) = 66 ∧
-    knillEulerScaled (branchialDAGOfEvolution edgeReversal_tripleMerger_Sys seedEdge12 3) = 78 :=
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_identity_Sys seedEdge12 3) = 30 ∧
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_fork_Sys seedEdge12 3) = 66 ∧
+    knillEulerScaled (branchialDAGOfFireAll edgeReversal_tripleMerger_Sys seedEdge12 3) = 78 :=
   ⟨edgeReversal_branchial_0, identityKeep_branchial_0,
    eR_id_branchial_30, eR_fork_branchial_66, eR_tripleMerger_branchial_78⟩
 

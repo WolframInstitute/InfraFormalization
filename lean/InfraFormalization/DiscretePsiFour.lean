@@ -77,7 +77,7 @@ def discretePsiFour (sys : ExecSystem) (H : ExecHG ℕ) (n : Nat) :
     List (Int × Nat) :=
   let flux := perStepEventCount sys H n
   let knills := (List.range (n+1)).map (fun k =>
-    knillEulerScaled (causalDAGOfEvolution sys H k))
+    knillEulerScaled (causalDAGOfFireAll sys H k))
   let deltas := (List.range n).map (fun k =>
     (knills.getD (k+1) 0) - (knills.getD k 0))
   deltas.zip flux
