@@ -1,10 +1,10 @@
 # Phase 1 — Self-audit of the empirical Wolfram-model rewriter
 
-**Status: PASSED.** The independent Python re-implementation (`scripts/python/rewriter.py`) reproduces every structural quantity that SetReplace produced for the 9 seeds used in the refutation, with residual discrepancies of ≤ 4 causal edges on two dense 3D-grid seeds (attributable to match-ordering tiebreaks, not to a difference in the rule's semantics).
+**Status: FAILED on two checks.** `scripts/python/run_all_seeds.py` (rerun 2026-10-23) exits with status 1 and prints "MISMATCHES DETECTED". The Python rewriter (`scripts/python/rewriter.py`) matches SetReplace on events fired, final state size and causal-graph vertex count for all 9 seeds, and on causal-graph edge count for 7 of 9. The causal edge counts differ on the 3x3x3 grid (1150 against 1146) and the 5x5x5 grid (7700 against 7703). The cone-growth exponents differ on 8 of 9 seeds (table below). The script does not compare exponents.
 
 ## What was audited
 
-Our empirical refutation of the rule named in arXiv:2102.09363 line 6202,
+The measurements of the rule named in arXiv:2102.09363 line 6202,
 $$
 R: \;\{\{x,y\},\{y,z\},\{z,w\},\{w,v\}\} \;\longrightarrow\; \{\{y,u\},\{u,v\},\{w,x\},\{x,u\}\},
 $$
@@ -23,33 +23,33 @@ No dependencies outside the Python standard library.
 
 ## Results (2026-04-18 comparison)
 
-| Seed | events fired | state size | \|V\| | \|E\| (py) | \|E\| (SR) | cone-fit dim |
-|---|---:|---:|---:|---:|---:|---:|
-| 4-cycle | 1 | 4 | 1 | — | — | — (too small) |
-| 4-path  | 1 | 4 | 1 | — | — | — (too small) |
-| 6-cycle | 500 | 6 | 500 | 1994 | 1994 | **0.995** |
-| 8-cycle | 500 | 8 | 500 | 1992 | 1992 | **1.000** |
-| 10-path | 500 | 10 | 500 | 1990 | 1990 | **0.995** |
-| 20-cycle | 1000 | 20 | 1000 | 3980 | 3980 | **1.028** |
-| grid3_3 | 300 | 54 | 300 | 1150 | 1146 | 1.081 |
-| grid3_4 | 1000 | 144 | 1000 | 3856 | 3856 | **1.256** |
-| grid3_5 | 2000 | 300 | 2000 | 7700 | 7703 | 1.055 |
+| Seed | events fired | state size | \|V\| | \|E\| (py) | \|E\| (SR) | exponent (py) | exponent (SR) |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| 4-cycle | 1 | 4 | 1 | — | — | — (too small) | — |
+| 4-path  | 1 | 4 | 1 | — | — | — (too small) | — |
+| 6-cycle | 500 | 6 | 500 | 1994 | 1994 | 0.995 | 0.995 |
+| 8-cycle | 500 | 8 | 500 | 1992 | 1992 | 1.000 | 0.991 |
+| 10-path | 500 | 10 | 500 | 1990 | 1990 | 0.995 | 1.014 |
+| 20-cycle | 1000 | 20 | 1000 | 3980 | 3980 | 1.028 | 0.995 |
+| grid3_3 | 300 | 54 | 300 | 1150 | 1146 | 1.081 | 1.098 |
+| grid3_4 | 1000 | 144 | 1000 | 3856 | 3856 | 1.256 | 0.985 |
+| grid3_5 | 2000 | 300 | 2000 | 7700 | 7703 | 1.055 | 1.014 |
+
+The Python values were reproduced on 2026-10-23. The SetReplace exponents come from `notes/empirical_refutation.md` and `setreplace_reference.md`.
 
 ### What matches exactly
 - **Events fired** across all 9 seeds. In particular, the 4-cycle and 4-path "die after 1 event" observation is confirmed.
 - **Final state size** across all 9 seeds. Edge-conservation (`|LHS|=|RHS| ⇒ state size constant`) is a structural law independent of any scheduler.
 - **Causal graph |V|** across all 9 seeds. (Once we align on the convention that SetReplace excludes the virtual-seed event, the two implementations produce equal event counts.)
 - **Causal graph |E|** on 7 of 9 seeds exactly.
-- **Cone dimension** is empirically ≈ 1 in Python for every seed that grows large enough to fit, including the 3D grids (0.995 to 1.256).
+- **Cone exponent**: does not match. Python gives 0.995 to 1.256 and SetReplace gives 0.985 to 1.098. On grid3_4 the event and causal-edge counts agree and the exponents are 1.256 and 0.985.
 
 ### Where they differ
 Two dense 3D-grid seeds differ in |E| by ≤ 4 edges out of thousands:
 - `grid3_3`: Python 1150 vs SetReplace 1146 (diff 4)
 - `grid3_5`: Python 7700 vs SetReplace 7703 (diff 3)
 
-**Cause.** On highly symmetric seeds (the 3D grid has many overlapping length-4 chains at each step), SetReplace's single-way match-selection heuristic and our Python backtracking-lex-first-match tiebreaker disagree on *which* match fires next. The histories therefore diverge slightly in which causal lineages exist. This is a scheduler-level difference; the underlying rule semantics are identical.
-
-**Evidence this is not a bug.** If our Python rewriter disagreed with SetReplace on the rule's semantics, the disagreement would appear *immediately* on small, non-symmetric seeds (4-cycle, 4-path, 6-cycle, 8-cycle, 10-path, 20-cycle). All six match exactly. The structural refutation (edge conservation ⇒ 1D cone growth) is invariant under scheduler choice; the discrepancies on 3D grids do not touch it.
+**Cause.** Not determined. The match chosen at each step has not been compared between the two tools. Equal counts on the six cycle and path seeds show agreement on those seeds only. The grid3_4 exponent difference occurs with equal event and causal-edge counts, so equal counts do not show equal causal graphs.
 
 ## Conventions (for future readers)
 
@@ -77,13 +77,8 @@ Match $x=1,y=2,z=3,w=4,v=5$. Fresh $u$; RHS = `{{2,u},{u,5},{4,1},{1,u}}`. Live 
 
 Chains of length 4: `4→1→u→5` is the longest directed chain and has only 3 edges. No length-4 chain exists. Halt. ✓
 
-## What this lets us trust
+## Status of the measured quantities
 
-Because Phase 1A passes, we can treat the following as verified facts about the rule JGORARD names in arXiv:2102.09363:
-
-1. **(Termination on small cycles/paths.)** On `{{1,2},…,{4,1}}` and `{{1,2},…,{4,5}}`, the rule halts after one firing.
-2. **(State conservation.)** For any seed and update order, the state multiset size is constant.
-3. **(Linear cone growth.)** The causal graph has log-log cone-growth exponent ≈ 1 on every seed tested, up to and including 3D grid seeds.
-4. **(Structural refutation.)** JGORARD's §3.3 machinery needs cone dimension $n = 4$ for 3+1-dim GR. The actual dimension is 1. The argument cannot apply to this rule.
-
-These four claims, independently verified by two implementations that agree to scheduler-level noise, form the empirical core of the refutation of arXiv:2102.09363 line 6202.
+1. **Halting on the 4-cycle and 4-edge path.** Both tools fire one event. The hand traces above confirm it.
+2. **Edge-count conservation.** PROVED in Lean (`Refutations.gorardNamedRule_applications_preserve_size`). Both tools report a constant state size.
+3. **Cone exponent.** MEASURED between 0.985 and 1.256 on the seeds above, with the tool disagreement unexplained. No bound on cone growth is proved (O1 in `STATUS_OF_GORARD_CLAIMS.md`).

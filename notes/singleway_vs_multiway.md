@@ -57,13 +57,13 @@ Once you have causal invariance, it ceases to matter which path you pick — eve
 | **S2 #3–#6 — Ill-defined discrete action / variation / orthonormality / $\varepsilon=\delta=1$** | undefined objects | NONE — holds in any update-ordering mode |
 | **S3 #7–#9 — Tautologies** | restatements of definitions | NONE — they're tautological in any framing |
 | **S4 #10–#12 — Unsupported bridge claims** | unproven conjectures | Benincasa–Dowker hypothesis is about Poisson-sampling, not about Wolfram dynamics per se |
-| **S5 #13 — Named rule is 1-dimensional** | structural: $|LHS|=|RHS|$ ⇒ edge conservation ⇒ linear cone growth | **ROBUST**: edge conservation holds for *every* update order; linear cone growth bound follows without picking an order |
+| **S5 #13 — Named rule cone growth** | edge conservation PROVED, cone exponent MEASURED single-way | Edge conservation holds for every update order. The cone exponent was measured in one update order per tool, and no cone bound is proved |
 | **S5 #14 — $N(r)$ by analogy** | not derived from convergence theorem | NONE — "by analogy" is rhetorical, not scheduler-specific |
 | **S6 #15–#16 — Claims not delivered in the body** | title/abstract-level | NONE |
 
 So of 16 distinct errors: zero depend on single-way vs multi-way.
 
-**Specifically for Error #13 (1D causal graph):** the causal graph's edge-count $|E_{cg}|$ with multi-count convention is bounded by $k \cdot m$, where $k$ is |LHS| and $m$ is the number of events. Each event has in-degree $k$. The state size is constant $N$, so in any *greedy parallel schedule* of the causal DAG each layer has $\le \lfloor N/k\rfloor$ events. This is the parallel-layer bound, and it is provable from $|LHS|=|RHS|$ alone.
+**Specifically for Error #13 (1D causal graph):** the causal graph's edge-count $|E_{cg}|$ with multi-count convention is bounded by $k \cdot m$, where $k$ is |LHS| and $m$ is the number of events. Each event has in-degree $k$. The state size is constant $N$, so in any *greedy parallel schedule* of the causal DAG each layer has $\le \lfloor N/k\rfloor$ events. This is the parallel-layer bound. It is OPEN in Lean (`STATUS_OF_GORARD_CLAIMS.md`, O2).
 
 **Honest caveat (corrected 2026-04-19):** the parallel-layer bound does NOT directly imply that the BFS cone of radius $t$ from any source has size $O(t)$. An event in the BFS cone can have arbitrarily high parallel-level via long alternate paths, so the cone is not contained in a contiguous band of parallel layers. The empirical *linear* cone growth we measured for the named rule on the tested seeds is rule-and-seed-specific structure (multiple paths merge in a way that keeps the cone narrow); it would require a rule-specific induction to prove formally, not a structural theorem about all conservative rules.
 
@@ -136,7 +136,7 @@ Items 1 and 4 are the most serious. Each is a research project, not a paper-revi
 
 - JGORARD's *definitions* of causal invariance and general covariance are multi-way, but his *arguments* are almost always single-way, and causal invariance is never verified for any specific rule.
 - Multi-way machinery (MWEG, branchial graph) is present in the corpus as a feature-set, but not deployed where the load-bearing arguments are made.
-- **Our empirical refutation (the named rule is 1-dim) uses a single-way SetReplace run + a single-way Python re-implementation, and the result is multi-way-robust because it is structural**: $|LHS| = |RHS|$ ⇒ conservation law ⇒ bounded cone growth.
+- **The cone-exponent measurements of the named rule use a single-way SetReplace run and a single-way Python run.** Edge conservation holds in every update order. No cone bound is proved, so the measurements say nothing about other update orders.
 - **Our continuum-side refutations (S1 errors) are independent of single-way vs multi-way entirely**; they are bugs in JGORARD's statement of Riemannian-geometry theorems.
 - **The null tetrad, connection, parallel transport, curvature tensor — none live on a hypergraph**; JGORARD's claims on them pertain either to an ambient continuum metric (G3 §6) or to hypergraph surrogates that fail the needed properties (S2 #5 fiat orthonormality).
 - A genuine hypergraph-to-GR derivation would require §6's six items — none of which JGORARD's corpus provides.

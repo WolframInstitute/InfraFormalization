@@ -54,7 +54,7 @@ Ill-defined discrete action $\sum d\mu_g R$, ill-defined $\delta/\delta g^{ab}$ 
 |---|---|---|
 | G1 | §3.3 (lines 882–990, Eqs 86–102) | original instance |
 | G2 | §5 (lines 1910–1980) | same argument, expanded |
-| G3 | §5 (lines 5240–6200) | further expanded with Benincasa–Dowker (which Poisson-samples the target manifold — structurally circular) |
+| G3 | §5 (lines 5240–6200) | further expanded with Benincasa–Dowker (which assumes Poisson sampling of a given manifold. G3's initial data is sampled from the target geometry) |
 | G4 | §4 | builds on G3's construction |
 
 Verdict **⚠ ill-defined / ○ open**. The overall conclusion (Einstein field equations emerge) inherits all the failures of its component steps. No single step has been repaired by any successor paper; each new paper reuses the broken argument.
@@ -92,7 +92,7 @@ Verdict **✗ refuted** by independent Python rewriter + SetReplace + structural
 |---|---|---|---|
 | G1 (2004.14810) | §3.3 discrete EFE "derivation"; Ollivier discrete Ricci on hypergraphs; ADM reframing | originator of Errors 1, 3, 4, 5, 6 | ✗ — "derivation" rests on undefined discrete objects and unproven limits |
 | G2 (2011.12174) | tube formula; d'Alembertian for causal graphs; links to causal-set theory | repeats 1 (3 copies!), 3, 4, 5, 6; originator of 2 | partially — causal-set link is valid on its own terms but inherits G1's undefined discrete EFE apparatus |
-| G3 (2102.09363) | CCZ4-on-hypergraph-mesh code; gravitational-wave extraction via Newman–Penrose; specific named rule | repeats 1, 2, 3, 4, 5, 6; originator of 7 | ✗ — "provably satisfies EFE" reduces to Poisson-sampling-the-target-manifold (circular); named rule produces 1D causal graph |
+| G3 (2102.09363) | CCZ4-on-hypergraph-mesh code; gravitational-wave extraction via Newman–Penrose; specific named rule | repeats 1, 2, 3, 4, 5, 6; originator of 7 | ✗ — "provably satisfies EFE" assumes Poisson-distributed rewrite events, and the comparison starts from initial data sampled from the target geometry. The named rule conserves edge count, with measured cone exponents 0.985 to 1.256 |
 | G4 (2303.07282) | continuum WKB/LTB/Ernst collapse analysis + numerical validation | inherits 1–7; also non-delivers on title | ✗ — title promises "discrete singularity theorems", body has none |
 
 ## The overall picture

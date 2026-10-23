@@ -98,7 +98,7 @@ Definitions used throughout this project. Organized by topic. Terms JGORARD uses
 
 **Verdict status.** ✓ verified, ✗ refuted, ⚠ ill-defined, ⊘ tautology, ○ open.
 
-**Conservative rule.** $|LHS| = |RHS|$ — Wolfram-model-specific term (not JGORARD's; ours). Central to the structural refutation of S5.
+**Conservative rule.** $|LHS| = |RHS|$ — Wolfram-model-specific term (not JGORARD's; ours). The named rule of G3 is conservative.
 
 **Directional Ricci conflation.** Our label for the S1 error pattern — treating $\mathrm{Ric}(v,v)$ as if it were the scalar $R$.
 

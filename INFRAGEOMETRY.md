@@ -99,7 +99,7 @@ Strategic contrasts:
 - Continuum targets (local-coord): Schwarzschild component functions + all eight Christoffels on the exterior; Schwarzschild as `PartialMetricData 4` (B1, B5); FLRW `flrwPartial a da` (B6); Reissner-Nordström `rnPartial M Q` (B8); de Sitter; 2-sphere; warpedDiag2.
 - Bundle-level metric predicates: `DiagRiemannianMetric` + Euclidean witness (C1); `DiagLorentzianMetric` + Minkowski witness (C2).
 - Hypergraph-origin obligations: every continuum metric in the GR zoo carries a `HypergraphMetricOriginObligation` Prop with flat-case witness; `LorentzianManifoldOriginObligation`, `ConnectionDataOriginObligation`, `EFEOriginObligation` similarly; `minkowski4_flat_vacuum_EFE_originated_global` is the first complete rule → metric → connection → EFE chain.
-- Refutations: F1 (no canonical metric), F2 (fiat orthonormality), F3 (dim-preservation tautology), F4 (causal-invariance ⇔ GC tautology), F5 (ill-defined "becomes"), F6 (G3 circular procedure = identity), F7 (named-rule conservativity blocks 4D cone growth); F8 Raychaudhuri statement level.
+- Refutations: F1 (no canonical metric), F2 (fiat orthonormality), F3 (dim-preservation tautology), F4 (causal-invariance ⇔ GC tautology), F5 (ill-defined "becomes"), F6 (G3 initial data sampled from the target geometry, Lean file restates its own hypothesis), F7 (named-rule edge conservation; no cone bound proved); F8 Raychaudhuri statement level.
 - Ollivier–JGORARD quantitative discrepancy: `ollivier_minus_gorard_leading` with S² worked example `s2_gorard_error = δε²/8`.
 
 ### Partially formalized

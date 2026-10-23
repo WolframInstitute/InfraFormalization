@@ -5,7 +5,7 @@ A Lean 4 / Mathlib formalisation of the Wolfram-model → general-relativity / q
 The project runs on three parallel axes:
 
 1. **Positive construction** — a 10-rung bridge ladder from hypergraph primitives to Einstein's equations, with every continuous object anchored to a hypergraph origin by an obligation Prop.
-2. **Audit of the JGORARD corpus** — line-by-line formalisation of seven structural flaws (F1–F7), each converted to an axiom-clean Lean theorem with counter-example witnesses.
+2. **Audit of the JGORARD corpus** — a line-by-line reading of four papers, eight recorded flaws (F1–F8), and axiom-clean Lean statements about the project's encodings of them. The status of each conclusion (PROVED, MEASURED, READ, OPEN) is in [`STATUS_OF_GORARD_CLAIMS.md`](STATUS_OF_GORARD_CLAIMS.md).
 3. **Infrageometry programme** — 57-task / 9-group research programme for the Wolfram Institute, covering colleagues' work (PHAJEK, NMURZIN, JWILES, HVLE, HKOLCZ, JPULLMAN, CZAPATA, SAHMED, IMILEA, DHAMMOCK, UBAJAJ, SRODKEY). Handle index in [`CONTRIBUTORS.md`](CONTRIBUTORS.md).
 
 `lake build` is fully green. Every theorem reduces to Lean's three standard axioms `{propext, Classical.choice, Quot.sound}` — no `sorry`, no `native_decide`, no custom axioms, certified by `#print axioms` in `AxiomCheck.lean`.
@@ -61,7 +61,7 @@ Previous landings (2026-04-26, late):
     - **H1 `CandidateRuleCatalog`**: JGORARD's named rule (arXiv:2102.09363) plus four other literature rules as concrete `Rule P` instances with `LiteratureSource` citations and machine-checked conservation theorems.
     - **Cycle-hypergraph distance infrastructure**: closed-form `.val` for iterated ±1 shifts, injectivity on admissible ranges, forward/backward disjointness, parallel-transport walk composition — feeds C8 (scaled → Levi-Civita).
 - **Grounding audit**: all four action items closed. No free-floating continuum islands at the obligation level (see [`GROUNDING_AUDIT.md`](GROUNDING_AUDIT.md)).
-- **Refutations**: F1–F7 Lean-formal; F6 (circular G3 derivation) formally proved as `circular_procedure_is_identity`; F8 documentary.
+- **Refutations**: F1–F7 have Lean files that prove facts about the project's own definitions (see [`STATUS_OF_GORARD_CLAIMS.md`](STATUS_OF_GORARD_CLAIMS.md)). F8 is documentary.
 - **Flat bridges proved**: cycle → circle, path → interval, 2-torus, d-torus, discrete Lorentz → Minkowski.
 - **Continuum-target GR zoo**: Minkowski, Schwarzschild, FLRW, Reissner-Nordström, Kerr, 2-sphere, de Sitter — all formalised with hypergraph-origin obligations attached.
 - **Branchial QM**: finite slice → ℂ-Hilbert → self-adjoint adjacency → unitary Schrödinger → Born rule → observables → expectation values.
@@ -285,7 +285,7 @@ No category-(3) obligation is allowed to sit as an open `True ∧ False` stub �
 
 - **G1 — arXiv:2004.14810** — *Some Relativistic and Gravitational Properties of the Wolfram Model.* Foundational. §3.3 is the claimed Einstein-equations derivation; §3.1 states the Ollivier–Ricci identity; §3.2 introduces the fiat-orthonormality convention.
 - **G2 — arXiv:2011.12174** — *Algorithmic Causal Sets and the Wolfram Model.* Reuses G1 §5; introduces Eq 126 (tube-volume coefficient) used later in G3 Eq 342.
-- **G3 — arXiv:2102.09363** — *Hypergraph Discretization of the Cauchy Problem in GR via Wolfram Model Evolution.* Contains the "provably satisfies EFE" claim and the named rule. Relies on a Poisson-sprinkle-then-reconstruct schema (TeX lines 6080, 6152).
+- **G3 — arXiv:2102.09363** — *Hypergraph Discretization of the Cauchy Problem in GR via Wolfram Model Evolution.* Contains the "provably satisfies EFE" claim and the named rule. Builds its initial hypergraph by Poisson sampling from the target initial-data geometry (text lines 6080, 6148-6152, 6179).
 - **G4 — arXiv:2303.07282** — *Non-Vacuum Solutions, Gravitational Collapse and Discrete Singularity Theorems.* Title-body gap: no discrete Raychaudhuri, no discrete expansion scalar, no discrete energy condition, no discrete stress-energy tensor, no "shear" or "vorticity" in the text.
 
 Supporting papers referenced: 2308.07508, 2401.14209.
@@ -294,34 +294,34 @@ Supporting papers referenced: 2308.07508, 2401.14209.
 
 - **Objects introduced by analogy, not by construction.** Discrete metric `g^{ab}`, volume form `d\mu_g`, functional derivative `δ/δg^{ab}`, orthonormal hyperedges — all named, none defined.
 - **Mis-stated cited continuum identities.** Ollivier's theorem uses directional `Ric(v,v)`; the papers write scalar `R`. Gray's tube coefficient is `(R + Ric(u,u))/(6(d+1))`; the papers write `(d−1)(R − Ric(u,u))/(d+1)`. Factor-2 off on S², factor-6 off on S³.
-- **Definitions restated as theorems.** "Causal invariance ⇔ discrete general covariance" and "asymptotic dimensionality preservation ⇒ EFE" both unfold to `Iff.rfl`.
-- **Informal bridge prose.** "Becomes" (which topology?), "weak ergodicity" (precise definition?), "provably" (applied to an open Sorkin–Benincasa–Dowker conjecture).
-- **Circularity in G3.** The initial hypergraph is built by Poisson-sampling vertices from the known target spacetime; the subsequent reconstruction then recovers that spacetime from the sample. Target-as-input.
-- **Structural block on the named rule.** `|LHS| = |RHS| = 4` forces edge-count conservation, hence linear cone growth; cone dimension ≈ 1 on every tested seed in two independent implementations.
+- **Definitions restated as theorems.** "Causal invariance ⇔ discrete general covariance" is an identification of two definitions. Asymptotic dimensionality preservation is defined as the Euler-Lagrange equation of S, and the step from there to the EFE rests on the unproved limit of eq. 88. The project's encodings of both equivalences hold by `Iff.rfl`.
+- **Informal bridge prose.** "Becomes" (which topology?), "weak ergodicity" (precise definition?), "provably" (applied to a chain that assumes Poisson-distributed rewrite events and the assumptions of the Benincasa–Dowker action limit).
+- **Sampled initial data in G3.** The initial hypergraph is built by Poisson sampling from the target initial-data geometry (G3 lines 6148-6152, 6179), and the figures are coloured with the analytic conformal factor (lines 6185-6192). The rule is not run from initial data that does not encode the target geometry.
+- **Named rule.** `|LHS| = |RHS| = 4` gives edge-count conservation (PROVED). The measured cone-growth exponent lies between 0.985 and 1.256 on 9 small seeds, and the two implementations disagree on 8 of them (MEASURED). A cone-growth bound is OPEN.
 
-### Lean-formal refutations
+### Lean files for the audit
 
-| Flaw | Lean module | Key theorem |
-|---|---|---|
-| F1 — discrete `g^{ab}` never constructed | `Refutations/F1NoMetric.lean` | `metric_construction_is_never_unique`; `no_canonical_metric_from_hypergraph_alone`; `action_depends_on_construction_choice` |
-| F2 — fiat orthonormality | `Refutations/F2Orthonormality.lean` | `orthonormality_depends_on_form`; `orthonormalising_form_not_unique`; `gorard_orthonormality_is_non_canonical` |
-| F3 — "dim preservation ⇒ EFE" is tautology | `Refutations/F3Tautology.lean` | `gorard_dim_preservation_is_euler_lagrange := Iff.rfl`; `gorard_section_3_3_contentless` |
-| F4 — "causal invariance ⇔ general covariance" is tautology | `Refutations/F4Tautology.lean` | `gorard_causal_invariance_is_general_covariance := Iff.rfl` — certified to depend on **zero axioms** |
-| F5 — "becomes" ill-defined | `Refutations/F5Illdefined.lean` | `becomes_is_underdetermined`; `claim_is_vacuous_without_convergence_notion`; `different_notions_give_different_limits` |
-| F6 — G3 circular derivation | `Refutations/F6Circularity.lean` | `circular_reconstruction_has_no_content` (0 axioms); `circular_procedure_is_identity` — any Poisson-sprinkle-then-reconstruct returns its input |
-| F7 — named rule is structurally 1-D | `Refutations/F7NamedRuleStructure.lean` + empirical | `namedRule_trajectory_edge_count_fixed`; `isConservative_implies_structurallyOneDim`; `conservative_blocks_dim_geq_one` (in `RuleSearch.lean`) |
+| Flaw | Lean module | Theorems | What they prove |
+|---|---|---|---|
+| F1 — discrete `g^{ab}` never constructed | `Refutations/F1NoMetric.lean` | `metric_construction_is_never_unique`; `no_canonical_metric_from_hypergraph_alone`; `action_depends_on_construction_choice` | The function type `DHyp V → V → V → ℝ` has more than one element |
+| F2 — fiat orthonormality | `Refutations/F2Orthonormality.lean` | `orthonormality_depends_on_form`; `orthonormalising_form_not_unique` | Facts about functions on `Bool × Bool` |
+| F3 — "dim preservation ⇒ EFE" | `Refutations/F3Tautology.lean` | `asymptoticDimPreservation_iff_eulerLagrange := Iff.rfl` | Two project definitions with the same body are equivalent |
+| F4 — "causal invariance ⇔ general covariance" | `Refutations/F4Tautology.lean` | `causalInvariance_iff_discreteGeneralCovariance := Iff.rfl` (no axioms) | Two project definitions with the same body are equivalent |
+| F5 — "becomes" ill-defined | `Refutations/F5Illdefined.lean` | `becomes_is_underdetermined`; `claim_is_vacuous_without_convergence_notion`; `different_notions_give_different_limits` | Facts about 1/(n+1) and the constant-`True` predicate |
+| F6 — G3 sampled initial data | `Refutations/F6Circularity.lean` | `CircularReconstruction.comp_eq_id` | Restates its own hypothesis. Does not model G3 |
+| F7 — named rule | `Refutations/F7NamedRuleStructure.lean` | `gorardNamedRule_application_preserves_size`; `gorardNamedRule_applications_preserve_size` | The named rule conserves edge count. No dimension bound |
 
-**F8** (G4 title-body gap): not a formal claim but a documentary finding; JGORARD concedes the gap in the paper's conclusion.
+The link from each file to the paper is a reading of the paper text. **F8** (G4 title-body gap): not a formal claim but a documentary finding; JGORARD concedes the gap in the paper's conclusion.
 
-### Empirical refutation
+### Measurements of the named rule
 
 - 2102.09363 named rule: `{{x,y},{y,z},{z,w},{w,v}} → {{y,u},{u,v},{w,x},{x,u}}`.
-- SetReplace + an independent Python re-implementation agree on 9 seeds: causal-cone dimension ≈ 1 on each.
-- The corresponding structural theorem: `|LHS|=|RHS|` ⇒ state size is conserved along every trajectory ⇒ ball volume is bounded by `Fintype.card V` ⇒ no `r^d` growth with `d ≥ 1` on any fixed finite vertex type.
+- SetReplace and an independent Python rewriter on 9 seeds (cycles, paths, 3D grids up to 300 edges, at most 2000 events): cone-growth exponents between 0.985 and 1.256. The two tools disagree on 8 of 9 seeds (4x4x4 grid: 0.985 against 1.256), cause not determined. Table: [`STATUS_OF_GORARD_CLAIMS.md`](STATUS_OF_GORARD_CLAIMS.md), Claim 1.
+- Edge-count conservation is PROVED. A bounded ball count holds for every finite hypergraph and does not distinguish this rule.
 
 ### Summary verdict
 
-Overclaim in multiple load-bearing places, with embedded arithmetic errors. The §3.3 Einstein-equations derivation uses objects that are never constructed (F1, F2). The logical spine reduces, in multiple places, to `Iff.rfl` (F3, F4). The continuum-limit step is left informal (F5). The G3 argument that a rule satisfies EFE is circular (F6). The named rule is empirically and structurally 1-dimensional (F7). The cited continuum identities are mis-stated by non-trivial factors on simple test manifolds. All errors are in the public record and checkable.
+Overclaim in multiple load-bearing places, with embedded arithmetic errors. The §3.3 Einstein-equations derivation uses objects that are never constructed (F1, F2). The logical spine reduces, in multiple places, to `Iff.rfl` (F3, F4). The continuum-limit step is left informal (F5). G3's comparison starts from initial data sampled from the target geometry and gives no proof for the named rule (F6). The named rule conserves edge count, and its measured cone-growth exponent on small seeds is between 0.985 and 1.256 (F7). The cited continuum identities are mis-stated by non-trivial factors on simple test manifolds. All errors are in the public record and checkable.
 
 See [`MAJOR_FLAWS.md`](MAJOR_FLAWS.md), [`FINDINGS.md`](FINDINGS.md), [`notes/corpus_assessment.md`](notes/corpus_assessment.md), and the close-reading notes for paper-by-paper detail.
 

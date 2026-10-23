@@ -6,19 +6,19 @@ Grouped from most-immediate (parts already done) to most-ambitious.
 
 ## P1 — Audit and formal refutation of the JGORARD corpus
 
-**One-line pitch.** A machine-checked audit of arXiv:2004.14810, 2011.12174, 2102.09363, 2303.07282 showing that the central claim — that general relativity has been derived from Wolfram-model hypergraph rewriting — has not been established. Each specific error and structural flaw is documented at citation-precision and **formally refuted in Lean**.
+**One-line pitch.** A machine-checked audit of arXiv:2004.14810, 2011.12174, 2102.09363, 2303.07282 showing that the central claim — that general relativity has been derived from Wolfram-model hypergraph rewriting — has not been established. Each specific error and structural flaw is documented at citation-precision. The Lean files prove statements about the project's encodings, and the link to each paper is a reading of the text (`STATUS_OF_GORARD_CLAIMS.md`).
 
-**Status.** Ready *now* as a v1 arXiv preprint.
+**Status.** Not ready: the F6 and F7 items below are open.
 
 **Sufficient conditions.**
 - [x] S1/S2/S6 error taxonomy with TeX line references
-- [x] F1–F5 structural flaws **formally refuted in Lean** (`Refutations/F1-F5*.lean`), all axiom-clean
-- [x] **F6 circularity of 2102.09363 "provably satisfies EFE"** formalised in Lean (`Refutations/F6Circularity.lean`): `CircularReconstruction` schema + `circular_reconstruction_has_no_content` (0 axioms) + `circular_procedure_is_identity`. JGORARD's Poisson-sprinkle-and-reconstruct procedure is PROVED mathematically content-free at the Lean-type level.
+- [x] F1–F5: axiom-clean Lean statements about the project's encodings (`Refutations/F1-F5*.lean`). F3 and F4 hold by `Iff.rfl`. F1, F2 and F5 are facts about function types and the constant-`True` predicate. The findings about the papers are readings of the text.
+- [ ] F6: G3's initial data is sampled from the target geometry (READ, G3 lines 6148-6152, 6179). `Refutations/F6Circularity.lean` restates its own hypothesis and does not model G3.
 - [x] Corpus-wide cross-paper propagation map
 - [x] Continuum-limit claims catalog
 - [x] Line-by-line close readings of all four JGORARD papers
-- [x] Edge conservation proved in Lean (underpins F7 refutation)
-- [x] Named rule empirically refuted (SetReplace + independent Python rewriter)
+- [x] Edge conservation of the named rule proved in Lean (`Refutations.gorardNamedRule_applications_preserve_size`)
+- [ ] Named rule cone-growth measurements reconciled: SetReplace and Python disagree on 8 of 9 seeds (`STATUS_OF_GORARD_CLAIMS.md`, Claim 1)
 - [ ] A short (≤ 15 page) technical-comment-style PDF
 - [ ] External review by Wolfram Institute colleagues
 
@@ -27,11 +27,11 @@ Grouped from most-immediate (parts already done) to most-ambitious.
 **Load-bearing Lean theorems:**
 - F1: `Refutations.F1NoMetric.hypergraph_does_not_determine_metric`
 - F2: `Refutations.F2Orthonormality.orthonormality_depends_on_form`
-- F3: `Refutations.F3Tautology.gorard_dim_preservation_is_euler_lagrange` (Iff.rfl)
-- F4: `Refutations.F4Tautology.gorard_causal_invariance_is_general_covariance` (axiom-free)
+- F3: `Refutations.asymptoticDimPreservation_iff_eulerLagrange` (Iff.rfl on project definitions)
+- F4: `Refutations.causalInvariance_iff_discreteGeneralCovariance` (Iff.rfl on project definitions, axiom-free)
 - F5: `Refutations.F5Illdefined.becomes_is_underdetermined`
-- F6: `Refutations.F6Circularity.circular_reconstruction_has_no_content` (formal refutation of JGORARD's circular "derivation" at the type level); also `DiscreteDAlembertian.BenincasaDowkerConjecture` (explicit unproven-load-bearing flag on the conjectured side).
-- F7: `Refutations.F7NamedRuleStructure.namedRule_trajectory_edge_count_fixed` + `isConservative_implies_structurallyOneDim` (structural barrier to 4D continuum limit for any conservative rule).
+- F6: no theorem about G3. `DiscreteDAlembertian.BenincasaDowkerConjecture` states the conjectured action limit as a Prop.
+- F7: `Refutations.gorardNamedRule_applications_preserve_size` (edge-count conservation of the named rule, no dimension bound).
 - F7: `Application.size_result_of_conservative`
 
 ## P2 — Corrected continuum identities formalised
@@ -190,16 +190,16 @@ Grouped from most-immediate (parts already done) to most-ambitious.
 
 ## P9 — Machine-checked refutation of JGORARD's EFE derivation chain
 
-**One-line pitch.** A self-contained paper walking through JGORARD's prose derivation of the Einstein field equations from Wolfram-model dynamics, showing at each step which move is tautological (F3, F4), ill-defined (F5), circular (F6), or unsupported (F1, F2). Every refutation is a cited Lean theorem.
+**One-line pitch.** A self-contained paper walking through JGORARD's prose derivation of the Einstein field equations from Wolfram-model dynamics, showing at each step which move is tautological (F3, F4), ill-defined (F5), assumed (F6), or unsupported (F1, F2). The Lean theorems prove statements about the project's encodings, and the link to the paper is a reading of the text.
 
-**Status.** All pieces formalised; drafting ready to begin.
+**Status.** Not ready: F6 has no Lean statement about G3.
 
 **Sufficient conditions.**
-- [x] F1 refuted: `hypergraph_does_not_determine_metric`.
-- [x] F2 refuted: `orthonormality_depends_on_form`.
-- [x] F3 refuted: `gorard_dim_preservation_is_euler_lagrange` (Iff.rfl).
-- [x] F4 refuted: `gorard_causal_invariance_is_general_covariance` (axiom-free).
-- [x] F5 refuted: `becomes_is_underdetermined`.
+- [x] F1: `hypergraph_does_not_determine_metric` (fact about a function type).
+- [x] F2: `orthonormality_depends_on_form` (fact about functions on `Bool × Bool`).
+- [x] F3: `asymptoticDimPreservation_iff_eulerLagrange` (Iff.rfl on project definitions).
+- [x] F4: `causalInvariance_iff_discreteGeneralCovariance` (Iff.rfl on project definitions, axiom-free).
+- [x] F5: `becomes_is_underdetermined` (fact about 1/(n+1)).
 - [x] F6 flagged: `BenincasaDowkerConjecture`.
 - [x] Positive construction (hypergraph anchor) exists for each "what JGORARD should have formalised" move.
 - [ ] 15-page paper draft

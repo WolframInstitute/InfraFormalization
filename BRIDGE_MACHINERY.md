@@ -278,7 +278,7 @@ These complement the constructive bridge: they pin down which JGORARD claims fai
 **Priority order** (what to grind next):
 
 **Current focus: discrete d'Alembertian (Benincasa-Dowker-style) on the trajectory causal DAG.**
-This is the operator JGORARD's 2102.09363 circular derivation hinged on. We have all the discrete-causal scaffolding already (`Trajectory`, `causallyPrecedes`, `isCausalPred`, `level`). Formalise: (a) `intervalSize τ j i` — cardinality of open causal interval; (b) `layer τ k i` — events with exactly `k` intermediates; (c) `discreteDAlembertian4 τ φ i := -φ i + ∑ L_0 φ - 9·∑ L_1 φ + 16·∑ L_2 φ - 8·∑ L_3 φ`; (d) linearity + structural theorems; (e) explicit statement of the Benincasa-Dowker convergence conjecture as an open `Prop`, connected to F6. Ships as `DiscreteDAlembertian.lean`.
+This is the operator of the Benincasa–Dowker chain in JGORARD's 2102.09363 §6. We have all the discrete-causal scaffolding already (`Trajectory`, `causallyPrecedes`, `isCausalPred`, `level`). Formalise: (a) `intervalSize τ j i` — cardinality of open causal interval; (b) `layer τ k i` — events with exactly `k` intermediates; (c) `discreteDAlembertian4 τ φ i := -φ i + ∑ L_0 φ - 9·∑ L_1 φ + 16·∑ L_2 φ - 8·∑ L_3 φ`; (d) linearity + structural theorems; (e) explicit statement of the Benincasa-Dowker convergence conjecture as an open `Prop`, connected to F6. Ships as `DiscreteDAlembertian.lean`.
 
 **Next after that:**
 1. **Schwarzschild as `MetricData 4`** (Rung 5 curved-metric sanity check): all components, all partial derivatives, Christoffel computation, vacuum-EFE verification. A concrete "JGORARD tried and failed to formalise, we did" deliverable.

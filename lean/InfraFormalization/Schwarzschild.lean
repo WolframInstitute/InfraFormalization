@@ -48,9 +48,9 @@ assume "Schwarzschild comes from a Wolfram-model rule."
 This matters because JGORARD's corpus (arXiv:2004.14810 §3.3;
 2102.09363 §5; 2303.07282) *claims* to have derived Schwarzschild
 (and Kerr, FLRW) from hypergraph rules. The corpus audit (see
-`MAJOR_FLAWS.md` / `memory/corpus_audit_finding.md`) finds the
-derivations rely on Poisson-sprinkling coordinates from the *target*
-manifold — not on rule dynamics — which is circular.
+`MAJOR_FLAWS.md`) finds that the 2102.09363 comparison starts from
+initial data Poisson-sampled from the target geometry (G3 lines
+6148-6152, 6179).
 
 **What is achievable right now** (and *is* built elsewhere in the
 project):

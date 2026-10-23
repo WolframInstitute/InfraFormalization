@@ -85,7 +85,7 @@ In flight (this session):
 ### Parallel-layer bound
 - [x] State-size invariant across a parallel schedule (`trajectory_preserves_size` / `trajectory_size_invariant`, `ParallelSchedule.lean` + `RuleDimensionBounds.lean`)
 - [ ] Layer-cardinality bound `|layer_s| ≤ N/k` (the full parallel-layer bound, a.k.a. Theorem B)
-- [x] Bounded-ball-volume under conservative trajectory (`trajectory_conservative_ballVolume_bounded`, `RuleDimensionBounds.lean` / IR2)
+- [x] Ball volume bounded by `Fintype.card V` for every hypergraph (`Hypergraph.geodesicBallVolume_le_card`, `RuleDimensionBounds.lean`)
 - [ ] Linear BFS-cone bound for specific rule + specific seed
 
 ### Structural impossibilities (refute the major flaws)
@@ -523,7 +523,7 @@ final infrageometric scenes."
 The `../efficient_rewriting_final/` repo is a high-performance C++ multi-way hypergraph-rewriting engine with a Mathematica paclet interface. Single-way SetReplace cannot verify causal invariance or explore branchial structure; this engine can.
 
 - [ ] Wrap paclet for headless invocation from our Python test harness
-- [ ] Re-run empirical refutation of the named rule with multi-way evolution (confirm 1D cone across all branches)
+- [ ] Measure the named rule's cone exponent in other update orders and reconcile the SetReplace and Python exponents
 - [ ] Test causal invariance of simple rules (is any family provably causal-invariant?)
 - [ ] Collect branchial-graph data for Phase 7 quantum-mechanical thread
 - [ ] Use as a probe for candidate GR-recovering rules (Phase 5 search)

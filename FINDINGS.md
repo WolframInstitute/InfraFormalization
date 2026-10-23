@@ -39,14 +39,14 @@ Each is a keystone of the §3.3 Einstein-equations "derivation" and none is resc
 | # | Verdict | Claim | Status in the literature |
 |---|---|---|---|
 | 10 | ○ | "$\sum d\mu_g R$ becomes $\int d^4x \sqrt{-g} R$ in the continuum limit." | Unproven even for causal-set theory (Sorkin–Benincasa–Dowker conjecture, partial numerical support from Cunningham 2018). |
-| 11 | ✗ | "Named rule provably satisfies EFE in continuum limit." | The "proof" reduces to Poisson-sprinkling the known target manifold and reconstructing it; the rule is empirically 1-dimensional (S5). |
+| 11 | ○ | "Named rule provably satisfies EFE in continuum limit." | No proof for the rule is given in G3. G3 replaces weak ergodicity by an assumption of Poisson-distributed rewrite events (line 6080) and samples the initial hypergraph from the target geometry (lines 6148-6152, 6179). The repository does not prove the claim false. See [`STATUS_OF_GORARD_CLAIMS.md`](STATUS_OF_GORARD_CLAIMS.md), Claim 1. |
 | 12 | ○ | "Ollivier–Ricci scalar on directed hypergraphs converges to Ricci in continuum limit." | Asserted. Convergence theorems exist only for specific random-geometric-graph constructions (Trillos–Slepčev 2018), not for Wolfram-model-rewriting evolutions. |
 
 ## S5 — Refuted specific claims
 
 | # | Verdict | Claim | Evidence |
 |---|---|---|---|
-| 13 | ✗ | The rule $\{\{x,y\},\{y,z\},\{z,w\},\{w,v\}\} \to \{\{y,u\},\{u,v\},\{w,x\},\{x,u\}\}$ produces a 3+1-dim causal graph. | Empirical: SetReplace + independent Python rewriter agree on 9 seeds; cone dimension ≈ 1 on each. Structural: $\|LHS\|=\|RHS\|=4$ conservation law forces linear cone growth. |
+| 13 | MEASURED | The rule $\{\{x,y\},\{y,z\},\{z,w\},\{w,v\}\} \to \{\{y,u\},\{u,v\},\{w,x\},\{x,u\}\}$ produces a 3+1-dim causal graph. | Measured cone-growth exponents lie between 0.985 and 1.256 on cycles, paths and 3D grids up to 300 edges and 2000 events. SetReplace and the Python rewriter disagree on the exponent for 8 of 9 seeds (4x4x4 grid: 0.985 against 1.256), cause not determined. Edge-count conservation is PROVED. A bound on cone growth is OPEN. |
 | 14 | ✗ | Discrete $N(r) = ar^n(1 - Rr^2/(6(n+2)) + O(r^4))$ on hypergraphs. | Obtained "by analogy," not derived. In combination with the Ollivier and tube-formula mis-statements above, the "curvatures" computed from hypergraphs are calibrated against a formula that is itself unjustified or wrong. |
 
 ## S6 — Claims in titles and abstracts not delivered in the body
@@ -54,7 +54,7 @@ Each is a keystone of the §3.3 Einstein-equations "derivation" and none is resc
 | # | Verdict | Claim | Evidence |
 |---|---|---|---|
 | 15 | ✗ (title-body gap) | Title: "Non-Vacuum Solutions, Gravitational Collapse and **Discrete Singularity Theorems** in Wolfram Model Systems." | Body has no discrete Raychaudhuri, no discrete expansion scalar, no discrete energy condition, no discrete stress-energy tensor; zero occurrences of "shear" or "vorticity." Conclusion acknowledges these as future work. |
-| 16 | ✗ (wording overclaim) | "A hypergraph substitution rule that **provably** satisfies the Einstein field equations in the continuum limit." | "Provably" applied to a chain ending in the Sorkin–Benincasa–Dowker *conjecture*, with the manifold assumed as input (circular). Specific rule refuted as 1-dim. |
+| 16 | ✗ (wording overclaim) | "A hypergraph substitution rule that **provably** satisfies the Einstein field equations in the continuum limit." | "Provably" is applied to a chain that assumes Poisson-distributed rewrite events (G3 line 6080) and the zero-surface-term and vanishing-tail assumptions of the Benincasa–Dowker action limit (lines 6110-6120). G3 gives no proof for the named rule. |
 
 ## Verified correct (✓)
 
@@ -73,18 +73,18 @@ These are Lean-formalisation targets (see [`lean/InfraFormalization/`](lean/Infr
 
 | # | Finding | Status |
 |---|---|---|
-| P1 | `\|LHS\| = \|RHS\|` rule ⇒ state size is conserved along any evolution. | **✅ Machine-verified in Lean 4 + Mathlib 4.29.1.** Theorem `Application.size_result_of_conservative` + trajectory corollary `size_preserved_by_applications` in [`lean/InfraFormalization/Conservation.lean`](lean/InfraFormalization/Conservation.lean). Full `lake build` passes (1687 jobs). |
-| P2a | `\|LHS\| = \|RHS\|` rule ⇒ in any parallel-schedule decomposition of the causal DAG, each layer has ≤ ⌊N/k⌋ events. | Provable cleanly (substantial proof but elementary). Lean implementation pending. |
-| P2b | `\|LHS\| = \|RHS\|` rule ⇒ causal graph has *linear* BFS-cone growth (dimension ≤ 1). | **Empirically true on every tested seed** (9 seeds, two implementations agree). **NOT a direct consequence of P2a** — events in a BFS cone can have arbitrarily high parallel-level via long alternate paths. The proof for the specific named rule + tested seeds is rule-and-seed-specific analysis, not a structural fact about all conservative rules. |
-| P3 | JGORARD's §3.3 dimension-$n$ argument cannot apply to the named rule on the tested seeds. | Empirical, reproducible across two implementations. Formal Lean proof would require a rule-specific induction. |
+| P1 | `\|LHS\| = \|RHS\|` rule ⇒ state size is conserved along any evolution. | PROVED. `Application.size_result_of_conservative` (`Conservation.lean:27`), `size_preserved_by_applications` (`Conservation.lean:48`), and for the named rule `Refutations.gorardNamedRule_applications_preserve_size` (`Refutations/F7NamedRuleStructure.lean:41`). Axioms: `propext`, `Classical.choice`, `Quot.sound`. |
+| P2a | `\|LHS\| = \|RHS\|` = k rule with N edges ⇒ every antichain of the causal graph of a single-way evolution has at most ⌊N/k⌋ events. | OPEN. The library has no causal graph with hyperedge identities (`Causal.lean:35-44`), so the statement cannot yet be written in Lean. |
+| P2b | The named rule's causal graph has cone growth C(t) ≤ c(N)·(t+1). | OPEN. MEASURED exponents 0.985 to 1.256 on 9 seeds, with the two tools disagreeing (row 13). P2a does not imply P2b: P2a bounds events by longest-path distance and the cone counts shortest-path distance. |
+| P3 | JGORARD's §3.3 dimension-$n$ argument cannot apply to the named rule. | OPEN. Depends on P2b and on a convergence notion G1 does not state. |
 
 ## Where this leaves the headline claim
 
 The headline claim — that general relativity is derived from hypergraph rewriting — is **unsupported in the corpus**. Specifically:
 
 - The main §3.3 argument of G1 uses undefined objects (S2) and a tautological definition (S3).
-- The "concrete example" rule of G3 is empirically 1-dimensional (S5).
-- The "provably satisfies EFE" claim reduces to a causal-set-theory conjecture applied to a Poisson sample of the target manifold (S4).
+- G3 gives no proof for its named rule. The rule conserves edge count (PROVED), and its measured cone-growth exponents lie between 0.985 and 1.256 on small seeds (MEASURED, S5).
+- The "provably satisfies EFE" claim assumes Poisson-distributed rewrite events and the assumptions of the Benincasa–Dowker action limit, and G3's comparison starts from initial data sampled from the target geometry (S4).
 - The Riemannian identities used to calibrate hypergraph curvatures are mis-stated (S1) by non-trivial factors on simple test manifolds.
 
 None of the errors is fabrication. All are public and checkable. The corpus is best described as *systematic overclaim with embedded mathematical errors*.

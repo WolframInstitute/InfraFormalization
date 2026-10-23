@@ -10,7 +10,7 @@ Our infrageometry Lean corpus can be used as a **verifier** and **screener** in 
 |---|---|---|
 | Conservation forces constant state size | `Application.size_result_of_conservative` | Rules where the causal graph can grow in density; places an upper bound on cone dimension. Refutes JGORARD's named rule (F7). |
 | Same-level antichain | `same_level_ordered_antichain`, `no_causal_edge_within_level` | Rules whose causal DAG lacks consistent level structure (shouldn't happen for well-formed trajectories, but the formal invariant is available). |
-| Linear cone growth empirically | (combinatorial; driven by level and causal-precedence counts) | Rules with cone dimension 1 on any seed — cannot support 3+1-dim Minkowski. |
+| Linear cone growth empirically | (combinatorial; driven by level and causal-precedence counts) | Rules with measured cone exponent near 1 on the tested seeds. A measurement on finite seeds does not prove a bound. |
 
 ### Quantitative signatures
 

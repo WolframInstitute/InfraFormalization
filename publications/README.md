@@ -46,7 +46,7 @@ Each folder contains:
 - [`publications/I04-torus-gh/`](I04-torus-gh/) — 2D lattice-to-torus, same template generalised.
 - [`publications/I05-ollivier-correction/`](I05-ollivier-correction/) — Correction of the Ollivier-Ricci identity for discrete hypergraphs, with directional-vs-scalar distinction preserved. *Draftable now as a short note from T27 + T28 + T30 + T31.*
 - [`publications/I06-gray-tube-correction/`](I06-gray-tube-correction/) — Correction of the Gray tube formula with concrete disagreement proofs.
-- [`publications/I07-named-rule-refutation/`](I07-named-rule-refutation/) — Empirical + structural refutation of the arXiv:2102.09363 named rule.
+- [`publications/I07-named-rule-refutation/`](I07-named-rule-refutation/) — Edge conservation (PROVED) and cone-exponent measurements (MEASURED) of the arXiv:2102.09363 named rule.
 
 ### Major papers (targets)
 

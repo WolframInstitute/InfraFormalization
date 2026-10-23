@@ -139,7 +139,7 @@ as $\rho \to \infty$ with additional assumptions (zero surface terms, non-local 
 
 **Claim.** "a hypergraph substitution rule that provably satisfies the Einstein field equations in the continuum limit."
 **Continuum object.** EFE on a Lorentzian manifold.
-**Our status.** ✗🧨 The "provably" reduces to the Benincasa–Dowker causal-set conjecture (above), with a Poisson-sampling hypothesis replacing Wolfram dynamics (line 6080 verbatim). For the specific named rule (line 6202), the causal graph is empirically 1-dimensional on every tested seed — *cannot* satisfy EFE of a 3+1-dim spacetime. See [`notes/empirical_refutation.md`](empirical_refutation.md).
+**Our status.** ✗🧨 The "provably" reduces to the Benincasa–Dowker causal-set conjecture (above), with a Poisson-sampling hypothesis replacing Wolfram dynamics (line 6080 verbatim). For the specific named rule (line 6202), the measured cone-growth exponents are 0.985 to 1.256 on small seeds, and no bound is proved. See [`notes/empirical_refutation.md`](empirical_refutation.md).
 
 ### §3–§4 — CCZ4 / BSSN
 
@@ -180,7 +180,7 @@ Direct repeats of G1 §3 formulas with the same Ricci-directional/scalar error p
 ### Initial-data construction (TeX ~6152)
 
 **Quote.** The initial hypergraph is constructed by "Poisson distribution, in which the probability of $n$ vertices of $H$ lying within a spatial region of volume $v$ is given by $P_v(n) = (\rho_c v)^n \exp(-\rho_c v)/n!$."
-**Our status.** 🧨 The target manifold is the *input* to this construction. The "continuum limit" of the constructed hypergraph then trivially reproduces the input manifold. This is the *circularity* of G3's main claim; see [`notes/2102.09363_close_reading.md`](2102.09363_close_reading.md).
+**Our status.** 🧨 The initial data is sampled from the target geometry (lines 6148-6152, 6179), so the comparison does not test the rule from initial data that does not encode the target. See [`notes/2102.09363_close_reading.md`](2102.09363_close_reading.md).
 
 ---
 

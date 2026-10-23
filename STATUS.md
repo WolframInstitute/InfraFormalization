@@ -514,7 +514,7 @@ The first concrete inhabitant of the `TrueLimitConverges` framework (#419) that 
 
 **Why this matters**: contrast with `witnessRule0`'s Forman trace `[4, 4, 4]` — constant at 4, satisfies the finite-fit `c=12` envelope at depth 2 only because `4·3 = 12`, but proven (by B4 honesty audit #419) NOT to true-limit converge to 0. The cycle sequence has Forman trace that **actually IS 0 at every verified depth**, true-limit converges to 0 by `tendsto_const_nhds`. **First inhabitant of the framework that's not a vacuous fudge.**
 
-**Continuum-limit interpretation**: `C_n → S¹` as `n → ∞` (the canonical lattice approximation, with project's existing cycle-Laplacian → circle-Laplacian infrastructure). `Ric(S¹) = 0` (1-manifold, no curvature). So `Forman(C_n) → 0 = Ric(S¹)` is a genuine, materially-discharged continuum-limit convergence — the kind of statement JGORARD tried to make for his 4D rule but fudged structurally (F7: cone-growth dim ≤ 1, structurally impossible for him; here we don't claim 4D, we claim 1D and prove it).
+**Continuum-limit interpretation**: `C_n → S¹` as `n → ∞` (the canonical lattice approximation, with project's existing cycle-Laplacian → circle-Laplacian infrastructure). `Ric(S¹) = 0` (1-manifold, no curvature). So `Forman(C_n) → 0 = Ric(S¹)` is a genuine, materially-discharged continuum-limit convergence. The statement concerns a 1-dimensional target.
 
 **Honesty caveat**: the cycle case is "trivial" — both sides are 0 (vacuum target on a 1D manifold). The non-trivial cases (positive Ricci on 2-sphere, time-varying Ricci on FLRW, black-hole Ricci on Schwarzschild) require the genuine Christiansen-2024 discrete-Ricci → smooth-Ricci theorem with proper scaling. **But the cycle case demonstrates the framework can genuinely be inhabited** — `TrueLimitConverges` is not an empty predicate.
 
@@ -590,12 +590,7 @@ The boring single-edge rules from `RuleExtraction.lean` are now joined by **lite
 
 2. **Triangulation on edge12 → HYPERBOLIC emergence**: Higuchi `[2, 0, -6]` drops below zero (negative combinatorial curvature). SquareCount `[0, 0, 24]` — 4-cycles emerge from a seed that had none.
 
-3. **JGORARD's published rule on triangle → vacuum-stable witness**: all 5 traces constant (`forman=18`, `transport=-30`, `higuchi=0`, `degVar=0`, `squareCount=0`). 4-edge path LHS doesn't match 3-vertex triangle, giving a literature-grade `c=0` rate-bounded witness.
-
-**Named alternative-witness GR-zoo discharges** using JGORARD's published rule:
-- `minkowski4_strong_from_jgorardNamedRule_triangle` (Forman)
-- `minkowski4_strong_from_jgorardNamedRule_triangle_{transport, higuchi, degvariance, squarecount}` (all 5 families)
-- `minkowski4_jgorardNamedRule_triangle_quintDischarge` — five-fold bundle using JGORARD's own published rule as witness.
+3. **JGORARD's published rule on triangle**: all 5 traces constant (`forman=18`, `transport=-30`, `higuchi=0`, `degVar=0`, `squareCount=0`). The triangle seed has 3 edges and the rule's left-hand side needs 4, so the rule does not fire.
 
 This is the literature-grade payoff the user requested: real candidate-spacetime rules screened through the curvature cascade and inserted as proof witnesses. Build green at 3557 jobs.
 
@@ -1348,10 +1343,9 @@ reduces to `{propext, Classical.choice, Quot.sound}` (and many to
 `{propext, Quot.sound}` only). No `sorry`, no `native_decide`, no
 `decide`, no custom axioms. `lake build` fully green.
 
-**JGORARD refutations F1–F7 Lean-formal**, including `F6Circularity`
-(the Poisson-sprinkle-then-reconstruct schema of arXiv:2102.09363
-§3.3 formally proved to produce its input identically — the
-`circular_procedure_is_identity` theorem).
+**JGORARD audit files F1–F7**: axiom-clean statements about the
+project's encodings. The status of each conclusion is in
+`STATUS_OF_GORARD_CLAIMS.md`.
 
 ## Closures since the 2026-04-23 weekly report
 
@@ -1639,7 +1633,7 @@ All formalized as Lean theorems, axiom-clean:
 
 **What we have:** full chain `causallyPrecedes (trajectory) → CausalPrecedes (discrete Lorentz) → ContinuumCausalPrecedes (Minkowski)` under `LightConeCompatible τ φ`. Flat-target GH bounds in all dimensions (cycle, path, d-torus). Graph Laplacian with full spectral-theory readiness. F1–F5 refuted.
 
-**What we're missing for GR:** curved-target bridges (tasks #217 + #218 — our own Ricci / Einstein on explicit metrics, plus real discrete-Ricci convergence on curved targets; nothing waits on Mathlib). Full Lorentzian-GH (task #213 — we define it ourselves). A specific rule whose causal graph has the right dimension (empirical + structural rejection of JGORARD's named rule — F7). Discretization of the Einstein–Hilbert action converging to the continuum one (F5 blocks naïve form).
+**What we're missing for GR:** curved-target bridges (tasks #217 + #218 — our own Ricci / Einstein on explicit metrics, plus real discrete-Ricci convergence on curved targets; nothing waits on Mathlib). Full Lorentzian-GH (task #213 — we define it ourselves). A specific rule whose causal graph has the right dimension (JGORARD's named rule conserves edge count and has measured cone exponents 0.985 to 1.256 on small seeds; a bound is OPEN — F7). Discretization of the Einstein–Hilbert action converging to the continuum one (F5 blocks naïve form).
 
 **Rule search as the practical route:** our Lean corpus serves as verifier for any candidate rule + candidate spatial embedding (`RULE_SEARCH.md`). Screening signatures: level growth `~t^{d+1}`, antichain width `~k^d`, cone volume. Any candidate rule passing these + `LightConeCompatible` gets a machine-checked Minkowski-consistency certificate via the end-to-end bridge.
 
