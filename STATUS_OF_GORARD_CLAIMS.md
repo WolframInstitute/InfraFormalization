@@ -88,6 +88,11 @@ READ:
 - G3 states the masses (0.5M each), the separation (1M), the times (t = 6M, 12M, 24M), the Kerr spin (a/M = 0.6) and the resolutions (100 to 1600 vertices). G3 states no value for the link cut-off distance ("a certain cut-off distance", line 6176), no update order, no number of events per unit of t, and no map from events to the time coordinate t.
 - G3 extracts rΨ4 "in the pure Wolfram model case" (line 6212) and reports second-order convergence of the Hamiltonian constraint (Table 6).
 
+MEASURED (convergence tables, [`results/phase2_continuum/convergence_tables.md`](results/phase2_continuum/convergence_tables.md), script `scripts/python/check_convergence_tables.py`):
+
+- The norm definitions of G3 eqs. 180-181 and G4 eqs. 186-187 force L∞ ≤ L1 ≤ L2 in every row. 28 of the 35 rows of G3 Tables 1-7 and 7 of the 20 rows of G4 Tables 1-4 violate this ordering, including every row of G3 Table 6 and G4 Table 4 (the rule's runs).
+- The printed orders are log₂ of the norm ratio per doubling of the vertex count. Five of the 132 printed orders differ from the tabulated norms by more than 0.01: G3 lines 2712, 4696 and 4697, and G4 lines 5151 and 5152.
+
 Lean: `Refutations/F6Circularity.lean:39` defines `CircularReconstruction`, a pair of maps with the hypothesis `reconstruct (sample t) = t`, and `CircularReconstruction.comp_eq_id` (`:48`, axioms `Quot.sound`) restates the hypothesis. The file does not model the procedure of G3 and does not prove that the procedure satisfies the hypothesis. Status: VACUOUS with respect to Claim 2. The evolved hypergraphs at t = 6M, 12M, 24M are not the sampled initial data, so the comparison at those times is not of the form `reconstruct ∘ sample`.
 
 The `BBH*.lean` files (`BBHInitialData.lean:64` defines `bbhInitial`, a 6-vertex graph of two triangles joined by one edge) and the rules in `DiscoveredRules.lean:66-130` (single-edge left-hand sides) use neither the named rule nor G3's initial data. They do not bear on Claim 2.
