@@ -256,6 +256,125 @@ def run(initial_state: List[Edge], rule: Rule, max_events: int) -> History:
     return h
 
 
+# --- SetReplace's event order --------------------------------------------
+#
+# SetReplace's "EventOrderingFunction" (libSetReplace/HypergraphMatcher.cpp, MatchComparator).
+# A match is (rule index, input edge ids in pattern order). Each ordering name compares one list
+# of two matches: the ids sorted ascending ("OldestEdge", reversed "LeastOldEdge"), sorted
+# descending ("LeastRecentEdge", reversed "NewestEdge"), in pattern order ("RuleOrdering",
+# reversed "ReverseRuleOrdering"), or the rule index ("RuleIndex", reversed "ReverseRuleIndex").
+# Two lists compare by their first differing entry, and a prefix comes before a longer list. The
+# first name that tells two matches apart decides. SetReplace's default order is
+# ["LeastRecentEdge", "RuleOrdering", "RuleIndex"].
+
+SETREPLACE_DEFAULT_ORDER = ["LeastRecentEdge", "RuleOrdering", "RuleIndex"]
+
+_ORDER_KEYS = {
+    "OldestEdge": (lambda r, ids: sorted(ids), False),
+    "LeastOldEdge": (lambda r, ids: sorted(ids), True),
+    "LeastRecentEdge": (lambda r, ids: sorted(ids, reverse=True), False),
+    "NewestEdge": (lambda r, ids: sorted(ids, reverse=True), True),
+    "RuleOrdering": (lambda r, ids: list(ids), False),
+    "ReverseRuleOrdering": (lambda r, ids: list(ids), True),
+    "RuleIndex": (lambda r, ids: [r], False),
+    "ReverseRuleIndex": (lambda r, ids: [r], True),
+}
+
+
+def _compare_lists(a: List[int], b: List[int]) -> int:
+    for x, y in zip(a, b):
+        if x != y:
+            return -1 if x < y else 1
+    return (len(a) > len(b)) - (len(a) < len(b))
+
+
+def setreplace_compare(ordering: List[str], a: Tuple[int, List[int]], b: Tuple[int, List[int]]) -> int:
+    """-1, 0 or 1 as match a comes before, ties with, or comes after match b."""
+    for name in ordering:
+        f, reverse = _ORDER_KEYS[name]
+        c = _compare_lists(f(*a), f(*b))
+        if c != 0:
+            return -c if reverse else c
+    return 0
+
+
+def all_matches(history: History, rule: Rule) -> List[Tuple[List[int], Dict[str, int]]]:
+    """Every match of `rule.lhs` in the live state: (edge ids in pattern order, binding).
+
+    The candidates for a pattern edge with a bound variable are the live edges at that variable's
+    vertex. The candidates for any other pattern edge are all live edges."""
+    live_ids = history.live_edge_ids()
+    at_vertex: Dict[int, List[int]] = {}
+    for i in live_ids:
+        for v in set(history.all_edges[i]):
+            at_vertex.setdefault(v, []).append(i)
+    out: List[Tuple[List[int], Dict[str, int]]] = []
+    chosen: List[int] = []
+
+    def backtrack(k: int, binding: Dict[str, int]) -> None:
+        if k == len(rule.lhs):
+            out.append((list(chosen), binding))
+            return
+        bound = [binding[a] for a in rule.lhs[k] if isinstance(a, str) and a in binding]
+        candidates = at_vertex.get(bound[0], []) if bound else live_ids
+        for i in candidates:
+            if i in chosen:
+                continue
+            extended = _match_edge(rule.lhs[k], history.all_edges[i], binding)
+            if extended is None:
+                continue
+            chosen.append(i)
+            backtrack(k + 1, extended)
+            chosen.pop()
+
+    backtrack(0, {})
+    return out
+
+
+def run_ordered(initial_state: List[Edge], rules: List[Rule], max_events: int,
+                ordering: List[str]) -> Tuple[History, List[int]]:
+    """Single history as SetReplace's WolframModel runs it: up to `max_events` events, each the
+    match first in `ordering`, a list of SetReplace's "EventOrderingFunction" names that orders
+    every two matches. Edge ids are creation order: the initial edges, then each event's outputs
+    in right-hand-side order. Returns the history, whose event 0 is the virtual seed event, and
+    the rule index of each event, counted from 1."""
+    h = History()
+    h.events.append(Event(index=0, input_edge_ids=[], output_edge_ids=[]))
+    for e in initial_state:
+        h.all_edges.append(tuple(e))
+        h.creator.append(0)
+        h.consumer.append(-1)
+        h.events[0].output_edge_ids.append(len(h.all_edges) - 1)
+    next_fresh = max((v for e in initial_state for v in e), default=0) + 1
+    event_rules: List[int] = []
+    for _ in range(max_events):
+        best = None
+        for r, rule in enumerate(rules):
+            for ids, binding in all_matches(h, rule):
+                if best is None or setreplace_compare(ordering, (r, ids), (best[0], best[1])) < 0:
+                    best = (r, ids, binding)
+        if best is None:
+            break
+        r, ids, binding = best
+        rule = rules[r]
+        full = dict(binding)
+        for fv in sorted(rule.fresh_vars()):
+            full[fv] = next_fresh
+            next_fresh += 1
+        index = len(h.events)
+        outputs = []
+        for pedge in rule.rhs:
+            h.all_edges.append(tuple(a if isinstance(a, int) else full[a] for a in pedge))
+            h.creator.append(index)
+            h.consumer.append(-1)
+            outputs.append(len(h.all_edges) - 1)
+        for i in ids:
+            h.consumer[i] = index
+        h.events.append(Event(index=index, input_edge_ids=list(ids), output_edge_ids=outputs))
+        event_rules.append(r + 1)
+    return h, event_rules
+
+
 # --- Causal graph --------------------------------------------------------
 
 def causal_edges(
