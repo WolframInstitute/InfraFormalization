@@ -11,7 +11,7 @@ Status labels:
 - **MEASURED**: a number from a script run, with the script, seeds and sizes.
 - **OPEN**: not established. The exact statement needed is given.
 
-Paper files: G1 = `papers/gorard_2004.14810.txt`, G3 = `papers/gorard_2102.09363.txt`.
+Paper files: G1 = `papers/gorard_2004.14810.txt`, G2 = `papers/gorard_2011.12174.txt`, G3 = `papers/gorard_2102.09363.txt`, G4 = `papers/gorard_2303.07282.txt`, Gravitas II = `papers/tex_2401/GravitasPaper2.tex` (TeX line numbers). The layout of `papers/` is described in [`CITATIONS.md`](CITATIONS.md).
 
 ## Claim 1. The rule {{x,y},{y,z},{z,w},{w,v}} -> {{y,u},{u,v},{w,x},{x,u}} "provably satisfies the Einstein field equations in the continuum limit"
 
