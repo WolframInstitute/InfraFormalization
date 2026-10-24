@@ -113,10 +113,28 @@ Branch-pair resolution on other small initial states (MEASURED with HGEvolve, st
 
 Single histories of one Brill-Lindquist point cloud (MEASURED with HGEvolve; 3D periodic box [−10, 10]³, masses 0.5 at separation 1, link cut-off 1.25·(8000/n)^(1/3), cloud seed 1, one uniformly random match per step, "RandomSeed" 1 to 5): at n = 200 points (600 events) and n = 400 points (1000 events) the five causal graphs of equal length are pairwise non-isomorphic, with 1170 to 1190 and 1771 to 1828 causal pairs.
 
+### (6) Calibration of the dimension and curvature measures
+
+The measures below were applied to the rule's causal graphs and to Brill-Lindquist point clouds in the reproduction runs. Their calibration determines which readings describe the rule and which describe the instrument. A reading is UNCALIBRATED when the calibration does not validate the instrument at the sizes used. An UNCALIBRATED entry describes the instrument, and is not a finding about the papers.
+
+Cone measure of a causal graph (the slope of log C(r) over r from R/4 to 3R/4, 40 sources from the first half of the events), MEASURED:
+
+- Lattices: a chain of 300 events gives 0.99. The 1+1 lattice gives 1.89 at radius 60 and 1.97 at radius 200, the 2+1 lattice 2.45 at radius 15 and 2.76 at radius 40, and the 3+1 lattice 3.08 at radius 12. The measure reproduces lattice dimensions with a downward bias at finite radius.
+- Sprinkled causal sets (uniform points in a causal diamond of 1+1, 2+1 and 3+1 Minkowski space, 500 to 5000 points, link graph): the cone measure gives 3.00, 3.28, 3.61 and 4.21 in 1+1 dimensions (1 to 14 sources with four radii in range, mean radius 7), and has no value in 2+1 and 3+1, where no source has four radii in the middle half of its cone. The Myrheim-Meyer value of the whole set gives 1.94 to 2.01 (1+1), 2.94 to 2.97 (2+1) and 3.96 to 4.09 (3+1). The median over sampled intervals gives 1.93 to 1.99, 2.81 to 2.89 and 3.31 to 3.60.
+
+The cone measure does not reproduce the dimension of a sprinkled causal set. The cone exponents of findings (3) and (4) (0.77 to 1.26 on cycles, paths and grids) and the cone dimensions of the rule on Brill-Lindquist clouds (1.13 to 1.54 at 200 and 400 points) are therefore UNCALIBRATED. The statement that the exponent depends on the update order stands as a MEASURED property of the instrument's readings. On the 721 events before the first repeated state of the 200-point history, 7.6% of event pairs are related and no interval has 40 or more events, so the Myrheim-Meyer measure has no value there.
+
+Ball measures of a spatial hypergraph (HGEvolve "VolumeGrowth": ball dimension and ball scalar curvature, means over all vertices), calibrated on random geometric graphs of known dimension and curvature (uniform points on tori, spheres and hyperbolic balls, links below a geodesic distance set by the mean degree):
+
+- On uniform periodic 3D boxes the ball dimension reads 1.64 to 2.57 at 200 points and 2.05 to 2.38 at 1000 points (mean degree 6 to 24), and reads 3 within 0.1 only at 10,000 points with mean degree 6.
+- Converted to length⁻² with the measured hop length, the ball scalar curvature reads −0.72 to −0.95 on uniform periodic 3D boxes at 200 points, −0.16 to −0.46 at 1000 points, and −0.04 to −0.11 at 5000 and 10,000 points, where the scalar curvature is 0. It reads the known curvature within 25% only at 10,000 points (2D sphere, 2D torus and 3D sphere at mean degree 12 and 24).
+
+On the Brill-Lindquist clouds (c = 1.25) the ball dimension reads 1.72, 1.86, 2.02 and 2.24 at 200, 400, 800 and 1600 points, and the mean ball scalar curvature reads −0.46, −0.36, −0.28 and −0.21 hops⁻². These readings have the size of the readings on a uniform flat 3D box at the same sizes. They are UNCALIBRATED, describe the bias of the instrument at these sizes, and are not findings about the initial data of arXiv:2102.09363, whose Brill-Lindquist slice has zero scalar curvature (K̃_ij = 0, eq. 102, line 1421; H = R − K_ij K^ij + K², eq. 179, line 2659).
+
 ## Status
 
 - PROVED: the rule conserves edge count. In every evolution from N hyperedges, with any update order, every antichain of the causal graph has at most N/4 events and at most 5^t events lie within directed distance t of an event (`CausalHistory.gorardNamedRule_antichain_card_le`, `CausalHistory.gorardNamedRule_ball_card_le`).
-- MEASURED: on the seeds above the cone-growth exponent lies between 0.77 and 1.26 and depends on the update order (section 4).
+- MEASURED: on the seeds above the cone-growth exponent lies between 0.77 and 1.26 and depends on the update order (section 4). The cone measure does not reproduce the dimension of sprinkled causal sets, so the values are UNCALIBRATED as dimensions (section 6).
 - MEASURED: the rule is not confluent and not causal invariant. From the directed path of five edges, one complete history has 2 events and the other 1, with non-isomorphic terminal states of 7 and 6 vertices (section 5).
 - OPEN: linear cone growth, stated in Lean as `CausalHistory.GorardNamedRuleConeGrowthLinear` (O1 in `STATUS_OF_GORARD_CLAIMS.md`).
 - Not run: the rule on a Poisson sprinkling of Brill-Lindquist initial data, which is the initial data arXiv:2102.09363 uses (lines 6148-6152, 6179).
@@ -127,4 +145,4 @@ The largest run has 2000 events. The measurements do not determine the exponent 
 
 ## Relation to arXiv:2004.14810 §3.3
 
-The §3.3 argument of arXiv:2004.14810 uses a causal-graph cone count of the form $C(t) = a\,t^n(1 - \ldots)$ with $n = 4$ for 3+1 dimensions. On the seeds above the measured exponent is between 0.77 and 1.26. Whether the cone growth of this rule is linear on all initial data is OPEN.
+The §3.3 argument of arXiv:2004.14810 uses a causal-graph cone count of the form $C(t) = a\,t^n(1 - \ldots)$ with $n = 4$ for 3+1 dimensions. On the seeds above the measured exponent is between 0.77 and 1.26. The cone measure is UNCALIBRATED on sprinkled causal sets (section 6). Whether the cone growth of this rule is linear on all initial data is OPEN.
