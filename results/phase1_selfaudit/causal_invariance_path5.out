@@ -1,0 +1,19 @@
+initial state: [(1, 2), (2, 3), (3, 4), (4, 5), (5, 6)]
+matches of the initial state (edge identities): [[1, 2, 3, 4], [2, 3, 4, 5]]
+history 1: 2 events
+  event 1: consumes edges [1, 2, 3, 4], creates edges [6, 7, 8, 9]
+  event 2: consumes edges [8, 9, 7, 5], creates edges [10, 11, 12, 13]
+  causal edges: [(1, 2)]
+  terminal state: [(1, 8), (2, 7), (4, 8), (5, 4), (8, 6)], 7 vertices, 5 edges
+history 2: 1 events
+  event 1: consumes edges [2, 3, 4, 5], creates edges [6, 7, 8, 9]
+  causal edges: []
+  terminal state: [(1, 2), (2, 7), (3, 7), (5, 2), (7, 6)], 6 vertices, 5 edges
+terminal isomorphism classes: 2; histories per class: [[1], [2]]
+state isomorphism classes: 4, transitions between classes: 3
+  class 0: 6 vertices, successors [1, 2]
+  class 1: 6 vertices, successors []
+  class 2: 6 vertices, successors [3]
+  class 3: 7 vertices, successors []
+  branch pair from class 0: classes 2 and 1, common descendant: False
+branch pairs: 1, resolved: 0

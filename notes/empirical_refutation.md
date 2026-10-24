@@ -86,10 +86,38 @@ Causal edge counts on the 3x3x3, 4x4x4 and 5x5x5 grids: SetReplace 1146, 3856, 7
 
 On the 3x3x3 grid the exponent ranges from 0.77 to 1.10 across the four orders, and on the 4x4x4 grid from 0.99 to 1.26. At 300 to 2000 events the fit depends on the update order and does not determine an exponent of the rule.
 
+### (5) The rule is not causal invariant and not confluent
+
+arXiv:2102.09363 restricts itself to confluent systems ("for the purposes of this article we shall consider only Wolfram model system that are (globally) confluent", lines 5011-5015), calls confluence "generally necessary (though not sufficient)" for causal invariance (lines 5036-5038), and puts gauge choices in bijection with evaluation orders through causal invariance (lines 5062-5066). arXiv:2303.07282 uses causal invariance as a hypothesis for the rule (lines 4693-4699, 4733-4735).
+
+Counterexample on the directed path of five edges `{{1,2},{2,3},{3,4},{4,5},{5,6}}` (MEASURED, `scripts/python/causal_invariance_path5.py`, output `results/phase1_selfaudit/causal_invariance_path5.out`, run on 2026-10-24). The script enumerates every complete history with hyperedge identities.
+
+- The initial state has two matches, on edges 1-4 and on edges 2-5. They share three edges.
+- History 1 applies the first match (event 1 consumes edges 1, 2, 3, 4 and creates 6, 7, 8, 9). Event 1 creates a new match, and event 2 consumes edges 8, 9, 7 and 5. The history ends with 2 events, one causal edge (1 → 2), and a terminal state of 7 vertices and 5 edges.
+- History 2 applies the second match (event 1 consumes edges 2, 3, 4, 5). No match remains. The history ends with 1 event, no causal edge, and a terminal state of 6 vertices and 5 edges.
+- The two terminal states are not isomorphic, and the two complete causal graphs have 2 and 1 events.
+- Up to isomorphism the multiway system has 4 state classes and 3 transitions. The initial class has two successor classes with no common descendant, so its one branch pair is not resolved.
+
+The rule is therefore not confluent, and its complete causal graphs depend on the update order. The same counts (4 state classes, 3 events, 1 unresolved branch pair) were obtained with the HGEvolve engine (HypergraphRewritingEngine) with "CanonicalizeStates" -> Full.
+
+Branch-pair resolution on other small initial states (MEASURED with HGEvolve, states identified up to isomorphism; a pair of successor classes of a class at depth at most D − 2 is resolved when the two have a common descendant class within depth D):
+
+| Initial state | D | Resolved branch pairs |
+|---|---:|---:|
+| path of 5 edges | 7 | 0 of 1 |
+| path of 6 edges | 7 | 1 of 6 |
+| 5-cycle | 7 | 1 of 9 |
+| 6-cycle | 7 | 11 of 26 |
+| two 4-cycles sharing a vertex | 6 | 3429 of 5445 |
+| four self-loops on one vertex | 7 | 0 of 1 |
+
+Single histories of one Brill-Lindquist point cloud (MEASURED with HGEvolve; 3D periodic box [−10, 10]³, masses 0.5 at separation 1, link cut-off 1.25·(8000/n)^(1/3), cloud seed 1, one uniformly random match per step, "RandomSeed" 1 to 5): at n = 200 points (600 events) and n = 400 points (1000 events) the five causal graphs of equal length are pairwise non-isomorphic, with 1170 to 1190 and 1771 to 1828 causal pairs.
+
 ## Status
 
 - PROVED: the rule conserves edge count. In every evolution from N hyperedges, with any update order, every antichain of the causal graph has at most N/4 events and at most 5^t events lie within directed distance t of an event (`CausalHistory.gorardNamedRule_antichain_card_le`, `CausalHistory.gorardNamedRule_ball_card_le`).
 - MEASURED: on the seeds above the cone-growth exponent lies between 0.77 and 1.26 and depends on the update order (section 4).
+- MEASURED: the rule is not confluent and not causal invariant. From the directed path of five edges, one complete history has 2 events and the other 1, with non-isomorphic terminal states of 7 and 6 vertices (section 5).
 - OPEN: linear cone growth, stated in Lean as `CausalHistory.GorardNamedRuleConeGrowthLinear` (O1 in `STATUS_OF_GORARD_CLAIMS.md`).
 - Not run: the rule on a Poisson sprinkling of Brill-Lindquist initial data, which is the initial data arXiv:2102.09363 uses (lines 6148-6152, 6179).
 
