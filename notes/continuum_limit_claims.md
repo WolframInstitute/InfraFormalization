@@ -104,6 +104,8 @@ Repeated from G1:
 - Lines 3581-3583: "the Ollivier-Ricci scalar κ (p, q) reduces to the ordinary Riemannian Ricci scalar R (p, q)". Differs from source.
 - Eq. 225 (line 4042): direction-averaged expansion with $R$. Differs from source.
 - Eqs. 227-229 (lines 4118-4160): the G1 §3.3 argument. G2 defines weak ergodicity as the vanishing of the net flux of causal edges through every hypersurface of constant $x^\nu$ in the continuum limit (lines 4136-4139), and states that this "provides us with the analytic justification necessary to exchange this discrete sum for an integral". No proof of the exchange is given.
+- Lines 4249-4255 define the energy-momentum tensor T^μν as "the flux of causal edges ... through a hypersurface of constant x^ν". The weak-ergodicity hypothesis of the vacuum derivation (lines 4136-4140) is the vanishing of the net flux of the same edges through the same hypersurfaces. G2 does not relate the two uses.
+- Abstract lines 36-40, lines 171-175 ("formally proving that the Benincasa-Dowker action follows as a special case") and lines 4235-4237: the Benincasa-Dowker action is recovered when weak ergodicity is replaced with "a much stronger assumption of uniform (Poisson) distribution of causal set elements". G2 gives no proof that a rewriting rule produces a Poisson distribution.
 
 New in G2:
 
