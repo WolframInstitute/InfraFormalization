@@ -87,6 +87,7 @@ READ:
 - The hypergraphs in Figures 73-77 are coloured with the analytic Schwarzschild conformal factor ψ of eq. 391 (lines 6185-6192).
 - G3 states the masses (0.5M each), the separation (1M), the times (t = 6M, 12M, 24M), the Kerr spin (a/M = 0.6) and the resolutions (100 to 1600 vertices). G3 states no value for the link cut-off distance ("a certain cut-off distance", line 6176), no update order, no number of events per unit of t, and no map from events to the time coordinate t.
 - G3 extracts rΨ4 "in the pure Wolfram model case" (line 6212) and reports second-order convergence of the Hamiltonian constraint (Table 6).
+- The public Gravitas code (github.com/JonathanGorard/Gravitas, commit 9b02562, 22 months after G3) builds "discrete hypersurfaces" by sampling random points on a curvature surface of a given continuum metric and joining points closer than a Euclidean cut-off (`DiscreteHypersurfaceDecomposition.wl:88-95`). Its "evolution" properties draw a new sample at each time and apply no rewriting rule (lines 293-332). It contains no numerical time integration, refinement or Ψ4 extraction ([`notes/gravitas_code_audit.md`](notes/gravitas_code_audit.md)).
 
 MEASURED (convergence tables, [`results/phase2_continuum/convergence_tables.md`](results/phase2_continuum/convergence_tables.md), script `scripts/python/check_convergence_tables.py`):
 
