@@ -1,0 +1,12 @@
+G3 Fig 39 CCZ4 Schwarzschild: axis row 223, axis column 72, major t ticks at {162, 252, 344, 434, 524, 616}, spacing {90.80000000000001, 80.}, points 502, max {1799/227, 0.003875}, min {1534/227, -0.0037625000000000002}
+G3 Fig 78 rule Schwarzschild: axis row 221, axis column 76, major t ticks at {134, 232, 328, 426, 522, 620}, spacing {97.2, 68.}, points 534, max {1916/243, 0.003897058823529412}, min {1636/243, -0.004029411764705882}
+G3 Fig 49 CCZ4 Kerr: axis row 232, axis column 73, major t ticks at {163, 253, 345, 435, 525, 617}, spacing {90.80000000000001, 45.}, points 502, max {1794/227, 0.003688888888888889}, min {1559/227, -0.0031222222222222224}
+G3 Fig 84 rule Kerr: axis row 208, axis column 74, major t ticks at {132, 230, 326, 424, 520, 618}, spacing {97.2, 74.}, points 536, max {1946/243, 0.0036891891891891893}, min {562/81, -0.0031216216216216216}
+GII Fig 54 Schwarzschild: axis row 236, axis column 85, major t ticks at {193, 302, 410, 519, 627, 736}, spacing {108.60000000000001, 98.}, points 598, max {4306/543, 0.0038877551020408165}, min {1222/181, -0.003775510204081633}
+G3 Fig 39 CCZ4 Schwarzschild vs GII Fig 54 Schwarzschild: r = 0.9999, RMS difference 0.000054
+G3 Fig 39 CCZ4 Schwarzschild vs G3 Fig 78 rule Schwarzschild: r = 0.9977, RMS difference 0.00012
+G3 Fig 49 CCZ4 Kerr vs G3 Fig 84 rule Kerr: r = 0.9952, RMS difference 0.00012
+G3 Fig 39 CCZ4 Schwarzschild vs G3 Fig 49 CCZ4 Kerr: r = 0.6120, RMS difference 0.0015
+G3 Fig 78 rule Schwarzschild vs G3 Fig 84 rule Kerr: r = 0.6184, RMS difference 0.0015
+time stretch 1: r = 0.9999 over 521 points
+time stretch 2: r = 0.0837 over 451 points

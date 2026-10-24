@@ -93,6 +93,11 @@ MEASURED (convergence tables, [`results/phase2_continuum/convergence_tables.md`]
 - The norm definitions of G3 eqs. 180-181 and G4 eqs. 186-187 force L∞ ≤ L1 ≤ L2 in every row. 28 of the 35 rows of G3 Tables 1-7 and 7 of the 20 rows of G4 Tables 1-4 violate this ordering, including every row of G3 Table 6 and G4 Table 4 (the rule's runs).
 - The printed orders are log₂ of the norm ratio per doubling of the vertex count. Five of the 132 printed orders differ from the tabulated norms by more than 0.01: G3 lines 2712, 4696 and 4697, and G4 lines 5151 and 5152.
 
+MEASURED (rΨ4 plots, [`results/phase2_continuum/rpsi4_digitisation.md`](results/phase2_continuum/rpsi4_digitisation.md), scripts `scripts/python/digitise_rpsi4.py` and `scripts/digitise_rpsi4.wls`):
+
+- The rΨ4 curves of the rule (G3 Figures 78 and 84) correlate with the CCZ4 curves of the same problem (Figures 39 and 49) with r = 0.998 and 0.995. The Schwarzschild and Kerr curves of either method correlate with r = 0.61-0.62.
+- The rΨ4 curve of Gravitas II Figure 54 (ADM, masses M at separation 2M, 10,000 vertices) equals the 800-vertex CCZ4 curve of G3 Figure 39 (masses 0.5M at separation 1M): r = 1.000 and 0.9999 by two independent digitisations, RMS difference about two pixels. With the time axis stretched by 2, the factor that relates the two systems, r = 0.05 and 0.08.
+
 Lean: `Refutations/F6Circularity.lean:39` defines `CircularReconstruction`, a pair of maps with the hypothesis `reconstruct (sample t) = t`, and `CircularReconstruction.comp_eq_id` (`:48`, axioms `Quot.sound`) restates the hypothesis. The file does not model the procedure of G3 and does not prove that the procedure satisfies the hypothesis. Status: VACUOUS with respect to Claim 2. The evolved hypergraphs at t = 6M, 12M, 24M are not the sampled initial data, so the comparison at those times is not of the form `reconstruct ∘ sample`.
 
 The `BBH*.lean` files (`BBHInitialData.lean:64` defines `bbhInitial`, a 6-vertex graph of two triangles joined by one edge) and the rules in `DiscoveredRules.lean:66-130` (single-edge left-hand sides) use neither the named rule nor G3's initial data. They do not bear on Claim 2.

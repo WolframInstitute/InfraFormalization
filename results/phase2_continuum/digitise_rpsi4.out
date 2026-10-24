@@ -1,0 +1,22 @@
+G3 Fig39 CCZ4 Schw: columns 502, t range 0.99-12.02, max 0.00392 at t=7.94, min -0.00381 at t=6.76
+G3 Fig49 CCZ4 Kerr: columns 502, t range 0.99-12.02, max 0.00369 at t=7.92, min -0.00317 at t=6.88
+G3 Fig78 WM Schw: columns 534, t range 1.01-12.02, max 0.00394 at t=7.88, min -0.00409 at t=6.74
+G3 Fig84 WM Kerr: columns 536, t range 1.01-12.02, max 0.00378 at t=8.02, min -0.00314 at t=6.82
+GII Fig54 Schw: columns 598, t range 1.01-12.02, max 0.00391 at t=7.94, min -0.00380 at t=6.76
+G3 Fig39 CCZ4 Schw vs GII Fig54 Schw (moving average 0.02 M): Pearson r = 1.000, RMS difference = 4.51e-05, RMS of first = 1.83e-03
+G3 Fig39 CCZ4 Schw vs GII Fig54 Schw (moving average 0.30 M): Pearson r = 1.000, RMS difference = 3.71e-05, RMS of first = 1.82e-03
+G3 Fig39 CCZ4 Schw vs G3 Fig78 WM Schw (moving average 0.02 M): Pearson r = 0.998, RMS difference = 1.26e-04, RMS of first = 1.83e-03
+G3 Fig39 CCZ4 Schw vs G3 Fig78 WM Schw (moving average 0.30 M): Pearson r = 0.999, RMS difference = 7.07e-05, RMS of first = 1.82e-03
+G3 Fig49 CCZ4 Kerr vs G3 Fig84 WM Kerr (moving average 0.02 M): Pearson r = 0.995, RMS difference = 1.25e-04, RMS of first = 1.26e-03
+G3 Fig49 CCZ4 Kerr vs G3 Fig84 WM Kerr (moving average 0.30 M): Pearson r = 0.998, RMS difference = 8.24e-05, RMS of first = 1.26e-03
+G3 Fig39 CCZ4 Schw vs G3 Fig49 CCZ4 Kerr (moving average 0.02 M): Pearson r = 0.614, RMS difference = 1.54e-03, RMS of first = 1.83e-03
+G3 Fig39 CCZ4 Schw vs G3 Fig49 CCZ4 Kerr (moving average 0.30 M): Pearson r = 0.623, RMS difference = 1.53e-03, RMS of first = 1.82e-03
+G3 Fig78 WM Schw vs G3 Fig84 WM Kerr (moving average 0.02 M): Pearson r = 0.621, RMS difference = 1.50e-03, RMS of first = 1.82e-03
+G3 Fig78 WM Schw vs G3 Fig84 WM Kerr (moving average 0.30 M): Pearson r = 0.632, RMS difference = 1.49e-03, RMS of first = 1.81e-03
+G3 Fig39 CCZ4 Schw vs G3 Fig84 WM Kerr (moving average 0.02 M): Pearson r = 0.622, RMS difference = 1.51e-03, RMS of first = 1.83e-03
+G3 Fig39 CCZ4 Schw vs G3 Fig84 WM Kerr (moving average 0.30 M): Pearson r = 0.632, RMS difference = 1.50e-03, RMS of first = 1.82e-03
+G3 Fig49 CCZ4 Kerr vs G3 Fig78 WM Schw (moving average 0.02 M): Pearson r = 0.613, RMS difference = 1.53e-03, RMS of first = 1.26e-03
+G3 Fig49 CCZ4 Kerr vs G3 Fig78 WM Schw (moving average 0.30 M): Pearson r = 0.623, RMS difference = 1.52e-03, RMS of first = 1.26e-03
+stretch 0.5: Pearson r = 0.086 over 231 points
+stretch 1.0: Pearson r = 1.000 over 520 points
+stretch 2.0: Pearson r = 0.051 over 491 points
