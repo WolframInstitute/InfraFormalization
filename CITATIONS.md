@@ -22,7 +22,11 @@ Status labels as in [`STATUS_OF_GORARD_CLAIMS.md`](STATUS_OF_GORARD_CLAIMS.md): 
 - Gorard, J. *Algorithmic Causal Sets and the Wolfram Model.* arXiv:[2011.12174](https://arxiv.org/abs/2011.12174) (2020). (G2)
 - Gorard, J. *Hypergraph Discretization of the Cauchy Problem in General Relativity via Wolfram Model Evolution.* arXiv:[2102.09363](https://arxiv.org/abs/2102.09363) (2021). (G3)
 - Gorard, J. *Non-Vacuum Solutions, Gravitational Collapse and Discrete Singularity Theorems in Wolfram Model Systems.* arXiv:[2303.07282](https://arxiv.org/abs/2303.07282) (2023). (G4)
-- Gorard, J. *Computational General Relativity in the Wolfram Language using Gravitas II: ADM Formalism and Numerical Relativity.* arXiv:[2401.14209](https://arxiv.org/abs/2401.14209) (2024).
+- Gorard, J. *Computational General Relativity in the Wolfram Language using Gravitas I: Symbolic and Analytic Computation.* arXiv:[2308.07508](https://arxiv.org/abs/2308.07508) (2023). (GI)
+- Gorard, J. *Computational General Relativity in the Wolfram Language using Gravitas II: ADM Formalism and Numerical Relativity.* arXiv:[2401.14209](https://arxiv.org/abs/2401.14209) (2024). (GII)
+- Gorard, J. *General Relativistic Hydrodynamics in Discrete Spacetime: Perfect Fluid Accretion onto Static and Spinning Black Holes.* arXiv:[2402.02331](https://arxiv.org/abs/2402.02331) (2024). (GH)
+- Gorard, J. *Gravitas*, Wolfram Language source code, [github.com/JonathanGorard/Gravitas](https://github.com/JonathanGorard/Gravitas), commit 9b02562 (2023-08-28). (GC)
+- Local copies of G1-G4, GI, GII and GH are kept in `papers/` as `gorard_<arXiv id>.pdf`, the text extracted with `pdftotext -layout` as `gorard_<arXiv id>.txt`, and the TeX source as `tex_<first four digits of the arXiv id>/`. The directory is not tracked. Line numbers in the documentation refer to these files.
 - The audit of G1-G4 is in [`FINDINGS.md`](FINDINGS.md), [`MAJOR_FLAWS.md`](MAJOR_FLAWS.md) and [`STATUS_OF_GORARD_CLAIMS.md`](STATUS_OF_GORARD_CLAIMS.md).
 
 ### A3. ZX-calculus and categorical Wolfram model
