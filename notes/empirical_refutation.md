@@ -131,13 +131,41 @@ Ball measures of a spatial hypergraph (HGEvolve "VolumeGrowth": ball dimension a
 
 On the Brill-Lindquist clouds (c = 1.25) the ball dimension reads 1.72, 1.86, 2.02 and 2.24 at 200, 400, 800 and 1600 points, and the mean ball scalar curvature reads −0.46, −0.36, −0.28 and −0.21 hops⁻². These readings have the size of the readings on a uniform flat 3D box at the same sizes. They are UNCALIBRATED, describe the bias of the instrument at these sizes, and are not findings about the initial data of arXiv:2102.09363, whose Brill-Lindquist slice has zero scalar curvature (K̃_ij = 0, eq. 102, line 1421; H = R − K_ij K^ij + K², eq. 179, line 2659).
 
+### (7) Runs on Brill-Lindquist point clouds
+
+The reproduction runs use the HGEvolve engine (HypergraphRewritingEngine). Initial data: n points in the periodic box [−10, 10]³ with density proportional to ψ⁶, ψ = 1 + 0.25/r₁ + 0.25/r₂ (masses 0.5 at separation 1, arXiv:2102.09363 lines 6179-6181), horizons excised, two points linked when their coordinate distance is below c·(8000/n)^(1/3), each edge given a random direction. Evolution: single histories with one uniformly random match per step. All values are MEASURED unless marked.
+
+Initial hypergraph against the link cut-off (seed 1):
+
+| n | c | Edges | Directed walks of four edges (matches of the rule) |
+|---:|---:|---:|---:|
+| 200 | 1.0 | 458 | 14,412 |
+| 200 | 1.25 | 877 | 102,695 |
+| 200 | 1.5 | 1456 | 625,952 |
+| 1600 | 1.0 | | 861,953 |
+| 1600 | 1.25 | 7219 | 5,796,932 |
+| 1600 | 1.5 | | 27,192,014 |
+
+arXiv:2102.09363 gives no value of the cut-off (line 6176), and the cut-off changes the initial edge count and the number of matches of the rule by large factors.
+
+- Vertex count. Each event creates a vertex u and removes the edges {y,z} and {z,w}, so z leaves the state when it has no other edge. At n = 200, c = 1.25, seed 1, the state has 200 vertices at step 0, 549 at step 1000 and 828 at step 2000, with 877 edges throughout. At n = 1600 the vertex count goes from 1599 to 1699 over 100 events. arXiv:2102.09363 Tables 6-7 index the runs by a vertex count, which the rule changes.
+- Components. The number of connected components at step 0, at the middle of the run and at the first repeated state: n = 200, c = 1.25, seeds 1, 2, 3: 1/3/40, 1/2/21, 1/2/41. n = 200, c = 1.0: 3/3/22. At n = 400, c = 1.25, the count rises from 1 to 11-12 by step 1000.
+- Separation of the holes against the vertex spacing. The mean spacing is 3.42, 2.71, 2.15 and 1.71 for n = 200, 400, 800 and 1600, and the separation of the holes is 1. The points within 1.5 of a hole number 6, 11, 15 and 30.
+- Graph distance between the neighbourhoods of the two holes (vertex sets within 1.5 of each hole). At n = 200, c = 1.25, seed 1 (2 and 4 vertices): distance 1 at steps 0 to 150, 2 at steps 200 to 550, 5 at step 600, 7 at steps 650 and 700. At n = 1600 (9 and 21 vertices): distance 1 at every fifth step from 0 to 100. The two neighbourhoods are adjacent at step 0 at both resolutions, so the distance starts at its smallest non-zero value. A merger would show as a falling distance (arXiv:2102.09363 lines 6192-6198 state that the holes merge by t = 12M).
+- Events per initial edge. Before the first repeated state: 0.82 at n = 200 (721 events, 877 edges). With all events run: 0.55 at n = 400, 0.08 at n = 800, and 0.014 at n = 1600 (100 events, 7219 edges). One event per edge at n = 1600, c = 1.25 needs 7219 steps, about 3.5 hours at the measured 1.7 s per step.
+- Repetition of the sampler. Single histories of the engine reach a state isomorphic to an earlier one at step 722, 648 and 697 (n = 200, c = 1.25, seeds 1-3), 300 (n = 200, c = 1.0) and 536 (n = 400, c = 1.0), and from that step every state is in one isomorphism class. The engine keys its "UniformRandom" choice on the canonical hash of the state and the canonical ranks of the matched edges (`canonical_transition_key` in `hypergraph/src/parallel_evolution.cpp` of HypergraphRewritingEngine), so the choice repeats with the class. The repetition is a property of the sampler.
+- Update order (READ). The engine applies one event per step on a single history. arXiv:2303.07282 lines 4640-4648 apply the rule "to every possible/matching (non-overlapping) subhypergraph at each step", and HGEvolve has no step that applies a maximal set of non-overlapping matches.
+- Cost of a step (callgrind, one thread). One step costs a pass over all matches of the state: 335 × 10⁶ instructions per step at 877 edges (102,695 walks), 1.68 × 10⁹ at 1813 edges and 8.26 × 10⁹ at 3587 edges, 3.0 to 5.3 thousand instructions per match. Re-matching takes 63% at 877 edges.
+
+The dimension and curvature readings of these runs are UNCALIBRATED (section 6).
+
 ## Status
 
 - PROVED: the rule conserves edge count. In every evolution from N hyperedges, with any update order, every antichain of the causal graph has at most N/4 events and at most 5^t events lie within directed distance t of an event (`CausalHistory.gorardNamedRule_antichain_card_le`, `CausalHistory.gorardNamedRule_ball_card_le`).
 - MEASURED: on the seeds above the cone-growth exponent lies between 0.77 and 1.26 and depends on the update order (section 4). The cone measure does not reproduce the dimension of sprinkled causal sets, so the values are UNCALIBRATED as dimensions (section 6).
 - MEASURED: the rule is not confluent and not causal invariant. From the directed path of five edges, one complete history has 2 events and the other 1, with non-isomorphic terminal states of 7 and 6 vertices (section 5).
 - OPEN: linear cone growth, stated in Lean as `CausalHistory.GorardNamedRuleConeGrowthLinear` (O1 in `STATUS_OF_GORARD_CLAIMS.md`).
-- Not run: the rule on a Poisson sprinkling of Brill-Lindquist initial data, which is the initial data arXiv:2102.09363 uses (lines 6148-6152, 6179).
+- MEASURED: runs of the rule on Brill-Lindquist point clouds of 200 to 1600 points (section 7). They reach at most 0.82 events per initial edge before the sampler repeats a state at 200 points, and 0.014 at 1600 points. The graph distance between the neighbourhoods of the two holes does not fall.
 
 A bounded spatial ball count holds on every finite hypergraph, so the constant edge count does not give the rule a spatial dimension that differs from any other rule run on a finite state. arXiv:2102.09363 compares runs at 200, 400, 800 and 1600 vertices, and edge-count conservation within a run does not constrain a sequence of initial states of growing size.
 
