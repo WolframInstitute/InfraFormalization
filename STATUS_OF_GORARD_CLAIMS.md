@@ -15,13 +15,13 @@ Paper files: G1 = `papers/gorard_2004.14810.txt`, G2 = `papers/gorard_2011.12174
 
 ## Claim 1. The rule {{x,y},{y,z},{z,w},{w,v}} -> {{y,u},{u,v},{w,x},{x,u}} "provably satisfies the Einstein field equations in the continuum limit"
 
-Source: G3 abstract lines 50-52, §1 lines 182 and 271. The rule first appears at G3 line 6202, in the text of §6 and in the captions of Figures 73-77 and 79-83.
+Source: G3 abstract lines 49-53, §1 lines 182 and 271. The rule first appears at G3 line 6202, in the text of §6 and in the captions of Figures 73-77 and 79-83.
 
 READ:
 
 - G3 gives no proof that this rule satisfies the Einstein field equations, weak ergodicity, asymptotic dimension preservation or causal invariance. The rule appears only as the rule used in the §6 comparison (`notes/2102.09363_close_reading.md` §5).
-- G3 line 6080 replaces "the assumption of weak ergodicity of the causal graph dynamics with the much stronger assumption of uniform Poisson distribution of the rewrite events". G3 gives no proof that this rule produces Poisson-distributed rewrite events.
-- The continuum limit of the Benincasa-Dowker action used at G3 lines 6110-6120 holds under the stated assumptions of zero surface terms and a vanishing contribution from outside the Riemann normal neighbourhood. G3 cites numerical support (Cunningham) for these assumptions, not a proof.
+- G3 lines 6078-6082 replace "the assumption of weak ergodicity of the causal graph dynamics with the much stronger assumption of uniform Poisson distribution of the rewrite events". G3 gives no proof that this rule produces Poisson-distributed rewrite events.
+- The continuum limit of the Benincasa-Dowker action used at G3 lines 6110-6120 holds under the stated assumptions of zero surface terms and a vanishing contribution from outside the Riemann normal neighbourhood. G3 cites a numerical demonstration by Cunningham (line 6112, reference [108]) of the convergence under these assumptions, not a proof.
 
 PROVED:
 
@@ -81,7 +81,7 @@ OPEN:
 
 ## Claim 2. Pure Wolfram model evolution under the rule and the numerical solution "converge to the same limiting geometries", including binary black hole mergers
 
-Source: G3 abstract lines 42-58, §6 lines 6146-6290, Table 6.
+Source: G3 abstract lines 42-58, the §6 experiment at lines 6142-6463, Table 6.
 
 READ:
 
@@ -110,13 +110,13 @@ OPEN: O5 above.
 
 ## Claim 3. Causal-invariant, asymptotically dimensionality-preserving rules satisfy the vacuum Einstein equations in the continuum limit
 
-Source: G1 §3.3, eqs. 86-91, lines 2168-2240.
+Source: G1 §3.3, eqs. 86-91, lines 2168-2259.
 
 READ:
 
 - G1 lines 2203-2206 state that asymptotic dimensionality preservation "corresponds to the statement" δS/δg^ab → 0 (eq. 87). This condition is the Euler-Lagrange equation of S.
 - G1 line 2214 (eq. 88) states that the sum "becomes" the Einstein-Hilbert integral "subject to a weak ergodicity assumption", with no notion of convergence and no definition of weak ergodicity.
-- G1 Def 15 (line 786) introduces a discrete Lorentzian metric g without a construction from the hypergraph. G1 line 2065 assumes non-parallel hyperedges "can be considered to be orthonormal" without a bilinear form.
+- G1 Def 15 (lines 786-790) introduces a discrete Lorentzian metric g without a construction from the hypergraph. G1 line 2065 assumes non-parallel hyperedges "can be considered to be orthonormal" without a bilinear form.
 
 Lean (all axiom-clean):
 
@@ -153,7 +153,7 @@ These theorems are PROVED arithmetic comparisons. The correct coefficients come 
 
 ## Reproducing the binary black hole experiment of arXiv:2102.09363
 
-G3 §6 (lines 6146-6290) states the experiment as follows (READ):
+G3 states the §6 experiment (lines 6142-6463) as follows (READ):
 
 - Initial data: points of a Poisson process of density ρ_c in a spatial slice of the Brill-Lindquist data for two Schwarzschild black holes of mass 0.5M each, separated by 1M (lines 6152-6181, eqs. 389-390). Two vertices are joined by a hyperedge when their points lie within "a certain cut-off distance (defined relative to the discretization cut-off V_c = ρ_c^-1)" (lines 6174-6176). A second run uses two Kerr black holes with a/M = 0.6 (lines 6269-6285).
 - Rule: {{x,y},{y,z},{z,w},{w,v}} → {{y,u},{u,v},{w,x},{x,u}} (line 6202).
