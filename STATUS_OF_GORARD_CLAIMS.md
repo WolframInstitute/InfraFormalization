@@ -46,7 +46,7 @@ PROVED (causal graph, `lean/InfraFormalization/CausalHistory.lean`). A `RuleHist
 | `CausalHistory.gorardNamedRule_antichain_card_le` | For the rule, 4·\|A\| ≤ N for every antichain A, where N is the initial edge count | same |
 | `CausalHistory.gorardNamedRule_ball_card_le` | For the rule, at most 5^t events lie within directed distance t of an event | same |
 
-MEASURED (cone-growth exponent of the causal graph): the exponent is the slope of a least-squares fit of log C(r) against log r, where C(r) is the number of events within directed graph distance r of the first event, over the middle half of the radii.
+MEASURED (cone-growth exponent of the causal graph): the exponent is the slope of a least-squares fit of log C(r) against log r, where C(r) is the number of events within directed graph distance r of the first event. The Python column fits r from r_lo = max(2, ⌊r_max/4⌋) to max(r_lo + 3, ⌊3 r_max/4⌋) (`scripts/python/rewriter.py` lines 514-515). The SetReplace column fits r_max/4 ≤ r ≤ 3 r_max/4 (`scripts/causal_dimension.wl` line 29), and ⌊r_max/4⌋ ≤ r ≤ ⌊3 r_max/4⌋ on the grids (`scripts/grid3d_test.wl` line 40). With the window r_max/4 ≤ r ≤ 3 r_max/4, the Python exponents of the 3x3x3 and 4x4x4 grids are 1.077 and 1.238 in place of 1.081 and 1.256.
 
 | Seed | Seed edges | Events | SetReplace exponent | Python exponent | Causal edges SetReplace / Python |
 |---|---:|---:|---:|---:|---|
