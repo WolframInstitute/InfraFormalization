@@ -76,7 +76,7 @@ OPEN:
 - O3 (closed). `CausalHistory.lean` defines the causal graph on hyperedge identities. `causallyPrecedes` (`Causal.lean`), `isCausalPred` (`CausalLevel.lean`) and `CausalEventTrace.deriveCausalEdges` relate events through hyperedge values, and differ from the causal graph when a state holds two equal hyperedges.
 - O4 (closed). The SetReplace and Python exponents differ because the tools use different update orders (MEASURED above).
 - MEASURED (causal invariance, `scripts/python/causal_invariance_path5.py`, output `results/phase1_selfaudit/causal_invariance_path5.out`): the rule is not confluent and not causal invariant. From the directed path of five edges {{1,2},{2,3},{3,4},{4,5},{5,6}}, the two initial matches share three edges. Applying the first gives a history of 2 events with terminal state of 7 vertices, and applying the second gives a history of 1 event with terminal state of 6 vertices. The terminal states are not isomorphic and the complete causal graphs have 2 and 1 events. G3 restricts itself to confluent systems (lines 5011-5015). G4 states causal invariance as a general condition on rules that satisfy the Einstein field equations (lines 4693-4699, 4733-4735) and applies it to the rule through line 4598. Further branch-pair counts and non-isomorphic single histories on Brill-Lindquist clouds are in `notes/empirical_refutation.md` section 5.
-- O5. A run of the rule on a Poisson sprinkling of Brill-Lindquist initial data at the resolutions of G3 Table 6, with at least one event per initial edge, an update order that applies a maximal set of non-overlapping matches, and a sampler that does not repeat a state. Runs with single random events reach 0.82 events per initial edge at 200 points and 0.014 at 1600 points (`notes/empirical_refutation.md` section 7).
+- O5. A run of the rule on a Poisson sprinkling of Brill-Lindquist initial data at each resolution of G3 Table 6, with at least one event per initial edge and an update order that applies a maximal set of non-overlapping matches. MEASURED at 200, 400, 800 and 1600 points: the notebook "Gorard binary black hole review.nb" (section 8) runs the rule on such clouds to 10 events per initial edge under the HGEvolve option "Generational" -> True (engine commit 0fac4f1c, 2026-10-24). "Generational" applies at each step every match that shares no hyperedge with a match before it in the engine's standard order, and involves no random choice. OPEN: the 100-vertex resolution. Runs with single random events reach 0.82 events per initial edge at 200 points and 0.014 at 1600 points (`notes/empirical_refutation.md` section 7).
 - The repository does not prove Claim 1 false. Claim 1 does not state a convergence notion, so there is no precise statement to refute (see Claim 3, F5).
 
 ## Claim 2. Pure Wolfram model evolution under the rule and the numerical solution "converge to the same limiting geometries", including binary black hole mergers
@@ -106,7 +106,7 @@ Lean: `Refutations/F6Circularity.lean:39` defines `CircularReconstruction`, a pa
 
 The `BBH*.lean` files (`BBHInitialData.lean:64` defines `bbhInitial`, a 6-vertex graph of two triangles joined by one edge) and the rules in `DiscoveredRules.lean:66-130` (single-edge left-hand sides) use neither the named rule nor G3's initial data. They do not bear on Claim 2.
 
-OPEN: O5 above.
+OPEN: O5 above (the 100-vertex resolution).
 
 ## Claim 3. Causal-invariant, asymptotically dimensionality-preserving rules satisfy the vacuum Einstein equations in the continuum limit
 
