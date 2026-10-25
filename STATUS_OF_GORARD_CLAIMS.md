@@ -94,8 +94,8 @@ READ:
 
 MEASURED (convergence tables, [`results/phase2_continuum/convergence_tables.md`](results/phase2_continuum/convergence_tables.md), script `scripts/python/check_convergence_tables.py`):
 
-- The norm definitions of G3 eqs. 180-181 and G4 eqs. 186-187 force L∞ ≤ L1 ≤ L2 in every row. 28 of the 35 rows of G3 Tables 1-7 and 7 of the 20 rows of G4 Tables 1-4 violate this ordering, including every row of G3 Table 6 and G4 Table 4 (the rule's runs).
-- The printed orders are log₂ of the norm ratio per doubling of the vertex count. Five of the 132 printed orders differ from the tabulated norms by more than 0.01: G3 lines 2712, 4696 and 4697, and G4 lines 5151 and 5152.
+- The columns are headed ε(L1), ε(L2) and ε(L∞) (for example `papers/tex_2102/NumericalRelativity.tex:1157`). G3 and G4 do not define ε, and the captions call the quantities "the L1, L2 and L∞ norms for the Hamiltonian constraint H". The norm definitions of G3 eqs. 180-181 and G4 eqs. 186-187 force L∞ ≤ L1 ≤ L2 in every row. 28 of the 35 rows of G3 Tables 1-7 and 7 of the 20 rows of G4 Tables 1-4 violate this ordering, including every row of G3 Table 6 and G4 Table 4 (the rule's runs).
+- The printed orders are log₂ of the norm ratio per doubling of the vertex count. Six of the 132 printed orders differ from the log₂ ratios of the tabulated norms by more than 0.01: G3 lines 2712, 2713, 4696 and 4697, and G4 lines 5151 and 5152. G3 line 2713 (L2, 4.048 computed, 4.06 printed) lies within the rounding of the tabulated norms. The other five lie outside the range allowed by the rounding of the norms to three figures and of the orders to two decimals.
 
 MEASURED (rΨ4 plots, [`results/phase2_continuum/rpsi4_digitisation.md`](results/phase2_continuum/rpsi4_digitisation.md), scripts `scripts/python/digitise_rpsi4.py` and `scripts/digitise_rpsi4.wls`):
 
