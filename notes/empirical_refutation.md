@@ -6,7 +6,7 @@ arXiv:2102.09363 (line 6202) uses
 $$
 \{\{x,y\},\{y,z\},\{z,w\},\{w,v\}\}\;\to\;\{\{y,u\},\{u,v\},\{w,x\},\{x,u\}\}
 $$
-(where `u` is a fresh vertex) and describes it as "a hypergraph substitution rule that provably satisfies the Einstein field equations in the continuum limit" (abstract, lines 50-52). The paper gives no proof for this rule.
+(where `u` is a fresh vertex) and describes it as "a hypergraph substitution rule that provably satisfies the Einstein field equations in the continuum limit" (abstract, lines 49-53). The paper gives no proof for this rule.
 
 The SetReplace runs below use `scripts/run_seeds_v3.wl`, `scripts/causal_dimension.wl` and `scripts/grid3d_test.wl` through `wolframscript` with SetReplace 0.3.196. The Python runs use `scripts/python/run_all_seeds.py`. Each run is single-way, in the update order of its tool.
 
@@ -35,7 +35,7 @@ The rule has `|LHS| = |RHS| = 4`, so each firing removes 4 edges and adds 4. Edg
 
 ### (3) Cone-growth exponent
 
-C(r) is the number of events within directed graph distance r of the first event. The exponent is the slope of a least-squares fit of log C(r) against log r over r in [r_max/4, 3 r_max/4].
+C(r) is the number of events within directed graph distance r of the first event. The exponent is the slope of a least-squares fit of log C(r) against log r. The Python column fits r from r_lo = max(2, ⌊r_max/4⌋) to max(r_lo + 3, ⌊3 r_max/4⌋) (`scripts/python/rewriter.py` lines 514-515). The SetReplace column fits r_max/4 ≤ r ≤ 3 r_max/4 (`scripts/causal_dimension.wl` line 29), and ⌊r_max/4⌋ ≤ r ≤ ⌊3 r_max/4⌋ on the grids (`scripts/grid3d_test.wl` line 40). With the window r_max/4 ≤ r ≤ 3 r_max/4, the Python exponents of the 3x3x3 and 4x4x4 grids are 1.077 and 1.238 in place of 1.081 and 1.256.
 
 | Seed | Seed edges | Events | Max cone distance (SetReplace) | SetReplace exponent | Python exponent |
 |---|---:|---:|---:|---:|---:|
@@ -93,7 +93,7 @@ arXiv:2102.09363 restricts itself to confluent systems ("for the purposes of thi
 Counterexample on the directed path of five edges `{{1,2},{2,3},{3,4},{4,5},{5,6}}` (MEASURED, `scripts/python/causal_invariance_path5.py`, output `results/phase1_selfaudit/causal_invariance_path5.out`, run on 2026-10-24). The script enumerates every complete history with hyperedge identities.
 
 - The initial state has two matches, on edges 1-4 and on edges 2-5. They share three edges.
-- History 1 applies the first match (event 1 consumes edges 1, 2, 3, 4 and creates 6, 7, 8, 9). Event 1 creates a new match, and event 2 consumes edges 8, 9, 7 and 5. The history ends with 2 events, one causal edge (1 → 2), and a terminal state of 7 vertices and 5 edges.
+- History 1 applies the first match (event 1 consumes edges 1, 2, 3, 4 and creates 6, 7, 8, 9). Event 1 creates a new match, and event 2 consumes edges 8, 9, 7 and 5. The history ends with 2 events, three causal edges from event 1 to event 2 (one related pair, through edges 7, 8 and 9), and a terminal state of 7 vertices and 5 edges.
 - History 2 applies the second match (event 1 consumes edges 2, 3, 4, 5). No match remains. The history ends with 1 event, no causal edge, and a terminal state of 6 vertices and 5 edges.
 - The two terminal states are not isomorphic, and the two complete causal graphs have 2 and 1 events.
 - Up to isomorphism the multiway system has 4 state classes and 3 transitions. The initial class has two successor classes with no common descendant, so its one branch pair is not resolved.
@@ -137,7 +137,7 @@ The reproduction runs use the HGEvolve engine (HypergraphRewritingEngine). Initi
 
 Initial hypergraph against the link cut-off (seed 1):
 
-| n | c | Edges | Directed walks of four edges (matches of the rule) |
+| n | c | Edges | Directed walks of four edges |
 |---:|---:|---:|---:|
 | 200 | 1.0 | 458 | 14,412 |
 | 200 | 1.25 | 877 | 102,695 |
@@ -146,16 +146,16 @@ Initial hypergraph against the link cut-off (seed 1):
 | 1600 | 1.25 | 7219 | 5,796,932 |
 | 1600 | 1.5 | | 27,192,014 |
 
-arXiv:2102.09363 gives no value of the cut-off (line 6176), and the cut-off changes the initial edge count and the number of matches of the rule by large factors.
+A walk may use one edge twice. The edge-distinct matches of the rule number 14,091 at n = 200, c = 1.0 and 623,255 at n = 200, c = 1.5. arXiv:2102.09363 gives no value of the cut-off (line 6176), and the cut-off changes the initial edge count and the number of matches of the rule by large factors.
 
-- Vertex count. Each event creates a vertex u and removes the edges {y,z} and {z,w}, so z leaves the state when it has no other edge. At n = 200, c = 1.25, seed 1, the state has 200 vertices at step 0, 549 at step 1000 and 828 at step 2000, with 877 edges throughout. At n = 1600 the vertex count goes from 1599 to 1699 over 100 events. arXiv:2102.09363 Tables 6-7 index the runs by a vertex count, which the rule changes.
+- Vertex count. Each event creates a vertex u and removes the edges {y,z} and {z,w}, so z leaves the state when it has no other edge. At n = 200, c = 1.25, seed 1, with 877 edges throughout, the state has 200 vertices at step 0 and 828 at steps 1000 and 2000 on engine build 0f8f80e9, and 962 at step 1000 and 980 at step 2000 at engine master 9af852a4. At n = 1600 the vertex count goes from 1599 to 1699 over 100 events. arXiv:2102.09363 Tables 6-7 index the runs by a vertex count, which the rule changes.
 - Components. The number of connected components at step 0, at the middle of the run and at the first repeated state: n = 200, c = 1.25, seeds 1, 2, 3: 1/3/40, 1/2/21, 1/2/41. n = 200, c = 1.0: 3/3/22. At n = 400, c = 1.25, the count rises from 1 to 11-12 by step 1000.
 - Separation of the holes against the vertex spacing. The mean spacing is 3.42, 2.71, 2.15 and 1.71 for n = 200, 400, 800 and 1600, and the separation of the holes is 1. The points within 1.5 of a hole number 6, 11, 15 and 30.
-- Graph distance between the neighbourhoods of the two holes (vertex sets within 1.5 of each hole). At n = 200, c = 1.25, seed 1 (2 and 4 vertices): distance 1 at steps 0 to 150, 2 at steps 200 to 550, 5 at step 600, 7 at steps 650 and 700. At n = 1600 (9 and 21 vertices): distance 1 at every fifth step from 0 to 100. The two neighbourhoods are adjacent at step 0 at both resolutions, so the distance starts at its smallest non-zero value. A merger would show as a falling distance (arXiv:2102.09363 lines 6192-6198 state that the holes merge by t = 12M).
+- Graph distance between the neighbourhoods of the two holes (vertex sets within 1.5 of each hole). At n = 200, c = 1.25, seed 1 (2 and 4 vertices), on engine builds before cba811ca: distance 1 at steps 0 to 150, 2 at steps 200 to 550, 5 at step 600, 7 at steps 650 and 700. The history at engine master 9af852a4 gives distances 1 to 4. At n = 1600 (9 and 21 vertices): distance 1 at every fifth step from 0 to 100. The two neighbourhoods are adjacent at step 0 at both resolutions, so the distance starts at its smallest non-zero value and cannot register a merger. arXiv:2102.09363 lines 6192-6196 evolve the solution to t = 12M "with an intermediate check at time t = 6M, after which the two black holes merge".
 - Events per initial edge. Before the first repeated state: 0.82 at n = 200 (721 events, 877 edges). With all events run: 0.55 at n = 400, 0.08 at n = 800, and 0.014 at n = 1600 (100 events, 7219 edges). One event per edge at n = 1600, c = 1.25 needs 7219 steps, about 3.5 hours at the measured 1.7 s per step.
 - Repetition of the sampler. Single histories of the engine reach a state isomorphic to an earlier one at step 722, 648 and 697 (n = 200, c = 1.25, seeds 1-3), 300 (n = 200, c = 1.0) and 536 (n = 400, c = 1.0), and from that step every state is in one isomorphism class. The engine keys its "UniformRandom" choice on the canonical hash of the state and the canonical ranks of the matched edges (`canonical_transition_key` in `hypergraph/src/parallel_evolution.cpp` of HypergraphRewritingEngine), so the choice repeats with the class. The repetition is a property of the sampler.
-- Update order (READ). The engine applies one event per step on a single history. arXiv:2303.07282 lines 4640-4648 apply the rule "to every possible/matching (non-overlapping) subhypergraph at each step", and HGEvolve has no step that applies a maximal set of non-overlapping matches.
-- Cost of a step (callgrind, one thread). One step costs a pass over all matches of the state: 335 × 10⁶ instructions per step at 877 edges (102,695 walks), 1.68 × 10⁹ at 1813 edges and 8.26 × 10⁹ at 3587 edges, 3.0 to 5.3 thousand instructions per match. Re-matching takes 63% at 877 edges.
+- Update order (READ). The runs of this section apply one event per step on a single history. arXiv:2303.07282 lines 4640-4648 apply the rule "to every possible/matching (non-overlapping) subhypergraph at each step". The HGEvolve option "Generational" -> True (engine commit 0fac4f1c, 2026-10-24) applies at each step every match that shares no hyperedge with a match before it in the engine's standard order.
+- Cost of a step (callgrind, one thread, engine builds before e5565f9c). One step costs a pass over all matches of the state: 335 × 10⁶ instructions per step at 877 edges (102,695 walks), 1.68 × 10⁹ at 1813 edges and 8.26 × 10⁹ at 3587 edges, 3.0 to 5.3 thousand instructions per match. Re-matching takes 63% at 877 edges.
 
 The dimension and curvature readings of these runs are UNCALIBRATED (section 6).
 
@@ -167,7 +167,7 @@ The dimension and curvature readings of these runs are UNCALIBRATED (section 6).
 - OPEN: linear cone growth, stated in Lean as `CausalHistory.GorardNamedRuleConeGrowthLinear` (O1 in `STATUS_OF_GORARD_CLAIMS.md`).
 - MEASURED: runs of the rule on Brill-Lindquist point clouds of 200 to 1600 points (section 7). They reach at most 0.82 events per initial edge before the sampler repeats a state at 200 points, and 0.014 at 1600 points. The graph distance between the neighbourhoods of the two holes does not fall.
 
-A bounded spatial ball count holds on every finite hypergraph, so the constant edge count does not give the rule a spatial dimension that differs from any other rule run on a finite state. arXiv:2102.09363 compares runs at 200, 400, 800 and 1600 vertices, and edge-count conservation within a run does not constrain a sequence of initial states of growing size.
+A bounded spatial ball count holds on every finite hypergraph, so the constant edge count does not give the rule a spatial dimension that differs from any other rule run on a finite state. arXiv:2102.09363 compares runs at 100, 200, 400, 800 and 1600 vertices (Tables 6-7), and edge-count conservation within a run does not constrain a sequence of initial states of growing size.
 
 The largest run has 2000 events. The measurements do not determine the exponent at larger event counts.
 
