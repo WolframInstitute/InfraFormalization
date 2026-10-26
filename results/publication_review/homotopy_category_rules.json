@@ -1,0 +1,60 @@
+{
+ "reflexivity_alone_events": 0,
+ "transitivity_generational": [
+  {
+   "steps": 1,
+   "reached_step": 1,
+   "edges": 4,
+   "distinct_edges": 4,
+   "self_loops": 0,
+   "max_multiplicity": 1
+  },
+  {
+   "steps": 2,
+   "reached_step": 2,
+   "edges": 5,
+   "distinct_edges": 5,
+   "self_loops": 0,
+   "max_multiplicity": 1
+  },
+  {
+   "steps": 3,
+   "reached_step": 3,
+   "edges": 7,
+   "distinct_edges": 6,
+   "self_loops": 0,
+   "max_multiplicity": 2
+  },
+  {
+   "steps": 4,
+   "reached_step": 4,
+   "edges": 9,
+   "distinct_edges": 6,
+   "self_loops": 0,
+   "max_multiplicity": 2
+  },
+  {
+   "steps": 5,
+   "reached_step": 5,
+   "edges": 11,
+   "distinct_edges": 6,
+   "self_loops": 0,
+   "max_multiplicity": 4
+  },
+  {
+   "steps": 6,
+   "reached_step": 6,
+   "edges": 13,
+   "distinct_edges": 6,
+   "self_loops": 0,
+   "max_multiplicity": 5
+  }
+ ],
+ "inverse_rule": {
+  "states": 4,
+  "edges_per_state": [
+   3
+  ],
+  "max_two_way_pairs_in_a_state": 0
+ }
+}
