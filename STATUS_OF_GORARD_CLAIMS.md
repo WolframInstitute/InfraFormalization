@@ -1,4 +1,4 @@
-# Status of the repository's conclusions about the claims of G1-G4 (J. Gorard)
+# Status of the repository's conclusions about the claims of G1-G5 (J. Gorard)
 
 Each entry lists the claim with its source line, then what the repository proves, measures and reads from the paper, and what is open.
 
@@ -10,7 +10,7 @@ Status labels:
 - **MEASURED**: a number from a script run, with the script, seeds and sizes.
 - **OPEN**: not established. The exact statement needed is given.
 
-Paper files: G1 = `papers/gorard_2004.14810.txt`, G2 = `papers/gorard_2011.12174.txt`, G3 = `papers/gorard_2102.09363.txt`, G4 = `papers/gorard_2303.07282.txt`, Gravitas II = `papers/tex_2401/GravitasPaper2.tex` (TeX line numbers). The layout of `papers/` is described in [`CITATIONS.md`](CITATIONS.md).
+Paper files: G1 = `papers/gorard_2004.14810.txt`, G2 = `papers/gorard_2011.12174.txt`, G3 = `papers/gorard_2102.09363.txt`, G4 = `papers/gorard_2303.07282.txt`, G5 = `papers/gorard_complexsystems_29_2.txt` (Complex Systems 29(2) 537-598, PDF text), Gravitas II = `papers/tex_2401/GravitasPaper2.tex` (TeX line numbers). The layout of `papers/` is described in [`CITATIONS.md`](CITATIONS.md).
 
 ## Claim 1. The rule {{x,y},{y,z},{z,w},{w,v}} -> {{y,u},{u,v},{w,x},{x,u}} "provably satisfies the Einstein field equations in the continuum limit"
 
@@ -177,11 +177,50 @@ OPEN items of the reproduction, each with the evidence that would settle it:
 - O13. Whether the two holes merge at any event count G3 could have used. MEASURED (notebook "Gorard binary black hole review.nb", section 11): at 800 and 1600 points, to 10 events per initial edge under one sampled match per step, "Generational" and the SetReplace order, the graph distance between the neighbourhoods of the two holes never fell below its initial value of 1. The two neighbourhoods are adjacent at step 0, so the distance starts at its smallest non-zero value and cannot register a merger. OPEN. Settled by an observable that takes different values for two holes and for one, for example the number of connected components of the set of vertices whose ball count at a fixed radius exceeds the mean of a flat cloud of the same size by a fixed threshold (the initial density is proportional to ψ⁶, so each hole is a local excess of points), at 800 and 1600 points to 10 events per initial edge under the same three updates.
 - O14. A definition of "asymptotically dimension preserving" (G1 eq. 87) under which the property can be proved or measured for the rule.
 
+## Claim 6. G5: for terminating multiway systems, convergence of branch pairs is necessary and sufficient for causal invariance, and multiway invariance implies causal invariance
+
+Source: G5 lines 450-454, 499-503, 599-607, 1333-1336, 1812-1818. G5 = Gorard, "Some Quantum Mechanical Properties of the Wolfram Model", Complex Systems 29(2) 537-598 (2020), `papers/gorard_complexsystems_29_2.txt`. Close reading: [`notes/cs.29.2.537_close_reading.md`](notes/cs.29.2.537_close_reading.md).
+
+READ:
+
+- G5 derives both statements from Newman's lemma and the critical pair lemma, which concern confluence of the reachable objects. Causal invariance (G5 Def 12, lines 324-326, as G1 Def 9) concerns isomorphism of the causal graphs of the histories. G5 gives no argument from one to the other.
+- G5 describes completion as adding both x → y and y → x for each unresolved branch pair (lines 512-515, 748-749) and requires that completion preserve strong normalisation (lines 516-526). A system with both rules has the infinite sequence x → y → x → ... and is not strongly normalising.
+- G5 lines 1804-1818 treat the multiway graph as the Hasse diagram of a lattice and state that modularity of this lattice is "a provably sufficient condition for causal invariance".
+
+MEASURED (HGEvolve, `scripts/python/pubreview/qm_confluence_causal_invariance.py`, output `results/publication_review/qm_confluence_causal_invariance.json`):
+
+| System | Rules (string form) | Terminal state classes | Causal graphs of the complete histories |
+|---|---|---:|---|
+| E1 | A → B, A → C | 2 | all isomorphic (1 event) |
+| E2 | A → B, A → D, B → D | 1 | 1 event; 2 events with 1 causal edge |
+| E3 | A → X, B → Y, XB → XY from AB | 1 | 2 events with 0 causal edges; 2 events with 1 causal edge |
+
+The hypergraph encodings use unary and repeated-vertex hyperedges: A = {a}, B = {a,a}, D = {a,a,a} in E1-E2, and A = {a}, X = {a,a}, B = {b,b,b}, Y = {b,b,b,b} in E3. E1 is causal invariant and not confluent, so convergence of branch pairs is not necessary. E2 and E3 terminate and are confluent and are not causal invariant, so convergence is not sufficient. The multiway graph of E3, with isomorphic states identified, is the four-element Boolean lattice, which is modular. The multiway graph of E2 has an edge implied by transitivity and is not a Hasse diagram.
+
+Lean: `Multiway.lean` defines `Confluent` and `LocallyConfluent` for hypergraph rewriting. No Lean module relates confluence to causal graphs.
+
+## Claim 7. G5: branchlike hypersurfaces converge to complex projective Hilbert space, and the multiway system has analogs of the Einstein equations, the uncertainty principle, the path integral and the Schrödinger equation
+
+Source: G5 abstract lines 25-43, §3.2 lines 1482-1689, lines 1946-1949, 2515-2524.
+
+READ:
+
+- The argument of §3.2, called a proof at lines 1483 and 1689, has four steps: branchial distance equals algorithmic information distance up to a constant (lines 1519-1528, stated); the continuum limit of information distance is the Fisher metric (lines 1557-1562, stated); the Fisher metric extends to the Fubini-Study metric (cited); conformal invariance is "equivalent to modding out by the action of the multiplicative group ℂ*" (lines 1677-1689, stated). G5 states no sequence of multiway systems, no limit object and no mode of convergence.
+- The abstract states that G5 derives the analog of the Einstein field equations (lines 37-38) and the nonrelativistic propagator (line 43). The body states both as conjectures (lines 1946-1949 and 2515-2524).
+- The uncertainty relation [Â, B̂] = iℏ (eq. 47) follows from the assumption that "the unit distance on branchlike hypersurfaces" is iℏ (lines 928-929). Eq. 40 derives that every hypersurface state is an eigenvector of every rewrite operator "from the linearity of A", which linearity does not give.
+- Def 50 takes the discrete Laplacian with values in "the ring R simply corresponding to the natural numbers ℕ" (lines 2459-2461). ℕ is not a ring, and the Laplacian takes negative values.
+- Reference [1] of G5, cited for the relativistic results, carries the page range 537-598 and DOI 10.25088/ComplexSystems.29.2.537 of G5 itself (lines 2604-2606, line 48).
+
+MEASURED (`scripts/python/pubreview/qm_branchial_distance.py`, output `results/publication_review/qm_branchial_distance.json`): G5 lines 1508-1516 state that two branchial states are at the distance of the number of levels back to their common ancestor, and that disconnection "generally only happens if there was more than one initial condition". From one initial state, the branchial graph at the last step leaves 8 of 15 pairs disconnected for {{x,y},{x,z}} → {{x,y},{x,w},{y,w},{z,w}} at step 3 and 634 of 666 pairs for the G3 rule from an 8-edge path at step 3, with isomorphic states identified. Without identification the branchial graph of each step is a disjoint union of sibling cliques. No connected pair has a distance different from its ancestor depth.
+
+Lean: `BranchialHilbert.lean`, `BranchialCanonical.lean` and `BranchialSchrodinger.lean` define ℓ²(S) on a finite set, the adjacency operator of a symmetric relation and the equation i∂ₜψ = Aψ, and prove self-adjointness and conservation of Σ|ψ|². These modules take the relation as given and state no limit. They do not concern the convergence claim of G5.
+
+OPEN: a statement of the convergence claim: a sequence of multiway systems, a metric on each branchial slice, and a mode of convergence (for example Gromov-Hausdorff) to ℂPⁿ with the Fubini-Study metric.
+
 ## Publications not yet reviewed
 
-The index of the Wolfram Institute (https://wolframinstitute.org/output/tag/Jonathan+Gorard, 16 entries) and the arXiv listing of J. Gorard (23 entries) were checked on 2026-10-26 against `papers/` and this document. The repository reviews seven of them: G1-G4, Gravitas I (arXiv:2308.07508), Gravitas II (arXiv:2401.14209) and the hydrodynamics paper (arXiv:2402.02331). The following publications make claims about hypergraph or multiway rewriting and its relation to spacetime or quantum mechanics, and none has a close reading in `notes/`.
+The index of the Wolfram Institute (https://wolframinstitute.org/output/tag/Jonathan+Gorard, 16 entries) and the arXiv listing of J. Gorard (23 entries) were checked on 2026-10-26 against `papers/` and this document. The repository reviews eight of them: G1-G4, Gravitas I (arXiv:2308.07508), Gravitas II (arXiv:2401.14209), the hydrodynamics paper (arXiv:2402.02331) and G5 (Complex Systems 29(2) 537-598, Claims 6-7). The following publications make claims about hypergraph or multiway rewriting and its relation to spacetime or quantum mechanics, and none has a close reading in `notes/`.
 
-- Gorard, *Some Quantum Mechanical Properties of the Wolfram Model*, Complex Systems 29(2) (2020) 537-598, not on arXiv. The companion of G1. It treats rules that are not causal invariant, reads the multiway evolution as a superposition of states, and presents completion (Knuth-Bendix) of the rewriting system as the analogue of decoherence and measurement, with an observer defined as a foliation of the multiway graph. It states that the branchial graph converges to complex projective Hilbert space with the Fubini-Study metric, derives an analogue of the Einstein equations for the multiway system, and discusses the path integral, the discrete Schrödinger equation and the CHSH inequality. No Lean module cites this paper.
 - Arsiwalla and Gorard, *Pregeometric Spaces from Wolfram Model Rewriting Systems as Homotopy Types*, arXiv:2111.03460 (2021). It constructs higher homotopy types from multiway rewriting rules, states that the limit of the n-fold categories is an ∞-groupoid, and that the classifying space of all rules ("rulial" multiway systems) is an (∞,1)-topos. It presents this as a way to derive geometry from rewriting without assuming it. It states no convergence result for a single rule.
 - Arsiwalla, Gorard and Elshatlawy, *Homotopies in Multiway (Non-Deterministic) Rewriting Systems as n-Fold Categories*, arXiv:2105.10822 (2021). It states that adding rewriting rules from the space of rules induces higher homotopies in a multiway system, that a system with homotopies up to order n is an n-fold category, and that with invertible rewrites the limit is an ∞-groupoid, a homotopy space by Grothendieck's homotopy hypothesis.
 - Gorard and Dannemann-Freitag, *Axiomatic Quantum Field Theory in Discrete Spacetime via Multiway Causal Structure: The Case of Entanglement Entropies*, arXiv:2301.12455 (2023). It gives axioms for a free massless scalar field on multiway causal graphs, a class that contains causal sets and Wolfram model evolutions, and compares the Sorkin-Johnston entanglement entropy with an entropy defined from the branchial graph. It reports numerically that the two are monotonically related over a class of rules and proves a special case with a geometric entanglement monotone. This is the paper whose claims are closest to the branchial modules of the library.

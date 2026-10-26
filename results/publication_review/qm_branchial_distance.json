@@ -1,0 +1,180 @@
+{
+ "wolfram_signature_rule/Full": {
+  "final_step": 3,
+  "final_states": 6,
+  "pairs": {
+   "distance_equals_depth": 7,
+   "disconnected_with_common_ancestor": 8
+  },
+  "examples": [
+   {
+    "pair": [
+     3,
+     8
+    ],
+    "ancestor_depth": 2,
+    "distance": null
+   },
+   {
+    "pair": [
+     3,
+     9
+    ],
+    "ancestor_depth": 2,
+    "distance": null
+   },
+   {
+    "pair": [
+     4,
+     8
+    ],
+    "ancestor_depth": 2,
+    "distance": null
+   }
+  ]
+ },
+ "wolfram_signature_rule/tree": {
+  "final_step": 3,
+  "final_states": 16,
+  "pairs": {
+   "distance_equals_depth": 24,
+   "disconnected_with_common_ancestor": 96
+  },
+  "examples": [
+   {
+    "pair": [
+     3,
+     8
+    ],
+    "ancestor_depth": 2,
+    "distance": null
+   },
+   {
+    "pair": [
+     3,
+     9
+    ],
+    "ancestor_depth": 2,
+    "distance": null
+   },
+   {
+    "pair": [
+     3,
+     10
+    ],
+    "ancestor_depth": 2,
+    "distance": null
+   }
+  ]
+ },
+ "path_growth/Full": {
+  "final_step": 4,
+  "final_states": 20,
+  "pairs": {
+   "distance_equals_depth": 190
+  },
+  "examples": []
+ },
+ "path_growth/tree": {
+  "final_step": 4,
+  "final_states": 120,
+  "pairs": {
+   "distance_equals_depth": 240,
+   "disconnected_with_common_ancestor": 6900
+  },
+  "examples": [
+   {
+    "pair": [
+     10,
+     15
+    ],
+    "ancestor_depth": 2,
+    "distance": null
+   },
+   {
+    "pair": [
+     10,
+     16
+    ],
+    "ancestor_depth": 2,
+    "distance": null
+   },
+   {
+    "pair": [
+     10,
+     17
+    ],
+    "ancestor_depth": 2,
+    "distance": null
+   }
+  ]
+ },
+ "gorard_g3_rule/Full": {
+  "final_step": 3,
+  "final_states": 37,
+  "pairs": {
+   "distance_equals_depth": 32,
+   "disconnected_with_common_ancestor": 634
+  },
+  "examples": [
+   {
+    "pair": [
+     3,
+     7
+    ],
+    "ancestor_depth": 2,
+    "distance": null
+   },
+   {
+    "pair": [
+     3,
+     16
+    ],
+    "ancestor_depth": 2,
+    "distance": null
+   },
+   {
+    "pair": [
+     3,
+     17
+    ],
+    "ancestor_depth": 2,
+    "distance": null
+   }
+  ]
+ },
+ "gorard_g3_rule/tree": {
+  "final_step": 3,
+  "final_states": 71,
+  "pairs": {
+   "distance_equals_depth": 92,
+   "disconnected_with_common_ancestor": 2393
+  },
+  "examples": [
+   {
+    "pair": [
+     3,
+     7
+    ],
+    "ancestor_depth": 2,
+    "distance": null
+   },
+   {
+    "pair": [
+     3,
+     8
+    ],
+    "ancestor_depth": 2,
+    "distance": null
+   },
+   {
+    "pair": [
+     3,
+     11
+    ],
+    "ancestor_depth": 3,
+    "distance": null
+   }
+  ]
+ }
+}

@@ -1,0 +1,18 @@
+{
+ "fig6_ABA": [
+  "A",
+  "AA"
+ ],
+ "fig7_A_B__BB_B": {
+  "strings": 510,
+  "non_terminating": 0,
+  "more_than_one_normal_form": [],
+  "count_bad": 0
+ },
+ "fig7_AA_BA__AB_BA": {
+  "strings": 510,
+  "non_terminating": 0,
+  "more_than_one_normal_form": [],
+  "count_bad": 0
+ }
+}

@@ -1,0 +1,77 @@
+{
+ "E1_two_normal_forms": {
+  "histories": 2,
+  "terminates_within_steps": true,
+  "terminal_state_classes": 2,
+  "confluent": false,
+  "causal_graph_classes": [
+   {
+    "events": 1,
+    "causal_edges": []
+   }
+  ],
+  "causal_invariant": true,
+  "multiway_graph": {
+   "states": 3,
+   "is_lattice": false,
+   "modular": null,
+   "transitive_edges": 0
+  }
+ },
+ "E2_confluent_terminating": {
+  "histories": 2,
+  "terminates_within_steps": true,
+  "terminal_state_classes": 1,
+  "confluent": true,
+  "causal_graph_classes": [
+   {
+    "events": 1,
+    "causal_edges": []
+   },
+   {
+    "events": 2,
+    "causal_edges": [
+     [
+      0,
+      1
+     ]
+    ]
+   }
+  ],
+  "causal_invariant": false,
+  "multiway_graph": {
+   "states": 3,
+   "is_lattice": true,
+   "modular": true,
+   "transitive_edges": 1
+  }
+ },
+ "E3_boolean_lattice": {
+  "histories": 3,
+  "terminates_within_steps": true,
+  "terminal_state_classes": 1,
+  "confluent": true,
+  "causal_graph_classes": [
+   {
+    "events": 2,
+    "causal_edges": []
+   },
+   {
+    "events": 2,
+    "causal_edges": [
+     [
+      0,
+      1
+     ]
+    ]
+   }
+  ],
+  "causal_invariant": false,
+  "multiway_graph": {
+   "states": 4,
+   "is_lattice": true,
+   "modular": true,
+   "transitive_edges": 0
+  }
+ }
+}

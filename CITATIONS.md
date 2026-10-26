@@ -18,7 +18,7 @@ Status labels as in [`STATUS_OF_GORARD_CLAIMS.md`](STATUS_OF_GORARD_CLAIMS.md): 
 ### A2. Wolfram-model hypergraph rewriting
 
 - Gorard, J. *Some Relativistic and Gravitational Properties of the Wolfram Model.* arXiv:[2004.14810](https://arxiv.org/abs/2004.14810) (2020). (G1)
-- Gorard, J. *Some Quantum Mechanical Properties of the Wolfram Model.* Wolfram technical report (2020).
+- Gorard, J. *Some Quantum Mechanical Properties of the Wolfram Model.* Complex Systems 29(2) (2020) 537-598, doi:10.25088/ComplexSystems.29.2.537. (G5)
 - Gorard, J. *Algorithmic Causal Sets and the Wolfram Model.* arXiv:[2011.12174](https://arxiv.org/abs/2011.12174) (2020). (G2)
 - Gorard, J. *Hypergraph Discretization of the Cauchy Problem in General Relativity via Wolfram Model Evolution.* arXiv:[2102.09363](https://arxiv.org/abs/2102.09363) (2021). (G3)
 - Gorard, J. *Non-Vacuum Solutions, Gravitational Collapse and Discrete Singularity Theorems in Wolfram Model Systems.* arXiv:[2303.07282](https://arxiv.org/abs/2303.07282) (2023). (G4)
@@ -26,7 +26,7 @@ Status labels as in [`STATUS_OF_GORARD_CLAIMS.md`](STATUS_OF_GORARD_CLAIMS.md): 
 - Gorard, J. *Computational General Relativity in the Wolfram Language using Gravitas II: ADM Formalism and Numerical Relativity.* arXiv:[2401.14209](https://arxiv.org/abs/2401.14209) (2024). (GII)
 - Gorard, J. *General Relativistic Hydrodynamics in Discrete Spacetime: Perfect Fluid Accretion onto Static and Spinning Black Holes.* arXiv:[2402.02331](https://arxiv.org/abs/2402.02331) (2024). (GH)
 - Gorard, J. *Gravitas*, Wolfram Language source code, [github.com/JonathanGorard/Gravitas](https://github.com/JonathanGorard/Gravitas), commit 9b02562 (2023-08-28). (GC)
-- Local copies of G1-G4, GI, GII and GH are kept in `papers/` as `gorard_<arXiv id>.pdf`, the text extracted with `pdftotext -layout` as `gorard_<arXiv id>.txt`, and the TeX source as `tex_<first four digits of the arXiv id>/`. The directory is not tracked. Line numbers in the documentation refer to these files.
+- Local copies of G1-G9, GI, GII and GH are kept in `papers/` as `gorard_<arXiv id>.pdf`, the text extracted with `pdftotext -layout` as `gorard_<arXiv id>.txt`, and the TeX source as `tex_<first four digits of the arXiv id>/`. G5 (Complex Systems 29(2) 537-598, not on arXiv) is kept as `gorard_complexsystems_29_2.pdf` and `.txt`, with no TeX source. The two papers of 2301 keep their TeX sources in `tex_2301_04690/` and `tex_2301_12455/`. The directory is not tracked. Line numbers in the documentation refer to these files.
 - The audit of G1-G4 is in [`FINDINGS.md`](FINDINGS.md), [`MAJOR_FLAWS.md`](MAJOR_FLAWS.md) and [`STATUS_OF_GORARD_CLAIMS.md`](STATUS_OF_GORARD_CLAIMS.md).
 
 ### A3. ZX-calculus and categorical Wolfram model
