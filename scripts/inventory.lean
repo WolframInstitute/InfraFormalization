@@ -98,7 +98,7 @@ def skipName (n : Name) : Bool :=
         s.startsWith "eq_" || s == "eq_def" ||
         s == "rec" || s == "recOn" || s == "casesOn" || s == "noConfusion" ||
         s == "noConfusionType" || s == "below" || s == "brecOn" || s == "binductionOn" ||
-        s == "ibelow" || s == "mk" || s == "sizeOf_spec" || s == "inj" || s == "injEq" ||
+        s == "ibelow" || s == "mk" || s == "ofNat_ctorIdx" || s == "sizeOf_spec" || s == "inj" || s == "injEq" ||
         s.startsWith "_" || s == "ext" || s == "ext_iff" || s == "ctorIdx"
      | _ => false)
 
