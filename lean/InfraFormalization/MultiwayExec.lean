@@ -125,27 +125,8 @@ def applyMatch (r : ExecRule) (H : ExecHG ℕ)
   let produced := mapPattern ρExt r.rhs
   removeEdges H consumed ++ produced
 
-/-! ## Matches per edge instance
-
-`allMatches` enumerates distinct bindings `Fin numBound → ℕ`, so two equal edges of `H` give one
-match. In the Wolfram model each occurrence of an edge gives its own match. For rules with one
-left-hand-side edge, `allEdgeInstanceMatches_singleLHS` returns one binding per edge of `H` of the
-right arity. `allMatches` and `singleWayStep` do not use it. Enumeration per edge instance for
-left-hand sides with several edges is not defined here. -/
-
-/-- For a rule with one left-hand-side edge, one binding `i ↦ e.verts[i]` (0 when out of range) for
-each edge `e` of `H` whose arity equals that of the left-hand-side edge, and the empty list for
-other
-rules. The binding does not check repeated pattern variables. -/
-def allEdgeInstanceMatches_singleLHS (r : ExecRule) (H : ExecHG ℕ) :
-    List (Fin r.numBound → ℕ) :=
-  match h : r.lhs with
-  | [lhsEdge] =>
-    H.filterMap (fun e =>
-      if e.verts.length = lhsEdge.verts.length then
-        some (fun i : Fin r.numBound => (e.verts[i.val]?).getD 0)
-      else none)
-  | _ => []
+/-! `allMatches` enumerates distinct bindings `Fin numBound → ℕ`, so two equal edges of `H` give one
+match. In the Wolfram model each occurrence of an edge gives its own match. -/
 
 /-- All states reachable from `H` by a single application of `r`. -/
 def oneStepStates (r : ExecRule) (H : ExecHG ℕ) : List (ExecHG ℕ) :=

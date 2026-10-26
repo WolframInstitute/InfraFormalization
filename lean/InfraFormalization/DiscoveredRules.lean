@@ -182,11 +182,5 @@ theorem depth4_knill_values_five_rules :
 /-- `enumerateRules2_1 2` has 21 members. -/
 theorem search_pool_size : (enumerateRules2_1 2).length = 21 := by decide
 
-/-- `(enumerateRules2_1 2).length = 21 ∧ True`. -/
-theorem discoveries_account_for_11_of_21 :
-    (enumerateRules2_1 2).length = 21 ∧
-    -- indices of the eleven named rules: 0, 2, 3, 4, 5, 7, 9, 11, 13, 16, 18
-    True := ⟨search_pool_size, trivial⟩
-
 end DiscoveredRules
 end InfraFormalization
