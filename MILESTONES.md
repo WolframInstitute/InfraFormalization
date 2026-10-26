@@ -27,7 +27,7 @@ Phases follow [`INFRAGEOMETRY.md`](INFRAGEOMETRY.md). Sequencing across phases t
 
 ---
 
-## Phase 0: audit of the JGORARD corpus
+## Phase 0: audit of the papers G1-G4 by J. Gorard
 
 - [x] G1 (2004.14810) close reading ([notes/2004.14810_close_reading.md](notes/2004.14810_close_reading.md)). READ.
 - [x] G2 (2011.12174) partial close reading (cross-paper audit). READ.
@@ -549,7 +549,7 @@ Lean ports of [`resources/SyntheticInfrageometry/SyntheticInfrageometry/Kernel/*
 
 ## Output targets (see [`PUBLISHABLE.md`](PUBLISHABLE.md))
 
-- [ ] Audit note on the JGORARD corpus, with the READ findings and the Lean results with their status labels.
+- [ ] Audit note on G1-G4, with the READ findings and the Lean results with their status labels.
 - [ ] Note on the corrected Ollivier and Gray identities.
 - [ ] Infrageometry paper: the Phase 3 continuum-limit theorems.
 - [ ] Research paper: a Wolfram-model rule with a proved continuum limit (Phase 5).

@@ -6,7 +6,7 @@ Status labels follow `STATUS_OF_GORARD_CLAIMS.md`: PROVED (kernel-checked, sorry
 
 Paper files: G1 = `papers/gorard_2004.14810.txt`, G2 = `papers/gorard_2011.12174.txt`, G3 = `papers/gorard_2102.09363.txt`, G4 = `papers/gorard_2303.07282.txt`.
 
-## P1: Audit of the JGORARD corpus
+## P1: Audit of G1-G4 (J. Gorard)
 
 Summary. An audit of arXiv:2004.14810, 2011.12174, 2102.09363 and 2303.07282. The papers state that general relativity follows from Wolfram-model hypergraph rewriting. The audit records, with line numbers, where the papers give no proof of a step, and what the repository proves and measures about the rule of G3. The findings about the papers are READ findings (`STATUS_OF_GORARD_CLAIMS.md`, `MAJOR_FLAWS.md`). The Lean files prove statements about the project's encodings and about the rule of G3.
 
