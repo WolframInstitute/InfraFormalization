@@ -1,6 +1,6 @@
 # Reading guide to the audit of G1-G4
 
-This guide answers three questions about the papers G1 = arXiv:2004.14810, G2 = arXiv:2011.12174, G3 = arXiv:2102.09363 and G4 = arXiv:2303.07282, and points to the files of this repository that support each answer. Line numbers refer to `papers/gorard_*.txt`. Status labels: PROVED (Lean, axiom-clean), MEASURED, READ (from the paper text), OPEN.
+This guide answers three questions about the papers G1 = arXiv:2004.14810, G2 = arXiv:2011.12174, G3 = arXiv:2102.09363 and G4 = arXiv:2303.07282, and points to the files of this repository that support each answer. Line numbers refer to `papers/gorard_*.txt`. Status labels: PROVED (Lean, axioms within propext, Classical.choice and Quot.sound), MEASURED, READ (from the paper text), OPEN.
 
 The three questions:
 
@@ -21,8 +21,8 @@ The three questions:
 
 READ. The papers cite the following sources for their technical ingredients: Forman (2003) and Ollivier (2009) for discrete Ricci curvature, Gray (1973) for the ball and tube volume expansions, Bombelli, Lee, Meyer and Sorkin (1987) and Benincasa and Dowker (2010) for causal sets and the discrete d'Alembertian, and the ADM, BSSN and CCZ4 formulations for the Cauchy problem. Where the papers restate these results for hypergraphs, the restatement is either a definition (for example, G1 eq. 65 at lines 1792-1796 transfers the Riemannian ball-volume expansion to vertex counts) or a formula that differs from the source (eqs. 342, 344). The statements specific to the Wolfram model are:
 
-- Causal invariance corresponds to discrete general covariance (G1 lines 1066-1075). The two notions are defined as the same property; the project's encoding is PROVED by `Iff.rfl` (`Refutations/F4Tautology.lean`).
-- Asymptotically dimension-preserving, causal-invariant rules satisfy the vacuum Einstein equations (G1 §3.3). The dimension condition is the Euler-Lagrange equation of the action (G1 lines 2203-2211); the encoding is PROVED by `Iff.rfl` (`Refutations/F3Tautology.lean`). The passage from sum to integral (line 2214) states no notion of convergence.
+- Causal invariance corresponds to discrete general covariance (G1 lines 1066-1075). G1 defines the two notions as the same property (READ).
+- Asymptotically dimension-preserving, causal-invariant rules satisfy the vacuum Einstein equations (G1 §3.3). The dimension condition is the Euler-Lagrange equation of the action (READ, G1 lines 2203-2211). The passage from sum to integral (line 2214) states no notion of convergence.
 - The rule of G3 line 6202 satisfies the Einstein equations in the continuum limit. No proof is given (READ).
 
 ## 3. Evidence that evolutions match continuum solutions
@@ -47,9 +47,9 @@ What the repository establishes about the rule of G3:
 | `THEOREM_STATUS.md` | Status of every theorem cited in the documentation |
 | `results/phase2_continuum/eq342_verdict.md`, `eq344_verdict.md` | The two coefficient comparisons |
 | `notes/empirical_refutation.md` | Measurements of the G3 rule and the cause of the difference between the SetReplace and Python tables |
-| `lean/InfraFormalization/Refutations/` | F1-F7. F3 and F4 hold by `Iff.rfl`; F1, F2, F5 and F6 are VACUOUS with respect to the papers; F7 proves edge-count conservation |
+| `lean/InfraFormalization/Refutations/F7NamedRuleStructure.lean` | F7: edge-count conservation for the rule of G3 line 6202 |
 | `lean/InfraFormalization/CausalHistory.lean` | Causal graph with hyperedge identities; antichain and cone bounds |
 
 ## The positive part of the library
 
-The library states continuum targets (Minkowski, Schwarzschild, FLRW, Reissner-Nordström, Kerr, de Sitter, S²) and attaches to each an origin obligation. The obligations do not depend on their target and hold for every target (`Curvature.any_metric_has_strong_obligation_witness`), and the milestone statements of `Milestone.lean` hold for every target (`Milestone.GR_emerges_from_hypergraph_holds`). These statements are VACUOUS: no theorem in the library states that a rewriting evolution converges to any of these geometries. The PROVED continuum limits concern fixed families of graphs (cycles to the circle, paths to the interval, tori, lattices to Minkowski space); see `THEOREM_STATUS.md` and `BRIDGE_MACHINERY.md`.
+The library defines continuum targets (Minkowski, Schwarzschild, FLRW, Reissner-Nordström, Kerr, de Sitter, S²). No theorem in the library states that a rewriting evolution converges to any of these geometries. The PROVED continuum limits concern fixed families of graphs (cycles to the circle, paths to the interval, tori, lattices to Minkowski space); see `THEOREM_STATUS.md` and `BRIDGE_MACHINERY.md`.

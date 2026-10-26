@@ -84,8 +84,6 @@ Definitions used in this project, by topic. Terms used in G1-G4 are marked ★. 
 
 **Discrete-to-continuum bridge.** A theorem stating that a sequence of discrete objects $X_n$ with parameter $\varepsilon_n \to 0$ converges in a specified topology to a continuum object $X$, and that discrete invariants on $X_n$ converge to the corresponding invariants on $X$. See [`BRIDGE_MACHINERY.md`](BRIDGE_MACHINERY.md).
 
-**Origin obligation.** A Lean Prop such as `HypergraphMetricOriginObligation target`. The origin obligations do not depend on their target and hold for every target (`Curvature.any_metric_has_strong_obligation_witness`). Theorems that inhabit them are VACUOUS.
-
 **Antichain bound.** For a rule with $|LHS| = |RHS| = k$ evolving from $N$ hyperedges, every antichain $A$ of the causal graph satisfies $k \cdot |A| \le N$, for every update order (`CausalHistory.RuleHistory.antichain_card_le`, PROVED; for the rule of G3, `CausalHistory.gorardNamedRule_antichain_card_le`). Linear growth of causal cones is a separate statement, OPEN for the rule of G3 as `CausalHistory.GorardNamedRuleConeGrowthLinear`.
 
 ## Project vocabulary
@@ -96,4 +94,4 @@ Definitions used in this project, by topic. Terms used in G1-G4 are marked ★. 
 
 **Groups S1-S6.** Defined in [`notes/severity_taxonomy.md`](notes/severity_taxonomy.md) and used in [`FINDINGS.md`](FINDINGS.md): S1 formulas that differ from the cited sources; S2 objects used without a definition; S3 equivalences that hold by definition; S4 passages from discrete to continuum without a proof; S5 statements about the rule of G3 line 6202; S6 titles and abstracts that name results the body does not prove.
 
-**Status labels.** PROVED, PROVED-WITH-NATIVE-DECIDE, VACUOUS, MEASURED, READ, OPEN, as defined in [`STATUS_OF_GORARD_CLAIMS.md`](STATUS_OF_GORARD_CLAIMS.md).
+**Status labels.** PROVED, PROVED-WITH-NATIVE-DECIDE, MEASURED, READ, OPEN, as defined in [`STATUS_OF_GORARD_CLAIMS.md`](STATUS_OF_GORARD_CLAIMS.md).
