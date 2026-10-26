@@ -1,4 +1,4 @@
-# Status of the repository's conclusions about the claims of G1-G8 (J. Gorard)
+# Status of the repository's conclusions about the claims of G1-G9 (J. Gorard)
 
 Each entry lists the claim with its source line, then what the repository proves, measures and reads from the paper, and what is open.
 
@@ -10,7 +10,7 @@ Status labels:
 - **MEASURED**: a number from a script run, with the script, seeds and sizes.
 - **OPEN**: not established. The exact statement needed is given.
 
-Paper files: G1 = `papers/gorard_2004.14810.txt`, G2 = `papers/gorard_2011.12174.txt`, G3 = `papers/gorard_2102.09363.txt`, G4 = `papers/gorard_2303.07282.txt`, G5 = `papers/gorard_complexsystems_29_2.txt` (Complex Systems 29(2) 537-598, PDF text), G6 = `papers/tex_2105/act21.tex` (arXiv:2105.10822, TeX line numbers), G7 = `papers/tex_2111/homotopy1.tex` (arXiv:2111.03460, TeX line numbers), G8 = `papers/tex_2301_04690/ComputationalIrreducibility.tex` (arXiv:2301.04690, TeX line numbers), Gravitas II = `papers/tex_2401/GravitasPaper2.tex` (TeX line numbers). The layout of `papers/` is described in [`CITATIONS.md`](CITATIONS.md).
+Paper files: G1 = `papers/gorard_2004.14810.txt`, G2 = `papers/gorard_2011.12174.txt`, G3 = `papers/gorard_2102.09363.txt`, G4 = `papers/gorard_2303.07282.txt`, G5 = `papers/gorard_complexsystems_29_2.txt` (Complex Systems 29(2) 537-598, PDF text), G6 = `papers/tex_2105/act21.tex` (arXiv:2105.10822, TeX line numbers), G7 = `papers/tex_2111/homotopy1.tex` (arXiv:2111.03460, TeX line numbers), G8 = `papers/tex_2301_04690/ComputationalIrreducibility.tex` (arXiv:2301.04690, TeX line numbers), G9 = `papers/tex_2301_12455/EntanglementEntropy.tex` (arXiv:2301.12455, TeX line numbers), Gravitas II = `papers/tex_2401/GravitasPaper2.tex` (TeX line numbers). The layout of `papers/` is described in [`CITATIONS.md`](CITATIONS.md).
 
 ## Claim 1. The rule {{x,y},{y,z},{z,w},{w,v}} -> {{y,u},{u,v},{w,x},{x,u}} "provably satisfies the Einstein field equations in the continuum limit"
 
@@ -254,10 +254,28 @@ MEASURED (`scripts/python/pubreview/irreducibility_additivity.py`, output `resul
 
 Lean: none.
 
-## Publications not yet reviewed
+## Claim 10. G9: the Sorkin-Johnston and branchial entanglement entropies are monotonically related for Wolfram model evolutions, with a special case proved
 
-The index of the Wolfram Institute (https://wolframinstitute.org/output/tag/Jonathan+Gorard, 16 entries) and the arXiv listing of J. Gorard (23 entries) were checked on 2026-10-26 against `papers/` and this document. The repository reviews eleven of them: G1-G4, Gravitas I (arXiv:2308.07508), Gravitas II (arXiv:2401.14209), the hydrodynamics paper (arXiv:2402.02331), G5 (Complex Systems 29(2) 537-598, Claims 6-7), G6 (arXiv:2105.10822) and G7 (arXiv:2111.03460) (Claim 8), and G8 (arXiv:2301.04690, Claim 9). The following publications make claims about hypergraph or multiway rewriting and its relation to spacetime or quantum mechanics, and none has a close reading in `notes/`.
+Source: G9 = Gorard and Dannemann-Freitag, arXiv:2301.12455, `papers/tex_2301_12455/EntanglementEntropy.tex`, abstract line 28, §5 lines 1720-2020, §2-§3 lines 723-1118. Close reading: [`notes/2301.12455_close_reading.md`](notes/2301.12455_close_reading.md).
 
-- Gorard and Dannemann-Freitag, *Axiomatic Quantum Field Theory in Discrete Spacetime via Multiway Causal Structure: The Case of Entanglement Entropies*, arXiv:2301.12455 (2023). It gives axioms for a free massless scalar field on multiway causal graphs, a class that contains causal sets and Wolfram model evolutions, and compares the Sorkin-Johnston entanglement entropy with an entropy defined from the branchial graph. It reports numerically that the two are monotonically related over a class of rules and proves a special case with a geometric entanglement monotone. This is the paper whose claims are closest to the branchial modules of the library.
+READ:
+
+- The proof for the branchial measure E (lines 1890-1940) establishes 0 ≤ E ≤ Σ 2(d − 1)/d and invariance under local unitaries. Monotonicity under local operations is cited to Cocchiarella et al. The "special case of this monotonic relationship" (abstract) ends with the identity g_μμ(v) = Σ v_i v_j A_ij (line 1990), which relates the Fubini-Study metric along local-unitary directions to the matrices A. No step relates the graph distance between two branchial vertices, the quantity of the numerical comparison, to E.
+- The numerical comparison (lines 1994-2020, Figure 30: 10 and 50 evolutions of 2₂ → 4₂ rules) states no rule, step count, choice of the pair of histories, subregion for the Sorkin-Johnston entropy or measure of monotonicity, and samples "until the assembled causal multiway system appears to reach a steady-state configuration".
+- The concluding remarks state agreement of 2-point correlation functions "in both analytical and numerical" form (line 2025). §5 compares entropy values only.
+- The convergence of the branchial metric to the Fubini-Study metric is cited to G5 (line 1828), whose argument states no limit (Claim 7). The statement that Wolfram model rules "provably simulate the evolution of the Einstein field equations ... from arbitrary initial Cauchy data" is cited to G3 (line 2027), which gives no such proof (Claims 1-2).
+- G9 defines branchial edges by a common ancestor (line 1788), which joins every pair of states of a system with one initial state. G5, HGEvolve and the Lean definition `BranchialRelated` (`Branchial.lean`) use a common immediate predecessor.
+- Formulas: the tube volume at line 945 has the coefficient of G2 eq. 126 and G3 eq. 342 (Claim 5, PROVED to differ from Gray on S² and S³); the flat ball volume at line 953 has Γ(d/2) where line 930 has Γ(d/2 + 1); the caption of Figure 7 (line 821) states that converging paths give negative Ollivier-Ricci curvature, while the definition at line 741 gives positive curvature for converging paths, and line 807 calls the same graph positively curved; the uniqueness proof by Carlson's theorem (lines 1061-1118) asserts the growth conditions it needs.
+
+MEASURED (scripts in `scripts/python/pubreview/`, outputs in `results/publication_review/`):
+
+- Path counts as amplitudes (line 1788, `entanglement_rootnot.py`): G9's initial state (|0⟩ + |1⟩)/√2 is an eigenvector of √NOT, so counts and amplitude moduli agree. From |0⟩ the normalised counts stay (0.7071, 0.7071) while √NOT²|0⟩ = |1⟩, a difference of 0.7071 at t = 2, 4, 6.
+- Dimension two for the rules of Figures 6-13 (line 975, `entanglement_dimension.py`, `entanglement_dimension_multiway.py`): G9 states no initial condition. From 2 or 3 copies of {0,0,0} each history applies one event per step and the causal graph is a chain (30 events, 29 causal edges under "Generational"); from 6 copies it is 3 chains. G9's estimator Δ_t on the forward cone rises from 0.585 to 0.966 over t = 1-28, the values of a chain.
+
+Lean: `Branchial.lean` (definition of the branchial relation). The branchial Hilbert-space modules take a symmetric relation as given and do not concern E or the Sorkin-Johnston entropy.
+
+## Publications reviewed
+
+The index of the Wolfram Institute (https://wolframinstitute.org/output/tag/Jonathan+Gorard, 16 entries) and the arXiv listing of J. Gorard (23 entries) were checked on 2026-10-26 against `papers/` and this document. The repository reviews twelve of them: G1-G4, Gravitas I (arXiv:2308.07508), Gravitas II (arXiv:2401.14209), the hydrodynamics paper (arXiv:2402.02331), G5 (Complex Systems 29(2) 537-598, Claims 6-7), G6 (arXiv:2105.10822) and G7 (arXiv:2111.03460) (Claim 8), G8 (arXiv:2301.04690, Claim 9) and G9 (arXiv:2301.12455, Claim 10). The other entries of the two listings follow.
 
 Listed and not relevant to hypergraph rewriting and general relativity: the ZX-calculus papers (arXiv:2010.02752, 2103.15820) and the string-diagram paper (arXiv:2105.04057), which apply multiway rewriting to quantum circuits; *A Cosine Rule-Based Discrete Sectional Curvature for Graphs* (arXiv:2212.04406, Arsiwalla and Du Plessis, listed under Gorard's tag by the Institute); quantum cellular automata (arXiv:1910.00578); Categorica I (arXiv:2403.16269); uniqueness trees (arXiv:1606.06399, cited by G4 as reference [88], see O8 above); and the numerical relativity, plasma and machine-learning papers of 2024-2026 (arXiv:2410.02549, 2503.13877, 2505.03849, 2505.05299, 2510.26019, 2602.14853), which use continuum PDE solvers and no hypergraph rewriting.

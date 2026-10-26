@@ -1,0 +1,231 @@
+{
+ "plus_state": [
+  {
+   "t": 0,
+   "path_counts": [
+    1.0,
+    1.0
+   ],
+   "normalised_counts": [
+    0.7071,
+    0.7071
+   ],
+   "amplitude_moduli": [
+    0.7071,
+    0.7071
+   ],
+   "max_difference": 0.0
+  },
+  {
+   "t": 1,
+   "path_counts": [
+    2.0,
+    2.0
+   ],
+   "normalised_counts": [
+    0.7071,
+    0.7071
+   ],
+   "amplitude_moduli": [
+    0.7071,
+    0.7071
+   ],
+   "max_difference": 0.0
+  },
+  {
+   "t": 2,
+   "path_counts": [
+    4.0,
+    4.0
+   ],
+   "normalised_counts": [
+    0.7071,
+    0.7071
+   ],
+   "amplitude_moduli": [
+    0.7071,
+    0.7071
+   ],
+   "max_difference": 0.0
+  },
+  {
+   "t": 3,
+   "path_counts": [
+    8.0,
+    8.0
+   ],
+   "normalised_counts": [
+    0.7071,
+    0.7071
+   ],
+   "amplitude_moduli": [
+    0.7071,
+    0.7071
+   ],
+   "max_difference": 0.0
+  },
+  {
+   "t": 4,
+   "path_counts": [
+    16.0,
+    16.0
+   ],
+   "normalised_counts": [
+    0.7071,
+    0.7071
+   ],
+   "amplitude_moduli": [
+    0.7071,
+    0.7071
+   ],
+   "max_difference": 0.0
+  },
+  {
+   "t": 5,
+   "path_counts": [
+    32.0,
+    32.0
+   ],
+   "normalised_counts": [
+    0.7071,
+    0.7071
+   ],
+   "amplitude_moduli": [
+    0.7071,
+    0.7071
+   ],
+   "max_difference": 0.0
+  },
+  {
+   "t": 6,
+   "path_counts": [
+    64.0,
+    64.0
+   ],
+   "normalised_counts": [
+    0.7071,
+    0.7071
+   ],
+   "amplitude_moduli": [
+    0.7071,
+    0.7071
+   ],
+   "max_difference": 0.0
+  }
+ ],
+ "zero_state": [
+  {
+   "t": 0,
+   "path_counts": [
+    1.0,
+    0.0
+   ],
+   "normalised_counts": [
+    1.0,
+    0.0
+   ],
+   "amplitude_moduli": [
+    1.0,
+    0.0
+   ],
+   "max_difference": 0.0
+  },
+  {
+   "t": 1,
+   "path_counts": [
+    1.0,
+    1.0
+   ],
+   "normalised_counts": [
+    0.7071,
+    0.7071
+   ],
+   "amplitude_moduli": [
+    0.7071,
+    0.7071
+   ],
+   "max_difference": 0.0
+  },
+  {
+   "t": 2,
+   "path_counts": [
+    2.0,
+    2.0
+   ],
+   "normalised_counts": [
+    0.7071,
+    0.7071
+   ],
+   "amplitude_moduli": [
+    0.0,
+    1.0
+   ],
+   "max_difference": 0.7071
+  },
+  {
+   "t": 3,
+   "path_counts": [
+    4.0,
+    4.0
+   ],
+   "normalised_counts": [
+    0.7071,
+    0.7071
+   ],
+   "amplitude_moduli": [
+    0.7071,
+    0.7071
+   ],
+   "max_difference": 0.0
+  },
+  {
+   "t": 4,
+   "path_counts": [
+    8.0,
+    8.0
+   ],
+   "normalised_counts": [
+    0.7071,
+    0.7071
+   ],
+   "amplitude_moduli": [
+    1.0,
+    0.0
+   ],
+   "max_difference": 0.7071
+  },
+  {
+   "t": 5,
+   "path_counts": [
+    16.0,
+    16.0
+   ],
+   "normalised_counts": [
+    0.7071,
+    0.7071
+   ],
+   "amplitude_moduli": [
+    0.7071,
+    0.7071
+   ],
+   "max_difference": 0.0
+  },
+  {
+   "t": 6,
+   "path_counts": [
+    32.0,
+    32.0
+   ],
+   "normalised_counts": [
+    0.7071,
+    0.7071
+   ],
+   "amplitude_moduli": [
+    0.0,
+    1.0
+   ],
+   "max_difference": 0.7071
+  }
+ ],
+ "sqrtnot_squared_equals_not": true
+}

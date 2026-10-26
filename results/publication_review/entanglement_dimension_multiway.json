@@ -1,0 +1,93 @@
+{
+ "flat_rule/two_triple_self_loops": {
+  "states_per_step": [
+   1,
+   2,
+   2,
+   4,
+   4,
+   4,
+   4,
+   4,
+   4,
+   4,
+   4,
+   4,
+   4
+  ],
+  "max_events_from_one_state": 2,
+  "events": 44
+ },
+ "flat_rule/three_triple_self_loops": {
+  "states_per_step": [
+   1,
+   6,
+   24,
+   60,
+   156,
+   414,
+   834,
+   1620,
+   3018,
+   6360,
+   12348,
+   20010,
+   20010
+  ],
+  "max_events_from_one_state": 6,
+  "events": 64860
+ },
+ "flat_rule/mixed": {
+  "states_per_step": [
+   1,
+   1
+  ],
+  "max_events_from_one_state": 1,
+  "events": 1
+ },
+ "curved_rule/two_triple_self_loops": {
+  "states_per_step": [
+   1,
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   2
+  ],
+  "max_events_from_one_state": 2,
+  "events": 24
+ },
+ "curved_rule/three_triple_self_loops": {
+  "states_per_step": [
+   1,
+   6,
+   24,
+   48,
+   96,
+   186,
+   384,
+   738,
+   1350,
+   2436,
+   4338,
+   8322,
+   17796
+  ],
+  "max_events_from_one_state": 6,
+  "events": 35724
+ },
+ "curved_rule/mixed": {
+  "states_per_step": [
+   1
+  ],
+  "max_events_from_one_state": 0,
+  "events": 0
+ }
+}
