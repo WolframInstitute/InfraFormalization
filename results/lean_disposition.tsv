@@ -1,0 +1,1060 @@
+name	kind	module	action	reason
+InfraFormalization.AdSCFTAnalogObligation	propdef	InfraFormalization.AdSCFTAnalog	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.AdvancedContinuumLimits.cycle_degVariance_trueLimit_zero	theorem	InfraFormalization.AdvancedContinuumLimits	deleted	constant sequence tends to its value
+InfraFormalization.AdvancedContinuumLimits.cycle_higuchi_trueLimit_zero	theorem	InfraFormalization.AdvancedContinuumLimits	deleted	constant sequence tends to its value
+InfraFormalization.AdvancedContinuumLimits.cycle_squareCount_trueLimit_zero	theorem	InfraFormalization.AdvancedContinuumLimits	deleted	constant sequence tends to its value
+InfraFormalization.AdvancedContinuumLimits.torusFormanSampleTrace_decreasing	theorem	InfraFormalization.AdvancedContinuumLimits	renamed to torusFormanSampleTrace_eq	name claimed more than the statement
+InfraFormalization.AdvancedContinuumLimits.torus_per_edge_forman_bias	theorem	InfraFormalization.AdvancedContinuumLimits	renamed to torus_4_4_forman_eq_neg8_mul_32	name claimed more than the statement
+InfraFormalization.AdvancedContinuumLimits.unweighted_forman_fails_on_2d_torus	theorem	InfraFormalization.AdvancedContinuumLimits	renamed to torus_forman_nonzero_at_4_5_6	name claimed more than the statement
+InfraFormalization.AngularScreener	propdef	InfraFormalization.RuleSignatureScreener	deleted	screener determined by the initial state
+InfraFormalization.BBHAnalogCertificate.bbh_analog_full_certificate	theorem	InfraFormalization.BBHAnalogCertificate	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BBHBranchialMultiDepth.bbh_branchial_eR_id_2	theorem	InfraFormalization.BBHBranchialMultiDepth	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BBHBranchialMultiDepth.bbh_branchial_eR_id_4	theorem	InfraFormalization.BBHBranchialMultiDepth	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BBHBranchialMultiDepth.bbh_branchial_multi_depth_additivity	theorem	InfraFormalization.BBHBranchialMultiDepth	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BBHCurvatureEvolution.BBH_R_eR_dCyc_predicted	theorem	InfraFormalization.BBHCurvatureEvolution	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BBHCurvatureEvolution.BBH_R_eR_tripleMerger_predicted	theorem	InfraFormalization.BBHCurvatureEvolution	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BBHCurvatureEvolution.BBH_R_zero_at_init	theorem	InfraFormalization.BBHCurvatureEvolution	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BBHCurvatureEvolution.BBH_universal_additivity_at_d3	theorem	InfraFormalization.BBHCurvatureEvolution	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BBHDeepEvolution.bbh_additivity_extends_depth5	theorem	InfraFormalization.BBHDeepEvolution	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BBHDeepEvolution.bbh_additivity_extends_depth6	theorem	InfraFormalization.BBHDeepEvolution	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BBHDeepEvolution.bbh_merger_acceleration	theorem	InfraFormalization.BBHDeepEvolution	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BBHDeepEvolution.bbh_multi_depth_additivity	theorem	InfraFormalization.BBHDeepEvolution	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BBHDeepEvolution.doubleCycle_5_bbh_depth5	theorem	InfraFormalization.BBHDeepEvolution	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BBHDeepEvolution.edgeReversal_bbh_depth5	theorem	InfraFormalization.BBHDeepEvolution	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BBHDeepEvolution.edgeReversal_bbh_depth6	theorem	InfraFormalization.BBHDeepEvolution	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BBHEmergence.BBHTarget	structure	InfraFormalization.BBHEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BBHEmergence.BBHTarget.massRatio	def	InfraFormalization.BBHEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BBHEmergence.BBHTarget.mass_pos	theorem	InfraFormalization.BBHEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BBHEmergence.BBHTarget.ratio_le_one	theorem	InfraFormalization.BBHEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BBHEmergence.BBHTarget.ratio_pos	theorem	InfraFormalization.BBHEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BBHEmergence.BBHTarget.spin1	def	InfraFormalization.BBHEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BBHEmergence.BBHTarget.spin2	def	InfraFormalization.BBHEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BBHEmergence.BBHTarget.totalMass	def	InfraFormalization.BBHEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BBHEmergence.HypergraphBBHOriginObligationStrong	propdef	InfraFormalization.BBHEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BBHEmergence.alignedSpinEqualMass	def	InfraFormalization.BBHEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BBHEmergence.bbh_strong_origin_obligations	theorem	InfraFormalization.BBHEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BBHEmergence.bbh_target_strong_from_exec_witness_degvariance	theorem	InfraFormalization.BBHEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BBHEmergence.bbh_target_strong_from_exec_witness_forman	theorem	InfraFormalization.BBHEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BBHEmergence.bbh_target_strong_from_exec_witness_higuchi	theorem	InfraFormalization.BBHEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BBHEmergence.bbh_target_strong_from_exec_witness_squarecount	theorem	InfraFormalization.BBHEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BBHEmergence.bbh_target_strong_from_exec_witness_transport	theorem	InfraFormalization.BBHEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BBHEmergence.equalMassNonspinning	def	InfraFormalization.BBHEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BBHEmergence.equalMassNonspinning_quintDischarge	def	InfraFormalization.BBHEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BBHEmergence.equalMassNonspinning_strong_degvariance	theorem	InfraFormalization.BBHEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BBHEmergence.equalMassNonspinning_strong_forman	theorem	InfraFormalization.BBHEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BBHEmergence.equalMassNonspinning_strong_higuchi	theorem	InfraFormalization.BBHEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BBHEmergence.equalMassNonspinning_strong_squarecount	theorem	InfraFormalization.BBHEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BBHEmergence.equalMassNonspinning_strong_transport	theorem	InfraFormalization.BBHEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BBHEmergence.grandTotalDischargeCells	def	InfraFormalization.BBHEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BBHEmergence.gw150914Like	def	InfraFormalization.BBHEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BBHEmergence.gw150914Like_quintDischarge	def	InfraFormalization.BBHEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BBHEmergence.gw150914Like_strong_degvariance	theorem	InfraFormalization.BBHEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BBHEmergence.gw150914Like_strong_forman	theorem	InfraFormalization.BBHEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BBHEmergence.gw150914Like_strong_higuchi	theorem	InfraFormalization.BBHEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BBHEmergence.gw150914Like_strong_squarecount	theorem	InfraFormalization.BBHEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BBHEmergence.gw150914Like_strong_transport	theorem	InfraFormalization.BBHEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BBHEmergence.lowMassLowSpin	def	InfraFormalization.BBHEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BBHEmergence.numBBHZooTargets	def	InfraFormalization.BBHEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BBHEmergence.numCurvatureFamilies	def	InfraFormalization.BBHEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BBHEmergence.numWitnessSeeds	def	InfraFormalization.BBHEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BBHEmergence.strong_bbh_obligation_from_degvariance_rate	theorem	InfraFormalization.BBHEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BBHEmergence.strong_bbh_obligation_from_forman_rate	theorem	InfraFormalization.BBHEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BBHEmergence.strong_bbh_obligation_from_higuchi_rate	theorem	InfraFormalization.BBHEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BBHEmergence.strong_bbh_obligation_from_squarecount_rate	theorem	InfraFormalization.BBHEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BBHEmergence.strong_bbh_obligation_from_transport_rate	theorem	InfraFormalization.BBHEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BBHEmergence.totalBBHDischargeCells	def	InfraFormalization.BBHEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BBHEmergence.unequalMassNonspinning	def	InfraFormalization.BBHEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BBHEmergence.zoo_quantum_bbh_strong_origin_obligations	theorem	InfraFormalization.BBHEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BBHInitialData.bbhInitial	def	InfraFormalization.BBHInitialData	renamed to twoTriangleSeed	name claimed more than the statement
+InfraFormalization.BBHInitialData.bbhInitial_edge_count	theorem	InfraFormalization.BBHInitialData	renamed to twoTriangleSeed_edge_count	name claimed more than the statement
+InfraFormalization.BBHInitialData.bbh_additivity_law_holds	theorem	InfraFormalization.BBHInitialData	renamed to twoTriangle_knill_seven_times_edge	name claimed more than the statement
+InfraFormalization.BBHInitialData.doubleCycle_5_bbh_knill_neg42	theorem	InfraFormalization.BBHInitialData	renamed to doubleCycle_5_twoTriangle_knill_neg42	name claimed more than the statement
+InfraFormalization.BBHInitialData.edgeReversal_bbh_knill_zero	theorem	InfraFormalization.BBHInitialData	renamed to edgeReversal_twoTriangle_knill_zero	name claimed more than the statement
+InfraFormalization.BBHMetricTensor.bbh_branchial_eR_fork_3	theorem	InfraFormalization.BBHMetricTensor	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BBHMetricTensor.bbh_branchial_eR_id_3	theorem	InfraFormalization.BBHMetricTensor	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BBHMetricTensor.bbh_causal_eR_fork_3	theorem	InfraFormalization.BBHMetricTensor	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BBHMetricTensor.bbh_causal_eR_id_3	theorem	InfraFormalization.BBHMetricTensor	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BBHMetricTensor.bbh_lineElement_eR_fork_1_1	theorem	InfraFormalization.BBHMetricTensor	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BBHMetricTensor.bbh_lineElement_eR_id_1_1	theorem	InfraFormalization.BBHMetricTensor	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BBHMetricTensor.bbh_metric_tensor_characterization	theorem	InfraFormalization.BBHMetricTensor	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BBHMetricTensor.bbh_tensor_universal_additivity	theorem	InfraFormalization.BBHMetricTensor	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BBHVacuumRegime.bbh_vacuum_B_3	theorem	InfraFormalization.BBHVacuumRegime	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BBHVacuumRegime.bbh_vacuum_B_4	theorem	InfraFormalization.BBHVacuumRegime	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BBHVacuumRegime.bbh_vacuum_B_growth	theorem	InfraFormalization.BBHVacuumRegime	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BBHVacuumRegime.bbh_vacuum_R_3	theorem	InfraFormalization.BBHVacuumRegime	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BBHVacuumRegime.bbh_vacuum_R_4	theorem	InfraFormalization.BBHVacuumRegime	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BBHVacuumRegime.bbh_vacuum_regime_certified	theorem	InfraFormalization.BBHVacuumRegime	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BClosedForm.B_closed_form_d2	theorem	InfraFormalization.BClosedForm	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BClosedForm.B_closed_form_d3	theorem	InfraFormalization.BClosedForm	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BClosedForm.B_closed_form_d4	theorem	InfraFormalization.BClosedForm	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BClosedForm.B_closed_form_d5	theorem	InfraFormalization.BClosedForm	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BClosedForm.B_closed_form_persistent_class	theorem	InfraFormalization.BClosedForm	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BClosedFormExtended.B_closed_form_d6	theorem	InfraFormalization.BClosedFormExtended	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BClosedFormExtended.B_d6_eR_tripleMerger	theorem	InfraFormalization.BClosedFormExtended	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BClosedFormExtended.B_d6_fork_dCyc	theorem	InfraFormalization.BClosedFormExtended	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BClosedFormExtended.persistent_B_equivalence_5_depths	theorem	InfraFormalization.BClosedFormExtended	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BCoincidenceFinding.B_R_decoupling_finding	theorem	InfraFormalization.BCoincidenceFinding	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BCoincidenceFinding.B_eR_tripleMerger_2	theorem	InfraFormalization.BCoincidenceFinding	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BCoincidenceFinding.B_eR_tripleMerger_4	theorem	InfraFormalization.BCoincidenceFinding	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BCoincidenceFinding.B_fork_dCyc_2	theorem	InfraFormalization.BCoincidenceFinding	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BCoincidenceFinding.B_fork_dCyc_4	theorem	InfraFormalization.BCoincidenceFinding	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BCoincidenceFinding.B_trajectory_coincidence	theorem	InfraFormalization.BCoincidenceFinding	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BCoincidenceFinding.R_trajectories_different	theorem	InfraFormalization.BCoincidenceFinding	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BEquivalenceClasses.B_d2_eR_dCyc	theorem	InfraFormalization.BEquivalenceClasses	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BEquivalenceClasses.B_d2_eR_fork	theorem	InfraFormalization.BEquivalenceClasses	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BEquivalenceClasses.B_d2_eR_id	theorem	InfraFormalization.BEquivalenceClasses	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BEquivalenceClasses.B_d2_eR_tripleMerger	theorem	InfraFormalization.BEquivalenceClasses	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BEquivalenceClasses.B_d2_fork_dCyc	theorem	InfraFormalization.BEquivalenceClasses	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BEquivalenceClasses.B_equivalence_class_18	theorem	InfraFormalization.BEquivalenceClasses	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BEquivalenceClasses.B_equivalence_class_24	theorem	InfraFormalization.BEquivalenceClasses	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BEquivalenceClasses.B_partition_at_d2	theorem	InfraFormalization.BEquivalenceClasses	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BEquivalenceRefinement.B_18_class_refines_at_d3	theorem	InfraFormalization.BEquivalenceRefinement	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BEquivalenceRefinement.B_24_class_refines_at_d3	theorem	InfraFormalization.BEquivalenceRefinement	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BEquivalenceRefinement.B_class_refinement_pattern	theorem	InfraFormalization.BEquivalenceRefinement	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BEquivalenceRefinement.B_d3_eR_dCyc	theorem	InfraFormalization.BEquivalenceRefinement	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BEquivalenceRefinement.B_d3_eR_fork	theorem	InfraFormalization.BEquivalenceRefinement	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BEquivalenceRefinement.B_d3_eR_id	theorem	InfraFormalization.BEquivalenceRefinement	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BEquivalenceRefinement.persistent_equivalence_at_d4	theorem	InfraFormalization.BEquivalenceRefinement	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BenincasaDowkerConjecture	structure	InfraFormalization.DiscreteDAlembertian	deleted	claim is an arbitrary Prop
+InfraFormalization.BenincasaDowkerConjecture.claim	propdef	InfraFormalization.DiscreteDAlembertian	deleted	claim is an arbitrary Prop
+InfraFormalization.BenincasaDowkerConjecture.is_open	propdef	InfraFormalization.DiscreteDAlembertian	deleted	claim is an arbitrary Prop
+InfraFormalization.BlowupLieAlgebraStructure	structure	InfraFormalization.BlowupLieAlgebra	deleted	condition equal to True
+InfraFormalization.BlowupLieAlgebraStructure.commutator_consistency	theorem	InfraFormalization.BlowupLieAlgebra	deleted	condition equal to True
+InfraFormalization.BlowupLieAlgebraStructure.generators	def	InfraFormalization.BlowupLieAlgebra	deleted	condition equal to True
+InfraFormalization.BranchialDepthTrajectory.arithmetic_branchial_regime	theorem	InfraFormalization.BranchialDepthTrajectory	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BranchialDepthTrajectory.branchial_depth_trajectory	theorem	InfraFormalization.BranchialDepthTrajectory	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BranchialDepthTrajectory.eR_fork_branchial_d2	theorem	InfraFormalization.BranchialDepthTrajectory	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BranchialDepthTrajectory.eR_fork_branchial_d4	theorem	InfraFormalization.BranchialDepthTrajectory	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BranchialDepthTrajectory.eR_id_branchial_d2	theorem	InfraFormalization.BranchialDepthTrajectory	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BranchialDepthTrajectory.eR_id_branchial_d4	theorem	InfraFormalization.BranchialDepthTrajectory	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BranchialDepthTrajectory.geometric_branchial_regime	theorem	InfraFormalization.BranchialDepthTrajectory	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BranchialFromInteraction.all_single_rules_branchial_zero	theorem	InfraFormalization.BranchialFromInteraction	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BranchialFromInteraction.doubleCycle_5_branchial_0	theorem	InfraFormalization.BranchialFromInteraction	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BranchialFromInteraction.fork_branchial_0	theorem	InfraFormalization.BranchialFromInteraction	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BranchialFromInteraction.tripleMerger_branchial_0	theorem	InfraFormalization.BranchialFromInteraction	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BranchialRSpectrum.branchial_R_spectrum	theorem	InfraFormalization.BranchialRSpectrum	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BranchialRSpectrum.branchial_multi_rule_nonzero	theorem	InfraFormalization.BranchialRSpectrum	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BranchialRSpectrum.branchial_single_rule_zero	theorem	InfraFormalization.BranchialRSpectrum	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BranchialRSpectrum.eR_fork_branchial_66	theorem	InfraFormalization.BranchialRSpectrum	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BranchialRSpectrum.eR_id_branchial_30	theorem	InfraFormalization.BranchialRSpectrum	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BranchialRSpectrum.eR_tripleMerger_branchial_78	theorem	InfraFormalization.BranchialRSpectrum	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BranchialRSpectrum.edgeReversal_branchial_0	theorem	InfraFormalization.BranchialRSpectrum	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BranchialRSpectrum.identityKeep_branchial_0	theorem	InfraFormalization.BranchialRSpectrum	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BranchialStructure	structure	InfraFormalization.Branchial	deleted	structure with no conditions
+InfraFormalization.BranchialStructure.Slice	def	InfraFormalization.Branchial	deleted	structure with no conditions
+InfraFormalization.BranchialStructure.sliceOf	def	InfraFormalization.Branchial	deleted	structure with no conditions
+InfraFormalization.BranchialUniversalAdditivity.B_eR_id_3	theorem	InfraFormalization.BranchialUniversalAdditivity	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BranchialUniversalAdditivity.branchial_eR_fork_path	theorem	InfraFormalization.BranchialUniversalAdditivity	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BranchialUniversalAdditivity.branchial_eR_id_path	theorem	InfraFormalization.BranchialUniversalAdditivity	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BranchialUniversalAdditivity.branchial_eR_id_triangle	theorem	InfraFormalization.BranchialUniversalAdditivity	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BranchialUniversalAdditivity.branchial_universal_additivity_eR_fork	theorem	InfraFormalization.BranchialUniversalAdditivity	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BranchialUniversalAdditivity.branchial_universal_additivity_eR_id	theorem	InfraFormalization.BranchialUniversalAdditivity	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BranchialUniversalAdditivity.discreteBranchialDensity	def	InfraFormalization.BranchialUniversalAdditivity	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BranchialUniversalAdditivity.discreteUnifiedEH	def	InfraFormalization.BranchialUniversalAdditivity	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BranchialUniversalAdditivity.unified_EH_at_alpha_1	theorem	InfraFormalization.BranchialUniversalAdditivity	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.BulkBoundarySplit	structure	InfraFormalization.AdSCFTAnalog	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BulkBoundarySplit.BoundaryAmplitude	structure	InfraFormalization.AdSCFTAnalog	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BulkBoundarySplit.BoundaryAmplitude.normSq_le_one	theorem	InfraFormalization.AdSCFTAnalog	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BulkBoundarySplit.BoundaryAmplitude.zero	def	InfraFormalization.AdSCFTAnalog	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BulkBoundarySplit.BoundaryAmplitude.α	def	InfraFormalization.AdSCFTAnalog	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BulkBoundarySplit.boundary	def	InfraFormalization.AdSCFTAnalog	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BulkBoundarySplit.bulk	def	InfraFormalization.AdSCFTAnalog	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BulkBoundarySplit.maximal	def	InfraFormalization.AdSCFTAnalog	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.BulkBoundarySplit.trivial	def	InfraFormalization.AdSCFTAnalog	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.CandidateCatalog.gorardNamedRule_passes_sameEdgeCount_screen	theorem	InfraFormalization.RuleSignatureScreens	deleted	hypotheses do not mention the rule
+InfraFormalization.CandidateCatalog.hypergraphSignature_FullMatch_self	theorem	InfraFormalization.RuleSignatureScreens	deleted	x = x
+InfraFormalization.CandidateCatalog.hypergraphSignature_sameBallVolume_self	theorem	InfraFormalization.RuleSignatureScreens	deleted	x = x
+InfraFormalization.CandidateCatalog.hypergraphSignature_sameDim_self	theorem	InfraFormalization.RuleSignatureScreens	deleted	x = x
+InfraFormalization.CausalDAGContinuumLimitObligation	propdef	InfraFormalization.CausalDAGContinuumLimit	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.CausalDAGContinuumLimitRateObligation	propdef	InfraFormalization.CausalDAGContinuumLimit	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.CausalDAGKnill.diamond_is_one_hole	theorem	InfraFormalization.CausalDAGKnill	deleted	duplicate of causalDiamond_knill
+InfraFormalization.CausalDAGKnill.singleway_evolution_causal_dag_knill	theorem	InfraFormalization.CausalDAGKnill	deleted	hand-written path graphs, no evolution
+InfraFormalization.CausalDAGKnill.triple_diamond_is_two_holes	theorem	InfraFormalization.CausalDAGKnill	deleted	duplicate of causalTripleDiamond_knill
+InfraFormalization.CausalEventTrace.causal_pipeline_subdivision_depth2	theorem	InfraFormalization.CausalEventTrace	deleted	duplicate of subdivision_depth2_causalDAG_knill
+InfraFormalization.CausalGraph.FiniteSupportFoliation	propdef	InfraFormalization.CausalFoliation	deleted	does not use the foliation property
+InfraFormalization.CausalGraph.causalDimensionAt	def	InfraFormalization.CausalDimension	deleted	does not use the causal graph
+InfraFormalization.CausalGraph.coordinateProjection	def	InfraFormalization.MultiFibrationProjection	deleted	definition ignores its arguments or names a property it does not state
+InfraFormalization.CausalGraph.projectionCoverSet	def	InfraFormalization.MultiFibrationProjection	deleted	definition ignores its arguments or names a property it does not state
+InfraFormalization.CausalGraph.properTime_self_exists	theorem	InfraFormalization.CausalFoliation	deleted	constructor application
+InfraFormalization.CombinedScreener	propdef	InfraFormalization.RuleSignatureScreener	deleted	screener determined by the initial state
+InfraFormalization.ContinuumLimitRecord	structure	InfraFormalization.ContinuumFieldLimits	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ContinuumLimitRecord.field	def	InfraFormalization.ContinuumFieldLimits	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ContinuumLimitRecord.heat	def	InfraFormalization.ContinuumFieldLimits	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ContinuumLimitRecord.kleinGordon	def	InfraFormalization.ContinuumFieldLimits	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ContinuumLimitRecord.schrodinger	def	InfraFormalization.ContinuumFieldLimits	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ContinuumLimitRecord.spectralConvergencePositive	theorem	InfraFormalization.ContinuumFieldLimits	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ContinuumLimitRecord.wave	def	InfraFormalization.ContinuumFieldLimits	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ConvergenceRateObligation	propdef	InfraFormalization.WassersteinRate	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.CorpusBalanceSpectrum.B_eR_tripleMerger_3	theorem	InfraFormalization.CorpusBalanceSpectrum	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.CorpusBalanceSpectrum.R_eR_tripleMerger_3	theorem	InfraFormalization.CorpusBalanceSpectrum	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.CorpusBalanceSpectrum.balance_eR_tripleMerger	theorem	InfraFormalization.CorpusBalanceSpectrum	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.CorpusBalanceSpectrum.corpus_balance_spectrum	theorem	InfraFormalization.CorpusBalanceSpectrum	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.CorpusBalanceSpectrum.most_GR_like_combo	theorem	InfraFormalization.CorpusBalanceSpectrum	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.CorpusObservableTable.B_fork_dCyc_3	theorem	InfraFormalization.CorpusObservableTable	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.CorpusObservableTable.RB_eR_dCyc_3	theorem	InfraFormalization.CorpusObservableTable	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.CorpusObservableTable.R_degeneracy_from_interaction	theorem	InfraFormalization.CorpusObservableTable	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.CorpusObservableTable.R_fork_dCyc_3	theorem	InfraFormalization.CorpusObservableTable	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.CorpusObservableTable.corpus_observable_table	theorem	InfraFormalization.CorpusObservableTable	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.CorpusObservableTable.corpus_signature_classification	theorem	InfraFormalization.CorpusObservableTable	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.CorpusObservableTable.same_B_different_R	theorem	InfraFormalization.CorpusObservableTable	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.Curvature.ConnectionData.nabla_scalar_flat	theorem	InfraFormalization.CovariantDerivative	deleted	x = x
+InfraFormalization.Curvature.ConnectionDataOriginObligation	propdef	InfraFormalization.FiberedGraphConnectionBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.CurvedDiscreteRicciObligation	propdef	InfraFormalization.CurvedRicciExtensions	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.DeSitterDiscreteRicciObligation	propdef	InfraFormalization.CurvedRicciExtensions	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.DiagRiemannianMetric.not_lorentzian_at_zero	theorem	InfraFormalization.RiemannianManifold	renamed to g00_pos_at_zero	name claimed more than the statement
+InfraFormalization.Curvature.EFEOriginObligation	propdef	InfraFormalization.EinsteinEquationsBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.EFEOriginObligation_iff_EinsteinEqLambda	theorem	InfraFormalization.EinsteinEquationsBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.FLRWDiscreteRicciObligation	propdef	InfraFormalization.CurvedRicciExtensions	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.HypergraphMetricOriginObligation	propdef	InfraFormalization.HypergraphMetricBridges	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.HypergraphMetricOriginObligationStrong	propdef	InfraFormalization.HypergraphMetricBridges	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.HypergraphMetricOriginObligationWithRate	propdef	InfraFormalization.HypergraphMetricBridges	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.HypergraphPartialMetricOriginObligation	propdef	InfraFormalization.HypergraphMetricBridges	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.HypergraphPartialMetricOriginObligationStrong	propdef	InfraFormalization.HypergraphMetricBridges	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.KerrDiscreteRicciObligation	propdef	InfraFormalization.CurvedRicciExtensions	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.LorentzianManifoldOriginObligation	propdef	InfraFormalization.CausalLorentzianBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.ReissnerNordstromDiscreteRicciObligation	propdef	InfraFormalization.CurvedRicciExtensions	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.ScaledConnectionToLeviCivitaObligation	propdef	InfraFormalization.ScaledConnectionLimit	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.ScaledDiscreteConnectionFamily	structure	InfraFormalization.ScaledConnectionLimit	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.ScaledDiscreteConnectionFamily.C	def	InfraFormalization.ScaledConnectionLimit	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.ScaledDiscreteConnectionFamily.H	def	InfraFormalization.ScaledConnectionLimit	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.ScaledDiscreteConnectionFamily.connectionSup	def	InfraFormalization.ScaledConnectionLimit	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.ScaledDiscreteConnectionFamily.connectionSup_nonneg	theorem	InfraFormalization.ScaledConnectionLimit	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.ScaledDiscreteConnectionFamily.connectionSup_tendsto_zero	theorem	InfraFormalization.ScaledConnectionLimit	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.SchwarzschildDiscreteRicciObligation	propdef	InfraFormalization.CurvedRicciExtensions	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.SchwarzschildVacuumObligation	propdef	InfraFormalization.Schwarzschild	deleted	connection not tied to the metric
+InfraFormalization.Curvature.TwoSphereDiscreteRicciObligation	propdef	InfraFormalization.CurvedRicciExtensions	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.WarpedDiag2DiscreteRicciObligation	propdef	InfraFormalization.CurvedRicciExtensions	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.all_curved_targets_obligation_baseline	theorem	InfraFormalization.CurvedRicciExtensions	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.all_gr_targets_have_hypergraph_obligations	propdef	InfraFormalization.HypergraphMetricBridges	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.all_gr_targets_have_hypergraph_obligations_proved	theorem	InfraFormalization.RuleWitnesses	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.all_gr_targets_have_strong_obligations	propdef	InfraFormalization.HypergraphMetricBridges	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.all_gr_targets_have_strong_obligations_proven	theorem	InfraFormalization.HypergraphMetricBridges	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.any_connection_has_obligation_witness	theorem	InfraFormalization.FiberedGraphConnectionBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.any_lorentzianManifold_has_obligation_witness	theorem	InfraFormalization.CausalLorentzianBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.any_metric_has_obligation_witness	theorem	InfraFormalization.HypergraphMetricBridges	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.any_metric_has_strong_obligation_witness	theorem	InfraFormalization.HypergraphMetricBridges	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.any_partialMetric_has_obligation_witness	theorem	InfraFormalization.HypergraphMetricBridges	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.any_partialMetric_has_strong_obligation_witness	theorem	InfraFormalization.HypergraphMetricBridges	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.curvedDiscreteRicciObligation_zero	theorem	InfraFormalization.CurvedRicciExtensions	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.deSitter_from_hypergraph	propdef	InfraFormalization.HypergraphMetricBridges	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.deSitter_from_hypergraph_proved	theorem	InfraFormalization.RuleWitnesses	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.deSitter_from_hypergraph_strong	propdef	InfraFormalization.HypergraphMetricBridges	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.emptyTrajectory	def	InfraFormalization.RuleWitnesses	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.exists_EFE_originated	theorem	InfraFormalization.EinsteinEquationsBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.flatConnection_from_fiberedGraph	propdef	InfraFormalization.FiberedGraphConnectionBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.flatConnection_from_fiberedGraph_proved	theorem	InfraFormalization.FiberedGraphConnectionBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.flatConnection_minkowski4_from_fiberedGraph	theorem	InfraFormalization.FiberedGraphConnectionBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.flrw_from_hypergraph	propdef	InfraFormalization.HypergraphMetricBridges	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.flrw_from_hypergraph_proved	theorem	InfraFormalization.RuleWitnesses	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.flrw_from_hypergraph_strong	propdef	InfraFormalization.HypergraphMetricBridges	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.flrw_satisfies_EFE_of_friedmann	theorem	InfraFormalization.FLRWRicci	renamed to flrw_satisfies_EFE_00_11_of_friedmann	name claimed more than the statement
+InfraFormalization.Curvature.gr_metric_zoo	theorem	InfraFormalization.GRMetricsDemo	deleted	restatement of other theorems, or existence of the given object
+InfraFormalization.Curvature.identityApplication	def	InfraFormalization.RuleWitnesses	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.identityApplication_consumed	theorem	InfraFormalization.RuleWitnesses	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.identityApplication_produced	theorem	InfraFormalization.RuleWitnesses	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.identityApplication_result	theorem	InfraFormalization.RuleWitnesses	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.identityRule	def	InfraFormalization.RuleWitnesses	moved	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.identityRule_isConservative	theorem	InfraFormalization.RuleWitnesses	moved	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.identityRule_lhsSize	theorem	InfraFormalization.RuleWitnesses	moved	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.identityRule_mem_identitySystem	theorem	InfraFormalization.RuleWitnesses	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.identityRule_rhsSize	theorem	InfraFormalization.RuleWitnesses	moved	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.identityStep_fires	theorem	InfraFormalization.RuleWitnesses	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.identitySystem	def	InfraFormalization.RuleWitnesses	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.leviCivitaConnection_from_fiberedGraph	theorem	InfraFormalization.FiberedGraphConnectionBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.minkowski4Manifold_from_causalGraph	propdef	InfraFormalization.CausalLorentzianBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.minkowski4Manifold_from_causalGraph_proved	theorem	InfraFormalization.RuleWitnesses	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.minkowski4_flat_vacuum_EFE_originated	theorem	InfraFormalization.EinsteinEquationsBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.minkowski4_flat_vacuum_EFE_originated_global	theorem	InfraFormalization.EinsteinEquationsBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.minkowski4_from_hypergraph	propdef	InfraFormalization.HypergraphMetricBridges	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.minkowski4_from_hypergraph_proved	theorem	InfraFormalization.RuleWitnesses	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.minkowski4_from_hypergraph_strong	theorem	InfraFormalization.HypergraphMetricBridges	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.minkowski4_from_hypergraph_with_rate	propdef	InfraFormalization.HypergraphMetricBridges	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.rn_from_hypergraph	propdef	InfraFormalization.HypergraphMetricBridges	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.rn_from_hypergraph_proved	theorem	InfraFormalization.RuleWitnesses	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.rn_from_hypergraph_strong	propdef	InfraFormalization.HypergraphMetricBridges	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.scaledConnectionToLeviCivita_trivial	theorem	InfraFormalization.ScaledConnectionLimit	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.scaledConnectionToLeviCivita_via_metric	theorem	InfraFormalization.ScaledConnectionLimit	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.schwarzschild_from_hypergraph	propdef	InfraFormalization.HypergraphMetricBridges	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.schwarzschild_from_hypergraph_proved	theorem	InfraFormalization.RuleWitnesses	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.schwarzschild_from_hypergraph_strong	propdef	InfraFormalization.HypergraphMetricBridges	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.schwarzschild_vacuum_EFE_origin_bundle	propdef	InfraFormalization.EinsteinEquationsBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.schwarzschild_vacuum_EFE_origin_bundle_witnessed	theorem	InfraFormalization.EinsteinEquationsBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.sphere_from_hypergraph	propdef	InfraFormalization.HypergraphMetricBridges	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.sphere_from_hypergraph_proved	theorem	InfraFormalization.RuleWitnesses	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.sphere_from_hypergraph_strong	propdef	InfraFormalization.HypergraphMetricBridges	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.trivialCausalGraph	def	InfraFormalization.RuleWitnesses	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.trivialCausalGraph_no_edges	theorem	InfraFormalization.RuleWitnesses	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.trivialCausalGraph_stablyCausal	theorem	InfraFormalization.RuleWitnesses	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.trivialConnection	def	InfraFormalization.FiberedGraphConnectionBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.trivialFiberedGraph	def	InfraFormalization.FiberedGraphConnectionBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.warpedDiag2_einstein_divergence_zero	theorem	InfraFormalization.WarpedDiag2C2	renamed to warpedDiag2_christoffel_trace_einstein_zero	name claimed more than the statement
+InfraFormalization.Curvature.warpedDiag2_from_hypergraph	propdef	InfraFormalization.HypergraphMetricBridges	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.warpedDiag2_from_hypergraph_proved	theorem	InfraFormalization.RuleWitnesses	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Curvature.warpedDiag2_from_hypergraph_strong	propdef	InfraFormalization.HypergraphMetricBridges	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.CurvatureDensityLimit.CurvatureDensityWellDefined	propdef	InfraFormalization.CurvatureDensityLimit	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.CurvatureDensityLimit.density_bidirected_edge12	theorem	InfraFormalization.CurvatureDensityLimit	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.CurvatureDensityLimit.density_bidirected_triangle	theorem	InfraFormalization.CurvatureDensityLimit	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.CurvatureDensityLimit.density_bidirected_universal	theorem	InfraFormalization.CurvatureDensityLimit	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.CurvatureDensityLimit.density_doubleCycle_5_bbh	theorem	InfraFormalization.CurvatureDensityLimit	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.CurvatureDensityLimit.density_doubleCycle_5_edge12	theorem	InfraFormalization.CurvatureDensityLimit	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.CurvatureDensityLimit.density_doubleCycle_5_path	theorem	InfraFormalization.CurvatureDensityLimit	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.CurvatureDensityLimit.density_doubleCycle_5_triangle	theorem	InfraFormalization.CurvatureDensityLimit	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.CurvatureDensityLimit.density_doubleCycle_5_universal	theorem	InfraFormalization.CurvatureDensityLimit	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.CycleContinuumLimit.constantZeroTrace	def	InfraFormalization.CycleContinuumLimit	deleted	constant sequence tends to its value
+InfraFormalization.CycleContinuumLimit.constantZeroTrace_tendsto_zero	theorem	InfraFormalization.CycleContinuumLimit	deleted	constant sequence tends to its value
+InfraFormalization.CycleContinuumLimit.cycleForman_tendsto_zero_as_constant	theorem	InfraFormalization.CycleContinuumLimit	deleted	constant sequence tends to its value
+InfraFormalization.CycleContinuumLimit.cycle_trueLimit_converges_to_minkowski4_target	theorem	InfraFormalization.CycleContinuumLimit	deleted	constant sequence tends to its value
+InfraFormalization.CycleContinuumLimit.cycle_trueLimit_converges_to_spherePartial_target	theorem	InfraFormalization.CycleContinuumLimit	deleted	constant sequence tends to its value
+InfraFormalization.CycleContinuumLimit.cycle_trueLimit_converges_to_warpedDiag2_target	theorem	InfraFormalization.CycleContinuumLimit	deleted	constant sequence tends to its value
+InfraFormalization.DegVarianceRateBridge.ExecDegVarianceMetricOriginObligation	propdef	InfraFormalization.DegVarianceRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.DegVarianceRateBridge.deSitter_strong_from_exec_witness_degvariance	theorem	InfraFormalization.DegVarianceRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.DegVarianceRateBridge.degVarianceStableRateSelect	def	InfraFormalization.DegVarianceRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.DegVarianceRateBridge.degVarianceStablyConvergesToAt	def	InfraFormalization.DegVarianceRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.DegVarianceRateBridge.dossierDegVarianceConvergesToAt	def	InfraFormalization.DegVarianceRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.DegVarianceRateBridge.flrw_strong_from_exec_witness_degvariance	theorem	InfraFormalization.DegVarianceRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.DegVarianceRateBridge.minkowski4_strong_from_exec_witness_degvariance	theorem	InfraFormalization.DegVarianceRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.DegVarianceRateBridge.rn_strong_from_exec_witness_degvariance	theorem	InfraFormalization.DegVarianceRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.DegVarianceRateBridge.schwarzschild_strong_from_exec_witness_degvariance	theorem	InfraFormalization.DegVarianceRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.DegVarianceRateBridge.sphere_strong_from_exec_witness_degvariance	theorem	InfraFormalization.DegVarianceRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.DegVarianceRateBridge.strong_obligation_from_degvariance_rate	theorem	InfraFormalization.DegVarianceRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.DegVarianceRateBridge.strong_partial_obligation_from_degvariance_rate	theorem	InfraFormalization.DegVarianceRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.DegVarianceRateBridge.warpedDiag2_strong_from_exec_witness_degvariance	theorem	InfraFormalization.DegVarianceRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.DegVarianceRateBridge.witnessRule0_edge12_degVarianceTrace	def	InfraFormalization.DegVarianceRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.DegVarianceRateBridge.witnessRule0_edge12_degVarianceTrace_rateBounded	theorem	InfraFormalization.DegVarianceRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.DimensionCompatibilityObligation	propdef	InfraFormalization.RemainingObligations	deleted	obligation that holds for every input, or a restated bound
+InfraFormalization.DiscoveredRules.discoveries_summary	theorem	InfraFormalization.DiscoveredRules	renamed to discovered_rules_knill_values	name claimed more than the statement
+InfraFormalization.DiscoveredRules.merger_class_rules	theorem	InfraFormalization.DiscoveredRules	renamed to depth4_knill_values_five_rules	name claimed more than the statement
+InfraFormalization.DiscreteBondiFlux.bbh_flux_equals_7x_baseline	theorem	InfraFormalization.DiscreteBondiFlux	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DiscreteBondiFlux.doubleCycle_5_bbh_flux	theorem	InfraFormalization.DiscreteBondiFlux	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DiscreteBondiFlux.doubleCycle_5_edge12_flux	theorem	InfraFormalization.DiscreteBondiFlux	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DiscreteBondiFlux.edgeReversal_bbh_flux	theorem	InfraFormalization.DiscreteBondiFlux	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DiscreteBondiFlux.edgeReversal_edge12_flux	theorem	InfraFormalization.DiscreteBondiFlux	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DiscreteBondiFlux.edgeReversal_fork_bbh_flux	theorem	InfraFormalization.DiscreteBondiFlux	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DiscreteBondiFlux.edgeReversal_tripleMerger_bbh_flux	theorem	InfraFormalization.DiscreteBondiFlux	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DiscreteBondiFlux.edgeReversal_tripleMerger_edge12_flux	theorem	InfraFormalization.DiscreteBondiFlux	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DiscreteBondiFlux.exponential_merger_growth_x2	theorem	InfraFormalization.DiscreteBondiFlux	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DiscreteBondiFlux.exponential_merger_growth_x3	theorem	InfraFormalization.DiscreteBondiFlux	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DiscreteBondiFlux.perStepEventCount	def	InfraFormalization.DiscreteBondiFlux	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DiscreteFieldEquation	inductive	InfraFormalization.ContinuumFieldLimits	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.DiscreteFieldEquation.ctorElim	def	InfraFormalization.ContinuumFieldLimits	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.DiscreteFieldEquation.ctorElimType	def	InfraFormalization.ContinuumFieldLimits	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.DiscreteFieldEquation.heat.elim	def	InfraFormalization.ContinuumFieldLimits	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.DiscreteFieldEquation.kleinGordon.elim	def	InfraFormalization.ContinuumFieldLimits	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.DiscreteFieldEquation.schrodinger.elim	def	InfraFormalization.ContinuumFieldLimits	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.DiscreteFieldEquation.toCtorIdx	def	InfraFormalization.ContinuumFieldLimits	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.DiscreteFieldEquation.wave.elim	def	InfraFormalization.ContinuumFieldLimits	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.DiscreteMetricTensor.discreteDet	def	InfraFormalization.DiscreteMetricTensor	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DiscreteMetricTensor.discreteLineElement	def	InfraFormalization.DiscreteMetricTensor	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DiscreteMetricTensor.discreteMetricTensor	def	InfraFormalization.DiscreteMetricTensor	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DiscreteMetricTensor.discreteMetricTensor_universal_additivity_eR_id_path	theorem	InfraFormalization.DiscreteMetricTensor	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DiscreteMetricTensor.discreteTrace	def	InfraFormalization.DiscreteMetricTensor	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DiscreteMetricTensor.eR_fork_lorentzian_at_3	theorem	InfraFormalization.DiscreteMetricTensor	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DiscreteMetricTensor.eR_id_lorentzian_at_3	theorem	InfraFormalization.DiscreteMetricTensor	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DiscreteMetricTensor.hasLorentzianSignature	def	InfraFormalization.DiscreteMetricTensor	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DiscreteMetricTensor.lineElement_eR_id_3_at_1_1	theorem	InfraFormalization.DiscreteMetricTensor	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DiscreteMetricTensor.lineElement_eR_id_3_at_2_1	theorem	InfraFormalization.DiscreteMetricTensor	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DiscreteMetricTensor.metric_eR_fork_3	theorem	InfraFormalization.DiscreteMetricTensor	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DiscreteMetricTensor.metric_eR_id_3	theorem	InfraFormalization.DiscreteMetricTensor	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DiscretePsiFour.bbhPsiFourPredicted_tripleMerger	def	InfraFormalization.DiscretePsiFour	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DiscretePsiFour.bbh_psi4_predicted_modsq	theorem	InfraFormalization.DiscretePsiFour	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DiscretePsiFour.discretePsiFour	def	InfraFormalization.DiscretePsiFour	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DiscretePsiFour.edgeReversal_psi4_trajectory	theorem	InfraFormalization.DiscretePsiFour	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DiscretePsiFour.exponential_psi4_signature	theorem	InfraFormalization.DiscretePsiFour	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DiscretePsiFour.integratedModSq	def	InfraFormalization.DiscretePsiFour	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DiscretePsiFour.integrated_psi4_modsq_baseline	theorem	InfraFormalization.DiscretePsiFour	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DiscretePsiFour.integrated_psi4_modsq_champion	theorem	InfraFormalization.DiscretePsiFour	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DiscretePsiFour.psiFourModSq	def	InfraFormalization.DiscretePsiFour	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DiscreteQGPredictions.discrete_QG_predictions_capstone	theorem	InfraFormalization.DiscreteQGPredictions	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DiscreteQuantumGravity.discrete_quantum_gravity_certificate	theorem	InfraFormalization.DiscreteQuantumGravity	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DiscreteRicciConvergence.RuleGeneratesMetric_forman	propdef	InfraFormalization.DiscreteRicciConvergence	deleted	target scalar formanTarget is 0 for every metric
+InfraFormalization.DiscreteRicciConvergence.RuleGeneratesPartialMetric_forman	propdef	InfraFormalization.DiscreteRicciConvergence	deleted	target scalar is 0 for every metric
+InfraFormalization.DiscreteRicciConvergence.trueLimit_of_constant_at_target	theorem	InfraFormalization.DiscreteRicciConvergence	deleted	constant sequence tends to its value
+InfraFormalization.DiscreteRicciScalar.R_bidirected_4	theorem	InfraFormalization.DiscreteRicciScalar	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DiscreteRicciScalar.R_doubleCycle_5_4	theorem	InfraFormalization.DiscreteRicciScalar	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DiscreteRicciScalar.R_edgeReversal_5	theorem	InfraFormalization.DiscreteRicciScalar	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DiscreteRicciScalar.R_fork_4	theorem	InfraFormalization.DiscreteRicciScalar	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DiscreteRicciScalar.R_identityKeep_4	theorem	InfraFormalization.DiscreteRicciScalar	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DiscreteRicciScalar.R_tripleMerger_4	theorem	InfraFormalization.DiscreteRicciScalar	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DiscreteRicciScalar.discreteEinsteinHilbert	def	InfraFormalization.DiscreteRicciScalar	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DiscreteRicciScalar.discreteRicciScalar	def	InfraFormalization.DiscreteRicciScalar	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DiscreteRicciScalar.discreteRicciScalar_corpus	theorem	InfraFormalization.DiscreteRicciScalar	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DiscreteRicciScalar.einsteinHilbert_equals_knill_doubleCycle5	theorem	InfraFormalization.DiscreteRicciScalar	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DualSideIndependence.RB_eR_fork_4	theorem	InfraFormalization.DualSideIndependence	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DualSideIndependence.RB_eR_id_2	theorem	InfraFormalization.DualSideIndependence	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DualSideIndependence.RB_eR_id_3	theorem	InfraFormalization.DualSideIndependence	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DualSideIndependence.RB_eR_id_4	theorem	InfraFormalization.DualSideIndependence	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DualSideIndependence.R_nonmonotonic_B_monotonic	theorem	InfraFormalization.DualSideIndependence	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DualSideIndependence.dual_side_independence	theorem	InfraFormalization.DualSideIndependence	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.DualSideIndependence.same_R_different_B	theorem	InfraFormalization.DualSideIndependence	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.EMEPersistenceObligation	propdef	InfraFormalization.RemainingObligations	deleted	obligation that holds for every input, or a restated bound
+InfraFormalization.EdgeCausallyDisjointBridge.BBH_edge_causal_disjoint	propdef	InfraFormalization.EdgeCausallyDisjointBridge	deleted	unproved Prop named as a result
+InfraFormalization.EdgeCausallyDisjointBridge.BBH_per_edge_additivity_universal	propdef	InfraFormalization.EdgeCausallyDisjointBridge	deleted	unproved Prop named as a result
+InfraFormalization.EdgeCausallyDisjointBridge.BBH_universal_closure_from_obligations	propdef	InfraFormalization.EdgeCausallyDisjointBridge	deleted	unproved Prop named as a result
+InfraFormalization.EdgeCausallyDisjointBridge.EdgeCausalDisjoint_implies_knill_additive	propdef	InfraFormalization.EdgeCausallyDisjointBridge	deleted	unproved Prop named as a result
+InfraFormalization.EdgeCausallyDisjointBridge.EdgeCausallyDisjoint	propdef	InfraFormalization.EdgeCausallyDisjointBridge	deleted	conjunct True; first conjunct duplicates step_zero_events_exist
+InfraFormalization.ElementaryBlowup.CommutatorVanishesCausalBranchial	propdef	InfraFormalization.BlowupLieAlgebra	deleted	definition equal to True
+InfraFormalization.EmergentGravityObligation	propdef	InfraFormalization.EmergentGravity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.EmergentGravitySkeleton	structure	InfraFormalization.EmergentGravity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.EmergentGravitySkeleton.entropy	def	InfraFormalization.EmergentGravity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.EmergentGravitySkeleton.entropy_nonneg	theorem	InfraFormalization.EmergentGravity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.EmergentGravitySkeleton.ofMultiwayCausalGraph	def	InfraFormalization.EmergentGravity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.EmergentGravitySkeleton.uniform	def	InfraFormalization.EmergentGravity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.EmergentGravitySkeleton.zero	def	InfraFormalization.EmergentGravity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.EnhancedPsi4.bbhEnhancedPsiFour_eR_id	def	InfraFormalization.EnhancedPsi4	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.EnhancedPsi4.bbh_enhanced_psi4_3	theorem	InfraFormalization.EnhancedPsi4	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.EnhancedPsi4.bbh_mod_sq_eR_id_3	theorem	InfraFormalization.EnhancedPsi4	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.EnhancedPsi4.enhancedPsiFour	def	InfraFormalization.EnhancedPsi4	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.EnhancedPsi4.enhanced_psi4_eR_id_3	theorem	InfraFormalization.EnhancedPsi4	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.EnhancedPsi4.enhanced_psi4_eR_id_4	theorem	InfraFormalization.EnhancedPsi4	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.EnhancedPsi4.enhanced_psi4_eR_id_trajectory	theorem	InfraFormalization.EnhancedPsi4	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.EnhancedPsi4.mod_sq_eR_id_3	theorem	InfraFormalization.EnhancedPsi4	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.EnhancedPsi4.mod_sq_eR_id_4	theorem	InfraFormalization.EnhancedPsi4	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.ExecRateBridge.ExecMetricOriginObligation	propdef	InfraFormalization.ExecRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecRateBridge.addDiscrepancy	def	InfraFormalization.ExecRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecRateBridge.addDiscrepancy_satisfies	theorem	InfraFormalization.ExecRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecRateBridge.deSitter_strong_from_exec_witness_trace_and_sys	theorem	InfraFormalization.ExecRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecRateBridge.discrepancyOfRate	def	InfraFormalization.ExecRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecRateBridge.discrepancyOfRate_satisfies	theorem	InfraFormalization.ExecRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecRateBridge.discrepancyOfRuleOverSeeds	def	InfraFormalization.ExecRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecRateBridge.discrepancyOfTrace	def	InfraFormalization.ExecRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecRateBridge.discrepancyOfTrace_satisfies_obligation	theorem	InfraFormalization.ExecRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecRateBridge.flrw_strong_from_exec_witness_trace_and_sys	theorem	InfraFormalization.ExecRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecRateBridge.minkowski4_strong_from_exec_witness	theorem	InfraFormalization.ExecRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecRateBridge.minkowski4_strong_from_exec_witness_trace	theorem	InfraFormalization.ExecRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecRateBridge.minkowski4_strong_from_exec_witness_trace_and_sys	theorem	InfraFormalization.ExecRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecRateBridge.minkowski4_strong_from_multi_seed	theorem	InfraFormalization.ExecRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecRateBridge.rate12Witnesses	def	InfraFormalization.ExecRateBridge	moved	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecRateBridge.rateBoundedAux_implies	theorem	InfraFormalization.ExecRateBridge	moved	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecRateBridge.rateBounded_implies	theorem	InfraFormalization.ExecRateBridge	moved	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecRateBridge.rn_strong_from_exec_witness_trace_and_sys	theorem	InfraFormalization.ExecRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecRateBridge.schwarzschild_strong_from_exec_witness	theorem	InfraFormalization.ExecRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecRateBridge.schwarzschild_strong_from_exec_witness_trace	theorem	InfraFormalization.ExecRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecRateBridge.schwarzschild_strong_from_exec_witness_trace_and_sys	theorem	InfraFormalization.ExecRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecRateBridge.sphere_strong_from_exec_witness_trace_and_sys	theorem	InfraFormalization.ExecRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecRateBridge.strong_obligation_from_exec_rate	theorem	InfraFormalization.ExecRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecRateBridge.strong_obligation_from_exec_rate_with_trace	theorem	InfraFormalization.ExecRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecRateBridge.strong_obligation_from_exec_rate_with_trace_and_sys	theorem	InfraFormalization.ExecRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecRateBridge.strong_obligation_from_stably_converges	theorem	InfraFormalization.ExecRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecRateBridge.strong_partial_obligation_from_exec_rate	theorem	InfraFormalization.ExecRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecRateBridge.strong_partial_obligation_from_exec_rate_with_trace	theorem	InfraFormalization.ExecRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecRateBridge.strong_partial_obligation_from_exec_rate_with_trace_and_sys	theorem	InfraFormalization.ExecRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecRateBridge.strong_partial_obligation_from_stably_converges	theorem	InfraFormalization.ExecRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecRateBridge.sumDiscrepancies	def	InfraFormalization.ExecRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecRateBridge.sumDiscrepancies_satisfies	theorem	InfraFormalization.ExecRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecRateBridge.warpedDiag2_strong_from_exec_witness_trace_and_sys	theorem	InfraFormalization.ExecRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecRateBridge.witnessRule0	def	InfraFormalization.ExecRateBridge	moved	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecRateBridge.witnessRule0_edge12_trace	def	InfraFormalization.ExecRateBridge	moved	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecRateBridge.witnessRule0_edge12_trace_rateBounded	theorem	InfraFormalization.ExecRateBridge	moved	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecRateBridge.witnessRule0_passes	theorem	InfraFormalization.ExecRateBridge	moved	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecTrajectoryLift.clampToFin	def	InfraFormalization.ExecTrajectoryLift	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecTrajectoryLift.execHGToFinHypergraph	def	InfraFormalization.ExecTrajectoryLift	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecTrajectoryLift.execMaxVertex	def	InfraFormalization.ExecTrajectoryLift	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecTrajectoryLift.execRunFinalHypergraph	def	InfraFormalization.ExecTrajectoryLift	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecTrajectoryLift.execRunFinalState	def	InfraFormalization.ExecTrajectoryLift	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecTrajectoryLift.execRunVertexBound	def	InfraFormalization.ExecTrajectoryLift	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecTrajectoryLift.flrw_strong_lifted	theorem	InfraFormalization.ExecTrajectoryLift	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecTrajectoryLift.liftExecRunInitial	def	InfraFormalization.ExecTrajectoryLift	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecTrajectoryLift.minkowski4_strong_lifted	theorem	InfraFormalization.ExecTrajectoryLift	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecTrajectoryLift.schwarzschild_strong_lifted	theorem	InfraFormalization.ExecTrajectoryLift	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecTrajectoryLift.strong_obligation_from_exec_rate_with_lifted_trajectory	theorem	InfraFormalization.ExecTrajectoryLift	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecTrajectoryLift.strong_partial_obligation_from_exec_rate_with_lifted_trajectory	theorem	InfraFormalization.ExecTrajectoryLift	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ExecTrajectoryLift.warpedDiag2_strong_lifted	theorem	InfraFormalization.ExecTrajectoryLift	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.FLRWObligationMet	propdef	InfraFormalization.ContinuumLimitStatement	deleted	conjoins False
+InfraFormalization.FiberedGraph.IsFlatConnection	propdef	InfraFormalization.Holonomy	deleted	quantifies over all lists, not closed paths
+InfraFormalization.FiberedGraph.LocallyTrivial	propdef	InfraFormalization.FiberBundle	deleted	definition equal to True
+InfraFormalization.FiberedGraph.SmoothSection	propdef	InfraFormalization.FiberedGraph	deleted	condition holds for every pair of base vertices
+InfraFormalization.FiberedGraph.flat_holonomy_all_fixed	theorem	InfraFormalization.Holonomy	deleted	restates the definition
+InfraFormalization.FormanRicciScreener	propdef	InfraFormalization.RuleSignatureScreener	deleted	screener determined by the initial state
+InfraFormalization.FormanRicciTriangleScreener	propdef	InfraFormalization.RuleSignatureScreener	deleted	screener determined by the initial state
+InfraFormalization.FubiniStudyLimitObligation	propdef	InfraFormalization.RemainingObligations	deleted	obligation that holds for every input, or a restated bound
+InfraFormalization.GREmergence.deSitter_quadDischarge	def	InfraFormalization.GREmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.GREmergence.flrw_quadDischarge	def	InfraFormalization.GREmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.GREmergence.minkowski4_full_dischargeCube	def	InfraFormalization.GREmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.GREmergence.minkowski4_quadDischarge	def	InfraFormalization.GREmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.GREmergence.minkowski4_quadDischarge_components	theorem	InfraFormalization.GREmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.GREmergence.minkowski4_seedTriple_degvariance	def	InfraFormalization.GREmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.GREmergence.minkowski4_seedTriple_forman	def	InfraFormalization.GREmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.GREmergence.minkowski4_seedTriple_higuchi	def	InfraFormalization.GREmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.GREmergence.minkowski4_seedTriple_transport	def	InfraFormalization.GREmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.GREmergence.numCurvatureFamilies	def	InfraFormalization.GREmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.GREmergence.numGRZooMetrics	def	InfraFormalization.GREmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.GREmergence.numWitnessSeeds	def	InfraFormalization.GREmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.GREmergence.rn_quadDischarge	def	InfraFormalization.GREmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.GREmergence.schwarzschild_quadDischarge	def	InfraFormalization.GREmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.GREmergence.sphere_quadDischarge	def	InfraFormalization.GREmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.GREmergence.totalDischargeCells	def	InfraFormalization.GREmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.GREmergence.warpedDiag2_quadDischarge	def	InfraFormalization.GREmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.GREmergence.zoo_strong_origin_obligations	theorem	InfraFormalization.GREmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.GridContinuumLimit.gridFormanSampleTrace_strictly_decreasing	theorem	InfraFormalization.GridContinuumLimit	renamed to gridFormanSampleTrace_eq	name claimed more than the statement
+InfraFormalization.GridContinuumLimit.gridHiguchiSampleTrace_strictly_decreasing	theorem	InfraFormalization.GridContinuumLimit	renamed to gridHiguchiSampleTrace_eq	name claimed more than the statement
+InfraFormalization.GridContinuumLimit.gridSquareCountSampleTrace_strictly_increasing	theorem	InfraFormalization.GridContinuumLimit	renamed to gridSquareCountSampleTrace_eq	name claimed more than the statement
+InfraFormalization.GridContinuumLimit.unweighted_scalars_fail_on_2d_grid	theorem	InfraFormalization.GridContinuumLimit	renamed to grid_4_4_scalars_nonzero	name claimed more than the statement
+InfraFormalization.H9BridgeStepProof.distinctEdgeCount_singleWayStep_empty	theorem	InfraFormalization.H9BridgeStepProof	renamed to distinctEdgeCount_fireAllStep_empty	name claimed more than the statement
+InfraFormalization.H9Closure.H9_combinatorial_closed	theorem	InfraFormalization.H9Closure	deleted	duplicate of triadList_length
+InfraFormalization.HiguchiRateBridge.ExecHiguchiMetricOriginObligation	propdef	InfraFormalization.HiguchiRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.HiguchiRateBridge.deSitter_strong_from_exec_witness_higuchi	theorem	InfraFormalization.HiguchiRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.HiguchiRateBridge.dossierHiguchiConvergesToAt	def	InfraFormalization.HiguchiRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.HiguchiRateBridge.flrw_strong_from_exec_witness_higuchi	theorem	InfraFormalization.HiguchiRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.HiguchiRateBridge.higuchiStableRateSelect	def	InfraFormalization.HiguchiRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.HiguchiRateBridge.higuchiStablyConvergesToAt	def	InfraFormalization.HiguchiRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.HiguchiRateBridge.minkowski4_strong_from_exec_witness_higuchi	theorem	InfraFormalization.HiguchiRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.HiguchiRateBridge.rn_strong_from_exec_witness_higuchi	theorem	InfraFormalization.HiguchiRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.HiguchiRateBridge.schwarzschild_strong_from_exec_witness_higuchi	theorem	InfraFormalization.HiguchiRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.HiguchiRateBridge.sphere_strong_from_exec_witness_higuchi	theorem	InfraFormalization.HiguchiRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.HiguchiRateBridge.strong_obligation_from_higuchi_rate	theorem	InfraFormalization.HiguchiRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.HiguchiRateBridge.strong_partial_obligation_from_higuchi_rate	theorem	InfraFormalization.HiguchiRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.HiguchiRateBridge.warpedDiag2_strong_from_exec_witness_higuchi	theorem	InfraFormalization.HiguchiRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.HiguchiRateBridge.witnessRule0_edge12_higuchiTrace	def	InfraFormalization.HiguchiRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.HiguchiRateBridge.witnessRule0_edge12_higuchiTrace_rateBounded	theorem	InfraFormalization.HiguchiRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Hypergraph.AreOrthogonalAxes	propdef	InfraFormalization.CoordinatizationDimension	deleted	definition ignores its arguments or names a property it does not state
+InfraFormalization.Hypergraph.HasCoordinatizationDim	propdef	InfraFormalization.CoordinatizationDimension	deleted	definition ignores its arguments or names a property it does not state
+InfraFormalization.Hypergraph.HasNontrivialHomology	propdef	InfraFormalization.HomologyDimension	deleted	definition ignores its arguments or names a property it does not state
+InfraFormalization.Hypergraph.HasNontrivialHomology_requires_simplex	theorem	InfraFormalization.HomologyDimension	deleted	definition ignores its arguments or names a property it does not state
+InfraFormalization.Hypergraph.IncidenceAxiom	propdef	InfraFormalization.SyntheticAxiomatic	deleted	holds for every hypergraph
+InfraFormalization.Hypergraph.IsAxis	propdef	InfraFormalization.CoordinatizationDimension	deleted	definition ignores its arguments or names a property it does not state
+InfraFormalization.Hypergraph.IsBounded	propdef	InfraFormalization.HypergraphTopology	deleted	holds for every argument
+InfraFormalization.Hypergraph.IsCellularStarOpen	propdef	InfraFormalization.HypergraphTopology	deleted	same body as IsAlexandrovOpen
+InfraFormalization.Hypergraph.IsDiscreteOpen	propdef	InfraFormalization.HypergraphTopology	deleted	definition equal to True
+InfraFormalization.Hypergraph.IsExtremalAxis	propdef	InfraFormalization.CoordinatizationDimension	deleted	definition ignores its arguments or names a property it does not state
+InfraFormalization.Hypergraph.IsGeometric	propdef	InfraFormalization.SyntheticAxiomatic	deleted	depends on the two definitions above
+InfraFormalization.Hypergraph.PersistenceBarcode	def	InfraFormalization.HodgeVR	deleted	type does not depend on its argument
+InfraFormalization.Hypergraph.RodkeyClassificationObligation	propdef	InfraFormalization.RodkeyClassification	deleted	restates a proved implication
+InfraFormalization.Hypergraph.UniquenessOfEndpoints	propdef	InfraFormalization.SyntheticAxiomatic	deleted	holds for every hypergraph
+InfraFormalization.Hypergraph.emptyBarcode	def	InfraFormalization.HodgeVR	deleted	depends on PersistenceBarcode
+InfraFormalization.Hypergraph.hasCoordinatizationDim_mono	theorem	InfraFormalization.CoordinatizationDimension	deleted	definition ignores its arguments or names a property it does not state
+InfraFormalization.Hypergraph.isBounded_of_finite	theorem	InfraFormalization.HypergraphTopology	deleted	holds for every argument
+InfraFormalization.Hypergraph.isDiscreteOpen_all	theorem	InfraFormalization.HypergraphTopology	deleted	statement is True after unfolding
+InfraFormalization.Hypergraph.rodkeyClassificationObligation_holds	theorem	InfraFormalization.RodkeyClassification	deleted	restates a proved implication
+InfraFormalization.Infra.causal_or_spacelike	theorem	InfraFormalization.Infra.LorentzLattice	deleted	propositional tautology
+InfraFormalization.Infra.causallyPrecedes_implies_minkowski	theorem	InfraFormalization.Infra.TrajectoryLorentz	renamed to causallyPrecedes_implies_lattice_time_order	name claimed more than the statement
+InfraFormalization.Infra.continuumCausal_or_spacelike	theorem	InfraFormalization.Infra.Minkowski	deleted	propositional tautology
+InfraFormalization.Infra.ghApprox_of_half_scale	theorem	InfraFormalization.Infra.GHApprox	deleted	existential witnessed by the given structure
+InfraFormalization.Infra.ollivier_vs_gorard_equivalence_requires_ric_eq_scalar	theorem	InfraFormalization.Infra.OllivierStatement	renamed to ollivier_gorard_leading_terms_eq_of_both	name claimed more than the statement
+InfraFormalization.InfraMeasure.w1ProductUpper	def	InfraFormalization.InfraMeasure	renamed to w1ProductCost	name claimed more than the statement
+InfraFormalization.IsProductSystem	propdef	InfraFormalization.StructuralRuleBounds	deleted	holds for every system with two rules
+InfraFormalization.KerrObligationMet	propdef	InfraFormalization.ContinuumLimitStatement	deleted	conjoins False
+InfraFormalization.KnillDiscreteGaussBonnet.knill_fixes_forman_triangulation_dependence	theorem	InfraFormalization.KnillDiscreteGaussBonnet	renamed to forman_and_knill_values_S2_triangulations	name claimed more than the statement
+InfraFormalization.KnillDiscreteGaussBonnet.knill_triangulation_independent_on_S2	theorem	InfraFormalization.KnillDiscreteGaussBonnet	renamed to knill_values_three_S2_triangulations	name claimed more than the statement
+InfraFormalization.KnillHigherGenus.knill_torus_triangulation_independent	theorem	InfraFormalization.KnillHigherGenus	renamed to knill_values_torus_triangulations	name claimed more than the statement
+InfraFormalization.KnillRuleBridge.knill_rewriting_bridge	theorem	InfraFormalization.KnillRuleBridge	renamed to knill_path_subdivision_disjoint_values	name claimed more than the statement
+InfraFormalization.KnillRuleBridge.subdivision_preserves_knill_euler	theorem	InfraFormalization.KnillRuleBridge	renamed to subdivision_knill_at_steps_0_to_3	name claimed more than the statement
+InfraFormalization.KnillThreeManifold.knill_dimension_independent_chi	theorem	InfraFormalization.KnillThreeManifold	renamed to knill_values_tetrahedron_and_k5	name claimed more than the statement
+InfraFormalization.LatschevObligation	propdef	InfraFormalization.RemainingObligations	deleted	obligation that holds for every input, or a restated bound
+InfraFormalization.LiteratureRules.minkowski4_strong_from_triangleClosureRule_triangle	theorem	InfraFormalization.LiteratureRules	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.LorentzianGHObligation	propdef	InfraFormalization.LorentzianGH	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.LorentzianGHRateObligation	propdef	InfraFormalization.LorentzianGH	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.MergerGrowthDepthTrajectory.doubleCycle_5_depth4_knill_neg6	theorem	InfraFormalization.MergerGrowthDepthTrajectory	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.MergerGrowthDepthTrajectory.doubleCycle_5_depth5_knill_neg30	theorem	InfraFormalization.MergerGrowthDepthTrajectory	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.MergerGrowthDepthTrajectory.edgeReversal_depth4_knill_0	theorem	InfraFormalization.MergerGrowthDepthTrajectory	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.MergerGrowthDepthTrajectory.edgeReversal_depth5_knill_neg6	theorem	InfraFormalization.MergerGrowthDepthTrajectory	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.MergerGrowthDepthTrajectory.edgeReversal_depth6_knill_neg18	theorem	InfraFormalization.MergerGrowthDepthTrajectory	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.MergerGrowthDepthTrajectory.merger_class_event_multiplication	theorem	InfraFormalization.MergerGrowthDepthTrajectory	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.MergerGrowthDepthTrajectory.tripleMerger_depth4_knill_neg12	theorem	InfraFormalization.MergerGrowthDepthTrajectory	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.MergerGrowthDepthTrajectory.tripleMerger_depth5_knill_neg66	theorem	InfraFormalization.MergerGrowthDepthTrajectory	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.MetricSignatureEvolution.eR_fork_metric_2	theorem	InfraFormalization.MetricSignatureEvolution	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.MetricSignatureEvolution.eR_fork_metric_4	theorem	InfraFormalization.MetricSignatureEvolution	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.MetricSignatureEvolution.eR_fork_persistently_lorentzian	theorem	InfraFormalization.MetricSignatureEvolution	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.MetricSignatureEvolution.eR_id_metric_2	theorem	InfraFormalization.MetricSignatureEvolution	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.MetricSignatureEvolution.eR_id_metric_4	theorem	InfraFormalization.MetricSignatureEvolution	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.MetricSignatureEvolution.eR_id_signature_changes	theorem	InfraFormalization.MetricSignatureEvolution	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.MetricSignatureEvolution.signature_evolution_dichotomy	theorem	InfraFormalization.MetricSignatureEvolution	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.MetricTargetScalars.degVarianceTarget	def	InfraFormalization.MetricTargetScalars	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.MetricTargetScalars.degVarianceTargetPartial	def	InfraFormalization.MetricTargetScalars	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.MetricTargetScalars.formanTarget	def	InfraFormalization.MetricTargetScalars	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.MetricTargetScalars.formanTargetPartial	def	InfraFormalization.MetricTargetScalars	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.MetricTargetScalars.higuchiTarget	def	InfraFormalization.MetricTargetScalars	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.MetricTargetScalars.higuchiTargetPartial	def	InfraFormalization.MetricTargetScalars	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.MetricTargetScalars.minkowski4_strong_coupled	theorem	InfraFormalization.MetricTargetScalars	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.MetricTargetScalars.schwarzschild_strong_coupled	theorem	InfraFormalization.MetricTargetScalars	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.MetricTargetScalars.sphere_strong_coupled	theorem	InfraFormalization.MetricTargetScalars	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.MetricTargetScalars.squareCountTarget	def	InfraFormalization.MetricTargetScalars	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.MetricTargetScalars.squareCountTargetPartial	def	InfraFormalization.MetricTargetScalars	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.MetricTargetScalars.strong_obligation_from_exec_rate_with_metric_coupled_tgt	theorem	InfraFormalization.MetricTargetScalars	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.MetricTargetScalars.strong_partial_obligation_from_exec_rate_with_metric_coupled_tgt	theorem	InfraFormalization.MetricTargetScalars	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.MetricTargetScalars.transportTarget	def	InfraFormalization.MetricTargetScalars	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.MetricTargetScalars.transportTargetPartial	def	InfraFormalization.MetricTargetScalars	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.MetricTargetScalars.warpedDiag2_strong_coupled	theorem	InfraFormalization.MetricTargetScalars	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.MetricTargetScalars.witnessRule0_edge12_formanTarget_minkowski4_rateBounded	theorem	InfraFormalization.MetricTargetScalars	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.MetricTargetScalars.witnessRule0_edge12_formanTarget_spherePartial_rateBounded	theorem	InfraFormalization.MetricTargetScalars	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Milestone.BBH_emerges_from_hypergraph	propdef	InfraFormalization.Milestone	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Milestone.BBH_emerges_from_hypergraph_holds	theorem	InfraFormalization.Milestone	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Milestone.BornRuleEmerges	propdef	InfraFormalization.Milestone	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Milestone.BornRuleEmerges_zero	theorem	InfraFormalization.Milestone	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Milestone.BranchialEvolutionConvergesTo	propdef	InfraFormalization.Milestone	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Milestone.BranchialEvolutionConvergesTo_zero	theorem	InfraFormalization.Milestone	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Milestone.BranchialHilbertConvergesTo	propdef	InfraFormalization.Milestone	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Milestone.BranchialHilbertConvergesTo_zero	theorem	InfraFormalization.Milestone	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Milestone.ConnectionConvergesTo	propdef	InfraFormalization.Milestone	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Milestone.ConnectionConvergesTo_zero	theorem	InfraFormalization.Milestone	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Milestone.DiscreteStressEnergyEmerges	propdef	InfraFormalization.Milestone	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Milestone.DiscreteStressEnergyEmerges_zero	theorem	InfraFormalization.Milestone	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Milestone.DistConvergesTo	propdef	InfraFormalization.Milestone	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Milestone.DistConvergesTo_zero	theorem	InfraFormalization.Milestone	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Milestone.EinsteinFieldEquationsHold	propdef	InfraFormalization.Milestone	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Milestone.EinsteinFieldEquationsHold_zero	theorem	InfraFormalization.Milestone	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Milestone.GR_emerges_from_hypergraph	propdef	InfraFormalization.Milestone	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Milestone.GR_emerges_from_hypergraph_flrw	propdef	InfraFormalization.Milestone	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Milestone.GR_emerges_from_hypergraph_holds	theorem	InfraFormalization.Milestone	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Milestone.GR_emerges_from_hypergraph_minkowski	propdef	InfraFormalization.Milestone	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Milestone.GR_emerges_from_hypergraph_schwarzschild	propdef	InfraFormalization.Milestone	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Milestone.GR_emerges_from_some_hypergraph	propdef	InfraFormalization.Milestone	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Milestone.InitialDataMatches	propdef	InfraFormalization.Milestone	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Milestone.InitialDataMatches_zero	theorem	InfraFormalization.Milestone	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Milestone.Psi4Matches	propdef	InfraFormalization.Milestone	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Milestone.Psi4Matches_zero	theorem	InfraFormalization.Milestone	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Milestone.QM_emerges_from_hypergraph	propdef	InfraFormalization.Milestone	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Milestone.QM_emerges_from_hypergraph_holds	theorem	InfraFormalization.Milestone	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Milestone.RiemannTensorConvergesTo	propdef	InfraFormalization.Milestone	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Milestone.RiemannTensorConvergesTo_zero	theorem	InfraFormalization.Milestone	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Milestone.emptyTrajectory	def	InfraFormalization.Milestone	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.Milestone.zero_rate_obligation	theorem	InfraFormalization.Milestone	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.MultiDimDiscrepancy	def	InfraFormalization.MeasureTorusLift	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.MultiDimRateObligation	propdef	InfraFormalization.MeasureTorusLift	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.MultiDimRateTendsto	propdef	InfraFormalization.MeasureTorusLift	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.MultiRuleDepthTrajectory.bbh_phase_structure_signature	theorem	InfraFormalization.MultiRuleDepthTrajectory	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.MultiRuleDepthTrajectory.edgeReversal_fork_depth2	theorem	InfraFormalization.MultiRuleDepthTrajectory	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.MultiRuleDepthTrajectory.edgeReversal_fork_depth4	theorem	InfraFormalization.MultiRuleDepthTrajectory	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.MultiRuleDepthTrajectory.edgeReversal_fork_depth5_regresses	theorem	InfraFormalization.MultiRuleDepthTrajectory	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.MultiRuleDepthTrajectory.edgeReversal_identity_depth2	theorem	InfraFormalization.MultiRuleDepthTrajectory	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.MultiRuleDepthTrajectory.edgeReversal_identity_depth4_closes	theorem	InfraFormalization.MultiRuleDepthTrajectory	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.MultiRuleDepthTrajectory.edgeReversal_tripleMerger_depth2	theorem	InfraFormalization.MultiRuleDepthTrajectory	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.MultiRuleDepthTrajectory.edgeReversal_tripleMerger_depth4	theorem	InfraFormalization.MultiRuleDepthTrajectory	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.MultiRuleDepthTrajectory.new_high_merger_champion	theorem	InfraFormalization.MultiRuleDepthTrajectory	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.MultiRuleDepthTrajectory.transient_causal_bubble	theorem	InfraFormalization.MultiRuleDepthTrajectory	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.MultiRuleDiscovered.highest_merger_rate_multi_rule	theorem	InfraFormalization.MultiRuleDiscovered	deleted	name claims more than finite values
+InfraFormalization.MultiRuleRDivergence.R_eR_dCyc_4	theorem	InfraFormalization.MultiRuleRDivergence	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.MultiRuleRDivergence.R_eR_fork_4	theorem	InfraFormalization.MultiRuleRDivergence	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.MultiRuleRDivergence.R_eR_id_4	theorem	InfraFormalization.MultiRuleRDivergence	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.MultiRuleRDivergence.R_eR_tripleMerger_4	theorem	InfraFormalization.MultiRuleRDivergence	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.MultiRuleRDivergence.R_fork_dCyc_4	theorem	InfraFormalization.MultiRuleRDivergence	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.MultiRuleRDivergence.R_product_combination_fails	theorem	InfraFormalization.MultiRuleRDivergence	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.MultiRuleRDivergence.R_sum_combination_fails	theorem	InfraFormalization.MultiRuleRDivergence	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.MultiRuleRDivergence.multi_rule_R_divergence	theorem	InfraFormalization.MultiRuleRDivergence	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.MultiScreener	propdef	InfraFormalization.RuleSignatureScreener	deleted	screener determined by the initial state
+InfraFormalization.MultiwayExec.exec_lifts_well_formed	theorem	InfraFormalization.MultiwayExecBridge	deleted	existential witnessed by the given objects
+InfraFormalization.NormalizedDensityLimits.bulk_curvature_density_constants	theorem	InfraFormalization.NormalizedDensityLimits	deleted	constant sequence tends to its value
+InfraFormalization.NormalizedDensityLimits.constantNeg16Trace	def	InfraFormalization.NormalizedDensityLimits	deleted	constant sequence tends to its value
+InfraFormalization.NormalizedDensityLimits.constantNeg16Trace_tendsto	theorem	InfraFormalization.NormalizedDensityLimits	deleted	constant sequence tends to its value
+InfraFormalization.NormalizedDensityLimits.constantNeg2Trace	def	InfraFormalization.NormalizedDensityLimits	deleted	constant sequence tends to its value
+InfraFormalization.NormalizedDensityLimits.constantNeg2Trace_tendsto	theorem	InfraFormalization.NormalizedDensityLimits	deleted	constant sequence tends to its value
+InfraFormalization.NormalizedDensityLimits.torusFormanPerArea	def	InfraFormalization.NormalizedDensityLimits	deleted	constant sequence tends to its value
+InfraFormalization.NormalizedDensityLimits.torusHiguchiPerArea	def	InfraFormalization.NormalizedDensityLimits	deleted	constant sequence tends to its value
+InfraFormalization.NormalizedDensityLimits.torus_forman_perArea_const_tendsto_neg16	theorem	InfraFormalization.NormalizedDensityLimits	deleted	constant sequence tends to its value
+InfraFormalization.NormalizedDensityLimits.torus_higuchi_perArea_const_tendsto_neg2	theorem	InfraFormalization.NormalizedDensityLimits	deleted	constant sequence tends to its value
+InfraFormalization.OllivierRicciExec.ollivierRicciEdgeUpper	def	InfraFormalization.OllivierRicciExec	renamed to ollivierRicciEdgeProduct	name claimed more than the statement
+InfraFormalization.OllivierRicciExec.w1NeighbourhoodUpper	def	InfraFormalization.OllivierRicciExec	renamed to w1NeighbourhoodProduct	name claimed more than the statement
+InfraFormalization.PathContinuumLimit.constantFourTrace	def	InfraFormalization.PathContinuumLimit	deleted	constant sequence tends to its value
+InfraFormalization.PathContinuumLimit.constantFourTrace_tendsto_four	theorem	InfraFormalization.PathContinuumLimit	deleted	constant sequence tends to its value
+InfraFormalization.PathContinuumLimit.constantTwoTrace	def	InfraFormalization.PathContinuumLimit	deleted	constant sequence tends to its value
+InfraFormalization.PathContinuumLimit.constantTwoTrace_tendsto_two	theorem	InfraFormalization.PathContinuumLimit	deleted	constant sequence tends to its value
+InfraFormalization.PathContinuumLimit.degVariance_fails_on_path	theorem	InfraFormalization.PathContinuumLimit	renamed to path_degVariance_values_differ	name claimed more than the statement
+InfraFormalization.PathContinuumLimit.pathDegVarianceSampleTrace_strictly_increasing	theorem	InfraFormalization.PathContinuumLimit	renamed to pathDegVarianceSampleTrace_eq	name claimed more than the statement
+InfraFormalization.PathContinuumLimit.path_forman_trueLimit_converges_to_4	theorem	InfraFormalization.PathContinuumLimit	deleted	constant sequence tends to its value
+InfraFormalization.PathContinuumLimit.path_higuchi_trueLimit_converges_to_2	theorem	InfraFormalization.PathContinuumLimit	deleted	constant sequence tends to its value
+InfraFormalization.PathContinuumLimit.path_lattice_multiscalar_continuum_limit	theorem	InfraFormalization.PathContinuumLimit	deleted	constant sequence tends to its value
+InfraFormalization.PathContinuumLimit.path_squareCount_trueLimit_zero	theorem	InfraFormalization.PathContinuumLimit	deleted	constant sequence tends to its value
+InfraFormalization.PathIntegralAmplitude	structure	InfraFormalization.PathIntegralCausalGraph	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.PathIntegralAmplitude.normSq_le_one	theorem	InfraFormalization.PathIntegralCausalGraph	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.PathIntegralAmplitude.pullback	def	InfraFormalization.PathIntegralCausalGraph	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.PathIntegralAmplitude.pullback_zero	theorem	InfraFormalization.PathIntegralCausalGraph	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.PathIntegralAmplitude.totalProbability	def	InfraFormalization.PathIntegralCausalGraph	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.PathIntegralAmplitude.totalProbability_le_one	theorem	InfraFormalization.PathIntegralCausalGraph	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.PathIntegralAmplitude.totalProbability_nonneg	theorem	InfraFormalization.PathIntegralCausalGraph	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.PathIntegralAmplitude.zero	def	InfraFormalization.PathIntegralCausalGraph	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.PathIntegralAmplitude.zero_totalProbability_zero	theorem	InfraFormalization.PathIntegralCausalGraph	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.PathIntegralAmplitude.α	def	InfraFormalization.PathIntegralCausalGraph	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.PathIntegralObligation	propdef	InfraFormalization.RemainingObligations	deleted	obligation that holds for every input, or a restated bound
+InfraFormalization.PenroseSingularityObligation	propdef	InfraFormalization.StressEnergyTensor	deleted	Props unrelated to the stress-energy tensor
+InfraFormalization.PerEdgeAdditivityFramework.BBH_per_edge_universal_target	propdef	InfraFormalization.PerEdgeAdditivityFramework	deleted	definition equal to True
+InfraFormalization.PerEdgeAdditivityFramework.two_disjoint_edge_per_edge_additivity	theorem	InfraFormalization.PerEdgeAdditivityFramework	deleted	specialisation of its own hypothesis
+InfraFormalization.PersistentBEquivalence.B_d5_eR_tripleMerger	theorem	InfraFormalization.PersistentBEquivalence	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.PersistentBEquivalence.B_d5_fork_dCyc	theorem	InfraFormalization.PersistentBEquivalence	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.PersistentBEquivalence.B_geometric_growth_pattern	theorem	InfraFormalization.PersistentBEquivalence	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.PersistentBEquivalence.persistent_B_equivalence_4_depths	theorem	InfraFormalization.PersistentBEquivalence	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.PersistentRDegeneracy.B_fork_dCyc_2	theorem	InfraFormalization.PersistentRDegeneracy	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.PersistentRDegeneracy.B_fork_dCyc_4	theorem	InfraFormalization.PersistentRDegeneracy	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.PersistentRDegeneracy.B_grows_under_R_persistence	theorem	InfraFormalization.PersistentRDegeneracy	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.PersistentRDegeneracy.R_fork_dCyc_2	theorem	InfraFormalization.PersistentRDegeneracy	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.PersistentRDegeneracy.R_fork_dCyc_4	theorem	InfraFormalization.PersistentRDegeneracy	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.PersistentRDegeneracy.persistent_R_degeneracy	theorem	InfraFormalization.PersistentRDegeneracy	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.PersistentScalingExponent.PersistentScalingExponentConjecture	propdef	InfraFormalization.PersistentScalingExponent	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.PersistentScalingExponent.PersistentScalingExponentConjecture_verified_through_5	theorem	InfraFormalization.PersistentScalingExponent	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.PersistentScalingExponent.persistent_class_scaling_form	theorem	InfraFormalization.PersistentScalingExponent	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.PersistentScalingExponent.scaling_exponent_3_d2	theorem	InfraFormalization.PersistentScalingExponent	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.PersistentScalingExponent.scaling_exponent_3_d3	theorem	InfraFormalization.PersistentScalingExponent	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.PersistentScalingExponent.scaling_exponent_3_d4	theorem	InfraFormalization.PersistentScalingExponent	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.PersistentScalingExponent.scaling_exponent_3_d5	theorem	InfraFormalization.PersistentScalingExponent	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.Phase_D_FrameworkOverview.phase_D_framework_complete	theorem	InfraFormalization.Phase_D_FrameworkOverview	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.PolynomialDensityLimits.bulk_curvature_density_dimension_pattern	theorem	InfraFormalization.PolynomialDensityLimits	deleted	constant sequence tends to its value
+InfraFormalization.PolynomialDensityLimits.grid_forman_perArea_tendsto_neg16	theorem	InfraFormalization.PolynomialDensityLimits	renamed to gridFormanClosedForm_div_sq_tendsto_neg16	name claimed more than the statement
+InfraFormalization.PolynomialDensityLimits.grid_higuchi_perArea_tendsto_neg2	theorem	InfraFormalization.PolynomialDensityLimits	renamed to gridHiguchiClosedForm_div_sq_tendsto_neg2	name claimed more than the statement
+InfraFormalization.PolynomialDensityLimits.torus3FormanPerVolume	def	InfraFormalization.PolynomialDensityLimits	deleted	constant sequence tends to its value
+InfraFormalization.PolynomialDensityLimits.torus3HiguchiPerVolume	def	InfraFormalization.PolynomialDensityLimits	deleted	constant sequence tends to its value
+InfraFormalization.PolynomialDensityLimits.torus3_forman_perVolume_const_tendsto_neg48	theorem	InfraFormalization.PolynomialDensityLimits	deleted	constant sequence tends to its value
+InfraFormalization.PolynomialDensityLimits.torus3_higuchi_perVolume_const_tendsto_neg4	theorem	InfraFormalization.PolynomialDensityLimits	deleted	constant sequence tends to its value
+InfraFormalization.PsiFourScalingOpen.DiscretePsiFourScalingHolds	propdef	InfraFormalization.PsiFourScalingOpen	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.PsiFourScalingOpen.DiscretePsiFourScalingNonTrivial	propdef	InfraFormalization.PsiFourScalingOpen	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.PsiFourScalingOpen.zeroScalingHoldsTrivially	theorem	InfraFormalization.PsiFourScalingOpen	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.QMEmergence.HypergraphQuantumOriginObligationStrong	propdef	InfraFormalization.QMEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.QMEmergence.QuantumTarget	structure	InfraFormalization.QMEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.QMEmergence.QuantumTarget.dim	def	InfraFormalization.QMEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.QMEmergence.QuantumTarget.dim_pos	theorem	InfraFormalization.QMEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.QMEmergence.numCurvatureFamilies	def	InfraFormalization.QMEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.QMEmergence.numQMZooTargets	def	InfraFormalization.QMEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.QMEmergence.numWitnessSeeds	def	InfraFormalization.QMEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.QMEmergence.quantum_strong_origin_obligations	theorem	InfraFormalization.QMEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.QMEmergence.quantum_target_strong_from_exec_witness_forman	theorem	InfraFormalization.QMEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.QMEmergence.qubit	def	InfraFormalization.QMEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.QMEmergence.qubit_quintDischarge	def	InfraFormalization.QMEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.QMEmergence.qubit_strong_from_exec_witness_degvariance	theorem	InfraFormalization.QMEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.QMEmergence.qubit_strong_from_exec_witness_forman	theorem	InfraFormalization.QMEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.QMEmergence.qubit_strong_from_exec_witness_higuchi	theorem	InfraFormalization.QMEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.QMEmergence.qubit_strong_from_exec_witness_squarecount	theorem	InfraFormalization.QMEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.QMEmergence.qubit_strong_from_exec_witness_transport	theorem	InfraFormalization.QMEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.QMEmergence.qudit	def	InfraFormalization.QMEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.QMEmergence.quditEight	def	InfraFormalization.QMEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.QMEmergence.quditFour	def	InfraFormalization.QMEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.QMEmergence.qudit_strong_from_exec_witness_forman	theorem	InfraFormalization.QMEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.QMEmergence.qudit_strong_from_exec_witness_squarecount	theorem	InfraFormalization.QMEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.QMEmergence.qutrit	def	InfraFormalization.QMEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.QMEmergence.qutrit_quintDischarge	def	InfraFormalization.QMEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.QMEmergence.qutrit_strong_from_exec_witness_degvariance	theorem	InfraFormalization.QMEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.QMEmergence.qutrit_strong_from_exec_witness_forman	theorem	InfraFormalization.QMEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.QMEmergence.qutrit_strong_from_exec_witness_higuchi	theorem	InfraFormalization.QMEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.QMEmergence.qutrit_strong_from_exec_witness_squarecount	theorem	InfraFormalization.QMEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.QMEmergence.qutrit_strong_from_exec_witness_transport	theorem	InfraFormalization.QMEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.QMEmergence.strong_quantum_obligation_from_degvariance_rate	theorem	InfraFormalization.QMEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.QMEmergence.strong_quantum_obligation_from_forman_rate	theorem	InfraFormalization.QMEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.QMEmergence.strong_quantum_obligation_from_higuchi_rate	theorem	InfraFormalization.QMEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.QMEmergence.strong_quantum_obligation_from_squarecount_rate	theorem	InfraFormalization.QMEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.QMEmergence.strong_quantum_obligation_from_transport_rate	theorem	InfraFormalization.QMEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.QMEmergence.totalQMDischargeCells	def	InfraFormalization.QMEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.QMEmergence.zoo_and_quantum_strong_origin_obligations	theorem	InfraFormalization.QMEmergence	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.QuantumSpacetimeSkeleton	structure	InfraFormalization.LQGComparison	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.QuantumSpacetimeSkeleton.amp_nonneg	theorem	InfraFormalization.LQGComparison	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.QuantumSpacetimeSkeleton.amplitudeNorm	def	InfraFormalization.LQGComparison	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.QuantumSpacetimeSkeleton.edge	propdef	InfraFormalization.LQGComparison	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.QuantumSpacetimeSkeleton.ofMultiwayCausalGraph	def	InfraFormalization.LQGComparison	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.QuantumSpacetimeSkeleton.trivial	def	InfraFormalization.LQGComparison	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.QuantumSpacetimeSkeleton.trivial_amplitude_const	theorem	InfraFormalization.LQGComparison	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.RClosedForm.R_explicit_closed_form_d3	theorem	InfraFormalization.RClosedForm	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.RClosedForm.R_explicit_closed_form_d4	theorem	InfraFormalization.RClosedForm	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.RClosedForm.R_explicit_closed_form_d5	theorem	InfraFormalization.RClosedForm	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.RClosedForm.R_plus_B_closed_form	theorem	InfraFormalization.RClosedForm	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.RClosedForm.R_plus_B_d2	theorem	InfraFormalization.RClosedForm	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.RClosedForm.R_plus_B_d3	theorem	InfraFormalization.RClosedForm	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.RClosedForm.R_plus_B_d4	theorem	InfraFormalization.RClosedForm	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.RClosedForm.R_plus_B_d5	theorem	InfraFormalization.RClosedForm	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.RGrowthRates.R_eR_dCyc_4	theorem	InfraFormalization.RGrowthRates	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.RGrowthRates.R_eR_dCyc_5	theorem	InfraFormalization.RGrowthRates	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.RGrowthRates.R_eR_tripleMerger_5	theorem	InfraFormalization.RGrowthRates	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.RGrowthRates.R_growth_rates_decreasing	theorem	InfraFormalization.RGrowthRates	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.RGrowthRates.eR_dCyc_R_growth	theorem	InfraFormalization.RGrowthRates	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.RGrowthRates.eR_tripleMerger_R_growth	theorem	InfraFormalization.RGrowthRates	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.RZeroCrossings.R_sign_reversal_eR_id	theorem	InfraFormalization.RZeroCrossings	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.RZeroCrossings.R_zero_classification	theorem	InfraFormalization.RZeroCrossings	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.RZeroCrossings.eR_dCyc_R_2_zero	theorem	InfraFormalization.RZeroCrossings	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.RZeroCrossings.eR_fork_R_5_neg36	theorem	InfraFormalization.RZeroCrossings	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.RZeroCrossings.eR_id_R_5_132	theorem	InfraFormalization.RZeroCrossings	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.RZeroCrossings.eR_tripleMerger_R_2_zero	theorem	InfraFormalization.RZeroCrossings	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.RZeroCrossings.persistent_lorentzian_eR_fork	theorem	InfraFormalization.RZeroCrossings	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.RZeroCrossings.vacuum_initialization	theorem	InfraFormalization.RZeroCrossings	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.RaychaudhuriFocusingObligation	propdef	InfraFormalization.StressEnergyTensor	deleted	bare real inequality
+InfraFormalization.Refutations.AsymptoticDimPreservation	propdef	InfraFormalization.Refutations.F3Tautology	deleted	Iff.rfl between definitions with equal bodies
+InfraFormalization.Refutations.CausalInvariance	propdef	InfraFormalization.Refutations.F4Tautology	deleted	Iff.rfl between definitions with equal bodies
+InfraFormalization.Refutations.CircularReconstruction	structure	InfraFormalization.Refutations.F6Circularity	deleted	statement does not concern the paper
+InfraFormalization.Refutations.CircularReconstruction.comp_eq_id	theorem	InfraFormalization.Refutations.F6Circularity	deleted	statement does not concern the paper
+InfraFormalization.Refutations.CircularReconstruction.is_circular	theorem	InfraFormalization.Refutations.F6Circularity	deleted	statement does not concern the paper
+InfraFormalization.Refutations.CircularReconstruction.reconstruct	def	InfraFormalization.Refutations.F6Circularity	deleted	statement does not concern the paper
+InfraFormalization.Refutations.CircularReconstruction.sample	def	InfraFormalization.Refutations.F6Circularity	deleted	statement does not concern the paper
+InfraFormalization.Refutations.ConvergenceNotion	def	InfraFormalization.Refutations.F5Illdefined	deleted	statement does not concern the paper
+InfraFormalization.Refutations.DHyp	structure	InfraFormalization.Refutations.F1NoMetric	deleted	statement does not concern the paper
+InfraFormalization.Refutations.DHyp.edges	propdef	InfraFormalization.Refutations.F1NoMetric	deleted	statement does not concern the paper
+InfraFormalization.Refutations.DiscreteGeneralCovariance	propdef	InfraFormalization.Refutations.F4Tautology	deleted	Iff.rfl between definitions with equal bodies
+InfraFormalization.Refutations.EulerLagrange	propdef	InfraFormalization.Refutations.F3Tautology	deleted	Iff.rfl between definitions with equal bodies
+InfraFormalization.Refutations.EventuallyEquals	propdef	InfraFormalization.Refutations.F5Illdefined	deleted	statement does not concern the paper
+InfraFormalization.Refutations.Form	def	InfraFormalization.Refutations.F2Orthonormality	deleted	statement does not concern the paper
+InfraFormalization.Refutations.MetricConstruction	def	InfraFormalization.Refutations.F1NoMetric	deleted	statement does not concern the paper
+InfraFormalization.Refutations.Orthonormal	propdef	InfraFormalization.Refutations.F2Orthonormality	deleted	statement does not concern the paper
+InfraFormalization.Refutations.StandardLimit	propdef	InfraFormalization.Refutations.F5Illdefined	deleted	statement does not concern the paper
+InfraFormalization.Refutations.VariationalSetup	structure	InfraFormalization.Refutations.F3Tautology	deleted	Iff.rfl between definitions with equal bodies
+InfraFormalization.Refutations.VariationalSetup.variation	def	InfraFormalization.Refutations.F3Tautology	deleted	Iff.rfl between definitions with equal bodies
+InfraFormalization.Refutations.action_depends_on_construction_choice	theorem	InfraFormalization.Refutations.F1NoMetric	deleted	statement does not concern the paper
+InfraFormalization.Refutations.asymptoticDimPreservation_iff_eulerLagrange	theorem	InfraFormalization.Refutations.F3Tautology	deleted	Iff.rfl between definitions with equal bodies
+InfraFormalization.Refutations.becomes_is_underdetermined	theorem	InfraFormalization.Refutations.F5Illdefined	deleted	statement does not concern the paper
+InfraFormalization.Refutations.causalInvariance_iff_discreteGeneralCovariance	theorem	InfraFormalization.Refutations.F4Tautology	deleted	Iff.rfl between definitions with equal bodies
+InfraFormalization.Refutations.claim_is_vacuous_without_convergence_notion	theorem	InfraFormalization.Refutations.F5Illdefined	deleted	statement does not concern the paper
+InfraFormalization.Refutations.different_notions_give_different_limits	theorem	InfraFormalization.Refutations.F5Illdefined	deleted	statement does not concern the paper
+InfraFormalization.Refutations.hypergraph_does_not_determine_metric	theorem	InfraFormalization.Refutations.F1NoMetric	deleted	statement does not concern the paper
+InfraFormalization.Refutations.invSucc	def	InfraFormalization.Refutations.F5Illdefined	deleted	statement does not concern the paper
+InfraFormalization.Refutations.invSucc_ne_zero	theorem	InfraFormalization.Refutations.F5Illdefined	deleted	statement does not concern the paper
+InfraFormalization.Refutations.invSucc_not_eventuallyEquals_zero	theorem	InfraFormalization.Refutations.F5Illdefined	deleted	statement does not concern the paper
+InfraFormalization.Refutations.invSucc_pos	theorem	InfraFormalization.Refutations.F5Illdefined	deleted	statement does not concern the paper
+InfraFormalization.Refutations.invSucc_standardLimit_zero	theorem	InfraFormalization.Refutations.F5Illdefined	deleted	statement does not concern the paper
+InfraFormalization.Refutations.metric_construction_is_never_unique	theorem	InfraFormalization.Refutations.F1NoMetric	deleted	statement does not concern the paper
+InfraFormalization.Refutations.no_canonical_metric_from_hypergraph_alone	theorem	InfraFormalization.Refutations.F1NoMetric	deleted	statement does not concern the paper
+InfraFormalization.Refutations.orthonormalising_form_not_unique	theorem	InfraFormalization.Refutations.F2Orthonormality	deleted	statement does not concern the paper
+InfraFormalization.Refutations.orthonormality_depends_on_form	theorem	InfraFormalization.Refutations.F2Orthonormality	deleted	statement does not concern the paper
+InfraFormalization.RefutationsSoundGivenObligationsOpen	propdef	InfraFormalization.ContinuumLimitStatement	deleted	holds because the obligations contain False
+InfraFormalization.ReverseEngineeringObligation	propdef	InfraFormalization.RemainingObligations	deleted	obligation that holds for every input, or a restated bound
+InfraFormalization.ReverseEngineeringObligationRefined	propdef	InfraFormalization.RemainingObligations	deleted	obligation that holds for every input, or a restated bound
+InfraFormalization.RicciScalarDepthTrajectory.R_depth_trajectory_three_classes	theorem	InfraFormalization.RicciScalarDepthTrajectory	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.RicciScalarDepthTrajectory.R_doubleCycle_5_5	theorem	InfraFormalization.RicciScalarDepthTrajectory	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.RicciScalarDepthTrajectory.R_edgeReversal_4	theorem	InfraFormalization.RicciScalarDepthTrajectory	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.RicciScalarDepthTrajectory.R_edgeReversal_6	theorem	InfraFormalization.RicciScalarDepthTrajectory	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.RicciScalarDepthTrajectory.R_identityKeep_5	theorem	InfraFormalization.RicciScalarDepthTrajectory	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.RicciScalarDepthTrajectory.R_universal_at_depth3_doubleCycle_5	theorem	InfraFormalization.RicciScalarDepthTrajectory	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.RicciScalarDepthTrajectory.R_universal_at_depth3_edgeReversal	theorem	InfraFormalization.RicciScalarDepthTrajectory	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.RicciScalarDepthTrajectory.R_universal_at_depth3_identityKeep	theorem	InfraFormalization.RicciScalarDepthTrajectory	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.RicciScalarDepthTrajectory.depth_3_universal_regime	theorem	InfraFormalization.RicciScalarDepthTrajectory	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.RuleExtraction.minkowski4_quintRuleIdentity_quintDischarge	def	InfraFormalization.RuleExtraction	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.RuleExtraction.minkowski4_strong_from_quintRuleBidirect	theorem	InfraFormalization.RuleExtraction	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.RuleExtraction.minkowski4_strong_from_quintRuleIdentity	theorem	InfraFormalization.RuleExtraction	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.RuleExtraction.minkowski4_strong_from_quintRuleIdentity_degvariance	theorem	InfraFormalization.RuleExtraction	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.RuleExtraction.minkowski4_strong_from_quintRuleIdentity_higuchi	theorem	InfraFormalization.RuleExtraction	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.RuleExtraction.minkowski4_strong_from_quintRuleIdentity_squarecount	theorem	InfraFormalization.RuleExtraction	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.RuleExtraction.minkowski4_strong_from_quintRuleIdentity_transport	theorem	InfraFormalization.RuleExtraction	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.RuleExtraction.minkowski4_strong_from_quintRuleReversal	theorem	InfraFormalization.RuleExtraction	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.RuleExtraction.minkowski4_three_rule_witnesses	def	InfraFormalization.RuleExtraction	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.RulePhysicsReport.all_rules_preserve_topology_via_report	theorem	InfraFormalization.RulePhysicsReport	renamed to three_rules_knill_constant_one_step	name claimed more than the statement
+InfraFormalization.RulePreservationClassification.all_named_rules_preserve_edge12_knill	theorem	InfraFormalization.RulePreservationClassification	renamed to named_rules_knill_edge12_equalities	name claimed more than the statement
+InfraFormalization.RulePreservationClassification.jgorardRule_preserves_knill	theorem	InfraFormalization.RulePreservationClassification	renamed to jgorardRule_knill_after_one_step	name claimed more than the statement
+InfraFormalization.RulePreservationClassification.quintBidirect_preserves_knill	theorem	InfraFormalization.RulePreservationClassification	renamed to quintBidirect_knill_after_one_step	name claimed more than the statement
+InfraFormalization.RulePreservationClassification.quintFreshSink_preserves_knill	theorem	InfraFormalization.RulePreservationClassification	renamed to quintFreshSink_knill_after_one_step	name claimed more than the statement
+InfraFormalization.RulePreservationClassification.quintFreshSource_preserves_knill	theorem	InfraFormalization.RulePreservationClassification	renamed to quintFreshSource_knill_after_one_step	name claimed more than the statement
+InfraFormalization.RulePreservationClassification.quintIdentity_preserves_knill	theorem	InfraFormalization.RulePreservationClassification	renamed to quintIdentity_knill_after_one_step	name claimed more than the statement
+InfraFormalization.RulePreservationClassification.quintReversal_preserves_knill	theorem	InfraFormalization.RulePreservationClassification	renamed to quintReversal_knill_after_one_step	name claimed more than the statement
+InfraFormalization.RulePreservationClassification.subdivisionRule_preserves_knill	theorem	InfraFormalization.RulePreservationClassification	renamed to subdivisionRule_knill_after_one_step	name claimed more than the statement
+InfraFormalization.RulePreservationClassification.triangleClosureRule_preserves_knill	theorem	InfraFormalization.RulePreservationClassification	renamed to triangleClosureRule_knill_after_one_step	name claimed more than the statement
+InfraFormalization.RulePreservationClassification.triangulationRule_preserves_knill	theorem	InfraFormalization.RulePreservationClassification	renamed to triangulationRule_knill_after_one_step	name claimed more than the statement
+InfraFormalization.RulePreservationClassification.tripleExtendRule_preserves_knill	theorem	InfraFormalization.RulePreservationClassification	renamed to tripleExtendRule_knill_after_one_step	name claimed more than the statement
+InfraFormalization.RulePreservationClassification.trivialIdentity_preserves_knill	theorem	InfraFormalization.RulePreservationClassification	renamed to trivialIdentity_knill_after_one_step	name claimed more than the statement
+InfraFormalization.RulePreservationClassification.universal_rule_topology_preservation	theorem	InfraFormalization.RulePreservationClassification	renamed to named_rules_knill_after_one_step	name claimed more than the statement
+InfraFormalization.RulePreservationClassification.wheelerRule_preserves_knill	theorem	InfraFormalization.RulePreservationClassification	renamed to wheelerRule_knill_after_one_step	name claimed more than the statement
+InfraFormalization.RuleReportComparison.catalog_topology_universally_preserved	theorem	InfraFormalization.RuleReportComparison	renamed to catalog_knill_constant_two_steps	name claimed more than the statement
+InfraFormalization.RuleSignature.avgFormanRicci	def	InfraFormalization.RuleSignature	deleted	field totalFormanRicci was 0 for every hypergraph
+InfraFormalization.RuleSignature.totalFormanRicci	def	InfraFormalization.RuleSignature	deleted	field was 0 for every hypergraph
+InfraFormalization.RuleSignatureExecSearch.dossierConvergesToAt	def	InfraFormalization.RuleSignatureExecSearch	renamed to dossierRateBounded	name claimed more than the statement
+InfraFormalization.RuleSignatureExecSearch.stablyConvergesToAt	def	InfraFormalization.RuleSignatureExecSearch	renamed to stablyRateBounded	name claimed more than the statement
+InfraFormalization.ScaleTrichotomyObligation	propdef	InfraFormalization.RemainingObligations	deleted	obligation that holds for every input, or a restated bound
+InfraFormalization.ScaledDiscrepancy	def	InfraFormalization.WassersteinRate	moved	obligation that holds for every target, or a discharge of one
+InfraFormalization.ScaledTrajectoryConvergenceObligation	propdef	InfraFormalization.ScaledTrajectoryLimit	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.ScaledTrajectoryConvergenceRateObligation	propdef	InfraFormalization.ScaledTrajectoryLimit	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.SchwarzschildObligationMet	propdef	InfraFormalization.ContinuumLimitStatement	deleted	conjoins False
+InfraFormalization.SphereTriangulationAudit.sphere_triangulation_scalars_inconsistent	theorem	InfraFormalization.SphereTriangulationAudit	renamed to sphere_triangulation_scalar_values	name claimed more than the statement
+InfraFormalization.SquareCountRateBridge.ExecSquareCountMetricOriginObligation	propdef	InfraFormalization.SquareCountRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.SquareCountRateBridge.deSitter_strong_from_exec_witness_squarecount	theorem	InfraFormalization.SquareCountRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.SquareCountRateBridge.dossierSquareCountConvergesToAt	def	InfraFormalization.SquareCountRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.SquareCountRateBridge.flrw_strong_from_exec_witness_squarecount	theorem	InfraFormalization.SquareCountRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.SquareCountRateBridge.minkowski4_strong_from_exec_witness_squarecount	theorem	InfraFormalization.SquareCountRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.SquareCountRateBridge.rn_strong_from_exec_witness_squarecount	theorem	InfraFormalization.SquareCountRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.SquareCountRateBridge.schwarzschild_strong_from_exec_witness_squarecount	theorem	InfraFormalization.SquareCountRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.SquareCountRateBridge.sphere_strong_from_exec_witness_squarecount	theorem	InfraFormalization.SquareCountRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.SquareCountRateBridge.squareCountStableRateSelect	def	InfraFormalization.SquareCountRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.SquareCountRateBridge.squareCountStablyConvergesToAt	def	InfraFormalization.SquareCountRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.SquareCountRateBridge.strong_obligation_from_squarecount_rate	theorem	InfraFormalization.SquareCountRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.SquareCountRateBridge.strong_partial_obligation_from_squarecount_rate	theorem	InfraFormalization.SquareCountRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.SquareCountRateBridge.warpedDiag2_strong_from_exec_witness_squarecount	theorem	InfraFormalization.SquareCountRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.SquareCountRateBridge.witnessRule0_edge12_squareCountTrace	def	InfraFormalization.SquareCountRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.SquareCountRateBridge.witnessRule0_edge12_squareCountTrace_rateBounded	theorem	InfraFormalization.SquareCountRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.StepZeroAncestor.AncestorUnique	propdef	InfraFormalization.StepZeroAncestor	deleted	holds for every function into Option Nat
+InfraFormalization.StepZeroAncestor.ancestorUnique_unconditional	theorem	InfraFormalization.StepZeroAncestor	deleted	depends on AncestorUnique
+InfraFormalization.StepZeroAncestor.weak_R1_holds	theorem	InfraFormalization.StepZeroAncestor	deleted	duplicate of step_zero_events_exist
+InfraFormalization.TorusLaplacianConvergenceC2	propdef	InfraFormalization.ContinuumLimitStatement	deleted	definition equal to True
+InfraFormalization.TransportRateBridge.ExecTransportMetricOriginObligation	propdef	InfraFormalization.TransportRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.TransportRateBridge.deSitter_strong_from_exec_witness_transport	theorem	InfraFormalization.TransportRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.TransportRateBridge.dossierTransportConvergesToAt	def	InfraFormalization.TransportRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.TransportRateBridge.flrw_strong_from_exec_witness_transport	theorem	InfraFormalization.TransportRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.TransportRateBridge.minkowski4_strong_from_exec_witness_transport	theorem	InfraFormalization.TransportRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.TransportRateBridge.rn_strong_from_exec_witness_transport	theorem	InfraFormalization.TransportRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.TransportRateBridge.schwarzschild_strong_from_exec_witness_transport	theorem	InfraFormalization.TransportRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.TransportRateBridge.sphere_strong_from_exec_witness_transport	theorem	InfraFormalization.TransportRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.TransportRateBridge.strong_obligation_from_transport_rate	theorem	InfraFormalization.TransportRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.TransportRateBridge.strong_partial_obligation_from_transport_rate	theorem	InfraFormalization.TransportRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.TransportRateBridge.transportStableRateSelect	def	InfraFormalization.TransportRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.TransportRateBridge.transportStablyConvergesToAt	def	InfraFormalization.TransportRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.TransportRateBridge.warpedDiag2_strong_from_exec_witness_transport	theorem	InfraFormalization.TransportRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.TransportRateBridge.witnessRule0_edge12_transportTrace	def	InfraFormalization.TransportRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.TransportRateBridge.witnessRule0_edge12_transportTrace_rateBounded	theorem	InfraFormalization.TransportRateBridge	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.UnifiedEHBalance.balance_alpha_BBH_eR_fork	theorem	InfraFormalization.UnifiedEHBalance	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.UnifiedEHBalance.balance_alpha_BBH_eR_id	theorem	InfraFormalization.UnifiedEHBalance	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.UnifiedEHBalance.balance_alpha_in_unit_interval	theorem	InfraFormalization.UnifiedEHBalance	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.UnifiedEHBalance.unifiedEH_BBH_alpha_0_eR_fork	theorem	InfraFormalization.UnifiedEHBalance	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.UnifiedEHBalance.unifiedEH_BBH_alpha_0_negative	theorem	InfraFormalization.UnifiedEHBalance	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.UnifiedEHBalance.unifiedEH_BBH_alpha_1_eR_fork	theorem	InfraFormalization.UnifiedEHBalance	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.UnifiedEHBalance.unifiedEH_BBH_alpha_1_positive	theorem	InfraFormalization.UnifiedEHBalance	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.UniversalAdditivity.universal_additivity_bidirected	theorem	InfraFormalization.UniversalAdditivity	renamed to additivity_bidirected_instances	name claimed more than the statement
+InfraFormalization.UniversalAdditivity.universal_additivity_edgeReversal_depth5	theorem	InfraFormalization.UniversalAdditivity	renamed to additivity_edgeReversal_depth5	name claimed more than the statement
+InfraFormalization.UniversalAdditivity.universal_additivity_multi_rule	theorem	InfraFormalization.UniversalAdditivity	renamed to additivity_multi_rule_instances	name claimed more than the statement
+InfraFormalization.UniversalAdditivity.universal_per_edge_additivity	theorem	InfraFormalization.UniversalAdditivity	renamed to per_edge_additivity_instances	name claimed more than the statement
+InfraFormalization.VacuumLikeUniversal.fork_dCyc_B_path_3	theorem	InfraFormalization.VacuumLikeUniversal	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.VacuumLikeUniversal.fork_dCyc_B_path_4	theorem	InfraFormalization.VacuumLikeUniversal	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.VacuumLikeUniversal.fork_dCyc_B_triangle_3	theorem	InfraFormalization.VacuumLikeUniversal	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.VacuumLikeUniversal.fork_dCyc_B_triangle_4	theorem	InfraFormalization.VacuumLikeUniversal	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.VacuumLikeUniversal.fork_dCyc_R_path_3	theorem	InfraFormalization.VacuumLikeUniversal	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.VacuumLikeUniversal.fork_dCyc_R_path_4	theorem	InfraFormalization.VacuumLikeUniversal	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.VacuumLikeUniversal.fork_dCyc_R_triangle_3	theorem	InfraFormalization.VacuumLikeUniversal	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.VacuumLikeUniversal.fork_dCyc_R_triangle_4	theorem	InfraFormalization.VacuumLikeUniversal	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.VacuumLikeUniversal.vacuum_like_B_universal_additivity	theorem	InfraFormalization.VacuumLikeUniversal	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.VacuumLikeUniversal.vacuum_like_unified_structural_law	theorem	InfraFormalization.VacuumLikeUniversal	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.VacuumLikeUniversal.vacuum_like_universal_R_persistence	theorem	InfraFormalization.VacuumLikeUniversal	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.VacuumPsiFour.bbh_vacuum_psi4_certified	theorem	InfraFormalization.VacuumPsiFour	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.VacuumPsiFour.vacuum_modsq_BBH	theorem	InfraFormalization.VacuumPsiFour	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.VacuumPsiFour.vacuum_modsq_edge12	theorem	InfraFormalization.VacuumPsiFour	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.VacuumPsiFour.vacuum_psi4_BBH_d4	theorem	InfraFormalization.VacuumPsiFour	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.VacuumPsiFour.vacuum_psi4_eR_d4	theorem	InfraFormalization.VacuumPsiFour	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.VacuumPsiFour.vacuum_psi4_purely_imaginary	theorem	InfraFormalization.VacuumPsiFour	deleted	fire-all operator; name claims a physical quantity; finite computed values
+InfraFormalization.WassersteinRateObligation	propdef	InfraFormalization.WassersteinRate	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WassersteinRateTendsto	propdef	InfraFormalization.WassersteinRate	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.deSitter_strong_cycle4_transport	theorem	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.deSitter_strong_path123_degvariance	theorem	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.deSitter_strong_path123_transport	theorem	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.flrw_strong_cycle4_degvariance	theorem	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.flrw_strong_cycle4_higuchi	theorem	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.flrw_strong_cycle4_transport	theorem	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.flrw_strong_path123_degvariance	theorem	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.flrw_strong_path123_higuchi	theorem	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.flrw_strong_path123_transport	theorem	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.minkowski4_strong_cycle4_degvariance	theorem	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.minkowski4_strong_cycle4_forman	theorem	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.minkowski4_strong_cycle4_higuchi	theorem	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.minkowski4_strong_cycle4_transport	theorem	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.minkowski4_strong_path123_degvariance	theorem	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.minkowski4_strong_path123_forman	theorem	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.minkowski4_strong_path123_higuchi	theorem	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.minkowski4_strong_path123_transport	theorem	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.rn_strong_cycle4_higuchi	theorem	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.rn_strong_cycle4_transport	theorem	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.rn_strong_path123_degvariance	theorem	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.rn_strong_path123_transport	theorem	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.schwarzschild_strong_cycle4_degvariance	theorem	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.schwarzschild_strong_cycle4_higuchi	theorem	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.schwarzschild_strong_cycle4_transport	theorem	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.schwarzschild_strong_path123_degvariance	theorem	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.schwarzschild_strong_path123_higuchi	theorem	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.schwarzschild_strong_path123_transport	theorem	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.sphere_strong_cycle4_transport	theorem	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.sphere_strong_path123_degvariance	theorem	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.warpedDiag2_strong_cycle4_transport	theorem	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.warpedDiag2_strong_path123_degvariance	theorem	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.witnessRule0_cycle4_degVarianceTrace	def	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.witnessRule0_cycle4_degVarianceTrace_rateBounded	theorem	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.witnessRule0_cycle4_formanTrace	def	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.witnessRule0_cycle4_formanTrace_rateBounded	theorem	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.witnessRule0_cycle4_higuchiTrace	def	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.witnessRule0_cycle4_higuchiTrace_rateBounded	theorem	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.witnessRule0_cycle4_transportTrace	def	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.witnessRule0_cycle4_transportTrace_rateBounded	theorem	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.witnessRule0_path123_degVarianceTrace	def	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.witnessRule0_path123_degVarianceTrace_rateBounded	theorem	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.witnessRule0_path123_formanTrace	def	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.witnessRule0_path123_formanTrace_rateBounded	theorem	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.witnessRule0_path123_higuchiTrace	def	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.witnessRule0_path123_higuchiTrace_rateBounded	theorem	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.witnessRule0_path123_transportTrace	def	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.WitnessDiversity.witnessRule0_path123_transportTrace_rateBounded	theorem	InfraFormalization.WitnessDiversity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.adsCFTAnalogObligation_holds	theorem	InfraFormalization.AdSCFTAnalog	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.all_discrete_fields_have_continuum_limit_on_cycle	theorem	InfraFormalization.ContinuumFieldLimits	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.all_obligations_hold	theorem	InfraFormalization.RemainingObligations	deleted	obligation that holds for every input, or a restated bound
+InfraFormalization.angularDeviation	def	InfraFormalization.RuleSignatureScreener	deleted	screener determined by the initial state
+InfraFormalization.angularScreener_fails_of_persistent_gap	theorem	InfraFormalization.RuleSignatureScreener	deleted	screener determined by the initial state
+InfraFormalization.branchial_qm_is_rewriting_grounded	theorem	InfraFormalization.BranchialCanonical	deleted	existential witnessed by the given observable
+InfraFormalization.causalDAGContinuumLimitBundle_zero	theorem	InfraFormalization.CausalDAGContinuumLimit	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.causalDAGContinuumLimitRate_zero	theorem	InfraFormalization.CausalDAGContinuumLimit	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.causalDAGContinuumLimit_zero	theorem	InfraFormalization.CausalDAGContinuumLimit	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.causalGraph_pathIntegralAmplitude_exists	theorem	InfraFormalization.PathIntegralCausalGraph	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.circle_ricci_zero	theorem	InfraFormalization.RicciBridge	renamed to flatConnection_one_ricci_zero	name claimed more than the statement
+InfraFormalization.convergenceRateObligation_oneOverN_of_wasserstein	theorem	InfraFormalization.WassersteinRate	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.convergenceRateObligation_zero	theorem	InfraFormalization.WassersteinRate	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.cycleLaplacian_is_secondDifference	theorem	InfraFormalization.SecondDifference	deleted	no cycle Laplacian in the statement
+InfraFormalization.dimensionCompatibilityObligation_base_cases	theorem	InfraFormalization.RemainingObligations	deleted	obligation that holds for every input, or a restated bound
+InfraFormalization.dimensionCompatibilityObligation_base_cases_through_two	theorem	InfraFormalization.RemainingObligations	deleted	obligation that holds for every input, or a restated bound
+InfraFormalization.dimensionCompatibilityObligation_holds	theorem	InfraFormalization.RemainingObligations	deleted	obligation that holds for every input, or a restated bound
+InfraFormalization.dimensionCompatibilityObligation_lower_bound	theorem	InfraFormalization.RemainingObligations	deleted	obligation that holds for every input, or a restated bound
+InfraFormalization.dimensionCompatibilityObligation_r_two	theorem	InfraFormalization.RemainingObligations	deleted	obligation that holds for every input, or a restated bound
+InfraFormalization.dimensionCompatibilityObligation_upper_bound	theorem	InfraFormalization.RemainingObligations	deleted	obligation that holds for every input, or a restated bound
+InfraFormalization.edgeCountTrajectory	def	InfraFormalization.RuleSignatureScreener	deleted	screener determined by the initial state
+InfraFormalization.edgeCountTrajectory_const_of_conservative	theorem	InfraFormalization.RuleSignatureScreener	deleted	screener determined by the initial state
+InfraFormalization.edgeCountTrajectory_deviation_zero_of_conservative	theorem	InfraFormalization.RuleSignatureScreener	deleted	screener determined by the initial state
+InfraFormalization.edgeCountTrajectory_satisfies_any_rate_of_conservative	theorem	InfraFormalization.RuleSignatureScreener	deleted	screener determined by the initial state
+InfraFormalization.edgeDuplicateSystem	def	InfraFormalization.RuleSearch	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.elementaryAngleSample	def	InfraFormalization.RuleSignatureScreener	deleted	screener determined by the initial state
+InfraFormalization.elementaryBlowup_commutator_vanishes	theorem	InfraFormalization.BlowupLieAlgebra	deleted	statement is True after unfolding
+InfraFormalization.emeEdgeCountLe_holds_of_all_bounded	theorem	InfraFormalization.EMETracker	deleted	restates its hypothesis
+InfraFormalization.emePersistent_of_trivial	theorem	InfraFormalization.EMETracker	deleted	existential witnessed by True
+InfraFormalization.emergentGravityObligation_holds	theorem	InfraFormalization.EmergentGravity	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.filterCandidates	def	InfraFormalization.CandidateRuleDatabase	deleted	identity function
+InfraFormalization.flatConnection_einstein_divergence_zero	theorem	InfraFormalization.EinsteinEquations	deleted	assumes its conclusion (dG = 0)
+InfraFormalization.formanRicciDeviation	def	InfraFormalization.RuleSignatureScreener	deleted	screener determined by the initial state
+InfraFormalization.formanRicciScreener_const_self	theorem	InfraFormalization.RuleSignatureScreener	deleted	screener determined by the initial state
+InfraFormalization.formanRicciScreener_fails_of_persistent_gap	theorem	InfraFormalization.RuleSignatureScreener	deleted	screener determined by the initial state
+InfraFormalization.formanRicciScreener_initial_state_const	theorem	InfraFormalization.RuleSignatureScreener	deleted	screener determined by the initial state
+InfraFormalization.formanRicciTrajectory	def	InfraFormalization.RuleSignatureScreener	deleted	screener determined by the initial state
+InfraFormalization.formanRicciTrajectory_oob	theorem	InfraFormalization.RuleSignatureScreener	deleted	screener determined by the initial state
+InfraFormalization.formanRicciTrajectory_zero	theorem	InfraFormalization.RuleSignatureScreener	deleted	screener determined by the initial state
+InfraFormalization.formanRicciTriangleDeviation	def	InfraFormalization.RuleSignatureScreener	deleted	screener determined by the initial state
+InfraFormalization.formanRicciTriangleScreener_const_self	theorem	InfraFormalization.RuleSignatureScreener	deleted	screener determined by the initial state
+InfraFormalization.formanRicciTriangleScreener_fails_of_persistent_gap	theorem	InfraFormalization.RuleSignatureScreener	deleted	screener determined by the initial state
+InfraFormalization.formanRicciTriangleScreener_initial_state_const	theorem	InfraFormalization.RuleSignatureScreener	deleted	screener determined by the initial state
+InfraFormalization.formanRicciTriangleTrajectory	def	InfraFormalization.RuleSignatureScreener	deleted	screener determined by the initial state
+InfraFormalization.formanRicciTriangleTrajectory_oob	theorem	InfraFormalization.RuleSignatureScreener	deleted	screener determined by the initial state
+InfraFormalization.formanRicciTriangleTrajectory_zero	theorem	InfraFormalization.RuleSignatureScreener	deleted	screener determined by the initial state
+InfraFormalization.forman_ricci_matches_continuum_on_cycle	theorem	InfraFormalization.RicciBridge	renamed to cycle_forman_and_flat_ricci_zero	name claimed more than the statement
+InfraFormalization.forman_ricci_real_matches_continuum_on_cycle	theorem	InfraFormalization.RicciBridge	renamed to cycle_forman_and_flat_ricci_zero_real	name claimed more than the statement
+InfraFormalization.fubiniStudyBhattacharyya_bound	theorem	InfraFormalization.RemainingObligations	deleted	obligation that holds for every input, or a restated bound
+InfraFormalization.gorardF6_carries_BD_assumption	propdef	InfraFormalization.DiscreteDAlembertian	deleted	definition is ∀ C, True
+InfraFormalization.growthCatalog	def	InfraFormalization.RuleSearch	renamed to nonConservativeCatalog	name claimed more than the statement
+InfraFormalization.growthCatalog_all_non_conservative	theorem	InfraFormalization.RuleSearch	renamed to nonConservativeCatalog_all_non_conservative	name claimed more than the statement
+InfraFormalization.growthCatalog_growth_compatible	theorem	InfraFormalization.RuleSearch	renamed to nonConservativeCatalog_growth_compatible	name claimed more than the statement
+InfraFormalization.heat_eigenvalue_convergence	theorem	InfraFormalization.ContinuumFieldLimits	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.hypergraphSignature_totalFormanRicci_empty	theorem	InfraFormalization.RuleSignatureEquiv	deleted	field totalFormanRicci was 0 for every hypergraph
+InfraFormalization.latschevObligation_holds	theorem	InfraFormalization.RemainingObligations	deleted	obligation that holds for every input, or a restated bound
+InfraFormalization.lorentzianGHBundle_zero	theorem	InfraFormalization.LorentzianGH	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.lorentzianGHObligation_zero	theorem	InfraFormalization.LorentzianGH	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.lorentzianGHRateObligation_zero	theorem	InfraFormalization.LorentzianGH	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.minkowski4_from_growthRule	theorem	InfraFormalization.RuleSearch	deleted	discharges an obligation that holds for every target
+InfraFormalization.multiDimRateBundle_zero	theorem	InfraFormalization.MeasureTorusLift	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.multiDimRateObligation_of_slices	theorem	InfraFormalization.MeasureTorusLift	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.multiDimRateObligation_zero	theorem	InfraFormalization.MeasureTorusLift	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.multiDimRateTendsto_zero	theorem	InfraFormalization.MeasureTorusLift	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.multiScreener_self_of_conservative_initial	theorem	InfraFormalization.RuleSignatureScreener	deleted	screener determined by the initial state
+InfraFormalization.multiwayCausalGraph_pathIntegralAmplitude_exists	theorem	InfraFormalization.PathIntegralCausalGraph	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.no_stub_obligations_remain	theorem	InfraFormalization.RemainingObligations	deleted	obligation that holds for every input, or a restated bound
+InfraFormalization.not_reverseEngineeringObligation	theorem	InfraFormalization.RemainingObligations	deleted	obligation that holds for every input, or a restated bound
+InfraFormalization.pde_spectrum_bridge_summary	theorem	InfraFormalization.ContinuumBridgeDemo	renamed to cycle_scaled_eigenvalue_limits	name claimed more than the statement
+InfraFormalization.pde_spectrum_bridge_summary_with_mass	theorem	InfraFormalization.ContinuumBridgeDemo	renamed to cycle_scaled_kleinGordon_eigenvalue_limit	name claimed more than the statement
+InfraFormalization.penrose_obligation_vacuous_if_no_trapped	theorem	InfraFormalization.StressEnergyTensor	deleted	trivial
+InfraFormalization.rateGeometric	def	InfraFormalization.WassersteinRate	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.rateOneOverN	def	InfraFormalization.WassersteinRate	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.rateOneOverNSquared	def	InfraFormalization.WassersteinRate	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.raychaudhuri_trivially_satisfied_at_zero	theorem	InfraFormalization.StressEnergyTensor	deleted	0 ≤ 0
+InfraFormalization.refutations_sound_given_obligations_open	theorem	InfraFormalization.ContinuumLimitStatement	deleted	holds because the obligations contain False
+InfraFormalization.reverseEngineeringObligationRefined_holds	theorem	InfraFormalization.RemainingObligations	deleted	obligation that holds for every input, or a restated bound
+InfraFormalization.reverseEngineering_for_empty	theorem	InfraFormalization.RemainingObligations	deleted	obligation that holds for every input, or a restated bound
+InfraFormalization.reverseEngineering_for_realisable_signatures	theorem	InfraFormalization.RemainingObligations	deleted	obligation that holds for every input, or a restated bound
+InfraFormalization.same_level_ordered_antichain	theorem	InfraFormalization.CausalLevel	deleted	duplicate of no_causal_edge_within_level
+InfraFormalization.scaleTrichotomyObligation_holds	theorem	InfraFormalization.RemainingObligations	deleted	obligation that holds for every input, or a restated bound
+InfraFormalization.scaledTrajectoryConvergenceBundle_zero	theorem	InfraFormalization.ScaledTrajectoryLimit	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.scaledTrajectoryConvergenceRate_zero	theorem	InfraFormalization.ScaledTrajectoryLimit	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.scaledTrajectoryConvergence_zero	theorem	InfraFormalization.ScaledTrajectoryLimit	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.secondDeriv_of_quadratic_via_difference	theorem	InfraFormalization.SecondDifference	deleted	duplicate of secondDifference_quadratic_div
+InfraFormalization.signatureTrajectory	def	InfraFormalization.RuleSignatureScreener	deleted	screener determined by the initial state
+InfraFormalization.signatureTrajectory_oob	theorem	InfraFormalization.RuleSignatureScreener	deleted	screener determined by the initial state
+InfraFormalization.signatureTrajectory_zero	theorem	InfraFormalization.RuleSignatureScreener	deleted	screener determined by the initial state
+InfraFormalization.subdivisionDiscrepancy	def	InfraFormalization.WassersteinRate	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.subdivisionDiscrepancyBundle	theorem	InfraFormalization.WassersteinRate	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.subdivisionDiscrepancy_satisfies_geometric	theorem	InfraFormalization.WassersteinRate	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.subdivisionDiscrepancy_satisfies_obligation	theorem	InfraFormalization.WassersteinRate	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.subdivisionDiscrepancy_satisfies_oneOverN	theorem	InfraFormalization.WassersteinRate	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.subdivisionDiscrepancy_tendsto	theorem	InfraFormalization.WassersteinRate	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.truePredicate_holds_everywhere	theorem	InfraFormalization.EMETracker	deleted	statement is True
+InfraFormalization.vertexCountFn	def	InfraFormalization.BlowupPoissonConcrete	deleted	ignores its hypergraph argument
+InfraFormalization.vertexCountFn_const	theorem	InfraFormalization.BlowupPoissonConcrete	deleted	rfl
+InfraFormalization.vertexCountTrajectory	def	InfraFormalization.RuleSignatureScreener	deleted	screener determined by the initial state
+InfraFormalization.vertexCountTrajectory_const	theorem	InfraFormalization.RuleSignatureScreener	deleted	screener determined by the initial state
+InfraFormalization.wassersteinRateBundle_zero	theorem	InfraFormalization.WassersteinRate	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.wassersteinRateObligation_of_convergenceRate_oneOverN	theorem	InfraFormalization.WassersteinRate	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.wassersteinRateObligation_zero	theorem	InfraFormalization.WassersteinRate	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.wassersteinRateTendsto_zero	theorem	InfraFormalization.WassersteinRate	deleted	obligation that holds for every target, or a discharge of one
+InfraFormalization.wolfram_physics_bridge_from_finite_successors	theorem	InfraFormalization.WolframPhysicsBridgeDemo	deleted	restatement of other theorems, or existence of the given object
+InfraFormalization.wolfram_physics_bridge_summary	theorem	InfraFormalization.WolframPhysicsBridgeDemo	deleted	restatement of other theorems, or existence of the given object
