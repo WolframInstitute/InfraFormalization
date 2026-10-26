@@ -6,7 +6,7 @@ The evolution is `tracedFireAllEvolve`. `fireAllStep` applies every match
 of every rule found in the state, including matches that share edges. It
 is not a Wolfram model update when matches overlap.
 
-PROVED (no `sorry`, no `native_decide`):
+The module proves, without `native_decide`:
 
   * `tracedFireAllStep_events_step`: every event of
     `tracedFireAllStep sys H k` has step index `k`.
@@ -18,20 +18,13 @@ PROVED (no `sorry`, no `native_decide`):
     has no events, the evolution is `(seed, [])` at every depth.
   * `tracedFireAllEvolve_first_batch_prefix`: for d ≥ 1, the step-0
     events are a prefix of the event list at depth d.
-  * `step_zero_events_exist` and `weak_R1_holds`: if the event list at
+  * `step_zero_events_exist`: if the event list at
     depth d is nonempty, it contains an event with step index 0.
   * `stepZeroAncestor_step_zero`: for an event with step index 0,
     `stepZeroAncestor` returns its own index.
-  * `ancestorUnique_unconditional`: `AncestorUnique` holds because
-    `stepZeroAncestor` returns an `Option Nat`.
 
-OPEN: `AncestorTotal`, the statement that `stepZeroAncestor` returns
-`some` for every event index.
-
-`EdgeCausallyDisjointBridge.EdgeCausallyDisjoint` is stated for
-`tracedSingleWayEvolve`. The lemmas of this module concern
-`tracedFireAllEvolve`, so they do not prove any conjunct of
-`EdgeCausallyDisjoint`.
+The module states `AncestorTotal`, that `stepZeroAncestor` returns `some`
+for every event index, and does not prove it.
 -/
 
 import InfraFormalization.EdgeCausallyDisjointBridge
@@ -47,8 +40,8 @@ open FreshVertexPartition
 
 /-! ## Section A: generic `List.foldl` invariant -/
 
-/-- If a predicate is preserved by the step function, it is preserved
-across the entire fold. -/
+/-- If `P` holds at `init` and is preserved by `f`, it holds at
+`xs.foldl f init`. -/
 lemma foldl_invariant {α β : Type*} (P : β → Prop) (f : β → α → β)
     (xs : List α) (init : β)
     (hStep : ∀ b a, P b → P (f b a)) (h0 : P init) :
@@ -62,8 +55,8 @@ lemma foldl_invariant {α β : Type*} (P : β → Prop) (f : β → α → β)
 `outerStep` is the per-rule step of the outer fold, in the form of
 `FreshVertexPartition.innerFoldl`. -/
 
-/-- Outer per-rule step of `tracedFireAllStep`: run the inner foldl
-over `(allMatches r H)` to process all matches of rule `r`. -/
+/-- The per-rule step of `tracedFireAllStep`: the inner fold over
+`allMatches r H`, then the rule index increased by 1. -/
 def outerStep (H : ExecHG ℕ) (baseFresh step : ℕ)
     (acc : InnerAcc) (r : ExecRule) : InnerAcc :=
   let (state, offset, ruleIdx, events) := acc
@@ -71,7 +64,7 @@ def outerStep (H : ExecHG ℕ) (baseFresh step : ℕ)
     (state, offset, ruleIdx, events)
   (matchRes.1, matchRes.2.1, ruleIdx + 1, matchRes.2.2.2)
 
-/-- `tracedFireAllStep` expressed via the outer foldl over rules. -/
+/-- `tracedFireAllStep` is the fold of `outerStep` over the rules. -/
 theorem tracedFireAllStep_eq_outer (sys : ExecSystem) (H : ExecHG ℕ) (k : ℕ) :
     tracedFireAllStep sys H k =
       let baseFresh := nextFresh H
@@ -81,8 +74,8 @@ theorem tracedFireAllStep_eq_outer (sys : ExecSystem) (H : ExecHG ℕ) (k : ℕ)
 
 /-! ## Section C: every emitted event carries the step index -/
 
-/-- A single `innerStep` appends exactly one event whose `step` field
-equals the outer `step` parameter; the prior events are preserved. -/
+/-- `innerStep` appends one event, with `step` field equal to `step`, to
+the event list. -/
 theorem innerStep_events_append (r : ExecRule) (baseFresh step : ℕ)
     (s : ExecHG ℕ) (o i : ℕ) (es : List CausalEvent)
     (ρ : Fin r.numBound → ℕ) :
@@ -99,8 +92,8 @@ theorem innerStep_events_append (r : ExecRule) (baseFresh step : ℕ)
   · rfl
   · rfl
 
-/-- After the inner foldl, every event in the accumulator has step `= k`,
-given the invariant held at entry. -/
+/-- If every event of `init` has step `step`, every event after
+`innerFoldl` has step `step`. -/
 theorem innerFoldl_events_step (r : ExecRule) (baseFresh step : ℕ)
     (binds : List (Fin r.numBound → ℕ)) (init : InnerAcc)
     (h0 : ∀ e ∈ init.2.2.2, e.step = step) :
@@ -120,8 +113,8 @@ theorem innerFoldl_events_step (r : ExecRule) (baseFresh step : ℕ)
   · rw [List.mem_singleton] at he
     rw [he, hnew_step]
 
-/-- After the outer step (one rule's processing), every event has step
-`= k`, given the invariant held at entry. -/
+/-- If every event of `acc` has step `step`, every event after
+`outerStep` has step `step`. -/
 theorem outerStep_events_step (H : ExecHG ℕ) (baseFresh step : ℕ)
     (acc : InnerAcc) (r : ExecRule)
     (h0 : ∀ e ∈ acc.2.2.2, e.step = step) :
@@ -146,14 +139,10 @@ theorem tracedFireAllStep_events_step (sys : ExecSystem) (H : ExecHG ℕ) (k : �
   · intro e' he'
     simp at he'
 
-/-! ## Section D: state preservation when no matches exist
+/-! ## Section D: steps with no matches -/
 
-If `allMatches r H = []` for every rule `r`, the inner `foldl` is empty
-for every rule, hence the accumulator only has its rule-index advanced.
-The state and event-list components are preserved. -/
-
-/-- Empty `allMatches` for a single rule: the outer step preserves
-state, offset, and events; only `ruleIdx` advances. -/
+/-- If `allMatches r H = []`, `outerStep` leaves state, offset and events
+unchanged and increases the rule index by 1. -/
 theorem outerStep_no_match (H : ExecHG ℕ) (baseFresh step : ℕ)
     (acc : InnerAcc) (r : ExecRule)
     (hr : allMatches r H = []) :
@@ -166,8 +155,8 @@ theorem outerStep_no_match (H : ExecHG ℕ) (baseFresh step : ℕ)
   rw [hr]
   simp
 
-/-- Empty `allMatches` for every rule: the outer `foldl` returns the
-initial accumulator with only `ruleIdx` advanced by `rs.length`. -/
+/-- If `allMatches r H = []` for every `r ∈ rs`, the fold returns `init`
+with the rule index increased by `rs.length`. -/
 theorem foldl_outerStep_no_matches (H : ExecHG ℕ) (baseFresh step : ℕ)
     (rs : List ExecRule) (init : InnerAcc)
     (h : ∀ r ∈ rs, allMatches r H = []) :
@@ -188,8 +177,7 @@ theorem foldl_outerStep_no_matches (H : ExecHG ℕ) (baseFresh step : ℕ)
     simp
     ring
 
-/-- If no rule has any match on `H`, `tracedFireAllStep sys H k` is
-the identity on state and produces no events. -/
+/-- If no rule has a match on `H`, `tracedFireAllStep sys H k = (H, [])`. -/
 theorem tracedFireAllStep_no_matches (sys : ExecSystem) (H : ExecHG ℕ) (k : ℕ)
     (h : ∀ r ∈ sys.rules, allMatches r H = []) :
     tracedFireAllStep sys H k = (H, []) := by
@@ -197,14 +185,9 @@ theorem tracedFireAllStep_no_matches (sys : ExecSystem) (H : ExecHG ℕ) (k : �
   simp only
   rw [foldl_outerStep_no_matches H (nextFresh H) k sys.rules (H, 0, 0, []) h]
 
-/-! ## Section E: length characterisation of the step's event list
+/-! ## Section E: number of events of one step -/
 
-The number of events emitted by `tracedFireAllStep sys H k` is the
-sum of match counts across rules and does not depend on `k`. Section F
-uses this to pass from "step 0 has no events" to "no rule has a match". -/
-
-/-- The inner foldl appends exactly `binds.length` events; thus the
-events component's length grows by `binds.length`. -/
+/-- `innerFoldl` over `binds` adds `binds.length` events. -/
 theorem innerFoldl_events_length (r : ExecRule) (baseFresh step : ℕ)
     (binds : List (Fin r.numBound → ℕ)) (init : InnerAcc) :
     (innerFoldl r baseFresh step binds init).2.2.2.length =
@@ -222,7 +205,7 @@ theorem innerFoldl_events_length (r : ExecRule) (baseFresh step : ℕ)
     simp
     ring
 
-/-- One outer step grows events by exactly `(allMatches r H).length`. -/
+/-- `outerStep` for rule `r` adds `(allMatches r H).length` events. -/
 theorem outerStep_events_length (H : ExecHG ℕ) (baseFresh step : ℕ)
     (acc : InnerAcc) (r : ExecRule) :
     (outerStep H baseFresh step acc r).2.2.2.length =
@@ -232,7 +215,8 @@ theorem outerStep_events_length (H : ExecHG ℕ) (baseFresh step : ℕ)
   simp only
   exact innerFoldl_events_length r baseFresh step (allMatches r H) (s, o, i, es)
 
-/-- The full outer foldl grows events by the sum of per-rule match counts. -/
+/-- The fold of `outerStep` over `rs` adds the sum over `rs` of the match
+counts. -/
 theorem foldl_outerStep_events_length (H : ExecHG ℕ) (baseFresh step : ℕ)
     (rs : List ExecRule) (init : InnerAcc) :
     (rs.foldl (outerStep H baseFresh step) init).2.2.2.length =
@@ -245,9 +229,8 @@ theorem foldl_outerStep_events_length (H : ExecHG ℕ) (baseFresh step : ℕ)
     simp [List.map_cons, List.sum_cons]
     ring
 
-/-- The number of events of
-`tracedFireAllStep sys H k` equals the total match count and is
-independent of `k`. -/
+/-- The number of events of `tracedFireAllStep sys H k` is the sum over
+rules of `(allMatches r H).length`. -/
 theorem tracedFireAllStep_events_length (sys : ExecSystem) (H : ExecHG ℕ) (k : ℕ) :
     (tracedFireAllStep sys H k).2.length =
       (sys.rules.map (fun r => (allMatches r H).length)).sum := by
@@ -256,7 +239,8 @@ theorem tracedFireAllStep_events_length (sys : ExecSystem) (H : ExecHG ℕ) (k :
   rw [foldl_outerStep_events_length H (nextFresh H) k sys.rules (H, 0, 0, [])]
   simp
 
-/-- Empty first-batch events ↔ every rule has empty `allMatches`. -/
+/-- `tracedFireAllStep sys H k` has no events if and only if no rule has a
+match on `H`. -/
 theorem tracedFireAllStep_events_empty_iff (sys : ExecSystem) (H : ExecHG ℕ) (k : ℕ) :
     (tracedFireAllStep sys H k).2 = [] ↔
       ∀ r ∈ sys.rules, allMatches r H = [] := by
@@ -278,15 +262,10 @@ theorem tracedFireAllStep_events_empty_iff (sys : ExecSystem) (H : ExecHG ℕ) (
   · intro h
     rw [tracedFireAllStep_no_matches sys H k h]
 
-/-! ## Section F: propagation — empty first batch yields empty evolution -/
+/-! ## Section F: evolutions with no first-step events -/
 
-/-- If the first batch on `seed` is empty, then `tracedFireAllEvolve`
-returns `(seed, [])` at every depth.
-
-The argument: emptiness of `(tracedFireAllStep sys seed 0).2` is
-equivalent to "no rule matches on `seed`", which is independent of the
-step parameter. So `tracedFireAllStep sys seed n = (seed, [])` at
-every `n`. Induct on the depth. -/
+/-- If step 0 on `seed` has no events, `tracedFireAllEvolve sys seed d =
+(seed, [])` for every `d`. -/
 theorem tracedFireAllEvolve_empty_of_no_first_batch
     (sys : ExecSystem) (seed : ExecHG ℕ)
     (h0 : (tracedFireAllStep sys seed 0).2 = []) :
@@ -305,14 +284,10 @@ theorem tracedFireAllEvolve_empty_of_no_first_batch
       tracedFireAllStep_no_matches sys seed d hnm
     simp only [tracedFireAllEvolve, ih, hstep, List.append_nil]
 
-/-! ## Section G: the depth-`d` event list contains the first batch as a prefix
+/-! ## Section G: the step-0 events are a prefix -/
 
-For `d ≥ 1`, the events of `tracedFireAllEvolve sys seed d` factor as
-`(tracedFireAllStep sys seed 0).2 ++ rest_d`, so the filter on
-`step = 0` has length at least `(tracedFireAllStep sys seed 0).2.length`. -/
-
-/-- The events of `tracedFireAllEvolve sys seed (d+1)` have the first
-batch as a prefix. -/
+/-- The events of step 0 are a prefix of the events of
+`tracedFireAllEvolve sys seed (d+1)`. -/
 theorem tracedFireAllEvolve_first_batch_prefix
     (sys : ExecSystem) (seed : ExecHG ℕ) :
     ∀ d, ∃ rest, (tracedFireAllEvolve sys seed (d + 1)).2 =
@@ -338,7 +313,7 @@ theorem tracedFireAllEvolve_first_batch_prefix
 /-! ## Section H: a step-0 event exists when the event list is nonempty -/
 
 /-- If the event list of `tracedFireAllEvolve sys seed d` is nonempty,
-it contains an event with step index 0. PROVED. -/
+it contains an event with step index 0. -/
 theorem step_zero_events_exist (sys : ExecSystem) (seed : ExecHG ℕ) (d : ℕ) :
     ∀ i : ℕ, i < (tracedFireAllEvolve sys seed d).2.length →
       0 < ((tracedFireAllEvolve sys seed d).2.filter (·.step = 0)).length := by
@@ -438,52 +413,17 @@ theorem stepZeroAncestor_step_zero
   rw [dif_pos hi]
   simp only [h0, if_true]
 
-/-! ## Section K: the statements `AncestorTotal` and `AncestorUnique` -/
+/-! ## Section K: the statement `AncestorTotal` -/
 
-/-- `AncestorTotal sys seed` (OPEN): for every depth d and every event
-index i of `tracedFireAllEvolve sys seed d`, `stepZeroAncestor` returns
-`some a` for some `a`. The library contains no proof of it. -/
+/-- For every depth d and every event index i of
+`tracedFireAllEvolve sys seed d`, `stepZeroAncestor` returns `some a` for
+some `a`. -/
 def AncestorTotal (sys : ExecSystem) (seed : ExecHG ℕ) : Prop :=
   ∀ d : Nat,
     let events := (tracedFireAllEvolve sys seed d).2
     let edges := deriveCausalEdges events
     ∀ i : ℕ, i < events.length → ∃ a, stepZeroAncestor events edges i = some a
 
-/-- `AncestorUnique sys seed`: two values returned by `stepZeroAncestor`
-for the same index are equal. It holds for every function into
-`Option Nat` (`ancestorUnique_unconditional`). -/
-def AncestorUnique (sys : ExecSystem) (seed : ExecHG ℕ) : Prop :=
-  ∀ d : Nat,
-    let events := (tracedFireAllEvolve sys seed d).2
-    let edges := deriveCausalEdges events
-    ∀ i a₁ a₂, stepZeroAncestor events edges i = some a₁ →
-                stepZeroAncestor events edges i = some a₂ → a₁ = a₂
-
-/-- Uniqueness holds because `Option.some` is injective. -/
-theorem ancestorUnique_unconditional (sys : ExecSystem) (seed : ExecHG ℕ) :
-    AncestorUnique sys seed := by
-  intro d events edges i a₁ a₂ h₁ h₂
-  rw [h₁] at h₂
-  exact Option.some.inj h₂
-
-/-! ## Section L: relation to `EdgeCausallyDisjoint`
-
-`EdgeCausallyDisjointBridge.EdgeCausallyDisjoint sys seed` is stated for
-`tracedSingleWayEvolve`. Its first conjunct has the same form as
-`weak_R1_holds`, and its second conjunct is `True`. `weak_R1_holds` is
-stated for `tracedFireAllEvolve`, so it does not prove the first
-conjunct of `EdgeCausallyDisjoint`. -/
-
-/-- For every system, seed and depth d: if the event list of
-`tracedFireAllEvolve sys seed d` is nonempty, it contains an event with
-step index 0. This is `step_zero_events_exist`. -/
-theorem weak_R1_holds (sys : ExecSystem) (seed : ExecHG ℕ) :
-    ∀ d : Nat,
-      let events := (tracedFireAllEvolve sys seed d).2
-      (∀ i : Nat, i < events.length →
-        0 < (events.filter (·.step = 0)).length) := by
-  intro d
-  exact step_zero_events_exist sys seed d
 
 end StepZeroAncestor
 end InfraFormalization

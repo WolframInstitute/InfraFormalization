@@ -1,20 +1,14 @@
 /-
-**Structural impossibility theorems for rule dimensions** (Group IR).
+Tree, planarity and concatenation predicates on rewriting systems.
 
-Extends `RuleDimensionBounds.lean` with additional classes of rules
-whose outputs have bounded Wolfram-Hausdorff / spectral dimension.
-
-  * **IR3**: Tree-producing rules have dimension `= log(branching)`.
-    (Predicate-level statement; quantitative proof deferred.)
-  * **IR4**: Planar-preserving rules produce graphs with
-    `dim ≤ 2` (Euler formula `V − E + F = 2` bounds curvature).
-  * **IR5**: Product rules `R₁ × R₂` on disjoint vertex sets give
-    additive dimensions (predicate-level).
-
-These eliminate broad classes from the candidate-rule search space.
-
-**Connection to hypergraphs.** Native: every bound is on a
-`RewritingSystem` acting on `Hypergraph V`. No continuum.
+This module defines tree-like hypergraphs (connected clique expansion with
+unique paths), the edge-count condition `E ≤ 3V − 6` as a necessary
+condition for planarity, the predicates that every trajectory state
+satisfies one of these, and systems whose rule list is the concatenation of
+two nonempty rule lists. It proves that every rule of a concatenated system
+lies in one of the two parts and that a concatenated system has only
+conservative rules if and only if both parts do. No theorem in this module
+bounds a dimension.
 -/
 
 import InfraFormalization.RuleDimensionBounds
@@ -24,65 +18,48 @@ namespace InfraFormalization
 
 variable {P V : Type*} [Fintype V] [DecidableEq V]
 
-/-! ## IR3: Tree-producing rules -/
+/-! ## Trees -/
 
-/-- **A hypergraph is tree-like** if its clique-expansion is a
-tree (connected + acyclic). Predicate-level, using Mathlib's
-SimpleGraph machinery. Mathlib-complete statement is
-`SimpleGraph.IsTree`. -/
+/-- The clique expansion of `H` is connected and any two paths with the
+same endpoints are equal. -/
 def Hypergraph.IsTreelike (H : Hypergraph V) : Prop :=
-  -- `SimpleGraph.IsTree` requires `Connected` + `Acyclic`; we state
-  -- the conjunction at predicate level.
+  -- Connectedness and uniqueness of paths, stated directly.
   H.toSimpleGraph.Connected ∧
   ∀ (u v : V) (w₁ w₂ : (H.toSimpleGraph).Walk u v),
     w₁.IsPath → w₂.IsPath → w₁ = w₂
 
-/-- **Tree-rule predicate**: every trajectory state is tree-like. -/
+/-- Every state of every trajectory of `sys` is tree-like. -/
 def RewritingSystem.ProducesTrees (sys : RewritingSystem P) : Prop :=
   ∀ (init : Hypergraph V) (τ : Trajectory sys init)
     (i : Nat) (hi : i < τ.states.length),
     (τ.states.get ⟨i, hi⟩).IsTreelike
 
-/-! ## IR4: Planar rules -/
+/-! ## Planarity -/
 
-/-- **A hypergraph is planar** if its clique-expansion embeds in
-the plane (no edge crossings). Predicate-level; Mathlib has
-`SimpleGraph.IsPlanar` in development.
-
-We state via the Euler-formula consequence: the vertex count,
-edge count, and face count satisfy `V − E + F = 2` for connected
-planar graphs. -/
+/-- `V` has fewer than 3 elements, or the clique expansion of `H` has at
+most `3 · |V| − 6` edges. This is a necessary condition for planarity, not
+planarity. -/
 def Hypergraph.IsPlanarLike (H : Hypergraph V) : Prop :=
-  -- Mathlib-level planarity is limited; we adopt a weaker placeholder:
-  -- "the hypergraph's clique-expansion has at most `3V − 6` edges
-  -- for `V ≥ 3`", a necessary condition for planarity.
+  -- Edge bound E ≤ 3V − 6 for |V| ≥ 3.
   Fintype.card V < 3 ∨
   (H.toSimpleGraph.edgeFinset.card ≤ 3 * Fintype.card V - 6)
 
-/-- **Planar-rule predicate**: every trajectory state is planar. -/
+/-- Every state of every trajectory of `sys` satisfies `IsPlanarLike`. -/
 def RewritingSystem.ProducesPlanar (sys : RewritingSystem P) : Prop :=
   ∀ (init : Hypergraph V) (τ : Trajectory sys init)
     (i : Nat) (hi : i < τ.states.length),
     (τ.states.get ⟨i, hi⟩).IsPlanarLike
 
-/-! ## IR5: Product rules -/
+/-! ## Concatenated systems -/
 
-/-- **Direct-concatenation system**: a system whose rule list is the
-concatenation of two sub-system rule lists, both over the same
-pattern type `P`. This is the shape-level of a product rule system,
-expressing that `sys` is built by putting `sys₁`'s rules and `sys₂`'s
-rules side by side with no interaction. Both halves required
-non-empty so the predicate is non-degenerate.
-
-This is the Lean-typable skeleton of "product rule"; the fuller
-version (product on disjoint vertex subsets `V₁ ⊕ V₂`) requires
-Rule types indexed by vertex-set, which is separate infrastructure. -/
+/-- The rule list of `sys` is the concatenation of the rule lists of `sys₁`
+and `sys₂`, and both are nonempty. -/
 def IsDirectConcatSystem (sys sys₁ sys₂ : RewritingSystem P) : Prop :=
   sys.rules = sys₁.rules ++ sys₂.rules ∧
   sys₁.rules ≠ [] ∧ sys₂.rules ≠ []
 
-/-- **Every rule in a direct-concat system belongs to one of the two
-halves.** Immediate from the `List.mem_append` characterisation. -/
+/-- Every rule of a concatenated system is a rule of `sys₁` or of
+`sys₂`. -/
 theorem IsDirectConcatSystem.rule_in_half
     {sys sys₁ sys₂ : RewritingSystem P}
     (hsys : IsDirectConcatSystem sys sys₁ sys₂) (r : Rule P)
@@ -90,10 +67,8 @@ theorem IsDirectConcatSystem.rule_in_half
   rw [hsys.1] at hr
   exact List.mem_append.mp hr
 
-/-- **A direct-concat system is `AllConservative`** iff both halves are.
-Machine-level witness that the `AllConservative` property is additive
-over direct-concatenation — one of the two shape-level additivity
-lemmas needed before the full product-dim additivity (IR5). -/
+/-- All rules of a concatenated system are conservative if and only if all
+rules of `sys₁` and all rules of `sys₂` are conservative. -/
 theorem IsDirectConcatSystem.allConservative_iff_both
     {sys sys₁ sys₂ : RewritingSystem P}
     (hsys : IsDirectConcatSystem sys sys₁ sys₂) :
@@ -109,11 +84,5 @@ theorem IsDirectConcatSystem.allConservative_iff_both
     rcases hsys.rule_in_half r hr with hr1 | hr2
     · exact h1 r hr1
     · exact h2 r hr2
-
-/-- **Product rule** (sentinel at pattern-type level): a system is a
-"product-like combo" when it can be written as a `IsDirectConcatSystem`
-over two halves. -/
-def IsProductSystem (sys : RewritingSystem P) : Prop :=
-  ∃ (sys₁ sys₂ : RewritingSystem P), IsDirectConcatSystem sys sys₁ sys₂
 
 end InfraFormalization

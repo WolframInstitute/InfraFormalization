@@ -1,23 +1,12 @@
 /-
-Causal-DAG level function and basic degree-sum theorems.
+Causal level of the events of a trajectory, and sums of consumed and produced edge counts.
 
-This file takes the first steps toward the parallel-layer bound for
-conservative rules (Theorem B). It:
-
-1. Proves `total_in_degree_eq` and `total_out_degree_eq`: the total
-   consumed / produced cardinalities sum to `M * r.(lhs|rhs)Size`.
-2. Proves `total_in_eq_total_out` for conservative rules (the causal
-   DAG is balanced).
-3. Defines `level`: the causal-DAG level of an event, via classical
-   well-founded recursion on the Nat index.
-
-The full parallel-layer bound (each level has ≤ ⌊N/k⌋ events) requires
-a state-at-each-level tracker and a monotonicity lemma
-(`level τ j + 1 ≤ level τ i` whenever `j` causally precedes `i`).
-The monotonicity lemma stumbled on `Nat.strongRecOn`'s unfolding
-behaviour; a cleaner approach (building level into a list iteratively
-so the equation is `List.get?`-based rather than strong-recursor-based)
-is the planned next step.
+For a trajectory of `M` applications of one rule `r`, the module proves that the consumed
+edge counts sum to `M * r.lhsSize` and the produced edge counts to `M * r.rhsSize`, and that
+the two sums are equal when `r` is conservative. It defines the Boolean causal-predecessor
+test `isCausalPred` and the causal level `level`, proves `level τ j + 1 ≤ level τ i` when `j`
+is a causal predecessor of `i` with `j < i`, and proves that `isCausalPred` agrees with
+`causallyPrecedes` from `Causal.lean`.
 -/
 
 import InfraFormalization.ParallelSchedule
@@ -29,9 +18,8 @@ namespace InfraFormalization
 
 variable {P V : Type*} [DecidableEq V]
 
-/-- **Total-in-degree theorem.** For a trajectory all of whose
-applications use the same conservative rule `r`, the sum of the
-consumed-edge cardinalities over all events is `M * r.lhsSize`. -/
+/-- If every application of `τ` uses the rule `r`, the consumed-edge counts of the
+applications sum to `τ.applications.length * r.lhsSize`. -/
 theorem total_in_degree_eq {sys : RewritingSystem P} {init : Hypergraph V}
     (τ : Trajectory sys init) (r : Rule P)
     (hall : ∀ i (hi : i < τ.applications.length),
@@ -45,7 +33,8 @@ theorem total_in_degree_eq {sys : RewritingSystem P} {init : Hypergraph V}
   · simp
   · rw [Application.consumed_card, hall i.val i.isLt]
 
-/-- **Total-out-degree theorem.** Same for produced edges. -/
+/-- If every application of `τ` uses the rule `r`, the produced-edge counts of the
+applications sum to `τ.applications.length * r.rhsSize`. -/
 theorem total_out_degree_eq {sys : RewritingSystem P} {init : Hypergraph V}
     (τ : Trajectory sys init) (r : Rule P)
     (hall : ∀ i (hi : i < τ.applications.length),
@@ -59,8 +48,8 @@ theorem total_out_degree_eq {sys : RewritingSystem P} {init : Hypergraph V}
   · simp
   · rw [Application.produced_card, hall i.val i.isLt]
 
-/-- **Balance theorem.** For a conservative rule, total in-degree and
-total out-degree are equal (both `= M * r.lhsSize`). -/
+/-- If every application of `τ` uses the conservative rule `r`, the consumed-edge counts and
+the produced-edge counts have equal sums. -/
 theorem total_in_eq_total_out {sys : RewritingSystem P} {init : Hypergraph V}
     (τ : Trajectory sys init) (r : Rule P) (hcons : r.IsConservative)
     (hall : ∀ i (hi : i < τ.applications.length),
@@ -73,8 +62,8 @@ theorem total_in_eq_total_out {sys : RewritingSystem P} {init : Hypergraph V}
   unfold Rule.IsConservative at hcons
   rw [hcons]
 
-/-- Causal-predecessor indicator (Bool), using classical decidability
-for the hyperedge existential. -/
+/-- `true` when both indices are in range and some hyperedge produced by application `j` is
+consumed by application `i`. Decidability of the existential is classical. -/
 noncomputable def isCausalPred {sys : RewritingSystem P} {init : Hypergraph V}
     (τ : Trajectory sys init) (j i : Nat) : Bool :=
   if h : j < τ.applications.length ∧ i < τ.applications.length then
@@ -86,11 +75,8 @@ noncomputable def isCausalPred {sys : RewritingSystem P} {init : Hypergraph V}
       e ∈ (τ.applications.get ⟨i, h.2⟩).2.2.consumed)
   else false
 
-/-- **Causal level** of an event: length of the longest chain of
-causal-predecessor edges ending at it. Defined via well-founded
-recursion on Nat; equivalently, `level τ i` is `1 + sup over causal
-predecessors of their level`, with the sup being 0 when there are no
-predecessors. -/
+/-- The causal level of event `i`: the supremum of `1 + level τ j` over indices `j < i` with
+`isCausalPred τ j i`, and 0 if there are none. Defined by well-founded recursion on `i`. -/
 noncomputable def level {sys : RewritingSystem P} {init : Hypergraph V}
     (τ : Trajectory sys init) (i : Nat) : Nat :=
   (Finset.range i).attach.sup fun ⟨j, hj⟩ =>
@@ -101,25 +87,23 @@ termination_by i
 decreasing_by
   exact Finset.mem_range.mp hj
 
-/-- **Level unfolding equation.** -/
+/-- The defining equation of `level`. -/
 theorem level_eq {sys : RewritingSystem P} {init : Hypergraph V}
     (τ : Trajectory sys init) (i : Nat) :
     level τ i = (Finset.range i).attach.sup fun ⟨j, hj⟩ =>
       if isCausalPred τ j i then 1 + level τ j else 0 := by
   rw [level]
 
-/-- **Level monotonicity.** If `j` causally precedes `i`
-(indicated by `isCausalPred τ j i = true` plus `j < i`), then
-`level τ j + 1 ≤ level τ i`. -/
+/-- If `j < i` and `isCausalPred τ j i = true`, then `level τ j + 1 ≤ level τ i`. -/
 theorem level_add_one_le_of_isCausalPred {sys : RewritingSystem P} {init : Hypergraph V}
     (τ : Trajectory sys init) (j i : Nat) (hlt : j < i)
     (hcp : isCausalPred τ j i = true) :
     level τ j + 1 ≤ level τ i := by
-  -- Name the sup-function to avoid naming issues in calc.
+  -- The function whose supremum defines `level τ i`.
   set f : {x // x ∈ Finset.range i} → Nat :=
     fun ⟨j', _⟩ => if isCausalPred τ j' i then 1 + level τ j' else 0
   with hf
-  -- Use the unfolding equation for `level τ i` (only at i).
+  -- Unfold `level` at `i` only.
   have heq : level τ i = (Finset.range i).attach.sup f := by
     rw [show level τ i = _ from level_eq τ i]
   rw [heq]
@@ -133,11 +117,7 @@ theorem level_add_one_le_of_isCausalPred {sys : RewritingSystem P} {init : Hyper
     _ ≤ (Finset.range i).attach.sup f :=
         Finset.le_sup (f := f) (Finset.mem_attach _ ⟨j, hjr⟩)
 
-/-- **Antichain property.** Events at the same causal level form an
-antichain: no causal edge connects two events at the same level.
-
-This is a direct consequence of monotonicity: a causal edge `j → i`
-forces `level τ j + 1 ≤ level τ i`, so they cannot be equal. -/
+/-- If `j < i` and `level τ j = level τ i`, then `isCausalPred τ j i = false`. -/
 theorem no_causal_edge_within_level {sys : RewritingSystem P} {init : Hypergraph V}
     (τ : Trajectory sys init) (j i : Nat) (hlt : j < i)
     (h_same_level : level τ j = level τ i) :
@@ -153,24 +133,8 @@ theorem no_causal_edge_within_level {sys : RewritingSystem P} {init : Hypergraph
     level_add_one_le_of_isCausalPred τ j i hlt hcp
   omega
 
-/-- Symmetric form of `no_causal_edge_within_level`: for *ordered* pairs
-`j < i`, same-level implies no forward causal edge. The fully symmetric
-version (covering both `isCausalPred τ j i` and `isCausalPred τ i j` for
-arbitrary `j ≠ i`) requires a trajectory-structure lemma stating that
-events can only consume expressions produced earlier in the trajectory,
-which we haven't yet formalised; deferred. -/
-theorem same_level_ordered_antichain {sys : RewritingSystem P} {init : Hypergraph V}
-    (τ : Trajectory sys init) (j i : Nat) (hlt : j < i)
-    (h_same_level : level τ j = level τ i) :
-    isCausalPred τ j i = false :=
-  no_causal_edge_within_level τ j i hlt h_same_level
-
-/-- **Bridge lemma.** The `Prop`-level `causallyPrecedes` from `Causal.lean`
-agrees with the `Bool`-level `isCausalPred` from this file. Specifically,
-for indices in range, `causallyPrecedes τ i j ↔ isCausalPred τ i j = true`.
-
-The argument-order convention matches: in both, the first index is the
-causal predecessor, the second is the successor. -/
+/-- `causallyPrecedes τ i j` holds if and only if `i < j`, `j` is in range and
+`isCausalPred τ i j = true`. -/
 theorem causallyPrecedes_iff_isCausalPred
     {sys : RewritingSystem P} {init : Hypergraph V}
     (τ : Trajectory sys init) (i j : Nat) :

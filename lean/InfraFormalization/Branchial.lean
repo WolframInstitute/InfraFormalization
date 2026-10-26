@@ -1,19 +1,11 @@
 /-
-Branchial structure — states sharing a common single-step predecessor.
+Branchial relation and slices.
 
-JGORARD (arXiv:2004.14810 and companion) posits a branchial graph at
-each "slice" of the multiway evolution graph: vertices are hypergraph
-states on the slice, edges connect states sharing an immediate
-predecessor. This graph is the staging ground for the branchial-space
-"quantum" picture (amplitudes, interference, branchial observables),
-which is the eventual bridge to QM in the Wolfram program.
-
-This file gives the bare, axiom-clean skeleton: the relation,
-its symmetry, and an iterated-step reachability predicate. It is
-deliberately lightweight — the interesting work happens downstream
-when branchial slices are endowed with measures, when amplitudes are
-assigned, and when convergence to quantum-mechanical Hilbert-space
-structure is proved.
+In G1 the branchial graph of a multiway system joins states that share
+an immediate predecessor. This module defines that relation for the
+abstract `Step` relation, proves it symmetric, defines exact `n`-step
+reachability `NStep`, and defines the depth-`n` slice as the set of
+states reachable in exactly `n` steps.
 -/
 
 import InfraFormalization.Multiway
@@ -22,9 +14,8 @@ namespace InfraFormalization
 
 variable {P V : Type*} [DecidableEq V]
 
-/-- **Branchial relation.** Two hypergraph states are *branch-related*
-(at the same multiway depth) if they share a common immediate
-predecessor: both are single-step successors of some state `s`. -/
+/-- Two states are branch-related when both are one-step successors of
+some state `s`. -/
 def BranchialRelated (sys : RewritingSystem P) (s₁ s₂ : Hypergraph V) : Prop :=
   ∃ s : Hypergraph V, Step sys s s₁ ∧ Step sys s s₂
 
@@ -43,8 +34,8 @@ theorem branchial_refl_of_has_predecessor (sys : RewritingSystem P)
   obtain ⟨s₀, hs₀⟩ := h
   exact ⟨s₀, hs₀, hs₀⟩
 
-/-- **Iterated single-step reachability.** `NStep sys n a b` holds if
-`b` is reachable from `a` in exactly `n` single-step firings. -/
+/-- `NStep sys n a b` holds when `b` is reachable from `a` in exactly `n`
+steps of `Step sys`. -/
 inductive NStep (sys : RewritingSystem P) :
     Nat → Hypergraph V → Hypergraph V → Prop
   | zero (s : Hypergraph V) : NStep sys 0 s s
@@ -82,9 +73,8 @@ theorem nStep_implies_multiStep (sys : RewritingSystem P)
   | zero s => exact Relation.ReflTransGen.refl
   | succ _ hstep ih => exact Relation.ReflTransGen.tail ih hstep
 
-/-- **Branchial slice at depth `n`.** The set of states reachable from
-`s₀` in exactly `n` steps. This is the vertex set of the branchial
-graph at depth `n`. -/
+/-- The depth-`n` slice: the set of states reachable from `s₀` in
+exactly `n` steps. -/
 def BranchialSlice (sys : RewritingSystem P) (s₀ : Hypergraph V) (n : Nat) :
     Set (Hypergraph V) :=
   { s | NStep sys n s₀ s }
@@ -110,14 +100,5 @@ theorem branchialSlice_succ (sys : RewritingSystem P)
       exact ⟨_, h₀, hstep⟩
   · rintro ⟨s', h', hstep⟩
     exact NStep.succ h' hstep
-
-/-- **Placeholder type-level interface for branchial structure.** A
-`BranchialStructure V` packages a slice-type and a slice-of-function;
-downstream code wanting to abstract the branchial-graph picture can
-depend on this interface without committing to a specific
-construction. Kept for compatibility with earlier scaffolding. -/
-structure BranchialStructure (V : Type*) where
-  Slice : Type*
-  sliceOf : Hypergraph V → Slice
 
 end InfraFormalization

@@ -1,13 +1,7 @@
 /-
-**Hodge Laplacian on the Vietoris-Rips complex** (Group IT /
-#134 IT2, #136 IT4).
+Graph Laplacian of the Vietoris–Rips graph of a hypergraph.
 
-For the VR complex at scale `ε`, the Hodge Laplacian on 0-forms
-and 1-forms is built from the boundary operators. We give the
-predicate-level scaffolding and a `persistenceBarcode` sentinel.
-
-**Connection to hypergraphs.** Native. The VR complex is built
-from `Hypergraph.dist`; the Laplacian uses only the VR adjacency.
+This module defines `vrHodge0 ε`, the graph Laplacian of `vietorisRipsGraph ε`, which is built from `Hypergraph.dist`, and proves that it vanishes on constant functions. No 1-form Laplacian is defined here.
 -/
 
 import InfraFormalization.VietorisRips
@@ -17,9 +11,7 @@ namespace Hypergraph
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
-/-- **Hodge 0-Laplacian on VR complex** at scale `ε`: the graph
-Laplacian of the VR-graph. Encoded as a function
-`(V → ℝ) → V → ℝ`, analogous to `laplacianHyper`. -/
+/-- `vrHodge0 ε f v = ∑_{u adjacent to v in vietorisRipsGraph ε} (f u − f v)`. -/
 noncomputable def vrHodge0 (H : Hypergraph V) (ε : ℕ) (f : V → ℝ)
     (v : V) : ℝ :=
   haveI : DecidablePred (fun u => (H.vietorisRipsGraph ε).Adj v u) :=
@@ -28,7 +20,7 @@ noncomputable def vrHodge0 (H : Hypergraph V) (ε : ℕ) (f : V → ℝ)
       (fun u => (H.vietorisRipsGraph ε).Adj v u),
     (f u - f v)
 
-/-- **Hodge 0-Laplacian vanishes on constants**. -/
+/-- `vrHodge0 ε` vanishes on constant functions. -/
 theorem vrHodge0_const (H : Hypergraph V) (ε : ℕ) (c : ℝ) (v : V) :
     H.vrHodge0 ε (fun _ => c) v = 0 := by
   unfold vrHodge0
@@ -36,16 +28,6 @@ theorem vrHodge0_const (H : Hypergraph V) (ε : ℕ) (c : ℝ) (v : V) :
   intros u _
   ring
 
-/-! ## Persistence barcode (sentinel) -/
-
-/-- **PersistenceBarcode** (stub): a multiset of `(birth, death)`
-pairs encoding when each Betti generator appears and disappears.
-Full construction requires chain-complex machinery. -/
-def PersistenceBarcode (V : Type*) : Type :=
-  Multiset (ℕ × ℕ)
-
-/-- **Empty barcode** — no persistent generators. -/
-def emptyBarcode : PersistenceBarcode V := (∅ : Multiset (ℕ × ℕ))
 
 end Hypergraph
 end InfraFormalization

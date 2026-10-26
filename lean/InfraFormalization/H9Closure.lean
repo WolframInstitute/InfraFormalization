@@ -12,19 +12,12 @@ The systems are `edgeReversal + tripleMerger`
 (`edgeReversal_tripleMerger_Sys`) and `forkRule_2 + doubleCycle_5`
 (`fork_doubleCycle_Sys`), both started from `seedEdge12 = [[1, 2]]`.
 
-PROVED without `native_decide`:
-
-  * `TriadEdge d` (inductive type) and `triadList d` (an explicit list).
-  * `triadList_length d : (triadList d).length = 3^d`, by induction on
-    `d`.
-  * `H9_conditional_on_bridge`: if `engineMatchesTriad` holds, then
-    `distinctEdgeCount (fireAllEvolve sys seedEdge12 d) = 3^d` for every
-    d and both systems.
-
-PROVED-WITH-NATIVE-DECIDE: `bridge_at_0` to `bridge_at_7`, the two
-equalities of `engineMatchesTriad` at depths 0 to 7.
-
-OPEN: `engineMatchesTriad` itself, for all d.
+The module proves `(triadList d).length = 3^d` by induction on `d`, and
+that `engineMatchesTriad` implies
+`distinctEdgeCount (fireAllEvolve sys seedEdge12 d) = 3^d` for every d and
+both systems. `bridge_at_0` to `bridge_at_7` state the two equalities of
+`engineMatchesTriad` at depths 0 to 7 and are checked by `native_decide`.
+No theorem in the library proves `engineMatchesTriad` for all d.
 -/
 
 import InfraFormalization.H9StructuralProgress
@@ -43,9 +36,8 @@ open H9StructuralProgress
 
 /-- `TriadEdge d` is an inductive type with one element `base` at depth 0
 and three constructors `reverseOf`, `freshA`, `freshB` from depth d to
-depth d+1. The type has no definitional link to the engine. The
-correspondence between distinct edges of the engine and `TriadEdge d` is
-the OPEN statement `engineMatchesTriad`, which compares counts only. -/
+depth d+1. No definition in the library relates `TriadEdge d` to the edges
+of the evolved states. `engineMatchesTriad` compares counts only. -/
 inductive TriadEdge : Nat → Type
   | base : TriadEdge 0
   | reverseOf {d : Nat} (parent : TriadEdge d) : TriadEdge (d+1)
@@ -63,7 +55,7 @@ def triadList : (d : Nat) → List (TriadEdge d)
   | d+1 => (triadList d).flatMap (fun p =>
       [TriadEdge.reverseOf p, TriadEdge.freshA p, TriadEdge.freshB p])
 
-/-! ## The cardinality theorem (proved via List.length induction) -/
+/-! ## Section C: Length of `triadList` by induction -/
 
 /-- `triadList 0` has length 1. -/
 theorem triadList_length_zero : (triadList 0).length = 1 := by
@@ -85,18 +77,12 @@ theorem triadList_length (d : Nat) : (triadList d).length = 3^d := by
 
 /-! ## Section D: Length of `triadList` -/
 
-/-- `∀ d, (triadList d).length = 3^d`. This is `triadList_length`. The
-statement concerns the list `triadList` only and does not mention the
-engine. -/
-theorem H9_combinatorial_closed : ∀ d : Nat, (triadList d).length = 3^d :=
-  triadList_length
+/-! ## Section E: The statement `engineMatchesTriad` -/
 
-/-! ## Section E: The statement `engineMatchesTriad` (OPEN) -/
-
-/-- `engineMatchesTriad` (OPEN): for every d, the distinct-edge counts
-of `fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 d` and of
+/-- For every d, the distinct-edge counts of
+`fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 d` and of
 `fireAllEvolve fork_doubleCycle_Sys seedEdge12 d` both equal
-`(triadList d).length`. This module does not prove it. -/
+`(triadList d).length`. No theorem in the library proves it. -/
 def engineMatchesTriad : Prop :=
   ∀ d : Nat,
     distinctEdgeCount (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 d) =
@@ -121,8 +107,8 @@ theorem H9_conditional_on_bridge (h : engineMatchesTriad) :
 /-! ## Section G: `engineMatchesTriad` at depths 0 to 7
 
 Each theorem below states the two equalities of `engineMatchesTriad` at
-one depth. The proofs rewrite with `triadList_length` and evaluate the
-engine by `native_decide`. -/
+one depth. The proofs rewrite with `triadList_length`, and the counts are
+checked by `native_decide`. -/
 
 /-- The two equalities of `engineMatchesTriad` at depth 0. -/
 theorem bridge_at_0 :
@@ -187,30 +173,6 @@ theorem bridge_at_7 :
     distinctEdgeCount (fireAllEvolve fork_doubleCycle_Sys seedEdge12 7) =
       (triadList 7).length := by
   refine ⟨?_, ?_⟩ <;> (rw [triadList_length]; native_decide)
-
-/-! ## Contents
-
-PROVED without `native_decide`:
-
-  * `triadList_length : ∀ d, (triadList d).length = 3^d`, and its copy
-    `H9_combinatorial_closed`.
-  * `H9_conditional_on_bridge`: `engineMatchesTriad` implies
-    `distinctEdgeCount (fireAllEvolve sys seedEdge12 d) = 3^d` for all d,
-    for both systems.
-
-PROVED-WITH-NATIVE-DECIDE:
-
-  * `bridge_at_0` to `bridge_at_7`: the two equalities of
-    `engineMatchesTriad` at depths 0 to 7.
-
-OPEN: `engineMatchesTriad`, the statement that for every d,
-`distinctEdgeCount (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 d)`
-and `distinctEdgeCount (fireAllEvolve fork_doubleCycle_Sys seedEdge12 d)`
-both equal `(triadList d).length`.
-
-`H9Bridge` reduces `engineMatchesTriad` to the OPEN statement
-`H9Bridge.BridgeStepLemma`.
--/
 
 end H9Closure
 end InfraFormalization

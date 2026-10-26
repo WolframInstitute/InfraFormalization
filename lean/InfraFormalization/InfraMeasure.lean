@@ -1,28 +1,12 @@
 /-
-**InfraMeasure: synthetic measure primitive on a hypergraph** (#388
-starter).
+Weight functions on vertices, couplings and transport cost.
 
-A measure-theoretic primitive built directly from the synthetic
-hypergraph data — not the marginal of a probability law on any
-continuum limit. Following PHAJEK's `InfraMeasure` in the
-`SyntheticInfrageometry` paclet (renamed from `VisitMeasure` in
-commits `9f34fb4` → `38693c2` → `eb68944`,
-`resources/SyntheticInfrageometry/Kernel/Tools.wl`).
-
-**F5 sharpening realised at the type level.** A measure on a graph
-is now its own kind of mathematical object (an `InfraMeasureData V`);
-whether it can be realised as the marginal of a probability measure
-on a continuum object is a separate question (the HVLE
-projective-limit obstruction documented in `Refutations/F5Illdefined.lean`
-and `notes/phajek_macro_observer_notes.txt`). G1 Eq 88 conflates the
-two — a category error this module makes structural.
-
-**Starter scope.** Bare primitives: vertex-weight data + non-negativity
-witness, total mass over an explicit vertex list, restriction by a
-Bool predicate, uniform measure on a finite vertex list, Dirac point
-mass. Ollivier-Ricci screener (W₁ between vertex-neighbourhood
-InfraMeasure-style measures, #368) and visit-measure walks on a graph
-are downstream targets.
+This module defines `InfraMeasureData V`, a non-negative weight function on a vertex type, after
+P. Hajek's `InfraMeasure` in the `SyntheticInfrageometry` paclet
+(`resources/SyntheticInfrageometry/Kernel/Tools.wl`). It defines total mass over a vertex list,
+restriction to a Boolean predicate, the uniform weight on a list and the Dirac weight, together with
+couplings, their marginals over a carrier list, transport cost, and the minimum transport cost over
+a finite list of couplings. The results are non-negativity and elementary identities.
 -/
 
 import InfraFormalization.Hypergraph
@@ -33,10 +17,7 @@ import Mathlib.Tactic.Linarith
 namespace InfraFormalization
 namespace InfraMeasure
 
-/-- **Synthetic measure on a vertex type `V`**: a non-negative weight
-function. Decoupled from `MeasureTheory.Measure` — this is an
-infrageometric construct of its own kind, not a probability measure
-on a continuum. -/
+/-- A non-negative weight function on a vertex type `V`. -/
 structure InfraMeasureData (V : Type*) where
   weight : V → ℝ
   nonneg : ∀ v, 0 ≤ weight v
@@ -45,8 +26,7 @@ namespace InfraMeasureData
 
 variable {V : Type*}
 
-/-- Total mass over an explicit list of vertices (sum of weights, with
-multiplicities — caller is responsible for dedup if desired). -/
+/-- The sum of the weights of the vertices in the list `vs`, counted with multiplicity. -/
 def totalMass (m : InfraMeasureData V) (vs : List V) : ℝ :=
   vs.foldr (fun v acc => m.weight v + acc) 0
 
@@ -68,8 +48,7 @@ theorem totalMass_nonneg (m : InfraMeasureData V) (vs : List V) :
 @[simp] theorem totalMass_cons (m : InfraMeasureData V) (v : V) (vs : List V) :
     m.totalMass (v :: vs) = m.weight v + m.totalMass vs := rfl
 
-/-- **Restrict** the measure to a Bool predicate: weights outside the
-predicate become `0`. The restriction is again an `InfraMeasureData`. -/
+/-- The weight that equals `m.weight v` where `P v` holds and 0 elsewhere. -/
 def restrict (m : InfraMeasureData V) (P : V → Bool) : InfraMeasureData V where
   weight v := if P v then m.weight v else 0
   nonneg v := by
@@ -77,7 +56,8 @@ def restrict (m : InfraMeasureData V) (P : V → Bool) : InfraMeasureData V wher
     · simp [h]; exact m.nonneg v
     · simp [h]
 
-/-- Restricting twice composes: `restrict (restrict m P) Q = restrict m (P ∧ Q)`. -/
+/-- Restricting by `P` and then by `Q` gives the same weight at every vertex as restricting by
+`P && Q`. -/
 theorem restrict_restrict (m : InfraMeasureData V) (P Q : V → Bool) (v : V) :
     ((m.restrict P).restrict Q).weight v
       = (m.restrict (fun x => P x && Q x)).weight v := by
@@ -90,8 +70,7 @@ theorem restrict_restrict (m : InfraMeasureData V) (P Q : V → Bool) (v : V) :
 
 end InfraMeasureData
 
-/-- **Uniform measure** on a finite vertex list: weight `1` for every
-vertex in the list, `0` outside. -/
+/-- The weight equal to 1 on the vertices in `vs` and 0 elsewhere. -/
 def uniformOn {V : Type*} [DecidableEq V] (vs : List V) :
     InfraMeasureData V where
   weight v := if v ∈ vs then 1 else 0
@@ -100,8 +79,7 @@ def uniformOn {V : Type*} [DecidableEq V] (vs : List V) :
     · simp [h]
     · simp [h]
 
-/-- **Dirac point mass** at a single vertex `v₀`: weight `1` at `v₀`,
-`0` elsewhere. -/
+/-- The weight equal to 1 at `v₀` and 0 elsewhere. -/
 def dirac {V : Type*} [DecidableEq V] (v₀ : V) : InfraMeasureData V where
   weight v := if v = v₀ then 1 else 0
   nonneg v := by
@@ -109,27 +87,24 @@ def dirac {V : Type*} [DecidableEq V] (v₀ : V) : InfraMeasureData V where
     · simp [h]
     · simp [h]
 
-/-- **Dirac is supported at a single point.** -/
+/-- The Dirac weight at `v₀` equals 1 at `v₀`. -/
 @[simp] theorem dirac_self {V : Type*} [DecidableEq V] (v₀ : V) :
     (dirac v₀).weight v₀ = 1 := by
   unfold dirac
   simp
 
-/-- **Off-support weight of a Dirac is zero.** -/
+/-- The Dirac weight at `v₀` equals 0 at every `v ≠ v₀`. -/
 theorem dirac_of_ne {V : Type*} [DecidableEq V] (v₀ v : V) (h : v ≠ v₀) :
     (dirac v₀).weight v = 0 := by
   unfold dirac
   simp [h]
 
-/-! ## Coupling + transport cost (foundation for Ollivier-Ricci screener)
+/-! ## Couplings and transport cost
 
-A **coupling** of two `InfraMeasureData`s `m₁`, `m₂` on `V` is a
-non-negative joint weight on `V × V` whose `V`-marginals (over a
-finite carrier list) recover the originals. The W₁ Wasserstein
-distance is the infimum of transport costs over couplings; we
-formalise the per-coupling cost here as the foundation. -/
+A coupling is a non-negative weight on `V × V`. `IsCouplingOf carrier γ m₁ m₂` states that the
+marginals of `γ` over the list `carrier` equal the weights of `m₁` and `m₂`. -/
 
-/-- A coupling on `V × V`: non-negative weights on ordered pairs. -/
+/-- A non-negative weight on ordered pairs of vertices. -/
 structure Coupling (V : Type*) where
   jointWeight : V → V → ℝ
   jointNonneg : ∀ u v, 0 ≤ jointWeight u v
@@ -138,16 +113,15 @@ namespace Coupling
 
 variable {V : Type*}
 
-/-- The first marginal of a coupling over an explicit carrier: the
-weight at `u` is the sum of `jointWeight u v` for `v` in the carrier. -/
+/-- The first marginal over `carrier`: the sum of `γ.jointWeight u v` over `v` in `carrier`. -/
 def marginal1 (γ : Coupling V) (carrier : List V) (u : V) : ℝ :=
   carrier.foldr (fun v acc => γ.jointWeight u v + acc) 0
 
-/-- The second marginal of a coupling over an explicit carrier. -/
+/-- The second marginal over `carrier`: the sum of `γ.jointWeight u v` over `u` in `carrier`. -/
 def marginal2 (γ : Coupling V) (carrier : List V) (v : V) : ℝ :=
   carrier.foldr (fun u acc => γ.jointWeight u v + acc) 0
 
-/-- Marginal-1 non-negativity. -/
+/-- The first marginal is non-negative. -/
 theorem marginal1_nonneg (γ : Coupling V) (carrier : List V) (u : V) :
     0 ≤ γ.marginal1 carrier u := by
   unfold marginal1
@@ -158,7 +132,7 @@ theorem marginal1_nonneg (γ : Coupling V) (carrier : List V) (u : V) :
     have := γ.jointNonneg u v
     linarith
 
-/-- Marginal-2 non-negativity. -/
+/-- The second marginal is non-negative. -/
 theorem marginal2_nonneg (γ : Coupling V) (carrier : List V) (v : V) :
     0 ≤ γ.marginal2 carrier v := by
   unfold marginal2
@@ -171,24 +145,21 @@ theorem marginal2_nonneg (γ : Coupling V) (carrier : List V) (v : V) :
 
 end Coupling
 
-/-- A coupling **respects** a pair of `InfraMeasureData`s if its
-marginals over the carrier equal the input measures' weights. -/
+/-- The marginals of `γ` over `carrier` equal the weights of `m₁` and `m₂` at every vertex. -/
 def IsCouplingOf {V : Type*} (carrier : List V)
     (γ : Coupling V) (m₁ m₂ : InfraMeasureData V) : Prop :=
   (∀ u, γ.marginal1 carrier u = m₁.weight u) ∧
   (∀ v, γ.marginal2 carrier v = m₂.weight v)
 
-/-- **Transport cost** of a coupling under a non-negative cost
-function `c : V × V → ℝ` (cost of moving one unit of mass from `u` to
-`v`): the sum over the carrier-square of `c u v * γ.jointWeight u v`.
-For W₁ on a metric space, use `c u v := d u v` (the graph distance).
-Defined via a flattened list of (u, v)-pairs to keep induction clean. -/
+/-- The sum over `u, v` in `carrier` of `cost u v * γ.jointWeight u v`. With `cost` a graph
+distance and `γ` a coupling of `m₁` and `m₂`, this is the cost whose minimum over couplings is the
+Wasserstein-1 distance. -/
 def transportCost {V : Type*} (carrier : List V)
     (cost : V → V → ℝ) (γ : Coupling V) : ℝ :=
   (carrier.flatMap (fun u =>
     carrier.map (fun v => cost u v * γ.jointWeight u v))).foldr (· + ·) 0
 
-/-- Helper: a foldr-sum of a non-negative list is non-negative. -/
+/-- The `foldr` sum of a list of non-negative reals is non-negative. -/
 theorem foldr_add_nonneg (l : List ℝ) (h : ∀ x ∈ l, 0 ≤ x) :
     0 ≤ l.foldr (· + ·) 0 := by
   induction l with
@@ -199,8 +170,7 @@ theorem foldr_add_nonneg (l : List ℝ) (h : ∀ x ∈ l, 0 ≤ x) :
     have h_rest : 0 ≤ rest.foldr (· + ·) 0 := ih (fun y hy => h y (by simp [hy]))
     linarith
 
-/-- **Transport cost is non-negative** when the cost function and
-coupling are both non-negative. -/
+/-- The transport cost is non-negative when the cost function is non-negative. -/
 theorem transportCost_nonneg {V : Type*} (carrier : List V)
     (cost : V → V → ℝ) (hcost : ∀ u v, 0 ≤ cost u v)
     (γ : Coupling V) :
@@ -213,52 +183,33 @@ theorem transportCost_nonneg {V : Type*} (carrier : List V)
   rw [← h_eq]
   exact mul_nonneg (hcost u v) (γ.jointNonneg u v)
 
-/-! ## W₁ Wasserstein distance via coupling-list infimum
+/-! ## Transport cost of the product weight and of a list of couplings
 
-The true Wasserstein-1 distance is the infimum of transport costs over
-*all* valid couplings respecting the two marginals. Computing the
-infimum over the constraint set is an LP; for a Lean-side primitive we
-provide two flavours:
+`w1ProductCost` is the transport cost of the product weight `m₁ u * m₂ v`. `w1InfimumOver` is the
+minimum transport cost over a given list of couplings. Neither definition requires the couplings to
+satisfy `IsCouplingOf`. -/
 
-  1. **`w1UpperBound`**: the transport cost under a fixed *product*
-     coupling (the simplest computable upper bound).
-  2. **`w1InfimumOver`**: the infimum over an explicit candidate list
-     of couplings — a computable lower-precision proxy for the true
-     W₁ that's exact when the candidate list contains an optimum.
-
-For Ollivier-Ricci on a hypergraph, W₁ is between vertex-neighbourhood
-measures, and the lazy-uniform formulation makes the candidate set
-small enough to enumerate. -/
-
-/-- The **product coupling** of two `InfraMeasureData`s: at `(u, v)`
-the joint weight is `(m₁ u * m₂ v) / totalMass m₂ carrier`. When the
-masses are equal and totalled to 1, this is the independent coupling.
-We use `m₁.weight u * m₂.weight v` directly (an unscaled variant)
-to avoid division issues; this gives an upper bound on W₁ that is
-exact up to a scaling factor. -/
+/-- The coupling with joint weight `m₁.weight u * m₂.weight v`. Its marginals equal `m₁` and `m₂`
+only when the other weight has total mass 1 on the carrier. -/
 def productCoupling {V : Type*}
     (m₁ m₂ : InfraMeasureData V) : Coupling V where
   jointWeight u v := m₁.weight u * m₂.weight v
   jointNonneg u v := mul_nonneg (m₁.nonneg u) (m₂.nonneg v)
 
-/-- The product coupling's transport cost — a fixed-coupling upper
-bound on W₁. -/
-def w1ProductUpper {V : Type*} (carrier : List V)
+/-- The transport cost of `productCoupling m₁ m₂`. -/
+def w1ProductCost {V : Type*} (carrier : List V)
     (cost : V → V → ℝ) (m₁ m₂ : InfraMeasureData V) : ℝ :=
   transportCost carrier cost (productCoupling m₁ m₂)
 
-/-- The product-coupling upper bound is non-negative. -/
+/-- `w1ProductCost` is non-negative when the cost function is non-negative. -/
 theorem w1ProductUpper_nonneg {V : Type*} (carrier : List V)
     (cost : V → V → ℝ) (hcost : ∀ u v, 0 ≤ cost u v)
     (m₁ m₂ : InfraMeasureData V) :
-    0 ≤ w1ProductUpper carrier cost m₁ m₂ :=
+    0 ≤ w1ProductCost carrier cost m₁ m₂ :=
   transportCost_nonneg carrier cost hcost _
 
-/-- **Infimum over an explicit candidate-coupling list.** Returns the
-minimum of `transportCost carrier cost γ` over the candidates, or
-defaults to `default` if the list is empty (no valid couplings to
-optimise over). When the candidate list contains the true optimum,
-this equals the W₁ distance; otherwise it's an upper bound. -/
+/-- The minimum of `transportCost carrier cost γ` over `γ` in `candidates`, or `default` if the list
+is empty. -/
 def w1InfimumOver {V : Type*} (carrier : List V)
     (cost : V → V → ℝ) (candidates : List (Coupling V))
     (default : ℝ) : ℝ :=
@@ -268,8 +219,7 @@ def w1InfimumOver {V : Type*} (carrier : List V)
       (fun γ' acc => min (transportCost carrier cost γ') acc)
       (transportCost carrier cost γ)
 
-/-- The infimum over candidate couplings is ≤ each candidate's
-transport cost. -/
+/-- `w1InfimumOver` is at most the transport cost of each member of `candidates`. -/
 theorem w1InfimumOver_le_member {V : Type*} (carrier : List V)
     (cost : V → V → ℝ) (candidates : List (Coupling V))
     (default : ℝ) (γ : Coupling V) (hγ : γ ∈ candidates) :

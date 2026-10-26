@@ -1,52 +1,11 @@
 /-
-**B4-extend: Knill on higher-genus surfaces — triangulated T²
-(χ = 0), genus formula** (#428).
+Knill's vertex curvature on triangulated tori.
 
-`KnillDiscreteGaussBonnet` (#427) implemented the vertex-defect
-formula and proved it triangulation-independent on the three
-Platonic S² triangulations (all giving `knillEulerScaled = 12`).
-
-This module **extends Knill to higher-genus surfaces**, demonstrating
-that the discrete Gauss-Bonnet is topology-respecting across the
-full closed-orientable-surface classification, not just S².
-
-**The closed-surface classification**: every closed orientable
-2-manifold is topologically a `g`-holed surface with Euler
-characteristic `χ = 2 − 2g`:
-
-  * `g = 0`: `S²`, `χ = 2`, `6χ = 12` (covered by #427).
-  * `g = 1`: `T²`, `χ = 0`, `6χ = 0` (covered here).
-  * `g = 2`: double torus, `χ = -2`, `6χ = -12` (genus-2 surface).
-  * `g ≥ 2`: high-genus surface, `χ = 2 − 2g`.
-
-**This module's contribution**:
-
-  * `triangulatedTorusHG n`: square grid with wrap (T² topology) +
-    diagonals splitting each square into 2 triangles.
-  * For `n ≥ 4`: `knillEulerScaled (triangulatedTorusHG n) = 0`
-    (= `6 · χ(T²)`), certified at `n = 4, 5, 6`.
-  * Per-vertex `K6(v) = 0` for every interior vertex of the
-    triangulated torus.
-  * Honesty note: `n = 3` is special — the size-3 wrap creates extra
-    triangles, giving `Knill = 54 ≠ 0`. This isn't a bug — it's the
-    triangulated `T²_3x3` having additional (long-diagonal) triangles
-    that the standard T² triangulation doesn't have. Same pattern as
-    T² Forman's special behavior at n=3 (#421).
-
-**Cross-genus table** (Knill-recovered):
-
-| g  | Surface     | χ  | 6χ  | Example                           | Status         |
-|----|-------------|----|----|-----------------------------------|----------------|
-| 0  | `S²`        | 2  | 12 | Tetrahedron / Octa / Icosa (#427) | ✅ certified    |
-| 1  | `T²`        | 0  | 0  | `triangulatedTorusHG n`, n ≥ 4    | ✅ certified    |
-| ≥2 | `Σ_g`       | 2−2g | 6(2−2g) | (literature-grade)            | scope-stated   |
-
-This shows the architecture's Knill implementation **scales across
-the full genus classification**, not just one topological type. The
-Verified on three S² triangulations and on triangulated tori at
-n ∈ {4,5,6}; the general "Knill = 6χ for any triangulated closed
-surface" would follow from the discrete Euler formula but is not
-formally proved across genera here.
+This module defines `triangulatedTorusHG n`, the n × n grid on the torus with one diagonal in each
+square, and shows that `knillEulerScaled` equals 0 = 6 · χ(T²) for `n = 4, 5, 6` and 54 for `n = 3`.
+For `n = 3`, the wrapped edges form additional 3-cycles. The values are checked by `native_decide`.
+The identity `knillEulerScaled = 6 · (2 − 2g)` for a closed orientable surface of genus `g` is not
+proved here.
 -/
 
 import InfraFormalization.KnillDiscreteGaussBonnet
@@ -59,16 +18,13 @@ open RuleSignatureExecMetrics
 open KnillDiscreteGaussBonnet
 open SphereTriangulationAudit
 
-/-! ## Triangulated T²(n, n)
+/-! ## Triangulated torus T²(n, n)
 
-Square grid on `n²` vertices with wraparound (torus topology), plus
-diagonals splitting each square into 2 triangles. Each vertex has
-degree 6 (4 grid neighbors + 2 diagonal neighbors). Triangle count
-per vertex = 6 (for `n ≥ 4`; n = 3 special). -/
+The vertices are the `n²` grid points with indices taken mod `n`. The edges are horizontal, vertical
+and diagonal. -/
 
-/-- Triangulated torus `T²(n, n)` as `ExecHG ℕ`. Edges: horizontal,
-vertical, and diagonal (lower-left → upper-right), all with `mod n`
-wraparound. -/
+/-- The triangulated torus `T²(n, n)` as `ExecHG ℕ`, with horizontal, vertical and diagonal edges
+`(i, j) – (i + 1, j + 1)`, all indices mod `n`. -/
 def triangulatedTorusHG (n : ℕ) : ExecHG ℕ :=
   let nodeId : ℕ → ℕ → ℕ := fun i j => i * n + j
   let horiz : List (Hyperedge ℕ) :=
@@ -85,14 +41,9 @@ def triangulatedTorusHG (n : ℕ) : ExecHG ℕ :=
         ⟨[nodeId i j, nodeId ((i + 1) % n) ((j + 1) % n)], List.cons_ne_nil _ _⟩))
   horiz ++ vert ++ diag
 
-/-! ## Knill = 0 = 6·χ(T²) on triangulated T²(n, n), n ≥ 4
+/-! ## Values of `knillEulerScaled` on T²(n, n)
 
-Certified at `n = 4, 5, 6` via `native_decide`. For `n ≥ 4`, every
-vertex has degree 6 and is in exactly 6 triangles, so
-`K6(v) = 6 − 18 + 12 = 0`. Sum over `n²` vertices: 0.
-
-(Exception: `n = 3` has extra triangles from the size-3 cycle wrap,
-giving Knill = 54 instead of 0.) -/
+For `n = 4, 5, 6` the value is 0, checked by `native_decide`. For `n = 3` the value is 54. -/
 
 theorem triangulatedTorus_4_knillEuler :
     knillEulerScaled (triangulatedTorusHG 4) = 0 := by native_decide
@@ -103,21 +54,15 @@ theorem triangulatedTorus_5_knillEuler :
 theorem triangulatedTorus_6_knillEuler :
     knillEulerScaled (triangulatedTorusHG 6) = 0 := by native_decide
 
-/-- The n=3 special case: size-3 wrap creates extra long-diagonal
-triangles, so Knill = 54 instead of 0. This is the same kind of
-n=3 anomaly as T² Forman's behavior (#421) — not a bug, but a
-real feature of the small triangulation. -/
+/-- `knillEulerScaled (triangulatedTorusHG 3) = 54`. For `n = 3`, the wrapped edges form additional
+3-cycles. -/
 theorem triangulatedTorus_3_knillEuler_special :
     knillEulerScaled (triangulatedTorusHG 3) = 54 := by native_decide
 
-/-! ## Triangulation-size-independence on T² (for n ≥ 4)
+/-! ## The three tori n = 4, 5, 6 -/
 
-Like the S² case (#427), the Knill scalar gives the SAME value
-(= 0 = 6·χ(T²)) across multiple sizes of the triangulated torus. -/
-
-/-- **`knill_torus_triangulation_independent`**: triangulated torus
-at `n = 4, 5, 6` all give the same Knill value 0 = 6·χ(T²). -/
-theorem knill_torus_triangulation_independent :
+/-- `knillEulerScaled (triangulatedTorusHG n) = 0` for `n = 4, 5, 6`. -/
+theorem knill_values_torus_triangulations :
     knillEulerScaled (triangulatedTorusHG 4) = 0 ∧
     knillEulerScaled (triangulatedTorusHG 5) = 0 ∧
     knillEulerScaled (triangulatedTorusHG 6) = 0 :=
@@ -125,52 +70,37 @@ theorem knill_torus_triangulation_independent :
    triangulatedTorus_5_knillEuler,
    triangulatedTorus_6_knillEuler⟩
 
-/-! ## Cross-genus pattern
+/-! ## Genus 0 and genus 1 -/
 
-Combining #427 (S²) and this module (T²), the Knill scalar recovers
-the correct topological Euler characteristic for the two simplest
-genera. The general formula `χ = 2 − 2g` for closed orientable
-surfaces extends to any genus. -/
-
-/-- **`knill_genus_zero_one_pattern`**: bundles the Knill values for
-genus 0 (S²) and genus 1 (T²). Both equal `6 · χ` of the respective
-topological type. -/
+/-- `knillEulerScaled` equals 12 on the three Platonic triangulations of S² and 0 on
+`triangulatedTorusHG n` for `n = 4, 5, 6`. -/
 theorem knill_genus_zero_one_pattern :
-    -- Genus 0 (S²): 6χ = 12, certified on three Platonic triangulations.
+    -- Genus 0 (S²): 6χ = 12 on three Platonic triangulations.
     (knillEulerScaled tetrahedronHG = 12 ∧
      knillEulerScaled octahedronHG = 12 ∧
      knillEulerScaled icosahedronHG = 12) ∧
-    -- Genus 1 (T²): 6χ = 0, certified on triangulated tori at n = 4, 5, 6.
+    -- Genus 1 (T²): 6χ = 0 on triangulated tori with n = 4, 5, 6.
     (knillEulerScaled (triangulatedTorusHG 4) = 0 ∧
      knillEulerScaled (triangulatedTorusHG 5) = 0 ∧
      knillEulerScaled (triangulatedTorusHG 6) = 0) :=
-  ⟨knill_recovers_chi_S2, knill_torus_triangulation_independent⟩
+  ⟨knill_recovers_chi_S2, knill_values_torus_triangulations⟩
 
-/-! ## Direct contrast with Forman (architectural unification)
+/-! ## Comparison with the Forman scalar
 
-The unweighted Forman fails dimensionally and topologically:
+On the tetrahedron, octahedron and icosahedron, `execFormanScalar` takes the values 48, 48 and 0. -/
 
-  * S² triangulations: triangulation-dependent (#426).
-  * T² (square grid no diagonals): per-area density only (-16, #424).
-  * T² triangulated (with diagonals): also has per-vertex Forman
-    that differs from 0 — Forman wasn't designed for this target.
-
-The Knill scalar gives the correct topological invariant uniformly:
-12 for S² triangulations, 0 for T² triangulations. -/
-
-/-- **`knill_vs_forman_across_genera`**: contrast bundle. Forman is
-inconsistent / dimensional-bias; Knill gives the correct `6χ` for
-each topological type. -/
+/-- `execFormanScalar` equals 48, 48 and 0 on the tetrahedron, octahedron and icosahedron;
+`knillEulerScaled` equals 12 on all three and 0 on `triangulatedTorusHG n` for `n = 4, 5, 6`. -/
 theorem knill_vs_forman_across_genera :
-    -- Forman on S² triangulations: +48, +48, 0 (inconsistent).
+    -- Forman scalar on the S² triangulations: 48, 48, 0.
     (execFormanScalar tetrahedronHG = 48 ∧
      execFormanScalar octahedronHG = 48 ∧
      execFormanScalar icosahedronHG = 0) ∧
-    -- Knill on S² triangulations: +12, +12, +12 (consistent = 6·χ(S²)).
+    -- Knill sum on the S² triangulations: 12, 12, 12 = 6·χ(S²).
     (knillEulerScaled tetrahedronHG = 12 ∧
      knillEulerScaled octahedronHG = 12 ∧
      knillEulerScaled icosahedronHG = 12) ∧
-    -- Knill on T² triangulations: 0, 0, 0 (consistent = 6·χ(T²)).
+    -- Knill sum on the T² triangulations: 0, 0, 0 = 6·χ(T²).
     (knillEulerScaled (triangulatedTorusHG 4) = 0 ∧
      knillEulerScaled (triangulatedTorusHG 5) = 0 ∧
      knillEulerScaled (triangulatedTorusHG 6) = 0) :=
@@ -178,34 +108,12 @@ theorem knill_vs_forman_across_genera :
     SphereTriangulationAudit.octahedron_forman,
     SphereTriangulationAudit.icosahedron_forman⟩,
    knill_recovers_chi_S2,
-   knill_torus_triangulation_independent⟩
+   knill_values_torus_triangulations⟩
 
-/-! ## What this delivers
+/-! ## Summary
 
-**Second positive constructive result for the Knill framework** (the
-first being #427 for S²):
-
-  * `triangulatedTorusHG n`: triangulated T² construction.
-  * Certified Knill = 0 = 6·χ(T²) at `n = 4, 5, 6`.
-  * Documented n = 3 special case: extra wrap triangles give 54.
-  * Bundled `knill_torus_triangulation_independent`.
-  * Cross-genus bundle `knill_genus_zero_one_pattern` covers g = 0, 1.
-  * Direct contrast `knill_vs_forman_across_genera` packages the
-    failure-vs-success comparison across both topological targets.
-
-**Why this matters**: this is the second concrete topological type
-(after S²) where Knill demonstrably recovers `6χ`. Combined with
-#427, the Knill scalar is verified on three S² triangulations and
-three triangulated tori (n=4,5,6); not proven for all surfaces
-in either genus — not just a one-off for S².
-
-The pattern extends to any genus: any closed orientable triangulated
-surface gives `knillEulerScaled = 6 · (V − E + F) = 6 · (2 − 2g)`.
-The general genus formula is left as a scope-stated extension (no
-concrete genus-2 surface encoded here — that would require ~30+
-triangles of a double-torus, computationally feasible but not the
-focal contribution of this commit).
--/
+`knillEulerScaled` equals 6χ on three triangulations of S² and on the triangulated tori with
+`n = 4, 5, 6`. No genus-2 surface is encoded here. -/
 
 end KnillHigherGenus
 end InfraFormalization

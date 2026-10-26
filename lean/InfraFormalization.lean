@@ -1,32 +1,14 @@
 /-
-Top-level module of the `InfraFormalization` Lean library.
+Root module of the `InfraFormalization` library. It imports every module.
 
-**Purpose.** Formalize the mechanics of directed hypergraph rewriting
-in a way that supports proving continuum-limit theorems — and use that
-machinery to formally state, where possible, refutations of JGORARD's
-2004.14810 / 2102.09363 / 2303.07282 claims that survive the
-project's multi-rail verification (see ../README.md).
-
-Layout grouped by phase:
-
-  * **Core hypergraph rewriting:**
-    `Hypergraph`, `Rule`, `Application`, `Conservation`, `Multiway`,
-    `Causal`, `CausalLevel`, `Branchial`, `ParallelSchedule`, `Demo`.
-
-  * **Continuum-limit infrastructure:**
-    `GraphMetric`, `Growth`, `Limit`, and the `Infra/*` submodules
-    (cycle / path / torus GH bounds, Lorentz lattice, Minkowski,
-    bridging theorems).
-
-  * **Refutations of JGORARD's structural flaws:**
-    `Refutations/F1NoMetric`, `F2Orthonormality`, `F3Tautology`,
-    `F4Tautology`, `F5Illdefined`.
-
-  * **Discrete calculus (Rung 1 of the bridge ladder):**
-    `DiscreteCalculus`, `DiscreteCalculusSymm`, `CycleGraph`.
-
-The `AxiomCheck` module imports everything and certifies the
-axiom-cleanliness of every proved theorem.
+Core modules define hypergraphs, rules, applications, multiway systems,
+trajectories and causal relations (`Hypergraph`, `Rule`, `Application`,
+`Conservation`, `Multiway`, `Causal`, `CausalLevel`, `CausalHistory`,
+`Branchial`). The `Infra/*` modules give Gromov-Hausdorff-type bounds from
+cycles, paths and lattices to circles, intervals, tori and Minkowski space.
+`Refutations/F7NamedRuleStructure` states edge-count conservation for the
+rule of G3 (arXiv:2102.09363).
+`scripts/inventory.lean` lists every declaration with its axioms.
 -/
 
 -- Core hypergraph rewriting
@@ -42,7 +24,6 @@ import InfraFormalization.Causal
 import InfraFormalization.CausalLevel
 import InfraFormalization.CausalHistory
 import InfraFormalization.KnillExamples
-import InfraFormalization.AxiomCheck
 import InfraFormalization.Branchial
 import InfraFormalization.ParallelSchedule
 import InfraFormalization.Demo
@@ -68,18 +49,11 @@ import InfraFormalization.Infra.Minkowski
 import InfraFormalization.Infra.ScaledLorentz
 import InfraFormalization.Infra.FullBridge
 
--- Refutations of JGORARD structural flaws F1-F5
-import InfraFormalization.Refutations.F1NoMetric
-import InfraFormalization.Refutations.F2Orthonormality
-import InfraFormalization.Refutations.F3Tautology
-import InfraFormalization.Refutations.F4Tautology
-import InfraFormalization.Refutations.F5Illdefined
-import InfraFormalization.Refutations.F6Circularity
+-- The rule of G3
 import InfraFormalization.Refutations.F7NamedRuleStructure
 import InfraFormalization.StressEnergyTensor
-import InfraFormalization.WolframPhysicsBridgeDemo
 
--- Discrete calculus (Rung 1 of the bridge ladder)
+-- Discrete calculus
 import InfraFormalization.DiscreteCalculus
 import InfraFormalization.DiscreteCalculusSymm
 import InfraFormalization.CycleGraph
@@ -105,37 +79,25 @@ import InfraFormalization.RuleDimensionBounds
 import InfraFormalization.FiberedGraph
 import InfraFormalization.HypergraphConnection
 import InfraFormalization.MultiwayCausalGraph
-import InfraFormalization.PathIntegralCausalGraph
-import InfraFormalization.ScaledConnectionLimit
 import InfraFormalization.RicciSymmetry
 import InfraFormalization.DiscreteGaugeField
 import InfraFormalization.CausalSetComparison
 import InfraFormalization.RuleSignatureScreens
-import InfraFormalization.RuleSignatureScreener
 import InfraFormalization.RuleSignatureSchema
 import InfraFormalization.RuleSignatureExecCorpus
 import InfraFormalization.RuleSignatureExecMetrics
 import InfraFormalization.RuleSignatureExecSearch
-import InfraFormalization.ExecRateBridge
 import InfraFormalization.InfraMeasure
 import InfraFormalization.PerpendicularModuli
 import InfraFormalization.OllivierRicciExec
 import InfraFormalization.OllivierRicciScreener
 import InfraFormalization.DualCurvatureScreener
-import InfraFormalization.TransportRateBridge
 import InfraFormalization.HiguchiScreener
-import InfraFormalization.HiguchiRateBridge
 import InfraFormalization.DegreeVarianceScreener
-import InfraFormalization.DegVarianceRateBridge
 import InfraFormalization.SquareCountScreener
-import InfraFormalization.SquareCountRateBridge
 import InfraFormalization.SubdivisionAbstract
-import InfraFormalization.QMEmergence
-import InfraFormalization.BBHEmergence
 import InfraFormalization.RuleExtraction
 import InfraFormalization.LiteratureRules
-import InfraFormalization.ExecTrajectoryLift
-import InfraFormalization.MetricTargetScalars
 import InfraFormalization.DiscreteRicciConvergence
 import InfraFormalization.CycleContinuumLimit
 import InfraFormalization.AdvancedContinuumLimits
@@ -158,45 +120,10 @@ import InfraFormalization.RuleReportComparison
 import InfraFormalization.DiscoveredRules
 import InfraFormalization.StableDiscoveredRules
 import InfraFormalization.DiscoveredRulesExpanded
-import InfraFormalization.MergerGrowthDepthTrajectory
 import InfraFormalization.BranchialEventTrace
 import InfraFormalization.MultiRuleDiscovered
-import InfraFormalization.MultiRuleDepthTrajectory
-import InfraFormalization.BBHInitialData
+import InfraFormalization.TwoTriangleSeed
 import InfraFormalization.UniversalAdditivity
-import InfraFormalization.CurvatureDensityLimit
-import InfraFormalization.DiscreteRicciScalar
-import InfraFormalization.RicciScalarDepthTrajectory
-import InfraFormalization.MultiRuleRDivergence
-import InfraFormalization.BranchialRSpectrum
-import InfraFormalization.BranchialDepthTrajectory
-import InfraFormalization.BranchialUniversalAdditivity
-import InfraFormalization.DualSideIndependence
-import InfraFormalization.BranchialFromInteraction
-import InfraFormalization.UnifiedEHBalance
-import InfraFormalization.DiscreteMetricTensor
-import InfraFormalization.MetricSignatureEvolution
-import InfraFormalization.BBHMetricTensor
-import InfraFormalization.Phase_D_FrameworkOverview
-import InfraFormalization.CorpusBalanceSpectrum
-import InfraFormalization.BBHBranchialMultiDepth
-import InfraFormalization.EnhancedPsi4
-import InfraFormalization.CorpusObservableTable
-import InfraFormalization.PersistentRDegeneracy
-import InfraFormalization.VacuumLikeUniversal
-import InfraFormalization.BBHVacuumRegime
-import InfraFormalization.VacuumPsiFour
-import InfraFormalization.RZeroCrossings
-import InfraFormalization.RGrowthRates
-import InfraFormalization.BBHCurvatureEvolution
-import InfraFormalization.BCoincidenceFinding
-import InfraFormalization.BEquivalenceClasses
-import InfraFormalization.BEquivalenceRefinement
-import InfraFormalization.PersistentBEquivalence
-import InfraFormalization.BClosedForm
-import InfraFormalization.PersistentScalingExponent
-import InfraFormalization.BClosedFormExtended
-import InfraFormalization.RClosedForm
 import InfraFormalization.DistinctEdgeIdentity
 import InfraFormalization.H9StructuralProgress
 import InfraFormalization.H9Closure
@@ -208,31 +135,11 @@ import InfraFormalization.FreshVertexPartition
 import InfraFormalization.EdgeCausallyDisjointBridge
 import InfraFormalization.StepZeroAncestor
 import InfraFormalization.PartitionClosure
-import InfraFormalization.DiscreteQGPredictions
-import InfraFormalization.DiscreteQuantumGravity
-import InfraFormalization.BBHDeepEvolution
-import InfraFormalization.DiscreteBondiFlux
-import InfraFormalization.DiscretePsiFour
-import InfraFormalization.BBHAnalogCertificate
-import InfraFormalization.PsiFourScalingOpen
 import InfraFormalization.RuleClassifier
 import InfraFormalization.ClassifierMaxRHS4
 import InfraFormalization.ClassifierRefined
 import InfraFormalization.ClassifierCorpusValidation
-import InfraFormalization.WitnessDiversity
-import InfraFormalization.GREmergence
-import InfraFormalization.Milestone
 import InfraFormalization.HypergraphTopology
-import InfraFormalization.WassersteinRate
-import InfraFormalization.MeasureTorusLift
-import InfraFormalization.LQGComparison
-import InfraFormalization.ContinuumFieldLimits
-import InfraFormalization.EmergentGravity
-import InfraFormalization.AdSCFTAnalog
-import InfraFormalization.LorentzianGH
-import InfraFormalization.CausalDAGContinuumLimit
-import InfraFormalization.ScaledTrajectoryLimit
-import InfraFormalization.CurvedRicciExtensions
 import InfraFormalization.WarpedDiag2C2
 import InfraFormalization.WassersteinFinite
 import InfraFormalization.CycleWasserstein
@@ -254,14 +161,11 @@ import InfraFormalization.FiberBundle
 import InfraFormalization.InfrageometricScene
 import InfraFormalization.StructuralRuleBounds
 import InfraFormalization.SyntheticAxiomatic
-import InfraFormalization.HomologyDimension
 import InfraFormalization.CausalDimension
 import InfraFormalization.EPSAxioms
 import InfraFormalization.DeRham
-import InfraFormalization.MultiFibrationProjection
 import InfraFormalization.FormCochainIntegration
 import InfraFormalization.BlowupOperations
-import InfraFormalization.CoordinatizationDimension
 import InfraFormalization.CandidateRuleDatabase
 import InfraFormalization.MarzkeWheeler
 import InfraFormalization.BlowupLieAlgebra
@@ -269,7 +173,6 @@ import InfraFormalization.DagCalculus
 import InfraFormalization.RadialLaminarBlowup
 import InfraFormalization.HodgeVR
 import InfraFormalization.FisherMetric
-import InfraFormalization.RemainingObligations
 import InfraFormalization.CycleSpectrum
 import InfraFormalization.CTwoTaylor
 import InfraFormalization.CycleEigenLimit
@@ -298,12 +201,7 @@ import InfraFormalization.EMETracker
 import InfraFormalization.BranchialCommutator
 import InfraFormalization.ProperTimeBounds
 import InfraFormalization.RuleSignatureEquiv
-import InfraFormalization.HypergraphMetricBridges
-import InfraFormalization.CausalLorentzianBridge
-import InfraFormalization.RuleWitnesses
 import InfraFormalization.RuleSearch
-import InfraFormalization.FiberedGraphConnectionBridge
-import InfraFormalization.EinsteinEquationsBridge
 import InfraFormalization.RodkeyClassification
 import InfraFormalization.CurvedRicciBridge
 import InfraFormalization.ContinuumBridgeDemo
@@ -316,6 +214,4 @@ import InfraFormalization.FLRWRicci
 import InfraFormalization.ReissnerNordstrom
 import InfraFormalization.TwoSphere
 import InfraFormalization.DeSitter
-import InfraFormalization.GRMetricsDemo
 import InfraFormalization.Kerr
-import InfraFormalization.GrandTour

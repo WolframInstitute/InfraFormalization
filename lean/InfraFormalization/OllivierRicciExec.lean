@@ -1,28 +1,16 @@
 /-
-**Ollivier-Ricci screener on `ExecHG ℕ`** (#368 instantiation, #401).
+A transport-cost quantity on neighbourhoods in `ExecHG ℕ`.
 
-Discrete edge-curvature defined via the W₁ Wasserstein-1 distance
-between vertex-neighbourhood `InfraMeasureData`s. For an edge `(u, v)`
-in a hypergraph `H`:
-
-  κ(u, v) := 1 − W₁(μ_u, μ_v) / d(u, v)
-
-where `μ_x` is the uniform measure on `{x} ∪ N(x)` and `d` is a hop
-distance. This is the Ollivier-Ricci curvature; positive on
-spheres / dense connected regions, negative on trees / hyperbolic
-regions.
-
-**This module** uses the `productCoupling`-based upper bound on W₁
-(from #400's `InfraMeasure.w1ProductUpper`) — a computable proxy for
-the true infimum-W₁. For Ollivier-Ricci on small concrete graphs the
-upper bound is informative; the true LP-optimum can be approximated
-by enumerating candidate couplings (`w1InfimumOver`).
-
-**Engine-port spec.** Like the triangle-Forman screener in
-`RuleSignatureExecMetrics`, this is the metric set to port into
-RASSAR's fast `HypergraphRewritingEngine` for an Ollivier-Ricci
-rule-search filter — the W₁-product-upper version is decide-checkable
-and feeds the existing screener bridge directly.
+The Ollivier–Ricci curvature of an edge `(u, v)` is `κ(u, v) = 1 − W₁(μ_u, μ_v) / d(u, v)`, with
+`μ_x`
+the uniform probability measure on the closed neighbourhood `{x} ∪ N(x)`. This module defines the
+closed neighbourhood, the unnormalised weight 1 on it, a hop cost (0, 1 or 2), and the transport
+cost
+`w1NeighbourhoodProduct` of the product weight of the two neighbourhood weights. The product weight is
+not normalised and its marginals are not `μ_u` and `μ_v`, so this transport cost is not W₁ and not
+an
+upper bound on it. The module proves non-negativity and checks neighbourhood sizes on `K₃` and the
+4-cycle by `native_decide`.
 -/
 
 import InfraFormalization.MultiwayExec
@@ -36,8 +24,7 @@ open MultiwayExec
 open InfraMeasure
 open RuleSignatureExecMetrics
 
-/-- The open neighbourhood of `v` in `H` (excluding `v` itself):
-all `u ∈ vertexList H` with `u ≠ v` and some edge containing both. -/
+/-- The vertices `u ≠ v` of `H` that share an edge with `v`. -/
 def neighbourhood (H : ExecHG ℕ) (v : ℕ) : List ℕ :=
   (vertexList H).filter (fun u =>
     (u != v) && H.any (fun e => e.verts.contains u && e.verts.contains v))
@@ -46,15 +33,11 @@ def neighbourhood (H : ExecHG ℕ) (v : ℕ) : List ℕ :=
 def closedNeighbourhood (H : ExecHG ℕ) (v : ℕ) : List ℕ :=
   (v :: neighbourhood H v).dedup
 
-/-- The **uniform measure on the closed neighbourhood of `v`** in `H`.
-Each vertex in `{v} ∪ N(v)` gets weight `1` (unnormalised — the W₁
-upper bound scales linearly so this is harmless for comparisons). -/
+/-- The weight equal to 1 on each vertex of `{v} ∪ N(v)` and 0 elsewhere, not normalised. -/
 def uniformOnNeighbourhood (H : ExecHG ℕ) (v : ℕ) : InfraMeasureData ℕ :=
   uniformOn (closedNeighbourhood H v)
 
-/-- The **hop cost** between two vertices: `0` if equal, `1` if
-adjacent in `H`, `2` if non-adjacent and distinct. Small-step distance
-sufficient for Ollivier-Ricci on small graphs. -/
+/-- 0 if `u = v`, 1 if `u` and `v` are adjacent in `H`, and 2 otherwise. -/
 def hopCost (H : ExecHG ℕ) (u v : ℕ) : ℝ :=
   if u = v then 0
   else if execAdj H u v then 1
@@ -70,38 +53,28 @@ theorem hopCost_nonneg (H : ExecHG ℕ) (u v : ℕ) :
     · simp [huv, hadj]
     · simp [huv, hadj]
 
-/-- The **W₁ upper bound** between the two vertex-neighbourhood
-uniform measures, with the hop-cost function. Computable; gives an
-upper bound on the true W₁. -/
-noncomputable def w1NeighbourhoodUpper (H : ExecHG ℕ) (u v : ℕ) : ℝ :=
+/-- The transport cost, with `hopCost`, of the product of the neighbourhood weights of `u` and `v`.
+-/
+noncomputable def w1NeighbourhoodProduct (H : ExecHG ℕ) (u v : ℕ) : ℝ :=
   let carrier := (vertexList H)
-  w1ProductUpper carrier (hopCost H)
+  w1ProductCost carrier (hopCost H)
     (uniformOnNeighbourhood H u) (uniformOnNeighbourhood H v)
 
-/-- The W₁ upper bound is non-negative. -/
+/-- `w1NeighbourhoodProduct` is non-negative. -/
 theorem w1NeighbourhoodUpper_nonneg (H : ExecHG ℕ) (u v : ℕ) :
-    0 ≤ w1NeighbourhoodUpper H u v := by
-  unfold w1NeighbourhoodUpper
+    0 ≤ w1NeighbourhoodProduct H u v := by
+  unfold w1NeighbourhoodProduct
   apply w1ProductUpper_nonneg
   intro x y
   exact hopCost_nonneg H x y
 
-/-- **Ollivier-Ricci edge-curvature upper-bound**:
-`κ(u, v) := 1 − W₁_upper(μ_u, μ_v) / d(u, v)`.
-For non-adjacent or equal vertices, returns `0` (convention: curvature
-is meaningful between adjacent vertices). -/
-noncomputable def ollivierRicciEdgeUpper (H : ExecHG ℕ) (u v : ℕ) : ℝ :=
+/-- `1 − w1NeighbourhoodProduct H u v / hopCost H u v`, and 0 when `u = v`. -/
+noncomputable def ollivierRicciEdgeProduct (H : ExecHG ℕ) (u v : ℕ) : ℝ :=
   let d := hopCost H u v
   if d = 0 then 0
-  else 1 - w1NeighbourhoodUpper H u v / d
+  else 1 - w1NeighbourhoodProduct H u v / d
 
-/-! ## Demonstration on small graphs
-
-For a triangle K₃ on `{1, 2, 3}`, every neighbourhood is the full
-3-vertex set, so the W₁ upper bound between any two vertex-
-neighbourhood measures involves transport across at most the small
-hop-cost diameter. Positive κ on K₃ is the Ollivier-Ricci signature
-of a positively-curved region (clique). -/
+/-! ## Neighbourhoods in `K₃` and the 4-cycle -/
 
 /-- Triangle K₃ on `{1, 2, 3}`. -/
 def k3 : ExecHG ℕ :=
@@ -115,8 +88,7 @@ example : (neighbourhood k3 1).length = 2 := by native_decide
 set on K₃). -/
 example : (closedNeighbourhood k3 1).length = 3 := by native_decide
 
-/-- 4-cycle on `{1, 2, 3, 4}` — neighbourhoods are size 2 (two
-adjacent vertices), giving a different curvature signature than K₃. -/
+/-- The 4-cycle on `{1, 2, 3, 4}`. -/
 def cycle4 : ExecHG ℕ :=
   [⟨[1, 2], by decide⟩, ⟨[2, 3], by decide⟩,
    ⟨[3, 4], by decide⟩, ⟨[1, 4], by decide⟩]

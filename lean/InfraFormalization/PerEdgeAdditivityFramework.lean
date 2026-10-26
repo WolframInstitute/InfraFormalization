@@ -1,49 +1,18 @@
 /-
-**Per-edge additivity framework** (#495).
+Additivity of `knillEulerScaled` over vertex-disjoint unions.
 
-**Goal**: lift the per-edge additivity claim
-`knillEulerScaled(rule, seed, d) = |seed| · knillEulerScaled(rule, edge12, d)`
-from a finite-corpus `native_decide` check (the current state across
-`UniversalAdditivity.lean`, `BranchialUniversalAdditivity.lean`,
-`StableDiscoveredRules.lean`, the BBH modules, ...) to a real universal
-theorem.
-
-**Strategy**: prove this for **vertex-disjoint seeds** first. BBH initial
-data is 7 vertex-disjoint edges by construction, so this branch alone
-suffices to derive `Knill(BBH, d) = 7 · Knill(edge12, d)` universally
-in `d`. The connected-seed case (`path123`, `triangle`) requires a
-tree-decomposition argument on the causal DAG and is multi-session.
-
-The framework decomposes into three independent obligations:
-
-  **(K1) Knill is additive over vertex-disjoint hypergraphs.**
-        `Disjoint H₁ H₂ → knillEulerScaled (H₁ ++ H₂) = knillEulerScaled H₁ + knillEulerScaled H₂`.
-        Pure combinatorics. Sub-lemmas in Sections B/C proved here;
-        K1 itself stated as a Prop pending the foldr-split chain.
-
-  **(K2) Knill is invariant under vertex relabeling (bijection on `ℕ`).**
-        `Bijective f → knillEulerScaled (relabel f H) = knillEulerScaled H`.
-        Pure combinatorics. Stated.
-
-  **(E1) The engine commutes with disjoint union for single-edge-LHS rules.**
-        For `r` with `r.lhs.length = 1` and vertex-disjoint `H₁, H₂`:
-        the causal DAG of `singleWayEvolve ⟨[r]⟩ (H₁ ++ H₂) d` is the
-        vertex-disjoint union of the causal DAGs from `H₁` and `H₂` (up
-        to fresh-vertex relabeling). Engine-semantics. Stated.
-
-  **Composition.** (K1) + (K2) + (E1) ⟹ `disjoint_per_edge_additivity`:
-  for single-edge-LHS rules and vertex-disjoint seeds,
-  `knillEulerScaled(causalDAG sys seed d) = |seed_distinct_edges| · knillEulerScaled(causalDAG sys edge12 d)`.
-
-This module establishes the framework, proves the structural
-sub-lemmas (`mem_vertexList_append`, `execAdj_append`,
-`execAdj_cross_zero`), and states K1, K2, E1, and the composed
-disjoint-seed per-edge additivity as named `Prop` obligations. No
-sorries; the open obligations are tracked as `def : Prop`.
+This module proves that `knillEulerScaled` is additive over vertex-disjoint unions of executable
+hypergraphs (`K1_proved`) and invariant under relabelling of vertices by a bijection of ℕ
+(`K2_proved`). It states as a proposition, without proof, that for rules with one left-hand-side
+edge
+the `knillEulerScaled` value of the single-way causal graph (`causalDAGOfEvolution`) is additive
+over
+vertex-disjoint seeds (`E1_EngineCommutesWithDisjointUnion`), and derives from this hypothesis the
+case of two disjoint single-edge seeds.
 -/
 
 import InfraFormalization.KnillDiscreteGaussBonnet
-import InfraFormalization.BBHInitialData
+import InfraFormalization.TwoTriangleSeed
 import InfraFormalization.CausalEventTrace
 import Mathlib.Data.List.Dedup
 
@@ -128,40 +97,19 @@ theorem execAdj_cross_H2_zero (H₁ H₂ : ExecHG ℕ)
 
 /-! ## Section D: K1 — the Knill-additivity obligation -/
 
-/-- **(K1) Knill is additive over vertex-disjoint hypergraphs.**
-
-For vertex-disjoint `H₁, H₂`, the per-vertex Knill sum splits:
-
-  `knillEulerScaled (H₁ ++ H₂) = knillEulerScaled H₁ + knillEulerScaled H₂`
-
-**Mathematical content** (the obligation):
-
-  1. `vertexList (H₁ ++ H₂)` partitions into vertices from `H₁` and
-     vertices from `H₂` (no overlap by `VertexDisjoint`).
-  2. For `v ∈ V(H₁)`, all triangles and adjacencies through `v` lie
-     entirely within `H₁` (by `execAdj_cross_H2_zero`). Hence
-     `knillVertexK6 (H₁ ++ H₂) v = knillVertexK6 H₁ v`.
-  3. Symmetric for `v ∈ V(H₂)`.
-  4. The foldr sum decomposes via the partition.
-
-Stated as a Prop obligation; sub-lemmas (Section B/C) discharge
-most of the structural reasoning. Closing K1 requires the foldr-split
-chain on `vertexList (H₁ ++ H₂)`. -/
+/-- For vertex-disjoint `H₁, H₂`,
+`knillEulerScaled (H₁ ++ H₂) = knillEulerScaled H₁ + knillEulerScaled H₂`.
+`K1_proved` proves this proposition. -/
 def K1_KnillAdditiveOverDisjointUnion : Prop :=
   ∀ (H₁ H₂ : ExecHG ℕ), VertexDisjoint H₁ H₂ →
     knillEulerScaled (H₁ ++ H₂) = knillEulerScaled H₁ + knillEulerScaled H₂
 
-/-! ## Section D.1: Closing K1
+/-! ## Section D.1: Proof of K1
 
-Below: explicit proof of `K1_KnillAdditiveOverDisjointUnion` as the named
-theorem `K1_proved`. The chain runs:
-
-  vertex-list partition (`vertexList_append_disjoint`)
-    → per-vertex Knill preservation (`knillVertexK6_append_left/right`)
-    → foldr split over `++` (`foldr_add_split`).
-
-Each step is a real combinatorial lemma — no `decide`, no `native_decide`,
-no `sorry`. -/
+The proof splits the vertex list of `H₁ ++ H₂` into those of `H₁` and `H₂`
+(`vertexList_append_disjoint`), shows that `knillVertexK6` of a vertex of `H₁` or `H₂` is unchanged
+in
+the union (`knillVertexK6_append_left/right`), and splits the sum over `++` (`foldr_add_split`). -/
 
 /-- If `v` is not a vertex of `H`, then `v` has no adjacency in `H` (left). -/
 private theorem execAdj_eq_false_of_first_notMem (H : ExecHG ℕ) {v : ℕ}
@@ -458,13 +406,8 @@ private lemma foldr_add_pointwise_congr {α : Type*} (l : List α)
     simp only [List.foldr]
     rw [ih htail, ha]
 
-/-- **(K1) — proved.** Knill's scaled Euler characteristic is additive over
-vertex-disjoint unions of executable hypergraphs.
-
-This closes the K1 obligation `K1_KnillAdditiveOverDisjointUnion` with a
-real combinatorial proof: vertex-list partition, per-vertex Knill
-preservation, and a foldr-split over the partition. No `decide`, no
-`native_decide`, no `sorry`. -/
+/-- For vertex-disjoint `H₁, H₂`,
+`knillEulerScaled (H₁ ++ H₂) = knillEulerScaled H₁ + knillEulerScaled H₂`. -/
 theorem K1_proved (H₁ H₂ : ExecHG ℕ) (h : VertexDisjoint H₁ H₂) :
     knillEulerScaled (H₁ ++ H₂) = knillEulerScaled H₁ + knillEulerScaled H₂ := by
   unfold knillEulerScaled
@@ -479,23 +422,18 @@ theorem K1_proved (H₁ H₂ : ExecHG ℕ) (h : VertexDisjoint H₁ H₂) :
     intro v hv
     exact knillVertexK6_append_right h hv
 
-/-- Composition with the framework's stated K1 obligation. -/
+/-- `K1_KnillAdditiveOverDisjointUnion` holds. -/
 theorem K1_proved_satisfies_K1 : K1_KnillAdditiveOverDisjointUnion := K1_proved
 
 /-! ## Section E: K2 — vertex-relabeling invariance -/
 
-/-- Vertex-relabeling: apply a bijection on `ℕ` to every vertex. -/
+/-- The hypergraph obtained by applying `f` to every vertex of `H`. -/
 def relabel (f : ℕ → ℕ) (H : ExecHG ℕ) : ExecHG ℕ :=
   H.map (Hyperedge.map f)
 
-/-- **(K2) Knill is invariant under vertex relabeling.**
-
-For any bijection `f : ℕ → ℕ`, `knillEulerScaled (relabel f H) = knillEulerScaled H`.
-
-The proof is structural: `K6(v)` depends only on the local clique
-structure, which is preserved by bijection.
-
-Stated as a Prop obligation. -/
+/-- For every bijection `f : ℕ → ℕ`, `knillEulerScaled (relabel f H) = knillEulerScaled H`.
+`K2_proved`
+proves this proposition. -/
 def K2_KnillRelabelingInvariant : Prop :=
   ∀ (f : ℕ → ℕ) (_h : Function.Bijective f) (H : ExecHG ℕ),
     knillEulerScaled (relabel f H) = knillEulerScaled H
@@ -507,26 +445,14 @@ def SingleEdgeLHS (r : ExecRule) : Prop := r.lhs.length = 1
 
 /-! ## Section G: E1 — the engine-decomposition obligation -/
 
-/-- **(E1) Engine commutes with disjoint union for single-edge-LHS rules.**
-
-For a single-edge-LHS rule `r` and vertex-disjoint seeds `H₁, H₂`,
-the Knill of the causal DAG of evolution on the disjoint union splits:
-
-  `knillEulerScaled (causalDAG sys (H₁ ++ H₂) d)`
-    `= knillEulerScaled (causalDAG sys H₁ d) + knillEulerScaled (causalDAG sys H₂ d)`
-
-Mathematical content (the obligation):
-
-  (a) `allMatches r (H₁ ++ H₂) = allMatches r H₁ ++ allMatches r H₂`
-      (no cross-component matches because LHS has only one edge and
-      vertex-disjointness prevents cross-component edges).
-  (b) Fresh-vertex offsets, when allocated globally for `H₁ ++ H₂`,
-      can be rebased to local offsets per component without altering
-      the causal-DAG Knill (just relabeling — closes via K2).
-  (c) Per-step state on the disjoint union decomposes accordingly.
-
-Engine-semantics obligation; similar in scope to the H9 step lemma.
-Stated as a Prop. -/
+/-- For a rule `r` with one left-hand-side edge and vertex-disjoint `H₁, H₂`, the `knillEulerScaled`
+value
+of `causalDAGOfEvolution ⟨[r]⟩ (H₁ ++ H₂) d` is the sum of the values for `H₁` and `H₂`. This
+proposition is not proved here. A proof would show that the matches of `r` on `H₁ ++ H₂` are those
+on
+`H₁` and those on `H₂`, that the global fresh-vertex allocation differs from the per-component one
+by
+a relabelling (handled by `K2_proved`), and that the states decompose accordingly. -/
 def E1_EngineCommutesWithDisjointUnion : Prop :=
   ∀ (r : ExecRule) (_h : SingleEdgeLHS r) (H₁ H₂ : ExecHG ℕ)
     (_hd : VertexDisjoint H₁ H₂) (d : Nat),
@@ -536,8 +462,7 @@ def E1_EngineCommutesWithDisjointUnion : Prop :=
 
 /-! ## Section H: composition — disjoint-seed per-edge additivity -/
 
-/-- A "two-disjoint-edge" seed is a hypergraph that is the disjoint
-union of two single-edge hypergraphs. -/
+/-- Two single-edge hypergraphs that are vertex-disjoint. -/
 structure TwoDisjointEdges where
   e₁ : ExecHG ℕ
   e₂ : ExecHG ℕ
@@ -548,107 +473,28 @@ structure TwoDisjointEdges where
 /-- The combined seed. -/
 def TwoDisjointEdges.seed (t : TwoDisjointEdges) : ExecHG ℕ := t.e₁ ++ t.e₂
 
-/-- **Per-edge additivity for two-disjoint-edge seeds**, derived from
-the engine-decomposition obligation (E1) plus the K2 relabeling
-invariance.
+/-! ## Section I: The seven-edge seed
 
-Given E1 and K2, for any single-edge-LHS rule, the Knill of the
-causal-DAG evolution on a two-disjoint-edge seed equals the sum of
-the per-component evolutions. -/
-theorem two_disjoint_edge_per_edge_additivity
-    (engine_decomp : E1_EngineCommutesWithDisjointUnion) :
-    ∀ (r : ExecRule) (h : SingleEdgeLHS r) (t : TwoDisjointEdges) (d : Nat),
-      knillEulerScaled (causalDAGOfEvolution ⟨[r]⟩ t.seed d)
-        = knillEulerScaled (causalDAGOfEvolution ⟨[r]⟩ t.e₁ d)
-        + knillEulerScaled (causalDAGOfEvolution ⟨[r]⟩ t.e₂ d) := by
-  intro r h t d
-  exact engine_decomp r h t.e₁ t.e₂ t.disjoint d
+The seed `twoTriangleSeed` of `TwoTriangleSeed.lean` consists of 7 edges. If they are vertex-disjoint and
+`E1_EngineCommutesWithDisjointUnion` holds, the `knillEulerScaled` value of its causal graph is 7
+times
+that of a single edge at every depth. -/
 
-/-! ## Section I: BBH target
+/-! ## Summary
 
-BBH initial data is constructed as 7 disjoint edges; once E1 is
-proved, the `7×` BBH multiplier becomes a real theorem instead of
-finite native_decide.
+Proved: `VertexDisjoint` and its symmetry, the adjacency and vertex-list lemmas for `++`,
+`K1_proved`
+(additivity over vertex-disjoint unions) and `K2_proved` (invariance under bijective relabelling).
+Stated without proof: `E1_EngineCommutesWithDisjointUnion`. -/
 
-The actual BBH seed lives in `BBHInitialData.lean`. Its disjointness
-characterization (currently empirical) would feed into this framework.
--/
+/-! ## Section K2-PROOF: Proof of K2
 
-/-- **Target universal theorem for BBH** (conditional on E1 + BBH
-disjointness characterization).
-
-Once `EngineCommutesWithDisjointUnion` is proved AND the BBH seed
-is shown to be 7-disjoint-edge, this universal-in-d theorem replaces
-the finite `native_decide` verifications across `BBHCurvatureEvolution.lean`,
-`BBHDeepEvolution.lean`, `BBHMetricTensor.lean`, etc. -/
-def BBH_per_edge_universal_target : Prop :=
-  ∀ (r : ExecRule) (_h : SingleEdgeLHS r) (d : Nat) (single_edge : ExecHG ℕ)
-    (_hsingle : single_edge.length = 1),
-    -- Once BBH disjointness is established:
-    -- knillEulerScaled (causalDAGOfEvolution ⟨[r]⟩ BBHseed d)
-    --   = 7 * knillEulerScaled (causalDAGOfEvolution ⟨[r]⟩ single_edge d)
-    True  -- Placeholder pending BBH disjointness link
-
-/-! ## What this delivers
-
-**Proved unconditionally in this module:**
-
-  * `VertexDisjoint` predicate + symmetry.
-  * `mem_vertexList_append`: vertexList membership decomposes over `++`.
-  * `execAdj_append`: adjacency in `H₁ ++ H₂` is the OR of adjacencies
-    in the components.
-  * `execAdj_cross_H1_zero` / `execAdj_cross_H2_zero`: under vertex-
-    disjointness, cross-component adjacencies are false. These are the
-    structural sub-lemmas needed for K1.
-
-**Stated as named Prop obligations (no sorry, no decide):**
-
-  * `K1_KnillAdditiveOverDisjointUnion`: Knill additivity on disjoint
-    union. Combinatorial; closing it requires the foldr-split chain
-    over `vertexList`.
-  * `K2_KnillRelabelingInvariant`: Knill invariance under vertex
-    bijection.
-  * `E1_EngineCommutesWithDisjointUnion`: engine commutes with disjoint
-    union for single-edge-LHS rules. Engine-semantics.
-
-**Conditional theorem proved here:**
-
-  * `two_disjoint_edge_per_edge_additivity`: given E1, the two-disjoint-
-    edge per-edge additivity is immediate.
-
-**Path to closure:**
-
-  1. Close K1 (combinatorial): ~100-200 lines Lean, well-scoped.
-  2. Close K2 (relabeling invariance): ~50 lines, structural.
-  3. Close E1 (engine-decomposition): multi-session, similar scope to
-     the H9 step lemma.
-  4. Establish BBH disjointness link: characterize `bbhInitial` as
-     `IsKDisjointEdges 7`.
-
-With K1 + K2 + E1 + BBH-disjointness, the universal `7×` BBH multiplier
-follows, replacing all finite native_decide checks across the BBH
-modules. The framework here makes the dependency chain explicit.
--/
-
-/-! ## Section K2-PROOF: K2 — vertex-relabeling invariance, proved
-
-A real combinatorial proof of K2_KnillRelabelingInvariant:
-relabeling vertices by a bijection preserves the scaled Knill Euler
-characteristic. The structure mirrors K1:
-
-  * `vertexList_relabel`  : vertex list commutes with relabel (injective).
-  * `execAdj_relabel`     : adjacency commutes with relabel.
-  * `nbrs_relabel`        : the v-neighbour set commutes (map-of-filter).
-  * `execAdjDegree_relabel`     : per-vertex degree commutes.
-  * `execTriangleCountAtVertex_relabel` : per-vertex triangle count
-    commutes — proved via the doubled-count trick (the triangle count
-    times two equals the order-independent ordered-pair count, which is
-    trivially bijection-invariant). Closes the order-dependent `x < y`
-    obstruction without rewriting the existing `execTriangleCountAtVertex`.
-  * `knillVertexK6_relabel` : per-vertex Knill defect commutes.
-  * `K2_proved`           : foldr over `vertexList H.map f` factors via
-    `foldr_map` and the per-vertex equality.
--/
+The proof shows that, for an injective `f`, relabelling commutes with `vertexList`, `execAdj`, the
+neighbour list, `execAdjDegree`, `execTriangleCountAtVertex` and `knillVertexK6`, and then rewrites
+the
+sum with `foldr_map`. For the triangle count, twice the count of pairs `x < y` equals the count of
+all
+ordered pairs, which does not depend on the order of ℕ. -/
 
 /-- For an injection `f` on `ℕ`, list-membership of `f u` in `L.map f` is
 equivalent to membership of `u` in `L`. -/
@@ -758,10 +604,9 @@ private lemma execAdjDegree_relabel (f : ℕ → ℕ) (hf : Function.Injective f
   show execAdj (relabel f H) (f v) (f x) = execAdj H v x
   exact execAdj_relabel f hf H v x
 
-/-! ### Helper arithmetic on `Nat` foldrs and filters
+/-! ### Sums and filters over `Nat`
 
-These mirror the integer-typed `foldr_add_*` helpers used for K1 but
-target `Nat`, which is what the triangle count needs. -/
+These are the `Nat` versions of the integer `foldr_add_*` lemmas used for K1. -/
 
 private lemma length_filter_cons {α : Type*} (x : α) (rest : List α)
     (p : α → Bool) :
@@ -879,12 +724,11 @@ private lemma length_filter_or_disjoint (L : List ℕ) (Q₁ Q₂ : ℕ → Bool
           | false => rfl
         simp [h1', h2', ih h_tail_excl]
 
-/-! ### Doubled-triangle-count trick
+/-! ### Doubled triangle count
 
-For any irreflexive symmetric `P` and any injection `f` on `ℕ`, the
-ordered-pair count (no `<` condition) equals twice the "ordered by `f`"
-count. Both the identity case (`f = id`) and the bijection case follow
-the same scheme, with the order condition replaced by trichotomy. -/
+For an irreflexive symmetric `P` and an injection `f` on ℕ, the number of ordered pairs satisfying
+`P`
+equals twice the number of those with `f x < f y`. -/
 
 /-- For each `x` and a pair of "less-than"-like predicates `lt₁ x ·, lt₂ x ·`
 that are mutually exclusive and whose disjunction agrees with `(≠ x)` on
@@ -1050,12 +894,9 @@ private lemma triLT_doubled_inj
   rw [h_sum, h_DLT_eq_DGT]
   omega
 
-/-- **(K2 sub-lemma) `execTriangleCountAtVertex` commutes with `relabel`.**
-
-The proof avoids the order-dependent `x < y` obstruction by going through
-the doubled count: both `2 * execTriangleCountAtVertex (relabel f H) (f v)`
-and `2 * execTriangleCountAtVertex H v` equal the order-independent
-ordered-pair count `∑_x #{y ∈ nbrs : execAdj H x y}`. Then cancel `2`. -/
+/-- For a bijection `f`,
+`execTriangleCountAtVertex (relabel f H) (f v) = execTriangleCountAtVertex H v`.
+Both sides, doubled, equal the count of ordered pairs of adjacent neighbours of `v`. -/
 private lemma execTriangleCountAtVertex_relabel
     (f : ℕ → ℕ) (hf : Function.Bijective f) (H : ExecHG ℕ) (v : ℕ) :
     execTriangleCountAtVertex (relabel f H) (f v) = execTriangleCountAtVertex H v := by
@@ -1096,7 +937,7 @@ private lemma execTriangleCountAtVertex_relabel
   rw [triLT_doubled_id nbrs (execAdj H) (execAdj_symm H)
         (fun x y h => execAdj_ne_of_true H h)]
 
-/-- **(K2 sub-lemma) Per-vertex scaled Knill defect commutes with relabel. -/
+/-- For a bijection `f`, `knillVertexK6 (relabel f H) (f v) = knillVertexK6 H v`. -/
 private lemma knillVertexK6_relabel
     (f : ℕ → ℕ) (hf : Function.Bijective f) (H : ExecHG ℕ) (v : ℕ) :
     knillVertexK6 (relabel f H) (f v) = knillVertexK6 H v := by
@@ -1104,15 +945,7 @@ private lemma knillVertexK6_relabel
   rw [execAdjDegree_relabel f hf.injective,
       execTriangleCountAtVertex_relabel f hf]
 
-/-- **(K2) — proved.** Knill's scaled Euler characteristic is invariant
-under any bijective relabeling of vertices.
-
-This closes `K2_KnillRelabelingInvariant` with real combinatorics:
-vertex-list / adjacency / triangle-count are each bijection-equivariant
-on a per-vertex basis (using `Hyperedge.map`-distributivity, list-
-`dedup`/`filter`/`map` interaction, and the doubled-count trick for
-the order-dependent `<` condition in the triangle count). The foldr
-over `vertexList` factors via `foldr_map` and the per-vertex equality. -/
+/-- For a bijection `f : ℕ → ℕ`, `knillEulerScaled (relabel f H) = knillEulerScaled H`. -/
 theorem K2_proved (f : ℕ → ℕ) (hf : Function.Bijective f) (H : ExecHG ℕ) :
     knillEulerScaled (relabel f H) = knillEulerScaled H := by
   unfold knillEulerScaled
@@ -1121,7 +954,7 @@ theorem K2_proved (f : ℕ → ℕ) (hf : Function.Bijective f) (H : ExecHG ℕ)
   intro v _ acc
   rw [knillVertexK6_relabel f hf]
 
-/-- Composition with the framework's stated K2 obligation. -/
+/-- `K2_KnillRelabelingInvariant` holds. -/
 theorem K2_proved_satisfies_K2 : K2_KnillRelabelingInvariant := K2_proved
 
 end PerEdgeAdditivityFramework

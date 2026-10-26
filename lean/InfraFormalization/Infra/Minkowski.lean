@@ -1,17 +1,14 @@
 /-
-Continuum Minkowski spacetime `ℝ^{1,d}` with L∞ spatial metric.
+Real coordinates `Fin (d+1) → ℝ` with an L∞ spatial distance and the causal relations it
+defines.
 
-Mirrors the structure of `Infra/LorentzLattice.lean` on ℝ-valued
-coordinates instead of ℤ. Used as the target of the scaled Lorentz
-lattice (`Infra/ScaledLorentz.lean`): in the continuum limit, the
-scaled discrete lattice sits densely inside this Minkowski space and
-the discrete `CausalPrecedes` matches the continuum one exactly
-(not just approximately — both are defined by the same inequality
-`spaceDist ≤ Δt`).
-
-We use L∞ as the spatial metric to match the discrete side. Other
-choices (L¹, L²) give different causal cones in the continuum but are
-not what the discrete rewriting framework suggests.
+The module defines the spatial L∞ distance `continuumSpaceDist` and proves that it is
+nonnegative, symmetric, zero on the diagonal and satisfies the triangle inequality. It
+defines causal precedence (`spaceDist ≤ Δt`), timelike, null and spacelike relations and
+the interval `Δt² - spaceDist²`, and proves reflexivity and transitivity of causal
+precedence. These definitions are the ℝ-valued versions of those in
+`Infra/LorentzLattice.lean`. With the L∞ distance the causal cones are pyramids, not the
+round cones of Minkowski space with the Euclidean spatial norm.
 -/
 
 import Mathlib.Data.Real.Basic
@@ -24,16 +21,11 @@ import Mathlib.Algebra.Order.Group.Abs
 namespace InfraFormalization
 namespace Infra
 
-/-- Continuum event: `Fin (d+1) → ℝ` (index `0` = time, indices
-`1..d` = space). -/
+/-- A point of `ℝ^{d+1}`. Index `0` is time and indices `1..d` are space. -/
 abbrev ContinuumEvent (d : Nat) : Type := Fin (d + 1) → ℝ
 
-/-- Continuum spatial L∞ distance. For `d = 0` there are no spatial
-coordinates; we take the sup over the empty finset via ℕ-like fallback
-by using `Finset.sup'` when `d ≥ 1` and `0` when `d = 0`. Implementation
-via `Finset.sup` is cleaner on ℝ but ℝ has no `OrderBot`, so we use
-`Finset.sup'` (requiring nonemptiness) for `d ≥ 1` and handle `d = 0`
-by cases. -/
+/-- The L∞ distance between the spatial coordinates of `p` and `q`: the maximum of
+`|p i - q i|` over `i = 1..d`, and `0` when `d = 0`. -/
 noncomputable def continuumSpaceDist (d : Nat) (p q : ContinuumEvent d) : ℝ :=
   match d with
   | 0 => 0
@@ -115,8 +107,7 @@ theorem continuumSpaceDist_triangle {d : Nat} (p q r : ContinuumEvent d) :
         (Finset.mem_univ i)
     linarith
 
-/-- **Continuum causal precedence** on ℝ^{1,d}: `p ≺ q` iff the time
-increment dominates the spatial L∞ increment. -/
+/-- `p` causally precedes `q` when `continuumSpaceDist d p q ≤ q 0 - p 0`. -/
 def ContinuumCausalPrecedes (d : Nat) (p q : ContinuumEvent d) : Prop :=
   continuumSpaceDist d p q ≤ q 0 - p 0
 
@@ -134,35 +125,22 @@ theorem continuumCausal_trans {d : Nat} {p q r : ContinuumEvent d}
   have htri := continuumSpaceDist_triangle p q r
   linarith
 
-/-- **Continuum timelike:** strict interior of the forward light cone. -/
+/-- `continuumSpaceDist d p q < q 0 - p 0`. -/
 def ContinuumTimelike (d : Nat) (p q : ContinuumEvent d) : Prop :=
   continuumSpaceDist d p q < q 0 - p 0
 
-/-- **Continuum null:** light-cone edge, forward-oriented. -/
+/-- `continuumSpaceDist d p q = q 0 - p 0` and `p 0 < q 0`. -/
 def ContinuumNull (d : Nat) (p q : ContinuumEvent d) : Prop :=
   continuumSpaceDist d p q = q 0 - p 0 ∧ p 0 < q 0
 
-/-- **Continuum spacelike:** outside both forward and backward cones. -/
+/-- Neither `p` causally precedes `q` nor `q` causally precedes `p`. -/
 def ContinuumSpacelike (d : Nat) (p q : ContinuumEvent d) : Prop :=
   ¬ ContinuumCausalPrecedes d p q ∧ ¬ ContinuumCausalPrecedes d q p
 
-/-- Continuum signed Minkowski interval squared. -/
+/-- `(q 0 - p 0)² - (continuumSpaceDist d p q)²`. -/
 noncomputable def continuumMinkowskiIntervalSq
     (d : Nat) (p q : ContinuumEvent d) : ℝ :=
   (q 0 - p 0)^2 - (continuumSpaceDist d p q)^2
-
-/-- Trichotomy on the continuum. -/
-theorem continuumCausal_or_spacelike (d : Nat) (p q : ContinuumEvent d) :
-    ContinuumCausalPrecedes d p q ∨
-    ContinuumCausalPrecedes d q p ∨
-    ContinuumSpacelike d p q := by
-  unfold ContinuumCausalPrecedes ContinuumSpacelike
-  by_cases h1 : continuumSpaceDist d p q ≤ q 0 - p 0
-  · exact Or.inl h1
-  by_cases h2 : continuumSpaceDist d q p ≤ p 0 - q 0
-  · exact Or.inr (Or.inl h2)
-  · right; right
-    exact ⟨h1, h2⟩
 
 end Infra
 end InfraFormalization

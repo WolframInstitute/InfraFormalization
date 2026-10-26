@@ -1,30 +1,12 @@
 /-
-Bridge: discrete Forman-Ricci on the cycle ↔ continuum Ricci on the
-circle.
+Forman-Ricci curvature on 2-regular graphs and the Ricci tensor of the flat
+connection in one dimension.
 
-**The grounding-principle obligation.** Per `BRIDGE_MACHINERY.md`,
-every continuum-curvature object must be paired with a discrete-side
-object plus a relating theorem. This file is the first such bridge:
-
-  Forman-Ricci on `Fin n` cycle (a 2-regular graph)
-       =  0
-       =  continuum Ricci on `S¹` (a 1-dim manifold)
-
-The circle's continuum Ricci is computed using the local-coordinate
-framework: `MetricData 1` with `g₀₀ ≡ 1`, flat connection, Ricci ≡ 0
-(via `flatConnection_ricci_zero`).
-
-The match is not a coincidence: the circle is the GH-limit of the
-scaled cycle (`Infra.cycle_circle_gh_bound`), and Forman-Ricci is a
-combinatorial invariant that vanishes precisely when degrees are 2,
-i.e., when the graph is locally 1-dim — which is what a 1-dim
-manifold limit requires.
-
-This is the prototype for the broader statement we want eventually:
-**discrete-Ricci on a hypergraph → continuum-Ricci on its GH-limit**.
-For the cycle case it is trivially `0 = 0`, but the formalisation
-makes the bridge mechanically checkable, and provides the template
-for higher-curvature cases (sphere → positive Ricci, etc.).
+This module defines `circleMetric`, the constant metric `g₀₀ = 1` on one
+coordinate, and proves that the Ricci tensor and scalar curvature of the
+flat connection `flatConnection 1` are 0, that the Forman-Ricci curvature
+of every edge of a 2-regular neighbourhood structure on `Fin n` is 0, and
+that the two values are equal because both are 0.
 -/
 
 import InfraFormalization.DiscreteRicci
@@ -33,10 +15,8 @@ import InfraFormalization.CurvatureRiemann
 
 namespace InfraFormalization
 
-/-- **Circle as a `MetricData 1`.** Single-coordinate `x` with constant
-metric `g₀₀(x) = 1` (Euclidean line, equivalently the unit-arc-length
-parameterisation of the circle). Inverse `g^{00} ≡ 1`; partial
-derivatives ≡ 0. -/
+/-- The metric data on one coordinate with `g₀₀ = 1`, `g^{00} = 1` and all
+partial derivatives 0. -/
 noncomputable def circleMetric : Curvature.MetricData 1 where
   g := fun _ _ _ => 1
   ginv := fun _ _ _ => 1
@@ -45,7 +25,7 @@ noncomputable def circleMetric : Curvature.MetricData 1 where
   ginv_symm := by intros; rfl
   ginv_mul := by
     intros x μ ν
-    -- For Fin 1, all elements are equal, so μ = ν always; sum has one summand.
+    -- `Fin 1` has one element, so μ = ν and the sum has one summand.
     have hμν : μ = ν := Subsingleton.elim μ ν
     rw [Finset.sum_const, Finset.card_univ]
     have : Fintype.card (Fin 1) = 1 := Fintype.card_fin 1
@@ -53,37 +33,30 @@ noncomputable def circleMetric : Curvature.MetricData 1 where
     simp [hμν]
   dg_symm := by intros; rfl
 
-/-- **Continuum Ricci of the circle vanishes.** Using the flat
-connection on `circleMetric`, the Ricci tensor is zero everywhere. -/
-theorem circle_ricci_zero (x : Fin 1 → ℝ) (σ ν : Fin 1) :
+/-- The Ricci tensor of `flatConnection 1` is 0. The statement does not
+involve `circleMetric`. -/
+theorem flatConnection_one_ricci_zero (x : Fin 1 → ℝ) (σ ν : Fin 1) :
     (Curvature.flatConnection 1).ricci x σ ν = 0 :=
   Curvature.flatConnection_ricci_zero 1 x σ ν
 
-/-- **Continuum scalar curvature of the circle vanishes.** -/
+/-- The scalar curvature of `flatConnection 1` with respect to
+`circleMetric` is 0. -/
 theorem circle_scalar_zero (x : Fin 1 → ℝ) :
     Curvature.ConnectionData.scalarCurvature circleMetric
       (Curvature.flatConnection 1) x = 0 :=
   Curvature.flatConnection_scalar_zero circleMetric x
 
-/-- **Discrete Forman-Ricci of the cycle vanishes.** Any
-neighbourhood structure on `Fin n` in which every vertex has degree
-exactly 2 yields zero Forman-Ricci on every edge. -/
+/-- If every vertex of a neighbourhood structure on `Fin n` has degree 2,
+the Forman-Ricci curvature of every pair `v`, `w` is 0. -/
 theorem cycleForman_zero {n : Nat} (N : Neighbourhood (Fin n))
     (h2reg : ∀ v : Fin n, N.degree v = 2) (v w : Fin n) :
     formanRicciEdge N v w = 0 :=
   formanRicciEdge_zero_of_two_regular N h2reg v w
 
-/-- **The bridge.** For any 2-regular neighbourhood structure on
-`Fin n` (the discrete-side avatar of a 1-dim cyclic spatial slice),
-the Forman-Ricci on every edge equals the continuum Ricci of the
-circle at every point — both being zero.
-
-This is the first formalised case of the discrete-Ricci ↔
-continuum-Ricci correspondence under our grounding principle: the
-continuum object (Ricci tensor on `circleMetric`) is paired with a
-discrete-side object (Forman-Ricci on a 2-regular graph) and an
-explicit relating theorem (both vanish identically). -/
-theorem forman_ricci_matches_continuum_on_cycle
+/-- For a 2-regular neighbourhood structure on `Fin n`, the Forman-Ricci
+curvature of every pair is 0 and the Ricci tensor of `flatConnection 1` is
+0. -/
+theorem cycle_forman_and_flat_ricci_zero
     {n : Nat} (N : Neighbourhood (Fin n))
     (h2reg : ∀ v : Fin n, N.degree v = 2)
     (v w : Fin n) (x : Fin 1 → ℝ) (σ ν : Fin 1) :
@@ -91,18 +64,18 @@ theorem forman_ricci_matches_continuum_on_cycle
     ∧ (Curvature.flatConnection 1).ricci x σ ν = 0 := by
   refine ⟨?_, ?_⟩
   · exact cycleForman_zero N h2reg v w
-  · exact circle_ricci_zero x σ ν
+  · exact flatConnection_one_ricci_zero x σ ν
 
-/-- **Bridge in numerical form.** Cast both sides to ℝ and use the
-fact that both are zero. The casting bridges integer-valued discrete
-Ricci and real-valued continuum Ricci. -/
-theorem forman_ricci_real_matches_continuum_on_cycle
+/-- For a 2-regular neighbourhood structure on `Fin n`, the Forman-Ricci
+curvature of every pair, cast to ℝ, equals the Ricci tensor of
+`flatConnection 1`; both are 0. -/
+theorem cycle_forman_and_flat_ricci_zero_real
     {n : Nat} (N : Neighbourhood (Fin n))
     (h2reg : ∀ v : Fin n, N.degree v = 2)
     (v w : Fin n) (x : Fin 1 → ℝ) (σ ν : Fin 1) :
     ((formanRicciEdge N v w : ℤ) : ℝ)
     = (Curvature.flatConnection 1).ricci x σ ν := by
-  rw [cycleForman_zero N h2reg v w, circle_ricci_zero x σ ν]
+  rw [cycleForman_zero N h2reg v w, flatConnection_one_ricci_zero x σ ν]
   simp
 
 end InfraFormalization

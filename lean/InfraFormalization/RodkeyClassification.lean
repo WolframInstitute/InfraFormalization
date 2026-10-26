@@ -1,33 +1,17 @@
 /-
-**Rodkey classification — pointwise-uniform Wolfram-Hausdorff dimension.**
+Hypergraphs whose geodesic ball volumes do not depend on the vertex.
 
-First inhabiting theorems for P20 (task #212). Attribution: a question
-of SRODKEY, pursued with PHAJEK and DHAMMOCK per PHAJEK's
-2026-04 weekly update: *classification of graphs with pointwise
-constant Wolfram-Hausdorff dimension*.
-
-This file provides:
-
-  * `Hypergraph.BallVolumeVertexUniform` — the predicate that
-    `geodesicBallVolume v r` is the same at every vertex `v`, for
-    every radius `r`. When this holds, the local-Wolfram-Hausdorff
-    dimension is automatically vertex-uniform.
-  * `Hypergraph.LocalDimensionVertexUniform` — the analogous
-    predicate for `localDimension`, directly the Rodkey condition.
-  * `ballVolumeVertexUniform_implies_localDimensionVertexUniform` —
-    ball-volume uniformity is the stronger condition; it implies
-    local-dimension uniformity.
-  * Base-case theorems for `cycleHypergraph n` at `r = 0`, `r = 1`,
-    and `r ≥ n`: the ball volume is the same at every vertex there.
-  * `cycleHypergraph_ballVolumeVertexUniform_baseCases` — packaged
-    disjunction of the three base-case radii.
-
-What remains open for P20: the intermediate range `2 ≤ r < n` on
-`cycleHypergraph n` (requires dist-translation-invariance under
-rotation), and the general classification problem.
-
-**Grounded.** `Hypergraph V`, `geodesicBallVolume`, `localDimension`
-are all hypergraph primitives.
+This module defines `BallVolumeVertexUniform` (the volume of the ball of
+radius r is the same at every vertex, for every r),
+`LocalDimensionVertexUniform`, `DistTransitive`, `AdjTransitive` and
+`Regular`, following a question of Rodkey on graphs with pointwise
+constant Wolfram-Hausdorff dimension. It proves the implications
+adjacency-transitive ⇒ distance-transitive ⇒ ball-volume uniform ⇒
+local-dimension uniform, and, for connected hypergraphs, ball-volume
+uniform ⇒ regular. It proves that `cycleHypergraph n` (n ≥ 2) satisfies
+all four uniformity conditions and that `pathHypergraph n` (n ≥ 3) is
+neither regular nor ball-volume uniform. A classification of the
+ball-volume uniform hypergraphs is not stated.
 -/
 
 import InfraFormalization.HypergraphDistance
@@ -38,28 +22,21 @@ namespace Hypergraph
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
-/-- **Ball-volume vertex-uniformity**: `geodesicBallVolume v r` does
-not depend on the choice of vertex `v`, for any radius `r`. -/
+/-- `geodesicBallVolume v r = geodesicBallVolume w r` for all `r`, `v`,
+`w`. -/
 def BallVolumeVertexUniform (H : Hypergraph V) : Prop :=
   ∀ r : ℕ, ∀ v w : V, H.geodesicBallVolume v r = H.geodesicBallVolume w r
 
-/-- **Local-dimension vertex-uniformity**: `localDimension v r` does
-not depend on `v`, for any `r`. This is the direct Rodkey condition. -/
+/-- `localDimension v r = localDimension w r` for all `r`, `v`, `w`. -/
 def LocalDimensionVertexUniform (H : Hypergraph V) : Prop :=
   ∀ r : ℕ, ∀ v w : V, H.localDimension v r = H.localDimension w r
 
-/-- **Dist-transitivity**: for every pair of vertices `(v, w)` there is
-a bijection `σ : V ≃ V` sending `v` to `w` and preserving distances from
-`v`: for every `a`, `dist v a = dist w (σ a)`. This is the abstract
-sufficient condition for ball-volume vertex-uniformity; vertex-
-transitive graphs (in the graph-automorphism sense) satisfy it. -/
+/-- For all `v`, `w` there is a bijection `σ : V ≃ V` with `σ v = w` and
+`dist v a = dist w (σ a)` for every `a`. -/
 def DistTransitive (H : Hypergraph V) : Prop :=
   ∀ v w : V, ∃ σ : V ≃ V, σ v = w ∧ ∀ a, H.dist v a = H.dist w (σ a)
 
-/-- **Rodkey classification — sufficient condition.** Any dist-transitive
-hypergraph satisfies ball-volume vertex-uniformity. The shift σ bijects
-the radius-r ball at v with the radius-r ball at w, so their cardinalities
-agree. -/
+/-- A distance-transitive hypergraph is ball-volume uniform. -/
 theorem ballVolumeVertexUniform_of_distTransitive
     (H : Hypergraph V) (ht : H.DistTransitive) :
     H.BallVolumeVertexUniform := by
@@ -79,10 +56,8 @@ theorem ballVolumeVertexUniform_of_distTransitive
     rw [σ.apply_symm_apply] at this
     rw [this]; exact hu'
 
-/-- Ball-volume vertex-uniformity implies local-dimension
-vertex-uniformity: `localDimension v r` is a function of
-`geodesicBallVolume v r` and `r`, so if the former is uniform in `v`,
-so is the latter. -/
+/-- Ball-volume uniformity implies local-dimension uniformity, since
+`localDimension v r` is a function of `geodesicBallVolume v r` and `r`. -/
 theorem ballVolumeVertexUniform_implies_localDimensionVertexUniform
     (H : Hypergraph V) (h : H.BallVolumeVertexUniform) :
     H.LocalDimensionVertexUniform := by
@@ -90,19 +65,13 @@ theorem ballVolumeVertexUniform_implies_localDimensionVertexUniform
   unfold localDimension
   rw [h r v w]
 
-/-- **Adj-transitivity**: for every pair `(v, w)` there is an `Equiv σ`
-sending `v` to `w` that preserves adjacency in both directions. This
-is the graph-theoretic vertex-transitivity condition and is strictly
-stronger than `DistTransitive` (it implies it via Walk.map on the
-induced SimpleGraph.Hom). -/
+/-- For all `v`, `w` there is a bijection `σ : V ≃ V` with `σ v = w` that
+preserves adjacency in both directions. -/
 def AdjTransitive (H : Hypergraph V) : Prop :=
   ∀ v w : V, ∃ σ : V ≃ V, σ v = w ∧ ∀ a b, H.Adj a b ↔ H.Adj (σ a) (σ b)
 
-/-- **Adj-transitive implies dist-transitive.** Given an
-adjacency-preserving `Equiv σ` sending `v` to `w`, the SimpleGraph Hom
-structure transfers walks between `v → a` and `w → σ a` (in both
-directions, using `σ` and `σ⁻¹`), so walk lengths and hence distances
-are preserved. -/
+/-- An adjacency-transitive hypergraph is distance-transitive: `σ` and
+`σ⁻¹` map walks to walks of the same length. -/
 theorem distTransitive_of_adjTransitive
     (H : Hypergraph V) (ht : H.AdjTransitive) :
     H.DistTransitive := by
@@ -117,9 +86,7 @@ theorem distTransitive_of_adjTransitive
   let bwd : H.toSimpleGraph →g H.toSimpleGraph :=
     { toFun := σ.symm
       map_rel' := fun {x y} hxy => by
-        -- σ.symm preserves Adj: if Adj x y, then σ (σ.symm x) = x
-        -- and σ (σ.symm y) = y, so (hσ _ _).mpr applied to Adj x y in the
-        -- shape Adj (σ (σ.symm x)) (σ (σ.symm y)).
+        -- σ.symm preserves adjacency because σ does in both directions.
         have hx : σ (σ.symm x) = x := σ.apply_symm_apply x
         have hy : σ (σ.symm y) = y := σ.apply_symm_apply y
         have := (hσ (σ.symm x) (σ.symm y)).mpr (by rw [hx, hy]; exact hxy)
@@ -139,9 +106,8 @@ theorem distTransitive_of_adjTransitive
         _ = (p.map bwd).length := by simp [q, SimpleGraph.Walk.length_copy]
         _ = p.length := p.length_map _
         _ = H.toSimpleGraph.dist w (σ a) := hp
-    · -- Unreachable: dist w (σ a) = 0 as junk, so we must show dist v a ≤ 0.
-      -- But via the fwd Hom, Reachable v a would imply Reachable w (σ a).
-      -- So ¬Reachable w (σ a) implies ¬Reachable v a, hence dist v a = 0.
+    · -- If `w` cannot reach `σ a`, then `v` cannot reach `a`, so both
+      -- distances are 0.
       have hnreach_va : ¬ H.toSimpleGraph.Reachable v a := by
         intro h
         obtain ⟨p⟩ := h
@@ -167,20 +133,15 @@ theorem distTransitive_of_adjTransitive
       rw [SimpleGraph.dist_eq_zero_of_not_reachable hnreach_wσa]
       exact Nat.zero_le _
 
-/-- **Adj-transitive implies ball-volume vertex-uniform.** Composition
-of `distTransitive_of_adjTransitive` and
-`ballVolumeVertexUniform_of_distTransitive`. -/
+/-- An adjacency-transitive hypergraph is ball-volume uniform. -/
 theorem ballVolumeVertexUniform_of_adjTransitive
     (H : Hypergraph V) (ht : H.AdjTransitive) :
     H.BallVolumeVertexUniform :=
   ballVolumeVertexUniform_of_distTransitive H
     (distTransitive_of_adjTransitive H ht)
 
-/-- **Geodesic ball volume at radius 1 equals degree plus one** on a
-connected hypergraph. The radius-1 ball around `v` is the disjoint
-union of `{v}` with the SimpleGraph-neighbour set of `v` (because
-`dist v u = 1 ↔ Adj v u` on a simple graph, and connectivity rules
-out the unreachable-junk case). -/
+/-- On a connected hypergraph, the ball of radius 1 about `v` has
+`1 + degree v` vertices. -/
 theorem geodesicBallVolume_one_eq_degree_plus_one
     (H : Hypergraph V) (hconn : H.toSimpleGraph.Connected) (v : V) :
     H.geodesicBallVolume v 1 = 1 + H.toSimpleGraph.degree v := by
@@ -216,10 +177,8 @@ theorem geodesicBallVolume_one_eq_degree_plus_one
   rw [SimpleGraph.degree]
   omega
 
-/-- **Ball-volume vertex-uniformity at radius 1 implies uniform
-SimpleGraph degree** (on a connected hypergraph): if the radius-1 ball
-size is the same at every vertex, the SimpleGraph degrees also agree,
-since `|ball v 1| = 1 + degree v`. -/
+/-- On a connected ball-volume uniform hypergraph, all vertices have the
+same degree. -/
 theorem degree_uniform_of_ballVolumeVertexUniform
     (H : Hypergraph V) (hconn : H.toSimpleGraph.Connected)
     (hb : H.BallVolumeVertexUniform) (v w : V) :
@@ -229,13 +188,8 @@ theorem degree_uniform_of_ballVolumeVertexUniform
       geodesicBallVolume_one_eq_degree_plus_one H hconn w] at hvw
   omega
 
-/-- **Non-regular connected hypergraph is NOT ball-volume
-vertex-uniform.** Contrapositive of `degree_uniform_of_ballVolumeVertexUniform`
-— if any two vertices have different SimpleGraph degree on a connected
-hypergraph, the ball-volume-vertex-uniformity predicate cannot hold.
-This is the workhorse for ruling out candidate hypergraphs from the
-Rodkey classification: any non-regular connected graph fails the
-radius-1 ball-count check, regardless of what happens at larger radii. -/
+/-- On a connected hypergraph with two vertices of different degree,
+`BallVolumeVertexUniform` fails. -/
 theorem not_ballVolumeVertexUniform_of_degree_ne
     (H : Hypergraph V) (hconn : H.toSimpleGraph.Connected)
     {v w : V} (hne : H.toSimpleGraph.degree v ≠ H.toSimpleGraph.degree w) :
@@ -243,11 +197,8 @@ theorem not_ballVolumeVertexUniform_of_degree_ne
   intro hb
   exact hne (degree_uniform_of_ballVolumeVertexUniform H hconn hb v w)
 
-/-- **`k`-regular connected hypergraph has uniform radius-1 ball volume
-equal to `k + 1`.** Direct application of `geodesicBallVolume_one_eq_degree_plus_one`
-at every vertex. The radius-1 piece of the BallVolumeVertexUniform
-predicate holds for every regular connected hypergraph — a partial
-necessary-and-sufficient result at the local level. -/
+/-- On a connected hypergraph in which every vertex has degree `k`, every
+ball of radius 1 has `k + 1` vertices. -/
 theorem ballVolumeOne_regular (H : Hypergraph V)
     (hconn : H.toSimpleGraph.Connected) (k : ℕ)
     (hreg : ∀ v : V, H.toSimpleGraph.degree v = k) (v : V) :
@@ -255,9 +206,8 @@ theorem ballVolumeOne_regular (H : Hypergraph V)
   rw [geodesicBallVolume_one_eq_degree_plus_one H hconn v, hreg v]
   omega
 
-/-- **Regular connected hypergraphs are ball-volume-uniform at radius 1.**
-Direct corollary of `ballVolumeOne_regular`: if every vertex has the
-same SimpleGraph degree, every radius-1 ball has the same size. -/
+/-- On a connected hypergraph in which every vertex has degree `k`, all
+balls of radius 1 have the same volume. -/
 theorem ballVolumeOne_uniform_of_regular (H : Hypergraph V)
     (hconn : H.toSimpleGraph.Connected) {k : ℕ}
     (hreg : ∀ v : V, H.toSimpleGraph.degree v = k) (v w : V) :
@@ -265,17 +215,12 @@ theorem ballVolumeOne_uniform_of_regular (H : Hypergraph V)
   rw [ballVolumeOne_regular H hconn k hreg v,
       ballVolumeOne_regular H hconn k hreg w]
 
-/-- **Regularity predicate**: every vertex has the same SimpleGraph
-degree. A necessary (but not sufficient) condition for
-BallVolumeVertexUniform on a connected hypergraph. -/
+/-- All vertices have the same degree. -/
 def Regular (H : Hypergraph V) : Prop :=
   ∀ v w : V, H.toSimpleGraph.degree v = H.toSimpleGraph.degree w
 
-/-- **Ball-volume vertex-uniformity (at radius 1) on a connected
-hypergraph is equivalent to regularity.** Forward: r=1 uniformity gives
-uniform degree via `degree_uniform_of_ballVolumeVertexUniform`. Backward:
-regularity gives uniform r=1 balls via `ballVolumeOne_regular`. A
-tight local characterisation of the r=1 slice of the Rodkey predicate. -/
+/-- On a connected hypergraph, all balls of radius 1 have the same volume
+if and only if the hypergraph is regular. -/
 theorem ballVolumeOne_uniform_iff_regular (H : Hypergraph V)
     (hconn : H.toSimpleGraph.Connected) :
     (∀ v w : V, H.geodesicBallVolume v 1 = H.geodesicBallVolume w 1)
@@ -291,11 +236,7 @@ theorem ballVolumeOne_uniform_iff_regular (H : Hypergraph V)
     rw [geodesicBallVolume_one_eq_degree_plus_one H hconn v,
         geodesicBallVolume_one_eq_degree_plus_one H hconn w, hreg v w]
 
-/-- **`cycleHypergraph n` is 2-regular for `n ≥ 3`.** Every vertex has
-exactly `v + 1` and `v - 1` as distinct neighbours; the SimpleGraph
-degree is 2 throughout. Derived via
-`cycleHypergraph_ballVolume_one_exact` (= 3) and
-`geodesicBallVolume_one_eq_degree_plus_one`. -/
+/-- For `n ≥ 3`, every vertex of `cycleHypergraph n` has degree 2. -/
 theorem cycleHypergraph_regular_degree_two {n : Nat} [NeZero n]
     (hn : 3 ≤ n) (v : Fin n) :
     (cycleHypergraph n).toSimpleGraph.degree v = 2 := by
@@ -305,19 +246,15 @@ theorem cycleHypergraph_regular_degree_two {n : Nat} [NeZero n]
     (cycleHypergraph n) hconn v
   omega
 
-/-- **`cycleHypergraph n` is Regular for `n ≥ 3`**: every vertex has
-degree 2. -/
+/-- For `n ≥ 3`, `cycleHypergraph n` is regular. -/
 theorem cycleHypergraph_regular {n : Nat} [NeZero n] (hn : 3 ≤ n) :
     (cycleHypergraph n).Regular := by
   intro v w
   rw [cycleHypergraph_regular_degree_two hn v,
       cycleHypergraph_regular_degree_two hn w]
 
-/-- **`pathHypergraph n` is NOT regular for `n ≥ 3`**: the endpoint
-`0 : Fin n` has degree 1 while the interior vertex `1 : Fin n` has
-degree 2. Matches the pre-existing
-`pathHypergraph_not_ballVolumeVertexUniform` result, but cast at the
-structural (degree) level rather than the ball-volume level. -/
+/-- For `n ≥ 3`, `pathHypergraph n` is not regular: vertex 0 has degree 1
+and vertex 1 has degree 2. -/
 theorem pathHypergraph_not_regular {n : ℕ} [NeZero n] (hn : 3 ≤ n) :
     ¬ (pathHypergraph n).Regular := by
   intro hreg
@@ -331,11 +268,8 @@ theorem pathHypergraph_not_regular {n : ℕ} [NeZero n] (hn : 3 ≤ n) :
   rw [h0, h1] at hdiff
   omega
 
-/-- **Regularity dichotomy on `Fin 3`**: there exist hypergraphs on
-the same vertex type such that one is Regular and another is not.
-Witnessed by `cycleHypergraph 3` (regular, degree 2) and
-`pathHypergraph 3` (not regular: endpoint degree 1, interior degree 2).
-Structural analogue of `rodkey_classification_nontrivial`. -/
+/-- On `Fin 3` there is a regular hypergraph (`cycleHypergraph 3`) and a
+hypergraph that is not regular (`pathHypergraph 3`). -/
 theorem regular_dichotomy_on_fin3 :
     ∃ (H : Hypergraph (Fin 3)) (K : Hypergraph (Fin 3)),
       H.Regular ∧ ¬ K.Regular :=
@@ -343,30 +277,21 @@ theorem regular_dichotomy_on_fin3 :
    cycleHypergraph_regular (by omega),
    pathHypergraph_not_regular (by omega)⟩
 
-/-- **`BallVolumeVertexUniform` implies `Regular`** on a connected
-hypergraph: the radius-1 ball size equals `1 + degree v`, so uniformity
-at `r = 1` forces uniform degree. Packages
-`degree_uniform_of_ballVolumeVertexUniform` at the predicate level. -/
+/-- A connected ball-volume uniform hypergraph is regular. -/
 theorem regular_of_ballVolumeVertexUniform (H : Hypergraph V)
     (hconn : H.toSimpleGraph.Connected)
     (hb : H.BallVolumeVertexUniform) : H.Regular :=
   degree_uniform_of_ballVolumeVertexUniform H hconn hb
 
-/-- **Contrapositive at the Regular level**: a non-regular connected
-hypergraph cannot satisfy `BallVolumeVertexUniform`. Uniform restatement
-of `not_ballVolumeVertexUniform_of_degree_ne` via the `Regular`
-predicate — no explicit `v, w` pair needed. -/
+/-- A connected hypergraph that is not regular is not ball-volume
+uniform. -/
 theorem not_ballVolumeVertexUniform_of_not_regular (H : Hypergraph V)
     (hconn : H.toSimpleGraph.Connected) (hnotreg : ¬ H.Regular) :
     ¬ H.BallVolumeVertexUniform :=
   fun hb => hnotreg (regular_of_ballVolumeVertexUniform H hconn hb)
 
-/-- **Ball volume is vertex-uniform at any radius `r ≥ |V|` on every
-connected hypergraph.** Both sides equal `|V|` by
-`geodesicBallVolume_ge_card`. So the obstruction to
-`BallVolumeVertexUniform` always lies in the "small-radius" regime
-`r < |V|`; once `r ≥ |V|`, uniformity is automatic regardless of
-graph structure. -/
+/-- On a connected hypergraph, for `r ≥ |V|` every ball of radius `r` has
+the same volume, by `geodesicBallVolume_ge_card`. -/
 theorem ballVolumeVertexUniform_at_large_radius (H : Hypergraph V)
     (hconn : H.toSimpleGraph.Connected) (r : ℕ) (hr : Fintype.card V ≤ r)
     (v w : V) :
@@ -374,9 +299,7 @@ theorem ballVolumeVertexUniform_at_large_radius (H : Hypergraph V)
   rw [geodesicBallVolume_ge_card H hconn v r hr,
       geodesicBallVolume_ge_card H hconn w r hr]
 
-/-- **Radius-0 ball volume = 1 on every connected hypergraph.** On a
-connected graph, `dist v u = 0 ↔ v = u`, so the only vertex within
-distance 0 of `v` is `v` itself. -/
+/-- On a connected hypergraph, every ball of radius 0 has volume 1. -/
 theorem geodesicBallVolume_zero_of_connected (H : Hypergraph V)
     (hconn : H.toSimpleGraph.Connected) (v : V) :
     H.geodesicBallVolume v 0 = 1 := by
@@ -399,27 +322,21 @@ theorem geodesicBallVolume_zero_of_connected (H : Hypergraph V)
   rw [h_eq]
   simp
 
-/-- **Ball volume is vertex-uniform at radius 0 on every connected
-hypergraph.** Both sides equal 1. The `r = 0` slice of
-`BallVolumeVertexUniform` is trivial. -/
+/-- On a connected hypergraph, all balls of radius 0 have the same
+volume. -/
 theorem ballVolumeVertexUniform_at_zero (H : Hypergraph V)
     (hconn : H.toSimpleGraph.Connected) (v w : V) :
     H.geodesicBallVolume v 0 = H.geodesicBallVolume w 0 := by
   rw [geodesicBallVolume_zero_of_connected H hconn v,
       geodesicBallVolume_zero_of_connected H hconn w]
 
-/-- **Restricted BallVolumeVertexUniform predicate**: uniformity only
-asked in the non-trivial regime `1 ≤ r < |V|`. Together with the
-"sandwich" pieces `ballVolumeVertexUniform_at_zero` and
-`ballVolumeVertexUniform_at_large_radius`, this is equivalent to the
-full `BallVolumeVertexUniform` on connected hypergraphs. -/
+/-- Ball volumes agree at all vertices for every radius `1 ≤ r < |V|`. -/
 def BallVolumeVertexUniformRestricted (H : Hypergraph V) : Prop :=
   ∀ (r : ℕ), 1 ≤ r → r < Fintype.card V →
     ∀ (v w : V), H.geodesicBallVolume v r = H.geodesicBallVolume w r
 
-/-- **Restricted ⇔ full**: on connected hypergraphs, uniformity on
-`1 ≤ r < |V|` extends automatically to `r = 0` and `r ≥ |V|` via the
-sandwich pieces, giving the full `BallVolumeVertexUniform`. -/
+/-- On a connected hypergraph, `BallVolumeVertexUniform` is equivalent to
+`BallVolumeVertexUniformRestricted`. -/
 theorem ballVolumeVertexUniform_iff_restricted (H : Hypergraph V)
     (hconn : H.toSimpleGraph.Connected) :
     H.BallVolumeVertexUniform ↔ H.BallVolumeVertexUniformRestricted := by
@@ -434,8 +351,7 @@ theorem ballVolumeVertexUniform_iff_restricted (H : Hypergraph V)
       · exact hres r hpos hlt v w
     · exact ballVolumeVertexUniform_at_large_radius H hconn r hge v w
 
-/-- **Vertex count is ≥ 2 whenever the non-trivial regime is
-non-empty**: the range `1 ≤ r < |V|` is inhabited iff `|V| ≥ 2`. -/
+/-- Some `r` satisfies `1 ≤ r < |V|` if and only if `|V| ≥ 2`. -/
 theorem restrictedRegime_nonempty_iff (H : Hypergraph V) :
     (∃ r : ℕ, 1 ≤ r ∧ r < Fintype.card V) ↔ 2 ≤ Fintype.card V := by
   constructor
@@ -444,9 +360,7 @@ theorem restrictedRegime_nonempty_iff (H : Hypergraph V) :
   · intro h
     exact ⟨1, le_refl 1, h⟩
 
-/-- **On vertex types with `|V| ≤ 1`, every hypergraph is trivially
-`BallVolumeVertexUniform`**: only `v = w` cases arise, so the equality
-holds reflexively. -/
+/-- If `|V| ≤ 1`, every hypergraph on `V` is ball-volume uniform. -/
 theorem ballVolumeVertexUniform_of_card_le_one (H : Hypergraph V)
     (hcard : Fintype.card V ≤ 1) : H.BallVolumeVertexUniform := by
   intro r v w
@@ -455,30 +369,22 @@ theorem ballVolumeVertexUniform_of_card_le_one (H : Hypergraph V)
     exact this v w
   rw [h_uv]
 
-
-/-- **Adj-transitive implies uniform degree.** An Adj-preserving
-`Equiv σ : V ≃ V` sending `v` to `w` bijects the neighbour set of `v`
-with the neighbour set of `w`, so the simple-graph degrees agree. This
-gives a NECESSARY graph-theoretic condition for the Rodkey property:
-vertex-transitive graphs are regular. Contrapositive: a graph with
-vertices of different degree (e.g., `pathHypergraph n` with endpoints
-of degree 1 and interior vertices of degree 2) cannot be Adj-transitive,
-and hence its ball-volume-vertex-uniformity status is not derivable
-from the sufficient-condition chain above. -/
+/-- In an adjacency-transitive hypergraph, all vertices have the same
+degree. -/
 theorem degree_invariant_of_adjTransitive
     (H : Hypergraph V) (ht : H.AdjTransitive) (v w : V) :
     H.toSimpleGraph.degree v = H.toSimpleGraph.degree w := by
   obtain ⟨σ, hσvw, hσ⟩ := ht v w
   rw [SimpleGraph.degree, SimpleGraph.degree]
   refine Finset.card_bij (fun u _ => σ u) ?_ ?_ ?_
-  · -- Forward: Adj v u → Adj w (σ u). Use hσ v u and the identification σ v = w.
+  · -- Adj v u gives Adj w (σ u), using σ v = w.
     intro u hu
     simp only [SimpleGraph.mem_neighborFinset] at hu ⊢
     have h := (hσ v u).mp hu
     rw [hσvw] at h
     exact h
   · intros u _ u' _ h; exact σ.injective h
-  · -- Surjectivity: given Adj w u', take u = σ⁻¹ u' as the preimage.
+  · -- The preimage of u' is σ⁻¹ u'.
     intro u' hu'
     simp only [SimpleGraph.mem_neighborFinset] at hu'
     refine ⟨σ.symm u', ?_, σ.apply_symm_apply u'⟩
@@ -489,8 +395,8 @@ theorem degree_invariant_of_adjTransitive
 
 /-! ## cycleHypergraph base cases -/
 
-/-- **`cycleHypergraph n` has vertex-uniform ball volume at `r = 0`.**
-Every vertex has a radius-0 ball of size 1. -/
+/-- For `n ≥ 2`, all balls of radius 0 in `cycleHypergraph n` have volume
+1. -/
 theorem cycleHypergraph_ballVolumeVertexUniform_at_zero {n : Nat} [NeZero n]
     (hn : 2 ≤ n) (v w : Fin n) :
     (cycleHypergraph n).geodesicBallVolume v 0 =
@@ -498,10 +404,8 @@ theorem cycleHypergraph_ballVolumeVertexUniform_at_zero {n : Nat} [NeZero n]
   rw [cycleHypergraph_ballVolume_zero_exact hn v,
       cycleHypergraph_ballVolume_zero_exact hn w]
 
-/-- **`cycleHypergraph n` has vertex-uniform ball volume at `r = 1`
-for `n ≥ 3`.** Every vertex has a radius-1 ball of size 3 (itself + two
-neighbours). Requires `n ≥ 3` so that the two neighbours `v+1` and
-`v-1` are distinct. -/
+/-- For `n ≥ 3`, all balls of radius 1 in `cycleHypergraph n` have the same
+volume (3). -/
 theorem cycleHypergraph_ballVolumeVertexUniform_at_one {n : Nat} [NeZero n]
     (hn : 3 ≤ n) (v w : Fin n) :
     (cycleHypergraph n).geodesicBallVolume v 1 =
@@ -509,8 +413,8 @@ theorem cycleHypergraph_ballVolumeVertexUniform_at_one {n : Nat} [NeZero n]
   rw [cycleHypergraph_ballVolume_one_exact hn v,
       cycleHypergraph_ballVolume_one_exact hn w]
 
-/-- **`cycleHypergraph n` has vertex-uniform ball volume at `r ≥ n`.**
-Every vertex has a radius-`r` ball equal to the whole vertex set. -/
+/-- For `n ≥ 2` and `r ≥ n`, all balls of radius `r` in `cycleHypergraph n`
+have the same volume. -/
 theorem cycleHypergraph_ballVolumeVertexUniform_at_large {n : Nat} [NeZero n]
     (hn : 2 ≤ n) (v w : Fin n) (r : ℕ) (hr : n ≤ r) :
     (cycleHypergraph n).geodesicBallVolume v r =
@@ -518,9 +422,8 @@ theorem cycleHypergraph_ballVolumeVertexUniform_at_large {n : Nat} [NeZero n]
   rw [cycleHypergraph_ballVolume_large hn v r hr,
       cycleHypergraph_ballVolume_large hn w r hr]
 
-/-- **`cycleHypergraph n` ball-volume uniformity at the base radii
-`r ∈ {0, 1} ∪ [n, ∞)`**, assuming `n ≥ 3` (so the `r = 1` case is
-non-degenerate). -/
+/-- For `n ≥ 3` and `r ∈ {0, 1}` or `r ≥ n`, all balls of radius `r` in
+`cycleHypergraph n` have the same volume. -/
 theorem cycleHypergraph_ballVolumeVertexUniform_baseCases {n : Nat} [NeZero n]
     (hn : 3 ≤ n) (v w : Fin n) (r : ℕ) (h : r = 0 ∨ r = 1 ∨ n ≤ r) :
     (cycleHypergraph n).geodesicBallVolume v r =
@@ -533,17 +436,12 @@ theorem cycleHypergraph_ballVolumeVertexUniform_baseCases {n : Nat} [NeZero n]
     exact cycleHypergraph_ballVolumeVertexUniform_at_one hn v w
   · exact cycleHypergraph_ballVolumeVertexUniform_at_large hn2 v w r hr
 
-/-! ## Translation-invariance on `cycleHypergraph n`
+/-! ## Rotations of `cycleHypergraph n`
 
-The rotation `k ↦ k + c` on `Fin n` sends cycle-edges to cycle-edges
-in both directions, so it is a SimpleGraph automorphism of
-`(cycleHypergraph n).toSimpleGraph`. Distance is preserved under
-graph homomorphism (via `SimpleGraph.Walk.map` + `Walk.length_map`),
-giving dist-translation-invariance and hence full vertex-uniformity
-of the geodesic ball volume. -/
+The rotation `k ↦ k + c` of `Fin n` preserves adjacency in both directions
+and therefore preserves distance. -/
 
-/-- **Adj translation invariance** on the cycle: adjacency is preserved
-in both directions under `k ↦ k + c`. -/
+/-- `Adj a b ↔ Adj (a + c) (b + c)` in `cycleHypergraph n`, for `n ≥ 2`. -/
 theorem cycleHypergraph_Adj_translation {n : Nat} [NeZero n] (hn : 2 ≤ n)
     (c a b : Fin n) :
     (cycleHypergraph n).Adj a b ↔ (cycleHypergraph n).Adj (a + c) (b + c) := by
@@ -566,15 +464,15 @@ theorem cycleHypergraph_Adj_translation {n : Nat} [NeZero n] (hn : 2 ≤ n)
       have h3 : (b + 1) + c = a + c := h2.trans heq.symm
       exact (add_right_cancel h3).symm
 
-/-- **Rotation as a SimpleGraph Hom** on `(cycleHypergraph n).toSimpleGraph`. -/
+/-- The rotation `k ↦ k + c` as a graph homomorphism. -/
 def cycleRotHom {n : Nat} [NeZero n] (hn : 2 ≤ n) (c : Fin n) :
     (cycleHypergraph n).toSimpleGraph →g (cycleHypergraph n).toSimpleGraph where
   toFun k := k + c
   map_rel' hab :=
     (cycleHypergraph_Adj_translation hn c _ _).mp hab
 
-/-- **Distance translation invariance** on the cycle. The shift
-`k ↦ k + c` preserves the hypergraph distance. -/
+/-- `dist v w = dist (v + c) (w + c)` in `cycleHypergraph n`, for
+`n ≥ 2`. -/
 theorem cycleHypergraph_dist_translation {n : Nat} [NeZero n] (hn : 2 ≤ n)
     (c v w : Fin n) :
     (cycleHypergraph n).dist v w =
@@ -607,9 +505,7 @@ theorem cycleHypergraph_dist_translation {n : Nat} [NeZero n] (hn : 2 ≤ n)
       _ = p.length := p.length_map _
       _ = (cycleHypergraph n).toSimpleGraph.dist v w := hp
 
-/-- **cycleHypergraph has vertex-uniform ball volume at every radius.**
-Follows from dist translation invariance: the shift `k ↦ k + (w - v)`
-bijects `{u : dist v u ≤ r}` with `{u : dist w u ≤ r}`. -/
+/-- For `n ≥ 2`, `cycleHypergraph n` is ball-volume uniform. -/
 theorem cycleHypergraph_ballVolumeVertexUniform {n : Nat} [NeZero n]
     (hn : 2 ≤ n) :
     (cycleHypergraph n).BallVolumeVertexUniform := by
@@ -639,19 +535,15 @@ theorem cycleHypergraph_ballVolumeVertexUniform {n : Nat} [NeZero n]
       omega
     · abel
 
-/-- **Local-dimension vertex uniformity on the cycle.** The Rodkey
-condition holds for every `cycleHypergraph n` with `n ≥ 2`. -/
+/-- For `n ≥ 2`, `cycleHypergraph n` is local-dimension uniform. -/
 theorem cycleHypergraph_localDimensionVertexUniform {n : Nat} [NeZero n]
     (hn : 2 ≤ n) :
     (cycleHypergraph n).LocalDimensionVertexUniform :=
   ballVolumeVertexUniform_implies_localDimensionVertexUniform _
     (cycleHypergraph_ballVolumeVertexUniform hn)
 
-/-- **`cycleHypergraph n` is dist-transitive via rotation.** For any
-vertices `v, w` the shift `k ↦ k + (w - v)` is a bijection on `Fin n`
-that sends `v` to `w` and preserves distance (by
-`cycleHypergraph_dist_translation`). This exhibits the cycle as a
-witness for the `DistTransitive` sufficient condition. -/
+/-- For `n ≥ 2`, `cycleHypergraph n` is distance-transitive, with
+`σ = (· + (w − v))`. -/
 theorem cycleHypergraph_distTransitive {n : Nat} [NeZero n] (hn : 2 ≤ n) :
     (cycleHypergraph n).DistTransitive := by
   intro v w
@@ -663,9 +555,8 @@ theorem cycleHypergraph_distTransitive {n : Nat} [NeZero n] (hn : 2 ≤ n) :
     rw [hw] at this
     exact this
 
-/-- **`cycleHypergraph n` is Adj-transitive via rotation.** The shift
-`k ↦ k + (w - v)` is an `Equiv` on `Fin n` that sends `v` to `w` and
-preserves adjacency iff-both-ways (by `cycleHypergraph_Adj_translation`). -/
+/-- For `n ≥ 2`, `cycleHypergraph n` is adjacency-transitive, with
+`σ = (· + (w − v))`. -/
 theorem cycleHypergraph_adjTransitive {n : Nat} [NeZero n] (hn : 2 ≤ n) :
     (cycleHypergraph n).AdjTransitive := by
   intro v w
@@ -674,11 +565,8 @@ theorem cycleHypergraph_adjTransitive {n : Nat} [NeZero n] (hn : 2 ≤ n) :
   · intro a b
     exact cycleHypergraph_Adj_translation hn (w - v) a b
 
-/-- **Full Rodkey chain on the cycle.** Every `cycleHypergraph n` with
-`n ≥ 2` satisfies all four levels of the Rodkey classification
-hierarchy: Adj-transitive, dist-transitive, ball-volume
-vertex-uniform, and local-dimension vertex-uniform. This is the
-canonical positive example. -/
+/-- For `n ≥ 2`, `cycleHypergraph n` is adjacency-transitive,
+distance-transitive, ball-volume uniform and local-dimension uniform. -/
 theorem cycleHypergraph_rodkey_chain {n : Nat} [NeZero n] (hn : 2 ≤ n) :
     (cycleHypergraph n).AdjTransitive ∧
     (cycleHypergraph n).DistTransitive ∧
@@ -689,19 +577,10 @@ theorem cycleHypergraph_rodkey_chain {n : Nat} [NeZero n] (hn : 2 ≤ n) :
    cycleHypergraph_ballVolumeVertexUniform hn,
    cycleHypergraph_localDimensionVertexUniform hn⟩
 
-/-! ## Path hypergraph negative example
+/-! ## `pathHypergraph n` -/
 
-The path hypergraph `pathHypergraph n` with `n ≥ 3` is a canonical
-negative example for the Rodkey classification: ball-volume-vertex-
-uniformity fails at radius 1 because endpoints (degree 1) differ from
-interior vertices (degree 2). -/
-
-/-- **`pathHypergraph n` is NOT ball-volume vertex-uniform** for `n ≥ 3`.
-The endpoint `0 : Fin n` has SimpleGraph degree `1`, the interior
-vertex `1 : Fin n` has degree `2`; by
-`not_ballVolumeVertexUniform_of_degree_ne` (connected + degree
-mismatch ⇒ ball-volume-uniformity fails), the path is ruled out.
-Canonical negative example complementing the cycle positive example. -/
+/-- For `n ≥ 3`, `pathHypergraph n` is not ball-volume uniform: vertex 0
+has degree 1 and vertex 1 has degree 2. -/
 theorem pathHypergraph_not_ballVolumeVertexUniform {n : ℕ} [NeZero n]
     (hn : 3 ≤ n) :
     ¬ (pathHypergraph n).BallVolumeVertexUniform := by
@@ -712,14 +591,8 @@ theorem pathHypergraph_not_ballVolumeVertexUniform {n : ℕ} [NeZero n]
       pathHypergraph_degree_one hn]
   omega
 
-/-- **Classification separates**: there exist finite hypergraphs on
-the same vertex type (`Fin 3`) of which one satisfies
-`BallVolumeVertexUniform` and another does not. This is the non-
-triviality check for the Rodkey predicate — it rules out both
-"vacuous-true" and "vacuous-false" defect modes of the classification.
-
-Witnessed by `cycleHypergraph 3` (positive, via rotation automorphism)
-and `pathHypergraph 3` (negative, via endpoint/interior degree gap). -/
+/-- On `Fin 3` there is a ball-volume uniform hypergraph
+(`cycleHypergraph 3`) and one that is not (`pathHypergraph 3`). -/
 theorem rodkey_classification_nontrivial :
     ∃ (H : Hypergraph (Fin 3)) (K : Hypergraph (Fin 3)),
       H.BallVolumeVertexUniform ∧ ¬ K.BallVolumeVertexUniform := by
@@ -727,37 +600,10 @@ theorem rodkey_classification_nontrivial :
   · exact cycleHypergraph_ballVolumeVertexUniform (by omega)
   · exact pathHypergraph_not_ballVolumeVertexUniform (by omega)
 
-/-! ## Classification obligation
+/-! ## The implication between the two uniformity predicates -/
 
-The full Rodkey classification is open: characterise every finite
-hypergraph `H` such that `H.BallVolumeVertexUniform` (equivalently,
-every hypergraph-vertex-transitive graph in the adjacency sense). The
-predicate is formalised; the classification theorem is future work
-(task #212, with PHAJEK and DHAMMOCK). -/
-
-/-- **Rodkey classification obligation**: every finite hypergraph
-admitting a vertex-transitive adjacency automorphism group has
-pointwise-uniform Wolfram-Hausdorff dimension. The predicate
-`BallVolumeVertexUniform` + `LocalDimensionVertexUniform` is
-formalised; the structural-classification theorem connecting them to
-graph-theoretic properties (vertex-transitivity, Cayley structure,
-etc.) is the open programme. -/
-def RodkeyClassificationObligation (V : Type) [Fintype V] [DecidableEq V] : Prop :=
-  ∀ (H : Hypergraph V), H.BallVolumeVertexUniform → H.LocalDimensionVertexUniform
-
-/-- The obligation is inhabited — it is the implication
-`ball-volume uniform ⇒ local-dimension uniform`, which we have
-proved above. -/
-theorem rodkeyClassificationObligation_holds (V : Type)
-    [Fintype V] [DecidableEq V] :
-    RodkeyClassificationObligation V :=
-  fun H h => ballVolumeVertexUniform_implies_localDimensionVertexUniform H h
-
-/-- **P20 dichotomy holds on every `Fin n` with `n ≥ 3`**: for every
-such vertex type there is both a Rodkey-valid hypergraph
-(`cycleHypergraph n`) and a Rodkey-invalid one (`pathHypergraph n`).
-Generalises `rodkey_classification_nontrivial` from `Fin 3` to every
-sufficiently-large cardinality. -/
+/-- For `n ≥ 3`, on `Fin n` there is a ball-volume uniform hypergraph
+(`cycleHypergraph n`) and one that is not (`pathHypergraph n`). -/
 theorem rodkey_classification_nontrivial_for_Fin {n : ℕ} [NeZero n]
     (hn : 3 ≤ n) :
     ∃ (H : Hypergraph (Fin n)) (K : Hypergraph (Fin n)),
@@ -766,8 +612,8 @@ theorem rodkey_classification_nontrivial_for_Fin {n : ℕ} [NeZero n]
    cycleHypergraph_ballVolumeVertexUniform (by omega),
    pathHypergraph_not_ballVolumeVertexUniform hn⟩
 
-/-- **Regular dichotomy on every `Fin n` with `n ≥ 3`**: structural
-analogue at the degree level. -/
+/-- For `n ≥ 3`, on `Fin n` there is a regular hypergraph and one that is
+not regular. -/
 theorem regular_dichotomy_for_Fin {n : ℕ} [NeZero n] (hn : 3 ≤ n) :
     ∃ (H : Hypergraph (Fin n)) (K : Hypergraph (Fin n)),
       H.Regular ∧ ¬ K.Regular :=
@@ -775,10 +621,8 @@ theorem regular_dichotomy_for_Fin {n : ℕ} [NeZero n] (hn : 3 ≤ n) :
    cycleHypergraph_regular hn,
    pathHypergraph_not_regular hn⟩
 
-/-- **`cycleHypergraph n` satisfies the restricted Rodkey predicate**:
-immediate consequence of `cycleHypergraph_ballVolumeVertexUniform` +
-`ballVolumeVertexUniform_iff_restricted`. Re-exports the positive
-example at the restricted-regime level for downstream use. -/
+/-- For `n ≥ 2`, `cycleHypergraph n` satisfies
+`BallVolumeVertexUniformRestricted`. -/
 theorem cycleHypergraph_ballVolumeVertexUniformRestricted
     {n : Nat} [NeZero n] (hn : 2 ≤ n) :
     (cycleHypergraph n).BallVolumeVertexUniformRestricted := by
@@ -786,9 +630,8 @@ theorem cycleHypergraph_ballVolumeVertexUniformRestricted
   exact (ballVolumeVertexUniform_iff_restricted (cycleHypergraph n) hconn).mp
     (cycleHypergraph_ballVolumeVertexUniform hn)
 
-/-- **`pathHypergraph n` fails even the restricted Rodkey predicate**
-for `n ≥ 3`: the obstruction at `r = 1` is in the restricted range
-`1 ≤ 1 < n`, so the restricted form fails just as the full form does. -/
+/-- For `n ≥ 3`, `pathHypergraph n` does not satisfy
+`BallVolumeVertexUniformRestricted`. -/
 theorem pathHypergraph_not_ballVolumeVertexUniformRestricted
     {n : ℕ} [NeZero n] (hn : 3 ≤ n) :
     ¬ (pathHypergraph n).BallVolumeVertexUniformRestricted := by

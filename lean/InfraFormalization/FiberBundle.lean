@@ -1,16 +1,13 @@
 /-
-**Fiber-bundle predicate + related structures** (Group IG / IG8, IG9, IG11).
+Fiber-bundle predicates on fibered graphs.
 
-Extends `FiberedGraph.lean` with the full fiber-bundle predicate
-(isomorphic fibers + edge-lifting + at-most-one-edge-lift + local
-triviality), a concrete `GraphTangentBundle` construction, and the
-multi-fibered-graph type.
-
-Mirrors `resources/InfraGaugeTheory/Kernel/FiberedGraph.wl`
-(`FiberBundleQ`) and `TangentBundle.wl` (`GraphTangentBundle`).
-
-**Connection to hypergraphs.** All constructions are on
-`FiberedGraph V W` (itself built on `Hypergraph V`). No continuum.
+This module defines, for a `FiberedGraph V W`, the predicates `IsomorphicFibers`,
+`EdgeLiftingProperty`, `AtMostOneEdgeLift` and their
+conjunction `IsFiberBundle`.
+It also defines `MultiFiberedGraph`, whose projection sends each total vertex to a finite set of
+base vertices, and `GraphTangentBundle`, a simple graph with decidable adjacency.
+The definitions follow `FiberBundleQ` in `resources/InfraGaugeTheory/Kernel/FiberedGraph.wl` and
+`GraphTangentBundle` in `TangentBundle.wl`.
 -/
 
 import InfraFormalization.FiberedGraph
@@ -23,19 +20,15 @@ variable (F : FiberedGraph V W)
 
 /-! ## Fiber-isomorphism predicate -/
 
-/-- **Isomorphic-fibers predicate**: all fibers have the same
-vertex count. Weaker than full graph isomorphism but sufficient
-for the "bundle-like" structure in the Wolfram paclet. -/
+/-- All fibers have the same number of vertices. This is a cardinality condition, not a graph
+isomorphism. -/
 def IsomorphicFibers : Prop :=
   ∀ w₁ w₂ : W, (F.fiber w₁).card = (F.fiber w₂).card
 
-/-! ## Edge-lifting property
+/-! ## Edge-lifting property -/
 
-For every base edge `w → w'` and every total vertex in `F.fiber w`,
-there is at least one lift ending in `F.fiber w'`. -/
-
-/-- **Edge-lifting predicate**: every base adjacency lifts to a
-total-space adjacency starting at every fiber vertex. -/
+/-- For all `w`, `w'` that lie in a common projected edge of the total space, every vertex `v` in
+the fiber over `w` is adjacent in the total space to some vertex in the fiber over `w'`. -/
 def EdgeLiftingProperty : Prop :=
   ∀ (w w' : W) (v : V),
     v ∈ F.fiber w →
@@ -43,36 +36,26 @@ def EdgeLiftingProperty : Prop :=
       e ∈ (F.total.edges.map (Hyperedge.map F.π)).toFinset) →
     ∃ v' : V, v' ∈ F.fiber w' ∧ F.total.Adj v v'
 
-/-- **At-most-one-edge-lift predicate**. -/
+/-- Every total vertex `v` is adjacent to at most one vertex in each fiber. -/
 def AtMostOneEdgeLift : Prop :=
   ∀ (v : V) (w' : W),
     (Finset.univ.filter (fun v' => v' ∈ F.fiber w' ∧ F.total.Adj v v')).card ≤ 1
 
-/-! ## Local-triviality (stub, predicate level) -/
-
-/-- Defined as `True`; `IsFiberBundle` therefore reduces to its other conjuncts. -/
-def LocallyTrivial (_F : FiberedGraph V W) : Prop :=
-  True
 
 /-! ## The fiber-bundle predicate -/
 
-/-- **Fiber bundle predicate**: isomorphic fibers + edge-lifting +
-uniqueness of lifts + local triviality. -/
+/-- The conjunction of `IsomorphicFibers`, `EdgeLiftingProperty`, `AtMostOneEdgeLift` and
+-/
 def IsFiberBundle : Prop :=
   IsomorphicFibers F ∧ EdgeLiftingProperty F ∧
-  AtMostOneEdgeLift F ∧ LocallyTrivial F
+  AtMostOneEdgeLift F
 
 end FiberedGraph
 
-/-! ## Multi-fibered graphs (IG11)
+/-! ## Multi-fibered graphs -/
 
-Multi-fibrations arise when the "projection" is multi-valued: one
-total-space vertex can project onto multiple base vertices. This
-is needed to model non-unique shortest-path projections in
-infracausality. -/
-
-/-- **Multi-fibered graph**: projection is a function to `Finset`
-(a finite set of base vertices each total vertex projects onto). -/
+/-- A hypergraph `total` on `V` with a projection `π : V → Finset W` that assigns each total vertex
+a finite set of base vertices. -/
 structure MultiFiberedGraph (V W : Type*) where
   total : Hypergraph V
   π     : V → Finset W
@@ -82,43 +65,33 @@ namespace MultiFiberedGraph
 variable {V W : Type*} [Fintype V] [Fintype W] [DecidableEq V] [DecidableEq W]
 variable (M : MultiFiberedGraph V W)
 
-/-- **Fiber over a base vertex** in a multi-fibration: the set of
-total vertices projecting onto (i.e., containing) `w`. -/
+/-- The fiber over `w`: the total vertices `v` with `w ∈ M.π v`. -/
 def fiber (w : W) : Finset V :=
   Finset.univ.filter (fun v => w ∈ M.π v)
 
-/-- **Membership in a multi-fiber.** -/
+/-- `v ∈ M.fiber w` if and only if `w ∈ M.π v`. -/
 theorem mem_fiber (v : V) (w : W) : v ∈ M.fiber w ↔ w ∈ M.π v := by
   unfold fiber
   simp
 
-/-- **Total-vertex projection-set is the set of base vertices it
-covers.** -/
+/-- The set `M.π v` of base vertices assigned to `v`. -/
 def coverSet (v : V) : Finset W := M.π v
 
-/-- **A multi-fibration specialises to a regular fibration** when
-each total vertex projects to exactly one base vertex. -/
+/-- Every total vertex is assigned exactly one base vertex. -/
 def IsSingleValued : Prop :=
   ∀ v : V, (M.π v).card = 1
 
 end MultiFiberedGraph
 
-/-! ## Graph tangent bundle (IG9)
+/-! ## Graph tangent bundle -/
 
-Following `TangentBundle.wl`: the tangent-bundle total space has
-vertices `(v, u)` where `u ∈ neighbourhood(v)` — the tangent vector
-`u` "based at" `v`. Horizontal edges connect `(v, u) → (v', u')` when
-`(v, v')` is a base edge and `u` matches `u'` (shared tangent direction). -/
-
-/-- **Graph tangent bundle** over a `SimpleGraph V`: fibers at `v`
-are the 1-neighbourhoods of `v`. -/
+/-- A simple graph `base` on `V` together with a decidability instance for its adjacency
+relation. -/
 structure GraphTangentBundle (V : Type*) [Fintype V] [DecidableEq V] where
   base : SimpleGraph V
   decAdj : DecidableRel base.Adj
 
-/-- **Tangent vertex at `v`**: a vertex `u` in the closed
-1-neighbourhood of `v` (adjacent or equal). Returned as a predicate
-for simplicity. -/
+/-- `u` lies in the closed neighbourhood of `v`: `v = u` or `v` is adjacent to `u`. -/
 def GraphTangentBundle.IsTangentVertex {V : Type*} [Fintype V] [DecidableEq V]
     (G : GraphTangentBundle V) (v u : V) : Prop :=
   v = u ∨ G.base.Adj v u

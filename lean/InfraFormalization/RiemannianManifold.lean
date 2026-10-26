@@ -1,59 +1,35 @@
 import InfraFormalization.CurvatureLocalCoord
 
 /-!
-**Riemannian manifold structure** (C1 / #34).
+Diagonal Riemannian metrics in coordinates.
 
-A Riemannian manifold is a `MetricData n` whose metric is
-positive-definite at every point. Unlike `DiagLorentzianMetric` (signature
-`(-, +, ..., +)`), the Riemannian version requires all diagonal
-entries to be positive.
-
-This module provides:
-
-* `DiagRiemannianMetric M`: diagonal + positive-definite predicate.
-* `DiagRiemannianManifold n`: bundled structure (MetricData + Riemannian witness).
-* `euclidean n`: the flat Euclidean metric on `ℝⁿ` (`g = I`).
-* `euclidean_diagRiemannian`: Euclidean space is Riemannian.
-
-**Design note.** The task description (C1) asks for
-`RiemannianMetric M` as "a smooth section of Sym²(T*M) for a smooth
-manifold M (via Mathlib's charted-space + bundle API)". Project policy
-(see `project_overview.md`) uses `MetricData n` — Christoffel-level
-raw components on `ℝⁿ` — as the working substrate, matching how
-`DiagLorentzianMetric`, `Schwarzschild`, `FLRW`, etc. are all stated.
-The Mathlib `ChartedSpace`/`VectorBundle`/`TensorProduct` integration
-is deferred as a separate future task; it would sit *above* this
-predicate, not replace it.
-
-**Connection to hypergraphs.** The same anchor pattern as
-`LorentzianManifold`: continuum side. A concrete hypergraph →
-Riemannian-metric bridge needs a positive-definite discrete analog
-(e.g. scaled graph metric), out of scope here.
+This module defines `DiagRiemannianMetric M` for `M : MetricData n` (all
+diagonal components positive and all off-diagonal components 0 at every
+point), the bundled structure `DiagRiemannianManifold n`, and the Euclidean
+metric `euclidean n` with `g = I`. It proves that `euclidean n` satisfies
+`DiagRiemannianMetric`. Metrics are component functions on `ℝⁿ`, not
+sections of a bundle over a Mathlib manifold.
 -/
 
 namespace InfraFormalization
 namespace Curvature
 
-/-- **Riemannian-signature predicate**: diagonal and strictly positive
-`g_{μμ}(x) > 0` at every point, off-diagonal zero. Matches the
-shape of `DiagLorentzianMetric` (diagonal + fixed-signature) but
-with all-positive eigenvalues instead of signature `(-,+,...,+)`. -/
+/-- `M` is diagonal with positive diagonal components at every point. -/
 structure DiagRiemannianMetric {n : Nat} (M : MetricData n) : Prop where
   /-- `g_{ii}(x) > 0` for every `x` and every `i`. -/
   g_ii_pos : ∀ (x : Fin n → ℝ) (i : Fin n), 0 < M.g x i i
   /-- `g` is diagonal: off-diagonal components vanish. -/
   g_off_diag : ∀ (x : Fin n → ℝ) (μ ν : Fin n), μ ≠ ν → M.g x μ ν = 0
 
-/-- **Riemannian manifold structure**: a `MetricData n` together with
-the Riemannian positive-definite witness. -/
+/-- A `MetricData n` with a proof of `DiagRiemannianMetric`. -/
 structure DiagRiemannianManifold (n : Nat) where
   /-- Underlying metric data. -/
   toMetric : MetricData n
-  /-- Positive-definite-signature witness. -/
+  /-- Proof that the metric is diagonal with positive diagonal. -/
   riemannian : DiagRiemannianMetric toMetric
 
-/-- **Euclidean metric on ℝⁿ**: `g_{μν} = δ_{μν}` (identity matrix
-at every point). Represents flat Euclidean space. -/
+/-- The metric data with `g_{μν} = δ_{μν}`, `g^{μν} = δ_{μν}` and all
+partial derivatives 0. -/
 noncomputable def euclidean (n : Nat) : MetricData n where
   g    _ i j := if i = j then 1 else 0
   ginv _ i j := if i = j then 1 else 0
@@ -87,8 +63,7 @@ noncomputable def euclidean (n : Nat) : MetricData n where
       · simp [hμb]
   dg_symm := by intros; rfl
 
-/-- **Euclidean is Riemannian** (positive-definite). `g_{ii} = 1 > 0`,
-off-diagonal zero. -/
+/-- `euclidean n` is diagonal with diagonal components 1. -/
 theorem euclidean_diagRiemannian (n : Nat) :
     DiagRiemannianMetric (euclidean n) where
   g_ii_pos := by
@@ -100,23 +75,20 @@ theorem euclidean_diagRiemannian (n : Nat) :
     unfold euclidean
     simp [hμν]
 
-/-- **Euclidean as a `DiagRiemannianManifold`.** -/
+/-- `euclidean n` as a `DiagRiemannianManifold n`. -/
 noncomputable def euclideanManifold (n : Nat) : DiagRiemannianManifold n where
   toMetric := euclidean n
   riemannian := euclidean_diagRiemannian n
 
-/-- **Diagonal entries of a Riemannian metric are positive.** Accessor
-for the common use case. -/
+/-- The diagonal components of a `DiagRiemannianMetric` are positive. -/
 theorem DiagRiemannianMetric.g_ii_pos_of {n : Nat} {M : MetricData n}
     (R : DiagRiemannianMetric M) (x : Fin n → ℝ) (i : Fin n) :
     0 < M.g x i i :=
   R.g_ii_pos x i
 
-/-- **A Riemannian metric has no mixed signature**: at every point and
-every diagonal entry, the sign is positive (vs. Lorentzian which has
-one negative and the rest positive). This theorem asserts the
-sign-distinction at the definitional level. -/
-theorem DiagRiemannianMetric.not_lorentzian_at_zero {n : Nat}
+/-- For `n > 0`, the component `g_{00}` of a `DiagRiemannianMetric` is
+positive at every point. -/
+theorem DiagRiemannianMetric.g00_pos_at_zero {n : Nat}
     {M : MetricData n} (R : DiagRiemannianMetric M) (h : 0 < n)
     (x : Fin n → ℝ) : 0 < M.g x ⟨0, h⟩ ⟨0, h⟩ :=
   R.g_ii_pos x ⟨0, h⟩

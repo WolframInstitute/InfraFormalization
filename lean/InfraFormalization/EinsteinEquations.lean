@@ -1,23 +1,12 @@
 /-
-**Einstein field equations with cosmological constant Λ** (F3 / #62).
+Einstein field equations with cosmological constant in four dimensions.
 
-The full EFE:
-  `G_{μν}(x) + Λ · g_{μν}(x) = κ · T_{μν}(x)`
-
-where:
-  * `G_{μν} = R_{μν} − ½ R g_{μν}` is the Einstein tensor,
-  * `Λ` is the cosmological constant,
-  * `κ = 8π G / c⁴` in classical units (we leave it abstract here),
-  * `T_{μν}` is the stress-energy tensor.
-
-This file provides a concrete Prop + vacuum-case proofs. The full
-task of exhibiting a rewriting rule whose continuum limit satisfies
-this Prop with non-zero `T` is a separate obligation.
-
-**Connection to hypergraphs.** Same anchor as `StressEnergyTensor`:
-this is the continuum-target side of the bridge. A future hypergraph
-stress-energy tensor would pair with a hypergraph Einstein tensor
-via a discrete-Ricci → continuum-Ricci convergence theorem.
+`EinsteinEqLambda M C Λ κ T x` states `G_{μν}(x) + Λ · g_{μν}(x) = κ · T_{μν}`
+for all `μ, ν`, where `G_{μν} = R_{μν} − ½ R g_{μν}` is the Einstein tensor of
+the connection `C` and metric `M`, and `κ` is a real parameter. The module
+proves that the Minkowski metric with the flat connection satisfies the
+equation with `Λ = 0` and `T = 0`, and that it satisfies the vacuum equation
+only for `Λ = 0`. No hypergraph appears in this module.
 -/
 
 import InfraFormalization.CurvatureRiemann
@@ -28,23 +17,16 @@ namespace InfraFormalization
 
 open Curvature
 
-/-- **Einstein equations with Λ, pointwise** (in 4 dimensions, matching
-`StressEnergyTensor` which is `Fin 4 → Fin 4 → ℝ`).
-
-`M` is the metric, `C` the connection, `Λ` the cosmological constant,
-`κ` the Einstein coupling constant, `T` the stress-energy tensor, and
-`x` a spacetime point. The equation:
-
-  `G_{μν}(x) + Λ · g_{μν}(x) = κ · T_{μν}(x)`   (for every μ, ν). -/
+/-- For every `μ, ν : Fin 4`,
+`C.einsteinTensor M x μ ν + Λ · M.g x μ ν = κ · T.T μ ν`. The tensor `T` is a
+constant `Fin 4 → Fin 4 → ℝ` array and does not depend on `x`. -/
 def EinsteinEqLambda (M : MetricData 4) (C : ConnectionData 4)
     (Λ κ : ℝ) (T : StressEnergyTensor) (x : Fin 4 → ℝ) : Prop :=
   ∀ μ ν : Fin 4,
     C.einsteinTensor M x μ ν + Λ * M.g x μ ν = κ * T.T μ ν
 
-/-- **Vacuum with Λ = 0 on Minkowski with flat connection.** The
-Minkowski metric with the flat connection satisfies the Einstein
-equations with Λ = 0 and zero stress-energy. This is the trivial
-flat-space sanity check. -/
+/-- The Minkowski metric `minkowski4` with the flat connection satisfies
+`EinsteinEqLambda` with `Λ = 0` and `T = 0` at every point, for every `κ`. -/
 theorem minkowski4_satisfies_EFE_zero_lambda (κ : ℝ) (x : Fin 4 → ℝ) :
     EinsteinEqLambda minkowski4 (flatConnection 4) 0 κ
       StressEnergyTensor.zero x := by
@@ -54,8 +36,8 @@ theorem minkowski4_satisfies_EFE_zero_lambda (κ : ℝ) (x : Fin 4 → ℝ) :
   unfold StressEnergyTensor.zero
   simp
 
-/-- **EFE with Λ reduces to `G + Λ g = 0` in vacuum** (`T = 0`). Just
-unfolds the zero stress-energy tensor. Useful as a rewrite. -/
+/-- With `T = 0`, `EinsteinEqLambda` is equivalent to
+`G_{μν} + Λ · g_{μν} = 0` for all `μ, ν`. -/
 theorem einsteinEqLambda_vacuum_iff (M : MetricData 4) (C : ConnectionData 4)
     (Λ κ : ℝ) (x : Fin 4 → ℝ) :
     EinsteinEqLambda M C Λ κ StressEnergyTensor.zero x ↔
@@ -66,18 +48,9 @@ theorem einsteinEqLambda_vacuum_iff (M : MetricData 4) (C : ConnectionData 4)
   · intro h μ ν; have := h μ ν; simp at this; exact this
   · intro h μ ν; rw [h μ ν]; simp
 
-/-- **De Sitter–type vacuum with Λ**: the EFE with Λ ≠ 0 and zero
-stress-energy requires `G_{μν} = −Λ g_{μν}`. For Minkowski with flat
-connection, this forces `0 = −Λ g`, which in turn (since `g` is
-non-degenerate) forces `Λ = 0`. Hence non-zero-Λ de Sitter/anti-de
-Sitter cannot live on Minkowski + flat connection.
-
-This theorem: if Minkowski + flat connection + some stress-energy
-satisfies EFE with Λ, and `Λ ≠ 0`, then the stress-energy is
-non-zero at the 0-0 component.
-
-Simpler consequence: proves Minkowski + flat does not admit a vacuum
-solution with Λ ≠ 0. -/
+/-- If `minkowski4` with the flat connection satisfies `EinsteinEqLambda`
+with `T = 0` at a point `x`, then `Λ = 0`. The proof uses the `(1, 1)`
+component, where the Einstein tensor is 0 and `g₁₁ = 1`. -/
 theorem minkowski4_flat_vacuum_forces_lambda_zero
     (Λ κ : ℝ) (x : Fin 4 → ℝ)
     (h : EinsteinEqLambda minkowski4 (flatConnection 4) Λ κ
@@ -91,39 +64,9 @@ theorem minkowski4_flat_vacuum_forces_lambda_zero
   simp at h11
   exact h11
 
-/-- **Second Bianchi identity (divergence of Einstein tensor) vanishes
-on the flat connection** — trivially, since the entire Einstein tensor
-vanishes. This is `∇_μ G^{μν} = 0` in the degenerate flat case.
-
-For general torsion-free metric-compatible (Levi-Civita) connections
-the contracted second Bianchi identity `∇_μ G^{μν} = 0` is a
-consequence of the un-contracted Bianchi `∇_{[λ} R_{μν]ρσ} = 0`; full
-proof requires metric compatibility (not yet formalised). Here we
-close the flat-vacuum case. -/
-theorem flatConnection_einstein_divergence_zero (n : Nat)
-    (M : MetricData n) (x : Fin n → ℝ)
-    (dG : Fin n → (Fin n → ℝ) → Fin n → Fin n → ℝ)
-    (h_dG : ∀ μ ν ρ y, dG μ y ν ρ = 0) (ν : Fin n) :
-    (∑ μ : Fin n, dG μ x μ ν)
-      + (∑ μ : Fin n, ∑ ρ : Fin n, (flatConnection n).Γ x μ μ ρ
-          * (flatConnection n).einsteinTensor M x ρ ν) = 0 := by
-  -- dG = 0 everywhere, and Γ_flat = 0.
-  have h_first : (∑ μ : Fin n, dG μ x μ ν) = 0 := by
-    refine Finset.sum_eq_zero (fun μ _ => ?_)
-    exact h_dG μ μ ν x
-  have h_second : (∑ μ : Fin n, ∑ ρ : Fin n, (flatConnection n).Γ x μ μ ρ
-      * (flatConnection n).einsteinTensor M x ρ ν) = 0 := by
-    simp [flatConnection]
-  rw [h_first, h_second]
-  ring
-
-/-- **Bundled Lorentzian vacuum bridge**: the Minkowski 4-space, as a
-`DiagLorentzianManifold`, with the flat connection, satisfies vacuum
-Einstein equations (zero Λ, zero stress-energy) at every point.
-
-This ties E1 (`DiagLorentzianManifold`) + F3 (`EinsteinEqLambda`) into
-a single theorem: we have a formal Lorentzian GR framework with
-Minkowski as a concrete instance. -/
+/-- The metric of `minkowski4Manifold` with the flat connection satisfies
+`EinsteinEqLambda` with `Λ = 0` and `T = 0` at every point. The proof is
+`minkowski4_satisfies_EFE_zero_lambda`. -/
 theorem minkowski4Manifold_satisfies_vacuum_EFE (κ : ℝ) (x : Fin 4 → ℝ) :
     EinsteinEqLambda minkowski4Manifold.toMetric
       (flatConnection 4) 0 κ StressEnergyTensor.zero x :=

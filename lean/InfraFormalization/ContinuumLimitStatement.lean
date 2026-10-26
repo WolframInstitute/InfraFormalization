@@ -1,25 +1,14 @@
 /-
-**Formal statements** of the continuum-limit theorems that the
-hypergraph→continuum bridge is supposed to establish.
+Limit statements for scaled discrete operators on the cycle, Riemann sums, and placeholder
+propositions for curved spacetimes.
 
-**Why this file exists.** The grounding principle says: every
-continuum object in this project must have a hypergraph origin,
-either as a proved theorem or as an *explicit* proof obligation.
-Vague references like "conjecturally, as n → ∞" are not acceptable.
-
-This file converts every outstanding bridge target into a Lean `Prop`
-with specific hypotheses and conclusions, so the obligation is
-machine-checkable: any future hand-wave would require *constructing*
-a term of these Prop types, not waving at them.
-
-**Current status.** The `Prop`s below are definitions, not theorems.
-Each corresponds to an open proof obligation in the bridge ladder
-(Rungs 1-6). Where partial progress exists, it is cited. Once
-proved, each should be moved out of this file into the corresponding
-file alongside the proof.
-
-Nothing in this file is a theorem; it is a structured to-do list in
-Lean.
+The module states pointwise convergence of the scaled second difference for twice
+differentiable functions (not proved) and proves it for quadratics. It proves the scalar
+limits `exp(t n² λ_k) → exp(−(2πk)² t)`, `2n sin(πk/n) → 2πk` and
+`4n² sin²(πk/n) (+ m²) → (2πk)² (+ m²)`, where `λ_k` is the cycle Laplacian eigenvalue. It
+proves that the Riemann sums `(1/n) Σ_{k<n} f(k/n)` tend to `∫_0^1 f` for every polynomial of
+degree at most 3. The propositions named after Schwarzschild, Kerr and FLRW contain `False`
+and do not state a convergence property.
 -/
 
 import InfraFormalization.HypergraphCycleBridge
@@ -35,23 +24,13 @@ import Mathlib.Analysis.SpecialFunctions.Integrals.Basic
 
 namespace InfraFormalization
 
-/-! ## A. Rung-1 / Rung-2 scaled discrete ↔ continuum operators
+/-! ## A. Scaled second differences
 
-The polynomial case is proved
-(`hypergraph_scaled_laplacian_eq_second_deriv`); the general case is a
-true limit. -/
+The quadratic case is proved below as `cycle_laplacian_conv_polynomial`. -/
 
-/-- **Open: scaled cycle Laplacian convergence for C² functions.**
-For any `f : ℝ → ℝ` that is twice differentiable at `x`, the scaled
-second difference `scaledSecondDiff f n x → f''(x)` as `n → ∞`.
-Pointwise convergence. Composed with `laplacianHyper_cycleHypergraph`
-this gives `n² · Hypergraph.laplacianHyper (cycleHypergraph n) f_n i
-→ f''(x)` for the discretisation `f_n(j) := f(j.val / n)` at interior
-indices.
-
-Pending: Mathlib Taylor integration (#33), which enables the full
-C² argument. Polynomial case is proved exactly
-(`hypergraph_scaled_laplacian_eq_second_deriv`). -/
+/-- For every `f : ℝ → ℝ` and `x` such that `deriv f` has derivative `deriv (deriv f) x` at
+`x`, `scaledSecondDiff f n x = n² (f(x + 1/n) − 2f(x) + f(x − 1/n))` tends to
+`deriv (deriv f) x`. This proposition is not proved in this module. -/
 def CycleLaplacianConvergenceC2 : Prop :=
   ∀ (f : ℝ → ℝ) (x : ℝ),
     HasDerivAt (deriv f) (deriv (deriv f) x) x →
@@ -59,40 +38,10 @@ def CycleLaplacianConvergenceC2 : Prop :=
       Filter.atTop
       (nhds (deriv (deriv f) x))
 
-/-- **Open: scaled d-torus Laplacian convergence.** Generalisation of
-the above to the d-dimensional scaled torus. Inherits status from
-`CycleLaplacianConvergenceC2`. -/
-def TorusLaplacianConvergenceC2 (d : Nat) : Prop :=
-  -- Parameterised analog of `CycleLaplacianConvergenceC2` for
-  -- `Hypergraph (Fin n)^d` as an approximation of the d-torus.
-  -- Requires ScaledTorusD infrastructure (already built) plus the
-  -- full C² Laplacian-convergence argument.
-  True  -- placeholder sentinel
+/-! ## B. Scaled cycle eigenvalue limits and Riemann sums -/
 
-/-! ## B. PDE convergence on scaled hypergraphs
-
-Given a heat (wave, Schrödinger, Klein-Gordon) solution on a scaled
-hypergraph, its trajectory converges — in a suitable weak sense — to
-a continuum PDE solution on the GH-limit manifold. These are Rung-6
-obligations. -/
-
-/-- **D7 — scaled discrete heat → continuum heat on cycle/circle**
-(upgraded from `True` stub to real content + proof).
-
-Under diffusive scaling (time `t ↦ t · n²` on the discrete side, which
-matches space `x ↦ x/n`), the discrete heat-kernel eigenvalue on the
-cycle converges to the continuum heat-kernel eigenvalue on `S¹`:
-
-  `Real.exp (t · n² · cycleEigenvalue n k)  →  Real.exp (-(2πk)² · t)`
-
-as `n → ∞`. Follows from A4 (`cycleEigenvalue_scaled_tendsto`) and
-continuity of `Real.exp`.
-
-This is the solution-level convergence of the discrete heat kernel
-acting on the `k`-th eigenmode to the continuum heat kernel acting
-on the `k`-th Fourier mode — the first *dynamics-level* (not just
-spectrum-level) bridge theorem between discrete hypergraph heat flow
-and continuum PDE heat flow. -/
+/-- For every `k` and `t`, `exp(t · n² · cycleEigenvalue n k) → exp(−(2πk)² t)` as
+`n → ∞`. This is a limit of real numbers for each fixed mode `k`. -/
 def DiscreteHeatToContinuumHeat : Prop :=
   ∀ (k : ℕ) (t : ℝ),
     Filter.Tendsto
@@ -101,14 +50,12 @@ def DiscreteHeatToContinuumHeat : Prop :=
       Filter.atTop
       (nhds (Real.exp (-(2 * Real.pi * k) ^ 2 * t)))
 
-/-- **D7 proved.** The discrete-heat-to-continuum-heat scaling limit
-holds: the discrete heat kernel on cycle eigenvectors, scaled
-diffusively, converges pointwise to the continuum heat kernel on
-circle Fourier modes. -/
+/-- `DiscreteHeatToContinuumHeat` holds, from `cycleEigenvalue_scaled_tendsto` and continuity
+of `Real.exp`. -/
 theorem discreteHeatToContinuumHeat :
     DiscreteHeatToContinuumHeat := by
   intro k t
-  -- Step 1: A4 gives n² · λ_k → -(2πk)².
+  -- Step 1: `n² · λ_k → -(2πk)²` (`cycleEigenvalue_scaled_tendsto`).
   have hA4 := cycleEigenvalue_scaled_tendsto k
   -- Step 2: multiplying by constant t preserves the limit.
   have h_mul : Filter.Tendsto
@@ -126,13 +73,8 @@ theorem discreteHeatToContinuumHeat :
   rw [← h_rewrite]
   exact h_exp
 
-/-- **A6 — weak convergence of the lattice average to the integral**
-(upgraded from stub to real content).
-
-For any continuous `f : ℝ → ℝ`, the `n`-point lattice Riemann sum
-`(1/n) · Σ_{k=0}^{n-1} f(k/n)` converges to `∫_0^1 f dx` as `n → ∞`.
-This is the operator-level form of "counting measure on `{k/n}_{k < n}`
-converges weakly to Lebesgue on `[0,1)`". -/
+/-- For every continuous `f : ℝ → ℝ`, `(1/n) · Σ_{k=0}^{n-1} f(k/n) → ∫_0^1 f dx`. This
+proposition is not proved in this module. -/
 def A6LatticeRiemannObligation : Prop :=
   ∀ (f : ℝ → ℝ) (_hcont : Continuous f),
     Filter.Tendsto
@@ -141,9 +83,7 @@ def A6LatticeRiemannObligation : Prop :=
       Filter.atTop
       (nhds (∫ x in (0 : ℝ)..1, f x))
 
-/-- **A6 holds for constant functions**: `(1/n) · Σ_{k : Fin n} c = c
-= ∫_0^1 c dx`. Concrete verification of the obligation's shape on the
-easiest test functions. -/
+/-- For a constant `c`, `(1/n) · Σ_{k : Fin n} c → ∫_0^1 c dx = c`. -/
 theorem A6_for_constants (c : ℝ) :
     Filter.Tendsto
       (fun n : ℕ => (1 / (n : ℝ)) * ∑ _k : Fin n, c)
@@ -162,14 +102,7 @@ theorem A6_for_constants (c : ℝ) :
   refine Filter.eventually_atTop.mpr ⟨1, fun n hn => ?_⟩
   exact (h_sum n (by omega)).symm
 
-/-- **Gauss summation formula on `Fin n` (real-valued)**:
-`∑_{k : Fin n} k.val = n(n-1)/2` (in `ℝ`). The real-valued analog of
-`Finset.sum_range_id`, obtained by induction via `Fin.sum_univ_castSucc`.
-
-This is the building block for A6 tests on polynomial integrands
-(e.g., the identity function `x`, quadratic `x²`, etc.), where the
-Riemann sum `(1/n) · Σ_{k<n} (k/n)^d` reduces to a closed-form
-polynomial in `n`. -/
+/-- `∑_{k : Fin n} k = n(n-1)/2` in `ℝ`. -/
 theorem sum_fin_val_eq_triangular (n : ℕ) :
     (∑ k : Fin n, (k.val : ℝ)) = (n : ℝ) * ((n : ℝ) - 1) / 2 := by
   induction n with
@@ -181,11 +114,7 @@ theorem sum_fin_val_eq_triangular (n : ℕ) :
     push_cast
     ring
 
-/-- **A6 Riemann-sum closed form for the identity function**:
-`(1/n) · Σ_{k : Fin n} (k/n) = (n - 1) / (2n)` for every positive `n`.
-Direct consequence of `sum_fin_val_eq_triangular`; the `n → ∞` limit
-gives `1/2 = ∫_0^1 x dx`, which is the `A6_for_identity` obligation
-(filter-side statement deferred to the general polynomial case). -/
+/-- For `n > 0`, `(1/n) · Σ_{k : Fin n} (k/n) = (n - 1) / (2n)`. -/
 theorem A6_identity_sum_closed_form (n : ℕ) (hn : 0 < n) :
     (1 / (n : ℝ)) * (∑ k : Fin n, ((k : ℝ) / (n : ℝ)))
       = ((n : ℝ) - 1) / (2 * n) := by
@@ -194,9 +123,7 @@ theorem A6_identity_sum_closed_form (n : ℕ) (hn : 0 < n) :
   rw [← Finset.sum_div, sum_fin_val_eq_triangular]
   field_simp
 
-/-- **Riemann sum `(n-1)/(2n)` converges to `1/2`**. Splits the
-expression as `1/2 - 1/(2n)`, then applies
-`(1/n) → 0` for the second term. -/
+/-- `(n-1)/(2n) → 1/2`. -/
 theorem tendsto_nMinusOne_div_twoN :
     Filter.Tendsto (fun n : ℕ => ((n : ℝ) - 1) / (2 * n))
       Filter.atTop (nhds (1 / 2)) := by
@@ -223,11 +150,7 @@ theorem tendsto_nMinusOne_div_twoN :
   refine h_target.congr' (Filter.eventually_atTop.mpr ⟨1, fun n hn => ?_⟩)
   exact (h_eqv n (by omega)).symm
 
-/-- **A6 holds for the identity function `f(x) = x`**: the Riemann sum
-`(1/n) · Σ_{k : Fin n} (k/n) = (n-1)/(2n) → 1/2 = ∫_0^1 x dx`.
-Follows from `A6_identity_sum_closed_form` plus
-`tendsto_nMinusOne_div_twoN`. Concrete A6 verification on the first
-non-constant polynomial integrand. -/
+/-- `(1/n) · Σ_{k : Fin n} (k/n) → ∫_0^1 x dx = 1/2`. -/
 theorem A6_for_identity :
     Filter.Tendsto
       (fun n : ℕ => (1 / (n : ℝ)) * ∑ k : Fin n, ((k : ℝ) / (n : ℝ)))
@@ -239,10 +162,7 @@ theorem A6_for_identity :
   refine tendsto_nMinusOne_div_twoN.congr' (Filter.eventually_atTop.mpr ⟨1, fun n hn => ?_⟩)
   exact (A6_identity_sum_closed_form n (by omega)).symm
 
-/-- **Sum of squares formula on `Fin n` (real-valued)**:
-`∑_{k : Fin n} k² = n(n-1)(2n-1)/6` (in `ℝ`). Proved by induction on
-`n` using `Fin.sum_univ_castSucc`. Building block for A6 tests on the
-x² integrand. -/
+/-- `∑_{k : Fin n} k² = n(n-1)(2n-1)/6` in `ℝ`. -/
 theorem sum_fin_val_sq_eq (n : ℕ) :
     (∑ k : Fin n, ((k.val : ℝ))^2)
       = (n : ℝ) * ((n : ℝ) - 1) * (2 * (n : ℝ) - 1) / 6 := by
@@ -255,9 +175,7 @@ theorem sum_fin_val_sq_eq (n : ℕ) :
     push_cast
     ring
 
-/-- **A6 Riemann-sum closed form for `x²`**:
-`(1/n) · Σ_{k : Fin n} (k/n)² = (n-1)(2n-1)/(6n²)` for `n ≥ 1`.
-Immediate consequence of `sum_fin_val_sq_eq`. -/
+/-- For `n > 0`, `(1/n) · Σ_{k : Fin n} (k/n)² = (n-1)(2n-1)/(6n²)`. -/
 theorem A6_sq_sum_closed_form (n : ℕ) (hn : 0 < n) :
     (1 / (n : ℝ)) * (∑ k : Fin n, ((k : ℝ) / (n : ℝ))^2)
       = ((n : ℝ) - 1) * (2 * (n : ℝ) - 1) / (6 * n^2) := by
@@ -270,8 +188,7 @@ theorem A6_sq_sum_closed_form (n : ℕ) (hn : 0 < n) :
   rw [← Finset.sum_div, sum_fin_val_sq_eq]
   field_simp
 
-/-- **Convergence `(n-1)(2n-1)/(6n²) → 1/3`** as `n → ∞`. Splits the
-expression as `1/3 - 1/(2n) + 1/(6n²)`, each auxiliary term vanishing. -/
+/-- `(n-1)(2n-1)/(6n²) → 1/3`. -/
 theorem tendsto_sqRiemann_to_third :
     Filter.Tendsto (fun n : ℕ => ((n : ℝ) - 1) * (2 * n - 1) / (6 * n^2))
       Filter.atTop (nhds (1 / 3)) := by
@@ -309,9 +226,7 @@ theorem tendsto_sqRiemann_to_third :
   refine h_target.congr' (Filter.eventually_atTop.mpr ⟨1, fun n hn => ?_⟩)
   exact (h_eqv n (by omega)).symm
 
-/-- **A6 holds for the quadratic function `f(x) = x²`**:
-`(1/n) · Σ_{k : Fin n} (k/n)² → ∫_0^1 x² dx = 1/3`. Third polynomial
-test function closed (after `A6_for_constants` and `A6_for_identity`). -/
+/-- `(1/n) · Σ_{k : Fin n} (k/n)² → ∫_0^1 x² dx = 1/3`. -/
 theorem A6_for_sq :
     Filter.Tendsto
       (fun n : ℕ => (1 / (n : ℝ)) * ∑ k : Fin n, ((k : ℝ) / (n : ℝ))^2)
@@ -323,10 +238,7 @@ theorem A6_for_sq :
   refine tendsto_sqRiemann_to_third.congr' (Filter.eventually_atTop.mpr ⟨1, fun n hn => ?_⟩)
   exact (A6_sq_sum_closed_form n (by omega)).symm
 
-/-- **Sum of cubes formula on `Fin n` (real-valued)**:
-`∑_{k : Fin n} k³ = n²(n-1)²/4` (in `ℝ`). Equivalently, `[n(n-1)/2]²`
-— the "square of a triangular number" formula. Proved by induction on
-`n` using `Fin.sum_univ_castSucc`. -/
+/-- `∑_{k : Fin n} k³ = n²(n-1)²/4` in `ℝ`. -/
 theorem sum_fin_val_cube_eq (n : ℕ) :
     (∑ k : Fin n, ((k.val : ℝ))^3)
       = (n : ℝ)^2 * ((n : ℝ) - 1)^2 / 4 := by
@@ -339,9 +251,7 @@ theorem sum_fin_val_cube_eq (n : ℕ) :
     push_cast
     ring
 
-/-- **A6 Riemann-sum closed form for `x³`**:
-`(1/n) · Σ_{k : Fin n} (k/n)³ = (n-1)²/(4n²)` for `n ≥ 1`. Immediate
-consequence of `sum_fin_val_cube_eq`. -/
+/-- For `n > 0`, `(1/n) · Σ_{k : Fin n} (k/n)³ = (n-1)²/(4n²)`. -/
 theorem A6_cube_sum_closed_form (n : ℕ) (hn : 0 < n) :
     (1 / (n : ℝ)) * (∑ k : Fin n, ((k : ℝ) / (n : ℝ))^3)
       = ((n : ℝ) - 1)^2 / (4 * n^2) := by
@@ -354,8 +264,7 @@ theorem A6_cube_sum_closed_form (n : ℕ) (hn : 0 < n) :
   rw [← Finset.sum_div, sum_fin_val_cube_eq]
   field_simp
 
-/-- **Convergence `(n-1)²/(4n²) → 1/4`** as `n → ∞`. Splits the
-expression as `1/4 - 1/(2n) + 1/(4n²)`. -/
+/-- `(n-1)²/(4n²) → 1/4`. -/
 theorem tendsto_cubeRiemann_to_quarter :
     Filter.Tendsto (fun n : ℕ => ((n : ℝ) - 1)^2 / (4 * n^2))
       Filter.atTop (nhds (1 / 4)) := by
@@ -393,9 +302,7 @@ theorem tendsto_cubeRiemann_to_quarter :
   refine h_target.congr' (Filter.eventually_atTop.mpr ⟨1, fun n hn => ?_⟩)
   exact (h_eqv n (by omega)).symm
 
-/-- **A6 holds for the cubic function `f(x) = x³`**:
-`(1/n) · Σ_{k : Fin n} (k/n)³ → ∫_0^1 x³ dx = 1/4`. Fourth polynomial
-test function closed. -/
+/-- `(1/n) · Σ_{k : Fin n} (k/n)³ → ∫_0^1 x³ dx = 1/4`. -/
 theorem A6_for_cube :
     Filter.Tendsto
       (fun n : ℕ => (1 / (n : ℝ)) * ∑ k : Fin n, ((k : ℝ) / (n : ℝ))^3)
@@ -408,24 +315,16 @@ theorem A6_for_cube :
     (Filter.eventually_atTop.mpr ⟨1, fun n hn => ?_⟩)
   exact (A6_cube_sum_closed_form n (by omega)).symm
 
-/-! ## A6 as a predicate + linearity
+/-! ## Riemann-sum convergence as a predicate -/
 
-Packaging the per-function A6 claim as a predicate `A6Holds f` lets
-us state linearity (constant-scalar and sum) once and derive A6 for
-polynomials from the monomial cases without re-running the filter
-machinery each time. -/
-
-/-- **A6 predicate for a test function `f`**: the `n`-point Riemann
-sum `(1/n) · Σ_{k : Fin n} f(k/n)` converges to `∫_0^1 f dx`. -/
+/-- `(1/n) · Σ_{k : Fin n} f(k/n) → ∫_0^1 f dx`. -/
 def A6Holds (f : ℝ → ℝ) : Prop :=
   Filter.Tendsto
     (fun n : ℕ => (1 / (n : ℝ)) * ∑ k : Fin n, f ((k : ℝ) / (n : ℝ)))
     Filter.atTop
     (nhds (∫ x in (0 : ℝ)..1, f x))
 
-/-- **A6 closed under scalar multiplication.** If A6 holds for `f`,
-it holds for `c · f`: both the Riemann sum and the integral scale by
-`c`, so the limit does too. No integrability hypothesis needed. -/
+/-- `A6Holds f` implies `A6Holds (c · f)`. -/
 theorem A6Holds.const_mul (c : ℝ) {f : ℝ → ℝ} (hf : A6Holds f) :
     A6Holds (fun x => c * f x) := by
   unfold A6Holds at *
@@ -443,10 +342,8 @@ theorem A6Holds.const_mul (c : ℝ) {f : ℝ → ℝ} (hf : A6Holds f) :
   intro n
   exact (h_sum n).symm
 
-/-- **A6 closed under addition (for integrable test functions).** If
-A6 holds for `f` and `g`, both interval-integrable on `[0, 1]`, then
-A6 holds for `f + g`. The integrability hypothesis is needed to invoke
-`intervalIntegral.integral_add`. -/
+/-- For `f` and `g` interval-integrable on `[0, 1]`, `A6Holds f` and `A6Holds g` imply
+`A6Holds (f + g)`. -/
 theorem A6Holds.add {f g : ℝ → ℝ}
     (hf : A6Holds f) (hg : A6Holds g)
     (hf_int : IntervalIntegrable f MeasureTheory.volume 0 1)
@@ -482,12 +379,11 @@ theorem A6Holds_sq : A6Holds (fun x => x^2) := A6_for_sq
 /-- `A6_for_cube` in the `A6Holds`-predicate form. -/
 theorem A6Holds_cube : A6Holds (fun x => x^3) := A6_for_cube
 
-/-- **A6 holds for the zero function.** Special case of `A6Holds_const`
-with `c = 0`. -/
+/-- `A6Holds` for the zero function. -/
 theorem A6Holds_zero : A6Holds (fun _ : ℝ => (0 : ℝ)) := A6Holds_const 0
 
-/-- **A6 closed under subtraction.** Immediate from `A6Holds.add` +
-`A6Holds.const_mul` with scalar `-1`. -/
+/-- For `f` and `g` interval-integrable on `[0, 1]`, `A6Holds f` and `A6Holds g` imply
+`A6Holds (f − g)`. -/
 theorem A6Holds.sub {f g : ℝ → ℝ}
     (hf : A6Holds f) (hg : A6Holds g)
     (hf_int : IntervalIntegrable f MeasureTheory.volume 0 1)
@@ -501,11 +397,7 @@ theorem A6Holds.sub {f g : ℝ → ℝ}
   rw [h_eq]
   exact hf.add h_neg_g hf_int h_neg_g_int
 
-/-- **A6 holds for every polynomial of degree ≤ 3** (linear combination
-of the monomial cases). Witnesses the usefulness of
-`A6Holds.add`/`const_mul`: no new filter-limit arguments needed once
-the monomial cases are in hand. `a, b, c, d` are the coefficients of
-`1, x, x², x³` respectively. -/
+/-- `A6Holds` for `a + b x + c x² + d x³`. -/
 theorem A6Holds_poly_deg3 (a b c d : ℝ) :
     A6Holds (fun x => a + b * x + c * x^2 + d * x^3) := by
   have h_const_int : IntervalIntegrable (fun _ : ℝ => a)
@@ -533,21 +425,8 @@ theorem A6Holds_poly_deg3 (a b c d : ℝ) :
             (A6Holds_sq.const_mul c) h_a_bx h_cx2).add
           (A6Holds_cube.const_mul d) h_a_bx_cx2 h_dx3)
 
-/-- **Discrete wave → continuum wave on scaled lattice** (upgraded
-from `True` to real content).
-
-Spectral form: the `k`-th discrete wave-propagator frequency (the
-dispersion relation eigenvalue) on the `n`-cycle, scaled by `n`,
-converges to the continuum-wave frequency `2πk` on the circle.
-
-Discrete dispersion: `ω_k(n) = 2 sin(πk/n)` (the square root of the
-discrete Laplacian eigenvalue magnitude). Scaled: `n · ω_k(n) =
-2n sin(πk/n) → 2πk` as `n → ∞`. This is the Rung-2 / A4 bridge for the
-wave equation: the cycle wave-Laplacian eigenvalues converge to the
-continuum-circle wave-Laplacian eigenvalues.
-
-Full wave-equation convergence (propagator level) needs wave-kernel
-infrastructure; the spectral bridge is the foundational step. -/
+/-- For every `k`, `n · 2 sin(πk/n) → 2πk`. The number `2 sin(πk/n)` is the square root of
+`−cycleEigenvalue n k`. -/
 def DiscreteWaveToContinuumWave : Prop :=
   ∀ (k : ℕ),
     Filter.Tendsto
@@ -556,21 +435,8 @@ def DiscreteWaveToContinuumWave : Prop :=
       Filter.atTop
       (nhds (2 * Real.pi * k))
 
-/-- **Discrete Schrödinger → continuum Schrödinger** (upgraded from
-`True` to real content).
-
-Spectral form: the scaled discrete Schrödinger dispersion relation
-on the cycle converges to the continuum one.
-
-Discrete Schrödinger Hamiltonian eigenvalue = minus the discrete
-Laplacian eigenvalue = `4 sin²(πk/n)`. Scaled by `n²`:
-`n² · 4 sin²(πk/n) → (2πk)²` as `n → ∞`. This matches the continuum
-Schrödinger Hamiltonian eigenvalue `-d²/dx² = (2πk)²` on the circle.
-
-Same content as `cycleEigenvalue_scaled_tendsto` (A4) in magnitude;
-stated here for the Schrödinger operator. Full propagator-level
-convergence `exp(-itH_n) → exp(-itH_∞)` needs unitary-convergence
-infrastructure. -/
+/-- For every `k`, `n² · 4 sin²(πk/n) → (2πk)²`. This is `cycleEigenvalue_scaled_tendsto`
+with the sign reversed. -/
 def DiscreteSchrodingerToContinuumSchrodinger : Prop :=
   ∀ (k : ℕ),
     Filter.Tendsto
@@ -579,9 +445,8 @@ def DiscreteSchrodingerToContinuumSchrodinger : Prop :=
       Filter.atTop
       (nhds ((2 * Real.pi * k)^2))
 
-/-- **DiscreteWaveToContinuumWave PROVED.** Follows from the helper
-`n_sin_pi_k_div_n_tendsto`: `n · sin(πk/n) → πk`, so
-`n · 2 sin(πk/n) = 2 · (n · sin(πk/n)) → 2πk`. Uses `Tendsto.const_mul`. -/
+/-- `DiscreteWaveToContinuumWave` holds, from `n · sin(πk/n) → πk`
+(`n_sin_pi_k_div_n_tendsto`). -/
 theorem discreteWaveToContinuumWave_holds :
     DiscreteWaveToContinuumWave := by
   intro k
@@ -596,16 +461,13 @@ theorem discreteWaveToContinuumWave_holds :
   rw [h_target] at h2
   exact h2.congr h_eq
 
-/-- **DiscreteSchrodingerToContinuumSchrodinger PROVED.** Negative of
-`cycleEigenvalue_scaled_tendsto` (A4). Since
-`n² · cycleEigenvalue n k = -n² · 4 sin²(πk/n) → -(2πk)²`, we get
-`n² · 4 sin²(πk/n) → (2πk)²`. -/
+/-- `DiscreteSchrodingerToContinuumSchrodinger` holds, by negating
+`cycleEigenvalue_scaled_tendsto`. -/
 theorem discreteSchrodingerToContinuumSchrodinger_holds :
     DiscreteSchrodingerToContinuumSchrodinger := by
   intro k
   have hA4 := cycleEigenvalue_scaled_tendsto k
-  -- hA4: n² · (−4 sin²(π k / n)) → −(2πk)².
-  -- Negate to get: n² · 4 sin²(π k / n) → (2πk)².
+  -- hA4: n² · (−4 sin²(π k / n)) → −(2πk)²; negate it.
   have hneg : Filter.Tendsto
       (fun n : ℕ => - ((n : ℝ)^2 * cycleEigenvalue n k))
       Filter.atTop (nhds (-(-(2 * Real.pi * k)^2))) := hA4.neg
@@ -618,12 +480,7 @@ theorem discreteSchrodingerToContinuumSchrodinger_holds :
   rw [h_target] at hneg
   exact hneg.congr h_eq
 
-/-- **Klein-Gordon continuum-limit spectrum**: for mass `m` and any
-wavenumber `k`, the lattice KG dispersion `n²·4 sin²(πk/n) + m²`
-converges to the continuum KG Hamiltonian eigenvalue `(2πk)² + m²`
-as `n → ∞`. Follows from the Schrödinger spectral bridge
-(`discreteSchrodingerToContinuumSchrodinger_holds`) via
-`Filter.Tendsto.add`. -/
+/-- For every `k`, `n² · 4 sin²(πk/n) + m² → (2πk)² + m²`. -/
 def DiscreteKleinGordonSpectrum (m : ℝ) : Prop :=
   ∀ (k : ℕ),
     Filter.Tendsto
@@ -633,8 +490,8 @@ def DiscreteKleinGordonSpectrum (m : ℝ) : Prop :=
       Filter.atTop
       (nhds ((2 * Real.pi * k)^2 + m^2))
 
-/-- **DiscreteKleinGordonSpectrum PROVED.** Sum of the Schrödinger
-spectral convergence and the constant `m²` limit. -/
+/-- `DiscreteKleinGordonSpectrum m` holds, from
+`discreteSchrodingerToContinuumSchrodinger_holds` and the constant limit `m²`. -/
 theorem discreteKleinGordonSpectrum_holds (m : ℝ) :
     DiscreteKleinGordonSpectrum m := by
   intro k
@@ -643,102 +500,19 @@ theorem discreteKleinGordonSpectrum_holds (m : ℝ) :
     tendsto_const_nhds
   exact h_schr.add h_const
 
-/-! ## C. Rule-driven trajectories → curved spacetimes
+/-! ## C. Placeholders for curved spacetimes
 
-**This is the core open problem in Wolfram Physics.** JGORARD claims
-that specific hypergraph rewriting rules produce Schwarzschild,
-Kerr, and FLRW spacetimes in continuum limit. No rule has been
-published with a proof; the corpus audit (see `MAJOR_FLAWS.md`,
-memory `corpus_audit_finding`) shows all claimed derivations rely on
-Poisson-sprinkled coordinates from the *target* manifold, not on
-rule dynamics.
+G1, G3 and G4 (arXiv:2004.14810, 2102.09363, 2303.07282) discuss Schwarzschild, Kerr and
+FLRW spacetimes as continuum limits of hypergraph rewriting. The definitions below are
+conjunctions with `False`; they are false for every argument and do not formalise a
+convergence statement. -/
 
-We state the obligations here as formal `Prop`s so that any future
-claim of "rule X produces Schwarzschild" must produce a term of
-`SchwarzschildObligationMet`, not a hand-wave. -/
+/-! ## D. Uninhabitedness of the placeholders -/
 
-/-- **Open: hypergraph origin of Schwarzschild.** The obligation:
-exhibit a `RewritingSystem P`, an initial state `init : Hypergraph V`,
-a `Trajectory sys init`, scaling functions, and an embedding, such
-that the scaled trajectory GH-converges to the Schwarzschild manifold
-with mass `M > 0`.
+/-! ## E. The quadratic case of `CycleLaplacianConvergenceC2` -/
 
-Currently: **open**. No rule known to satisfy this. JGORARD's claimed
-derivations (arXiv:2004.14810, 2102.09363, 2303.07282) use
-Poisson-sprinkled coordinates from the target manifold, which is
-circular. -/
-def SchwarzschildObligationMet (M : ℝ) : Prop :=
-  -- The real statement requires:
-  --   * a RewritingSystem P with specific rules
-  --   * an init : Hypergraph V
-  --   * a Trajectory τ : Trajectory sys init
-  --   * scaling functions σ_n : ℝ
-  --   * an embedding φ_n : V → ℝ^4
-  --   * GH-convergence of (τ_n, σ_n, φ_n) to (SchwarzschildManifold M, d_{Schw}).
-  -- As a Prop it is uninhabited until such a construction is given.
-  -- The `M > 0` parameter is kept for downstream signature compatibility.
-  0 < M ∧ False  -- explicit False so no term exists
-
-/-- **Open: hypergraph origin of Kerr.** Same structure as
-`SchwarzschildObligationMet`, with `M, a` parameters. -/
-def KerrObligationMet (M a : ℝ) : Prop :=
-  0 < M ∧ False
-
-/-- **Open: hypergraph origin of FLRW.** Scaled trajectory under a
-`RewritingSystem` with measured-growth dynamics converges to an
-FLRW cosmology with specified scale factor `a(t)`. -/
-def FLRWObligationMet (a : ℝ → ℝ) : Prop :=
-  (∀ t, 0 < a t) ∧ False
-
-/-! ## D. Full refutation of JGORARD claims where obligation fails
-
-If the obligation fails — no rule produces the claimed spacetime —
-the claim is refuted. These refutations are elsewhere
-(`Refutations/*.lean`, `MAJOR_FLAWS.md`); this file merely names the
-corresponding open obligations so the reader can trace the logical
-dependency.
-
-In particular:
-
-  `SchwarzschildObligationMet M`  UNPROVED  ⟹  JGORARD's
-    "provably-satisfies-EFE" claim in arXiv:2102.09363 §5 is
-    not substantiated by the hypergraph evidence provided.
-
-That logical chain is what `Refutations.F3Tautology` and company
-already capture as "the identity is vacuous without convergence".
--/
-
-/-- **Logical dependency map.** The refutation chain in
-`Refutations/*` is sound iff every obligation here remains open
-(i.e., no term has been constructed). This is a *status assertion*,
-not a theorem — it can be disproved at any time by filling in one
-of the obligations above. -/
-def RefutationsSoundGivenObligationsOpen : Prop :=
-  ¬(∃ M, SchwarzschildObligationMet M) ∧
-  ¬(∃ M a, KerrObligationMet M a) ∧
-  ¬(∃ a, FLRWObligationMet a)
-
-/-- **Current status: refutations are sound.** All three
-obligations are uninhabited (their definitions include `False`).
-This is the current machine-checked state of the Wolfram Physics
-claim about curved-metric continuum limits. -/
-theorem refutations_sound_given_obligations_open :
-    RefutationsSoundGivenObligationsOpen := by
-  refine ⟨?_, ?_, ?_⟩
-  · rintro ⟨M, _, hfalse⟩; exact hfalse
-  · rintro ⟨M, a, _, hfalse⟩; exact hfalse
-  · rintro ⟨a, _, hfalse⟩; exact hfalse
-
-/-! ## E. Partial results
-
-What we *have* proved so far, cited to show the obligations are not
-"forever open" but actively reducible. -/
-
-/-- **Partial result: polynomial case of `CycleLaplacianConvergenceC2`.**
-For every quadratic `f(y) = a y² + b y + c`, the scaled
-second-difference sequence is eventually constant and equal to `f''(x)`,
-hence trivially convergent. This is the "Rung-2 polynomial bridge"
-worked out in `LaplacianBridge`. -/
+/-- For `f(y) = a y² + b y + c`, `scaledSecondDiff f n x` equals `f''(x)` for every `n > 0`,
+so it tends to `f''(x)`. -/
 theorem cycle_laplacian_conv_polynomial (a b c : ℝ) (x : ℝ) :
     Filter.Tendsto
       (fun n : Nat => scaledSecondDiff (fun y => a * y^2 + b * y + c) n x)

@@ -1,34 +1,16 @@
 /-
-**FLRW Ricci tensor, scalar curvature, and Einstein tensor** (task #27 / B7).
+Ricci tensor, scalar curvature and Einstein tensor of a connection with FLRW Christoffel symbols.
 
-For the FLRW metric `g = diag(-1, a², a², a²)` with scale factor
-`a : ℝ → ℝ`, first derivative `da : ℝ → ℝ`, and second derivative
-`dda : ℝ → ℝ`, we build a `ConnectionData 4` representing the
-Levi-Civita connection of FLRW and compute closed forms for:
-
-  * `R^ρ_{σμν}` — Riemann tensor.
-  * `R_{μν}` — Ricci tensor:
-    - `R_{00} = -3 a''(t) / a(t)`
-    - `R_{ii} = a a'' + 2 (a')²` for `i ∈ {1, 2, 3}`
-    - `R_{μν} = 0` otherwise.
-  * `R = g^{μν} R_{μν} = 6 a''/a + 6 (a'/a)²` — scalar curvature.
-  * Einstein tensor `G_{μν}`.
-  * **Friedmann form** of the EFE — the constraint and evolution
-    equations connecting `a, a', a''` to perfect-fluid stress-energy.
-
-**Approach.** Rather than build a `PartialMetricDataC2` infrastructure,
-we package the closed-form Christoffel values + their `t`-derivatives
-into a `ConnectionData 4` directly. Symmetries are proven by case
-analysis on `Fin 4`. Riemann and Ricci then come from the abstract
-machinery in `CurvatureRiemann`. The connection is non-flat whenever
-`a' ≠ 0` (universe is expanding/contracting).
-
-**Grounding.** Continuum side: this is a `ConnectionData 4` derived
-from the scale-factor data `(a, da, dda)`. Hypergraph side: pairs with
-the cosmological discretisation captured under
-`HypergraphMetricBridges` / `EinsteinEquationsBridge`.
-
-Axiom-clean (`propext`, `Classical.choice`, `Quot.sound`).
+For functions `a da dda : ℝ → ℝ`, `flrwConnection a da dda` is a `ConnectionData 4` whose
+Christoffel symbols are those of `g = diag(-1, a², a², a²)` with `da` in place of `a'`, and whose
+`∂Γ` entries are the time derivatives of those symbols with `dda` in place of `a''`.
+No hypothesis relates `da` and `dda` to derivatives of `a`.
+Under `a (x 0) ≠ 0`, the module proves `R_{00} = -3 dda/a`, `R_{ii} = a·dda + 2 da²` for
+`i ∈ {1, 2, 3}`, and `R_{μν} = 0` for `μ < ν`, using the Riemann and Ricci definitions in
+`CurvatureRiemann`.
+It defines the diagonal trace `6 dda/a + 6 (da/a)²` as the scalar curvature, the perfect-fluid
+stress-energy `diag(ρ, p a², p a², p a²)` and the two Friedmann equations, and proves that the
+`00` and `11` components of `G_{μν} + Λ g_{μν} = κ T_{μν}` are equivalent to the Friedmann pair.
 -/
 
 import InfraFormalization.FLRW
@@ -41,11 +23,9 @@ open scoped BigOperators
 
 /-! ## Closed-form Christoffel and `∂Γ` data for FLRW -/
 
-/-- **FLRW Christoffel symbols (closed form).** Encodes the textbook
-non-zero entries:
-  * `Γ⁰_{ii} = a(t) a'(t)` for `i ∈ {1, 2, 3}`,
-  * `Γⁱ_{0i} = Γⁱ_{i0} = a'(t) / a(t)` for `i ∈ {1, 2, 3}`,
-all others zero. -/
+/-- Christoffel symbols with non-zero entries `Γ⁰_{ii} = a · da` and
+`Γⁱ_{0i} = Γⁱ_{i0} = da / a` for `i ∈ {1, 2, 3}`, evaluated at time `x 0`. All other entries
+are zero. -/
 noncomputable def flrwΓ (a da : ℝ → ℝ) (x : Fin 4 → ℝ)
     (ρ μ ν : Fin 4) : ℝ :=
   if ρ = 0 then
@@ -57,7 +37,7 @@ noncomputable def flrwΓ (a da : ℝ → ℝ) (x : Fin 4 → ℝ)
       da (x 0) / a (x 0)
     else 0
 
-/-- **Lower-index symmetry of `flrwΓ`** (torsion-free). -/
+/-- `flrwΓ a da x ρ μ ν = flrwΓ a da x ρ ν μ`. -/
 theorem flrwΓ_symm (a da : ℝ → ℝ) (x : Fin 4 → ℝ) (ρ μ ν : Fin 4) :
     flrwΓ a da x ρ μ ν = flrwΓ a da x ρ ν μ := by
   unfold flrwΓ
@@ -86,10 +66,9 @@ theorem flrwΓ_symm (a da : ℝ → ℝ) (x : Fin 4 → ℝ) (ρ μ ν : Fin 4) 
           · exact h1 ⟨hb, ha⟩
         rw [if_neg h1', if_neg h2']
 
-/-- **Closed-form `∂Γ` for FLRW.** Only `l = 0` (time derivative) is
-non-zero, with:
-  * `∂_0 Γ⁰_{ii}(x) = (a')² + a a''` for `i ∈ {1, 2, 3}`,
-  * `∂_0 Γⁱ_{0i}(x) = (a a'' − (a')²) / a²` for `i ∈ {1, 2, 3}`.
+/-- Derivative data for `flrwΓ`. Entries with `l ≠ 0` are zero. For `l = 0` the non-zero entries
+are `∂_0 Γ⁰_{ii} = da² + a · dda` and `∂_0 Γⁱ_{0i} = ∂_0 Γⁱ_{i0} = (a · dda − da²) / a²` for
+`i ∈ {1, 2, 3}`.
 -/
 noncomputable def flrwdΓ (a da dda : ℝ → ℝ) (l : Fin 4) (x : Fin 4 → ℝ)
     (ρ μ ν : Fin 4) : ℝ :=
@@ -102,7 +81,7 @@ noncomputable def flrwdΓ (a da dda : ℝ → ℝ) (l : Fin 4) (x : Fin 4 → �
         (a (x 0) * dda (x 0) - (da (x 0))^2) / (a (x 0))^2
       else 0
 
-/-- **Lower-index symmetry of `flrwdΓ`**. -/
+/-- `flrwdΓ a da dda l x ρ μ ν = flrwdΓ a da dda l x ρ ν μ`. -/
 theorem flrwdΓ_symm (a da dda : ℝ → ℝ)
     (l : Fin 4) (x : Fin 4 → ℝ) (ρ μ ν : Fin 4) :
     flrwdΓ a da dda l x ρ μ ν = flrwdΓ a da dda l x ρ ν μ := by
@@ -132,19 +111,14 @@ theorem flrwdΓ_symm (a da dda : ℝ → ℝ)
             · exact h1 ⟨hb, ha⟩
           rw [if_neg h1', if_neg h2']
 
-/-- **FLRW Levi-Civita connection** (closed-form). Packages
-`flrwΓ a da` and `flrwdΓ a da dda` into a `ConnectionData 4`. -/
+/-- The `ConnectionData 4` with `Γ = flrwΓ a da` and `dΓ = flrwdΓ a da dda`. -/
 noncomputable def flrwConnection (a da dda : ℝ → ℝ) : ConnectionData 4 where
   Γ := flrwΓ a da
   dΓ := flrwdΓ a da dda
   Γ_symm := fun x => flrwΓ_symm a da x
   dΓ_symm := fun l x => flrwdΓ_symm a da dda l x
 
-/-! ## Pointwise Christoffel and `∂Γ` evaluations
-
-The proofs below repeatedly need to evaluate `flrwΓ` and `flrwdΓ` at
-specific index combinations. These small lemmas cache the explicit
-values so the Riemann/Ricci computations stay readable. -/
+/-! ## Values of `flrwΓ` and `flrwdΓ` at specific indices -/
 
 @[simp] theorem flrwΓ_0_ii (a da : ℝ → ℝ) (x : Fin 4 → ℝ)
     (i : Fin 4) (hi : i ≠ 0) :
@@ -195,14 +169,14 @@ values so the Riemann/Ricci computations stay readable. -/
   unfold flrwdΓ
   simp [hi]
 
-/-- **Sum over `Fin 4`** unfolds explicitly: `∑ l : Fin 4, f l = f 0 + f 1 + f 2 + f 3`. -/
+/-- `∑ l : Fin 4, f l = f 0 + f 1 + f 2 + f 3`. -/
 private theorem sumFin4 {β : Type*} [AddCommMonoid β] (f : Fin 4 → β) :
     ∑ l : Fin 4, f l = f 0 + f 1 + f 2 + f 3 := by
   show ∑ l ∈ (Finset.univ : Finset (Fin 4)), f l = f 0 + f 1 + f 2 + f 3
   rw [show (Finset.univ : Finset (Fin 4)) = {0, 1, 2, 3} from by decide]
   simp [Finset.sum_insert, Finset.mem_insert, Finset.mem_singleton, add_assoc]
 
-/-- All Γ entries with `μ = ν = 0` vanish. -/
+/-- `flrwΓ a da x l 0 0 = 0` for every `l`. -/
 @[simp] theorem flrwΓ_l_00 (a da : ℝ → ℝ) (x : Fin 4 → ℝ) (l : Fin 4) :
     flrwΓ a da x l 0 0 = 0 := by
   by_cases hl : l = 0
@@ -213,9 +187,7 @@ private theorem sumFin4 {β : Type*} [AddCommMonoid β] (f : Fin 4 → β) :
 
 /-! ## Riemann components: time-time direction -/
 
-/-- **`R^1_{010}(x) = -a''(t)/a(t)`** on FLRW (assuming `a(t) ≠ 0`).
-The first non-vanishing Riemann component on a non-flat FLRW spacetime;
-each spatial direction `i ∈ {1,2,3}` gives the same value. -/
+/-- If `a (x 0) ≠ 0`, then `R^1_{010}(x) = -dda/a`. -/
 theorem flrwRiemann_1_0_1_0 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
     (hv : FLRWValid a x) :
     (flrwConnection a da dda).riemann x 1 0 1 0 = -(dda (x 0) / a (x 0)) := by
@@ -252,8 +224,7 @@ theorem flrwRiemann_1_0_1_0 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
   field_simp
   ring
 
-/-- **`R^2_{020}(x) = -a''(t)/a(t)`** on FLRW (assuming `a(t) ≠ 0`).
-By spatial isotropy, same form as `flrwRiemann_1_0_1_0`. -/
+/-- If `a (x 0) ≠ 0`, then `R^2_{020}(x) = -dda/a`. -/
 theorem flrwRiemann_2_0_2_0 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
     (hv : FLRWValid a x) :
     (flrwConnection a da dda).riemann x 2 0 2 0 = -(dda (x 0) / a (x 0)) := by
@@ -283,8 +254,7 @@ theorem flrwRiemann_2_0_2_0 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
   field_simp
   ring
 
-/-- **`R^3_{030}(x) = -a''(t)/a(t)`** on FLRW (assuming `a(t) ≠ 0`).
-By spatial isotropy, same form as `flrwRiemann_1_0_1_0`. -/
+/-- If `a (x 0) ≠ 0`, then `R^3_{030}(x) = -dda/a`. -/
 theorem flrwRiemann_3_0_3_0 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
     (hv : FLRWValid a x) :
     (flrwConnection a da dda).riemann x 3 0 3 0 = -(dda (x 0) / a (x 0)) := by
@@ -316,9 +286,7 @@ theorem flrwRiemann_3_0_3_0 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
 
 /-! ## Riemann components: spatial-spatial direction (for `R_{ii}`) -/
 
-/-- **`R^0_{101}(x) = a(t) a''(t)`** on FLRW (assuming `a(t) ≠ 0`).
-Time-index Riemann component contributing to the spatial Ricci
-`R_{11}`. -/
+/-- If `a (x 0) ≠ 0`, then `R^0_{101}(x) = a · dda`. -/
 theorem flrwRiemann_0_1_0_1 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
     (hv : FLRWValid a x) :
     (flrwConnection a da dda).riemann x 0 1 0 1 = a (x 0) * dda (x 0) := by
@@ -361,8 +329,7 @@ theorem flrwRiemann_0_1_0_1 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
   field_simp
   ring
 
-/-- **`R^2_{121}(x) = (a'(t))²`** on FLRW (assuming `a(t) ≠ 0`).
-Spatial-spatial Riemann component contributing to `R_{11}`. -/
+/-- If `a (x 0) ≠ 0`, then `R^2_{121}(x) = da²`. -/
 theorem flrwRiemann_2_1_2_1 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
     (hv : FLRWValid a x) :
     (flrwConnection a da dda).riemann x 2 1 2 1 = (da (x 0))^2 := by
@@ -397,8 +364,7 @@ theorem flrwRiemann_2_1_2_1 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
              zero_mul, mul_zero, add_zero, zero_add, sub_zero]
   field_simp
 
-/-- **`R^3_{131}(x) = (a'(t))²`** on FLRW. By spatial isotropy, same
-form as `flrwRiemann_2_1_2_1`. -/
+/-- If `a (x 0) ≠ 0`, then `R^3_{131}(x) = da²`. -/
 theorem flrwRiemann_3_1_3_1 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
     (hv : FLRWValid a x) :
     (flrwConnection a da dda).riemann x 3 1 3 1 = (da (x 0))^2 := by
@@ -425,14 +391,10 @@ theorem flrwRiemann_3_1_3_1 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
              zero_mul, mul_zero, add_zero, zero_add, sub_zero]
   field_simp
 
-/-! ## Ricci tensor: time-time component R_{00} = -3 a''/a -/
+/-! ## Ricci tensor: time-time component -/
 
-/-- **`R_{00}(x) = -3 a''(t)/a(t)`** on FLRW (assuming `a(t) ≠ 0`).
-The time-time Ricci component, sum of three identical spatial-direction
-Riemann components plus the vanishing `R^0_{000}` (by antisymmetry).
-This is the textbook FLRW Ricci diagonal-time entry that drives the
-**first Friedmann equation** when contracted against the inverse
-metric. -/
+/-- If `a (x 0) ≠ 0`, then `R_{00}(x) = -3 dda/a`. The proof sums `R^ρ_{0ρ0}` over `ρ`, with
+`R^0_{000} = 0` by antisymmetry. -/
 theorem flrwRicci_0_0 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
     (hv : FLRWValid a x) :
     (flrwConnection a da dda).ricci x 0 0 = -3 * dda (x 0) / a (x 0) := by
@@ -450,12 +412,8 @@ theorem flrwRicci_0_0 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
   field_simp
   ring
 
-/-- **`R_{11}(x) = a(t) a''(t) + 2 (a'(t))²`** on FLRW (assuming
-`a(t) ≠ 0`). The spatial Ricci component, sum of the time-index
-contribution `R^0_{101} = a a''` plus two identical spatial-index
-contributions `R^j_{1j1} = (a')²`. The vanishing `R^1_{111}` follows
-from antisymmetry. This is the textbook spatial-spatial Ricci entry
-that drives the **second Friedmann equation**. -/
+/-- If `a (x 0) ≠ 0`, then `R_{11}(x) = a · dda + 2 da²`. The summands are `R^0_{101} = a · dda`,
+`R^2_{121} = R^3_{131} = da²` and `R^1_{111} = 0`. -/
 theorem flrwRicci_1_1 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
     (hv : FLRWValid a x) :
     (flrwConnection a da dda).ricci x 1 1
@@ -472,8 +430,7 @@ theorem flrwRicci_1_1 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
       flrwRiemann_3_1_3_1 a da dda x hv]
   ring
 
-/-- **`R^0_{202}(x) = a(t) a''(t)`** on FLRW (assuming `a(t) ≠ 0`).
-Spatial-isotropy copy of `flrwRiemann_0_1_0_1`. -/
+/-- If `a (x 0) ≠ 0`, then `R^0_{202}(x) = a · dda`. -/
 theorem flrwRiemann_0_2_0_2 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
     (hv : FLRWValid a x) :
     (flrwConnection a da dda).riemann x 0 2 0 2 = a (x 0) * dda (x 0) := by
@@ -505,7 +462,7 @@ theorem flrwRiemann_0_2_0_2 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
   field_simp
   ring
 
-/-- **`R^1_{212}(x) = (a'(t))²`** on FLRW (assuming `a(t) ≠ 0`). -/
+/-- If `a (x 0) ≠ 0`, then `R^1_{212}(x) = da²`. -/
 theorem flrwRiemann_1_2_1_2 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
     (hv : FLRWValid a x) :
     (flrwConnection a da dda).riemann x 1 2 1 2 = (da (x 0))^2 := by
@@ -532,7 +489,7 @@ theorem flrwRiemann_1_2_1_2 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
              zero_mul, mul_zero, add_zero, zero_add, sub_zero]
   field_simp
 
-/-- **`R^3_{232}(x) = (a'(t))²`** on FLRW (assuming `a(t) ≠ 0`). -/
+/-- If `a (x 0) ≠ 0`, then `R^3_{232}(x) = da²`. -/
 theorem flrwRiemann_3_2_3_2 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
     (hv : FLRWValid a x) :
     (flrwConnection a da dda).riemann x 3 2 3 2 = (da (x 0))^2 := by
@@ -559,8 +516,7 @@ theorem flrwRiemann_3_2_3_2 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
              zero_mul, mul_zero, add_zero, zero_add, sub_zero]
   field_simp
 
-/-- **`R_{22}(x) = a(t) a''(t) + 2 (a'(t))²`** on FLRW. By spatial
-isotropy, identical to `R_{11}`. -/
+/-- If `a (x 0) ≠ 0`, then `R_{22}(x) = a · dda + 2 da²`. -/
 theorem flrwRicci_2_2 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
     (hv : FLRWValid a x) :
     (flrwConnection a da dda).ricci x 2 2
@@ -576,7 +532,7 @@ theorem flrwRicci_2_2 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
       flrwRiemann_3_2_3_2 a da dda x hv]
   ring
 
-/-- **`R^0_{303}(x) = a(t) a''(t)`** on FLRW. -/
+/-- If `a (x 0) ≠ 0`, then `R^0_{303}(x) = a · dda`. -/
 theorem flrwRiemann_0_3_0_3 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
     (hv : FLRWValid a x) :
     (flrwConnection a da dda).riemann x 0 3 0 3 = a (x 0) * dda (x 0) := by
@@ -608,7 +564,7 @@ theorem flrwRiemann_0_3_0_3 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
   field_simp
   ring
 
-/-- **`R^1_{313}(x) = (a'(t))²`** on FLRW (assuming `a(t) ≠ 0`). -/
+/-- If `a (x 0) ≠ 0`, then `R^1_{313}(x) = da²`. -/
 theorem flrwRiemann_1_3_1_3 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
     (hv : FLRWValid a x) :
     (flrwConnection a da dda).riemann x 1 3 1 3 = (da (x 0))^2 := by
@@ -635,7 +591,7 @@ theorem flrwRiemann_1_3_1_3 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
              zero_mul, mul_zero, add_zero, zero_add, sub_zero]
   field_simp
 
-/-- **`R^2_{323}(x) = (a'(t))²`** on FLRW (assuming `a(t) ≠ 0`). -/
+/-- If `a (x 0) ≠ 0`, then `R^2_{323}(x) = da²`. -/
 theorem flrwRiemann_2_3_2_3 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
     (hv : FLRWValid a x) :
     (flrwConnection a da dda).riemann x 2 3 2 3 = (da (x 0))^2 := by
@@ -662,8 +618,7 @@ theorem flrwRiemann_2_3_2_3 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
              zero_mul, mul_zero, add_zero, zero_add, sub_zero]
   field_simp
 
-/-- **`R_{33}(x) = a(t) a''(t) + 2 (a'(t))²`** on FLRW. By spatial
-isotropy, identical to `R_{11}` and `R_{22}`. -/
+/-- If `a (x 0) ≠ 0`, then `R_{33}(x) = a · dda + 2 da²`. -/
 theorem flrwRicci_3_3 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
     (hv : FLRWValid a x) :
     (flrwConnection a da dda).ricci x 3 3
@@ -679,23 +634,17 @@ theorem flrwRicci_3_3 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
       flrwRiemann_2_3_2_3 a da dda x hv]
   ring
 
-/-! ## Scalar curvature, Einstein tensor, and the first Friedmann equation
+/-! ## Scalar curvature and Einstein tensor
 
-Since FLRW has a diagonal metric `g = diag(-1, a², a², a²)`, the
-scalar curvature `R = g^{μν} R_{μν}` collapses to a diagonal trace.
-We give a direct closed-form definition (bypassing the off-diagonal
-Ricci-vanishing proof, which is straightforward but tedious). -/
+The inverse metric `diag(-1, a⁻², a⁻², a⁻²)` is diagonal, so the trace `g^{μν} R_{μν}` uses only
+the diagonal Ricci components. -/
 
-/-- **Direct closed form for FLRW scalar curvature**:
-`R(x) = 6 a''/a + 6 (a'/a)² = 6 H² + 6 H'/(...)`. -/
+/-- The expression `6 dda/a + 6 da²/a²` at time `x 0`. -/
 noncomputable def flrwScalarCurvatureClosed (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) : ℝ :=
   6 * dda (x 0) / a (x 0) + 6 * (da (x 0))^2 / (a (x 0))^2
 
-/-- **Diagonal scalar curvature on FLRW** (trace of Ricci against the
-inverse metric, restricted to the diagonal — which is all that
-matters for FLRW since `g^{μν} = 0` for `μ ≠ ν`):
-
-  `R_diag = -R_{00} + (1/a²)(R_{11} + R_{22} + R_{33})`. -/
+/-- The diagonal trace `-R_{00} + (1/a²)(R_{11} + R_{22} + R_{33})` of the Ricci tensor of
+`flrwConnection a da dda`. -/
 noncomputable def flrwScalarCurvatureDiag (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) : ℝ :=
   -(flrwConnection a da dda).ricci x 0 0
     + (1 / (a (x 0))^2)
@@ -703,7 +652,7 @@ noncomputable def flrwScalarCurvatureDiag (a da dda : ℝ → ℝ) (x : Fin 4 �
           + (flrwConnection a da dda).ricci x 2 2
           + (flrwConnection a da dda).ricci x 3 3)
 
-/-- **FLRW scalar curvature closed form**: `R = 6 a''/a + 6 (a'/a)²`. -/
+/-- If `a (x 0) ≠ 0`, then `flrwScalarCurvatureDiag a da dda x = 6 dda/a + 6 da²/a²`. -/
 theorem flrwScalarCurvatureDiag_eq (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
     (hv : FLRWValid a x) :
     flrwScalarCurvatureDiag a da dda x = flrwScalarCurvatureClosed a da dda x := by
@@ -717,14 +666,8 @@ theorem flrwScalarCurvatureDiag_eq (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
   field_simp
   ring
 
-/-- **First Friedmann equation LHS** (vacuum side): the diagonal
-Einstein tensor's time-time component on FLRW is
-
-  `G_{00}(x) = R_{00}(x) - ½ R(x) · g_{00}(x) = 3 (a'/a)²`,
-
-i.e., **3 H²**, the textbook left-hand side of the first Friedmann
-equation. With perfect-fluid stress-energy `T_{00} = ρ`, the EFE
-`G_{00} + Λ g_{00} = 8π G T_{00}` gives `3 H² = 8π G ρ + Λ`. -/
+/-- If `a (x 0) ≠ 0`, then `R_{00} - ½ R · (-1) = 3 da²/a²`, with `R` given by
+`flrwScalarCurvatureClosed`. -/
 theorem flrwEinstein_0_0 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
     (hv : FLRWValid a x) :
     (flrwConnection a da dda).ricci x 0 0
@@ -737,16 +680,8 @@ theorem flrwEinstein_0_0 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
   field_simp
   ring
 
-/-- **Second Friedmann equation LHS** (vacuum side): the diagonal
-Einstein tensor's spatial-spatial component on FLRW is
-
-  `G_{ii}(x) = R_{ii}(x) - ½ R(x) · g_{ii}(x) = -(2 a a'' + (a')²)`
-
-for `i ∈ {1, 2, 3}` (with `g_{ii} = a²`). Dividing by `g_{ii} = a²`
-gives the standard form `-(2 a''/a + (a'/a)²)`. With perfect-fluid
-stress-energy `T_{ii} = p · a²`, the EFE `G_{ii} + Λ g_{ii} = 8π G
-T_{ii}` gives the second Friedmann equation
-`2 a''/a + (a'/a)² = -8π G p + Λ`. -/
+/-- If `a (x 0) ≠ 0`, then `R_{11} - ½ R · a² = -(2 a · dda + da²)`, with `R` given by
+`flrwScalarCurvatureClosed`. -/
 theorem flrwEinstein_1_1 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
     (hv : FLRWValid a x) :
     (flrwConnection a da dda).ricci x 1 1
@@ -759,8 +694,7 @@ theorem flrwEinstein_1_1 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
   field_simp
   ring
 
-/-- **Spatial isotropy of `G_{ii}`** — by SO(3) symmetry, `G_{22}` and
-`G_{33}` have the same closed form as `G_{11}`. -/
+/-- If `a (x 0) ≠ 0`, then `R_{22} - ½ R · a² = -(2 a · dda + da²)`. -/
 theorem flrwEinstein_2_2 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
     (hv : FLRWValid a x) :
     (flrwConnection a da dda).ricci x 2 2
@@ -773,6 +707,7 @@ theorem flrwEinstein_2_2 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
   field_simp
   ring
 
+/-- If `a (x 0) ≠ 0`, then `R_{33} - ½ R · a² = -(2 a · dda + da²)`. -/
 theorem flrwEinstein_3_3 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
     (hv : FLRWValid a x) :
     (flrwConnection a da dda).ricci x 3 3
@@ -785,37 +720,26 @@ theorem flrwEinstein_3_3 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
   field_simp
   ring
 
-/-! ## Perfect-fluid stress-energy and the Einstein equations on FLRW
+/-! ## Perfect-fluid stress-energy and the Friedmann equations -/
 
-In the comoving frame, a perfect fluid with energy density `ρ(t)` and
-isotropic pressure `p(t)` has stress-energy components:
-  * `T_{00} = ρ(t)`
-  * `T_{ii} = p(t) · a²(t)` for `i ∈ {1, 2, 3}`
-  * off-diagonal = 0.
-Off-diagonal pieces vanish trivially (no shear in a comoving perfect
-fluid). With the FLRW Einstein tensor diagonal closed forms above,
-the EFE `G_{μν} + Λ g_{μν} = κ T_{μν}` reduces on the diagonal to
-the **Friedmann equations**. -/
-
-/-- **Perfect-fluid stress-energy on FLRW (comoving frame).** -/
+/-- The diagonal tensor with `T_{00} = ρ`, `T_{ii} = p · a²` for `i ∈ {1, 2, 3}`, and zero
+off-diagonal entries, evaluated at time `x 0`. -/
 noncomputable def flrwPerfectFluidT (a ρ p : ℝ → ℝ) (x : Fin 4 → ℝ)
     (μ ν : Fin 4) : ℝ :=
   if μ ≠ ν then 0
   else if μ = 0 then ρ (x 0)
   else p (x 0) * (a (x 0))^2
 
-/-- **First Friedmann equation**: `3 H² = κ ρ + Λ`, where `H = a'/a`. -/
+/-- `3 da²/a² = κ ρ + Λ` at time `t`. -/
 def flrwFriedmann1 (a da : ℝ → ℝ) (ρ : ℝ → ℝ) (Λ κ : ℝ) (t : ℝ) : Prop :=
   3 * (da t)^2 / (a t)^2 = κ * ρ t + Λ
 
-/-- **Second Friedmann equation**: `2 a''/a + (a'/a)² = -κ p + Λ`. -/
+/-- `2 dda/a + da²/a² = -κ p + Λ` at time `t`. -/
 def flrwFriedmann2 (a da dda : ℝ → ℝ) (p : ℝ → ℝ) (Λ κ : ℝ) (t : ℝ) : Prop :=
   2 * dda t / a t + (da t)^2 / (a t)^2 = -(κ * p t) + Λ
 
-/-- **Diagonal FLRW Einstein equation (time-time)** ⟺ **first Friedmann
-equation**. Direct algebraic equivalence: under `a(t) ≠ 0`, the EFE
-component `G_{00}(x) + Λ g_{00}(x) = κ T_{00}(x)` (with `g_{00} = -1`,
-`T_{00} = ρ(t)`) is the same as `3 H² = κ ρ + Λ`. -/
+/-- If `a (x 0) ≠ 0`, then `R_{00} - ½ R · (-1) + Λ · (-1) = κ T_{00}` holds if and only if
+`flrwFriedmann1` holds at `x 0`. -/
 theorem flrwEinstein_00_iff_friedmann1
     (a da dda ρ p : ℝ → ℝ) (Λ κ : ℝ) (x : Fin 4 → ℝ)
     (hv : FLRWValid a x) :
@@ -833,9 +757,8 @@ theorem flrwEinstein_00_iff_friedmann1
   · intro h; linarith
   · intro h; linarith
 
-/-- **Diagonal FLRW Einstein equation (spatial-spatial, i = 1)** ⟺
-**second Friedmann equation**. Under `a(t) ≠ 0`, dividing through by
-`a²` recovers the standard form. -/
+/-- If `a (x 0) ≠ 0`, then `R_{11} - ½ R · a² + Λ · a² = κ T_{11}` holds if and only if
+`flrwFriedmann2` holds at `x 0`. -/
 theorem flrwEinstein_11_iff_friedmann2
     (a da dda ρ p : ℝ → ℝ) (Λ κ : ℝ) (x : Fin 4 → ℝ)
     (hv : FLRWValid a x) :
@@ -890,20 +813,17 @@ theorem flrwEinstein_11_iff_friedmann2
       rw [← hcombined]; field_simp
     linarith
 
-/-! ## Off-diagonal Ricci vanishing
+/-! ## Off-diagonal Ricci components
 
-For FLRW in comoving coordinates, the Ricci tensor is diagonal:
-`R_{μν}(x) = 0` whenever `μ ≠ ν`. Each entry expands to a sum of four
-Riemann components, each vanishing because the relevant Christoffel
-products either include `Γ^l_{00} = 0` (handled by `flrwΓ_l_00`) or
-involve mismatched index patterns. -/
+This section proves `R_{μν}(x) = 0` for `μ < ν`. Each entry is a sum of four Riemann components,
+and each of these is shown to be zero. -/
 
-/-- **A useful Γ-vanishing lemma**: `flrwΓ a da x ρ ρ 1 = 0` always. -/
+/-- `flrwΓ a da x ρ ρ 1 = 0` for every `ρ`. -/
 private theorem flrwΓ_ρ_ρ_1 (a da : ℝ → ℝ) (x : Fin 4 → ℝ) (ρ : Fin 4) :
     flrwΓ a da x ρ ρ 1 = 0 := by
   fin_cases ρ <;> (unfold flrwΓ; simp)
 
-/-- **`flrwΓ a da x l 1 0 = 0` unless `l = 1`.** -/
+/-- `flrwΓ a da x l 1 0 = 0` for `l ≠ 1`. -/
 private theorem flrwΓ_l_1_0_zero (a da : ℝ → ℝ) (x : Fin 4 → ℝ)
     (l : Fin 4) (h : l ≠ 1) :
     flrwΓ a da x l 1 0 = 0 := by
@@ -914,7 +834,7 @@ private theorem flrwΓ_l_1_0_zero (a da : ℝ → ℝ) (x : Fin 4 → ℝ)
   · unfold flrwΓ; simp
 
 
-/-- **FLRW Riemann component R^0_{0 0 1} = 0.** -/
+/-- `R^0_{001}(x) = 0`. -/
 private theorem flrwRiemann_0_0_0_1 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) :
     (flrwConnection a da dda).riemann x 0 0 0 1 = 0 := by
   unfold ConnectionData.riemann flrwConnection
@@ -930,13 +850,13 @@ private theorem flrwRiemann_0_0_0_1 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
   rw [d1, d2]
   simp [h00_l, flrwΓ_l_00]
 
-/-- **FLRW Riemann component R^1_{0 1 1} = 0** by antisymmetry in (μ, ν). -/
+/-- `R^1_{011}(x) = 0`, by antisymmetry in the last two indices. -/
 private theorem flrwRiemann_1_0_1_1 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) :
     (flrwConnection a da dda).riemann x 1 0 1 1 = 0 := by
   have := (flrwConnection a da dda).riemann_antisymm x 1 0 1 1
   linarith
 
-/-- **FLRW Riemann component R^2_{0 2 1} = 0.** -/
+/-- `R^2_{021}(x) = 0`. -/
 private theorem flrwRiemann_2_0_2_1 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) :
     (flrwConnection a da dda).riemann x 2 0 2 1 = 0 := by
   unfold ConnectionData.riemann flrwConnection
@@ -959,7 +879,7 @@ private theorem flrwRiemann_2_0_2_1 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
   rw [d1, d2, h22_1, h22_2, h22_3, h_l_1_0_0, h_l_1_0_2, h_l_1_0_3]
   simp [h21_l, flrwΓ_l_00]
 
-/-- **FLRW Riemann component R^3_{0 3 1} = 0.** -/
+/-- `R^3_{031}(x) = 0`. -/
 private theorem flrwRiemann_3_0_3_1 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) :
     (flrwConnection a da dda).riemann x 3 0 3 1 = 0 := by
   unfold ConnectionData.riemann flrwConnection
@@ -979,8 +899,7 @@ private theorem flrwRiemann_3_0_3_1 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
   rw [d1, d2, h33_1, h33_2, h33_3, h_l_1_0_0, h_l_1_0_2, h_l_1_0_3]
   simp [h31_l, flrwΓ_l_00]
 
-/-- **FLRW Ricci off-diagonal `R_{01}(x) = 0`.** Time-spatial mixed
-component vanishes via the four Riemann summands. -/
+/-- `R_{01}(x) = 0`. -/
 theorem flrwRicci_0_1 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) :
     (flrwConnection a da dda).ricci x 0 1 = 0 := by
   unfold ConnectionData.ricci
@@ -988,12 +907,9 @@ theorem flrwRicci_0_1 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) :
   rw [flrwRiemann_0_0_0_1, flrwRiemann_1_0_1_1, flrwRiemann_2_0_2_1, flrwRiemann_3_0_3_1]
   ring
 
-/-! Each remaining off-diagonal Ricci component follows the same
-4-Riemann-summand decomposition as `flrwRicci_0_1`. We handle them
-individually since the index-substitution patterns differ slightly. -/
+/-! The remaining off-diagonal Ricci components are proved in the same way as `flrwRicci_0_1`. -/
 
-/-- **Riemann R^ρ_{σ ρ ν} = 0 when σ = 0 and ν ∈ {2, 3}, ρ ∈ off-pattern**:
-mirror of `flrwRiemann_0_0_0_1` but with ν = 2.  -/
+/-- `R^0_{002}(x) = 0`. -/
 private theorem flrwRiemann_0_0_0_2 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) :
     (flrwConnection a da dda).riemann x 0 0 0 2 = 0 := by
   unfold ConnectionData.riemann flrwConnection
@@ -1065,7 +981,7 @@ private theorem flrwRiemann_3_0_3_2 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
   rw [d1, d2, h33_1, h33_2, h33_3, h_0_2_0, h_1_2_0, h_3_2_0]
   simp [h32_l, flrwΓ_l_00]
 
-/-- **FLRW Ricci off-diagonal `R_{02}(x) = 0`.** -/
+/-- `R_{02}(x) = 0`. -/
 theorem flrwRicci_0_2 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) :
     (flrwConnection a da dda).ricci x 0 2 = 0 := by
   unfold ConnectionData.ricci
@@ -1116,7 +1032,7 @@ private theorem flrwRiemann_3_0_3_3 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
   have := (flrwConnection a da dda).riemann_antisymm x 3 0 3 3
   linarith
 
-/-- **FLRW Ricci off-diagonal `R_{03}(x) = 0`.** -/
+/-- `R_{03}(x) = 0`. -/
 theorem flrwRicci_0_3 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) :
     (flrwConnection a da dda).ricci x 0 3 = 0 := by
   unfold ConnectionData.ricci
@@ -1132,9 +1048,8 @@ private theorem flrwRiemann_0_1_0_2 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
       sumFin4 (fun l => flrwΓ a da x 0 2 l * flrwΓ a da x l 0 1)]
   have h00_l : ∀ l : Fin 4, flrwΓ a da x 0 0 l = 0 := by
     intro l; fin_cases l <;> (unfold flrwΓ; simp)
-  -- Γ_x_l_0_1 = 0 for all l (l=0: μ=0,ν=1,off-diag=0; l=i≥1: ρ=l, μ=0, ν=1: condition needs ν=l, but ν=1≠l for l=2,3; for l=1 we get value a'/a if (μ=0∧ν=ρ)=(0=0∧1=1)=T; so non-zero!).
-  -- Wait, Γ_x_1_0_1 = a'/a (the standard Hubble Christoffel). So this sum is non-trivial.
-  -- But it's multiplied by Γ_x_0_2_l. Γ_x_0_2_l: ρ=0, μ=2, ν=l. Only l=2 gives a*a' (μ=ν=2, μ≠0); others 0.
+  -- `Γ^l_{01}` is non-zero only for `l = 1`, and `Γ^0_{2l}` is non-zero only for `l = 2`, so
+  -- every product in the second sum is zero.
   have h_0_2_0 : flrwΓ a da x 0 2 0 = 0 := flrwΓ_0_diff a da x 2 0 (by decide)
   have h_0_2_1 : flrwΓ a da x 0 2 1 = 0 := flrwΓ_0_diff a da x 2 1 (by decide)
   have h_0_2_2 : flrwΓ a da x 0 2 2 = a (x 0) * da (x 0) := flrwΓ_0_ii a da x 2 (by decide)
@@ -1185,7 +1100,7 @@ private theorem flrwRiemann_3_1_3_2 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
   rw [d1, d2]
   simp [hl21, hl31, h32_l]
 
-/-- **FLRW Ricci off-diagonal `R_{12}(x) = 0`.** -/
+/-- `R_{12}(x) = 0`. -/
 theorem flrwRicci_1_2 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) :
     (flrwConnection a da dda).ricci x 1 2 = 0 := by
   unfold ConnectionData.ricci
@@ -1248,7 +1163,7 @@ private theorem flrwRiemann_3_1_3_3 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
   have := (flrwConnection a da dda).riemann_antisymm x 3 1 3 3
   linarith
 
-/-- **FLRW Ricci off-diagonal `R_{13}(x) = 0`.** -/
+/-- `R_{13}(x) = 0`. -/
 theorem flrwRicci_1_3 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) :
     (flrwConnection a da dda).ricci x 1 3 = 0 := by
   unfold ConnectionData.ricci
@@ -1309,7 +1224,7 @@ private theorem flrwRiemann_3_2_3_3 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ)
   have := (flrwConnection a da dda).riemann_antisymm x 3 2 3 3
   linarith
 
-/-- **FLRW Ricci off-diagonal `R_{23}(x) = 0`.** -/
+/-- `R_{23}(x) = 0`. -/
 theorem flrwRicci_2_3 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) :
     (flrwConnection a da dda).ricci x 2 3 = 0 := by
   unfold ConnectionData.ricci
@@ -1317,9 +1232,9 @@ theorem flrwRicci_2_3 (a da dda : ℝ → ℝ) (x : Fin 4 → ℝ) :
   rw [flrwRiemann_0_2_0_3, flrwRiemann_1_2_1_3, flrwRiemann_2_2_2_3, flrwRiemann_3_2_3_3]
   ring
 
-/-- **FLRW Einstein equations ⟺ Friedmann pair** (diagonal version).
-The diagonal components of the EFE on FLRW with perfect-fluid
-stress-energy are equivalent to the textbook Friedmann pair. -/
+/-- If `a (x 0) ≠ 0`, the `00` and `11` components of `G_{μν} + Λ g_{μν} = κ T_{μν}` with
+perfect-fluid `T` hold together if and only if `flrwFriedmann1` and `flrwFriedmann2` hold at
+`x 0`. The `22` and `33` components are not part of the statement. -/
 theorem flrwEFE_diag_iff_friedmann
     (a da dda ρ p : ℝ → ℝ) (Λ κ : ℝ) (x : Fin 4 → ℝ)
     (hv : FLRWValid a x) :
@@ -1336,19 +1251,12 @@ theorem flrwEFE_diag_iff_friedmann
   rw [flrwEinstein_00_iff_friedmann1 a da dda ρ p Λ κ x hv,
       flrwEinstein_11_iff_friedmann2 a da dda ρ p Λ κ x hv]
 
-/-! ## F5 / B7 capstone: FLRW as explicit solution with perfect-fluid matter
+/-! ## The two directions of `flrwEFE_diag_iff_friedmann` -/
 
-Bundling theorems combining all FLRW Ricci / Einstein / Friedmann
-results into top-level statements suitable for citation downstream
-and for paper/exposition purposes. -/
-
-/-- **F5 / B7 capstone — FLRW satisfies the Einstein equations under
-Friedmann data.** Forward direction: if the Friedmann pair holds at
-time `t = x 0`, then the diagonal components of the Einstein equation
-`G_{μν} + Λ g_{μν} = κ T_{μν}` are satisfied on the FLRW Levi-Civita
-connection with perfect-fluid stress-energy
-`T_{μν} = diag(ρ, p·a², p·a², p·a²)`. -/
-theorem flrw_satisfies_EFE_of_friedmann
+/-- If `a (x 0) ≠ 0` and the Friedmann pair holds at `x 0`, then the `00` and `11` components of
+`G_{μν} + Λ g_{μν} = κ T_{μν}` hold for `flrwConnection a da dda` with
+`T = flrwPerfectFluidT a ρ p`. -/
+theorem flrw_satisfies_EFE_00_11_of_friedmann
     (a da dda ρ p : ℝ → ℝ) (Λ κ : ℝ) (x : Fin 4 → ℝ)
     (hv : FLRWValid a x)
     (hF1 : flrwFriedmann1 a da ρ Λ κ (x 0))
@@ -1363,7 +1271,8 @@ theorem flrw_satisfies_EFE_of_friedmann
       = κ * flrwPerfectFluidT a ρ p x 1 1 :=
   (flrwEFE_diag_iff_friedmann a da dda ρ p Λ κ x hv).mpr ⟨hF1, hF2⟩
 
-/-- **F5 / B7 reverse direction — Friedmann follows from EFE.** -/
+/-- If `a (x 0) ≠ 0` and the `00` and `11` components of `G_{μν} + Λ g_{μν} = κ T_{μν}` hold,
+then the Friedmann pair holds at `x 0`. -/
 theorem flrw_friedmann_of_EFE
     (a da dda ρ p : ℝ → ℝ) (Λ κ : ℝ) (x : Fin 4 → ℝ)
     (hv : FLRWValid a x)
@@ -1381,10 +1290,8 @@ theorem flrw_friedmann_of_EFE
 
 /-! ### Vacuum and matter-dominated specializations -/
 
-/-- **Vacuum FLRW** — perfect-fluid stress-energy with `ρ = p = 0`.
-The Friedmann pair reduces to `3 H² = Λ` and `2 a''/a + H² = Λ`,
-which together force the de Sitter / anti-de Sitter expansion law
-`H² = a''/a = Λ/3`. -/
+/-- With `ρ = p = 0`, the Friedmann pair at `t` is equivalent to `3 da²/a² = Λ` and
+`2 dda/a + da²/a² = Λ`. -/
 theorem flrw_vacuum_friedmann_iff
     (a da dda : ℝ → ℝ) (Λ κ : ℝ) (t : ℝ) :
     (flrwFriedmann1 a da (fun _ => 0) Λ κ t
@@ -1402,9 +1309,8 @@ theorem flrw_vacuum_friedmann_iff
     · linarith
     · linarith
 
-/-- **Matter-dominated FLRW** — perfect fluid with `p = 0` (dust).
-The Friedmann pair specializes to the energy constraint
-`3 H² = κ ρ + Λ` plus `2 a''/a + H² = Λ` (no pressure term). -/
+/-- With `p = 0`, the Friedmann pair at `t` is equivalent to `3 da²/a² = κ ρ + Λ` and
+`2 dda/a + da²/a² = Λ`. -/
 theorem flrw_dust_friedmann_iff
     (a da dda ρ : ℝ → ℝ) (Λ κ : ℝ) (t : ℝ) :
     (flrwFriedmann1 a da ρ Λ κ t

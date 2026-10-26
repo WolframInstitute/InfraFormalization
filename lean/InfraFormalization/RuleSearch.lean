@@ -1,30 +1,13 @@
 /-
-**Rule search infrastructure** — answering "how do we find rules that
-satisfy the constraints we need?"
+Conservation of small rules.
 
-This file provides:
-
-  1. A **decidable `IsConservative`** predicate (via `Nat` equality).
-  2. A **catalog of concrete candidate rules** with proved signature
-     properties:
-       * `identityRule` — empty/empty, conservative
-       * `pairToTriangleRule` — LHS 2 edges, RHS 3 edges, non-conservative
-       * `edgeDuplicateRule` — LHS 1 edge, RHS 2 edges, non-conservative
-       * `tripleToEdgeRule` — LHS 3 edges, RHS 1 edge, non-conservative
-  3. **Search filters** that mechanically pick rules matching a target
-     signature criterion (conservative vs. not; bounded edge count).
-  4. **Witness theorems** connecting rules to bridge constraints.
-
-This is the Lean-side of the rule-search problem. The filter predicates
-classify rules by conservation (|LHS| = |RHS|). No screen in this file
-proves that a rule cannot have a continuum limit of a given dimension.
-
-**Grounding.** All rules are concrete `Rule (Fin k)` constructions;
-candidate rules are `RewritingSystem (Fin k)`; signatures are computed
-from trajectory states which are `Hypergraph V`.
+The module makes `Rule.IsConservative` (`|LHS| = |RHS|`) decidable and defines five rules: the rule
+with empty sides, a self-map of one edge, edge duplication, a three-edges-to-one rule and a
+two-edges-to-triangle rule. It computes their left- and right-hand sizes and states which are
+conservative. It defines two catalogs, `conservativeCatalog` and `nonConservativeCatalog`, and the predicate
+`Rule.GrowthCompatible r := ¬ r.IsConservative`.
 -/
 
-import InfraFormalization.RuleWitnesses
 import InfraFormalization.CandidateRuleDatabase
 import InfraFormalization.StructuralRuleBounds
 
@@ -36,7 +19,7 @@ instance Rule.instDecidableIsConservative {P : Type*} (r : Rule P) :
     Decidable r.IsConservative :=
   Nat.decEq r.lhsSize r.rhsSize
 
-/-- **Conservation screen (decidable)**: a rule passes iff `|LHS|=|RHS|`. -/
+/-- `true` iff `|LHS| = |RHS|`. -/
 def Rule.passesConservationScreen {P : Type*} (r : Rule P) : Bool :=
   decide r.IsConservative
 
@@ -45,10 +28,7 @@ theorem Rule.passesConservationScreen_iff {P : Type*} (r : Rule P) :
   unfold Rule.passesConservationScreen
   simp
 
-/-! ## Concrete catalog of candidate rules
-
-Every rule below is constructed from `Fin k`-valued pattern vertices.
-We attach explicit `IsConservative` / non-conservation proofs. -/
+/-! ## Rules over `Fin 2` and `Fin 3` -/
 
 /-- A single-edge hyperedge on two pattern vertices `p₁ p₂ : Fin 2`. -/
 private def binaryEdge (p₁ p₂ : Fin 2) : Hyperedge (Fin 2) :=
@@ -63,9 +43,7 @@ private def singleBinaryHypergraph (p₁ p₂ : Fin 2) : Hypergraph (Fin 2) :=
   show ((binaryEdge p₁ p₂) ::ₘ 0).card = 1
   rw [Multiset.card_cons]; simp
 
-/-- **`edgeDuplicateRule`**: consume one edge `(0 → 1)`, produce two
-edges `(0 → 1)` and `(0 → 1)` — non-conservative, |LHS|=1, |RHS|=2.
-A toy growth rule: pure duplication. -/
+/-- `{(0,1)} → {(0,1), (0,1)}`. `|LHS| = 1`, `|RHS| = 2`. -/
 noncomputable def edgeDuplicateRule : Rule (Fin 2) where
   lhs := singleBinaryHypergraph 0 1
   rhs := ⟨(binaryEdge 0 1) ::ₘ (binaryEdge 0 1) ::ₘ 0⟩
@@ -80,15 +58,14 @@ theorem edgeDuplicateRule_rhsSize : edgeDuplicateRule.rhsSize = 2 := by
   show ((binaryEdge 0 1) ::ₘ (binaryEdge 0 1) ::ₘ 0).card = 2
   rw [Multiset.card_cons, Multiset.card_cons]; simp
 
-/-- **`edgeDuplicateRule` is not conservative**. -/
+/-- `edgeDuplicateRule` is not conservative. -/
 theorem edgeDuplicateRule_not_conservative :
     ¬ edgeDuplicateRule.IsConservative := by
   unfold Rule.IsConservative
   rw [edgeDuplicateRule_lhsSize, edgeDuplicateRule_rhsSize]
   decide
 
-/-- **`tripleToEdgeRule`**: consume three edges, produce one —
-deletion rule. Non-conservative in the other direction. -/
+/-- `{(0,1), (0,1), (0,1)} → {(0,1)}`. `|LHS| = 3`, `|RHS| = 1`. -/
 noncomputable def tripleToEdgeRule : Rule (Fin 2) where
   lhs := ⟨(binaryEdge 0 1) ::ₘ (binaryEdge 0 1) ::ₘ (binaryEdge 0 1) ::ₘ 0⟩
   rhs := singleBinaryHypergraph 0 1
@@ -109,8 +86,7 @@ theorem tripleToEdgeRule_not_conservative :
   rw [tripleToEdgeRule_lhsSize, tripleToEdgeRule_rhsSize]
   decide
 
-/-- **`selfMapRule`**: consume one edge, produce the same edge.
-Conservative, `|LHS|=|RHS|=1`. A JGORARD-style "rewrite-in-place" rule. -/
+/-- `{(0,1)} → {(0,1)}`. `|LHS| = |RHS| = 1`. -/
 noncomputable def selfMapRule : Rule (Fin 2) where
   lhs := singleBinaryHypergraph 0 1
   rhs := singleBinaryHypergraph 0 1
@@ -129,12 +105,11 @@ theorem selfMapRule_isConservative : selfMapRule.IsConservative := by
   unfold Rule.IsConservative
   rw [selfMapRule_lhsSize, selfMapRule_rhsSize]
 
-/-- **`pairToTriangleRule`**: consume two edges `[(0,1), (1,2)]`,
-produce three edges forming a triangle `[(0,1), (1,2), (2,0)]`.
-Non-conservative, |LHS|=2, |RHS|=3. -/
+/-- A two-vertex hyperedge over `Fin 3`. -/
 private def ternaryEdge (p₁ p₂ : Fin 3) : Hyperedge (Fin 3) :=
   ⟨[p₁, p₂], by simp⟩
 
+/-- `{(0,1), (1,2)} → {(0,1), (1,2), (2,0)}`. `|LHS| = 2`, `|RHS| = 3`. -/
 noncomputable def pairToTriangleRule : Rule (Fin 3) where
   lhs := ⟨(ternaryEdge 0 1) ::ₘ (ternaryEdge 1 2) ::ₘ 0⟩
   rhs := ⟨(ternaryEdge 0 1) ::ₘ (ternaryEdge 1 2) ::ₘ (ternaryEdge 2 0) ::ₘ 0⟩
@@ -155,90 +130,78 @@ theorem pairToTriangleRule_not_conservative :
   rw [pairToTriangleRule_lhsSize, pairToTriangleRule_rhsSize]
   decide
 
-/-! ## Catalog system packaging -/
+/-! ## The rule with empty left- and right-hand sides -/
 
-/-- **The concrete candidate catalog** of non-conservative rules on
-`Fin 2` — useful for search-based filtering. -/
+/-- The rule with empty left-hand side and empty right-hand side. -/
+def identityRule (P : Type) : Rule P :=
+  { lhs := Hypergraph.empty, rhs := Hypergraph.empty }
+
+@[simp] theorem identityRule_lhsSize (P : Type) :
+    (identityRule P).lhsSize = 0 := by
+  unfold identityRule Rule.lhsSize Hypergraph.empty Hypergraph.size
+  simp
+
+@[simp] theorem identityRule_rhsSize (P : Type) :
+    (identityRule P).rhsSize = 0 := by
+  unfold identityRule Rule.rhsSize Hypergraph.empty Hypergraph.size
+  simp
+
+/-- `identityRule P` has |LHS| = |RHS| = 0. -/
+theorem identityRule_isConservative (P : Type) :
+    (identityRule P).IsConservative := by
+  show (identityRule P).lhsSize = (identityRule P).rhsSize
+  rw [identityRule_lhsSize, identityRule_rhsSize]
+
+/-! ## Catalogs -/
+
+/-- The conservative rules `identityRule (Fin 2)` and `selfMapRule`. -/
 noncomputable def conservativeCatalog : List (Rule (Fin 2)) :=
-  [Curvature.identityRule (Fin 2), selfMapRule]
+  [identityRule (Fin 2), selfMapRule]
 
-/-- **The concrete catalog of non-conservative rules** on `Fin 2`. -/
-noncomputable def growthCatalog : List (Rule (Fin 2)) :=
+/-- The non-conservative rules `edgeDuplicateRule` and `tripleToEdgeRule`. -/
+noncomputable def nonConservativeCatalog : List (Rule (Fin 2)) :=
   [edgeDuplicateRule, tripleToEdgeRule]
 
-/-! ## Theorem-level rule-search filters
+/-! ## Conservation of the catalogs -/
 
-A rule passes/fails a *target signature criterion*. We prove two
-filters: conservation (screens out structurally-capped rules) and
-dimension cap (screens out rules trapped on finite vertex types). -/
-
-/-- **Filter: every rule in `conservativeCatalog` is conservative**. -/
+/-- Every rule in `conservativeCatalog` is conservative. -/
 theorem conservativeCatalog_all_conservative :
     ∀ r ∈ conservativeCatalog, r.IsConservative := by
   intro r hr
   unfold conservativeCatalog at hr
   simp at hr
   rcases hr with h | h
-  · rw [h]; exact Curvature.identityRule_isConservative (Fin 2)
+  · rw [h]; exact identityRule_isConservative (Fin 2)
   · rw [h]; exact selfMapRule_isConservative
 
-/-- **Filter: every rule in `growthCatalog` is non-conservative**. -/
-theorem growthCatalog_all_non_conservative :
-    ∀ r ∈ growthCatalog, ¬ r.IsConservative := by
+/-- No rule in `nonConservativeCatalog` is conservative. -/
+theorem nonConservativeCatalog_all_non_conservative :
+    ∀ r ∈ nonConservativeCatalog, ¬ r.IsConservative := by
   intro r hr
-  unfold growthCatalog at hr
+  unfold nonConservativeCatalog at hr
   simp at hr
   rcases hr with h | h
   · rw [h]; exact edgeDuplicateRule_not_conservative
   · rw [h]; exact tripleToEdgeRule_not_conservative
 
-/-! ## Rule-search → target-constraint bridge
+/-! ## `Rule.GrowthCompatible`
 
-`Rule.GrowthCompatible r` is defined as `¬ r.IsConservative`. The
-predicate is a label for the screen. No theorem here proves that a
-conservative rule has no continuum limit of positive dimension. -/
+`Rule.GrowthCompatible r` is defined as `¬ r.IsConservative`. -/
 
-/-- **Target-compatibility predicate**: a rule is *growth-compatible*
-with an unbounded-growth target if it is not conservative. -/
+/-- `r` is not conservative. -/
 def Rule.GrowthCompatible {P : Type*} (r : Rule P) : Prop :=
   ¬ r.IsConservative
 
-/-- **Every rule in `growthCatalog` is growth-compatible**. -/
-theorem growthCatalog_growth_compatible :
-    ∀ r ∈ growthCatalog, r.GrowthCompatible := by
+/-- Every rule in `nonConservativeCatalog` satisfies `GrowthCompatible`. -/
+theorem nonConservativeCatalog_growth_compatible :
+    ∀ r ∈ nonConservativeCatalog, r.GrowthCompatible := by
   intro r hr
-  exact growthCatalog_all_non_conservative r hr
+  exact nonConservativeCatalog_all_non_conservative r hr
 
-/-- **No rule in `conservativeCatalog` is growth-compatible**. -/
+/-- No rule in `conservativeCatalog` satisfies `GrowthCompatible`. -/
 theorem conservativeCatalog_not_growth_compatible :
     ∀ r ∈ conservativeCatalog, ¬ r.GrowthCompatible := by
   intro r hr hgc
   exact hgc (conservativeCatalog_all_conservative r hr)
-
-/-! ## Witness: a growth-catalog rule inhabits every bridge obligation
-
-A concrete search result: the non-conservative `edgeDuplicateRule` can
-be packaged into a `RewritingSystem (Fin 2)` that inhabits the
-`HypergraphMetricOriginObligation`. This is a stronger witness than
-`identitySystem Unit` because the rule is empirically non-trivial. -/
-
-/-- **The `edgeDuplicateRule`-based rewriting system**. -/
-noncomputable def edgeDuplicateSystem : RewritingSystem (Fin 2) :=
-  ⟨[edgeDuplicateRule]⟩
-
-/-- **Alternative Minkowski witness** using a non-conservative
-growth rule. The rule `edgeDuplicateRule` is load-bearing — it is
-the only rule in the system, and the trajectory mentions it through
-the system. -/
-theorem minkowski4_from_growthRule :
-    Curvature.minkowski4_from_hypergraph := by
-  unfold Curvature.minkowski4_from_hypergraph
-    Curvature.HypergraphMetricOriginObligation
-  refine ⟨Fin 2, inferInstance, inferInstance, Fin 2,
-    edgeDuplicateSystem, cycleHypergraph 2,
-    Curvature.emptyTrajectory edgeDuplicateSystem (cycleHypergraph 2),
-    fun k => (1 : ℝ) / (k + 1), ?_⟩
-  intro k
-  positivity
 
 end InfraFormalization

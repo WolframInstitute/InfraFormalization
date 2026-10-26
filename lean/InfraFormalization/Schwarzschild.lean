@@ -1,80 +1,14 @@
 /-
-Schwarzschild metric component formulas — the first non-trivial
-curved metric we formalise.
+The Schwarzschild metric in coordinates.
 
-**Why a separate component-level file and not a `MetricData 4`
-instance?** The Schwarzschild metric components `1/(1 − 2M/r)` and
-`1/(r² sin²θ)` are singular at `r = 2M`, `r = 0`, and
-`sin θ = 0`. Our `MetricData n` structure requires the axiom
-`∑_α g^{μα} g_{αν} = δ^μ_ν` pointwise for all `x : Fin n → ℝ`. That
-axiom fails at the coordinate singularities (Lean's total division
-returns `0` there, breaking `X · (1/X) = 1`).
-
-So we formalise Schwarzschild as **component-level functions with
-explicit exterior-region theorems**. `SchwarzschildValid M x` is the
-predicate "the Schwarzschild metric is non-singular at `x`"; the key
-theorems carry it as a hypothesis. The full `MetricData` packaging
-is deferred until a `PartialMetricData` / domain-restricted variant
-is added (tracked in `MILESTONES.md`).
-
-**Scope.** Defines `sgg`, `sginv`, `sdg` (component functions),
-`schwarzschildValid` (exterior predicate), and proves the key
-inverse identity on the exterior. Christoffel computation is
-complete (all eight non-zero entries matching the textbook); vacuum
-`Ric = 0` is a substantial follow-up.
-
-──────────────────────────────────────────────────────────────────────
-**HYPERGRAPH-ORIGIN OBLIGATION — EXPLICITLY OPEN.**
-──────────────────────────────────────────────────────────────────────
-
-Per the grounding principle of this project, every continuum object
-must have a hypergraph origin. The `sgg`, `sginv`, `sdg`,
-`schwarzschildChristoffel` functions above are **purely analytic**:
-they take `(M, x : Fin 4 → ℝ)` and return real values. No
-`Hypergraph V` appears in their definition.
-
-This is intentionally a **landing pad**: Schwarzschild is the
-*target* of a bridge we have not yet built, not a result derived
-from hypergraph rewriting. The machine-checked formal statement of
-the missing leg is:
-
-  `InfraFormalization.SchwarzschildObligationMet`
-    (in `ContinuumLimitStatement.lean`)
-
-which currently contains `∧ False` — the obligation is formally
-uninhabited. No term exists, so nothing downstream is permitted to
-assume "Schwarzschild comes from a Wolfram-model rule."
-
-This matters because JGORARD's corpus (arXiv:2004.14810 §3.3;
-2102.09363 §5; 2303.07282) *claims* to have derived Schwarzschild
-(and Kerr, FLRW) from hypergraph rules. The corpus audit (see
-`MAJOR_FLAWS.md`) finds that the 2102.09363 comparison starts from
-initial data Poisson-sampled from the target geometry (G3 lines
-6148-6152, 6179).
-
-**What is achievable right now** (and *is* built elsewhere in the
-project):
-  1. `Infra.LorentzLattice`, `Infra.Minkowski`, `Infra.ScaledLorentz`
-     — scaled discrete lattices GH-converging to *flat* Minkowski.
-  2. `HypergraphCycleBridge` (this session) — concrete bridge from
-     `Hypergraph (Fin n)` via `laplacianHyper` to the continuum
-     second derivative, polynomial test functions.
-  3. `HeatEquation.lean`, `WaveEquation.lean`,
-     `SchrodingerEquation.lean`, `KleinGordon.lean` — PDEs living
-     on `Hypergraph V` with mass conservation / energy conservation
-     / unitarity, provably self-adjoint Laplacian.
-
-**What is NOT built** (and whose absence the `False` in
-`SchwarzschildObligationMet` formally records):
-  * A concrete `RewritingSystem P` whose scaled trajectory
-    GH-converges to the Schwarzschild manifold.
-  * Any hypergraph construction whose `laplacianHyper` scales to
-    the curved-space Laplace-Beltrami operator for a non-flat
-    metric.
-
-Extending the polynomial-case Rung-2 bridge of this session into the
-curved-space case is the outstanding Wolfram-physics research
-problem; it cannot be bluffed past in Lean.
+This module defines the components `sgg`, `sginv` and `sdg` of the
+Schwarzschild metric, its inverse and its first partial derivatives in
+coordinates `(t, r, θ, φ)`, and the region `SchwarzschildValid M`
+(`r > 2M`, `r > 0`, `sin θ ≠ 0`). It proves `g^{μα} g_{αν} = δ^μ_ν` on
+that region, computes the nine nonzero Christoffel symbols up to
+lower-index symmetry, packages the metric as a `PartialMetricData 4`, and
+proves that the metric is diagonal with signature (−, +, +, +) on the
+region. No definition in this module involves a hypergraph.
 -/
 
 import InfraFormalization.CurvatureLocalCoord
@@ -86,8 +20,8 @@ import Mathlib.Tactic.FieldSimp
 namespace InfraFormalization
 namespace Curvature
 
-/-- **Schwarzschild metric components** `g_{μν}(x; M)`. Diagonal in
-Schwarzschild coordinates `(t, r, θ, φ)`. -/
+/-- Metric components in coordinates `(t, r, θ, φ)`: `g_{00} = −(1 − 2M/r)`,
+`g_{11} = 1/(1 − 2M/r)`, `g_{22} = r²`, `g_{33} = r² sin²θ`, off-diagonal 0. -/
 noncomputable def sgg (M : ℝ) (x : Fin 4 → ℝ) (μ ν : Fin 4) : ℝ :=
   if μ ≠ ν then 0
   else
@@ -98,8 +32,8 @@ noncomputable def sgg (M : ℝ) (x : Fin 4 → ℝ) (μ ν : Fin 4) : ℝ :=
     else if μ.val = 2 then r^2
     else r^2 * (Real.sin θ)^2
 
-/-- **Schwarzschild inverse metric** `g^{μν}(x; M)`. Diagonal
-reciprocal of `sgg`. -/
+/-- Inverse metric components: the reciprocals of the diagonal components
+of `sgg`, off-diagonal 0. -/
 noncomputable def sginv (M : ℝ) (x : Fin 4 → ℝ) (μ ν : Fin 4) : ℝ :=
   if μ ≠ ν then 0
   else
@@ -110,9 +44,8 @@ noncomputable def sginv (M : ℝ) (x : Fin 4 → ℝ) (μ ν : Fin 4) : ℝ :=
     else if μ.val = 2 then 1 / r^2
     else 1 / (r^2 * (Real.sin θ)^2)
 
-/-- **First partial derivatives** `∂_l g_{μν}(x; M)`. Non-zero only
-for `l = 1 (r)` on diagonal components, and for `l = 2 (θ)` on the
-`φφ` component. -/
+/-- First partial derivatives `∂_l g_{μν}`. They are nonzero only for
+`l = 1` on diagonal components and for `l = 2` on `g_{33}`. -/
 noncomputable def sdg (M : ℝ) (l : Fin 4) (x : Fin 4 → ℝ) (μ ν : Fin 4) : ℝ :=
   if μ ≠ ν then 0
   else
@@ -128,13 +61,11 @@ noncomputable def sdg (M : ℝ) (l : Fin 4) (x : Fin 4 → ℝ) (μ ν : Fin 4) 
       else 0
     else 0
 
-/-- **Schwarzschild exterior region predicate.** Non-zero components,
-non-singular metric. Requires `r > 2M` (strictly outside the event
-horizon), `r ≠ 0`, and `sin θ ≠ 0` (outside the axis). -/
+/-- `r > 2M`, `r > 0` and `sin θ ≠ 0`. -/
 def SchwarzschildValid (M : ℝ) (x : Fin 4 → ℝ) : Prop :=
   x 1 > 2 * M ∧ x 1 > 0 ∧ Real.sin (x 2) ≠ 0
 
-/-- The Schwarzschild metric is symmetric. -/
+/-- `sgg` is symmetric. -/
 theorem sgg_symm (M : ℝ) (x : Fin 4 → ℝ) (μ ν : Fin 4) :
     sgg M x μ ν = sgg M x ν μ := by
   unfold sgg
@@ -142,7 +73,7 @@ theorem sgg_symm (M : ℝ) (x : Fin 4 → ℝ) (μ ν : Fin 4) :
   · rw [h]
   · simp [h, Ne.symm h]
 
-/-- The Schwarzschild inverse metric is symmetric. -/
+/-- `sginv` is symmetric. -/
 theorem sginv_symm (M : ℝ) (x : Fin 4 → ℝ) (μ ν : Fin 4) :
     sginv M x μ ν = sginv M x ν μ := by
   unfold sginv
@@ -150,8 +81,7 @@ theorem sginv_symm (M : ℝ) (x : Fin 4 → ℝ) (μ ν : Fin 4) :
   · rw [h]
   · simp [h, Ne.symm h]
 
-/-- The Schwarzschild partials preserve the metric's lower-index
-symmetry. -/
+/-- `sdg l x μ ν = sdg l x ν μ`. -/
 theorem sdg_symm (M : ℝ) (l : Fin 4) (x : Fin 4 → ℝ) (μ ν : Fin 4) :
     sdg M l x μ ν = sdg M l x ν μ := by
   unfold sdg
@@ -159,9 +89,7 @@ theorem sdg_symm (M : ℝ) (l : Fin 4) (x : Fin 4 → ℝ) (μ ν : Fin 4) :
   · rw [h]
   · simp [h, Ne.symm h]
 
-/-- **Diagonal inverse identity in the exterior.** For `x` in the
-Schwarzschild exterior, `g · g⁻¹ = g^{μμ} g_{μμ} = 1` at every
-diagonal component. -/
+/-- On `SchwarzschildValid M`, `g^{μμ} g_{μμ} = 1` for every `μ`. -/
 theorem sginv_mul_sgg_diagonal {M : ℝ} {x : Fin 4 → ℝ}
     (hx : SchwarzschildValid M x) (μ : Fin 4) :
     sginv M x μ μ * sgg M x μ μ = 1 := by
@@ -200,10 +128,7 @@ theorem sginv_mul_sgg_diagonal {M : ℝ} {x : Fin 4 → ℝ}
     have hsin_sq : (Real.sin (x 2))^2 ≠ 0 := pow_ne_zero _ hsinθ
     field_simp
 
-/-- **Schwarzschild full inverse identity in the exterior.** The
-matrix product `g^{μα} g_{αν}` equals `δ^μ_ν` at any exterior point.
-This is the axiom `ginv_mul` of `MetricData`, established here as a
-theorem conditional on `SchwarzschildValid`. -/
+/-- On `SchwarzschildValid M`, `∑_α g^{μα} g_{αν} = δ^μ_ν`. -/
 theorem sginv_mul_sgg {M : ℝ} {x : Fin 4 → ℝ}
     (hx : SchwarzschildValid M x) (μ ν : Fin 4) :
     (∑ α : Fin 4, sginv M x μ α * sgg M x α ν)
@@ -233,40 +158,31 @@ theorem sginv_mul_sgg {M : ℝ} {x : Fin 4 → ℝ}
       have hne : μ ≠ α := fun heq => hαμ heq.symm
       simp [hne]
 
-/-! ## Schwarzschild Christoffel symbols
+/-! ## Christoffel symbols
 
-Direct computation using the Christoffel formula with Schwarzschild's
-`sginv`, `sdg`. We define `schwarzschildChristoffel M x ρ μ ν` and
-prove specific non-zero entries.
+The nonzero Christoffel symbols, up to lower-index symmetry, are
 
-The textbook non-zero Schwarzschild Christoffel symbols (up to lower-
-index symmetry) are:
-
-  Γ^0_{01} = Γ^0_{10} = M / (r² (1 − 2M/r)) = M / (r(r−2M))
+  Γ^0_{01} = M / (r(r−2M))
   Γ^1_{00} = M (r − 2M) / r³
-  Γ^1_{11} = −M / (r² (1 − 2M/r)) = −M / (r(r−2M))
+  Γ^1_{11} = −M / (r(r−2M))
   Γ^1_{22} = −(r − 2M)
   Γ^1_{33} = −(r − 2M) sin²θ
-  Γ^2_{12} = Γ^2_{21} = 1/r
+  Γ^2_{12} = 1/r
   Γ^2_{33} = −sin θ cos θ
-  Γ^3_{13} = Γ^3_{31} = 1/r
-  Γ^3_{23} = Γ^3_{32} = cos θ / sin θ
+  Γ^3_{13} = 1/r
+  Γ^3_{23} = cos θ / sin θ
 
-All others vanish.
-
-We prove `Γ^1_{00} = M (r − 2M) / r³` as the worked example,
-illustrating the formalism. The rest follow by analogous computations
-(tedious but mechanical).
+Each is proved below on `SchwarzschildValid M`.
 -/
 
-/-- **Schwarzschild Christoffel symbols** (via the standard formula). -/
+/-- `Γ^ρ_{μν} = (1/2) ∑_σ g^{ρσ} (∂_μ g_{σν} + ∂_ν g_{σμ} − ∂_σ g_{μν})`. -/
 noncomputable def schwarzschildChristoffel (M : ℝ) (x : Fin 4 → ℝ)
     (ρ μ ν : Fin 4) : ℝ :=
   (1 / 2) * ∑ σ : Fin 4,
     sginv M x ρ σ *
       (sdg M μ x σ ν + sdg M ν x σ μ - sdg M σ x μ ν)
 
-/-- **Lower-index symmetry of Schwarzschild Christoffel**. -/
+/-- `Γ^ρ_{μν} = Γ^ρ_{νμ}`. -/
 theorem schwarzschildChristoffel_symm (M : ℝ) (x : Fin 4 → ℝ)
     (ρ μ ν : Fin 4) :
     schwarzschildChristoffel M x ρ μ ν = schwarzschildChristoffel M x ρ ν μ := by
@@ -280,11 +196,7 @@ theorem schwarzschildChristoffel_symm (M : ℝ) (x : Fin 4 → ℝ)
     ring
   rw [h1]
 
-/-- **Worked example: `Γ^1_{00}` = M(r − 2M)/r³ in the exterior.**
-Demonstrates the Schwarzschild Christoffel computation on a specific
-non-zero entry. The proof uses the three component computations:
-`sginv M x 1 1 = 1 − 2M/r`, `sdg M 0 x 1 0 = 0` (time-derivative
-of off-diagonal), `sdg M 1 x 0 0 = −2M/r²`. -/
+/-- On `SchwarzschildValid M`, `Γ^1_{00} = M (r − 2M) / r³`. -/
 theorem schwarzschildChristoffel_1_00 {M : ℝ} {x : Fin 4 → ℝ}
     (hx : SchwarzschildValid M x) :
     schwarzschildChristoffel M x (⟨1, by decide⟩ : Fin 4)
@@ -328,21 +240,21 @@ theorem schwarzschildChristoffel_1_00 {M : ℝ} {x : Fin 4 → ℝ}
   · intro hne
     exact absurd (Finset.mem_univ _) hne
 
-/-! ### Helper lemma: off-diagonal vanishing of `sginv`. -/
+/-! ### Off-diagonal components of `sginv` vanish -/
 
 theorem sginv_off_diag {M : ℝ} {x : Fin 4 → ℝ} {ρ σ : Fin 4} (h : ρ ≠ σ) :
     sginv M x ρ σ = 0 := by
   unfold sginv
   rw [if_pos h]
 
-/-! ### Helper lemma: off-diagonal vanishing of `sdg`. -/
+/-! ### Off-diagonal components of `sdg` vanish -/
 
 theorem sdg_off_diag {M : ℝ} {l : Fin 4} {x : Fin 4 → ℝ} {μ ν : Fin 4}
     (h : μ ≠ ν) : sdg M l x μ ν = 0 := by
   unfold sdg
   rw [if_pos h]
 
-/-! ### Specific partial-derivative values. -/
+/-! ### Values of `sdg` -/
 
 /-- `∂_l g_{00}` is zero for `l ≠ 1`. -/
 theorem sdg_l_00_eq_zero {M : ℝ} {x : Fin 4 → ℝ} {l : Fin 4} (hl : l.val ≠ 1) :
@@ -392,7 +304,7 @@ theorem sdg_2_33 {M : ℝ} (x : Fin 4 → ℝ) :
   unfold sdg
   simp
 
-/-! ### Specific inverse-metric values on the exterior. -/
+/-! ### Values of `sginv` -/
 
 theorem sginv_00 {M : ℝ} (x : Fin 4 → ℝ) :
     sginv M x (⟨0, by decide⟩ : Fin 4) (⟨0, by decide⟩ : Fin 4)
@@ -418,10 +330,9 @@ theorem sginv_33 {M : ℝ} (x : Fin 4 → ℝ) :
   unfold sginv
   simp
 
-/-! ### Generic sum-collapse helper.
+/-! ### Reduction of the Christoffel sum
 
-For computing `Γ^ρ_{μν}`, since `sginv` is diagonal, the sum over `σ`
-collapses to `σ = ρ`. This helper encapsulates that collapse. -/
+Since `sginv` is diagonal, the sum over `σ` reduces to the term `σ = ρ`. -/
 
 theorem schwarzschild_christoffel_collapse (M : ℝ) (x : Fin 4 → ℝ)
     (ρ μ ν : Fin 4) :
@@ -436,20 +347,10 @@ theorem schwarzschild_christoffel_collapse (M : ℝ) (x : Fin 4 → ℝ)
   · intro hne
     exact absurd (Finset.mem_univ _) hne
 
-/-! ### Textbook Schwarzschild Christoffel entries.
+/-! ### The remaining Christoffel symbols
 
-  Γ^0_{01} = M / (r(r−2M))
-  Γ^1_{11} = −M / (r(r−2M))
-  Γ^1_{22} = −(r − 2M)
-  Γ^1_{33} = −(r − 2M) sin²θ
-  Γ^2_{12} = 1/r
-  Γ^2_{33} = −sin θ cos θ
-  Γ^3_{13} = 1/r
-  Γ^3_{23} = cos θ / sin θ
-
-For each, we use `schwarzschild_christoffel_collapse` to reduce to a
-single `(1/2) g^{ρρ} (·)` expression, then compute the three partials
-(most are zero by `sdg_off_diag`), and finish with `field_simp; ring`. -/
+Each proof reduces the sum with `schwarzschild_christoffel_collapse`,
+evaluates the partial derivatives, and finishes with `field_simp; ring`. -/
 
 theorem schwarzschildChristoffel_0_01 {M : ℝ} {x : Fin 4 → ℝ}
     (hx : SchwarzschildValid M x) :
@@ -618,15 +519,10 @@ theorem schwarzschildChristoffel_3_23 {M : ℝ} {x : Fin 4 → ℝ}
   field_simp
   ring
 
-/-! ## Schwarzschild as `PartialMetricData` on the exterior (B5) -/
+/-! ## `PartialMetricData` -/
 
-/-- **Schwarzschild metric bundled as a `PartialMetricData 4`** with
-validity predicate `SchwarzschildValid M` — the exterior region
-`r > 2M ∧ r > 0 ∧ sin θ ≠ 0`.
-
-This makes Schwarzschild slot into the full ConnectionData /
-Christoffel / Riemann / Ricci machinery, without lying about the
-interior (where `ginv_mul` fails). -/
+/-- The Schwarzschild metric as a `PartialMetricData 4` with domain
+`SchwarzschildValid M`. -/
 noncomputable def schwarzschildPartial (M : ℝ) : PartialMetricData 4 where
   g := sgg M
   ginv := sginv M
@@ -637,10 +533,8 @@ noncomputable def schwarzschildPartial (M : ℝ) : PartialMetricData 4 where
   ginv_mul := fun x hx μ ν => sginv_mul_sgg hx μ ν
   dg_symm := fun l x _ μ ν => sdg_symm M l x μ ν
 
-/-- **PartialMetricData-level Christoffel = the explicit Schwarzschild
-Christoffel.** On the exterior, the two coincide (same formula, same
-inputs). Makes the `PartialMetricData` packaging interoperate with
-existing `schwarzschildChristoffel`. -/
+/-- The Christoffel symbols of `schwarzschildPartial M` are
+`schwarzschildChristoffel M`, by `rfl`. -/
 theorem schwarzschildPartial_christoffel (M : ℝ) (x : Fin 4 → ℝ)
     (ρ μ ν : Fin 4) :
     (schwarzschildPartial M).christoffel x ρ μ ν
@@ -648,32 +542,8 @@ theorem schwarzschildPartial_christoffel (M : ℝ) (x : Fin 4 → ℝ)
   unfold PartialMetricData.christoffel schwarzschildChristoffel schwarzschildPartial
   rfl
 
-/-- **Schwarzschild-as-vacuum-solution obligation (B4 / #23)**: there
-exists a `MetricData 4` (the Schwarzschild metric, extended to a full
-metric in some way) and a `ConnectionData 4` (its Levi-Civita
-connection) such that, at every exterior point, the Ricci tensor
-vanishes.
-
-This is a *statement obligation*. Constructing the explicit connection
-from the Schwarzschild components requires second partial derivatives
-`∂²g`, not yet formalised. The obligation here makes any future
-Schwarzschild-vacuum proof machine-checkable.
-
-Note: `MetricData 4` requires `ginv_mul` *everywhere*; since
-Schwarzschild fails this at the horizon, the "extension" implicit
-here is non-trivial (one needs to extend sgg/sginv/sdg outside the
-exterior domain, e.g., to 0 or some compatible values). -/
-def SchwarzschildVacuumObligation (M : ℝ) : Prop :=
-  ∃ (metric : MetricData 4) (C : ConnectionData 4),
-    (∀ x : Fin 4 → ℝ, SchwarzschildValid M x →
-      ∀ μ ν : Fin 4, metric.g x μ ν = sgg M x μ ν)
-    ∧ (∀ x : Fin 4 → ℝ, SchwarzschildValid M x →
-      ∀ σ ν : Fin 4, C.ricci x σ ν = 0)
-
-/-- **Schwarzschild has Lorentzian signature on the exterior.** At
-every exterior point, the `sgg M x μ ν` has diagonal Lorentzian form
-(`g_00 < 0`, `g_ii > 0`, off-diagonal = 0). Confirms Schwarzschild is
-a valid Lorentzian geometry where non-singular. -/
+/-- On `SchwarzschildValid M`, `g_{00} < 0`, `g_{ii} > 0` for `i ≥ 1`, and
+the off-diagonal components are 0. -/
 theorem sgg_lorentzian_pointwise (M : ℝ) (x : Fin 4 → ℝ)
     (hv : SchwarzschildValid M x) :
     sgg M x 0 0 < 0

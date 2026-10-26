@@ -1,16 +1,12 @@
 /-
-**EME (Emergent Multiway Event) tracker** (IQ8 extension, M7 SAHMED).
+Predicates on the states of a trajectory.
 
-SAHMED's programme asks for a formal "EME lifetime" — the
-persistence of distinguishable branchial-state features across
-multiway-rewriting steps. This file provides concrete infrastructure
-grounded in `Hypergraph V` and `Trajectory` directly.
-
-An **EME** is any predicate `ψ : Hypergraph V → Prop` that
-distinguishes some branchial states. Its persistence along a
-trajectory can be expressed as "ψ holds on every state in the list".
-
-Grounded: every definition uses `Hypergraph V` + `Trajectory`.
+An `EMEPredicate V` is a predicate on `Hypergraph V`. The module defines
+when such a predicate holds at an index of a `Trajectory` and when it holds
+at every index. It proves that the constant predicate `True` holds at every
+index, that the conjunction of two predicates that hold at every index holds
+at every index, and that an edge-count bound holds at every index when it is
+assumed at every index.
 -/
 
 import InfraFormalization.Multiway
@@ -21,38 +17,22 @@ namespace InfraFormalization
 variable {V : Type*} [DecidableEq V]
 variable {P : Type*}
 
-/-- **EME = Emergent Multiway Event predicate**: a distinguishing
-feature on hypergraph states. -/
+/-- A predicate on hypergraph states. -/
 abbrev EMEPredicate (V : Type*) := Hypergraph V → Prop
 
-/-- **EME holds at index `i` along a trajectory**: the predicate `ψ`
-holds on the `i`-th state of `τ.states`. -/
+/-- If `i < τ.states.length`, then `ψ` holds on the `i`-th state of
+`τ.states`. The statement holds vacuously for larger `i`. -/
 def emeHoldsAt {sys : RewritingSystem P} {init : Hypergraph V}
     (τ : Trajectory sys init) (ψ : EMEPredicate V) (i : ℕ) : Prop :=
   ∀ (hi : i < τ.states.length), ψ (τ.states.get ⟨i, hi⟩)
 
-/-- **EME holds throughout** the trajectory. -/
+/-- `ψ` holds on every state of `τ.states`. -/
 def emeHoldsEverywhere {sys : RewritingSystem P} {init : Hypergraph V}
     (τ : Trajectory sys init) (ψ : EMEPredicate V) : Prop :=
   ∀ i, emeHoldsAt τ ψ i
 
-/-- **True-predicate holds everywhere**: the trivially-true EME
-trivially persists. -/
-theorem truePredicate_holds_everywhere {sys : RewritingSystem P}
-    {init : Hypergraph V} (τ : Trajectory sys init) :
-    emeHoldsEverywhere τ (fun _ => True) := by
-  intro i hi
-  trivial
-
-/-- **EME persistence exists** on every trajectory: the true
-predicate is a valid persistent EME. -/
-theorem emePersistent_of_trivial {sys : RewritingSystem P}
-    {init : Hypergraph V} (τ : Trajectory sys init) :
-    ∃ ψ : EMEPredicate V, emeHoldsEverywhere τ ψ :=
-  ⟨fun _ => True, truePredicate_holds_everywhere τ⟩
-
-/-- **Conjunction of two persistent EMEs is persistent.** If `ψ` and
-`χ` both hold everywhere, so does their conjunction. -/
+/-- If `ψ` and `χ` hold on every state of `τ`, then `ψ ∧ χ` holds on every
+state of `τ`. -/
 theorem emeHoldsEverywhere_and {sys : RewritingSystem P}
     {init : Hypergraph V} (τ : Trajectory sys init)
     (ψ χ : EMEPredicate V)
@@ -61,21 +41,9 @@ theorem emeHoldsEverywhere_and {sys : RewritingSystem P}
   intros i hi
   exact ⟨hψ i hi, hχ i hi⟩
 
-/-- **Edge-count-bounded EME**: the predicate "state has at most N
-edges" is a concrete EME-predicate on `Hypergraph V`. -/
+/-- The predicate that a hypergraph has at most `N` edges, counted with
+multiplicity. -/
 def emeEdgeCountLe (N : ℕ) : EMEPredicate V :=
   fun H => Multiset.card H.edges ≤ N
-
-/-- **Large-bound EME is persistent** when the bound exceeds every
-state's edge count. Concrete example of a persistent EME on a given
-trajectory. -/
-theorem emeEdgeCountLe_holds_of_all_bounded {sys : RewritingSystem P}
-    {init : Hypergraph V} (τ : Trajectory sys init) (N : ℕ)
-    (h_all : ∀ i, ∀ (hi : i < τ.states.length),
-      Multiset.card (τ.states.get ⟨i, hi⟩).edges ≤ N) :
-    emeHoldsEverywhere τ (emeEdgeCountLe N) := by
-  intros i hi
-  unfold emeEdgeCountLe
-  exact h_all i hi
 
 end InfraFormalization

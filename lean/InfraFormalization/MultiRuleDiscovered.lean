@@ -9,7 +9,7 @@ that share edges. Both rules of a system therefore fire on the same edge
 in one step. It is not a Wolfram model update when matches overlap, and
 the values below do not describe Wolfram model evolutions.
 
-The module computes by `native_decide` (PROVED-WITH-NATIVE-DECIDE). The
+The values are checked by `native_decide`. The
 column "1 - K/6" is the integer `1 - K / 6`. Other modules call it the
 number of holes. It is a value computed from K, and this module proves
 no statement about cycles or holes of the graph.
@@ -107,14 +107,6 @@ theorem multi_rule_discoveries :
 Among the five systems of this module, `edgeReversal + forkRule_2` has
 the lowest scaled Knill value at depth 3 (-42), so `1 - K/6 = 8`. The
 module does not compare this value with systems outside the five. -/
-
-/-- The scaled Knill value of the fire-all causal graph of
-`edgeReversal + forkRule_2` on `seedEdge12` at depth 3 is -42, and the
-integer `1 - (-42) / 6` equals 8. -/
-theorem highest_merger_rate_multi_rule :
-    knillEulerScaled (causalDAGOfFireAll edgeReversal_fork_Sys seedEdge12 3) = -42 ∧
-    (1 - (-42 : Int) / 6) = 8 :=
-  ⟨edgeReversal_fork_knill_neg42, by decide⟩
 
 end MultiRuleDiscovered
 end InfraFormalization

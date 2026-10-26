@@ -1,32 +1,11 @@
 /-
-**B4-abstract: polynomial per-volume density Tendsto theorem + 3D
-torus extension** (#425).
+Limits of quadratic polynomials divided by `n²`, and the 3D torus.
 
-This module **abstracts** the closed-form sample certifications of
-#424 to fully-universal `Tendsto` claims: for any polynomial closed
-form `p(n) = a · n^d + b · n^(d-1) + c`, the per-volume density
-`p(n) / n^d → a` as `n → ∞`, proven via Mathlib limit lemmas without
-any per-sample `native_decide` reliance.
-
-Then the module **extends the framework to 3 dimensions**: verified
-at `n ∈ {4, 5}` (Forman) and `n ∈ {3, 4, 5}` (Higuchi); the
-"for `n ≥ 4`" closed form is conjectural.
-Pattern across dimensions:
-
-  * `T¹` (cycle, 2-regular): per-volume Forman = `0`,  Higuchi = `0`.
-  * `T²` (4-regular):        per-volume Forman = `-16`, Higuchi = `-2`.
-  * `T³` (6-regular):        per-volume Forman = `-48`, Higuchi = `-4`.
-
-Pattern observed at `d ∈ {1, 2, 3}`: **per-volume bulk Forman of `Td`
-≈ `-8 d (d−1)`, per-volume bulk Higuchi ≈ `2 − 2d`**; the "general
-formula" framing is conjectural extrapolation.
-
-**What this delivers**:
-
-  * `polynomialPerVolume_tendsto` — abstract `Tendsto` theorem.
-  * Closed-form sample certifications for T³ Forman / Higuchi.
-  * Bundled `bulk_curvature_density_dimension_pattern` — the cross-
-    dimensional density-constant pattern as a single theorem.
+The module proves that `(a·n² + b·n + c)/n²` tends to `a` for all real `a`, `b`, `c`, and applies
+this to the grid closed forms `gridFormanClosedForm` and `gridHiguchiClosedForm`, whose quotients
+by `n²` tend to `-16` and `-2`. It defines the 3D torus `torus3HG m n k` and proves, with
+`native_decide`, that its Forman scalar equals `-48n³` at `n ∈ {4, 5}` and its doubled Higuchi
+total equals `-4n³` at `n ∈ {3, 4, 5}`.
 -/
 
 import InfraFormalization.NormalizedDensityLimits
@@ -37,8 +16,6 @@ namespace PolynomialDensityLimits
 open MultiwayExec
 open RuleSignatureSchema
 open RuleSignatureExecMetrics
-open Curvature
-open MetricTargetScalars
 open DiscreteRicciConvergence
 open CycleContinuumLimit
 open HiguchiScreener
@@ -49,12 +26,10 @@ open GridContinuumLimit
 open NormalizedDensityLimits
 open Filter
 
-/-! ## Abstract polynomial density Tendsto
+/-! ## Limit of a quadratic divided by `n²`
 
-The core abstract lemma: for any real `a`, `b`, `c`, the sequence
-`(a · n² + b · n + c) / n²` tends to `a` as `n → ∞`. Proven by
-rewriting `(a · n² + b · n + c) / n² = a + b/n + c/n²` and using
-the standard `1/n → 0` lemma. -/
+For real `a`, `b`, `c` the sequence `(a·n² + b·n + c)/n²` tends to `a`. The proof rewrites the
+quotient as `a + b/n + c/n²` and uses `1/n → 0`. -/
 
 /-- `b/n → 0` as `n → ∞` for any real `b`. -/
 lemma tendsto_const_div_natCast_atTop_zero (b : ℝ) :
@@ -76,11 +51,7 @@ lemma tendsto_const_div_natCast_sq_atTop_zero (c : ℝ) :
   have hn' : (n : ℝ) ≠ 0 := by exact_mod_cast hn.ne'
   field_simp
 
-/-- **Abstract polynomial per-volume density Tendsto**: for any real
-`a`, `b`, `c`, the rational function `(a · n² + b · n + c) / n²`
-tends to `a` as `n → ∞`. This abstracts the closed-form sample
-certifications of `gridFormanDensity` and `torusFormanPerArea` from
-#424 to a universal claim about all `n`. -/
+/-- For real `a`, `b`, `c`, the sequence `(a·n² + b·n + c)/n²` tends to `a` as `n → ∞`. -/
 theorem polynomialPerArea_tendsto (a b c : ℝ) :
     Tendsto (fun n : ℕ =>
         (a * (n : ℝ)^2 + b * (n : ℝ) + c) / ((n : ℝ)^2))
@@ -100,16 +71,9 @@ theorem polynomialPerArea_tendsto (a b c : ℝ) :
   have hn2 : ((n : ℝ)^2) ≠ 0 := pow_ne_zero 2 hn'
   field_simp
 
-/-! ## 3D torus extension — the dimensional pattern continues
+/-! ## 3D torus
 
-The 3D torus `T³(n, n, n)` (all vertices degree 6, no triangles for
-`n ≥ 4`) gives:
-
-  * `Forman(T³(n, n, n)) = -48 n³` verified at `n ∈ {4, 5}`
-  * `Higuchi(T³(n, n, n)) = -4 n³` (= `-4 per-vertex × n³ vertices`)
-
-The per-volume densities `-48` and `-4` follow the pattern
-`Forman_density(Td) = -8 d (d−1)`, `Higuchi_density(Td) = 2 - 2d`. -/
+For `n ≥ 4` every vertex of `torus3HG n n n` has degree 6 and no edge lies on a triangle. -/
 
 /-- The 3D torus `T³(m, n, k)` as `ExecHG ℕ`. Each vertex `(i, j, l)`
 has 6 neighbors (one in each of the 3 directions, both forward and
@@ -133,10 +97,9 @@ def torus3HG (m n k : ℕ) : ExecHG ℕ :=
           ⟨[nodeId i j l, nodeId i j ((l + 1) % k)], List.cons_ne_nil _ _⟩)))
   dirX ++ dirY ++ dirZ
 
-/-! ### T³ Forman closed form: `-48 n³` (for n ≥ 4)
+/-! ### T³ Forman closed form: `-48 n³`
 
-Sample certifications. T³(3,3,3) is special (wraps create triangles
-in the size-3 cycles), so we sample from n = 4 onward. -/
+Checked at `n ∈ {4, 5}`. At `n = 3` the wraparound edges form triangles. -/
 
 def torus3FormanClosedForm (n : ℕ) : ℤ := -48 * (n : ℤ)^3
 
@@ -150,7 +113,9 @@ theorem torus3_5_5_5_forman_closed_form :
   show execFormanScalar (torus3HG 5 5 5) = -48 * 125
   native_decide
 
-/-! ### T³ Higuchi closed form: `-4 n³` -/
+/-! ### T³ Higuchi closed form: `-4 n³`
+
+Checked at `n ∈ {3, 4, 5}`. -/
 
 def torus3HiguchiClosedForm (n : ℕ) : ℤ := -4 * (n : ℤ)^3
 
@@ -169,36 +134,17 @@ theorem torus3_5_5_5_higuchi_closed_form :
   show higuchiTotalDoubled (torus3HG 5 5 5) = -4 * 125
   native_decide
 
-/-! ### Per-volume density constants for `T³` -/
+/-! ## Grid closed forms divided by `n²`
 
-def torus3FormanPerVolume : ℕ → ℤ := fun _ => -48
-def torus3HiguchiPerVolume : ℕ → ℤ := fun _ => -4
+`polynomialPerArea_tendsto` applied with `(a, b, c) = (-16, 40, -16)` and `(-2, 4, 0)`. The
+sequences are defined from the closed-form polynomials of `NormalizedDensityLimits`. -/
 
-theorem torus3_forman_perVolume_const_tendsto_neg48 :
-    TrueLimitConverges torus3FormanPerVolume (-48) := by
-  unfold TrueLimitConverges torus3FormanPerVolume
-  exact tendsto_const_nhds
-
-theorem torus3_higuchi_perVolume_const_tendsto_neg4 :
-    TrueLimitConverges torus3HiguchiPerVolume (-4) := by
-  unfold TrueLimitConverges torus3HiguchiPerVolume
-  exact tendsto_const_nhds
-
-/-! ## Apply the abstract Tendsto to grid Forman density
-
-The grid Forman closed form `-16 n² + 40 n - 16` divided by `n²`
-tends to `-16` as `n → ∞`, by the abstract `polynomialPerArea_tendsto`
-with `a = -16`, `b = 40`, `c = -16`. This **proves the grid Forman
-per-area density convergence for all n**, not just samples. -/
-
-/-- The grid Forman per-area density as a real-valued sequence,
-matching the closed form `Forman(grid n n) / n² = -16 + 40/n − 16/n²`. -/
+/-- The real sequence `gridFormanClosedForm n / n²`. -/
 noncomputable def gridFormanPerAreaSeq : ℕ → ℝ :=
   fun n => (gridFormanClosedForm n : ℝ) / ((n : ℝ)^2)
 
-/-- **Abstract theorem**: `Forman(grid n n) / n² → -16` for ALL n,
-proven via `polynomialPerArea_tendsto` (no per-sample reliance). -/
-theorem grid_forman_perArea_tendsto_neg16 :
+/-- `gridFormanClosedForm n / n²` tends to `-16`. -/
+theorem gridFormanClosedForm_div_sq_tendsto_neg16 :
     Tendsto gridFormanPerAreaSeq atTop (nhds (-16)) := by
   have key : Tendsto
       (fun n : ℕ => (-16 * (n : ℝ)^2 + 40 * (n : ℝ) + (-16)) / ((n : ℝ)^2))
@@ -211,12 +157,12 @@ theorem grid_forman_perArea_tendsto_neg16 :
   push_cast
   ring
 
-/-- The grid Higuchi per-area density. -/
+/-- The real sequence `gridHiguchiClosedForm n / n²`. -/
 noncomputable def gridHiguchiPerAreaSeq : ℕ → ℝ :=
   fun n => (gridHiguchiClosedForm n : ℝ) / ((n : ℝ)^2)
 
-/-- **Abstract theorem**: `Higuchi(grid n n) / n² → -2` for ALL n. -/
-theorem grid_higuchi_perArea_tendsto_neg2 :
+/-- `gridHiguchiClosedForm n / n²` tends to `-2`. -/
+theorem gridHiguchiClosedForm_div_sq_tendsto_neg2 :
     Tendsto gridHiguchiPerAreaSeq atTop (nhds (-2)) := by
   have key : Tendsto
       (fun n : ℕ => (-2 * (n : ℝ)^2 + 4 * (n : ℝ) + 0) / ((n : ℝ)^2))
@@ -228,74 +174,6 @@ theorem grid_higuchi_perArea_tendsto_neg2 :
   unfold gridHiguchiPerAreaSeq gridHiguchiClosedForm
   push_cast
   ring
-
-/-! ## Cross-dimensional pattern summary
-
-The discrete-bulk curvature density constants of the d-dimensional
-torus follow a clean dimensional pattern:
-
-| d  | Topology  | Per-volume Forman | Per-volume Higuchi |
-|----|-----------|--------------------|--------------------|
-| 1  | `T¹` cycle | `0`                | `0`                |
-| 2  | `T²`       | `-16`              | `-2`               |
-| 3  | `T³`       | `-48`              | `-4`               |
-
-**General formula**:
-
-  * `Forman_density(Td) = -8 d (d − 1)`
-  * `Higuchi_density(Td) = 2 − 2d`
-
-These match the per-edge formula `4 - 2d - 2d = -8d + 4` (doubled to
-`-16d + 8`) × `d` edges-per-vertex (d directions, double-counted by 2)
-= `(-16d + 8) · d / 2 · 2 = (-16d + 8) · d`... actually `d · (-8d + 4)`...
-
-[The exact algebra of the dimensional formula is in the comment
-above the cycle density theorem.] -/
-
-/-- **`bulk_curvature_density_dimension_pattern`**: the cross-
-dimensional density pattern — d = 1, 2, 3 instances of the abstract
-per-volume-density convergence theorem. -/
-theorem bulk_curvature_density_dimension_pattern :
-    -- d = 1 (cycle): both densities → 0
-    TrueLimitConverges constantZeroTrace 0 ∧
-    -- d = 2 (T²): Forman → -16, Higuchi → -2
-    TrueLimitConverges torusFormanPerArea (-16) ∧
-    TrueLimitConverges torusHiguchiPerArea (-2) ∧
-    -- d = 3 (T³): Forman → -48, Higuchi → -4
-    TrueLimitConverges torus3FormanPerVolume (-48) ∧
-    TrueLimitConverges torus3HiguchiPerVolume (-4) :=
-  ⟨constantZeroTrace_tendsto_zero,
-   torus_forman_perArea_const_tendsto_neg16,
-   torus_higuchi_perArea_const_tendsto_neg2,
-   torus3_forman_perVolume_const_tendsto_neg48,
-   torus3_higuchi_perVolume_const_tendsto_neg4⟩
-
-/-! ## What this delivers
-
-**Abstract `Tendsto` proofs** (no `native_decide` reliance):
-
-  * `polynomialPerArea_tendsto a b c`: the universal `(a·n² + b·n + c) / n² → a` lemma.
-  * `grid_forman_perArea_tendsto_neg16`: applies to grid Forman density for ALL n.
-  * `grid_higuchi_perArea_tendsto_neg2`: same for grid Higuchi.
-
-**3D torus extension** (closed-form sample certifications):
-
-  * `torus3_n_n_n_forman_closed_form` for n = 4, 5.
-  * `torus3_n_n_n_higuchi_closed_form` for n = 3, 4, 5.
-  * `torus3_forman_perVolume_const_tendsto_neg48`.
-  * `torus3_higuchi_perVolume_const_tendsto_neg4`.
-
-**Cross-dimensional pattern** (`bulk_curvature_density_dimension_pattern`):
-  * d = 1: per-volume densities → 0 (vacuum).
-  * d = 2: → -16 (Forman), -2 (Higuchi).
-  * d = 3: → -48 (Forman), -4 (Higuchi).
-
-The codebase now has its **first fully-abstract continuum convergence
-theorem** — `grid_forman_perArea_tendsto_neg16` proves the limit
-holds for all `n`, not just a fixed list of samples. This closes the
-loop on the per-area density story from #424 and demonstrates the
-framework extends cleanly to arbitrary dimension.
--/
 
 end PolynomialDensityLimits
 end InfraFormalization

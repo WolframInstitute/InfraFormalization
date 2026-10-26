@@ -1,25 +1,14 @@
 /-
-**Covariant derivative on `ConnectionData`** (X2 / #31).
+Covariant derivative formulas for `ConnectionData`.
 
-Given a `ConnectionData n` carrying Christoffel symbols `Γ`, the
-covariant derivative `∇_μ` acts on tensor fields as:
-
-  * scalar field `φ(x)`:     `∇_μ φ = ∂_μ φ`
-  * (1,0) tensor `V^ν(x)`:   `∇_μ V^ν = ∂_μ V^ν + Γ^ν_{μρ} V^ρ`
-  * (0,1) tensor `ω_ν(x)`:   `∇_μ ω_ν = ∂_μ ω_ν − Γ^ρ_{μν} ω_ρ`
-
-This file defines the three cases pointwise. Higher-rank tensors
-follow by repeated application of these rules.
-
-**Connection to hypergraphs.** Same anchor as `CurvatureRiemann`: on
-the continuum side. A future hypergraph covariant derivative (via
-discrete connection on `FiberedGraph`) would pair with this via the
-discrete → continuum convergence theorem.
-
-**What we do NOT prove.** The Leibniz rule across the three types,
-the commutator `[∇_μ, ∇_ν] V^ρ = R^ρ_{σμν} V^σ`, and the metric
-compatibility `∇_μ g_{νρ} = 0` for Levi-Civita. Those are natural
-next theorems.
+For a `ConnectionData n` with Christoffel symbols `Γ`, this module
+defines pointwise the expressions `∂_μ φ`, `∂_μ V^ν + Γ^ν_{μρ} V^ρ` and
+`∂_μ ω_ν − Γ^ρ_{μν} ω_ρ`, where the partial derivatives are supplied as
+separate functions and are not required to be derivatives of the
+fields. It proves that the vector and covector expressions reduce to
+the supplied partial derivative for `flatConnection n`, and that all
+three are additive. The Leibniz rule, the commutator identity with the
+Riemann tensor, and metric compatibility are not stated.
 -/
 
 import InfraFormalization.CurvatureRiemann
@@ -30,44 +19,30 @@ namespace ConnectionData
 
 variable {n : Nat} (C : ConnectionData n)
 
-/-- **Covariant derivative of a scalar field**. On a scalar field
-`φ`, the covariant derivative coincides with the ordinary partial
-derivative: `∇_μ φ(x) = ∂_μ φ(x)`. The user supplies both `φ` and
-its partial derivatives `dφ`. -/
+/-- The scalar covariant derivative `∇_μ φ(x)`, defined as `dφ μ x`,
+where `dφ` is a supplied family of partial derivatives. -/
 def nabla_scalar (dφ : Fin n → (Fin n → ℝ) → ℝ)
     (μ : Fin n) (x : Fin n → ℝ) : ℝ :=
   dφ μ x
 
-/-- **Covariant derivative of a vector field** (1,0 tensor).
-
-  `∇_μ V^ν(x) = ∂_μ V^ν(x) + ∑_ρ Γ^ν_{μρ}(x) · V^ρ(x)`.
-
-User supplies `V` and `∂V` as data. -/
+/-- The vector covariant derivative
+`∇_μ V^ν(x) = dV μ x ν + ∑_ρ Γ^ν_{μρ}(x) · V^ρ(x)`, where `dV` is a
+supplied family of partial derivatives. -/
 def nabla_vector (V : (Fin n → ℝ) → Fin n → ℝ)
     (dV : Fin n → (Fin n → ℝ) → Fin n → ℝ)
     (μ ν : Fin n) (x : Fin n → ℝ) : ℝ :=
   dV μ x ν + ∑ ρ : Fin n, C.Γ x ν μ ρ * V x ρ
 
-/-- **Covariant derivative of a covector field** (0,1 tensor).
-
-  `∇_μ ω_ν(x) = ∂_μ ω_ν(x) − ∑_ρ Γ^ρ_{μν}(x) · ω_ρ(x)`.
-
-Note the sign difference from the vector case and the swapped upper
-index position in the Christoffel term. -/
+/-- The covector covariant derivative
+`∇_μ ω_ν(x) = dω μ x ν − ∑_ρ Γ^ρ_{μν}(x) · ω_ρ(x)`, where `dω` is a
+supplied family of partial derivatives. -/
 def nabla_covector (ω : (Fin n → ℝ) → Fin n → ℝ)
     (dω : Fin n → (Fin n → ℝ) → Fin n → ℝ)
     (μ ν : Fin n) (x : Fin n → ℝ) : ℝ :=
   dω μ x ν - ∑ ρ : Fin n, C.Γ x ρ μ ν * ω x ρ
 
-/-- **Flat-connection covariant derivative = partial derivative** on
-a scalar field (trivial; shown for completeness). -/
-theorem nabla_scalar_flat (n : Nat) (dφ : Fin n → (Fin n → ℝ) → ℝ)
-    (μ : Fin n) (x : Fin n → ℝ) :
-    nabla_scalar dφ μ x = dφ μ x := rfl
-
-/-- **Flat-connection covariant derivative of a vector field
-coincides with the partial derivative**: on the flat connection,
-`Γ ≡ 0`, so `∇_μ V^ν = ∂_μ V^ν`. -/
+/-- For `flatConnection n`, whose `Γ` is zero, the vector covariant
+derivative equals `dV μ x ν`. -/
 theorem nabla_vector_flat (n : Nat)
     (V : (Fin n → ℝ) → Fin n → ℝ)
     (dV : Fin n → (Fin n → ℝ) → Fin n → ℝ)
@@ -76,9 +51,8 @@ theorem nabla_vector_flat (n : Nat)
   unfold nabla_vector
   simp [flatConnection]
 
-/-- **Flat-connection covariant derivative of a covector field
-coincides with the partial derivative**: on the flat connection,
-`∇_μ ω_ν = ∂_μ ω_ν`. -/
+/-- For `flatConnection n`, the covector covariant derivative equals
+`dω μ x ν`. -/
 theorem nabla_covector_flat (n : Nat)
     (ω : (Fin n → ℝ) → Fin n → ℝ)
     (dω : Fin n → (Fin n → ℝ) → Fin n → ℝ)
@@ -87,8 +61,8 @@ theorem nabla_covector_flat (n : Nat)
   unfold nabla_covector
   simp [flatConnection]
 
-/-- **Linearity (additivity) of the scalar covariant derivative.**
-`∇_μ (dφ + dψ) = ∇_μ dφ + ∇_μ dψ`. Trivial on scalars. -/
+/-- The scalar covariant derivative is additive in the supplied
+partial derivatives. -/
 theorem nabla_scalar_add (n : Nat) (dφ dψ : Fin n → (Fin n → ℝ) → ℝ)
     (μ : Fin n) (x : Fin n → ℝ) :
     nabla_scalar (fun μ x => dφ μ x + dψ μ x) μ x
@@ -96,8 +70,9 @@ theorem nabla_scalar_add (n : Nat) (dφ dψ : Fin n → (Fin n → ℝ) → ℝ)
   unfold nabla_scalar
   rfl
 
-/-- **Linearity (additivity) of the vector covariant derivative.**
-`∇_μ (V + W)^ν = ∇_μ V^ν + ∇_μ W^ν` at each point. -/
+/-- The vector covariant derivative is additive:
+`∇_μ (V + W)^ν = ∇_μ V^ν + ∇_μ W^ν` at each point, with partial
+derivatives `dV + dW`. -/
 theorem nabla_vector_add (V W : (Fin n → ℝ) → Fin n → ℝ)
     (dV dW : Fin n → (Fin n → ℝ) → Fin n → ℝ)
     (μ ν : Fin n) (x : Fin n → ℝ) :
@@ -114,8 +89,9 @@ theorem nabla_vector_add (V W : (Fin n → ℝ) → Fin n → ℝ)
       ring]
   ring
 
-/-- **Linearity (additivity) of the covector covariant derivative.**
-`∇_μ (ω + η)_ν = ∇_μ ω_ν + ∇_μ η_ν`. -/
+/-- The covector covariant derivative is additive:
+`∇_μ (ω + η)_ν = ∇_μ ω_ν + ∇_μ η_ν` at each point, with partial
+derivatives `dω + dη`. -/
 theorem nabla_covector_add (ω η : (Fin n → ℝ) → Fin n → ℝ)
     (dω dη : Fin n → (Fin n → ℝ) → Fin n → ℝ)
     (μ ν : Fin n) (x : Fin n → ℝ) :

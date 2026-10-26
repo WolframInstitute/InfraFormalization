@@ -1,35 +1,12 @@
 /-
-Discrete Lorentzian causal structure on a cubic lattice.
+Causal relations on the integer lattice `ℤ^{d+1}` with an L∞ spatial distance.
 
-Takes events as functions `Fin (d+1) → ℤ` (1 time index `0`, and `d`
-space indices `1..d`), and declares:
-
-  `p ≺ q`   iff   `q 0 - p 0 ≥ max_{i ≥ 1} |p i - q i|`.
-
-That is, `q` lies in the forward L∞ light cone of `p`. This is the
-discrete analogue of the Minkowski causal structure on ℝ^{1,d} with
-the L∞ spatial metric.
-
-Implementation: we define `spaceDist` as a `ℕ`-valued quantity via
-`natAbs` and `Finset.sup` (which uses `OrderBot = 0` on ℕ and needs
-no nonemptiness witness — the `d = 0` case sits cleanly in the
-definition as "sup over empty = 0").
-
-Parameter mapping:
-  * `d = 1`  — 1+1-dim;
-  * `d = 2`  — 1+2-dim;
-  * `d = 3`  — 1+3-dim (physical spacetime).
-
-The `d = 0` edge case (events with only a time coordinate) is handled
-without pattern-matching by the underlying `Finset.sup` on the empty
-finset.
-
-**Why this matters.** The Wolfram-model causal graph is supposed to
-converge to a Lorentzian manifold. The lightest test of the
-infrageometry framework is whether a trivial cubic lattice exhibits
-the basic Lorentzian-manifold features (partial order + light-cone
-dichotomy). This file verifies it does. Subsequent work will replace
-the lattice with a rewriting-system causal graph.
+Events are functions `Fin (d+1) → ℤ`, with index `0` the time coordinate and indices
+`1..d` the spatial ones. `p ≺ q` is defined by `q 0 - p 0 ≥ max_{i ≥ 1} |p i - q i|`, with
+the maximum over an empty index set equal to `0`. The module proves that `≺` is reflexive
+and transitive, that mutual precedence forces equal time and zero spatial distance, that
+every pair is causally related in some direction or spacelike, and that the interval
+`Δt² - spaceDist²` is positive on timelike, zero on null and negative on spacelike pairs.
 -/
 
 import Mathlib.Data.Int.Basic
@@ -41,11 +18,11 @@ import Mathlib.Tactic.Ring
 namespace InfraFormalization
 namespace Infra
 
-/-- Coordinates of an event: `Fin (d+1) → ℤ` (1 time + `d` space). -/
+/-- A point of `ℤ^{d+1}`. Index `0` is time and indices `1..d` are space. -/
 abbrev Event (d : Nat) : Type := Fin (d + 1) → ℤ
 
-/-- Spatial L∞ distance between two events as a natural number. Ignores
-the time coord. For `d = 0`, this is sup over empty = `0`. -/
+/-- The maximum of `|p i - q i|` over the spatial indices `i = 1..d`, as a natural
+number. It is `0` when `d = 0`. -/
 def spaceDist (d : Nat) (p q : Event d) : ℕ :=
   (Finset.univ : Finset (Fin d)).sup
     (fun i => (p i.succ - q i.succ).natAbs)
@@ -95,18 +72,17 @@ theorem spaceDist_triangle {d : Nat} (p q r : Event d) :
       (Finset.mem_univ i)
   omega
 
-/-- **Causal precedence.** `p ≺ q` iff the time-increment from `p` to
-`q` matches or exceeds the spatial L∞ increment. -/
+/-- `p ≺ q` when `spaceDist d p q ≤ q 0 - p 0`. -/
 def CausalPrecedes (d : Nat) (p q : Event d) : Prop :=
   (spaceDist d p q : ℤ) ≤ q 0 - p 0
 
-/-- Reflexivity: every event causally precedes itself. -/
+/-- Every event causally precedes itself. -/
 theorem causal_refl (d : Nat) (p : Event d) : CausalPrecedes d p p := by
   unfold CausalPrecedes
   rw [spaceDist_self]
   simp
 
-/-- Transitivity: `p ≺ q` and `q ≺ r` ⇒ `p ≺ r`. -/
+/-- `p ≺ q` and `q ≺ r` imply `p ≺ r`. -/
 theorem causal_trans {d : Nat} {p q r : Event d}
     (hpq : CausalPrecedes d p q) (hqr : CausalPrecedes d q r) :
     CausalPrecedes d p r := by
@@ -116,8 +92,7 @@ theorem causal_trans {d : Nat} {p q r : Event d}
     exact_mod_cast spaceDist_triangle p q r
   linarith
 
-/-- Antisymmetry in the time direction. If `p ≺ q` and `q ≺ p`, they
-have equal time coordinates and are at zero spatial distance. -/
+/-- If `p ≺ q` and `q ≺ p`, then `q 0 = p 0` and `spaceDist d p q = 0`. -/
 theorem causal_antisymm_time {d : Nat} {p q : Event d}
     (hpq : CausalPrecedes d p q) (hqp : CausalPrecedes d q p) :
     q 0 = p 0 ∧ spaceDist d p q = 0 := by
@@ -131,45 +106,30 @@ theorem causal_antisymm_time {d : Nat} {p q : Event d}
   · have : (spaceDist d p q : ℤ) ≤ 0 := by linarith
     omega
 
-/-- A **timelike** (strict-interior) separation: `q` lies strictly
-inside `p`'s forward cone — the spatial gap is strictly less than the
-time gap. -/
+/-- `spaceDist d p q < q 0 - p 0`. -/
 def Timelike (d : Nat) (p q : Event d) : Prop :=
   (spaceDist d p q : ℤ) < q 0 - p 0
 
-/-- A **null** (light-cone edge) separation: the spatial gap equals
-the time gap and is nonzero. -/
+/-- `spaceDist d p q = q 0 - p 0` and `p 0 < q 0`. -/
 def Null (d : Nat) (p q : Event d) : Prop :=
   (spaceDist d p q : ℤ) = q 0 - p 0 ∧ p 0 < q 0
 
-/-- Timelike implies `CausalPrecedes` (forward). -/
+/-- `Timelike d p q` implies `p ≺ q`. -/
 theorem causalPrecedes_of_timelike {d : Nat} {p q : Event d}
     (h : Timelike d p q) : CausalPrecedes d p q :=
   le_of_lt h
 
-/-- Null implies `CausalPrecedes` (forward). -/
+/-- `Null d p q` implies `p ≺ q`. -/
 theorem causalPrecedes_of_null {d : Nat} {p q : Event d}
     (h : Null d p q) : CausalPrecedes d p q :=
   le_of_eq h.1
 
-/-- A spacelike pair: neither causally precedes the other. -/
+/-- Neither `p ≺ q` nor `q ≺ p`. -/
 def Spacelike (d : Nat) (p q : Event d) : Prop :=
   ¬ CausalPrecedes d p q ∧ ¬ CausalPrecedes d q p
 
-/-- Every pair of events is either causally related (in some
-direction) or spacelike. -/
-theorem causal_or_spacelike (d : Nat) (p q : Event d) :
-    CausalPrecedes d p q ∨ CausalPrecedes d q p ∨ Spacelike d p q := by
-  unfold CausalPrecedes Spacelike
-  by_cases h1 : (spaceDist d p q : ℤ) ≤ q 0 - p 0
-  · exact Or.inl h1
-  by_cases h2 : (spaceDist d q p : ℤ) ≤ p 0 - q 0
-  · exact Or.inr (Or.inl h2)
-  · right; right
-    exact ⟨h1, h2⟩
-
-/-- On a spacelike pair, the spatial distance strictly exceeds the
-time-coordinate gap (in both directions). -/
+/-- `Spacelike d p q` holds iff `q 0 - p 0 < spaceDist d p q` and
+`p 0 - q 0 < spaceDist d q p`. -/
 theorem spacelike_iff {d : Nat} (p q : Event d) :
     Spacelike d p q ↔
       q 0 - p 0 < (spaceDist d p q : ℤ)
@@ -181,9 +141,7 @@ theorem spacelike_iff {d : Nat} (p q : Event d) :
   · rintro ⟨h1, h2⟩
     exact ⟨not_le.mpr h1, not_le.mpr h2⟩
 
-/-- **Simultaneous distinct events are spacelike.** If `p 0 = q 0`
-(they share a time coordinate) and they are spatially separated
-(`0 < spaceDist d p q`), then neither causally precedes the other. -/
+/-- If `p 0 = q 0` and `0 < spaceDist d p q`, then `Spacelike d p q`. -/
 theorem spacelike_of_equal_time {d : Nat} (p q : Event d)
     (ht : p 0 = q 0) (hsp : 0 < spaceDist d p q) :
     Spacelike d p q := by
@@ -197,14 +155,11 @@ theorem spacelike_of_equal_time {d : Nat} (p q : Event d)
     have : (spaceDist d q p : ℤ) ≤ 0 := by rw [ht] at h; linarith
     omega
 
-/-- **Forward-cone characterization.** `p ≺ q` iff `q`'s time
-coordinate is at least `p`'s, and the spatial separation is no larger
-than the time increment. -/
+/-- `p ≺ q` iff `spaceDist d p q ≤ q 0 - p 0`; this is the definition of `≺`. -/
 theorem causalPrecedes_iff_time_space {d : Nat} (p q : Event d) :
     CausalPrecedes d p q ↔ (spaceDist d p q : ℤ) ≤ q 0 - p 0 := Iff.rfl
 
-/-- Timelike separations compose: `Timelike p q` and `Timelike q r`
-imply `Timelike p r`. -/
+/-- `Timelike d p q` and `Timelike d q r` imply `Timelike d p r`. -/
 theorem timelike_trans {d : Nat} {p q r : Event d}
     (hpq : Timelike d p q) (hqr : Timelike d q r) :
     Timelike d p r := by
@@ -214,12 +169,11 @@ theorem timelike_trans {d : Nat} {p q r : Event d}
     exact_mod_cast spaceDist_triangle p q r
   linarith
 
-/-- **Forward cone.** The set of events causally preceded by `p`. -/
+/-- The set of events `q` with `p ≺ q`. -/
 def forwardCone (d : Nat) (p : Event d) : Set (Event d) :=
   { q | CausalPrecedes d p q }
 
-/-- Forward cones are upward-closed under `CausalPrecedes`: if `q` is
-in `p`'s forward cone and `q ≺ r`, then `r` is in `p`'s cone too. -/
+/-- If `q ∈ forwardCone d p` and `q ≺ r`, then `r ∈ forwardCone d p`. -/
 theorem forwardCone_upward_closed {d : Nat} (p q r : Event d)
     (hq : q ∈ forwardCone d p) (hqr : CausalPrecedes d q r) :
     r ∈ forwardCone d p :=
@@ -229,13 +183,11 @@ theorem forwardCone_upward_closed {d : Nat} (p q r : Event d)
 theorem self_mem_forwardCone {d : Nat} (p : Event d) :
     p ∈ forwardCone d p := causal_refl d p
 
-/-- **Signed Minkowski interval squared** between two events, using L∞
-spatial metric: `τ² := (Δt)² − (Δx_∞)²`. Timelike: positive; null:
-zero; spacelike: negative. -/
+/-- `(q 0 - p 0)² - (spaceDist d p q)²`. -/
 def minkowskiIntervalSq (d : Nat) (p q : Event d) : ℤ :=
   (q 0 - p 0)^2 - (spaceDist d p q : ℤ)^2
 
-/-- A timelike pair has strictly positive Minkowski interval squared. -/
+/-- `Timelike d p q` implies `0 < minkowskiIntervalSq d p q`. -/
 theorem minkowskiIntervalSq_pos_of_timelike {d : Nat} {p q : Event d}
     (h : Timelike d p q) :
     0 < minkowskiIntervalSq d p q := by
@@ -250,7 +202,7 @@ theorem minkowskiIntervalSq_pos_of_timelike {d : Nat} {p q : Event d}
   · linarith
   · linarith
 
-/-- A null pair has zero Minkowski interval squared. -/
+/-- `Null d p q` implies `minkowskiIntervalSq d p q = 0`. -/
 theorem minkowskiIntervalSq_zero_of_null {d : Nat} {p q : Event d}
     (h : Null d p q) :
     minkowskiIntervalSq d p q = 0 := by
@@ -258,7 +210,7 @@ theorem minkowskiIntervalSq_zero_of_null {d : Nat} {p q : Event d}
   rw [h.1]
   ring
 
-/-- A spacelike pair has strictly negative Minkowski interval squared. -/
+/-- `Spacelike d p q` implies `minkowskiIntervalSq d p q < 0`. -/
 theorem minkowskiIntervalSq_neg_of_spacelike {d : Nat} {p q : Event d}
     (h : Spacelike d p q) :
     minkowskiIntervalSq d p q < 0 := by
@@ -270,7 +222,7 @@ theorem minkowskiIntervalSq_neg_of_spacelike {d : Nat} {p q : Event d}
   have hsymm : (spaceDist d q p : ℤ) = (spaceDist d p q : ℤ) := by
     rw [spaceDist_symm q p]
   rw [hsymm] at h2
-  -- Now both: (q 0 - p 0) < spaceDist p q, and -(q 0 - p 0) < spaceDist p q
+  -- Both (q 0 - p 0) < spaceDist p q, and -(q 0 - p 0) < spaceDist p q
   -- So |q 0 - p 0| < spaceDist p q, hence (q 0 - p 0)^2 < (spaceDist p q)^2.
   have habs : (q 0 - p 0)^2 < (spaceDist d p q : ℤ)^2 := by
     have h1' : q 0 - p 0 < (spaceDist d p q : ℤ) := h1

@@ -11,7 +11,7 @@ connection is via edge-production/consumption, NOT via seed-vertex
 sharing.
 -/
 
-import InfraFormalization.BBHInitialData
+import InfraFormalization.TwoTriangleSeed
 
 open InfraFormalization
 open InfraFormalization.MultiwayExec
@@ -19,7 +19,7 @@ open InfraFormalization.RuleSignatureExecMetrics
 open InfraFormalization.KnillDiscreteGaussBonnet
 open InfraFormalization.CausalEventTrace
 open InfraFormalization.DiscoveredRules
-open InfraFormalization.BBHInitialData
+open InfraFormalization.TwoTriangleSeed
 
 /-! ## Helpers (top-level, not inside `do`) -/
 
@@ -35,9 +35,9 @@ def edgeMember (e : Hyperedge ℕ) (es : List (Hyperedge ℕ)) : Bool :=
   es.any (fun e' => decide (e = e'))
 
 /-- The seed-edge index a step-0 event consumed (Some k iff event
-consumed exactly the k-th seed edge of `bbhInitial`). -/
+consumed exactly the k-th seed edge of `twoTriangleSeed`). -/
 def seedEdgeAncestorOfStep0 (ev : CausalEvent) : Option Nat :=
-  bbhInitial.zipIdx.foldr (fun (e, k) acc =>
+  twoTriangleSeed.zipIdx.foldr (fun (e, k) acc =>
     match acc with
     | some _ => acc
     | none =>
@@ -65,17 +65,17 @@ def probe : IO Unit := do
   IO.println "=========================================================="
   IO.println "BBH causal-DAG decomposition probe — doubleCycleSys_5, d=2"
   IO.println "=========================================================="
-  IO.println s!"Seed bbhInitial: {bbhInitial.length} edges"
-  IO.println s!"  {edgesStr bbhInitial}"
+  IO.println s!"Seed twoTriangleSeed: {twoTriangleSeed.length} edges"
+  IO.println s!"  {edgesStr twoTriangleSeed}"
 
-  let s0 := bbhInitial
+  let s0 := twoTriangleSeed
   IO.println s!"\nState at d=0: {s0.length} edges, nextFresh={nextFresh s0}"
   let s1 := singleWayStep doubleCycleSys_5 s0
   IO.println s!"State at d=1: {s1.length} edges, nextFresh={nextFresh s1}"
   let s2 := singleWayStep doubleCycleSys_5 s1
   IO.println s!"State at d=2: {s2.length} edges, nextFresh={nextFresh s2}"
 
-  let (_, events) := tracedSingleWayEvolve doubleCycleSys_5 bbhInitial 2
+  let (_, events) := tracedSingleWayEvolve doubleCycleSys_5 twoTriangleSeed 2
   IO.println s!"\nTotal events over d=2: {events.length}"
   IO.println "Events:"
   for (e, i) in events.zipIdx do
@@ -156,14 +156,14 @@ def probe : IO Unit := do
         | _, _ => pure ()
 
   -- Sanity: Knill at d=2.
-  let dag2 := causalDAGOfEvolution doubleCycleSys_5 bbhInitial 2
+  let dag2 := causalDAGOfEvolution doubleCycleSys_5 twoTriangleSeed 2
   IO.println s!"\nKnill(BBH, doubleCycle_5, 2) = {knillEulerScaled dag2}"
   let edgeDag2 := causalDAGOfEvolution doubleCycleSys_5 seedEdge12 2
   IO.println s!"Knill(edge12, doubleCycle_5, 2) = {knillEulerScaled edgeDag2}"
   IO.println s!"7 · Knill(edge12, doubleCycle_5, 2) = {7 * knillEulerScaled edgeDag2}"
 
   -- d=4 sanity (matches headline finding).
-  let dag4 := causalDAGOfEvolution doubleCycleSys_5 bbhInitial 4
+  let dag4 := causalDAGOfEvolution doubleCycleSys_5 twoTriangleSeed 4
   IO.println s!"\nKnill(BBH, doubleCycle_5, 4) = {knillEulerScaled dag4}"
 
 #eval probe
