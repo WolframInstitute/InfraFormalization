@@ -19,18 +19,6 @@ import pathlib
 import re
 import sys
 
-VACUOUS_DEFS = [
-    "HypergraphMetricOriginObligation", "HypergraphPartialMetricOriginObligation",
-    "HypergraphMetricOriginObligationWithRate", "HypergraphMetricOriginObligationStrong",
-    "HypergraphPartialMetricOriginObligationStrong", "HypergraphQuantumOriginObligationStrong",
-    "HypergraphBBHOriginObligationStrong", "ConnectionDataOriginObligation",
-    "GR_emerges_from_hypergraph", "QM_emerges_from_hypergraph", "BBH_emerges_from_hypergraph",
-    "GR_emerges_from_hypergraph_minkowski", "GR_emerges_from_some_hypergraph",
-    "DistConvergesTo", "ConnectionConvergesTo", "RiemannTensorConvergesTo",
-    "EinsteinFieldEquationsHold", "DiscreteStressEnergyEmerges", "InitialDataMatches",
-    "Psi4Matches", "BornRuleEmerges", "subdivisionDiscrepancy", "formanTarget",
-    "LocallyTrivial", "CircularReconstruction", "MetricConstruction",
-]
 
 REPO = pathlib.Path(__file__).resolve().parent.parent
 LEAN = REPO / "lean" / "InfraFormalization"
@@ -115,8 +103,7 @@ with open(out + ".lean", "w") as fh:
 with open(out + ".tsv", "w") as fh:
     for full in sorted(cites):
         f, l, stmt = decls[full]
-        hits = sorted(n for n in VACUOUS_DEFS if re.search(r"\b" + re.escape(n) + r"\b", stmt))
-        fh.write(f"{full}\t{f}:{l}\t{','.join(sorted(cites[full]))}\t{','.join(hits)}\n")
+        fh.write(f"{full}\t{f}:{l}\t{','.join(sorted(cites[full]))}\n")
 with open(out + ".unresolved", "w") as fh:
     for tok in sorted(unresolved):
         fh.write(f"{tok}\t{','.join(sorted(unresolved[tok]))}\n")
