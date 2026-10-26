@@ -1,8 +1,9 @@
 # Publications
 
-Each subfolder is a planned paper. A subfolder holds an `abstract.md` that lists the results the paper would report and their status. No manuscript exists yet. A paper is drafted when its Lean support is PROVED (kernel-checked, sorry-free, axioms at most `propext`, `Classical.choice`, `Quot.sound`) and its contribution over the existing literature is stated.
+Each subfolder is a planned paper. A subfolder holds an `abstract.md` that lists the results the paper would report and their status. No manuscript exists yet. A paper is drafted when its Lean support is PROVED (axioms at most `propext`, `Classical.choice`, `Quot.sound`) and its contribution over the existing literature is stated.
 
-Status labels follow `STATUS_OF_GORARD_CLAIMS.md`: PROVED, PROVED-WITH-NATIVE-DECIDE, VACUOUS, MEASURED, READ, OPEN.
+Status labels follow `STATUS_OF_GORARD_CLAIMS.md`: PROVED, PROVED-WITH-NATIVE-DECIDE, MEASURED, READ, OPEN.
+
 
 ## Structure
 

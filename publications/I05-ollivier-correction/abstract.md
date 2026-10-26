@@ -12,4 +12,5 @@ Target venue: arXiv math.DG, math-ph, as a short note.
 
 Length: 8-12 pages.
 
-Open items: a Lean proof of Ollivier's theorem would replace the citation; it is not needed for the comparison.
+Open items: a Lean proof of Ollivier's theorem, which the comparison does not need.
+

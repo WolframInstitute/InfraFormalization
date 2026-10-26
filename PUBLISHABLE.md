@@ -2,21 +2,20 @@
 
 This is the list of papers and technical notes the programme is working toward. Each entry names its audience and the conditions under which the paper is ready. Entries run from those whose content mostly exists to those that are open research.
 
-Status labels follow `STATUS_OF_GORARD_CLAIMS.md`: PROVED (kernel-checked, sorry-free, axioms at most `propext`, `Classical.choice`, `Quot.sound`), PROVED-WITH-NATIVE-DECIDE, VACUOUS (holds, but the statement does not concern the named object), MEASURED, READ (from the paper text, with line numbers), OPEN. A paper target cites PROVED or PROVED-WITH-NATIVE-DECIDE results as contributions. VACUOUS results are not contributions.
+Status labels follow `STATUS_OF_GORARD_CLAIMS.md`: PROVED (a Lean theorem with axioms at most `propext`, `Classical.choice`, `Quot.sound`), PROVED-WITH-NATIVE-DECIDE, MEASURED, READ (from the paper text, with line numbers), OPEN. A paper target cites PROVED or PROVED-WITH-NATIVE-DECIDE results as contributions.
 
 Paper files: G1 = `papers/gorard_2004.14810.txt`, G2 = `papers/gorard_2011.12174.txt`, G3 = `papers/gorard_2102.09363.txt`, G4 = `papers/gorard_2303.07282.txt`.
 
 ## P1: Audit of G1-G4 (J. Gorard)
 
-Summary. An audit of arXiv:2004.14810, 2011.12174, 2102.09363 and 2303.07282. The papers state that general relativity follows from Wolfram-model hypergraph rewriting. The audit records, with line numbers, where the papers give no proof of a step, and what the repository proves and measures about the rule of G3. The findings about the papers are READ findings (`STATUS_OF_GORARD_CLAIMS.md`, `MAJOR_FLAWS.md`). The Lean files prove statements about the project's encodings and about the rule of G3.
+Summary. An audit of arXiv:2004.14810, 2011.12174, 2102.09363 and 2303.07282. The papers state that general relativity follows from Wolfram-model hypergraph rewriting. The audit records, with line numbers, where the papers give no proof of a step, and what the repository proves and measures about the rule of G3. The findings about the papers are READ findings (`STATUS_OF_GORARD_CLAIMS.md`, `MAJOR_FLAWS.md`). The Lean files prove statements about the rule of G3.
 
 Status: not ready. F6 has no Lean statement about G3, the technical comment is not written, and external review has not taken place.
 
 Conditions:
 - [x] Severity taxonomy S1-S6 with TeX line references (`notes/severity_taxonomy.md`). READ.
-- [x] F1, F2, F5: Lean statements in `Refutations/F1NoMetric.lean`, `F2Orthonormality.lean`, `F5Illdefined.lean`. VACUOUS with respect to the papers: they are facts about the function type `DHyp V → V → V → ℝ`, functions on `Bool × Bool`, the sequence 1/(n+1) and the constant-`True` predicate. The findings about G1 are READ.
-- [x] F3, F4: `Refutations.asymptoticDimPreservation_iff_eulerLagrange` and `Refutations.causalInvariance_iff_discreteGeneralCovariance`. PROVED by `Iff.rfl` about the project's encodings. The identification of each encoding with G1's statement is READ.
-- [ ] F6: G3's initial data is sampled from the target geometry (READ, G3 lines 6148-6152 and 6179). `Refutations/F6Circularity.lean` restates its own hypothesis and does not model the procedure of G3 (VACUOUS with respect to G3). A Lean statement about G3's procedure is OPEN.
+- [x] F1-F5: findings about G1. READ.
+- [ ] F6: G3's initial data is sampled from the target geometry (READ, G3 lines 6148-6152 and 6179). A Lean statement about G3's procedure is OPEN.
 - [x] Cross-paper map of repeated findings (`notes/corpus_audit.md`). READ.
 - [x] Continuum-limit claims catalog (`notes/continuum_limit_claims.md`). READ.
 - [x] Close readings of the four papers. READ.
@@ -31,12 +30,7 @@ Conditions:
 Audience. *Complex Systems*; arXiv math-ph and gr-qc.
 
 Lean results cited:
-- F1: `Refutations.hypergraph_does_not_determine_metric` (VACUOUS with respect to G1).
-- F2: `Refutations.orthonormality_depends_on_form` (VACUOUS with respect to G1).
-- F3: `Refutations.asymptoticDimPreservation_iff_eulerLagrange` (PROVED, `Iff.rfl` on project definitions).
-- F4: `Refutations.causalInvariance_iff_discreteGeneralCovariance` (PROVED, `Iff.rfl` on project definitions, no axioms).
-- F5: `Refutations.becomes_is_underdetermined` (VACUOUS with respect to G1).
-- F6: no theorem about G3.
+- F1-F6: none.
 - F7: `Refutations.gorardNamedRule_applications_preserve_size`, `Application.size_result_of_conservative`, `CausalHistory.gorardNamedRule_antichain_card_le`, `CausalHistory.gorardNamedRule_ball_card_le` (PROVED).
 
 ## P2: Corrected continuum identities
@@ -46,8 +40,8 @@ Summary. The Ollivier-Ricci identity and the Gray tube formula stated as Lean de
 Status: the statements and the comparisons are PROVED arithmetic. The identities themselves come from Gray 1973 and Ollivier 2009 and are not formalised.
 
 Conditions:
-- [x] `OllivierStatement.OllivierIdentityLeading`, `GorardMisstatedForm`, `Infra.ollivier_gorard_agree_iff` (for δ, ε ≠ 0 the leading terms agree iff R = Ric(v,v)). PROVED.
-- [x] `GrayTubeStatement.GrayTubeLeading`, `Infra.gray_vs_gorard_disagree_on_S2`, `Infra.gray_vs_gorard_disagree_on_S3`. PROVED.
+- [x] `Infra.OllivierIdentityLeading`, `GorardMisstatedForm`, `Infra.ollivier_gorard_agree_iff` (for δ, ε ≠ 0 the leading terms agree iff R = Ric(v,v)). PROVED.
+- [x] `Infra.GrayTubeLeading`, `Infra.gray_vs_gorard_disagree_on_S2`, `Infra.gray_vs_gorard_disagree_on_S3`. PROVED.
 - [ ] Proofs of the Ollivier and Gray identities, using the project's Ricci tensor (task #217) and Wasserstein-1 distance (task #214). OPEN.
 
 Audience. arXiv math.DG and math-ph.
@@ -64,9 +58,9 @@ Conditions:
 - [x] `torus_gh_bound` (2D) and `dTorus_gh_bound` (any d). PROVED.
 - [x] `lorentzIntEmbed_preserves_causal_iff` (causal relation preserved in both directions by the integer embedding). PROVED.
 - [x] `scaledLorentzEmbed_dense`, `continuumSpaceDist_eq_cast` (scaled isometry and density). PROVED.
-- [x] Scaled second difference: `CTwoTaylor.scaledSecondDiff_tendsto_iteratedDeriv` (convergence to f'' for every C² function), `ScaledDiffC2Bridge.scaledSecondDiff_tendsto_iteratedDeriv_C2`, `hypergraph_scaled_laplacian_eq_scaledSecondDiff`. PROVED.
-- [x] Cycle spectrum: `CycleSpectrum.cycleLaplacian_eigen` (eigenvalues −4 sin²(πk/n), eigenvectors cos(2πkj/n)). PROVED.
-- [x] Eigenvalue convergence: `CycleEigenLimit.cycleEigenvalue_scaled_tendsto` (n²·λ_k → −(2πk)²). PROVED.
+- [x] Scaled second difference: `scaledSecondDiff_tendsto_iteratedDeriv` (convergence to f'' for every C² function, `CTwoTaylor.lean`), `scaledSecondDiff_tendsto_iteratedDeriv_C2` (`ScaledDiffC2Bridge.lean`), `hypergraph_scaled_laplacian_eq_scaledSecondDiff`. PROVED.
+- [x] Cycle spectrum: `cycleLaplacian_eigen` (`CycleSpectrum.lean`) (eigenvalues −4 sin²(πk/n), eigenvectors cos(2πkj/n)). PROVED.
+- [x] Eigenvalue convergence: `cycleEigenvalue_scaled_tendsto` (`CycleEigenLimit.lean`) (n²·λ_k → −(2πk)²). PROVED.
 - [x] Laplacian matrix and heat kernel: `laplacianMatrix_mulVec`, `heatKernel H t := exp(t·Δ)`, `heatKernel_add`, `heatTrace`, `laplacianMatrix_symm`. PROVED.
 - [x] Heat kernel solves the heat ODE: `heatKernel_isHeatSolution`; existence and forward uniqueness (`heat_exists_unique_forward`). PROVED.
 - [x] Conservation laws of the heat kernel: `heatKernel_mulVec_const`, `heatKernel_mass_conservation`, `heatKernel_L2_decay`, `heatKernel_mulVec_add`. PROVED.
@@ -76,33 +70,31 @@ Conditions:
 - [x] `Hypergraph.dist` triangle inequality and connectivity of the cycle (`dist_triangle`, `cycleHypergraph_connected`). PROVED.
 - [ ] A 25-page paper with the Lean library as an appendix.
 
-Not a contribution: `WassersteinRate.subdivisionDiscrepancy_satisfies_obligation` and `subdivisionDiscrepancyBundle`. `subdivisionDiscrepancy n = 1/2^n` is defined directly and is not computed from any measure on the subdivision trajectory, so these theorems are facts about the sequence 1/2^n (VACUOUS as convergence results).
-
 Audience. arXiv math.MG, math-ph and formal methods.
 
 ## P4: Library of structural theorems on hypergraph rewriting
 
 Summary. A Lean library of structural theorems about hypergraph rewriting: edge conservation, degree sums, causal-level monotonicity, antichain bounds, the hypergraph Laplacian and discrete exterior calculus.
 
-Status: the theorems below are PROVED unless marked. The library uses `native_decide` in about 100 files. A paper must report the status of each cited result.
+Status: the theorems below are PROVED unless marked. The library has 39 modules with theorems that depend on `native_decide`. A paper reports the status of each cited result.
 
 Conditions:
 - [x] Edge conservation, degree sums, per-event balance. PROVED.
 - [x] Level monotonicity and same-level antichain, forward direction (`level_add_one_le_of_isCausalPred`, `no_causal_edge_within_level`). PROVED.
 - [x] Hypergraph Laplacian: self-adjointness, Dirichlet form, positive semidefiniteness of −Δ, `laplacianHyper_sum_zero`. PROVED.
 - [x] Laplacian matrix: symmetry, zero row sums, heat kernel as `Matrix.exp` (semigroup, `heatTrace`). PROVED.
-- [x] Forman-Ricci curvature (graphs and hypergraphs). On 2-regular graphs it is 0, and the circle metric has Ricci tensor 0 (`forman_ricci_matches_continuum_on_cycle`). PROVED.
+- [x] Forman-Ricci curvature (graphs and hypergraphs). On 2-regular graphs it is 0, and the circle metric has Ricci tensor 0 (`cycle_forman_and_flat_ricci_zero`). PROVED.
 - [x] Cycle Laplacian equals the central second difference at interior points. PROVED.
 - [x] Scaled second difference converges to f'' for every C² function. PROVED.
 - [x] Cycle spectrum and convergence of the scaled eigenvalues to those of the circle. PROVED.
 - [x] Discrete PDEs on `Hypergraph V`: heat (mass conservation, L² decay), wave (energy conservation), Klein-Gordon, Schrödinger (unitarity), scalar field (Euler-Lagrange equation equivalent to Klein-Gordon). PROVED.
-- [x] Discrete exterior calculus: `HypergraphCalculus.summation_by_parts`, `DeRham.lean`, `FormCochainIntegration.lean`. PROVED.
-- [x] `KnillCore.dSquared_eq_zero` (d∘d = 0 on oriented simplices, `[LinearOrder V]`), `dStarSquared_eq_zero`, `hodgeOnG_psd`, `hodgeOnG_dirichlet_zero_iff_isDiracKernel`. PROVED.
-- [x] `KnillCore.wuCharacteristic₂_eq_chi_sq_sub_disjoint` (Wu inclusion-exclusion). PROVED.
-- [x] `KnillCore.eulerCharacteristic_eq_alt_sum_kSkeleton` and its `_fintype` corollary (Euler-Poincaré f-vector identity). PROVED.
+- [x] Discrete exterior calculus: `summation_by_parts` (`HypergraphCalculus.lean`), `DeRham.lean`, `FormCochainIntegration.lean`. PROVED.
+- [x] `Knill.dSquared_eq_zero` (`KnillCore.lean`, d∘d = 0 on oriented simplices, `[LinearOrder V]`), `dStarSquared_eq_zero`, `hodgeOnG_psd`, `hodgeOnG_dirichlet_zero_iff_isDiracKernel`. PROVED.
+- [x] `Knill.wuCharacteristic₂_eq_chi_sq_sub_disjoint` (Wu inclusion-exclusion). PROVED.
+- [x] `Knill.eulerCharacteristic_eq_alt_sum_kSkeleton` and `Knill.eulerCharacteristic_eq_alt_sum_fintype` (Euler-Poincaré f-vector identity). PROVED.
 - [x] `KnillEulerCharIdentity.knill_eq_six_euler_char` (Σ_v K6(v) = 6·(V − E + T)). PROVED.
 - [x] Type-level map from the executable engine to the abstract rewriting system (`MultiwayExecBridge.lean`: `ExecRule.toRule`, `Fin.embedSuffix`, the single-rule `ExecSystem` cast). PROVED. A step-level simulation lemma between `singleWayStep` and `MultiStep` is OPEN.
-- [x] Infrageometry groups IA-IR: definitions with lemmas. IR3, IR4 and IR5 are definitions only. IQ8 and IQ9 are VACUOUS (zero witnesses). `not_reverseEngineeringObligation` (the unrefined IR7 statement is false) is PROVED.
+- [x] Infrageometry groups IA-IR: definitions with lemmas. IR3, IR4 and IR5 are definitions only.
 - [x] Hypergraph distance, geodesic balls, Wolfram-Hausdorff dimension (`HypergraphDistance.lean`). PROVED.
 - [x] Benincasa-Dowker discrete d'Alembertian, action and Euler-Lagrange equation (definitions, linearity, `layer_disjoint`, `mem_layer_isCausalPred`). PROVED.
 - [x] `trajectory_size_invariant` (state size constant along a conservative trajectory). PROVED.
@@ -123,22 +115,17 @@ Results available as infrastructure:
 - [x] `DiscreteDAlembertian`: the Benincasa-Dowker operator on trajectories, `discreteAction`, `discreteEL`. PROVED (definitions and linearity).
 - [x] `leviCivitaConnection : MetricDataC2 n → ConnectionData n` and the Riemann, Ricci and Einstein tensors in local coordinates. PROVED.
 - [x] Schwarzschild: all nonzero Christoffel symbols in the exterior (`Schwarzschild.lean`). PROVED. The Riemann and Ricci tensors (B2, B3) are OPEN.
-- [x] FLRW: Ricci tensor and the equivalence of the Einstein equations with the Friedmann equations (`flrw_satisfies_EFE_of_friedmann`, `flrw_friedmann_of_EFE`). PROVED.
+- [x] FLRW: Ricci tensor, and the diagonal Einstein equations with a perfect fluid are equivalent to the Friedmann equations (`flrwEFE_diag_iff_friedmann`, `flrw_satisfies_EFE_00_11_of_friedmann`, `flrw_friedmann_of_EFE`). PROVED.
+
 - [x] Cycle spectrum converges to the circle spectrum (`CycleSpectrum.lean`, `CycleEigenLimit.lean`). PROVED.
 - [x] `EPSAxioms.lean`, `MarzkeWheeler.lean`: Ehlers-Pirani-Schild structures and Marzke-Wheeler ticks on a causal graph, as definitions with `eps_worldline_not_light` and `mwClock_implies_causallyPrecedes`. PROVED.
 - [x] Causal foliation, spatial reconstruction and proper time (IC4, IC5): `stablyCausal_hasFoliation` (every stably causal DAG has a foliation). PROVED.
 - [x] `CandidateRuleDatabase.lean`: candidate-rule records and screening predicates. PROVED.
 - [x] `RuleDimensionBounds.lean`: `Hypergraph.geodesicBallVolume_le_card` (ball volume at most the vertex count). PROVED. It holds for every finite hypergraph and does not bound a dimension.
 - [x] Angles, scalar curvature from ball growth, topology: `Hypergraph.elementaryAngle`, `cosAngle`, `angle`, `IsOrthoApprox`, `Hypergraph.scalarCurvatureAt`, `firstBettiZ`, `spatialB0`, `perpBisector`, `voronoiCell`, `midpoint`. Definitions with lemmas, PROVED. `HasTopologicalHyperplane` is a placeholder: it requires A and B to be unreachable from each other in the whole hypergraph, and does not state that removing the bisector disconnects them.
-- [x] Screeners: `RuleSignatureScreener.lean` (`FormanRicciScreener`, `AngularScreener`, `CombinedScreener`) and the bounded search of `RuleSignatureExecSearch.lean` (PROVED-WITH-NATIVE-DECIDE).
+- [x] The bounded rule search of `RuleSignatureExecSearch.lean`. PROVED-WITH-NATIVE-DECIDE.
 - [ ] A candidate rule with a curved target (Phase C, `ROADMAP.md`). OPEN.
 - [ ] A convergence theorem for that rule to a curved Lorentzian metric (#218, #236). OPEN.
-
-Not contributions (VACUOUS):
-- `HypergraphMetricOriginObligationStrong` and its discharges `Curvature.minkowski4_from_hypergraph_strong`, `Curvature.any_metric_has_strong_obligation_witness`, `Curvature.any_partialMetric_has_strong_obligation_witness`, `Curvature.all_gr_targets_have_strong_obligations_proven`. The obligation does not depend on its target and holds for every target.
-- `WassersteinRateObligation` and `ConvergenceRateObligation d r`: they concern a sequence d supplied by the caller and are satisfied by the zero function (`convergenceRateObligation_zero`). `subdivisionDiscrepancy n = 1/2^n` is defined directly.
-- `Milestone.GR_emerges_from_hypergraph`, `QM_emerges_from_hypergraph`, `BBH_emerges_from_hypergraph`: the layer Props (`DistConvergesTo`, `EinsteinFieldEquationsHold`, ...) are satisfied by the zero discrepancy. `Milestone.GR_emerges_from_hypergraph_holds` proves `GR_emerges_from_hypergraph target` for every target, and `QM_emerges_from_hypergraph_holds` and `BBH_emerges_from_hypergraph_holds` prove the other two. These statements do not express convergence to any metric, quantum system or black hole.
-- `DiscreteDAlembertian.gorardF6_carries_BD_assumption`, defined as `∀ C : BenincasaDowkerConjecture, True`. `BenincasaDowkerConjecture` is a structure with an unspecified field `claim : Prop` and does not state the conjecture.
 
 Audience. arXiv gr-qc and math-ph (*Physical Review D*, *Classical and Quantum Gravity*, *Foundations of Physics*).
 
@@ -153,8 +140,6 @@ Conditions:
 - [x] `BranchialFinite.lean`: `branchialSliceFinite_of_successors_finite`. PROVED.
 - [x] `FisherMetric.lean`: Fisher metric on distributions over a slice. PROVED.
 - [x] `SchrodingerEquation.lean`: discrete Schrödinger equation on `Hypergraph V` with unitarity. PROVED.
-- [x] `fubiniStudyBhattacharyya_bound`: ‖⟨ψ, φ⟩‖ ≤ Σ_s ‖ψ s‖·‖φ s‖. PROVED.
-- [x] `EMEPersistenceObligation`, `PathIntegralObligation`: hold with zero witnesses for every input. VACUOUS.
 - [ ] S1-S6 audit of the QM paper (arXiv:2004.14808).
 - [x] Uniform measure on a finite slice (`branchialUniformWeight`). PROVED.
 - [x] ℓ²(slice) as a complex Hilbert space with the adjacency operator `branchialAdjLM`, self-adjoint for symmetric adjacency (`branchialAdjLM_inner`). PROVED.
@@ -176,8 +161,6 @@ Conditions:
 - [ ] Discrete Ψ₄ extraction compared with binary black hole waveforms.
 - [ ] Lorentzian Gromov-Hausdorff convergence to a merger spacetime.
 
-The `BBH*.lean` modules state their results with `MultiwayExec.fireAllStep`, which is not a Wolfram model update when matches overlap. They use `bbhInitial`, a 6-vertex graph of two triangles joined by one edge, which is not Brill-Lindquist data. They do not bear on P7.
-
 Audience. As P5.
 
 ## P8: Discrete d'Alembertian on a causal DAG
@@ -190,7 +173,7 @@ Conditions:
 - [x] `openInterval`, `intervalSize`, `layer τ k i`, `discreteDAlembertian4` defined; `discreteDAlembertian4_add` and related linearity lemmas. PROVED.
 - [x] `discreteAction` (analogue of G1 eq. 86) and `discreteEL`; `discreteAction_smul`. PROVED.
 - [x] `layer_disjoint`, `mem_layer_isCausalPred`. PROVED.
-- [ ] A Lean statement of the Benincasa-Dowker limit B_ρ → □ − ½R. `BenincasaDowkerConjecture` has an unspecified field `claim : Prop`, and `gorardF6_carries_BD_assumption` is `∀ C, True` (VACUOUS). OPEN.
+- [ ] A Lean statement of the Benincasa-Dowker limit B_ρ → □ − ½R. OPEN.
 - [ ] A d'Alembertian for general dimension d, with coefficients indexed by d (2D: (1, −2, 1)). Not defined. OPEN.
 - [ ] A 10-page note with a review of the Benincasa-Dowker literature.
 
@@ -198,17 +181,14 @@ Audience. arXiv gr-qc and hep-th (*Classical and Quantum Gravity*, Letter).
 
 ## P9: The derivation of the Einstein equations in G1, step by step
 
-Summary. A paper that follows the derivation in G1 §3.3 (lines 2168-2240) step by step. For each step it states whether G1 gives a construction or a proof: G1 introduces a metric without a construction (F1), assumes orthonormality without a bilinear form (F2), states asymptotic dimension preservation as the Euler-Lagrange equation (F3), identifies causal invariance with discrete general covariance (F4), and passes from sum to integral without a notion of convergence (F5). These findings are READ. The Lean files encode F3 and F4 and prove the encodings equivalent by `Iff.rfl`. The Lean statements for F1, F2 and F5 are VACUOUS with respect to G1.
+Summary. A paper that follows the derivation in G1 §3.3 (lines 2168-2240) step by step. For each step it states whether G1 gives a construction or a proof: G1 introduces a metric without a construction (F1), assumes orthonormality without a bilinear form (F2), states asymptotic dimension preservation as the Euler-Lagrange equation (F3), identifies causal invariance with discrete general covariance (F4), and passes from sum to integral without a notion of convergence (F5). These findings are READ. The library has no Lean statement for them.
 
 Status: not ready. F6 has no Lean statement about G3.
 
 Conditions:
-- [x] F1: `hypergraph_does_not_determine_metric` (fact about a function type). VACUOUS with respect to G1.
-- [x] F2: `orthonormality_depends_on_form` (fact about functions on `Bool × Bool`). VACUOUS with respect to G1.
-- [x] F3: `asymptoticDimPreservation_iff_eulerLagrange` (`Iff.rfl` on project definitions). PROVED.
-- [x] F4: `causalInvariance_iff_discreteGeneralCovariance` (`Iff.rfl` on project definitions, no axioms). PROVED.
-- [x] F5: `becomes_is_underdetermined` (fact about 1/(n+1)). VACUOUS with respect to G1.
-- [ ] F6: a Lean statement of the Benincasa-Dowker limit and of G3's initial-data procedure. OPEN.
+- [x] F1-F5: close reading of G1 §3.3 with line numbers. READ.
+- [ ] F6:
+ a Lean statement of the Benincasa-Dowker limit and of G3's initial-data procedure. OPEN.
 - [ ] A 15-page draft.
 
 Audience. arXiv gr-qc and cs.LO.

@@ -2,7 +2,8 @@
 
 Paper files: G1 = `papers/gorard_2004.14810.txt`, G2 = `papers/gorard_2011.12174.txt`, G3 = `papers/gorard_2102.09363.txt`, G4 = `papers/gorard_2303.07282.txt`. Line numbers refer to these text files.
 
-Status labels: PROVED (Lean, kernel-checked, sorry-free, axioms at most `propext`, `Classical.choice`, `Quot.sound`), MEASURED, READ, OPEN. Per-claim detail with axiom lists: [`STATUS_OF_GORARD_CLAIMS.md`](STATUS_OF_GORARD_CLAIMS.md). Groups S1-S6 follow [`notes/severity_taxonomy.md`](notes/severity_taxonomy.md).
+Status labels: PROVED (a Lean theorem with axioms at most
+ `propext`, `Classical.choice`, `Quot.sound`), MEASURED, READ, OPEN. Per-claim detail with axiom lists: [`STATUS_OF_GORARD_CLAIMS.md`](STATUS_OF_GORARD_CLAIMS.md). Groups S1-S6 follow [`notes/severity_taxonomy.md`](notes/severity_taxonomy.md).
 
 ## S1. Formulas that differ from the cited sources
 
@@ -24,9 +25,9 @@ Status labels: PROVED (Lean, kernel-checked, sorry-free, axioms at most `propext
 
 | # | Claim | Where | Status |
 |---|---|---|---|
-| 7 | Causal invariance corresponds to discrete general covariance. Both are update-order independence of the causal graph. | G1 lines 1066-1075 | READ; the project's encoding is PROVED by `Iff.rfl` (`causalInvariance_iff_discreteGeneralCovariance`) |
+| 7 | Causal invariance corresponds to discrete general covariance. Both are update-order independence of the causal graph. | G1 lines 1066-1075 | READ |
 | 8 | Causal invariance gives discrete Lorentz covariance. The constancy of the speed of light "is enforced axiomatically by our definition of the edge lengths". | G1 lines 1083-1088 | READ |
-| 9 | Asymptotic dimension preservation "corresponds to the statement" δS/δg^ab → 0, the Euler-Lagrange equation of S. | G1 lines 2203-2211 | READ; the project's encoding is PROVED by `Iff.rfl` (`asymptoticDimPreservation_iff_eulerLagrange`) |
+| 9 | Asymptotic dimension preservation "corresponds to the statement" δS/δg^ab → 0, the Euler-Lagrange equation of S. | G1 lines 2203-2211 | READ |
 
 ## S4. Passages from discrete to continuum without a proof
 
