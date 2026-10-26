@@ -2,8 +2,8 @@
 Equivalence of rule signatures.
 
 This module defines `RuleSignature.sigEquiv`, agreement of two signatures in
-all five components, proves that it is reflexive, symmetric and transitive,
-and computes the edge count, vertex count and curvature total of the
+all four components, proves that it is reflexive, symmetric and transitive,
+and computes the edge count and vertex count of the
 signature of the empty hypergraph.
 -/
 

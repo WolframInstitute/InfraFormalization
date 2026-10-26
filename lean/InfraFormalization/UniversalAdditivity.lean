@@ -111,8 +111,7 @@ theorem edgeReversal_disjoint_depth5 :
 
 /-- Single-way trace of `edgeReversalSys` at depth 5. The statement is
 four equalities: -6 on `seedEdge12`, `2 * (-6)` on `seedPath123` and on
-`seedTwoDisjoint`, and `3 * (-6)` on `seedTriangle`.
-`BBHDeepEvolution` gives -42 = 7 × (-6) on `twoTriangleSeed` at depth 5. -/
+`seedTwoDisjoint`, and `3 * (-6)` on `seedTriangle`. -/
 theorem additivity_edgeReversal_depth5 :
     knillEulerScaled (causalDAGOfEvolution edgeReversalSys seedEdge12 5) = -6 ∧
     knillEulerScaled (causalDAGOfEvolution edgeReversalSys seedPath123 5) = 2 * (-6) ∧

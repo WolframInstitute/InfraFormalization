@@ -1,14 +1,12 @@
 /-
-Limit statements for scaled discrete operators on the cycle, Riemann sums, and placeholder
-propositions for curved spacetimes.
+Limit statements for scaled discrete operators on the cycle and for Riemann sums.
 
 The module states pointwise convergence of the scaled second difference for twice
 differentiable functions (not proved) and proves it for quadratics. It proves the scalar
 limits `exp(t n² λ_k) → exp(−(2πk)² t)`, `2n sin(πk/n) → 2πk` and
 `4n² sin²(πk/n) (+ m²) → (2πk)² (+ m²)`, where `λ_k` is the cycle Laplacian eigenvalue. It
 proves that the Riemann sums `(1/n) Σ_{k<n} f(k/n)` tend to `∫_0^1 f` for every polynomial of
-degree at most 3. The propositions named after Schwarzschild, Kerr and FLRW contain `False`
-and do not state a convergence property.
+degree at most 3.
 -/
 
 import InfraFormalization.HypergraphCycleBridge
@@ -500,16 +498,7 @@ theorem discreteKleinGordonSpectrum_holds (m : ℝ) :
     tendsto_const_nhds
   exact h_schr.add h_const
 
-/-! ## C. Placeholders for curved spacetimes
-
-G1, G3 and G4 (arXiv:2004.14810, 2102.09363, 2303.07282) discuss Schwarzschild, Kerr and
-FLRW spacetimes as continuum limits of hypergraph rewriting. The definitions below are
-conjunctions with `False`; they are false for every argument and do not formalise a
-convergence statement. -/
-
-/-! ## D. Uninhabitedness of the placeholders -/
-
-/-! ## E. The quadratic case of `CycleLaplacianConvergenceC2` -/
+/-! ## C. The quadratic case of `CycleLaplacianConvergenceC2` -/
 
 /-- For `f(y) = a y² + b y + c`, `scaledSecondDiff f n x` equals `f''(x)` for every `n > 0`,
 so it tends to `f''(x)`. -/
