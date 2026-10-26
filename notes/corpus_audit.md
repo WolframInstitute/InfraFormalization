@@ -4,7 +4,7 @@ This document lists, for each finding about the gravitational constructions, eve
 
 Line numbers refer to the text files `papers/gorard_*.txt`. The TeX sources are in `papers/tex_*`.
 
-Status labels: PROVED (Lean, kernel-checked, sorry-free, axioms at most `propext`, `Classical.choice`, `Quot.sound`), VACUOUS (a Lean theorem whose statement does not concern the paper's objects), MEASURED, READ, OPEN.
+Status labels: PROVED (a Lean theorem with axioms at most `propext`, `Classical.choice`, `Quot.sound`), MEASURED, READ, OPEN.
 
 ## The corpus
 
@@ -21,7 +21,7 @@ The papers state $W(B_\varepsilon(p),B_\varepsilon(q))=\delta\big(1-\tfrac{\vare
 
 | Paper | Line | Text |
 |---|---|---|
-| G1 | 1468 (eq. 48) | the expansion with $R$; line 1475 calls the quantity the "Ricci scalar curvature" |
+| G1 | 1468 (eq. 48) | the expansion with $R$. Line 1475 calls the quantity the "Ricci scalar curvature" |
 | G1 | 1532-1534 | "the Ollivier-Ricci scalar curvature κ (p, q) reduces (up to some arbitrary scaling factor) to the standard Riemannian Ricci scalar curvature R (p, q)" |
 | G1 | 1772 | the same reduction, used to infer eq. 64 |
 | G1 | 2054 (eq. 80) | the direction-averaged expansion with $R$ |
@@ -49,7 +49,7 @@ PROVED as arithmetic comparisons: `Infra.gray_vs_gorard_disagree_on_S2`, `Infra.
 
 ## Finding 3. The argument for the Einstein equations
 
-G1 §3.3 (lines 2168-2416) sums the discrete curvature into $S[g^{ab}]=\sum d\mu_g R$ (eq. 86, line 2200), sets its variation to zero (eq. 87, line 2211), states that the sum "becomes" the Einstein-Hilbert integral "subject to a weak ergodicity assumption" (line 2214, eq. 88), and concludes the vacuum Einstein equations (eq. 91, line 2259) "if a continuum limit exists in which the causal graph becomes a Riemannian manifold" (line 2264). Def 15 (lines 786-788) introduces a discrete Lorentzian metric g, and lines 799-801 state that the details of how it "can be explicitly obtained are outlined in the next section". G1 gives no formula for the components of $g^{ab}$ or for $d\mu_g$ in terms of the hypergraph, no definition of the variation of a discrete sum, no definition of weak ergodicity and no notion of convergence for "becomes" (READ; F1 and F5 in `MAJOR_FLAWS.md`).
+G1 §3.3 (lines 2168-2416) sums the discrete curvature into $S[g^{ab}]=\sum d\mu_g R$ (eq. 86, line 2200), sets its variation to zero (eq. 87, line 2211), states that the sum "becomes" the Einstein-Hilbert integral "subject to a weak ergodicity assumption" (line 2214, eq. 88), and concludes the vacuum Einstein equations (eq. 91, line 2259) "if a continuum limit exists in which the causal graph becomes a Riemannian manifold" (line 2264). Def 15 (lines 786-788) introduces a discrete Lorentzian metric g, and lines 799-801 state that the details of how it "can be explicitly obtained are outlined in the next section". G1 gives no formula for the components of $g^{ab}$ or for $d\mu_g$ in terms of the hypergraph, no definition of the variation of a discrete sum, no definition of weak ergodicity and no notion of convergence for "becomes" (READ, findings F1 and F5 in `MAJOR_FLAWS.md`).
 
 | Paper | Lines | Text |
 |---|---|---|
@@ -58,7 +58,7 @@ G1 §3.3 (lines 2168-2416) sums the discrete curvature into $S[g^{ab}]=\sum d\mu
 | G3 | 6076-6124 (eqs. 384-387) | replaces "the assumption of weak ergodicity of the causal graph dynamics with the much stronger assumption of uniform Poisson distribution of the rewrite events" (lines 6079-6081). The Benincasa-Dowker limit (eq. 387) is stated under zero surface terms and a vanishing contribution from outside the Riemann normal neighbourhood, with numerical support from Cunningham (lines 6110-6120) |
 | G4 | 4713-4735 | restates the chain and concludes that "any Wolfram model rule which is causal invariant, weakly ergodic and asymptotically dimension preserving will be consistent with the Einstein field equations in the continuum limit" (lines 4733-4735) |
 
-Lean: `Refutations/F1NoMetric.lean` and `Refutations/F5Illdefined.lean` are VACUOUS with respect to G1 (statements about a function type and about the sequence $1/(n+1)$). The findings rest on the reading.
+Lean: none. The findings are READ.
 
 ## Finding 4. Asymptotic dimension preservation is stated as the Euler-Lagrange equation
 
@@ -71,13 +71,13 @@ G1 lines 2203-2211 state that asymptotic dimensionality preservation "correspond
 | G3 | 150-152 and 271-273 (refer to rules that satisfy weak ergodicity and asymptotic dimension preservation) |
 | G4 | 4726-4735 |
 
-Lean: `asymptoticDimPreservation_iff_eulerLagrange` (`Refutations/F3Tautology.lean`) is PROVED by `Iff.rfl`. Both sides are the project's encoding `P.variation g = 0`. The encoding of eq. 87 is the READ finding.
+Lean: none. The finding is READ.
 
 ## Finding 5. Orthonormality of non-parallel hyperedges is assumed without a bilinear form
 
 G1 lines 2063-2065: "We also assume that all pairs of hyperedges which are not parallel (i.e. incident to the same set of vertices) can be considered to be orthonormal." G1 defines no bilinear form on hyperedges. The sentence occurs in G1 only. G2 (line 3981) and G3 (line 5794) use orthonormality of tangent vectors in the Riemannian definition of sectional curvature.
 
-Lean: `Refutations/F2Orthonormality.lean` is VACUOUS with respect to G1 (statements about forms on `Bool`).
+Lean: none. The finding is READ.
 
 ## Finding 6. Expansions stated for ε, δ → 0 are applied with ε = δ = 1
 
@@ -88,17 +88,17 @@ G1 lines 2059-2061 set all hyperedges to unit length and take $\varepsilon=\delt
 G3 states that the rule $\{\{x,y\},\{y,z\},\{z,w\},\{w,v\}\}\to\{\{y,u\},\{u,v\},\{w,x\},\{x,u\}\}$ "provably satisfies the Einstein field equations in the continuum limit" (abstract, lines 50-52) and uses it in the §6 comparison (line 6202, Figures 73-84). G4 §5 uses the same rule (figure captions, lines 5140-5217) and describes it as a rewriting system that "provably satisfies the Einstein field equations in the continuum limit" (lines 4594-4598). Neither paper gives a proof for this rule (READ).
 
 - PROVED: $|LHS|=|RHS|=4$, so every evolution preserves the edge count (`Refutations.gorardNamedRule_applications_preserve_size`). In every evolution from $N$ hyperedges, with any update order, every antichain of the causal graph has at most $N/4$ events (`CausalHistory.gorardNamedRule_antichain_card_le`) and at most $5^t$ events lie within directed distance $t$ of an event (`CausalHistory.gorardNamedRule_ball_card_le`).
-- MEASURED: on cycles, paths and 3D grids of up to 300 edges and 2000 events, the log-log cone-growth exponent lies between 0.77 and 1.26 and depends on the update order (SetReplace 0.3.196 and `scripts/python/`; [`notes/empirical_refutation.md`](empirical_refutation.md) §4). On the 4-cycle and the 4-edge path the rule fires once and halts.
+- MEASURED: on cycles, paths and 3D grids of up to 300 edges and 2000 events, the log-log cone-growth exponent lies between 0.77 and 1.26 and depends on the update order (SetReplace 0.3.196 and `scripts/python/`, [`notes/empirical_refutation.md`](empirical_refutation.md) §4). On the 4-cycle and the 4-edge path the rule fires once and halts.
 - OPEN: linear cone growth, stated as `CausalHistory.GorardNamedRuleConeGrowthLinear`.
 
 ## Per-paper summary
 
 | Paper | Material added in the paper | Findings present |
 |---|---|---|
-| G1 | §3.3 argument for the discrete Einstein equations; Ollivier-Ricci curvature on directed hypergraphs; discrete ADM | 1, 3, 4, 5, 6 |
-| G2 | tube-volume formula; causal-set d'Alembertian and Benincasa-Dowker action | 1, 2, 3, 4 |
-| G3 | CCZ4 on a hypergraph mesh; Ψ4 extraction; comparison with evolution under the rule of line 6202 | 1, 2, 3, 4 (by reference), 7 |
-| G4 | continuum WKB and Ernst-equation collapse analysis; numerical runs; comparison with evolution under the same rule | 3, 4, 7, and F8 of `MAJOR_FLAWS.md` (the title names discrete singularity theorems, and lines 76-78 and 351-357 state them as open) |
+| G1 | §3.3 argument for the discrete Einstein equations, Ollivier-Ricci curvature on directed hypergraphs, discrete ADM | 1, 3, 4, 5, 6 |
+| G2 | tube-volume formula, causal-set d'Alembertian and Benincasa-Dowker action | 1, 2, 3, 4 |
+| G3 | CCZ4 on a hypergraph mesh, Ψ4 extraction, comparison with evolution under the rule of line 6202 | 1, 2, 3, 4 (by reference), 7 |
+| G4 | continuum WKB and Ernst-equation collapse analysis, numerical runs, comparison with evolution under the same rule | 3, 4, 7, and F8 of `MAJOR_FLAWS.md` (the title names discrete singularity theorems, and lines 76-78 and 351-357 state them as open) |
 
 ## Summary
 

@@ -5,7 +5,7 @@ This document lists the statements in G1-G4 that assert convergence to, emergenc
 Status labels:
 
 - Standard: a result from the cited literature, quoted in agreement with it (READ).
-- Differs from source: the formula differs from the cited source; both formulas are given (READ, with the arithmetic comparison PROVED where noted).
+- Differs from source: the formula differs from the cited source. Both formulas are given (READ, with the arithmetic comparison PROVED where noted).
 - No proof: the paper states the claim and gives no proof, or uses an object it does not construct (READ).
 - By definition: the claim holds by the definitions the paper uses (READ).
 - Conditional: the paper states the claim under a named assumption or conjecture (READ).
@@ -61,7 +61,7 @@ Status: No proof. G1 gives no formula for the components of $g^{ab}$ or for $d\m
 
 Eq. 87 (lines 2203-2211). Asymptotic dimensionality preservation "corresponds to the statement" $\delta S[g^{ab}]/\delta g^{ab}\to0$.
 Continuum object: Euler-Lagrange equation of the Einstein-Hilbert action.
-Status: By definition. The condition is the Euler-Lagrange equation of $S$. G1 does not define the variation of a discrete sum. `asymptoticDimPreservation_iff_eulerLagrange` (`Refutations/F3Tautology.lean`) is PROVED by `Iff.rfl` for the project's encoding.
+Status: By definition. The condition is the Euler-Lagrange equation of $S$. G1 does not define the variation of a discrete sum. Lean: none.
 
 Eq. 88 (lines 2214-2225). "In the continuum limit of an arbitrarily large causal graph, this sum becomes (subject to a weak ergodicity assumption on the dynamics of the causal graph) an integral", $S[g^{ab}]=\int d^4x\sqrt{-g}R$.
 Continuum object: Einstein-Hilbert action.
@@ -127,7 +127,7 @@ Status: Conditional. G2 gives no proof that a Wolfram model evolution produces P
 
 Text: "a hypergraph substitution rule that provably satisfies the Einstein field equations in the continuum limit".
 Continuum object: Einstein equations on a Lorentzian manifold.
-Status: Conditional, and no proof for the rule. The argument (lines 6076-6124) replaces weak ergodicity by Poisson-distributed rewrite events and uses the Benincasa-Dowker limit under its two assumptions. G3 gives no proof that the rule of line 6202 produces Poisson-distributed events. For this rule: PROVED edge-count conservation, antichains of at most N/4 events and at most 5^t events within directed distance t (`CausalHistory.lean`); MEASURED cone-growth exponents between 0.77 and 1.26 on cycles, paths and 3D grids, depending on the update order ([`empirical_refutation.md`](empirical_refutation.md)); OPEN linear cone growth (`CausalHistory.GorardNamedRuleConeGrowthLinear`).
+Status: Conditional, and no proof for the rule. The argument (lines 6076-6124) replaces weak ergodicity by Poisson-distributed rewrite events and uses the Benincasa-Dowker limit under its two assumptions. G3 gives no proof that the rule of line 6202 produces Poisson-distributed events. For this rule, edge-count conservation, antichains of at most N/4 events and at most 5^t events within directed distance t are PROVED (`Refutations/F7NamedRuleStructure.lean`, `CausalHistory.lean`). Cone-growth exponents between 0.77 and 1.26 on cycles, paths and 3D grids, depending on the update order, are MEASURED ([`empirical_refutation.md`](empirical_refutation.md)). Linear cone growth is OPEN (`CausalHistory.GorardNamedRuleConeGrowthLinear`).
 
 ### §2-§5, CCZ4 on a hypergraph mesh (lines 310-4779)
 
@@ -142,7 +142,7 @@ Status: Standard. The tetrad is built from the evolved metric. See [`null_tetrad
 ### §6, discrete curvature and comparison with Wolfram model evolution (lines 4780-6463)
 
 - Eq. 340 (line 5241): ball-volume integral. Standard.
-- Eq. 342 (line 5276): tube volume with coefficient $\tfrac{d-1}{d+1}\big(R-\mathrm{Ric}(u,u)\big)$. Differs from source: Gray (1973) gives $\tfrac{R+\mathrm{Ric}(u,u)}{6(d+1)}$; the values on $S^2$ are $1/3$ and $1/6$. PROVED as arithmetic comparisons: `Infra.gray_vs_gorard_disagree_on_S2`, `Infra.gray_vs_gorard_disagree_on_S3`.
+- Eq. 342 (line 5276): tube volume with coefficient $\tfrac{d-1}{d+1}\big(R-\mathrm{Ric}(u,u)\big)$. Differs from source: Gray (1973) gives $\tfrac{R+\mathrm{Ric}(u,u)}{6(d+1)}$. The values on $S^2$ are $1/3$ and $1/6$. PROVED as arithmetic comparisons: `Infra.gray_vs_gorard_disagree_on_S2`, `Infra.gray_vs_gorard_disagree_on_S3`.
 - Eq. 343 (line 5306): ball-volume ratio. Standard.
 - Eq. 344 (line 5340): Wasserstein expansion with $R$. Differs from source, as for G1 eq. 48.
 - Lines 5414-5416: "the Ollivier-Ricci curvature scalar κ (p, q) reduces to the usual Riemannian Ricci curvature scalar R (p, q)". Differs from source.
@@ -196,7 +196,7 @@ Status: No proof. The substitution is stated, and details are referred to G4's r
 | Discrete objects without a construction | G1 eq. 86, Def 15, lines 2063-2065, eq. 96 | No proof |
 | Equivalences by definition | G1 eq. 87; G1 lines 1063-1089 | By definition |
 | Passage from discrete sum to integral | G1 eq. 88; G2 eq. 229; G3 lines 6076-6124; G4 lines 4713-4735 | Conditional on weak ergodicity or Poisson-distributed events |
-| The rule of G3 line 6202 | G3 abstract, §6; G4 §5 | Conditional; PROVED bounds, MEASURED exponents and OPEN linear growth as above |
+| The rule of G3 line 6202 | G3 abstract, §6; G4 §5 | Conditional. PROVED bounds, MEASURED exponents and OPEN linear growth as above |
 | Title and abstract of G4 | G4 lines 1-3, 76-78 | READ: stated as open in the body |
 
 The items G1 eqs. 86-92, 97 and 102, G1 eqs. 64-65 and 84, G2 eq. 229, G3 lines 6076-6124 and the G3 abstract carry the argument from hypergraph rewriting to the Einstein equations. None of them has a proof in G1-G4. Each relies on an object the papers do not construct, on weak ergodicity or Poisson-distributed events, or on the Benincasa-Dowker limit under its two assumptions.

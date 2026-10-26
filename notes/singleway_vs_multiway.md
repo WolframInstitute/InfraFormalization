@@ -25,12 +25,12 @@ G1 Definition 9 (lines 458-461) defines a multiway system as causal invariant wh
 | G1 §2.4 Discrete Lorentz transformations | 1147-1422 | transformations between foliations of one causal graph |
 | G1 §3.1 Discrete Ricci scalar for directed hypergraphs | 1427-1813 | one spatial hypergraph |
 | G1 §3.2 Parallel transport and the discrete spacetime Ricci tensor | 1814-2167 | one hypergraph and one causal graph |
-| G1 §3.3 The discrete Einstein field equations | 2168-3069 | one causal graph; assumes causal invariance and asymptotic dimensionality preservation (lines 2170-2171) |
-| G2 §3 Lorentz symmetry and causal invariance | 710-1654 | defines the multiway evolution graph (Definition 19, line 1075); line 1021 states the default updating order, which "applies a given transformation rule to every possible matching and non-overlapping subhypergraph" |
+| G1 §3.3 The discrete Einstein field equations | 2168-3069 | one causal graph, under the assumptions of causal invariance and asymptotic dimensionality preservation (lines 2170-2171) |
+| G2 §3 Lorentz symmetry and causal invariance | 710-1654 | defines the multiway evolution graph (Definition 19, line 1075). Line 1021 states the default updating order, which "applies a given transformation rule to every possible matching and non-overlapping subhypergraph" |
 | G2 §4-§5 Dimension estimation; discrete Ricci curvature, Benincasa-Dowker action | 1655-4464 | one causal graph |
 | G2 §6 Classical/quantum sequential growth and causal multiway systems | 4465 onward | multiway |
 | G3 §2-§5 CCZ4 formulation and numerical tests | 310-4779 | one hypergraph at each time, used as the mesh of a PDE solver (abstract, lines 26-39) |
-| G3 §6 Comparison to pure Wolfram model evolution | 4780 onward | one evolution of the rule of line 6202; the update order is not stated |
+| G3 §6 Comparison to pure Wolfram model evolution | 4780 onward | one evolution of the rule of line 6202, with the update order not stated |
 | G4 | 554 onward | CCZ4 on a hypergraph mesh, as in G3 (abstract, lines 51-61) |
 
 G1 and G2 define causal invariance on the multiway system. The arguments of G1 §2.3-§3.3, G2 §4-§5 and G3 §6 use one causal graph. G1 Figure 7 (lines 479-482) shows two string substitution systems with causal invariance. G3 gives no proof that the rule of line 6202 is causal invariant.
@@ -45,24 +45,24 @@ The numbering follows `FINDINGS.md`.
 
 | Findings | Content | Dependence on the update order |
 |---|---|---|
-| S1 #1-#2 | G1 eq. 80 and G3 eq. 344 use R where Ollivier (2009) has Ric(v,v); G2 eq. 126 and G3 eq. 342 differ from Gray (1973) | none: the formulas concern Riemannian manifolds |
-| S2 #3-#6 | the metric, the measure, the functional derivative and orthonormality are not constructed from the hypergraph; ε = δ = 1 | none |
+| S1 #1-#2 | G1 eq. 80 and G3 eq. 344 use R where Ollivier (2009) has Ric(v,v), and G2 eq. 126 and G3 eq. 342 differ from Gray (1973) | none: the formulas concern Riemannian manifolds |
+| S2 #3-#6 | the metric, the measure, the functional derivative and orthonormality are not constructed from the hypergraph, and ε = δ = 1 is assumed | none |
 | S3 #7-#9 | equivalences that hold by the definitions G1 gives | none |
 | S4 #10-#12 | passages from discrete to continuum without a proof | none: the Benincasa-Dowker step assumes Poisson-distributed events (G3 line 6080) |
-| S5 #13 | causal-graph growth of the rule of G3 line 6202 | edge-count conservation and the antichain and cone bounds are PROVED for every update order; the cone-growth exponents are MEASURED in four update orders and range from 0.77 to 1.26 |
+| S5 #13 | causal-graph growth of the rule of G3 line 6202 | edge-count conservation and the antichain and cone bounds are PROVED for every update order. The cone-growth exponents are MEASURED in four update orders and range from 0.77 to 1.26 |
 | S5 #14 | the ball-count expansion N(r) | none |
 | S6 #15-#16 | titles and abstracts | none |
 
-For the rule of G3 line 6202, the following hold in every evolution and every update order (PROVED, `CausalHistory.lean`): the edge count stays at its initial value N (`Refutations.gorardNamedRule_applications_preserve_size`); every antichain of the causal graph has at most N/4 events (`CausalHistory.gorardNamedRule_antichain_card_le`); at most 5^t events lie within directed distance t of an event (`CausalHistory.gorardNamedRule_ball_card_le`). The antichain bound limits the events at each longest-path distance from an event, and the cone counts shortest-path distance, so the antichain bound does not imply linear cone growth. Linear cone growth is OPEN, stated as `CausalHistory.GorardNamedRuleConeGrowthLinear`.
+For the rule of G3 line 6202, the following hold in every evolution and every update order (PROVED, `Refutations/F7NamedRuleStructure.lean` and `CausalHistory.lean`). The edge count stays at its initial value N (`Refutations.gorardNamedRule_applications_preserve_size`). Every antichain of the causal graph has at most N/4 events (`CausalHistory.gorardNamedRule_antichain_card_le`). At most 5^t events lie within directed distance t of an event (`CausalHistory.gorardNamedRule_ball_card_le`). The antichain bound limits the events at each longest-path distance from an event, and the cone counts shortest-path distance, so the antichain bound does not imply linear cone growth. Linear cone growth is OPEN, stated as `CausalHistory.GorardNamedRuleConeGrowthLinear`.
 
 Each path through the multiway evolution graph is a single-way evolution, so the PROVED bounds hold on every branch.
 
 ## 5. Evolution operators of the Lean library
 
-- `MultiwayExec.multiwayStep` (`MultiwayExec.lean:197`) returns every state obtained by one application of one rule at one match. `multiwayEvolve` iterates it without merging equal states.
-- `MultiwayExec.singleWayStep` (`MultiwayExec.lean:282`) applies a maximal set of edge-disjoint matches, chosen greedily in the order of the rules and of `allMatches`. Edges created in the step are not matched in the same step. This is the update scheme G2 line 1021 describes as its default. On the 4-cycle seed it fires one of the four matches of the rule of G3 line 6202 and the edge count stays 4.
-- `MultiwayExec.fireAllStep` (`MultiwayExec.lean:302`) applies every match found in the input state, including matches that share edges, with `fireAllEvolve`, `tracedFireAllStep`, `tracedFireAllEvolve`, `causalDAGOfFireAll` and `branchialDAGOfFireAll`. When matches overlap it is not a Wolfram model update, and the edge count of a rule with |LHS| = |RHS| can change.
-- The modules `MultiRuleDiscovered`, `StepZeroAncestor`, `H9Bridge`, `H9BridgeStepProof`, `H9Closure`, `H9StructuralProgress`, `DistinctEdgeAPI`, `DistinctEdgeIdentity`, `PartitionClosure`, the multi-rule part of `UniversalAdditivity`, and the `BBH*`, `Branchial*`, `Discrete*`, `EnhancedPsi4`, `CurvatureDensityLimit`, `MultiRuleDepthTrajectory`, `Phase_D_FrameworkOverview` and `VacuumLikeUniversal` modules state their results with the fire-all operator. Their results do not describe Wolfram model evolutions.
+- `MultiwayExec.multiwayStep` (`MultiwayExec.lean:142`) returns every state obtained by one application of one rule at one match. `multiwayEvolve` iterates it without merging equal states.
+- `MultiwayExec.singleWayStep` (`MultiwayExec.lean:227`) applies a maximal set of edge-disjoint matches, chosen greedily in the order of the rules and of `allMatches`. Edges created in the step are not matched in the same step. This is the update scheme G2 line 1021 describes as its default. On the 4-cycle seed it fires one of the four matches of the rule of G3 line 6202 and the edge count stays 4.
+- `MultiwayExec.fireAllStep` (`MultiwayExec.lean:247`) applies every match found in the input state, including matches that share edges, with `fireAllEvolve`, `tracedFireAllStep`, `tracedFireAllEvolve`, `causalDAGOfFireAll` and `branchialDAGOfFireAll`. When matches overlap it is not a Wolfram model update, and the edge count of a rule with |LHS| = |RHS| can change.
+- The modules `MultiRuleDiscovered`, `StepZeroAncestor`, `H9Bridge`, `H9BridgeStepProof`, `H9Closure`, `H9StructuralProgress`, `DistinctEdgeIdentity`, `PartitionClosure` and the multi-rule part of `UniversalAdditivity` state their results with the fire-all operator. These results do not describe Wolfram model evolutions.
 - The "branchial" relation of `BranchialEventTrace` is contention between events of one step for a consumed edge. It is not the branchial graph of the Wolfram model.
 - `allMatches` enumerates distinct bindings, so a state with two equal edges gives one match for a one-edge left-hand side where the Wolfram model gives two.
 

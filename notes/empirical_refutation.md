@@ -16,8 +16,8 @@ The SetReplace runs below use `scripts/run_seeds_v3.wl`, `scripts/causal_dimensi
 
 | Seed | Seed size | Events fired | Termination |
 |---|---:|---:|---|
-| directed 4-cycle `{{1,2},{2,3},{3,4},{4,1}}` | 4 | **1** | no match remains |
-| directed 4-path  `{{1,2},{2,3},{3,4},{4,5}}` | 4 | **1** | no match remains |
+| directed 4-cycle `{{1,2},{2,3},{3,4},{4,1}}` | 4 | 1 | no match remains |
+| directed 4-path  `{{1,2},{2,3},{3,4},{4,5}}` | 4 | 1 | no match remains |
 
 After one firing on the 4-cycle the state is `{{2,v12},{v12,1},{4,1},{1,v12}}`, which contains no chain of four distinct edges `x→y→z→w→v`. The hand traces are in `results/phase1_selfaudit/README.md`.
 
@@ -70,7 +70,7 @@ Both tools append the created edges at the end of the state. Each event consumes
 
 `scripts/python/setreplace_order.py` reimplements the SetReplace order with two rules for ties between matches that share their last edge: by left-hand-side ordering (`--tie perm`) and by state positions (`--tie pos`). With `--tie pos` it reproduces the SetReplace cone counts and exponents on the 6-cycle, 8-cycle and 10-path. It does not reproduce the 20-cycle and grid runs, so `Shortest` over `Alternatives` breaks ties by a rule that differs from both.
 
-Exponents under four update orders (MEASURED; Python columns rerun on 2026-10-23):
+Exponents under four update orders (MEASURED, Python columns rerun on 2026-10-23):
 
 | Seed | SetReplace | rewriter.py | last edge earliest, `--tie perm` | last edge earliest, `--tie pos` |
 |---|---:|---:|---:|---:|

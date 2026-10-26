@@ -60,7 +60,7 @@ S³:
 
 The ratio of the two coefficients is 2 on S² and 6 on S³, so the two expressions differ in form as well as by a constant factor.
 
-Lean (PROVED, axioms `propext`, `Classical.choice`, `Quot.sound`; Gray's formula is cited, not formalised): `Infra.gray_vs_gorard_disagree_on_S2` (`lean/InfraFormalization/Infra/GrayTubeStatement.lean:86`) and `Infra.gray_vs_gorard_disagree_on_S3` (`:96`) compare the two leading coefficients on S² (1/6 and 1/3) and S³.
+Lean: `Infra.gray_vs_gorard_disagree_on_S2` (`lean/InfraFormalization/Infra/GrayTubeStatement.lean:39`) and `Infra.gray_vs_gorard_disagree_on_S3` (`:50`) compare the two leading coefficients on S² (1/6 and 1/3) and S³ (PROVED). Gray's formula is cited, not formalised.
 
 Substituting (R + Ric(u,u))/(6(d+1)) for the coefficient of eq. 342 gives the expansion above.
 

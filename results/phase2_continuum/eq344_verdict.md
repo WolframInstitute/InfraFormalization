@@ -29,13 +29,13 @@ Ric(v,v) = R_ij v^i v^j is the Ricci tensor evaluated on the direction from p to
 
 On the unit sphere S²: R = 2 and Ric(v,v) = 1 for every unit v. The ε² coefficient is 1/8 in Ollivier's formula and 1/4 in eq. 344.
 
-Lean (PROVED, axioms `propext`, `Classical.choice`, `Quot.sound`; Ollivier's theorem is cited, not formalised):
+Lean (PROVED). Ollivier's theorem is cited, not formalised.
 
 | Theorem | File:line | Statement |
 |---|---|---|
-| `Infra.ollivier_minus_gorard_leading` | `lean/InfraFormalization/Infra/OllivierStatement.lean:93` | The leading terms differ by δε²(R − Ric(v,v))/(2(n+2)) |
-| `Infra.ollivier_gorard_agree_iff` | `Infra/OllivierStatement.lean:107` | For δ, ε ≠ 0 the leading terms agree iff R = Ric(v,v) |
-| `Infra.s2_gorard_error` | `Infra/OllivierStatement.lean:137` | The discrepancy on S² |
+| `Infra.ollivier_minus_gorard_leading` | `lean/InfraFormalization/Infra/OllivierStatement.lean:52` | The leading terms differ by δε²(R − Ric(v,v))/(2(n+2)) |
+| `Infra.ollivier_gorard_agree_iff` | `Infra/OllivierStatement.lean:61` | For δ, ε ≠ 0 the leading terms agree iff R = Ric(v,v) |
+| `Infra.s2_gorard_error` | `Infra/OllivierStatement.lean:90` | The discrepancy on S² |
 
 Substituting Ric(v,v) for R in eq. 344 gives Ollivier's formula.
 

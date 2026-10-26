@@ -19,7 +19,7 @@ Reading:
 - Hypothesis: stated as an assumption.
 - By definition: the two sides of the stated equivalence describe the same property.
 - No proof: G1 states the result and gives no derivation.
-- Differs from source: the formula differs from the cited source; both formulas are given.
+- Differs from source: the formula differs from the cited source. Both formulas are given.
 - Standard (continuum): a correct continuum formula that G1 reaches through rows marked Undefined or No proof.
 
 ---
@@ -101,7 +101,7 @@ Reading:
 | 61 | 446 | 1032 | Def 25 | DISCR-DEF | "discrete Cauchy surface" = achronal set whose Cauchy development is $\mathcal M$ | Standard | Def 16 (TeX line 322) restated in terms of achronal sets. |
 | 62 | 451 | 1051 | (37) | STD | $\hat g=\Omega^2 g$ (conformal transformation) | Standard | |
 | 63 | 456 | 1060 | (38) | STD | conformal-invariance of sign of $g(X,X)$ | Standard | |
-| 64 | 460 (text) | 1063-1077 | — | CONCL | Claim: causal invariance ⇔ discrete general covariance | By definition | Lines 1063-1077 identify causal invariance with a discretised principle of general covariance. Both describe independence of the causal graph from the updating order. The project's encoding is PROVED by `Iff.rfl` (`causalInvariance_iff_discreteGeneralCovariance`, `Refutations/F4Tautology.lean:51`). See close reading §2.3. |
+| 64 | 460 (text) | 1063-1077 | — | CONCL | Claim: causal invariance ⇔ discrete general covariance | By definition | Lines 1063-1077 identify causal invariance with a discretised principle of general covariance. Both describe independence of the causal graph from the updating order. Lean: none. See close reading §2.3. |
 | 65 | 462 (text) | 1079-1089 | — | CONCL | Claim: flat-hypersurface foliation ⇒ Lorentz covariance; constancy of $c$ axiomatic | By definition | Lines 1079-1089 derive discrete Lorentz covariance for flat foliations and state that constancy of the speed of light "is enforced axiomatically by our definition of the edge lengths in causal graphs". See close reading §2.3. |
 | 66 | 466 | 1115 | (39) | STD | Malament-Hogarth spacetime $\exists\gamma_1\subset\mathcal M,\ p\in\mathcal M:\int_{\gamma_1}d\tau=\infty,\gamma_1\subset I^-(p)$ | Standard | Standard Hogarth/Welch definition. |
 
@@ -141,12 +141,12 @@ Reading:
 | 91 | 664 | 1598 | (55) | DISCR-DEF | $A=\{x_1,\dots,x_n\}\to^e B=\{y_1,\dots,y_m\}$ | Notation | Directed hyperedge notation. |
 | 92 | 669 | 1605 | (56) | DISCR-DEF | $\kappa(e)=1-W(\mu_{A^{in}},\mu_{B^{out}})$ | Notation | Eq. 56 has no division by a distance, which eq. 51 has. |
 | 93 | 674 | 1617 | (57) | DISCR-DEF | $\mu_{A^{in}}=\sum_i \mu_{x_i}$, $\mu_{B^{out}}=\sum_j \mu_{y_j}$ | Definition | Each $\mu_{x_i}$ of eq. 58 carries a factor $1/n$, so $\mu_{A^{in}}$ has total mass 1. The same holds for $\mu_{B^{out}}$ with $1/m$. |
-| 94 | 679 | 1636 | (58) | DISCR-DEF | $\mu_{x_i}(z)$ piecewise definition using $d_{x_i^{in}}$ | Definition | Combinatorial rule; $d_{x_i^{in}}$ is the in-degree of $x_i$. |
+| 94 | 679 | 1636 | (58) | DISCR-DEF | $\mu_{x_i}(z)$ piecewise definition using $d_{x_i^{in}}$ | Definition | Combinatorial rule. $d_{x_i^{in}}$ is the in-degree of $x_i$. |
 | 95 | 689 | 1673 | (59) | DISCR-DEF | $\mu_{y_j}(z)$ piecewise definition using $d_{y_j^{out}}$ | Definition | Same form as eq. 58, with out-degrees. |
 | 96 | 699 | 1692 | Def 34 | DEF | discrete 1-Wasserstein distance between $\mu_{A^{in}}, \mu_{B^{out}}$ on a directed hypergraph | Definition | Def 32 applied to $\mu_{A^{in}}$ and $\mu_{B^{out}}$. |
 | 97 | 702 | 1700 | (60) | DISCR-DEF | $W(\mu_{A^{in}},\mu_{B^{out}})=\min\sum_{u\to A}\sum_{B\to v}d(u,v)\epsilon(u,v)$ | Notation | $\epsilon$ denotes the coupling and $d$ the graph distance. |
 | 98 | 707 | 1714 | (61) | DISCR-DEF | $\sum_{u\to A}\epsilon(u,v)=\sum_{j=1}^m \mu_{y_j}(v)$ | Definition | Marginal constraint. |
-| 99 | 712 | 1726 | (62) | DISCR-DEF | $\sum_{B\to v}\epsilon(u,v)=\sum_{i=1}^n \mu_{x_I}(u)$ | Notation | TeX line 713 has $\mu_{x_I}$; the index is $i$. |
+| 99 | 712 | 1726 | (62) | DISCR-DEF | $\sum_{B\to v}\epsilon(u,v)=\sum_{i=1}^n \mu_{x_I}(u)$ | Notation | TeX line 713 has $\mu_{x_I}$. The index is $i$. |
 | 100 | 719 | 1739 | (63) | DISCR-ASSERT | $N(r)=ar^n$, $a\in\mathbb Z$ for a "flat" spatial hypergraph | Notation | G1 states $N(r)=ar^n$ with $a\in\mathbb Z$ as an equality. In $\mathbb Z^2$ with graph distance $N(r)=2r^2+2r+1$, so the equality holds for the leading term only. |
 | 101 | 742 | 1787 | (64) | BRIDGE | $\mathrm{Vol}(B_r(p)\in\mathcal M)/\mathrm{Vol}(B_r(0)\in\mathbb Z^n)=1-\frac{R}{6(n+2)}r^2+O(r^4)$, "with exactness when $r=1$" | No proof | Eq. 64 is eq. 47 with $\epsilon$ replaced by $r$. G1 applies it to a hypergraph ball and states that it holds "with exactness when r = 1" (line 1790). Eq. 47 is an expansion as $\epsilon\to 0$. G1 gives no derivation for hypergraphs. |
 | 102 | 747 | 1798 | (65) | BRIDGE | $N(r)=ar^n(1-\frac{R}{6(n+2)}r^2+O(r^4))$ | No proof | G1 obtains the correction factor from eq. 64 (lines 1772-1803) and gives no derivation for hypergraph vertex counts. |
@@ -183,7 +183,7 @@ Reading:
 |---|---|---|---|---|---|---|---|
 | 124 | 885 (text) | 2170-2182 | — | DISCR-ASSERT | Assumption: "asymptotic dimensionality preservation" — growth rate of global dimension anomaly → 0 | Hypothesis | Lines 2170-2182 state asymptotic dimensionality preservation as an assumption and give no mode of convergence. |
 | 125 | 887 | 2200 | (86) | BRIDGE | $S[g^{ab}]=\sum d\mu_g R$ | Undefined | $d\mu_g$ appears in eq. 76 as the Riemannian volume element. G1 gives no discrete definition of $d\mu_g$ or of $g^{ab}$ (Def 15). |
-| 126 | 891 | 2211 | (87) | BRIDGE | $\delta S[g^{ab}]/\delta g^{ab}\to 0$ | Undefined | G1 applies $\delta/\delta g^{ab}$ to the discrete sum of eq. 86 and does not construct $g$ with components that can be varied. Lines 2203-2211 state that asymptotic dimensionality preservation "corresponds to" this condition, which is the Euler-Lagrange equation of $S$. The project's encoding is PROVED by `Iff.rfl` (`asymptoticDimPreservation_iff_eulerLagrange`, `Refutations/F3Tautology.lean:57`). See close reading §3.3. |
+| 126 | 891 | 2211 | (87) | BRIDGE | $\delta S[g^{ab}]/\delta g^{ab}\to 0$ | Undefined | G1 applies $\delta/\delta g^{ab}$ to the discrete sum of eq. 86 and does not construct $g$ with components that can be varied. Lines 2203-2211 state that asymptotic dimensionality preservation "corresponds to" this condition, which is the Euler-Lagrange equation of $S$. Lean: none. See close reading §3.3. |
 | 127 | 897 | 2225 | (88) | BRIDGE | $S[g^{ab}]=\int d^4 x \sqrt{-g}R$ (in continuum limit) | No proof | Line 2214 states that the sum "becomes" the integral "subject to a weak ergodicity assumption". G1 states no notion of convergence and does not define weak ergodicity. |
 | 128 | 902 | 2239 | (89) | STD | $\mathcal L_G = \sqrt{-g}R$ | Standard | Hilbert (1915). |
 | 129 | 907 | 2252 | (90) | STD | $\delta S/\delta g^{ab}=\sqrt{-g}(R_{ab}-\frac12 Rg_{ab})$ | Standard | Hilbert variation with zero surface terms. |
@@ -196,7 +196,7 @@ Reading:
 | 136 | 953 | 2361 | (97) | CONCL | $R_{ab}-\frac12 Rg_{ab}=8\pi T_{ab}$ | Standard (continuum) | The continuum Einstein equations with matter. G1 gives no matter Lagrangian on the hypergraph. |
 | 137 | 958 | 2370 | (98) | STD | $T_{ab}=-\frac{C_M}{8\pi\sqrt{-g}}\partial\mathcal L_M/\partial g^{ab}$ | Standard | Standard Hilbert stress-energy. |
 | 138 | 963 | 2377 | (99) | STD | $T_{ab}=-\frac{C_M}{8\pi\sqrt{-g}}\delta S_M/\delta g^{ab}$ | Standard | Same, action form. |
-| 139 | 977 | 2399 | (100) | BRIDGE | $S[g^{ab}]=\sum d\mu_g(R+2\Lambda)$ | Undefined | Eq. 86 with $2\Lambda$ added; same notes as row 125. |
+| 139 | 977 | 2399 | (100) | BRIDGE | $S[g^{ab}]=\sum d\mu_g(R+2\Lambda)$ | Undefined | Eq. 86 with $2\Lambda$ added. The notes of row 125 apply. |
 | 140 | 982 | 2408 | (101) | STD | $\mathcal L_G=\sqrt{-g}(R+2\Lambda)$ | Standard | Standard continuum Lagrangian with $\Lambda$. |
 | 141 | 987 | 2416 | (102) | CONCL | $R_{ab}-\frac12 Rg_{ab}+\Lambda g_{ab}=8\pi T_{ab}$ | Standard (continuum) | The continuum Einstein equations with $\Lambda$. G1 adds $2\Lambda$ to the discrete sum in eq. 100 and concludes that the model "is consistent with both zero and non-zero values of the cosmological constant" (line 2419). |
 | 142 | 994 | 2451 | (103) | STD | $\partial f/\partial t + \mathbf v\cdot\partial f/\partial\mathbf r + \mathbf F\cdot\partial f/\partial\mathbf v=\hat C f$ (Boltzmann) | Standard | |

@@ -2,7 +2,7 @@
 
 The review examines the derivation of general relativity from hypergraph rewriting in arXiv:2004.14810 (G1), 2011.12174 (G2), 2102.09363 (G3) and 2303.07282 (G4). For each claim the review records what the paper states and what holds. Statements that hold are formalised in Lean where the library allows it. Statements that differ from a cited source are recorded with both formulas.
 
-Paper files: `papers/gorard_*.txt`; TeX sources in `papers/tex_*`. Status labels follow `STATUS_OF_GORARD_CLAIMS.md`: PROVED, PROVED-WITH-NATIVE-DECIDE, VACUOUS, MEASURED, READ, OPEN.
+Paper files are `papers/gorard_*.txt`, and the TeX sources are in `papers/tex_*`. Status labels follow `STATUS_OF_GORARD_CLAIMS.md`: PROVED, PROVED-WITH-NATIVE-DECIDE, MEASURED, READ, OPEN.
 
 ## Method
 
@@ -62,7 +62,7 @@ Each finding that a formula differs from its source is rederived by a second rou
 | Cone bound 5^t for the rule of G3 line 6202 | PROVED: `CausalHistory.gorardNamedRule_ball_card_le` |
 | Linear cone growth for the rule of G3 line 6202 | OPEN: `CausalHistory.GorardNamedRuleConeGrowthLinear` |
 | G1 §3.3 applied to the rule of G3 line 6202 | OPEN: needs linear or polynomial cone growth and a notion of convergence that G1 does not state |
-| Comparison of the tube and Ollivier coefficients | PROVED as arithmetic: `Infra.gray_vs_gorard_disagree_on_S2`, `Infra.gray_vs_gorard_disagree_on_S3`, `Infra.ollivier_gorard_agree_iff`; Gray's and Ollivier's theorems are cited, not formalised |
+| Comparison of the tube and Ollivier coefficients | PROVED as arithmetic: `Infra.gray_vs_gorard_disagree_on_S2`, `Infra.gray_vs_gorard_disagree_on_S3`, `Infra.ollivier_gorard_agree_iff`. Gray's and Ollivier's theorems are cited, not formalised. |
 | Gray's tube formula and Ollivier's theorem in Lean | OPEN |
 
 ## Phase 7: further directions
