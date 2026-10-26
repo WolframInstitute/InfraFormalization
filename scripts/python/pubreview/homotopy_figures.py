@@ -9,9 +9,9 @@
    ABBBABBB, and the edges that the five homotopy rules of lines 200-203 and their inverses add
    when they are appended to the rule set as string rewriting rules (line 198), against the five
    pairs that join the two highlighted paths of Figure 5.
-3. The map p -> {(alpha, q) : p ->alpha q} (act21.tex line 112) is called a bijective function
-   from A to P(Lambda x A). Normal forms all map to the empty set; the script lists the normal
-   forms of A -> AB, AB -> A? no: of the systems of Figure 6 of G5 (AB -> A, BA -> B from ABA).
+3. The map p -> {(alpha, q) : p ->alpha q} (act21.tex line 112), called a bijective function
+   from A to P(Lambda x A), sends every normal form to the empty set. The normal forms of
+   AB -> A, BA -> B from ABA are computed by qm_string_figures.py.
 """
 import collections
 import json

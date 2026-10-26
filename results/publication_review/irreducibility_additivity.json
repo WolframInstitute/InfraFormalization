@@ -1,0 +1,20 @@
+{
+ "steps_3": {
+  "states": 23,
+  "events": 434,
+  "edge_count_change_per_event": {
+   "2": 434
+  },
+  "reachable_triples": 210,
+  "non_additive_triples": 0
+ },
+ "steps_4": {
+  "states": 179,
+  "events": 9938,
+  "edge_count_change_per_event": {
+   "2": 9938
+  },
+  "reachable_triples": 2895,
+  "non_additive_triples": 0
+ }
+}

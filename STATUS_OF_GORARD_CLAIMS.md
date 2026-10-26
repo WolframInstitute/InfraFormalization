@@ -1,4 +1,4 @@
-# Status of the repository's conclusions about the claims of G1-G7 (J. Gorard)
+# Status of the repository's conclusions about the claims of G1-G8 (J. Gorard)
 
 Each entry lists the claim with its source line, then what the repository proves, measures and reads from the paper, and what is open.
 
@@ -10,7 +10,7 @@ Status labels:
 - **MEASURED**: a number from a script run, with the script, seeds and sizes.
 - **OPEN**: not established. The exact statement needed is given.
 
-Paper files: G1 = `papers/gorard_2004.14810.txt`, G2 = `papers/gorard_2011.12174.txt`, G3 = `papers/gorard_2102.09363.txt`, G4 = `papers/gorard_2303.07282.txt`, G5 = `papers/gorard_complexsystems_29_2.txt` (Complex Systems 29(2) 537-598, PDF text), G6 = `papers/tex_2105/act21.tex` (arXiv:2105.10822, TeX line numbers), G7 = `papers/tex_2111/homotopy1.tex` (arXiv:2111.03460, TeX line numbers), Gravitas II = `papers/tex_2401/GravitasPaper2.tex` (TeX line numbers). The layout of `papers/` is described in [`CITATIONS.md`](CITATIONS.md).
+Paper files: G1 = `papers/gorard_2004.14810.txt`, G2 = `papers/gorard_2011.12174.txt`, G3 = `papers/gorard_2102.09363.txt`, G4 = `papers/gorard_2303.07282.txt`, G5 = `papers/gorard_complexsystems_29_2.txt` (Complex Systems 29(2) 537-598, PDF text), G6 = `papers/tex_2105/act21.tex` (arXiv:2105.10822, TeX line numbers), G7 = `papers/tex_2111/homotopy1.tex` (arXiv:2111.03460, TeX line numbers), G8 = `papers/tex_2301_04690/ComputationalIrreducibility.tex` (arXiv:2301.04690, TeX line numbers), Gravitas II = `papers/tex_2401/GravitasPaper2.tex` (TeX line numbers). The layout of `papers/` is described in [`CITATIONS.md`](CITATIONS.md).
 
 ## Claim 1. The rule {{x,y},{y,z},{z,w},{w,v}} -> {{y,u},{u,v},{w,x},{x,u}} "provably satisfies the Einstein field equations in the continuum limit"
 
@@ -238,11 +238,26 @@ MEASURED (scripts in `scripts/python/pubreview/`, outputs in `results/publicatio
 
 Lean: none. The library has no category-theoretic module on multiway systems.
 
+## Claim 9. G8: computational irreducibility is functoriality, multicomputational irreducibility is symmetric monoidal functoriality, and both are adjoint to quantum time evolution
+
+Source: G8 = Gorard, arXiv:2301.04690, `papers/tex_2301_04690/ComputationalIrreducibility.tex`, lines 114-160, 471-564, 657, 937-1009. Close reading: [`notes/2301.04690_close_reading.md`](notes/2301.04690_close_reading.md).
+
+READ:
+
+- The map Z′ sends a configuration to its step number and a computation to the interval of step numbers (lines 123-138). Z′ is a functor for every deterministic evolution whose quiver is a path, reducible or not, and the definition does not use irreducibility. Line 160 concludes that the functor exists "only in the case where all computations ... are irreducible", without an argument.
+- Under G8's definition of reducibility (line 49: some machine computes f(i) for the fixed input i in fewer steps), a machine that writes the fixed output makes every computation longer than the output length plus a constant reducible. Line 31 states that every Turing-complete computation is irreducible.
+- ℬ with real objects and closed intervals (lines 169-174) is the poset (ℝ, ≤), which has no initial object, so it is not a cobordism category under the definition of lines 176-180. The unit of the tensor product on Turing machine configurations is taken to be the halting state (line 405), and the tensor product on ℬ is called a coproduct (line 480), which in (ℕ, ≤) is max.
+- The adjunction with quantum time evolution (lines 937-987) is asserted. The displayed conditions are naturality squares, and the quantum functor Bord₁ → Vect does not have the codomain 𝒯 of the stated adjunction.
+- G8's reference list gives G1 as Complex Systems 29(2) 599-654 (line 1240). G5 cites G1 with G5's own pages 537-598 and DOI (Claim 7).
+
+MEASURED (`scripts/python/pubreview/irreducibility_additivity.py`, output `results/publication_review/irreducibility_additivity.json`): G8 line 657 states that in the hypergraph example {{x,y},{x,z}} → {{x,z},{x,w},{y,w},{z,w}} from {{0,0},{0,0}} sequential composition "is distorted more" than the tensor product. Every one of the 434 events at 3 steps and 9938 events at 4 steps adds exactly 2 edges, so every path between two states has the same length, and the least path length composes additively on all 210 and 2895 reachable triples.
+
+Lean: none.
+
 ## Publications not yet reviewed
 
-The index of the Wolfram Institute (https://wolframinstitute.org/output/tag/Jonathan+Gorard, 16 entries) and the arXiv listing of J. Gorard (23 entries) were checked on 2026-10-26 against `papers/` and this document. The repository reviews ten of them: G1-G4, Gravitas I (arXiv:2308.07508), Gravitas II (arXiv:2401.14209), the hydrodynamics paper (arXiv:2402.02331), G5 (Complex Systems 29(2) 537-598, Claims 6-7), G6 (arXiv:2105.10822) and G7 (arXiv:2111.03460) (Claim 8). The following publications make claims about hypergraph or multiway rewriting and its relation to spacetime or quantum mechanics, and none has a close reading in `notes/`.
+The index of the Wolfram Institute (https://wolframinstitute.org/output/tag/Jonathan+Gorard, 16 entries) and the arXiv listing of J. Gorard (23 entries) were checked on 2026-10-26 against `papers/` and this document. The repository reviews eleven of them: G1-G4, Gravitas I (arXiv:2308.07508), Gravitas II (arXiv:2401.14209), the hydrodynamics paper (arXiv:2402.02331), G5 (Complex Systems 29(2) 537-598, Claims 6-7), G6 (arXiv:2105.10822) and G7 (arXiv:2111.03460) (Claim 8), and G8 (arXiv:2301.04690, Claim 9). The following publications make claims about hypergraph or multiway rewriting and its relation to spacetime or quantum mechanics, and none has a close reading in `notes/`.
 
 - Gorard and Dannemann-Freitag, *Axiomatic Quantum Field Theory in Discrete Spacetime via Multiway Causal Structure: The Case of Entanglement Entropies*, arXiv:2301.12455 (2023). It gives axioms for a free massless scalar field on multiway causal graphs, a class that contains causal sets and Wolfram model evolutions, and compares the Sorkin-Johnston entanglement entropy with an entropy defined from the branchial graph. It reports numerically that the two are monotonically related over a class of rules and proves a special case with a geometric entanglement monotone. This is the paper whose claims are closest to the branchial modules of the library.
-- Gorard, *A Functorial Perspective on (Multi)computational Irreducibility*, arXiv:2301.04690 (2022). It defines computational irreducibility as exactness of a functor from a category of computations to a category of cobordisms, extends this to multiway computations, and conjectures that the functor is adjoint to the functor of the Atiyah-Segal axioms of functorial quantum field theory. It makes no claim about general relativity.
 
 Listed and not relevant to hypergraph rewriting and general relativity: the ZX-calculus papers (arXiv:2010.02752, 2103.15820) and the string-diagram paper (arXiv:2105.04057), which apply multiway rewriting to quantum circuits; *A Cosine Rule-Based Discrete Sectional Curvature for Graphs* (arXiv:2212.04406, Arsiwalla and Du Plessis, listed under Gorard's tag by the Institute); quantum cellular automata (arXiv:1910.00578); Categorica I (arXiv:2403.16269); uniqueness trees (arXiv:1606.06399, cited by G4 as reference [88], see O8 above); and the numerical relativity, plasma and machine-learning papers of 2024-2026 (arXiv:2410.02549, 2503.13877, 2505.03849, 2505.05299, 2510.26019, 2602.14853), which use continuum PDE solvers and no hypergraph rewriting.

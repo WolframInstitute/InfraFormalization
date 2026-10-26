@@ -202,7 +202,7 @@ The resolvent G(v, w; λ) = ⟨δ_v|(H − λ)⁻¹|δ_w⟩ is defined. "Our cen
 
 ### C-28 Reference [1] (lines 2604-2606)
 
-Reference [1], cited for the relativistic results (lines 60, 170, 392, 1168), is "J. Gorard, 'Some Relativistic and Gravitational Properties of the Wolfram Model,' Complex Systems, 29(2), 2020 pp. 537-598. doi:10.25088/ComplexSystems.29.2.537". The page range and DOI are those of G5 itself (line 48 and the page footers). READ.
+Reference [1], cited for the relativistic results (lines 60, 170, 392, 1168), is "J. Gorard, 'Some Relativistic and Gravitational Properties of the Wolfram Model,' Complex Systems, 29(2), 2020 pp. 537-598. doi:10.25088/ComplexSystems.29.2.537". The page range and DOI are those of G5 itself (line 48 and the page footers). The reference list of G8 (`papers/tex_2301_04690/ComputationalIrreducibility.tex` line 1240) gives G1 as Complex Systems 29(2) 599-654. READ.
 
 ### C-29 Results of G1 restated (lines 98-116)
 
