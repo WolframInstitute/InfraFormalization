@@ -1,19 +1,10 @@
 /-
-**Form → cochain integration map** (Group IA / #112 IA4).
+Integration of 1-forms over 1-chains of hyperedges.
 
-Discrete differential forms on a hypergraph can be integrated over
-chains (formal sums of hyperedges) to produce cochains on the
-clique complex. This provides the bridge from calculus-on-hypergraphs
-to algebraic topology.
-
-We provide:
-
-  * `Chain V` — formal sums of hyperedges with `ℤ` coefficients.
-  * `integrate` — pairing `OneForm V → Chain V → ℝ`.
-  * Linearity of integration.
-
-**Connection to hypergraphs.** Native. `Chain V` is built directly
-from `Hyperedge V`; `OneForm V` is an edge-function.
+This module defines `Chain1 V`, a finitely supported function from hyperedges to `ℤ`, the zero
+chain, the chain of a single hyperedge, and `integrate ω γ = ∑ γ(e) · ω(e)` over the support of
+`γ`.
+It proves that the integral over the zero chain is zero.
 -/
 
 import InfraFormalization.DeRham
@@ -22,19 +13,18 @@ namespace InfraFormalization
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
-/-- **A *1-chain*** on a hypergraph: a formal finite sum of
-hyperedges with `ℤ` coefficients. -/
+/-- A function from hyperedges to `ℤ` with finite support. -/
 structure Chain1 (V : Type*) where
   coefficients : Hyperedge V → ℤ
   finiteSupport : Set.Finite { e | coefficients e ≠ 0 }
 
-/-- **Zero chain.** -/
+/-- The chain with every coefficient equal to 0. -/
 def Chain1.zero (V : Type*) : Chain1 V :=
   { coefficients := fun _ => 0
     finiteSupport := by
       simp }
 
-/-- **Chain from a single hyperedge** with coefficient 1. -/
+/-- The chain with coefficient 1 on `e` and 0 elsewhere. -/
 noncomputable def Chain1.ofEdge (e : Hyperedge V) : Chain1 V :=
   { coefficients := fun e' => if e' = e then 1 else 0
     finiteSupport := by
@@ -44,13 +34,11 @@ noncomputable def Chain1.ofEdge (e : Hyperedge V) : Chain1 V :=
       · simp [h]
       · simp [h] at hx }
 
-/-- **Integration of a 1-form over a chain**: `∫_{∑ aᵢ eᵢ} ω =
-∑ aᵢ ω(eᵢ)`. Requires `Chain1.finiteSupport` to ensure finite sum. -/
+/-- `∑ γ(e) · ω(e)` over the finite support of `γ`. -/
 noncomputable def integrate (ω : OneForm V) (γ : Chain1 V) : ℝ :=
-  -- As a Finset sum indexed by the finite support of γ.
   ∑ e ∈ γ.finiteSupport.toFinset, (γ.coefficients e : ℝ) * ω e
 
-/-- **Integration over the zero chain is zero.** -/
+/-- `integrate ω (Chain1.zero V) = 0`. -/
 theorem integrate_zero (ω : OneForm V) :
     integrate ω (Chain1.zero V) = 0 := by
   unfold integrate Chain1.zero

@@ -1,30 +1,15 @@
 /-
-**Ollivier-Ricci-style screener on ExecHG dossiers** (#402).
+An integer transport-cost scalar on executable hypergraphs and rule dossiers.
 
-Builds on `OllivierRicciExec.lean` (#401) to provide a `decide`-
-checkable, integer-valued **transport-cost scalar** per state — a
-coarse Ollivier-Ricci-style discriminator that:
-
-  * sums the pairwise hop costs between vertex closed
-    neighbourhoods (the `productCoupling`-style transport cost);
-  * gives a per-edge "transport scalar" `1 − W₁_int_upper`;
-  * aggregates over directed adjacent pairs in `H` to a per-state
-    integer scalar.
-
-**Honest framing.** This is NOT the true Ollivier-Ricci κ(u, v),
-because the unnormalised `productCoupling` is not a valid coupling of
-the two uniform measures (it doesn't respect the marginals). It IS a
-concrete, integer-valued graph invariant that captures "how far apart
-the two vertex neighbourhoods are in pairwise hop cost." It's a real
-*discriminator* for rule search — distinct rule outputs give distinct
-scalars — and it sits in the same `SignatureVerdict`-shape as the
-triangle-Forman screener from #384. The true LP-optimal W₁ (and thus
-the genuine Ollivier-Ricci κ) requires the `w1InfimumOver` machinery
-with a carefully-chosen candidate-coupling set, which is staged
-separately.
-
-The integer form keeps `decide`/`native_decide` usable — paralleling
-the triangle-Forman scalar of #384.
+For adjacent `u, v`, `w1IntegerUpper H u v` is the sum of the hop costs `hopCostInt H x y` over `x`
+in
+the closed neighbourhood of `u` and `y` in the closed neighbourhood of `v`. The per-edge scalar is
+`1 − w1IntegerUpper H u v`, and `transportScalarH H` sums it over ordered adjacent pairs. The
+product
+weight used here is not a coupling of the uniform neighbourhood measures, so these quantities are
+not
+the Ollivier–Ricci curvature. The module defines the trace of `transportScalarH` along a dossier and
+checks its value on `K₃`, the 4-cycle, a single edge and two rule dossiers by `native_decide`.
 -/
 
 import InfraFormalization.OllivierRicciExec
@@ -52,10 +37,8 @@ def hopCostInt (H : ExecHG ℕ) (u v : ℕ) : ℕ :=
 def indicatorInt (vs : List ℕ) (v : ℕ) : ℕ :=
   if v ∈ vs then 1 else 0
 
-/-- **Integer W₁ upper bound** between two vertex-neighbourhood
-uniform measures via the unscaled product coupling: sum over
-`carrier × carrier` of `hopCost(x, y) · 𝟙(x ∈ cN(u)) · 𝟙(y ∈ cN(v))`.
-Equivalently, sum of `hopCost(x, y)` over `(x, y) ∈ cN(u) × cN(v)`. -/
+/-- The sum of `hopCostInt H x y` over `(x, y)` in `cN(u) × cN(v)`, where `cN` is the closed
+neighbourhood. -/
 def w1IntegerUpper (H : ExecHG ℕ) (u v : ℕ) : ℕ :=
   let carrier := vertexList H
   let cNu := closedNeighbourhood H u
@@ -65,14 +48,11 @@ def w1IntegerUpper (H : ExecHG ℕ) (u v : ℕ) : ℕ :=
       hopCostInt H x y * indicatorInt cNu x * indicatorInt cNv y))).foldr
     (· + ·) 0
 
-/-- **Per-edge transport scalar** for adjacent `(u, v)`:
-`1 − W₁_int_upper`. For non-adjacent or equal vertices, returns `0`. -/
+/-- `1 − w1IntegerUpper H u v` for adjacent `u, v`, and 0 otherwise. -/
 def transportScalarAdj (H : ExecHG ℕ) (u v : ℕ) : ℤ :=
   if execAdj H u v then 1 - (w1IntegerUpper H u v : ℤ) else 0
 
-/-- **Aggregate transport scalar** of `H`: sum of `transportScalarAdj`
-over directed pairs `(u, v)` in `vertexList H × vertexList H` that are
-adjacent. -/
+/-- The sum of `transportScalarAdj H u v` over ordered pairs of adjacent vertices of `H`. -/
 def transportScalarH (H : ExecHG ℕ) : ℤ :=
   let vs := vertexList H
   (vs.flatMap (fun u =>
@@ -82,22 +62,17 @@ def transportScalarH (H : ExecHG ℕ) : ℤ :=
 
 /-! ## Dossier-level trace + screener -/
 
-/-- The per-state transport-scalar trace of a dossier. -/
+/-- The list of `transportScalarH` over the states of a dossier. -/
 def _root_.InfraFormalization.RuleSignatureSchema.Dossier.transportScalarTrace
     (d : Dossier) : List ℤ :=
   d.states.map transportScalarH
 
-/-- A candidate rule's transport scalar is constant along its run on
-this seed (analogue of `formanScalarConstant`). -/
+/-- `true` when all values of `transportScalarTrace` are equal. -/
 def _root_.InfraFormalization.RuleSignatureSchema.Dossier.transportScalarConstant
     (d : Dossier) : Bool :=
   RuleSignatureExecMetrics.allEqHead d.transportScalarTrace
 
-/-! ## Concrete cross-checks pin the numerics
-
-These pin the integer-arithmetic values across small graphs so the
-engine port (and any reader) knows exactly what the screener
-computes. -/
+/-! ## Values on small graphs -/
 
 /-- The triangle K₃'s aggregate transport scalar. All 6 directed
 edges are adjacent in K₃; each `cN(u) = {1, 2, 3}` (whole vertex
@@ -119,32 +94,23 @@ aggregate over 2 directed adjacent pairs = `−2`. -/
 example : transportScalarH RuleSignatureExecMetrics.edge12 = -2 := by
   native_decide
 
-/-- **K₃ vs C₄: the screener distinguishes them strongly.** `−30` vs
-`−64` — the 4-cycle has further-apart neighbourhood pairs (Hamming-style)
-than the triangle. -/
+/-- `transportScalarH` takes different values on `K₃` (−30) and the 4-cycle (−64). -/
 example :
     transportScalarH OllivierRicciExec.k3 ≠
     transportScalarH OllivierRicciExec.cycle4 := by native_decide
 
-/-! ## Integration with rule-search dossiers
+/-! ## Values on rule dossiers
 
-`witnessRule0` from #392's rate-(0, 12) selection, run on `edge12`,
-yields a `transportScalarTrace` whose `decide`-checkable values can
-be compared against the existing Forman trace. Two parallel
-discriminators for the same candidate. -/
+The traces below are computed for two rules of `RuleSignatureExecCorpus` on `edge12`. -/
 
-/-- Trivial identity rule on `edge12` at 2 steps — the trace is
-constant at `−2` (state never changes, so the aggregate scalar
-doesn't change). -/
+/-- For the identity rule on `edge12`, the trace over 2 steps is `[-2, -2, -2]`. -/
 example :
     (canonicalDossier RuleSignatureExecCorpus.trivialIdentityExecRule
         RuleSignatureExecMetrics.edge12 2).transportScalarTrace
       = [-2, -2, -2] := by
   native_decide
 
-/-- Edge-append rule on `edge12` at 2 steps — the transport scalar
-trace evolves as the graph branches; the rule is NOT constant on
-this scalar. -/
+/-- For the edge-append rule on `edge12`, the trace over 2 steps is not constant. -/
 example :
     (canonicalDossier RuleSignatureExecCorpus.edgeAppendExecRule
         RuleSignatureExecMetrics.edge12 2).transportScalarConstant = false := by

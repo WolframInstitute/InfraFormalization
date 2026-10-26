@@ -1,17 +1,9 @@
 /-
-**Branchial-slice finiteness** (Group IQ / I1; task #84).
+Finiteness of branchial slices.
 
-For a finite rewriting system acting on a finite initial hypergraph,
-every branchial slice at depth `n` is a finite set of states. This
-is the foundation for the QM bridge: a finite branchial slice
-supports a `Finset`-indexed ℓ² Hilbert space, which is the
-finite-dim precursor to the continuum QM Hilbert space.
-
-**This file** provides the structural finiteness argument at the
-`Set.Finite` level, conditional on the reasonable assumption that
-each state has finitely many successors. The explicit `Fintype`
-instance requires enumerating `Application r s` constructors and
-is deferred to a follow-up (IG + BranchialFintypeInstance).
+This module proves that if every state has finitely many one-step
+successors, then every branchial slice `BranchialSlice sys s₀ n` is a finite
+set.
 -/
 
 import InfraFormalization.Branchial
@@ -23,17 +15,17 @@ namespace InfraFormalization
 
 variable {P V : Type*} [DecidableEq V]
 
-/-- **Successors set** of a state `s` under a rewriting system. -/
+/-- The set of states reachable from `s` in one step. -/
 def successors (sys : RewritingSystem P) (s : Hypergraph V) :
     Set (Hypergraph V) :=
   { s' | Step sys s s' }
 
-/-- **Predicate: a branchial slice is finite.** -/
+/-- The branchial slice at depth `n` is a finite set. -/
 def BranchialSliceFinite (sys : RewritingSystem P) (s₀ : Hypergraph V)
     (n : Nat) : Prop :=
   (BranchialSlice sys s₀ n).Finite
 
-/-- **Finiteness at depth 0** — the slice is `{s₀}`. -/
+/-- The slice at depth 0 is finite. -/
 theorem branchialSliceFinite_zero (sys : RewritingSystem P)
     (s₀ : Hypergraph V) :
     BranchialSliceFinite sys s₀ 0 := by
@@ -41,10 +33,8 @@ theorem branchialSliceFinite_zero (sys : RewritingSystem P)
   rw [branchialSlice_zero]
   exact Set.finite_singleton _
 
-/-- **Inductive step**: if every state has finitely many successors
-(a very mild assumption — always true for finite `V` and finite rule
-sets), the branchial slice at depth `n + 1` is finite provided the
-slice at depth `n` is. -/
+/-- If every state has finitely many successors and the slice at depth `n`
+is finite, then the slice at depth `n + 1` is finite. -/
 theorem branchialSliceFinite_succ (sys : RewritingSystem P)
     (s₀ : Hypergraph V) (n : Nat)
     (h_prev : BranchialSliceFinite sys s₀ n)
@@ -63,9 +53,8 @@ theorem branchialSliceFinite_succ (sys : RewritingSystem P)
     Set.finite_iUnion (fun s : Sub => h_succ_finite s.val)
   exact hU_fin.subset hsub
 
-/-- **Main statement (conditional finiteness).** Under the
-"finite-successors-everywhere" hypothesis, every branchial slice
-is finite. -/
+/-- If every state has finitely many successors, every branchial slice is
+finite. -/
 theorem branchialSliceFinite_of_successors_finite
     (sys : RewritingSystem P) (s₀ : Hypergraph V)
     (h_succ : ∀ s : Hypergraph V, (successors sys s).Finite) (n : Nat) :

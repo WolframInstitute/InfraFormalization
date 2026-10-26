@@ -1,40 +1,12 @@
 /-
-d-dim bridging theorem: trajectory causal DAG → (d+1)-dim Lorentz lattice
-via level-as-time + a *chosen* spatial embedding.
+Embedding of a trajectory's events into the (d+1)-dimensional Lorentz lattice with a supplied
+spatial map.
 
-**Why this file exists.** The 1+0-dim bridging (`TrajectoryLorentz.lean`)
-uses `level τ i` as a canonical time coordinate, but has no spatial
-structure — all same-level events collapse to a single point. For a
-higher-dim bridging we need spatial coordinates, and F1/F2 show that
-no canonical spatial embedding is determined by the rewriting data
-alone.
-
-This file formalises the next-best thing: a **parameterised** bridging
-theorem. Given *any* chosen spatial embedding
-`φ : ℕ → Fin d → ℤ`, we can ask whether `causallyPrecedes τ i j`
-implies `CausalPrecedes d (fullEmbed φ τ i) (fullEmbed φ τ j)`. The
-answer depends on the chosen `φ`: this cannot be a theorem about `φ`
-alone, but becomes one under a compatibility hypothesis.
-
-The compatibility hypothesis is:
-
-  **(compat)** for all `i, j` with `causallyPrecedes τ i j`,
-              the spatial L∞ distance between `φ i` and `φ j` is
-              ≤ the level-gap `level τ j - level τ i`.
-
-Equivalently: the embedding places causally-related events inside each
-other's light cones at the speed of one lattice-spacing-per-level-step.
-
-Under (compat), the d-dim bridging theorem holds automatically. The
-F1/F2 structural flaw is now *precisely the failure of (compat) to be
-automatic* — any candidate rule for a Wolfram-to-GR bridge must come
-with an embedding `φ` that satisfies (compat) by *construction*, not
-by happy accident. This file gives the formal ground for that
-requirement.
-
-This is the form used in the rule-search pipeline (see
-`RULE_SEARCH.md`): step 4 searches for `φ`, step 5 verifies (compat)
-via the Lean machinery here.
+The time coordinate of event `i` is `level τ i` and the spatial coordinates are `φ i` for a given
+`φ : ℕ → Fin d → ℤ`. The predicate `LightConeCompatible τ φ` requires the spatial L∞ distance of
+every causally related pair to be at most their level difference. Under this hypothesis, causal
+precedence in the trajectory implies `CausalPrecedes` between the image events. The module also
+proves that two events of equal level with distinct spatial images are `Spacelike`.
 -/
 
 import InfraFormalization.CausalLevel
@@ -46,13 +18,10 @@ namespace Infra
 
 variable {P V : Type*} [DecidableEq V]
 
-/-- A **spatial embedding** of trajectory events into the lattice
-`Fin d → ℤ`. This data is not determined by the trajectory and must be
-supplied externally — F1/F2 state that no canonical choice exists. -/
+/-- A spatial map of trajectory events into `Fin d → ℤ`, indexed by event number. -/
 abbrev SpatialEmbedding (d : Nat) : Type := Nat → Fin d → ℤ
 
-/-- The full spacetime embedding: time = `level τ`, spatial = the
-supplied `φ`. -/
+/-- The lattice event with time coordinate `level τ i` and spatial coordinates `φ i`. -/
 noncomputable def fullEmbed {sys : RewritingSystem P} {init : Hypergraph V}
     (τ : Trajectory sys init) {d : Nat} (φ : SpatialEmbedding d)
     (i : Nat) : Event d :=
@@ -71,20 +40,16 @@ noncomputable def fullEmbed {sys : RewritingSystem P} {init : Hypergraph V}
   unfold fullEmbed
   simp
 
-/-- **Light-cone compatibility** of a spatial embedding with a
-trajectory: whenever event `i` causally precedes event `j`, the
-spatial L∞ distance between their `φ`-images is at most the level-gap
-(equivalently: one lattice-step-per-level-tick bound, i.e., light
-speed = 1). -/
+/-- For every pair with `causallyPrecedes τ i j`, the spatial L∞ distance between `fullEmbed τ φ i`
+and `fullEmbed τ φ j` is at most `level τ j - level τ i`. -/
 def LightConeCompatible {sys : RewritingSystem P} {init : Hypergraph V}
     (τ : Trajectory sys init) {d : Nat} (φ : SpatialEmbedding d) : Prop :=
   ∀ i j, causallyPrecedes τ i j →
     (spaceDist d (fullEmbed τ φ i) (fullEmbed τ φ j) : ℤ)
     ≤ (level τ j : ℤ) - (level τ i : ℤ)
 
-/-- **d-dim bridging theorem (conditional).** Under `LightConeCompatible`,
-a trajectory's causal-precedence relation is faithfully embedded into
-the (d+1)-dim Lorentz lattice's `CausalPrecedes` relation. -/
+/-- If `LightConeCompatible τ φ` and `causallyPrecedes τ i j`, then
+`CausalPrecedes d (fullEmbed τ φ i) (fullEmbed τ φ j)`. -/
 theorem fullEmbed_preserves_causal {sys : RewritingSystem P}
     {init : Hypergraph V} (τ : Trajectory sys init) {d : Nat}
     (φ : SpatialEmbedding d) (hcompat : LightConeCompatible τ φ)
@@ -95,11 +60,8 @@ theorem fullEmbed_preserves_causal {sys : RewritingSystem P}
   have := hcompat i j h
   linarith
 
-/-- **Strengthened d-dim bridging.** Under `LightConeCompatible`, every
-causally-related pair lands in the forward (possibly null) light cone.
-Whether the image is strictly `Timelike` or `Null` depends on whether
-the spatial L∞ distance strictly matches the level-gap — which is a
-per-rule, per-embedding question. -/
+/-- If `LightConeCompatible τ φ` and `causallyPrecedes τ i j`, then `fullEmbed τ φ j` lies in
+`forwardCone d (fullEmbed τ φ i)`. -/
 theorem fullEmbed_forward_cone {sys : RewritingSystem P}
     {init : Hypergraph V} (τ : Trajectory sys init) {d : Nat}
     (φ : SpatialEmbedding d) (hcompat : LightConeCompatible τ φ)
@@ -107,10 +69,8 @@ theorem fullEmbed_forward_cone {sys : RewritingSystem P}
     fullEmbed τ φ j ∈ forwardCone d (fullEmbed τ φ i) :=
   fullEmbed_preserves_causal τ φ hcompat i j h
 
-/-- **Timelike (strict) bridging.** If the spatial L∞ distance is
-*strictly less* than the level-gap on every causal pair, then the
-embedding maps causal precedence into strict `Timelike` separation —
-the image lands in the *interior* of each forward light cone. -/
+/-- For every pair with `causallyPrecedes τ i j`, the spatial L∞ distance between `fullEmbed τ φ i`
+and `fullEmbed τ φ j` is strictly less than `level τ j - level τ i`. -/
 def StrictlyTimelikeCompatible {sys : RewritingSystem P}
     {init : Hypergraph V} (τ : Trajectory sys init) {d : Nat}
     (φ : SpatialEmbedding d) : Prop :=
@@ -118,6 +78,8 @@ def StrictlyTimelikeCompatible {sys : RewritingSystem P}
     (spaceDist d (fullEmbed τ φ i) (fullEmbed τ φ j) : ℤ)
     < (level τ j : ℤ) - (level τ i : ℤ)
 
+/-- If `StrictlyTimelikeCompatible τ φ` and `causallyPrecedes τ i j`, then
+`Timelike d (fullEmbed τ φ i) (fullEmbed τ φ j)`. -/
 theorem fullEmbed_timelike {sys : RewritingSystem P}
     {init : Hypergraph V} (τ : Trajectory sys init) {d : Nat}
     (φ : SpatialEmbedding d) (hstrict : StrictlyTimelikeCompatible τ φ)
@@ -127,14 +89,8 @@ theorem fullEmbed_timelike {sys : RewritingSystem P}
   rw [fullEmbed_time, fullEmbed_time]
   exact hstrict i j h
 
-/-- **Consequence for rule search.** If a spatial embedding `φ`
-additionally maps same-level events to spatially *distinct* positions,
-then same-level events become `Spacelike` in the Lorentz lattice — the
-1+0-dim lossiness (`trajectoryToEvent_lossy`) is overcome.
-
-This is the concrete criterion a candidate `φ` must satisfy in the
-rule-search pipeline (step 4 in `RULE_SEARCH.md`): compatibility with
-causal order (above) **plus** injectivity on same-level events. -/
+/-- If `level τ i = level τ j` and the spatial distance between `fullEmbed τ φ i` and
+`fullEmbed τ φ j` is positive, then the two image events are `Spacelike`. -/
 theorem same_level_spacelike_of_spatial_distinct
     {sys : RewritingSystem P} {init : Hypergraph V}
     (τ : Trajectory sys init) {d : Nat} (φ : SpatialEmbedding d)

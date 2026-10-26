@@ -1,26 +1,11 @@
 /-
-**Cycle eigenvalue → circle Laplacian eigenvalue** (task A4 / #15).
+Limit of the scaled cycle eigenvalue.
 
-The cycle Laplacian's closed-form eigenvalue `λ_{n,k} = −4 sin²(π k / n)`
-(proved in `CycleSpectrum.lean`) is the discrete analogue of the
-circle Laplacian eigenvalue `−(2 π k)²`. Scaling by `n²` and taking
-the continuum limit `n → ∞`:
-
-  `n² · λ_{n,k} = n² · (−4 sin²(π k / n)) → −(2 π k)²`
-
-This is the first concrete **spectral convergence** theorem: a sequence
-of hypergraph-derived Laplacian eigenvalues converges to the spectrum
-of the continuum Laplacian on `S¹ = [0, 1] / ∼`.
-
-**Proof idea.** `sin x ~ x` as `x → 0` (Mathlib's `Real.sinc` is
-continuous with `sinc 0 = 1`). Writing
-  `n · sin(π k / n) = (π k) · sinc(π k / n) → π k · 1 = π k`,
-squaring and multiplying by `−4` gives the limit `−4 π² k² = −(2 π k)²`.
-
-**Connection to hypergraphs.** The cycle eigenvalues lift to
-`Hypergraph.laplacianHyper (cycleHypergraph n)` via
-`laplacianHyper_cycleHypergraph`. So this theorem gives a concrete
-hypergraph-Laplacian spectrum → continuum-Laplacian spectrum result.
+This module proves that for each `k : ℕ`,
+`n² · cycleEigenvalue n k = n² · (−4 sin²(π k / n)) → −(2 π k)²` as `n → ∞`.
+The limit `−(2 π k)²` is the `k`-th eigenvalue of the Laplacian on the circle
+of length 1. The proof writes `n · sin(π k / n) = (π k) · sinc(π k / n)` and
+uses continuity of `sinc` at 0.
 -/
 
 import InfraFormalization.CycleSpectrum
@@ -30,7 +15,7 @@ namespace InfraFormalization
 
 open Filter Topology Real
 
-/-- **Key helper**: `n · sin(π k / n) → π k` as `n → ∞`. -/
+/-- `n · sin(π k / n) → π k` as `n → ∞`. -/
 lemma n_sin_pi_k_div_n_tendsto (k : ℕ) :
     Tendsto (fun n : ℕ => (n : ℝ) * sin (π * k / n)) atTop (𝓝 (π * k)) := by
   -- Case k = 0: both sides are 0.
@@ -60,11 +45,8 @@ lemma n_sin_pi_k_div_n_tendsto (k : ℕ) :
   rw [mul_one] at hπk_sinc_tendsto
   exact hπk_sinc_tendsto.congr' (h_eq.mono (fun _ h => h.symm))
 
-/-- **A4 — Scaled cycle eigenvalue → circle Laplacian eigenvalue.**
-
-`n² · cycleEigenvalue n k = n² · (−4 sin²(π k / n)) → −(2 π k)²`
-as `n → ∞`. The limit is the `k`-th eigenvalue of the Laplacian
-on the circle `[0, 1] / ∼`. -/
+/-- `n² · cycleEigenvalue n k = n² · (−4 sin²(π k / n)) → −(2 π k)²`
+as `n → ∞`. -/
 theorem cycleEigenvalue_scaled_tendsto (k : ℕ) :
     Tendsto (fun n : ℕ => (n : ℝ)^2 * cycleEigenvalue n k) atTop
       (𝓝 (-(2 * π * k)^2)) := by

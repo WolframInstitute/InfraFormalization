@@ -1,33 +1,13 @@
 /-
-Discrete Schrödinger equation on a hypergraph `Hypergraph V`.
+Discrete Schrödinger equation on a hypergraph.
 
-**Connection to hypergraphs.** Native. The wavefunction `ψ : ℝ → V → ℂ`
-lives on the same `Hypergraph V` that carries the Wolfram-model
-rewriting. The spatial operator is `Hypergraph.laplacianHyper`.
-
-**Representation.** We represent `ψ = u + i v` as an ordered pair of
-real-valued functions `u v : ℝ → V → ℝ`. The Schrödinger equation
-
-  `i ∂_t ψ = −Δ_H ψ`    ⇔    `∂_t ψ = i · Δ_H ψ`
-
-(using our `Δ_H = A − D` sign convention, which makes `Δ_H` negative
-semidefinite and hence `−Δ_H` a non-negative self-adjoint Hamiltonian)
-decomposes into
-
-  `u' = −Δ_H v`,    `v' = +Δ_H u`.
-
-**What this file contributes.**
-
-  * `SchrodingerSolution H u v` — the structure that captures both
-    equations of motion.
-  * `schrodingerProbability H u v t := ∑_x (u t x)² + (v t x)²` — the
-    total probability, which is `‖ψ‖²` in the ℓ²(V) norm.
-  * `schrodinger_unitary_evolution` — the total probability is
-    conserved for all `t`. This is the finite-dimensional incarnation
-    of unitarity of `e^{itH/ℏ}` with `H = −Δ_H`.
-
-The proof uses self-adjointness of `Δ_H` from `HypergraphLaplacian.lean`:
-`∑_x u(t,x) · Δ_H v(t) x = ∑_x v(t,x) · Δ_H u(t) x`.
+A wavefunction `ψ = u + i v` on the vertices of `H : Hypergraph V` is
+represented by two real functions `u v : ℝ → V → ℝ`. With the sign
+convention `Δ_H = A − D` of `Hypergraph.laplacianHyper`, the equation
+`i ∂_t ψ = −Δ_H ψ` becomes `u' = −Δ_H v`, `v' = Δ_H u`. This module defines
+solutions of this system and the total probability `∑_x u² + v²`, and
+proves, using the self-adjointness of `Δ_H`, that the total probability of
+a solution is constant in time.
 -/
 
 import InfraFormalization.HypergraphLaplacian
@@ -41,13 +21,8 @@ namespace InfraFormalization
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
-/-- **Discrete Schrödinger equation** on a hypergraph, written in
-real-imaginary components. For `ψ = u + i v` satisfying
-`i ∂_t ψ = −Δ_H ψ`:
-
-  * `real_eq`: `u'(t, x) = −Δ_H v(t) x`
-  * `imag_eq`: `v'(t, x) = +Δ_H u(t) x`
--/
+/-- `u` and `v` satisfy `∂_t u(t, x) = −Δ_H v(t) x` and
+`∂_t v(t, x) = Δ_H u(t) x` for all `t` and `x`. -/
 structure SchrodingerSolution (H : Hypergraph V) (u v : ℝ → V → ℝ) :
     Prop where
   real_eq : ∀ t x, HasDerivAt (fun s => u s x)
@@ -55,14 +30,13 @@ structure SchrodingerSolution (H : Hypergraph V) (u v : ℝ → V → ℝ) :
   imag_eq : ∀ t x, HasDerivAt (fun s => v s x)
     (Hypergraph.laplacianHyper H (u t) x) t
 
-/-- **Total probability** `‖ψ(t)‖² = ∑_x (u(t,x))² + (v(t,x))²`. -/
+/-- The total probability `∑_x (u(t,x))² + (v(t,x))²`. -/
 noncomputable def schrodingerProbability (u v : ℝ → V → ℝ) (t : ℝ) : ℝ :=
   ∑ x : V, ((u t x) ^ 2 + (v t x) ^ 2)
 
-/-- **Derivative of total probability is zero.** The time derivative
-of `∑_x u² + v²` along a Schrödinger solution is identically zero,
-as self-adjointness of `Δ_H` makes the cross terms
-`−2 u · Δ v + 2 v · Δ u` cancel when summed. -/
+/-- For a solution, the total probability has derivative 0 at every `t`;
+the terms `−2 u · Δ v` and `2 v · Δ u` cancel in the sum by
+self-adjointness of `Δ_H`. -/
 theorem hasDerivAt_schrodingerProbability (H : Hypergraph V)
     {u v : ℝ → V → ℝ}
     (hψ : SchrodingerSolution H u v) (t : ℝ) :
@@ -114,10 +88,8 @@ theorem hasDerivAt_schrodingerProbability (H : Hypergraph V)
   rw [hcancel] at hsum_deriv
   exact hsum_deriv
 
-/-- **Unitarity of Schrödinger evolution.** The total probability
-`‖ψ(t)‖² = ∑_x u² + v²` is constant in time. This is the finite-
-dimensional incarnation of the fact that `ψ(t) = e^{-iHt/ℏ} ψ(0)` with
-`H = −Δ_H` is unitary. -/
+/-- For a solution, the total probability at time `t` equals its value at
+time 0. -/
 theorem schrodinger_unitary_evolution (H : Hypergraph V)
     {u v : ℝ → V → ℝ}
     (hψ : SchrodingerSolution H u v) (t : ℝ) :
@@ -128,7 +100,8 @@ theorem schrodinger_unitary_evolution (H : Hypergraph V)
     (hasDerivAt_schrodingerProbability H hψ x).deriv
   exact is_const_of_deriv_eq_zero hdiff hzero t 0
 
-/-- **Stronger unitarity:** `‖ψ(t₁)‖² = ‖ψ(t₂)‖²` for any two times. -/
+/-- For a solution, the total probability takes the same value at any two
+times `t₁`, `t₂`. -/
 theorem schrodinger_unitary_evolution' (H : Hypergraph V)
     {u v : ℝ → V → ℝ}
     (hψ : SchrodingerSolution H u v) (t₁ t₂ : ℝ) :
@@ -136,8 +109,7 @@ theorem schrodinger_unitary_evolution' (H : Hypergraph V)
   rw [schrodinger_unitary_evolution H hψ t₁,
       schrodinger_unitary_evolution H hψ t₂]
 
-/-- **Probability is non-negative.** Immediate from the sum of
-squares structure. -/
+/-- The total probability is nonnegative. -/
 theorem schrodingerProbability_nonneg (u v : ℝ → V → ℝ) (t : ℝ) :
     0 ≤ schrodingerProbability u v t := by
   unfold schrodingerProbability

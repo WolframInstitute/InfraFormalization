@@ -1,15 +1,8 @@
 /-
-**Calculus on coordinate DAGs** (Group IA / #110 IA2).
+Prefix sums on `Fin n`.
 
-Extends `DagBlowup.lean` with the full calculus-on-DAGs toolkit:
-
-  * `dagDiscreteIntegral f i j := ∑ over range` — Riemann-sum-like
-    integral on `Fin n`.
-  * Telescoping FTC for specific forms.
-  * Linearity and constant/sum rules.
-
-**Connection to hypergraphs.** Native. Operates on
-`dagAsBlowupOfInterval n` from `DagBlowup.lean`.
+This module defines `dagPrefixSum f j`, the sum of `f k` over `k < j`, and
+proves that it vanishes at `j = 0` and is linear in `f`.
 -/
 
 import InfraFormalization.DagBlowup
@@ -21,11 +14,11 @@ namespace InfraFormalization
 
 variable {n : Nat}
 
-/-- **DAG discrete integral** from 0 to `j`: sum over prefixes. -/
+/-- The sum of `f k` over all `k : Fin n` with `k < j`. -/
 def dagPrefixSum (f : Fin n → ℝ) (j : Fin n) : ℝ :=
   ∑ k ∈ Finset.univ.filter (fun k : Fin n => k.val < j.val), f k
 
-/-- **Prefix sum at index 0 is 0** (empty sum). -/
+/-- The prefix sum at index 0 is 0. -/
 theorem dagPrefixSum_zero {n : Nat} [NeZero n] (f : Fin n → ℝ) :
     dagPrefixSum f ⟨0, Nat.pos_of_ne_zero (NeZero.ne n)⟩ = 0 := by
   unfold dagPrefixSum
@@ -35,14 +28,14 @@ theorem dagPrefixSum_zero {n : Nat} [NeZero n] (f : Fin n → ℝ) :
   have : k.val < 0 := hk.2
   omega
 
-/-- **Linearity**: integral of sum is sum of integrals. -/
+/-- The prefix sum of `f + g` is the sum of the prefix sums of `f` and `g`. -/
 theorem dagPrefixSum_add (f g : Fin n → ℝ) (j : Fin n) :
     dagPrefixSum (fun v => f v + g v) j
     = dagPrefixSum f j + dagPrefixSum g j := by
   unfold dagPrefixSum
   rw [← Finset.sum_add_distrib]
 
-/-- **Scalar homogeneity**. -/
+/-- The prefix sum of `c * f` is `c` times the prefix sum of `f`. -/
 theorem dagPrefixSum_smul (c : ℝ) (f : Fin n → ℝ) (j : Fin n) :
     dagPrefixSum (fun v => c * f v) j = c * dagPrefixSum f j := by
   unfold dagPrefixSum

@@ -1,16 +1,12 @@
 /-
-**Matrix exponential fixes eigenvectors** (task T2).
+The matrix exponential on an eigenvector.
 
-For a matrix `A : Matrix V V ℝ` and a vector `v : V → ℝ` with
-`A.mulVec v = λ • v`, the matrix exponential satisfies
-  `(NormedSpace.exp A).mulVec v = Real.exp λ • v`.
-
-Proved via Mathlib's `exp_eq_tsum_rat` (the series definition) +
-`ContinuousLinearMap.map_tsum` (linearity of `mulVec v` commutes with
-the infinite sum) + induction on `A^n.mulVec v = λ^n • v`.
-
-This underpins T4 (cycle spectrum in `HasEigenvalue` form) and ID7
-(heat trace as spectral sum).
+For `A : Matrix V V ℝ` and `v : V → ℝ` with `A.mulVec v = λ • v`, the module
+proves `(A^n).mulVec v = λ^n • v` and
+`(NormedSpace.exp A).mulVec v = Real.exp λ • v`. The proof writes the
+exponential as a series (`exp_eq_tsum_rat`) and moves `mulVec v` inside the
+sum with `ContinuousLinearMap.map_tsum`. As a consequence, the heat kernel
+`exp(t · Δ)` of a hypergraph maps every constant vector to itself.
 -/
 
 import InfraFormalization.LaplacianMatrix
@@ -25,7 +21,7 @@ namespace Hypergraph
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
-/-- **`Matrix.mulVec v` as a continuous linear map in the matrix argument.** -/
+/-- The map `M ↦ M.mulVec v`, as a continuous linear map on matrices. -/
 noncomputable def mulVecCLM (v : V → ℝ) : Matrix V V ℝ →L[ℝ] (V → ℝ) :=
   LinearMap.toContinuousLinearMap
     { toFun := fun M => M.mulVec v
@@ -43,8 +39,7 @@ noncomputable def mulVecCLM (v : V → ℝ) : Matrix V V ℝ →L[ℝ] (V → �
 @[simp] lemma mulVecCLM_apply (v : V → ℝ) (M : Matrix V V ℝ) :
     mulVecCLM v M = M.mulVec v := rfl
 
-/-- **Powers of a matrix acting on an eigenvector**: if `A.mulVec v = λ • v`,
-then `(A^n).mulVec v = λ^n • v`. -/
+/-- If `A.mulVec v = λ • v`, then `(A^n).mulVec v = λ^n • v` for every `n`. -/
 theorem matrix_pow_mulVec_of_eigenvector (A : Matrix V V ℝ) (v : V → ℝ) (lam : ℝ)
     (hv : A.mulVec v = lam • v) : ∀ n : ℕ, (A^n).mulVec v = lam^n • v := by
   intro n
@@ -57,10 +52,7 @@ theorem matrix_pow_mulVec_of_eigenvector (A : Matrix V V ℝ) (v : V → ℝ) (l
     rw [smul_smul]
     rw [mul_comm lam (lam ^ n), ← pow_succ]
 
-/-- **`NormedSpace.exp A` acting on an eigenvector**: if `A.mulVec v = λ • v`,
-then `(NormedSpace.exp A).mulVec v = Real.exp λ • v`.
-
-Closes T2. -/
+/-- If `A.mulVec v = λ • v`, then `(NormedSpace.exp A).mulVec v = Real.exp λ • v`. -/
 theorem exp_mulVec_of_eigenvector (A : Matrix V V ℝ) (v : V → ℝ) (lam : ℝ)
     (hv : A.mulVec v = lam • v) :
     (NormedSpace.exp A).mulVec v = Real.exp lam • v := by
@@ -111,12 +103,9 @@ theorem exp_mulVec_of_eigenvector (A : Matrix V V ℝ) (v : V → ℝ) (lam : �
   -- Lift to V → ℝ via HasSum.smul_const.
   exact (h_hasSum.smul_const v).tsum_eq
 
-/-- **Heat kernel preserves constants.** For any `c : ℝ` and `t : ℝ`,
-`(heatKernel H t).mulVec (fun _ => c) = (fun _ => c)`. Corollary of T2
-(`exp_mulVec_of_eigenvector`) with eigenvalue 0: the Laplacian kills
-constants, so `exp(t · Δ)` fixes them.
-
-This is the matrix-level incarnation of heat-equation mass conservation. -/
+/-- For all `c, t : ℝ`, `(heatKernel H t).mulVec (fun _ => c) = (fun _ => c)`.
+The proof applies `exp_mulVec_of_eigenvector` with eigenvalue 0, since the
+Laplacian maps constant vectors to 0. -/
 theorem heatKernel_mulVec_const (H : Hypergraph V) (c : ℝ) (t : ℝ) :
     (heatKernel H t).mulVec (fun _ => c) = (fun _ => c) := by
   unfold heatKernel

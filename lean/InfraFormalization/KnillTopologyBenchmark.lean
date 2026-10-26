@@ -1,39 +1,16 @@
 /-
-**B4-benchmark: Knill across extended topology zoo** (#433).
+Values of `knillEulerScaled` on four further graphs.
 
-Builds a comprehensive cross-topology benchmark of Knill's discrete
-Gauss-Bonnet recovery, beyond the S² Platonic solids (#427), T²
-triangulation (#428), 3-manifold S³ (#430), and causal DAGs (#432).
+This module evaluates `knillEulerScaled` on the complete graphs `K_6` and `K_7`, the Petersen graph
+and the cube graph `Q_3`, and shows by `native_decide` that each value equals `6 · (V − E + F)`,
+with `F` the number of triangles:
 
-**Extended zoo**:
-
-  * **Complete graphs `K_n`** (high-χ structures, lots of triangles):
-    K_6 (15 edges, 20 triangles, χ = 11) and
-    K_7 (21 edges, 35 triangles, χ = 21).
-  * **Petersen graph**: girth-5 non-planar 3-regular graph
-    (10 vertices, 15 edges, no triangles, χ = -5).
-  * **Hypercube `Q_3`**: 3-dimensional cube graph (bipartite,
-    8 vertices, 12 edges, no triangles, χ = -4).
-
-Each certified `knillEulerScaled = 6·χ` via `native_decide`.
-
-**Cross-topology table**:
-
-| Topology       | V   | E   | F (triangles) | χ  | Knill = 6χ |
-|----------------|-----|-----|---------------|----|------------|
-| K_6            | 6   | 15  | 20            | 11 | 66         |
-| K_7            | 7   | 21  | 35            | 21 | 126        |
-| Petersen       | 10  | 15  | 0             | -5 | -30        |
-| Q_3 (cube)     | 8   | 12  | 0             | -4 | -24        |
-
-**Why this matters**: combined with the Platonic / torus /
-3-manifold / causal-DAG certifications, the Knill framework now
-demonstrably recovers `6·χ` across a **broad cross-section of graph
-topologies**: complete graphs (high-clique), girth-bounded graphs
-(no short cycles), bipartite graphs, regular and irregular,
-small-V and large-V. The architecture's Knill implementation is
-not a narrow Platonic-solid coincidence — it works universally
-across the topology zoo.
+| Graph          | V   | E   | F (triangles) | V − E + F | knillEulerScaled |
+|----------------|-----|-----|---------------|-----------|------------------|
+| K_6            | 6   | 15  | 20            | 11        | 66               |
+| K_7            | 7   | 21  | 35            | 21        | 126              |
+| Petersen       | 10  | 15  | 0             | -5        | -30              |
+| Q_3 (cube)     | 8   | 12  | 0             | -4        | -24              |
 -/
 
 import InfraFormalization.KnillDiscreteGaussBonnet
@@ -130,9 +107,7 @@ theorem cube_knill : knillEulerScaled cubeHG = -24 := by native_decide
 
 /-! ## Bundled cross-topology benchmark -/
 
-/-- **`knill_extended_zoo_benchmark`**: Knill correctly recovers
-`6·χ` across the extended topology zoo (complete graphs K_6/K_7,
-Petersen graph, hypercube Q_3). -/
+/-- `knillEulerScaled` equals 66, 126, -30 and -24 on `K_6`, `K_7`, the Petersen graph and `Q_3`. -/
 theorem knill_extended_zoo_benchmark :
     knillEulerScaled k6HG = 66 ∧                  -- K_6:  6·11
     knillEulerScaled k7HG = 126 ∧                 -- K_7:  6·21
@@ -140,38 +115,10 @@ theorem knill_extended_zoo_benchmark :
     knillEulerScaled cubeHG = -24 :=              -- Q_3:  6·(-4)
   ⟨k6_knill, k7_knill, petersen_knill, cube_knill⟩
 
-/-! ## What this delivers
+/-! ## Summary
 
-**Extended cross-topology benchmark** for Knill discrete Gauss-Bonnet:
-
-  * `k6HG`, `k7HG`: complete graphs with high triangle density.
-  * `petersenHG`: girth-5 non-planar 3-regular.
-  * `cubeHG`: bipartite hypercube `Q_3`.
-  * Per-topology certifications + bundled `knill_extended_zoo_benchmark`.
-
-**Cross-topology table**:
-
-| Topology       | V   | E   | F (triangles) | χ  | Knill = 6χ |
-|----------------|-----|-----|---------------|----|------------|
-| K_6            | 6   | 15  | 20            | 11 | 66         |
-| K_7            | 7   | 21  | 35            | 21 | 126        |
-| Petersen       | 10  | 15  | 0             | -5 | -30        |
-| Q_3 (cube)     | 8   | 12  | 0             | -4 | -24        |
-
-Combined with the Platonic / torus / 3-manifold / causal-DAG
-certifications, the Knill framework is now demonstrated across:
-
-  * **Polyhedra**: K_4, octahedron, icosahedron (#427)
-  * **Closed surfaces**: triangulated T² (#428)
-  * **3-manifolds**: K_5 = ∂Δ⁴ (#430)
-  * **Causal DAGs**: chain, fork, join, diamond, etc. (#432)
-  * **Complete graphs**: K_6, K_7 (here)
-  * **Non-planar**: Petersen (here)
-  * **Bipartite**: hypercube Q_3 (here)
-
-The architecture's Knill is **uniformly correct** across all these
-topology classes — not a narrow coincidence on Platonic solids.
--/
+The four values agree with `6 · (V − E + F)`, as `KnillEulerCharIdentity.knill_eq_six_euler_char`
+states for every executable hypergraph. -/
 
 end KnillTopologyBenchmark
 end InfraFormalization

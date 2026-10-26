@@ -1,39 +1,14 @@
 /-
-Riemann curvature tensor, Ricci tensor, scalar curvature, Einstein
-tensor — all in local coordinates.
+Riemann, Ricci, scalar and Einstein curvature in local coordinates, as formulas in supplied
+data.
 
-**Continuation of Rung 5.** `CurvatureLocalCoord.lean` formalised
-Christoffel symbols. Here we add the Riemann tensor (which needs
-first partial derivatives of Γ, as data), Ricci (a contraction of
-Riemann), scalar curvature (Ricci traced against the inverse metric),
-and Einstein tensor `G_{μν} = R_{μν} − ½ R g_{μν}`.
-
-**Representation.** A `ConnectionData n` carries connection
-coefficients `Γ^ρ_{μν}(x)` and their first partial derivatives
-`∂_λ Γ^ρ_{μν}(x)` as user-supplied data, plus the lower-index
-symmetry of Γ. (We do not require Γ to be derived from a metric —
-this is the Riemann-tensor-as-formula viewpoint.)
-
-When a `MetricData` is also supplied, contractions to Ricci and scalar
-become available.
-
-**Sanity check.** The `flat` instance has `Γ ≡ 0, ∂Γ ≡ 0`; we prove
-`riemann ≡ 0`, `ricci ≡ 0`, `scalarCurvature ≡ 0`. This is the
-flat-space check — no curvature when Christoffel symbols vanish.
-
-**Hypergraph anchor (status: pending, prioritised).** Same caveat as
-`CurvatureLocalCoord.lean`: the curvature tensors here are *targets*
-for hypergraph-anchored discrete approximations (Forman-Ricci,
-Ollivier-Ricci, discrete connection convergence). They are not
-standalone continuum mathematics; they sit on the receiving end of
-discrete-to-continuum bridges that are decomposed in
-`BRIDGE_MACHINERY.md` Rungs 4.4 and 5.
-
-`minkowski4_satisfies_vacuum_EFE` is the trivial flat-space sanity
-check that the formalism is set up correctly. The non-trivial
-hypergraph→GR bridge requires (a) a candidate rule, (b) a discrete
-Ricci on its causal graph, (c) a convergence theorem. Those are the
-priority items, not yet shipped.
+A `ConnectionData n` holds connection coefficients `Γ^ρ_{μν}(x)` and a table `∂_λ Γ^ρ_{μν}(x)`,
+both symmetric in the lower indices; the table is not required to be the derivative of `Γ`.
+The module defines the Riemann tensor, the Ricci contraction, the scalar curvature against a
+`MetricData`, and the Einstein tensor `G_{μν} = R_{μν} − ½ R g_{μν}`. It proves antisymmetry of
+Riemann in its last two indices and the first Bianchi identity, and that all four tensors
+vanish for the zero connection. `MetricDataC2` adds tables of second derivatives of `g` and
+first derivatives of `g⁻¹`, from which `leviCivitaConnection` builds a `ConnectionData`.
 -/
 
 import InfraFormalization.CurvatureLocalCoord
@@ -41,7 +16,7 @@ import InfraFormalization.CurvatureLocalCoord
 namespace InfraFormalization
 namespace Curvature
 
-/-- **Connection-with-derivatives data.** -/
+/-- Connection coefficients and a table of their first partial derivatives. -/
 structure ConnectionData (n : Nat) where
   /-- `Γ^ρ_{μν}(x)`. -/
   Γ : (Fin n → ℝ) → Fin n → Fin n → Fin n → ℝ
@@ -49,16 +24,14 @@ structure ConnectionData (n : Nat) where
   dΓ : Fin n → (Fin n → ℝ) → Fin n → Fin n → Fin n → ℝ
   /-- Lower-index symmetry of Γ (torsion-free). -/
   Γ_symm : ∀ x ρ μ ν, Γ x ρ μ ν = Γ x ρ ν μ
-  /-- Lower-index symmetry of `∂Γ` (inherited from `Γ_symm` when `dΓ` is the
-  actual partial derivative; we record it as an axiom since `dΓ` is
-  supplied as data). -/
+  /-- Lower-index symmetry of `dΓ`, assumed as a field because `dΓ` is supplied as data. -/
   dΓ_symm : ∀ l x ρ μ ν, dΓ l x ρ μ ν = dΓ l x ρ ν μ
 
 namespace ConnectionData
 
 variable {n : Nat} (C : ConnectionData n)
 
-/-- **Riemann curvature tensor (mixed indices).**
+/-- The Riemann tensor
 
   `R^ρ_{σμν}(x) = ∂_μ Γ^ρ_{νσ}(x) − ∂_ν Γ^ρ_{μσ}(x)
                  + Σ_λ Γ^ρ_{μλ}(x) Γ^λ_{νσ}(x)
@@ -69,55 +42,33 @@ def riemann (x : Fin n → ℝ) (ρ σ μ ν : Fin n) : ℝ :=
     + (∑ l : Fin n, C.Γ x ρ μ l * C.Γ x l ν σ)
     - (∑ l : Fin n, C.Γ x ρ ν l * C.Γ x l μ σ)
 
-/-- **Antisymmetry of Riemann in the last two indices.** `R^ρ_{σμν} = −R^ρ_{σνμ}`. -/
+/-- `R^ρ_{σμν} = −R^ρ_{σνμ}`. -/
 theorem riemann_antisymm (x : Fin n → ℝ) (ρ σ μ ν : Fin n) :
     C.riemann x ρ σ μ ν = - C.riemann x ρ σ ν μ := by
   unfold riemann
   ring
 
-/-- **First (algebraic) Bianchi identity** for a torsion-free connection:
-
-  `R^ρ_{σμν} + R^ρ_{μνσ} + R^ρ_{νσμ} = 0`.
-
-Each `∂Γ` term cancels its cyclic mate using `Γ_symm` and `dΓ_symm`.
-The six quadratic `ΓΓ` terms also cancel pairwise. -/
+/-- The first Bianchi identity `R^ρ_{σμν} + R^ρ_{μνσ} + R^ρ_{νσμ} = 0`. The derivative terms
+cancel by `dΓ_symm` and the quadratic terms cancel in pairs by `Γ_symm`. -/
 theorem bianchi_first (x : Fin n → ℝ) (ρ σ μ ν : Fin n) :
     C.riemann x ρ σ μ ν + C.riemann x ρ μ ν σ + C.riemann x ρ ν σ μ = 0 := by
   unfold riemann
-  -- All ∂Γ terms cancel by `dΓ_symm`; all ΓΓ terms by `Γ_symm`.
-  -- Use Γ_symm to rewrite Γ^ρ_{μλ} = Γ^ρ_{λμ}? No, lower-index symmetry is
-  -- Γ x ρ μ λ = Γ x ρ λ μ. So Γ x ρ μ λ * Γ x λ ν σ involves:
-  --   second factor lower indices (ν σ): Γ x λ ν σ = Γ x λ σ ν.
-  --   first factor lower indices (μ λ): Γ x ρ μ λ = Γ x ρ λ μ.
-  -- Use these to relate cyclic terms.
   have hG := C.Γ_symm
   have hdG := C.dΓ_symm
-  -- For each cyclic permutation we use symmetries to bring summands to a
-  -- common form, and then the six terms cancel pairwise.
-  -- Rewrite all the ∂Γ-with-swapped-lower-indices.
+  -- Align the lower indices of the derivative terms.
   have hd1 : C.dΓ μ x ρ ν σ = C.dΓ μ x ρ σ ν := hdG μ x ρ ν σ
   have hd2 : C.dΓ ν x ρ σ μ = C.dΓ ν x ρ μ σ := hdG ν x ρ σ μ
   have hd3 : C.dΓ σ x ρ μ ν = C.dΓ σ x ρ ν μ := hdG σ x ρ μ ν
   rw [hd1, hd2, hd3]
-  -- Now ∂Γ terms: μ-derivs of Γ^ρ_{σν} cancel; ν of Γ^ρ_{μσ} cancel; σ of Γ^ρ_{νμ} cancel.
-  -- For ΓΓ terms, rewrite the second-factor lower indices using Γ_symm.
+  -- Lower-index symmetries of the second factor in the quadratic terms.
   have hΓ1 : ∀ l, C.Γ x l ν σ = C.Γ x l σ ν := fun l => hG x l ν σ
   have hΓ2 : ∀ l, C.Γ x l μ σ = C.Γ x l σ μ := fun l => hG x l μ σ
   have hΓ3 : ∀ l, C.Γ x l σ μ = C.Γ x l μ σ := fun l => hG x l σ μ
   have hΓ4 : ∀ l, C.Γ x l ν μ = C.Γ x l μ ν := fun l => hG x l ν μ
   have hΓ5 : ∀ l, C.Γ x l μ ν = C.Γ x l ν μ := fun l => hG x l μ ν
   have hΓ6 : ∀ l, C.Γ x l σ ν = C.Γ x l ν σ := fun l => hG x l σ ν
-  -- Sum manipulation: combine terms by pairing.
-  -- The expression after rewriting becomes a sum of three differences
-  -- where ΓΓ-pairs cancel via the Γ_symm rewrites.
-  -- Direct approach: after the dΓ rewrites, the linear (∂Γ) part is 0.
-  -- Then we need the quadratic part to also be 0. Use simp_rw with
-  -- the Γ-symmetries to align all factor orderings, then ring should close.
   ring_nf
-  -- After ring_nf the linear-in-∂Γ part should already be 0. The remaining
-  -- quadratic part is a sum of 6 ΓΓ terms in cyclic permutations; we need
-  -- to identify them via Γ_symm.
-  -- Use Finset.sum_add_distrib to combine the cyclic sums:
+  -- The six quadratic sums cancel in pairs.
   have key :
       (∑ l, C.Γ x ρ μ l * C.Γ x l ν σ)
       - (∑ l, C.Γ x ρ ν l * C.Γ x l μ σ)
@@ -125,13 +76,7 @@ theorem bianchi_first (x : Fin n → ℝ) (ρ σ μ ν : Fin n) :
          - (∑ l, C.Γ x ρ σ l * C.Γ x l ν μ))
       + ((∑ l, C.Γ x ρ σ l * C.Γ x l μ ν)
          - (∑ l, C.Γ x ρ μ l * C.Γ x l σ ν)) = 0 := by
-    -- Pair (T1) with (T6), (T2) with (T3), (T4) with (T5):
-    --   T1: Γ^ρ_{μl} Γ^l_{νσ}     T6 (negated): -Γ^ρ_{μl} Γ^l_{σν}
-    --      sum: Γ^ρ_{μl} (Γ^l_{νσ} - Γ^l_{σν}) = 0  via Γ_symm.
-    --   T2 (negated): -Γ^ρ_{νl} Γ^l_{μσ}     T3: +Γ^ρ_{νl} Γ^l_{σμ}
-    --      sum: Γ^ρ_{νl} (Γ^l_{σμ} - Γ^l_{μσ}) = 0.
-    --   T4 (negated): -Γ^ρ_{σl} Γ^l_{νμ}     T5: +Γ^ρ_{σl} Γ^l_{μν}
-    --      sum: Γ^ρ_{σl} (Γ^l_{μν} - Γ^l_{νμ}) = 0.
+    -- Pairs: terms 1 and 6, terms 2 and 3, terms 4 and 5.
     have p16 : (∑ l, C.Γ x ρ μ l * C.Γ x l ν σ)
              - (∑ l, C.Γ x ρ μ l * C.Γ x l σ ν) = 0 := by
       rw [← Finset.sum_sub_distrib]
@@ -164,29 +109,24 @@ theorem bianchi_first (x : Fin n → ℝ) (ρ σ μ ν : Fin n) :
     linarith
   linarith
 
-/-- **Ricci tensor.** Contraction of Riemann over the first upper and
-second lower index: `R_{σν}(x) = Σ_ρ R^ρ_{σρν}(x)`. -/
+/-- The Ricci tensor `R_{σν}(x) = Σ_ρ R^ρ_{σρν}(x)`. -/
 def ricci (x : Fin n → ℝ) (σ ν : Fin n) : ℝ :=
   ∑ ρ : Fin n, C.riemann x ρ σ ρ ν
 
-/-- **Scalar curvature.** Trace of Ricci against the inverse metric:
-`R(x) = Σ_{σν} g^{σν}(x) R_{σν}(x)`.
-
-This requires a metric. We provide the formula here against an
-externally-supplied `MetricData`; the type system enforces that the
-metric and connection share the same dimension `n`. -/
+/-- The scalar curvature `R(x) = Σ_{σν} g^{σν}(x) R_{σν}(x)` for a supplied `MetricData`. The
+connection is not required to be derived from the metric. -/
 def scalarCurvature {n : Nat} (M : MetricData n) (C : ConnectionData n)
     (x : Fin n → ℝ) : ℝ :=
   ∑ σ : Fin n, ∑ ν : Fin n, M.ginv x σ ν * C.ricci x σ ν
 
-/-- **Einstein tensor.** `G_{μν}(x) = R_{μν}(x) − ½ R(x) g_{μν}(x)`. -/
+/-- The Einstein tensor `G_{μν}(x) = R_{μν}(x) − ½ R(x) g_{μν}(x)`. -/
 noncomputable def einsteinTensor {n : Nat} (M : MetricData n)
     (C : ConnectionData n) (x : Fin n → ℝ) (μ ν : Fin n) : ℝ :=
   C.ricci x μ ν - (1 / 2) * scalarCurvature M C x * M.g x μ ν
 
 end ConnectionData
 
-/-- **Flat connection** on `ℝⁿ`: `Γ ≡ 0, ∂Γ ≡ 0`. -/
+/-- The zero connection: `Γ ≡ 0`, `dΓ ≡ 0`. -/
 def flatConnection (n : Nat) : ConnectionData n where
   Γ := fun _ _ _ _ => 0
   dΓ := fun _ _ _ _ _ => 0
@@ -229,58 +169,36 @@ theorem flatConnection_einstein_zero {n : Nat} (M : MetricData n)
   rw [flatConnection_ricci_zero, flatConnection_scalar_zero]
   ring
 
-/-- **Vacuum Einstein equation.** `G_{μν} = 0` on Minkowski with the
-flat connection. This is the trivial flat-space sanity check that the
-formalism is set up correctly. -/
+/-- The Einstein tensor of the zero connection with the metric `minkowski4` is zero. This is
+the case `M = minkowski4` of `flatConnection_einstein_zero`. -/
 theorem minkowski4_satisfies_vacuum_EFE
     (x : Fin 4 → ℝ) (μ ν : Fin 4) :
     ConnectionData.einsteinTensor minkowski4 (flatConnection 4) x μ ν = 0 :=
   flatConnection_einstein_zero minkowski4 x μ ν
 
-/-! ## Levi-Civita connection derivation from a metric with second partials
+/-! ## Connection from a metric with second-derivative data
 
-Given a `MetricData n` extended with second partial derivatives
-`ddg : Fin n → Fin n → ...`, we can compute both `Γ` (the
-Christoffel symbols) and `∂Γ` (their derivatives) explicitly.
+The derivative table of the Christoffel symbols is computed from tables of second
+derivatives of `g` and first derivatives of `g⁻¹`. The relation
+`∂_μ g^{ρσ} = −g^{ρα} g^{σβ} ∂_μ g_{αβ}` is not imposed on the table `dginv`. -/
 
-The second partials are required because the Riemann tensor formula
-involves `∂μ Γ^ρ_{νσ}`, which reduces to second derivatives of the
-metric through the Christoffel formula.
-
-We also need `dginv` (partial derivatives of the inverse metric);
-from `g · g⁻¹ = I`, differentiating gives
-`∂_μ g^{ρσ} = −g^{ρα} g^{σβ} ∂_μ g_{αβ}`. We carry `dginv` as
-separate data with this compatibility axiom optional (we do not
-enforce it in the structure; it can be checked per-instance).
--/
-
-/-- **Metric with second partial derivatives** — the data required to
-compute the full Riemann tensor from the metric via the Levi-Civita
-connection. Extends `MetricData n` with:
-  * `ddg λ μ x α β := ∂_λ ∂_μ g_{αβ}(x)` (second partials, symmetric
-    in the two derivative indices),
-  * `dginv λ x ρ σ := ∂_λ g^{ρσ}(x)` (partials of the inverse metric).
--/
+/-- `MetricData n` extended with a table `ddg l m x α β` for `∂_l ∂_m g_{αβ}(x)` and a table
+`dginv l x ρ σ` for `∂_l g^{ρσ}(x)`. -/
 structure MetricDataC2 (n : Nat) extends MetricData n where
-  /-- Second partial derivatives of the metric: `∂_λ ∂_μ g_{αβ}(x)`. -/
+  /-- Table for `∂_l ∂_m g_{αβ}(x)`. -/
   ddg : Fin n → Fin n → (Fin n → ℝ) → Fin n → Fin n → ℝ
-  /-- Partial derivatives of the inverse metric:
-      `∂_λ g^{ρσ}(x) = −g^{ρα}(x) g^{σβ}(x) ∂_λ g_{αβ}(x)`.
-      We supply this as data (with the compatibility implicit in
-      well-formed instances). -/
+  /-- Table for `∂_l g^{ρσ}(x)`; no relation to `dg` is imposed. -/
   dginv : Fin n → (Fin n → ℝ) → Fin n → Fin n → ℝ
-  /-- `ddg` has lower-index symmetry inherited from `g`. -/
+  /-- `ddg` is symmetric in `α, β`. -/
   ddg_symm : ∀ l m x α β, ddg l m x α β = ddg l m x β α
-  /-- `ddg` is symmetric in the two derivative indices (Clairaut's
-  theorem / Schwarz's theorem: mixed partials commute for smooth `g`). -/
+  /-- `ddg` is symmetric in the two derivative indices `l, m`. -/
   ddg_swap_deriv : ∀ l m x α β, ddg l m x α β = ddg m l x α β
 
 namespace MetricDataC2
 
 variable {n : Nat} (M : MetricDataC2 n)
 
-/-- **Partial derivative of the Christoffel symbol** (as explicit
-formula), computed from the metric data via:
+/-- The formula for the derivative of the Christoffel symbol in terms of the tables:
 
   `∂_λ Γ^ρ_{μν} = ½ (∂_λ g^{ρσ}) (∂_μ g_{σν} + ∂_ν g_{σμ} − ∂_σ g_{μν})
                  + ½ g^{ρσ} (∂_λ ∂_μ g_{σν} + ∂_λ ∂_ν g_{σμ} − ∂_λ ∂_σ g_{μν})`.
@@ -292,9 +210,7 @@ noncomputable def dchristoffel (l : Fin n) (x : Fin n → ℝ) (ρ μ ν : Fin n
      + M.ginv x ρ σ *
        (M.ddg l μ x σ ν + M.ddg l ν x σ μ - M.ddg l σ x μ ν))
 
-/-- **Lower-index symmetry of `dchristoffel`**. Follows from the
-lower-index symmetry of `Γ` being preserved under differentiation
-(via `ddg_symm`). -/
+/-- `dchristoffel` is symmetric in its lower indices `μ, ν`. -/
 theorem dchristoffel_symm (l : Fin n) (x : Fin n → ℝ) (ρ μ ν : Fin n) :
     M.dchristoffel l x ρ μ ν = M.dchristoffel l x ρ ν μ := by
   unfold dchristoffel
@@ -311,12 +227,8 @@ theorem dchristoffel_symm (l : Fin n) (x : Fin n → ℝ) (ρ μ ν : Fin n) :
     ring
   rw [h1, h2]
 
-/-- **Levi-Civita connection data** derived from a `MetricDataC2`.
-  * `Γ` = the Christoffel symbols (from the underlying `MetricData`).
-  * `dΓ` = computed via the differentiation of the Christoffel formula
-    using `dg`, `ddg`, `dginv`.
-  * `Γ_symm` = from `christoffel_symm`.
-  * `dΓ_symm` = from `dchristoffel_symm`. -/
+/-- The `ConnectionData` with `Γ` the Christoffel symbols of the underlying `MetricData` and
+`dΓ = dchristoffel`. -/
 noncomputable def leviCivitaConnection : ConnectionData n where
   Γ := fun x ρ μ ν => M.toMetricData.christoffel x ρ μ ν
   dΓ := M.dchristoffel

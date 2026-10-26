@@ -1,21 +1,12 @@
 /-
-**Square-count screener on `ExecHG ℕ`** (#410).
+Ordered 4-cycle counts of `ExecHG ℕ` states.
 
-A FIFTH independent curvature scalar alongside Forman (#384),
-transport (#402), Higuchi (#405), and degree-variance (#407). The new
-scalar counts **4-cycles** (squares) — ordered closed walks
-`v₀ → v₁ → v₂ → v₃ → v₀` with all four vertices distinct.
-
-Squares capture *global cycle topology* that the four earlier
-scalars miss: Forman / Higuchi / DegVariance are degree-based (local
-first-order), Transport is W₁-based (local-neighbourhood), but
-4-cycle counting requires reaching across two hops and folding back
-— a strictly larger-scope signal.
-
-Counts an *ordered* representative `(v₀, v₁, v₂, v₃)` per square,
-so each undirected 4-cycle contributes `8` (= 4 rotations × 2
-reflections); the integer scalar is `squareCountOrdered H`,
-divisible by `8` for any consistent enumeration.
+This module defines `squareCountOrdered H`, the number of tuples
+`(v₀, v₁, v₂, v₃)` of distinct vertices with all four edges
+`(v₀,v₁), (v₁,v₂), (v₂,v₃), (v₃,v₀)` present as binary hyperedges, and the
+per-state trace and constancy test of a dossier. Values on K₃, the
+4-cycle, a single edge, a 2-edge path and the identity rule on the 4-cycle
+are checked by `native_decide`.
 -/
 
 import InfraFormalization.RuleSignatureSchema
@@ -30,15 +21,13 @@ open RuleSignatureSchema
 open RuleSignatureExecMetrics
 open OllivierRicciExec
 
-/-- Decidable predicate: `(u, v)` is an undirected edge of `H`. -/
+/-- `H` contains the hyperedge `[u, v]` or `[v, u]`. -/
 def execHasEdge (H : ExecHG ℕ) (u v : ℕ) : Bool :=
   H.any (fun e => (e.verts == [u, v]) || (e.verts == [v, u]))
 
-/-- **Ordered 4-cycle count** of `H`: number of tuples
-`(v₀, v₁, v₂, v₃)` with all four vertices distinct and all four
-edges `(v₀,v₁), (v₁,v₂), (v₂,v₃), (v₃,v₀)` present in `H`.
-Each undirected 4-cycle contributes `8` to this count
-(4 rotations × 2 reflections). -/
+/-- The number of tuples `(v₀, v₁, v₂, v₃)` of distinct vertices of `H` with
+`execHasEdge` true on `(v₀,v₁), (v₁,v₂), (v₂,v₃), (v₃,v₀)`. Each undirected
+4-cycle gives 8 such tuples. -/
 def squareCountOrdered (H : ExecHG ℕ) : ℤ :=
   let verts := vertexList H
   let cnt := verts.foldr (fun a accA =>
@@ -56,42 +45,41 @@ def squareCountOrdered (H : ExecHG ℕ) : ℤ :=
           else accD) 0) 0) 0) 0
   (cnt : ℤ)
 
-/-- The per-state square-count trace of a dossier. -/
+/-- The list of `squareCountOrdered` values of the states of a dossier. -/
 def _root_.InfraFormalization.RuleSignatureSchema.Dossier.squareCountTrace
     (d : Dossier) : List ℤ :=
   d.states.map squareCountOrdered
 
-/-- A candidate's square-count trace is constant along its run. -/
+/-- All entries of the square-count trace equal its first entry. -/
 def _root_.InfraFormalization.RuleSignatureSchema.Dossier.squareCountConstant
     (d : Dossier) : Bool :=
   RuleSignatureExecMetrics.allEqHead d.squareCountTrace
 
-/-! ## Concrete cross-checks pin the numerics
+/-! ## Values on fixed states, checked by `native_decide` -/
 
-The four chosen seeds span the cycle-topology axis: -/
-
-/-- **K₃** (triangle): no 4-cycle (only 3-cycles); count = 0. -/
+/-- K₃: count 0. -/
 example : squareCountOrdered OllivierRicciExec.k3 = 0 := by native_decide
 
-/-- **4-cycle**: exactly ONE undirected 4-cycle, ordered count = 8. -/
+/-- The 4-cycle: count 8. -/
 example : squareCountOrdered OllivierRicciExec.cycle4 = 8 := by native_decide
 
-/-- **Single edge**: too small for any 4-cycle. -/
+/-- A single edge: count 0. -/
 example : squareCountOrdered RuleSignatureExecMetrics.edge12 = 0 := by native_decide
 
-/-- **3-path** `[{1,2}, {2,3}]`: too few edges. -/
+/-- The path `[{1,2}, {2,3}]`: count 0. -/
 example : squareCountOrdered RuleSignatureExecMetrics.path123 = 0 := by native_decide
 
-/-! ## End-to-end: square count distinguishes runs the four earlier
-scalars cannot -/
+/-! ## The identity rule on the 4-cycle -/
 
-/-- **Trivial identity on cycle4**: state never changes; trace constant. -/
+/-- The identity rule on the 4-cycle for 2 steps gives the trace
+`[8, 8, 8]`. -/
 example :
     (canonicalDossier RuleSignatureExecCorpus.trivialIdentityExecRule
         OllivierRicciExec.cycle4 2).squareCountTrace = [8, 8, 8] := by
   native_decide
 
-/-- The constancy verdict for the identity on cycle4: `true`. -/
+/-- The square-count trace of the identity rule on the 4-cycle is
+constant. -/
 example :
     (canonicalDossier RuleSignatureExecCorpus.trivialIdentityExecRule
         OllivierRicciExec.cycle4 2).squareCountConstant = true := by

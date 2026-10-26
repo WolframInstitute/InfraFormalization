@@ -1,24 +1,10 @@
 /-
-**Multi-construction scenes on hypergraphs** (Group IS / #157).
+Infrageometric scenes.
 
-From PHAJEK's Srní/Madrid talks: an *infrageometric scene* is
-an ensemble of synthetic geometric constructions over a common
-base hypergraph, with the Hausdorff distance between construction
-instances defining a branchial structure on scenes.
-
-  * A scene is a finset of `Finset V` (the set of constructed
-    objects, each a subset of vertices).
-  * The Hausdorff distance between two such subsets gives a metric
-    on the scene set.
-  * Ensembles of scenes form a branchial graph — one scene per
-    multiway branch of the underlying construction process.
-
-This file gives the basic type + Hausdorff-distance predicate. The
-branchial structure and hypergraph-rewriting coupling are IS3 and
-follow-up.
-
-**Connection to hypergraphs.** Native: a scene is literally a
-`Finset (Finset V)`.
+Following P. Hajek's Srní and Madrid talks, a scene is a finite set of constructed objects over a
+base hypergraph, each object a set of vertices. This module defines the scene type, the empty scene,
+insertion of an object, the number of objects, and the directed and symmetric Hausdorff distances
+between two vertex sets under `Hypergraph.dist`.
 -/
 
 import InfraFormalization.SyntheticGeometry
@@ -29,8 +15,7 @@ namespace Hypergraph
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
-/-- **Infrageometric scene** over a hypergraph: a finset of
-constructed objects (each a subset of vertices). -/
+/-- A finite set of constructed objects, each a finite set of vertices. -/
 structure InfrageometricScene (V : Type*) [Fintype V] [DecidableEq V] where
   objects : Finset (Finset V)
 
@@ -38,10 +23,10 @@ namespace InfrageometricScene
 
 variable (S : InfrageometricScene V)
 
-/-- **Empty scene.** -/
+/-- The scene with no objects. -/
 def empty : InfrageometricScene V := ⟨∅⟩
 
-/-- **Add an object to a scene.** -/
+/-- The scene with `obj` inserted into its set of objects. -/
 def addObject (obj : Finset V) : InfrageometricScene V :=
   ⟨insert obj S.objects⟩
 
@@ -50,7 +35,7 @@ def addObject (obj : Finset V) : InfrageometricScene V :=
 @[simp] theorem addObject_objects (obj : Finset V) :
     (S.addObject obj).objects = insert obj S.objects := rfl
 
-/-- **Scene cardinality**: the number of distinct constructed objects. -/
+/-- The number of distinct objects in the scene. -/
 def card : Nat := S.objects.card
 
 @[simp] theorem empty_card : (empty : InfrageometricScene V).card = 0 := by
@@ -58,18 +43,15 @@ def card : Nat := S.objects.card
 
 end InfrageometricScene
 
-/-! ## Hausdorff distance (stub) between two scene-objects. -/
+/-! ## Hausdorff distance between two vertex sets -/
 
-/-- **Directed Hausdorff "distance"** between two vertex-subsets under
-the hypergraph distance: `sup_{u ∈ A} inf_{v ∈ B} dist H u v`.
-Implemented as a `Nat` for the discrete-distance setting; returns
-`0` when either set is empty. -/
+/-- The directed Hausdorff distance `max_{u ∈ A} min_{v ∈ B} dist H u v` as a natural number. It
+is 0 when `A` or `B` is empty. -/
 noncomputable def directedHausdorff (H : Hypergraph V) (A B : Finset V) : Nat :=
   A.sup (fun u =>
     (B.image (fun v => H.dist u v)).min.getD 0)
 
-/-- **Symmetric Hausdorff distance**: max of the two directed
-directions. Metric on scene-objects under `Hypergraph.dist`. -/
+/-- The maximum of `directedHausdorff H A B` and `directedHausdorff H B A`. -/
 noncomputable def sceneHausdorff (H : Hypergraph V) (A B : Finset V) : Nat :=
   max (directedHausdorff H A B) (directedHausdorff H B A)
 

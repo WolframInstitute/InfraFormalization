@@ -4,34 +4,21 @@ import InfraFormalization.PathHypergraphDistance
 import Mathlib.Combinatorics.SimpleGraph.Metric
 
 /-!
-**Path-hypergraph Wasserstein distance** (task #214 consumer site).
+Wasserstein-1 distance on the path hypergraph.
 
-Hypergraph-anchored consumer site for the abstract W_1 framework on
-`pathHypergraph n` — the open-chain analog of `cycleHypergraph n`.
-
-Provides:
-  * `pathMetric n`, `pathMetric_nonneg`, `pathMetric_self`,
-    `pathMetric_symm`, `pathMetric_triangle`.
-  * `pathMetricScaled n = pathMetric / (n-1)` (diameter-normalised).
-  * `wasserstein1_pathDelta_eq_hypergraphDist` — sharp δ-to-δ identity
-    naming the hypergraph distance.
-
-Since `pathHypergraph` has no wrap-around, the cyclic shift story does
-not apply. Path is the direct-limit analog: W_1 between adjacent
-Diracs is the unit edge-length.
-
-Grounding convention: the abstract `wasserstein1` lives in
-`WassersteinFinite.lean` (pure discrete, no hypergraph anchor in the
-type signature). Here we specialise to `(Fin n, pathMetric n)`, which
-is entirely built from `pathHypergraph n` — no continuum content.
+This module specialises the finite Wasserstein-1 distance `wasserstein1` of `WassersteinFinite.lean`
+to `Fin n` with the shortest-path metric `pathMetric n` of `pathHypergraph n` and with the scaled
+metric `pathMetricScaled n = pathMetric n / n`. It proves that `pathMetric n` is a metric bounded by
+`n`, that W₁ between two Dirac measures equals the graph distance (divided by `n` in the scaled
+case), that W₁ between probability measures is at most `n` (at most 1 in the scaled case), and that
+adjacent vertices are at distance 1 (`1/n` scaled).
 -/
 
 namespace InfraFormalization
 
 open scoped BigOperators
 
-/-- **Path hypergraph graph metric**: shortest-path distance in
-`pathHypergraph n`, cast to ℝ. -/
+/-- The shortest-path distance in `pathHypergraph n`, cast to ℝ. -/
 noncomputable def pathMetric (n : ℕ) (i j : Fin n) : ℝ :=
   ((pathHypergraph n).dist i j : ℝ)
 
@@ -48,8 +35,7 @@ theorem pathMetric_symm (n : ℕ) (i j : Fin n) :
   unfold pathMetric
   rw [Hypergraph.dist_comm]
 
-/-- **Path metric triangle inequality** via `pathHypergraph_connected`
-(which holds for `n ≥ 1`). -/
+/-- For `n ≥ 1`, `pathMetric n` satisfies the triangle inequality. -/
 theorem pathMetric_triangle {n : ℕ} [NeZero n] (i j k : Fin n) :
     pathMetric n i k ≤ pathMetric n i j + pathMetric n j k := by
   unfold pathMetric
@@ -57,12 +43,8 @@ theorem pathMetric_triangle {n : ℕ} [NeZero n] (i j k : Fin n) :
   have := Hypergraph.dist_triangle _ hconn i j k
   exact_mod_cast this
 
-/-- **W_1 between two Dirac deltas on the path equals the path graph
-distance.** Hypergraph-anchored instantiation of
-`wasserstein1_delta_eq_dist`: the finite metric space is
-`(Fin n, pathMetric n)`, which is entirely defined from
-`pathHypergraph n`. Both sides of the identity are computable
-from the hypergraph data alone. -/
+/-- W₁ between the Dirac measures at `i` and `j` under `pathMetric n` equals the graph distance
+between `i` and `j` in `pathHypergraph n`. -/
 theorem wasserstein1_pathDelta_eq_hypergraphDist
     (n : ℕ) [NeZero n] (i j : Fin n) :
     wasserstein1 (pathMetric n) (delta i) (delta j)
@@ -70,18 +52,9 @@ theorem wasserstein1_pathDelta_eq_hypergraphDist
   rw [wasserstein1_delta_eq_dist]
   rfl
 
-/-! ## Universal diameter bound + scaled W_1 on the path
+/-! ## Diameter bounds and the scaled metric -/
 
-Path-hypergraph analogs of the cycle bounds in
-`CycleWasserstein.lean`. Together with the δ identity above, these
-give an O(1) scaled-W_1 universal bound and a sharp δ-to-δ scaled
-identity — exactly the form `[0, 1]`-interval convergence consumes. -/
-
-/-- **Path-metric diameter is at most `n`**: any two vertices of
-`pathHypergraph n` are within `n` graph steps of each other.
-Mirrors `cycleMetric_le_card`. The bound is loose by 1 (true
-diameter is `n - 1`), but `≤ n` keeps the same shape as the cycle
-case for downstream uniformity. -/
+/-- `pathMetric n i j ≤ n`. The diameter of the path is `n - 1`. -/
 theorem pathMetric_le_card (n : ℕ) [NeZero n] (i j : Fin n) :
     pathMetric n i j ≤ n := by
   unfold pathMetric Hypergraph.dist
@@ -102,10 +75,7 @@ theorem pathMetric_le_card (n : ℕ) [NeZero n] (i j : Fin n) :
   · rw [SimpleGraph.dist_eq_zero_of_not_reachable hreach]
     exact_mod_cast Nat.zero_le _
 
-/-- **W_1 between any two probability measures on `pathHypergraph n`
-is bounded by `n`.** The path-side concrete diameter bound for the
-abstract Wasserstein distance — hypergraph-anchored universal upper
-bound mirroring `wasserstein1_cycleMetric_le_card`. -/
+/-- For probability measures `μ`, `ν` on `Fin n`, W₁ under `pathMetric n` is at most `n`. -/
 theorem wasserstein1_pathMetric_le_card
     (n : ℕ) [NeZero n]
     (μ ν : Fin n → ℝ)
@@ -116,10 +86,7 @@ theorem wasserstein1_pathMetric_le_card
     (pathMetric_le_card n) (pathMetric_nonneg n) μ ν hμ hν hμsum hνsum
   exact_mod_cast Nat.zero_le _
 
-/-- **Scaled path metric**: hypergraph distance divided by `n`, so
-the unit cell has length `1/n` and the path's diameter is bounded by
-`1`. This is the metric under which `pathHypergraph n → [0, 1]`
-convergence is quantified. -/
+/-- `pathMetric n i j / n`. -/
 noncomputable def pathMetricScaled (n : ℕ) [NeZero n] (i j : Fin n) : ℝ :=
   pathMetric n i j / n
 
@@ -129,7 +96,7 @@ theorem pathMetricScaled_nonneg (n : ℕ) [NeZero n] (i j : Fin n) :
   have hn : (0 : ℝ) ≤ n := by exact_mod_cast Nat.zero_le _
   exact div_nonneg (pathMetric_nonneg n i j) hn
 
-/-- **Scaled path diameter is ≤ 1**. Direct from `pathMetric_le_card`. -/
+/-- `pathMetricScaled n i j ≤ 1`. -/
 theorem pathMetricScaled_le_one (n : ℕ) [NeZero n] (i j : Fin n) :
     pathMetricScaled n i j ≤ 1 := by
   unfold pathMetricScaled
@@ -139,9 +106,7 @@ theorem pathMetricScaled_le_one (n : ℕ) [NeZero n] (i j : Fin n) :
   rw [div_le_one hn_pos]
   exact pathMetric_le_card n i j
 
-/-- **W_1 under the scaled path metric is bounded by `1`.** Universal
-O(1) Wasserstein bound on the path hypergraph; together with the
-scaled δ identity below, pins scaled-W_1 to `[0, 1]`. -/
+/-- For probability measures `μ`, `ν` on `Fin n`, W₁ under `pathMetricScaled n` is at most 1. -/
 theorem wasserstein1_pathMetricScaled_le_one
     (n : ℕ) [NeZero n]
     (μ ν : Fin n → ℝ)
@@ -152,9 +117,9 @@ theorem wasserstein1_pathMetricScaled_le_one
     (pathMetricScaled_le_one n) (pathMetricScaled_nonneg n)
     μ ν hμ hν hμsum hνsum
 
-/-- **Sharp scaled W_1 between two path Dirac deltas**:
-`W_1_scaled(δ_i, δ_j) = d(i, j) / n`. Mirrors
-`wasserstein1_cycleDelta_scaled_eq` for the path case. -/
+/-- W₁ between the Dirac measures at `i` and `j` under `pathMetricScaled n` equals the graph
+distance
+divided by `n`. -/
 theorem wasserstein1_pathDelta_scaled_eq
     (n : ℕ) [NeZero n] (i j : Fin n) :
     wasserstein1 (pathMetricScaled n) (delta i) (delta j)
@@ -162,16 +127,12 @@ theorem wasserstein1_pathDelta_scaled_eq
   rw [wasserstein1_delta_eq_dist]
   rfl
 
-/-! ## Adjacent-vertex sharp identities
+/-! ## Adjacent vertices
 
-For consecutive path vertices `i.val + 1 = j.val`, the graph distance
-is exactly `1`, so the unscaled W_1 between Diracs is `1` and the
-scaled W_1 is `1/n`. Mirrors `wasserstein1_cycleDelta_succ` /
-`cycleMetric_succ_eq_one`. -/
+For `i.val + 1 = j.val`, the graph distance is 1, W₁ between the Dirac measures is 1, and the scaled
+values are `1/n`. -/
 
-/-- **Distance between adjacent path vertices is exactly `1`** (when
-`val + 1 = j.val`). Direct from `pathHypergraph_Adj_iff` +
-`SimpleGraph.dist_eq_one_iff_adj`. -/
+/-- If `i.val + 1 = j.val`, then `pathMetric n i j = 1`. -/
 theorem pathMetric_succ_eq_one (n : ℕ) [NeZero n] (i j : Fin n)
     (hij : i.val + 1 = j.val) :
     pathMetric n i j = 1 := by
@@ -182,16 +143,15 @@ theorem pathMetric_succ_eq_one (n : ℕ) [NeZero n] (i j : Fin n)
     (pathHypergraph_Adj_iff n i j).mpr ⟨hne, Or.inl hij⟩
   rw [SimpleGraph.dist_eq_one_iff_adj.mpr hadj, Nat.cast_one]
 
-/-- **Scaled distance between adjacent path vertices is `1/n`**. -/
+/-- If `i.val + 1 = j.val`, then `pathMetricScaled n i j = 1/n`. -/
 theorem pathMetricScaled_succ_eq (n : ℕ) [NeZero n] (i j : Fin n)
     (hij : i.val + 1 = j.val) :
     pathMetricScaled n i j = 1 / n := by
   unfold pathMetricScaled
   rw [pathMetric_succ_eq_one n i j hij]
 
-/-- **W_1 between adjacent path Diracs is exactly `1`**. The bound
-`pathMetric n = 1` saturates between adjacent vertices, and the
-δ-to-δ identity makes `wasserstein1` agree exactly. -/
+/-- If `i.val + 1 = j.val`, then W₁ between the Dirac measures at `i` and `j` under `pathMetric n`
+is 1. -/
 theorem wasserstein1_pathDelta_succ
     (n : ℕ) [NeZero n] (i j : Fin n) (hij : i.val + 1 = j.val) :
     wasserstein1 (pathMetric n) (delta i) (delta j) = 1 := by
@@ -199,9 +159,8 @@ theorem wasserstein1_pathDelta_succ
   show pathMetric n i j = 1
   exact pathMetric_succ_eq_one n i j hij
 
-/-- **Scaled W_1 between adjacent path Diracs is `1/n`**. The
-discrete unit cell shrinks under `pathMetricScaled` to `1/n`,
-matching the spacing of the `[0, 1]`-interval limit. -/
+/-- If `i.val + 1 = j.val`, then W₁ between the Dirac measures at `i` and `j` under
+`pathMetricScaled n` is `1/n`. -/
 theorem wasserstein1_pathDelta_scaled_succ
     (n : ℕ) [NeZero n] (i j : Fin n) (hij : i.val + 1 = j.val) :
     wasserstein1 (pathMetricScaled n) (delta i) (delta j) = 1 / n := by

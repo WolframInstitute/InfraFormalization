@@ -1,21 +1,12 @@
 /-
-**Round 2-sphere S² metric** — an explicit curved target for R4
-(curved discrete-Ricci bridge).
+The round 2-sphere metric in polar coordinates.
 
-In polar coordinates `(θ, φ)` the round unit 2-sphere has metric:
-
-  `ds² = dθ² + sin²θ dφ²`
-
-So `g_{00} = 1`, `g_{11} = sin²θ`, off-diagonal = 0. Validity: `sin θ ≠ 0`
-(away from the poles).
-
-This is the simplest positively-curved Riemannian target. Pairs with
-the 3-regular-graph discrete signature in `CurvedRicciBridge.lean`
-via the "beyond flat" bridge.
-
-**Connection to hypergraphs.** Same anchor as `CurvedRicciBridge`:
-continuum side. A hypergraph rule producing S² curvature would pair
-with this via the discrete → continuum Ricci bridge.
+This module defines the metric `ds² = dθ² + sin²θ dφ²` (with `x 0 = θ`),
+its inverse and first partial derivatives, and packages them as a
+`PartialMetricData 2` valid where `sin θ ≠ 0`. It computes the Christoffel
+symbols `Γ⁰_{11} = −sin θ cos θ` and `Γ¹_{01} = cos θ / sin θ`, and proves
+that `Γ¹_{01} ≠ 0` where `sin θ ≠ 0` and `cos θ ≠ 0`. No curvature tensor is
+computed in this module.
 -/
 
 import InfraFormalization.PartialMetricData
@@ -25,33 +16,33 @@ import Mathlib.Tactic.FieldSimp
 namespace InfraFormalization
 namespace Curvature
 
-/-- **2-sphere metric components**: `g_{00} = 1`, `g_{11} = sin²θ`,
-off-diagonal zero. Here `x 0 = θ`. -/
+/-- Metric components `g_{00} = 1`, `g_{11} = sin²θ`, off-diagonal 0, with
+`x 0 = θ`. -/
 noncomputable def sphereG (x : Fin 2 → ℝ) (μ ν : Fin 2) : ℝ :=
   if μ ≠ ν then 0
   else if μ.val = 0 then 1
   else (Real.sin (x 0))^2
 
-/-- **2-sphere inverse metric**: `g^{00} = 1`, `g^{11} = 1/sin²θ`,
-off-diagonal zero. -/
+/-- Inverse metric components `g^{00} = 1`, `g^{11} = 1/sin²θ`,
+off-diagonal 0. -/
 noncomputable def sphereGinv (x : Fin 2 → ℝ) (μ ν : Fin 2) : ℝ :=
   if μ ≠ ν then 0
   else if μ.val = 0 then 1
   else 1 / (Real.sin (x 0))^2
 
-/-- **2-sphere first partials**: only `∂_0 g_{11} = 2 sin θ cos θ` is
-nonzero (and its symmetric counterpart). -/
+/-- First partial derivatives of the metric: `∂_0 g_{11} = 2 sin θ cos θ`
+and all other components 0. -/
 noncomputable def sphereDg (l : Fin 2) (x : Fin 2 → ℝ) (μ ν : Fin 2) : ℝ :=
   if μ ≠ ν then 0
   else if l.val = 0 ∧ μ.val = 1 then
     2 * Real.sin (x 0) * Real.cos (x 0)
   else 0
 
-/-- **2-sphere validity**: `sin θ ≠ 0` (away from poles). -/
+/-- The domain of validity: `sin θ ≠ 0`. -/
 def SphereValid (x : Fin 2 → ℝ) : Prop :=
   Real.sin (x 0) ≠ 0
 
-/-- **2-sphere metric is symmetric.** -/
+/-- `sphereG` is symmetric. -/
 theorem sphereG_symm (x : Fin 2 → ℝ) (μ ν : Fin 2) :
     sphereG x μ ν = sphereG x ν μ := by
   unfold sphereG
@@ -59,7 +50,7 @@ theorem sphereG_symm (x : Fin 2 → ℝ) (μ ν : Fin 2) :
   · rw [h]
   · simp [h, Ne.symm h]
 
-/-- **2-sphere inverse metric is symmetric.** -/
+/-- `sphereGinv` is symmetric. -/
 theorem sphereGinv_symm (x : Fin 2 → ℝ) (μ ν : Fin 2) :
     sphereGinv x μ ν = sphereGinv x ν μ := by
   unfold sphereGinv
@@ -67,7 +58,7 @@ theorem sphereGinv_symm (x : Fin 2 → ℝ) (μ ν : Fin 2) :
   · rw [h]
   · simp [h, Ne.symm h]
 
-/-- **2-sphere as a `PartialMetricData 2`** on the validity domain. -/
+/-- The 2-sphere metric as a `PartialMetricData 2` on `SphereValid`. -/
 noncomputable def spherePartial : PartialMetricData 2 where
   g := sphereG
   ginv := sphereGinv
@@ -111,11 +102,7 @@ noncomputable def spherePartial : PartialMetricData 2 where
     · rw [h]
     · simp [h, Ne.symm h]
 
-/-- **2-sphere has non-vanishing Christoffel `Γ⁰_{11}` at generic points.**
-Specifically, `Γ⁰_{11}(x) = -sin θ cos θ`, which is non-zero whenever
-`sin θ ≠ 0 ∧ cos θ ≠ 0`. This confirms S² is a genuinely curved
-target — the continuum side of the curved Ricci bridge beyond the
-flat circle case. -/
+/-- `Γ⁰_{11}(x) = −sin θ cos θ`. -/
 theorem sphereChristoffel_0_1_1 (x : Fin 2 → ℝ) :
     spherePartial.christoffel x 0 1 1 = -(Real.sin (x 0) * Real.cos (x 0)) := by
   unfold PartialMetricData.christoffel
@@ -123,9 +110,7 @@ theorem sphereChristoffel_0_1_1 (x : Fin 2 → ℝ) :
   simp
   ring
 
-/-- **2-sphere Christoffel `Γ¹_{01} = cot(θ)` = cos θ / sin θ.** The
-other non-zero Christoffel symbol on S². Non-zero whenever
-`cos θ ≠ 0`. -/
+/-- Where `sin θ ≠ 0`, `Γ¹_{01}(x) = cos θ / sin θ`. -/
 theorem sphereChristoffel_1_0_1 (x : Fin 2 → ℝ) (hv : SphereValid x) :
     spherePartial.christoffel x 1 0 1 = Real.cos (x 0) / Real.sin (x 0) := by
   unfold PartialMetricData.christoffel
@@ -135,10 +120,8 @@ theorem sphereChristoffel_1_0_1 (x : Fin 2 → ℝ) (hv : SphereValid x) :
   simp
   field_simp
 
-/-- **2-sphere has non-flat geometry at generic points**: for any
-`x : Fin 2 → ℝ` with `sin θ ≠ 0` and `cos θ ≠ 0`, the Christoffel
-symbol `Γ¹_{01}` is non-zero. This is the "beyond flat" witness for
-the 2-sphere analog of R4. -/
+/-- Where `sin θ ≠ 0` and `cos θ ≠ 0`, `Γ¹_{01}(x) ≠ 0`. Nonzero Christoffel
+symbols do not by themselves imply nonzero curvature. -/
 theorem sphereChristoffel_nonzero (x : Fin 2 → ℝ) (hv : SphereValid x)
     (hc : Real.cos (x 0) ≠ 0) :
     spherePartial.christoffel x 1 0 1 ≠ 0 := by

@@ -1,22 +1,7 @@
 /-
-Directed (multi-)hypergraphs as used in the Wolfram model.
+Directed multi-hypergraphs as used in the Wolfram model.
 
-A `Hypergraph V` is a finite multiset of directed hyperedges, where each
-hyperedge is a nonempty ordered tuple of vertices from `V`. We use
-ordered tuples (not unordered subsets) because:
-
-  * JGORARD's later machinery (the Ollivier-Ricci construction in §3.1 of
-    arXiv:2004.14810 and in arXiv:2102.09363 §5) requires a notion of
-    "tail" and "head" of an edge, i.e. direction;
-  * "outgoing hyperedges" (Def 3, arXiv:2004.14810) is only well-defined
-    when edges carry an order;
-  * every rule actually written down in the Wolfram Physics Project
-    corpus is expressed with ordered edges.
-
-This file is intentionally light on Mathlib dependencies. We re-use
-`List` and `Multiset` from core/Mathlib so that downstream modules can
-compose these hypergraphs with Mathlib's metric / measure / topology
-infrastructure.
+A `Hyperedge V` is a nonempty ordered list of vertices, and a `Hypergraph V` is a finite multiset of hyperedges. Hyperedges are ordered because the outgoing hyperedges of Def. 3 in G1 (arXiv:2004.14810) require an order on each edge, and the rules of the Wolfram Physics Project are written with ordered edges. The module defines size, insertion, union and multiset difference, and proves the basic identities and size bounds for them.
 -/
 
 import Mathlib.Data.Multiset.Basic
@@ -41,7 +26,7 @@ variable {V : Type*}
 /-- The multiset of vertices incident to this hyperedge. -/
 def incident (e : Hyperedge V) : Multiset V := ↑e.verts
 
-/-- The first vertex; always exists because `verts ≠ []`. -/
+/-- The first vertex, which exists because `verts ≠ []`. -/
 def head! (e : Hyperedge V) : V :=
   e.verts.head e.nonempty
 
@@ -59,8 +44,7 @@ def map {W : Type*} (f : V → W) (e : Hyperedge V) : Hyperedge W where
 
 end Hyperedge
 
-/-- A (directed, multi-) hypergraph on `V`: a finite multiset of
-directed hyperedges. -/
+/-- A directed multi-hypergraph on `V`: a finite multiset of hyperedges. -/
 structure Hypergraph (V : Type*) where
   edges : Multiset (Hyperedge V)
 
@@ -95,31 +79,28 @@ instance : Add (Hypergraph V) := ⟨union⟩
   show (H₁.edges + H₂.edges).card = _
   simp [size]
 
-/-- Remove a submultiset of edges. Mathlib's `Multiset.sub` is
-truncated subtraction; to get exact conservation laws we'll prove
-lemmas that guarantee the submultiset assumption. Needs `DecidableEq`
-on the edges (which follows from `DecidableEq V`). -/
+/-- Remove the edges of `E` from `H` by `Multiset.sub`, which is truncated subtraction. Requires `DecidableEq V`. -/
 def diff [DecidableEq V] (H : Hypergraph V) (E : Multiset (Hyperedge V)) : Hypergraph V :=
   ⟨H.edges - E⟩
 
-/-- **Empty is a right unit for union.** -/
+/-- `H + empty = H`. -/
 @[simp] theorem add_empty (H : Hypergraph V) : H + empty = H := by
   show ⟨H.edges + (0 : Multiset (Hyperedge V))⟩ = H
   simp
 
-/-- **Empty is a left unit for union.** -/
+/-- `empty + H = H`. -/
 @[simp] theorem empty_add (H : Hypergraph V) : empty + H = H := by
   show ⟨(0 : Multiset (Hyperedge V)) + H.edges⟩ = H
   simp
 
-/-- **Union is commutative.** Inherited from multiset addition. -/
+/-- Union is commutative. -/
 theorem add_comm' (H₁ H₂ : Hypergraph V) : H₁ + H₂ = H₂ + H₁ := by
   show (⟨H₁.edges + H₂.edges⟩ : Hypergraph V)
     = (⟨H₂.edges + H₁.edges⟩ : Hypergraph V)
   congr 1
   exact Multiset.add_comm _ _
 
-/-- **Union is associative.** Inherited from multiset addition. -/
+/-- Union is associative. -/
 theorem add_assoc' (H₁ H₂ H₃ : Hypergraph V) :
     H₁ + H₂ + H₃ = H₁ + (H₂ + H₃) := by
   show (⟨H₁.edges + H₂.edges + H₃.edges⟩ : Hypergraph V)
@@ -127,23 +108,19 @@ theorem add_assoc' (H₁ H₂ H₃ : Hypergraph V) :
   congr 1
   exact Multiset.add_assoc _ _ _
 
-/-- **Diff reduces size**: removing edges can only decrease (or
-preserve) the size. Mathlib's truncated `Multiset.sub` gives the
-inequality unconditionally. -/
+/-- `(H.diff E).size ≤ H.size` for every `E`. -/
 theorem size_diff_le [DecidableEq V] (H : Hypergraph V)
     (E : Multiset (Hyperedge V)) :
     (H.diff E).size ≤ H.size := by
   show (H.edges - E).card ≤ H.edges.card
   exact Multiset.card_le_card (Multiset.sub_le_self H.edges E)
 
-/-- **Empty has size 0** — an alternate phrasing of `size_empty`. -/
+/-- If `H = empty` then `H.size = 0`. -/
 theorem size_eq_zero_of_empty (H : Hypergraph V)
     (hH : H = (empty : Hypergraph V)) : H.size = 0 := by
   rw [hH]; exact size_empty
 
-/-- **`H.size = 0 ↔ H = empty`.** A multiset has cardinality 0 iff it
-is the zero multiset; lift this to hypergraphs via the edge-multiset
-wrapping. -/
+/-- `H.size = 0 ↔ H = empty`. -/
 theorem size_eq_zero_iff_empty (H : Hypergraph V) :
     H.size = 0 ↔ H = (empty : Hypergraph V) := by
   constructor
@@ -154,7 +131,7 @@ theorem size_eq_zero_iff_empty (H : Hypergraph V) :
   · intro hempty
     rw [hempty]; exact size_empty
 
-/-- **`cons` strictly increases size**, so never yields empty. -/
+/-- `H.cons e ≠ empty`. -/
 theorem cons_ne_empty (e : Hyperedge V) (H : Hypergraph V) :
     H.cons e ≠ empty := by
   intro h
@@ -162,9 +139,7 @@ theorem cons_ne_empty (e : Hyperedge V) (H : Hypergraph V) :
   rw [size_cons] at this
   omega
 
-/-- **`cons` distributes over union on the right**: inserting `e` into
-`H₁ + H₂` equals adding `H₁.cons e + H₂`. Inherited from multiset
-cons/add interaction. -/
+/-- `(H₁ + H₂).cons e = H₁.cons e + H₂`. -/
 theorem cons_add (e : Hyperedge V) (H₁ H₂ : Hypergraph V) :
     (H₁ + H₂).cons e = H₁.cons e + H₂ := by
   show (⟨e ::ₘ (H₁.edges + H₂.edges)⟩ : Hypergraph V)
@@ -172,25 +147,22 @@ theorem cons_add (e : Hyperedge V) (H₁ H₂ : Hypergraph V) :
   congr 1
   exact (Multiset.cons_add e H₁.edges H₂.edges).symm
 
-/-- **Size strict monotonicity under `cons`**: `(H.cons e).size > H.size`.
-Immediate from `size_cons`. -/
+/-- `H.size < (H.cons e).size`. -/
 theorem size_lt_cons (e : Hyperedge V) (H : Hypergraph V) :
     H.size < (H.cons e).size := by
   rw [size_cons]; omega
 
-/-- **Size monotonicity under right-addition**: `H₁.size ≤ (H₁ + H₂).size`.
-Adding more edges can only increase (or preserve, if H₂ is empty) the
-total size. -/
+/-- `H₁.size ≤ (H₁ + H₂).size`. -/
 theorem size_le_add_right (H₁ H₂ : Hypergraph V) :
     H₁.size ≤ (H₁ + H₂).size := by
   rw [size_add]; omega
 
-/-- **Size monotonicity under left-addition**: `H₂.size ≤ (H₁ + H₂).size`. -/
+/-- `H₂.size ≤ (H₁ + H₂).size`. -/
 theorem size_le_add_left (H₁ H₂ : Hypergraph V) :
     H₂.size ≤ (H₁ + H₂).size := by
   rw [size_add]; omega
 
-/-- **Non-empty hypergraphs have a positive edge count.** -/
+/-- If `H ≠ empty` then `0 < H.size`. -/
 theorem size_pos_of_ne_empty (H : Hypergraph V) (hne : H ≠ empty) :
     0 < H.size := by
   rcases Nat.eq_zero_or_pos H.size with hz | hpos

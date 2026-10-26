@@ -1,53 +1,14 @@
 /-
-**Fresh-vertex partition lemma for single-edge-LHS rules** (#498).
+Disjoint fresh-vertex intervals for the matches of one rule.
 
-This module supplies the foundation block of the `#495` decomposition:
-each match in the inner foldl of `tracedSingleWayStep sys H step`
-produces fresh vertices in its own half-open interval
-`[baseFresh + m*numFresh, baseFresh + (m+1)*numFresh)`, and these
-intervals (one per match index `m`) are pairwise disjoint.
-
-**Why this matters.** `EdgeCausallyDisjoint` (the corrected predicate in
-`EdgeCausallyDisjointBridge.lean`) needs each step-0 event of the causal
-DAG to live in its own vertex slice so that the per-edge causal sub-DAGs
-inherit a partition of `ℕ`. The fresh-vertex slice disjointness is the
-**generator** of that partition: the propagation downstream (#499) is a
-separate closure step.
-
-**What is proved here** (no `sorry`, no `decide`, no `native_decide`):
-
-  * `freshSlice baseFresh numFresh m` — the half-open interval
-    `[baseFresh + m·numFresh, baseFresh + (m+1)·numFresh)`.
-
-  * `freshSlice_disjoint` — pure-arithmetic disjointness across
-    distinct match indices, requires `0 < numFresh`.
-
-  * `foldl_offset_proj` — a generic List.foldl-projection lemma:
-    if the per-step update increments a projection by a fixed
-    `numFresh`, the projection after the fold equals
-    `initial + xs.length * numFresh`.
-
-  * `innerFoldl` — explicit copy of the inner foldl in
-    `tracedSingleWayStep` (CausalEventTrace.lean lines 73-91),
-    factored as a named function so we can reason about its
-    accumulator's offset component.
-
-  * `innerFoldl_offset_after_matches` — the substantive engine-side
-    structural lemma: after processing the first `m` matches, the
-    inner foldl's offset component equals `initOffset + m * r.numFresh`.
-
-  * `fresh_slices_disjoint_across_matches` — the headline lemma:
-    the fresh slices of distinct match indices in
-    `tracedSingleWayStep ⟨[r]⟩ seed step` are pairwise disjoint.
-
-**About `h_singleLHS`.** The single-edge-LHS hypothesis is not used in
-the proofs of this module: fresh-slice disjointness is a property of
-`numFresh` (the count of RHS-only fresh variables per match) and is
-independent of LHS arity. The hypothesis is carried in the headline
-statement to mark it as part of the `#495` single-edge-LHS programme
-where the partition propagation lemmas (#499–#502) genuinely use it
-(those steps will require LHS = `[lhsEdge]` to reason that each event
-consumes exactly one edge).
+This module defines `freshSlice baseFresh numFresh m`, the interval
+`[baseFresh + m·numFresh, baseFresh + (m+1)·numFresh)`, and proves that the intervals for distinct
+`m` are disjoint when `0 < numFresh`.
+It defines `innerStep` and `innerFoldl`, a copy of the per-match fold written inline in
+`tracedSingleWayStep` (`CausalEventTrace.lean`), and proves that after `m` matches the offset
+component of the fold equals its initial value plus `m * r.numFresh`.
+No theorem in this module proves that `innerFoldl` agrees with the fold inside
+`tracedSingleWayStep`.
 -/
 
 import InfraFormalization.CausalEventTrace
@@ -60,25 +21,21 @@ open CausalEventTrace
 
 /-! ## Section A: fresh-vertex slices -/
 
-/-- The fresh-vertex slice for the `m`-th match: a half-open interval
-of natural numbers of length `numFresh`, starting at
-`baseFresh + m * numFresh`. The `m`-th match's fresh RHS variables get
-allocated to this slice by the inner foldl of `tracedSingleWayStep`. -/
+/-- The set of natural numbers `v` with `baseFresh + m * numFresh ≤ v < baseFresh + (m + 1) * numFresh`. -/
 def freshSlice (baseFresh numFresh m : ℕ) : Set ℕ :=
   { v | baseFresh + m * numFresh ≤ v ∧ v < baseFresh + (m + 1) * numFresh }
 
-/-- Membership characterisation of `freshSlice`. -/
+/-- `v ∈ freshSlice baseFresh numFresh m` if and only if
+`baseFresh + m * numFresh ≤ v ∧ v < baseFresh + (m + 1) * numFresh`. -/
 theorem mem_freshSlice (baseFresh numFresh m v : ℕ) :
     v ∈ freshSlice baseFresh numFresh m ↔
       baseFresh + m * numFresh ≤ v ∧ v < baseFresh + (m + 1) * numFresh := by
   rfl
 
-/-! ## Section B: pure-arithmetic disjointness of slices -/
+/-! ## Section B: disjointness of slices -/
 
-/-- **Slice disjointness across distinct match indices.** For distinct
-`m₁ ≠ m₂` and positive `numFresh`, the half-open intervals
-`freshSlice baseFresh numFresh m₁` and `freshSlice baseFresh numFresh m₂`
-are disjoint. The proof is pure arithmetic. -/
+/-- For `m₁ ≠ m₂`, `freshSlice baseFresh numFresh m₁` and `freshSlice baseFresh numFresh m₂` are
+disjoint. The hypothesis `0 < numFresh` is not used in the proof. -/
 theorem freshSlice_disjoint (baseFresh numFresh m₁ m₂ : ℕ)
     (hne : m₁ ≠ m₂) (_hnf : 0 < numFresh) :
     Disjoint (freshSlice baseFresh numFresh m₁)
@@ -88,8 +45,8 @@ theorem freshSlice_disjoint (baseFresh numFresh m₁ m₂ : ℕ)
   rw [mem_freshSlice] at hv1 hv2
   obtain ⟨h1lo, h1hi⟩ := hv1
   obtain ⟨h2lo, h2hi⟩ := hv2
-  -- WLOG `m₁ < m₂`: the upper end of slice m₁ is at most the lower end
-  -- of slice m₂, so any v in both yields v < v.
+  -- Case split on `m₁ < m₂`; in each case the upper end of the lower slice is at most the
+  -- lower end of the upper slice.
   rcases Nat.lt_or_ge m₁ m₂ with hlt | hge
   · -- Case m₁ < m₂.
     have hstep : m₁ + 1 ≤ m₂ := hlt
@@ -108,15 +65,10 @@ theorem freshSlice_disjoint (baseFresh numFresh m₁ m₂ : ℕ)
       Nat.add_le_add_left hmul _
     omega
 
-/-! ## Section C: abstract offset projection of a List.foldl
+/-! ## Section C: a numeric projection of `List.foldl` -/
 
-If a `List.foldl`'s update function increments a numeric projection of
-the accumulator by a fixed amount `numFresh` regardless of the input
-element, then the projection after the full fold equals
-`offProj init + xs.length * numFresh`. This isolates the arithmetic
-content from the engine-specific accumulator type. -/
-
-/-- **Generic offset-projection lemma for List.foldl.** -/
+/-- If `offProj (update b a) = offProj b + numFresh` for all `b` and `a`, then
+`offProj (xs.foldl update init) = offProj init + xs.length * numFresh`. -/
 theorem foldl_offset_proj
     {α β : Type*} (numFresh : ℕ)
     (update : β → α → β) (offProj : β → ℕ)
@@ -130,21 +82,16 @@ theorem foldl_offset_proj
     rw [ih (update init x), hUpd init x]
     ring
 
-/-! ## Section D: the inner foldl of `tracedSingleWayStep`
+/-! ## Section D: the per-match fold
 
-We factor the inner per-match foldl from `tracedSingleWayStep`
-(see `CausalEventTrace.lean:73-91`) into a named `innerFoldl` so we
-can reason about its accumulator's `offset` component. The accumulator
-is a 4-tuple `(state, offset, ruleIdx, events)`; we project onto the
-second component (offset). -/
+The accumulator is a 4-tuple `(state, offset, ruleIdx, events)`. -/
 
-/-- Accumulator type for the inner foldl. -/
+/-- The accumulator type `(state, offset, ruleIdx, events)`. -/
 abbrev InnerAcc := ExecHG ℕ × Nat × Nat × List CausalEvent
 
-/-- The inner per-match step of `tracedSingleWayStep`: process one
-match `ρ`, updating state, advancing offset by `r.numFresh`, and
-appending one `CausalEvent`. Mirrors the inline lambda at lines
-73-91 of `CausalEventTrace.lean`. -/
+/-- One step for the match `ρ`: remove the consumed edges, append the produced edges with fresh
+vertices numbered from `baseFresh + offset`, add `r.numFresh` to the offset, and append one
+`CausalEvent`. It is written to match the per-match lambda in `tracedSingleWayStep`. -/
 def innerStep (r : ExecRule) (baseFresh : ℕ) (step : ℕ)
     (acc' : InnerAcc) (ρ : Fin r.numBound → ℕ) : InnerAcc :=
   let (state', offset', rIdx, events') := acc'
@@ -164,32 +111,21 @@ def innerStep (r : ExecRule) (baseFresh : ℕ) (step : ℕ)
    rIdx,
    events' ++ [event])
 
-/-- The inner foldl of `tracedSingleWayStep`, factored as a named
-function. Processes each match in `binds` via `innerStep`, threading
-the 4-tuple accumulator. -/
+/-- `binds.foldl (innerStep r baseFresh step) init`. -/
 def innerFoldl (r : ExecRule) (baseFresh : ℕ) (step : ℕ)
     (binds : List (Fin r.numBound → ℕ)) (init : InnerAcc) : InnerAcc :=
   binds.foldl (innerStep r baseFresh step) init
 
-/-- **Offset advances by `r.numFresh` per inner step.** Pure unfolding
-of `innerStep`. -/
+/-- `innerStep` adds `r.numFresh` to the offset component. -/
 theorem innerStep_offset (r : ExecRule) (baseFresh step : ℕ)
     (acc : InnerAcc) (ρ : Fin r.numBound → ℕ) :
     (innerStep r baseFresh step acc ρ).2.1 = acc.2.1 + r.numFresh := by
   rfl
 
-/-! ## Section E: engine-side offset induction lemma -/
+/-! ## Section E: offset after the fold -/
 
-/-- **After processing `n` matches in the inner foldl, the offset is
-`initOffset + n * r.numFresh`.** Substantive engine-side lemma: it
-combines the abstract `foldl_offset_proj` with the per-step offset
-identity `innerStep_offset`.
-
-This is the **structural** statement underlying the partition: the
-`m`-th match's fresh vertices are allocated starting at
-`baseFresh + m * r.numFresh` because that is the value of the inner
-accumulator's offset field after `m` prior matches have been
-processed. -/
+/-- The offset component of `innerFoldl r baseFresh step binds init` equals
+`init.2.1 + binds.length * r.numFresh`. -/
 theorem innerFoldl_offset (r : ExecRule) (baseFresh step : ℕ)
     (binds : List (Fin r.numBound → ℕ)) (init : InnerAcc) :
     (innerFoldl r baseFresh step binds init).2.1 =
@@ -201,10 +137,8 @@ theorem innerFoldl_offset (r : ExecRule) (baseFresh step : ℕ)
     (innerStep_offset r baseFresh step)
     binds init
 
-/-- **Offset value after the first `m` of `matches` have been processed.**
-Restates `innerFoldl_offset` for `matches.take m`, which is the natural
-"first m matches" prefix. When `m ≤ matches.length`, this equals
-`initOffset + m * r.numFresh`. -/
+/-- For `m ≤ binds.length`, the offset component of `innerFoldl` over `binds.take m` equals
+`init.2.1 + m * r.numFresh`. -/
 theorem innerFoldl_offset_after_matches (r : ExecRule) (baseFresh step : ℕ)
     (binds : List (Fin r.numBound → ℕ)) (init : InnerAcc)
     (m : ℕ) (hm : m ≤ binds.length) :
@@ -212,22 +146,12 @@ theorem innerFoldl_offset_after_matches (r : ExecRule) (baseFresh step : ℕ)
       init.2.1 + m * r.numFresh := by
   rw [innerFoldl_offset, List.length_take, Nat.min_eq_left hm]
 
-/-! ## Section F: headline lemma — fresh slices disjoint across matches -/
+/-! ## Section F: slices for distinct match indices -/
 
-/-- **Headline lemma (#498).** For a single-edge-LHS rule `r` and any
-seed `seed`, the fresh-vertex slices of distinct matches in
-`tracedSingleWayStep ⟨[r]⟩ seed step` are pairwise disjoint.
-
-The conclusion is purely about the abstract slices keyed on `nextFresh
-seed` and `r.numFresh` — the engine-side content (that match `m`
-actually allocates from this slice) is the offset-induction lemma
-`innerFoldl_offset_after_matches`.
-
-The `h_singleLHS` hypothesis is **not** used in this proof; it is
-carried because the downstream partition-propagation lemmas
-(#499–#502) require LHS arity 1 to reason that each event consumes
-exactly one edge. Fresh-slice disjointness alone depends only on the
-positivity of `numFresh`. -/
+/-- For `m₁ ≠ m₂`, `freshSlice (nextFresh seed) r.numFresh m₁` and
+`freshSlice (nextFresh seed) r.numFresh m₂` are disjoint. The proof applies `freshSlice_disjoint`.
+The hypotheses `r.lhs.length = 1` and `m₁, m₂ < (allMatches r seed).length` and the argument
+`_stepIx` are not used. -/
 theorem fresh_slices_disjoint_across_matches
     (r : ExecRule) (_h_singleLHS : r.lhs.length = 1)
     (seed : ExecHG ℕ) (_stepIx : ℕ) (m₁ m₂ : ℕ)
@@ -236,22 +160,13 @@ theorem fresh_slices_disjoint_across_matches
     (hne : m₁ ≠ m₂) (hnf : 0 < r.numFresh) :
     Disjoint (freshSlice (nextFresh seed) r.numFresh m₁)
              (freshSlice (nextFresh seed) r.numFresh m₂) := by
-  -- The `_stepIx` parameter and the match-index hypotheses do not enter
-  -- the proof of slice disjointness; they record the calling context
-  -- (the slices claimed disjoint here are the ones the engine allocates
-  -- at the m₁-th and m₂-th matches inside the inner foldl).
   exact freshSlice_disjoint (nextFresh seed) r.numFresh m₁ m₂ hne hnf
 
-/-! ## Section G: explicit slice-of-the-m-th-match identification
+/-! ## Section G: offset and the lower end of a slice -/
 
-A small bridge for downstream use: the offset value the inner foldl
-holds when it is about to process the `m`-th match is exactly the
-lower endpoint of `freshSlice (nextFresh seed) r.numFresh m`. -/
-
-/-- The offset reached after `m` matches matches the lower endpoint of
-the `m`-th fresh slice when the inner foldl is initialised with
-`initOffset = 0` (the outer-foldl initial state for the first rule of
-the system). -/
+/-- With initial accumulator `(state₀, 0, 0, [])` and `m ≤ binds.length`, `baseFresh` plus the
+offset after `innerFoldl` over `binds.take m` equals `baseFresh + m * r.numFresh`, the lower end of
+`freshSlice baseFresh r.numFresh m`. -/
 theorem offset_eq_freshSlice_low
     (r : ExecRule) (baseFresh : ℕ) (stepIx : ℕ)
     (binds : List (Fin r.numBound → ℕ))
@@ -262,7 +177,7 @@ theorem offset_eq_freshSlice_low
       baseFresh + m * r.numFresh := by
   have := innerFoldl_offset_after_matches r baseFresh stepIx binds
             (state₀, 0, 0, []) m hm
-  -- The init accumulator is (state₀, 0, 0, []) so init.2.1 = 0; simp closes.
+  -- The initial offset is 0.
   simp at this
   rw [this]
 

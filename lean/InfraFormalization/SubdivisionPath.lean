@@ -1,30 +1,15 @@
 /-
-**Edge-subdivision rule + n-step path-shape theorem** (#232).
+The subdivision rule and path-shaped states.
 
-The edge-subdivision rule `{a, b} → {a, c}, {c, b}` (with `c` fresh)
-applied via `singleWayEvolve` from a single-edge seed `{1, 2}`
-produces, at step `n`, a path-shaped hypergraph with exactly `2^n`
-edges and `2^n + 1` vertices.
-
-This is the canonical hypergraph-anchored trajectory feeding into
-`PathWasserstein.lean` and the W_1-convergence obligations
-(#234): the *state itself* at step `n` is a path on `2^n + 1`
-vertices, so the consumer-site path-metric and Wasserstein bounds
-apply directly to the rule's output.
-
-**Proof strategy.** A `IsPathOf H vs` predicate captures the
-invariant: `H` is the list of consecutive-pair hyperedges of a
-nodup ℕ-list `vs` of length ≥ 2. We show:
-  * `subdSeed` satisfies `IsPathOf [1, 2]`.
-  * `singleWayStep subdivisionSys` preserves `IsPathOf`, with the new
-    vertex list being `vs` interleaved with fresh midpoints, doubling
-    edge count from `vs.length - 1` to `2(vs.length - 1)` and
-    vertex count from `vs.length` to `2 vs.length - 1`.
-  * Iterating `n` times: `vs.length = 2^n + 1`, edge count `2^n`.
-
-The inductive step is the load-bearing lemma — it requires reasoning
-about `allMatches` enumeration order on the path's vertex list and
-the `removeEdges`/`++ produced` foldl in `singleWayStep`.
+This module defines the rule `{a, b} → {a, c}, {c, b}` (`c` fresh), the
+edge list `pathEdges vs` of a vertex sequence, the predicate `IsPathOf`,
+the vertex sequences `subdVerts n` (with `2^n + 1` distinct entries), and
+`subdivideAll`, which subdivides every edge of a list. It proves
+`subdivideAll (pathEdges vs) b = pathEdges (subdivideVerts vs b)`. The
+equality `singleWayEvolve subdivisionSys subdSeed n = pathEdges (subdVerts n)`
+is checked by `decide` for n ≤ 4 and by `native_decide` for n = 3, 4, 5;
+it is not proved for every n. One step on `[consEdge a b]` is checked by
+`native_decide` for all `a, b < 12`.
 -/
 
 import InfraFormalization.MultiwayExec
@@ -37,25 +22,25 @@ open Hypergraph
 
 /-! ## Path-state predicate -/
 
-/-- The edge between consecutive ℕ vertices `a` and `b`. -/
+/-- The hyperedge `[a, b]`. -/
 @[simp] def consEdge (a b : ℕ) : Hyperedge ℕ :=
   ⟨[a, b], List.cons_ne_nil a [b]⟩
 
-/-- Build a path's edge list from its vertex sequence. -/
+/-- The edges `[vs[i], vs[i+1]]` of the vertex sequence `vs`. -/
 def pathEdges (vs : List ℕ) : ExecHG ℕ :=
   vs.zipWith consEdge vs.tail
 
-/-- `H` is the path with vertex sequence `vs` (in traversal order). -/
+/-- `vs` has at least 2 entries, no duplicates, and `H = pathEdges vs`. -/
 def IsPathOf (H : ExecHG ℕ) (vs : List ℕ) : Prop :=
   2 ≤ vs.length ∧ vs.Nodup ∧ H = pathEdges vs
 
-/-! ## Subdivision rule (re-stated locally for self-contained reasoning) -/
+/-! ## Subdivision rule -/
 
 private def sLhs : Hyperedge (Fin 2) := ⟨[0, 1], List.cons_ne_nil _ _⟩
 private def sRhsL : Hyperedge (Fin 3) := ⟨[0, 2], List.cons_ne_nil _ _⟩
 private def sRhsR : Hyperedge (Fin 3) := ⟨[2, 1], List.cons_ne_nil _ _⟩
 
-/-- The edge-subdivision rule: `{a, b} → {a, c}, {c, b}` with `c` fresh. -/
+/-- The rule `{a, b} → {a, c}, {c, b}` with `c` fresh. -/
 def subdivisionRule : ExecRule where
   numBound := 2
   numFresh := 1
@@ -64,22 +49,20 @@ def subdivisionRule : ExecRule where
 
 def subdivisionSys : ExecSystem := ⟨[subdivisionRule]⟩
 
-/-- Seed: a single edge `{1, 2}`. -/
+/-- The seed `[{1, 2}]`. -/
 def subdSeed : ExecHG ℕ := [consEdge 1 2]
 
-/-! ## The seed is path-shaped -/
+/-! ## The seed is a path -/
 
 theorem subdSeed_isPathOf : IsPathOf subdSeed [1, 2] := by
   refine ⟨by decide, by decide, ?_⟩
   rfl
 
-/-! ## n-step trajectory and counts
+/-! ## Interleaved vertex sequences
 
-The interleaved vertex sequence at step `n+1`: between every pair
-`(vs[i], vs[i+1])` we insert a fresh midpoint `baseFresh + i`,
-where `baseFresh = max(vs) + 1`. -/
+`subdivideVerts vs b` inserts `b + i` between `vs[i]` and `vs[i+1]`. -/
 
-/-- Interleave `vs` with `baseFresh + i` between position `i` and `i+1`. -/
+/-- Insert `baseFresh + i` between positions `i` and `i+1` of `vs`. -/
 def subdivideVerts (vs : List ℕ) (baseFresh : ℕ) : List ℕ :=
   match vs with
   | [] => []
@@ -96,8 +79,8 @@ def subdivideVerts (vs : List ℕ) (baseFresh : ℕ) : List ℕ :=
     subdivideVerts (v :: w :: rest) b
       = v :: b :: subdivideVerts (w :: rest) (b + 1) := rfl
 
-/-- Length recurrence: `subdivideVerts vs b` has `2 * vs.length - 1` elements
-when `vs.length ≥ 1`. -/
+/-- For `vs.length ≥ 1`, `subdivideVerts vs b` has `2 · vs.length − 1`
+entries. -/
 theorem subdivideVerts_length (vs : List ℕ) (h : 1 ≤ vs.length) (b : ℕ) :
     (subdivideVerts vs b).length = 2 * vs.length - 1 := by
   induction vs generalizing b with
@@ -111,14 +94,12 @@ theorem subdivideVerts_length (vs : List ℕ) (h : 1 ≤ vs.length) (b : ℕ) :
       simp only [subdivideVerts_cons_cons, List.length_cons, ih']
       omega
 
-/-! ## Closed-form vertex sequence
+/-! ## The vertex sequences `subdVerts n`
 
-`subdVerts n` is the path-vertex sequence after `n` single-way
-subdivision steps starting from `[1, 2]`. Each step interleaves the
-current sequence with fresh midpoints starting at `nextFresh` of the
-current path. -/
+`subdVerts 0 = [1, 2]`, and `subdVerts (n+1)` interleaves `subdVerts n`
+with midpoints starting at `listMax (subdVerts n) + 1`. -/
 
-/-- Maximum entry of a list of ℕ; 0 for the empty list. -/
+/-- The maximum entry of a list of ℕ, or 0 for the empty list. -/
 def listMax (vs : List ℕ) : ℕ := vs.foldr Nat.max 0
 
 @[simp] theorem listMax_nil : listMax [] = 0 := rfl
@@ -126,8 +107,8 @@ def listMax (vs : List ℕ) : ℕ := vs.foldr Nat.max 0
 @[simp] theorem listMax_cons (v : ℕ) (vs : List ℕ) :
     listMax (v :: vs) = Nat.max v (listMax vs) := rfl
 
-/-- Iterated vertex sequence; `subdVerts n` is the path's vertex list
-at step `n`. -/
+/-- `subdVerts 0 = [1, 2]` and
+`subdVerts (n+1) = subdivideVerts (subdVerts n) (listMax (subdVerts n) + 1)`. -/
 def subdVerts : ℕ → List ℕ
   | 0 => [1, 2]
   | n+1 =>
@@ -140,9 +121,9 @@ theorem subdVerts_succ (n : ℕ) :
     subdVerts (n+1) = subdivideVerts (subdVerts n) (listMax (subdVerts n) + 1) :=
   rfl
 
-/-! ## listMax helpers -/
+/-! ## `listMax` -/
 
-/-- Every element of a `ℕ` list is at most `listMax`. -/
+/-- Every entry of `vs` is at most `listMax vs`. -/
 theorem mem_le_listMax (vs : List ℕ) {x : ℕ} (hx : x ∈ vs) : x ≤ listMax vs := by
   induction vs with
   | nil => simp at hx
@@ -152,14 +133,14 @@ theorem mem_le_listMax (vs : List ℕ) {x : ℕ} (hx : x ∈ vs) : x ≤ listMax
       exact Nat.le_max_left x (listMax rest)
     · exact (ih hx_rest).trans (Nat.le_max_right v (listMax rest))
 
-/-- Tail-listMax bound: `listMax rest ≤ listMax (v :: rest)`. -/
+/-- `listMax rest ≤ listMax (v :: rest)`. -/
 theorem listMax_le_cons (v : ℕ) (rest : List ℕ) :
     listMax rest ≤ listMax (v :: rest) := Nat.le_max_right v (listMax rest)
 
-/-! ## Membership and Nodup for `subdivideVerts` (#280, #281) -/
+/-! ## Membership and absence of duplicates for `subdivideVerts` -/
 
-/-- **Element classification** (#280): every entry of `subdivideVerts vs b`
-is either an original vertex of `vs` or a fresh midpoint `≥ b`. -/
+/-- Every entry of `subdivideVerts vs b` is an entry of `vs` or is at
+least `b`. -/
 theorem mem_subdivideVerts_imp : ∀ (vs : List ℕ) (b : ℕ) {x : ℕ},
     x ∈ subdivideVerts vs b → x ∈ vs ∨ b ≤ x
   | [], b, x, hx => by simp [subdivideVerts] at hx
@@ -177,10 +158,8 @@ theorem mem_subdivideVerts_imp : ∀ (vs : List ℕ) (b : ℕ) {x : ℕ},
         · exact Or.inl (List.mem_cons_of_mem _ hin_rest)
         · exact Or.inr (by omega)
 
-/-- **Nodup preservation** (#281): if `vs.Nodup` and `b > listMax vs`,
-then `(subdivideVerts vs b).Nodup`. The freshness condition `b > listMax vs`
-guarantees the inserted midpoints don't collide with any vs entries; the
-midpoints are themselves consecutive, so distinct. -/
+/-- If `vs` has no duplicates and `listMax vs < b`, then
+`subdivideVerts vs b` has no duplicates. -/
 theorem subdivideVerts_nodup : ∀ (vs : List ℕ) (b : ℕ),
     vs.Nodup → listMax vs < b → (subdivideVerts vs b).Nodup
   | [], b, _, _ => by simp [subdivideVerts]
@@ -208,9 +187,9 @@ theorem subdivideVerts_nodup : ∀ (vs : List ℕ) (b : ℕ),
           omega
         · omega
 
-/-! ## Vertex-count theorem (closed form, proved by induction) -/
+/-! ## Length and absence of duplicates for `subdVerts n` -/
 
-/-- `subdVerts n` always has length ≥ 2. -/
+/-- `subdVerts n` has at least 2 entries. -/
 theorem subdVerts_length_ge_two (n : ℕ) : 2 ≤ (subdVerts n).length := by
   induction n with
   | zero => simp
@@ -218,9 +197,7 @@ theorem subdVerts_length_ge_two (n : ℕ) : 2 ≤ (subdVerts n).length := by
     rw [subdVerts_succ, subdivideVerts_length _ (by omega)]
     omega
 
-/-- **`subdVerts n` is `Nodup` for every `n`** (#282): induct on `n`,
-applying #281 with `b := listMax (subdVerts n) + 1` (always strictly
-greater than `listMax`, so freshness condition holds). -/
+/-- `subdVerts n` has no duplicates. -/
 theorem subdVerts_nodup (n : ℕ) : (subdVerts n).Nodup := by
   induction n with
   | zero => decide
@@ -228,9 +205,9 @@ theorem subdVerts_nodup (n : ℕ) : (subdVerts n).Nodup := by
     rw [subdVerts_succ]
     exact subdivideVerts_nodup _ _ ih (by omega)
 
-/-! ## `listMax` LE characterization (consumed by #283 below) -/
+/-! ## `listMax` and membership -/
 
-/-- **`listMax`-LE characterization**: `listMax vs ≤ M ↔ ∀ x ∈ vs, x ≤ M`. -/
+/-- `listMax vs ≤ M ↔ ∀ x ∈ vs, x ≤ M`. -/
 theorem listMax_le_iff (vs : List ℕ) (M : ℕ) :
     listMax vs ≤ M ↔ ∀ x ∈ vs, x ≤ M := by
   induction vs with
@@ -238,8 +215,7 @@ theorem listMax_le_iff (vs : List ℕ) (M : ℕ) :
   | cons v rest ih =>
     simp only [listMax_cons, Nat.max_le, ih, List.mem_cons, forall_eq_or_imp]
 
-/-- **`listMax` invariant under same-membership**: two lists with
-identical membership predicates have the same `listMax`. -/
+/-- Two lists with the same members have the same `listMax`. -/
 theorem listMax_eq_of_mem_iff (l₁ l₂ : List ℕ) (h : ∀ x, x ∈ l₁ ↔ x ∈ l₂) :
     listMax l₁ = listMax l₂ := by
   apply Nat.le_antisymm
@@ -248,7 +224,7 @@ theorem listMax_eq_of_mem_iff (l₁ l₂ : List ℕ) (h : ∀ x, x ∈ l₁ ↔ 
   · rw [listMax_le_iff]; intro x hx
     exact mem_le_listMax l₁ ((h x).mpr hx)
 
-/-- `subdVerts n` has exactly `2^n + 1` vertices. -/
+/-- `subdVerts n` has `2^n + 1` entries. -/
 theorem subdVerts_length (n : ℕ) :
     (subdVerts n).length = 2^n + 1 := by
   induction n with
@@ -268,7 +244,7 @@ theorem subdVerts_length (n : ℕ) :
   rw [List.length_zipWith, List.length_tail]
   omega
 
-/-- Recursive shape of `pathEdges`. The case-split is on the head pair. -/
+/-- Unfolding of `pathEdges` on short lists. -/
 @[simp] theorem pathEdges_nil : pathEdges ([] : List ℕ) = [] := rfl
 
 @[simp] theorem pathEdges_singleton (v : ℕ) : pathEdges [v] = [] := rfl
@@ -278,9 +254,8 @@ theorem subdVerts_length (n : ℕ) :
   unfold pathEdges
   rfl
 
-/-- `flatMap (·.verts)` of `pathEdges` is the "edge-traversal trace":
-the interior vertices appear twice each, endpoints once.
-For `vs = v :: w :: rest`, the trace decomposes as `v :: w :: trace (w :: rest)`. -/
+/-- `(pathEdges (v :: w :: rest)).flatMap verts
+= v :: w :: (pathEdges (w :: rest)).flatMap verts`. -/
 theorem pathEdges_flatMap_verts_cons_cons (v w : ℕ) (rest : List ℕ) :
     (pathEdges (v :: w :: rest)).flatMap (·.verts)
       = v :: w :: (pathEdges (w :: rest)).flatMap (·.verts) := by
@@ -291,8 +266,8 @@ theorem pathEdges_flatMap_verts_cons_cons (v w : ℕ) (rest : List ℕ) :
     (pathEdges [v, w]).flatMap (·.verts) = [v, w] := by
   simp [pathEdges, consEdge]
 
-/-- Membership in the flatMap of `pathEdges vs` is exactly membership in `vs`,
-when `vs` has at least two elements. -/
+/-- For `vs` with at least 2 entries, `x` occurs in a hyperedge of
+`pathEdges vs` if and only if `x ∈ vs`. -/
 theorem mem_pathEdges_flatMap (vs : List ℕ) (h : 2 ≤ vs.length) (x : ℕ) :
     x ∈ (pathEdges vs).flatMap (·.verts) ↔ x ∈ vs := by
   induction vs with
@@ -311,11 +286,8 @@ theorem mem_pathEdges_flatMap (vs : List ℕ) (h : 2 ≤ vs.length) (x : ℕ) :
         simp only [List.mem_cons, ih']
         tauto
 
-/-- **`nextFresh` of a path equals `listMax + 1`** (#283): bridges the
-engine's fresh-vertex allocation (`(vertexList H).foldr max 0 + 1`) to
-the path's natural midpoint counter (`listMax vs + 1`). The argument
-is membership-invariance of `listMax`: every vertex in `vertexList`
-is in `vs` and vice-versa, so the maxes match. -/
+/-- For `vs` with at least 2 entries,
+`nextFresh (pathEdges vs) = listMax vs + 1`. -/
 theorem nextFresh_pathEdges (vs : List ℕ) (h : 2 ≤ vs.length) :
     nextFresh (pathEdges vs) = listMax vs + 1 := by
   show (vertexList (pathEdges vs)).foldr Nat.max 0 + 1 = listMax vs + 1
@@ -326,21 +298,10 @@ theorem nextFresh_pathEdges (vs : List ℕ) (h : 2 ≤ vs.length) :
   rw [List.mem_dedup]
   exact mem_pathEdges_flatMap vs h x
 
-/-! ## Edge-count theorem for `singleWayEvolve`
+/-! ## Counts -/
 
-Combining the closed-form `subdVerts n` (length `2^n + 1`) with the
-intent that `singleWayEvolve subdivisionSys subdSeed n` produces
-`pathEdges (subdVerts n)` gives `2^n` edges and `2^n + 1` vertices.
-The full inductive proof of the equality
-  `singleWayEvolve subdivisionSys subdSeed n = pathEdges (subdVerts n)`
-is the load-bearing remaining work for #232. The skeleton above sets
-up the closed-form vertex sequence; below is the goal statement and
-the verified base case. -/
-
-/-- `vertexList` of `pathEdges vs` has the same length as `vs`, when
-`vs` is `Nodup` with at least two elements. The actual list is a
-permutation of `vs` (Mathlib's `dedup` keeps the last occurrence;
-order may differ from `vs`). -/
+/-- If `vs` has at least 2 entries and no duplicates, `vertexList
+(pathEdges vs)` has `vs.length` entries. -/
 theorem vertexList_pathEdges_length (vs : List ℕ)
     (h : 2 ≤ vs.length) (h_nodup : vs.Nodup) :
     (vertexList (pathEdges vs)).length = vs.length := by
@@ -353,36 +314,26 @@ theorem vertexList_pathEdges_length (vs : List ℕ)
     simp [List.mem_toFinset, h_mem]
   rw [← List.card_toFinset, h_toFinset, List.toFinset_card_of_nodup h_nodup]
 
-/-- The trajectory's path-vertex sequence has `2^n + 1` elements at
-step `n`; this is the count we want to read off from
-`singleWayEvolve subdivisionSys subdSeed n`. -/
+/-- `pathEdges (subdVerts n)` has `2^n` edges. -/
 @[simp] theorem subdVerts_pathEdges_length (n : ℕ) :
     (pathEdges (subdVerts n)).length = 2^n := by
   rw [pathEdges_length, subdVerts_length]
   have : 1 ≤ 2^n := Nat.one_le_two_pow
   omega
 
-/-- Base case: `singleWayEvolve` at `n = 0` is the seed itself, which
-equals the path with vertex list `[1, 2]`. -/
+/-- `singleWayEvolve subdivisionSys subdSeed 0 = pathEdges (subdVerts 0)`,
+by `rfl`. -/
 theorem singleWayEvolve_subdivision_zero :
     singleWayEvolve subdivisionSys subdSeed 0 = pathEdges (subdVerts 0) := by
   rfl
 
-/-! ## Phase 1 of #232 — `subdivideAll = pathEdges ∘ subdivideVerts` (math side)
+/-! ## Subdividing every edge of a path
 
-We introduce a *parallel* definition `subdivideAll` that subdivides
-each edge of a hypergraph independently — bypassing the engine's
-`allMatches` / `foldl` machinery. This phase proves
-`subdivideAll (pathEdges vs) b = pathEdges (subdivideVerts vs b)`,
-the closed-form math content of #232's theorem.
+`subdivideAll` subdivides each edge of a list independently, without
+`allMatches`. -/
 
-Phase 2 (the *simulation lemma* connecting `singleWayStep` to
-`subdivideAll`) is staged separately. See
-[`notes/232_subdivision_path_plan.md`](../../notes/232_subdivision_path_plan.md). -/
-
-/-- **Edge subdivision**: replace a 2-edge `[a, b]` with the pair
-`[a, c], [c, b]`. Non-2-edges are left unchanged (this case never
-occurs in the path-shape input we consume). -/
+/-- Replace a hyperedge `[a, b]` by `[a, c], [c, b]`; other hyperedges are
+returned unchanged. -/
 def subdivideEdge (e : Hyperedge ℕ) (c : ℕ) : ExecHG ℕ :=
   match e.verts with
   | [a, b] => [consEdge a c, consEdge c b]
@@ -392,10 +343,7 @@ def subdivideEdge (e : Hyperedge ℕ) (c : ℕ) : ExecHG ℕ :=
     subdivideEdge (consEdge a b) c = [consEdge a c, consEdge c b] := by
   unfold subdivideEdge consEdge; simp
 
-/-- **Subdivide each edge**: walk the edge list, replacing the i-th
-edge `[a, b]` with `[a, baseFresh + i], [baseFresh + i, b]`. Manual
-recursion on the edge list (cleaner than `zipIdx + flatMap` because
-the index offset shifts naturally with the recursion). -/
+/-- Replace the i-th edge `[a, b]` by `[a, baseFresh + i], [baseFresh + i, b]`. -/
 def subdivideAll : ExecHG ℕ → ℕ → ExecHG ℕ
   | [], _ => []
   | e :: rest, baseFresh => subdivideEdge e baseFresh ++ subdivideAll rest (baseFresh + 1)
@@ -405,10 +353,8 @@ def subdivideAll : ExecHG ℕ → ℕ → ExecHG ℕ
 @[simp] theorem subdivideAll_cons (e : Hyperedge ℕ) (rest : ExecHG ℕ) (b : ℕ) :
     subdivideAll (e :: rest) b = subdivideEdge e b ++ subdivideAll rest (b + 1) := rfl
 
-/-- **Math-side equality**: subdividing each edge of `pathEdges vs`
-with consecutive midpoints starting at `b` yields `pathEdges` of the
-interleaved vertex sequence. Pure list combinatorics — no engine
-semantics involved. -/
+/-- For `vs` with at least 2 entries,
+`subdivideAll (pathEdges vs) b = pathEdges (subdivideVerts vs b)`. -/
 theorem subdivideAll_pathEdges (vs : List ℕ) (h : 2 ≤ vs.length) (b : ℕ) :
     subdivideAll (pathEdges vs) b = pathEdges (subdivideVerts vs b) := by
   induction vs generalizing b with
@@ -434,68 +380,47 @@ theorem subdivideAll_pathEdges (vs : List ℕ) (h : 2 ≤ vs.length) (b : ℕ) :
         rw [pathEdges_cons_cons, pathEdges_cons_cons, pathEdges_cons_cons]
         rfl
 
-/-! ## Remaining inductive step (Phase 2 of #232 — staged)
+/-! ## The engine run for small n
 
-The *simulation lemma* `singleWayStep subdivisionSys H = subdivideAll H (nextFresh H)`
-for path-shape `H` bridges the engine to Phase 1's math side. Three
-sub-lemmas (S1 match-count, S2 match-order, S3 foldl invariant) per
-`notes/232_subdivision_path_plan.md` §3.
+The equality `singleWayStep subdivisionSys H = subdivideAll H (nextFresh H)`
+for paths `H` is not proved. The closed form
+`singleWayEvolve subdivisionSys subdSeed n = pathEdges (subdVerts n)` is
+checked below for n ≤ 5. -/
 
-In the meantime, `decide` certifies the full closed form
-`singleWayEvolve subdivisionSys subdSeed n = pathEdges (subdVerts n)`
-for small `n`, leveraging Phase 1's `subdivideAll_pathEdges` plus the
-fact that both sides are concrete computable `ExecHG ℕ` lists. -/
-
-/-- **Closed form, n=0**: `singleWayEvolve … 0 = pathEdges (subdVerts 0)`. -/
+/-- n = 0, by `decide`. -/
 example : singleWayEvolve subdivisionSys subdSeed 0 = pathEdges (subdVerts 0) := by
   decide
 
-/-- **Closed form, n=1**: `singleWayEvolve … 1 = pathEdges (subdVerts 1)`. -/
+/-- n = 1, by `decide`. -/
 example : singleWayEvolve subdivisionSys subdSeed 1 = pathEdges (subdVerts 1) := by
   decide
 
-/-- **Closed form, n=2**: `singleWayEvolve … 2 = pathEdges (subdVerts 2)`. -/
+/-- n = 2, by `decide`. -/
 example : singleWayEvolve subdivisionSys subdSeed 2 = pathEdges (subdVerts 2) := by
   decide
 
-/-- **Closed form, n=3** (4 edges, 5 vertices). -/
+/-- n = 3, by `native_decide`. -/
 example : singleWayEvolve subdivisionSys subdSeed 3 = pathEdges (subdVerts 3) := by
   native_decide
 
-/-- **Closed form, n=4** (8 edges, 9 vertices). -/
+/-- n = 4, by `native_decide`. -/
 example : singleWayEvolve subdivisionSys subdSeed 4 = pathEdges (subdVerts 4) := by
   native_decide
 
-/-- **Closed form, n=5** (16 edges, 17 vertices). -/
+/-- n = 5, by `native_decide`. -/
 example : singleWayEvolve subdivisionSys subdSeed 5 = pathEdges (subdVerts 5) := by
   native_decide
 
-/-! ## Towards #267 (Phase 2): structural sub-lemmas for the base case
+/-! ## One edge -/
 
-The general simulation lemma
-`singleWayStep subdivisionSys H = subdivideAll H (nextFresh H)`
-for path-shape `H` is the load-bearing piece; per
-`notes/232_subdivision_path_plan.md` it decomposes into S1/S2/S3.
-
-The sub-lemmas below pin the base-case (single edge `H = [consEdge a b]`)
-quantities that the general proof will reuse: `vertexList`, `nextFresh`,
-and the `subdivideAll` closed form on a singleton. They are abstract in
-`a, b : ℕ` (no `decide` shortcut) and are the bricks the inductive step
-will compose. -/
-
-/-- `vertexList [consEdge a b] = [a, b]` when `a ≠ b`. The
-`vertexList` definition is `(H.flatMap verts).dedup` — for the single
-edge `[a, b]`, the flatMap gives `[a, b]`, and dedup is the identity on
-a nodup list. -/
+/-- For `a ≠ b`, `vertexList [consEdge a b] = [a, b]`. -/
 theorem vertexList_consEdge_of_ne (a b : ℕ) (h : a ≠ b) :
     vertexList [consEdge a b] = [a, b] := by
   unfold vertexList
   simp [consEdge]
   exact List.Nodup.dedup (by simp [h])
 
-/-- `nextFresh [consEdge a b] = max a b + 1` when `a ≠ b`. Direct
-consequence of `vertexList_consEdge_of_ne`: `foldr max 0 [a, b] =
-max a (max b 0) = max a b`. -/
+/-- For `a ≠ b`, `nextFresh [consEdge a b] = max a b + 1`. -/
 theorem nextFresh_consEdge_of_ne (a b : ℕ) (h : a ≠ b) :
     nextFresh [consEdge a b] = max a b + 1 := by
   unfold nextFresh
@@ -511,71 +436,56 @@ theorem subdivideAll_singleton (a b c : ℕ) :
   rw [subdivideEdge_consEdge, subdivideAll_nil]
   simp
 
-/-- **Subdivision-side closed form, length-2 path** (abstract): the
-RHS of the simulation lemma's base case is fully determined by `a, b`. -/
+/-- For `a ≠ b`, `subdivideAll [consEdge a b] (nextFresh [consEdge a b])
+= [consEdge a (max a b + 1), consEdge (max a b + 1) b]`. -/
 theorem subdivideAll_consEdge_nextFresh_of_ne (a b : ℕ) (h : a ≠ b) :
     subdivideAll [consEdge a b] (nextFresh [consEdge a b])
       = [consEdge a (max a b + 1), consEdge (max a b + 1) b] := by
   rw [nextFresh_consEdge_of_ne a b h, subdivideAll_singleton]
 
-/-! The remaining piece for the length-2 base case is the engine side:
-`singleWayStep subdivisionSys [consEdge a b] = [consEdge a (max a b + 1),
-consEdge (max a b + 1) b]` for abstract `a ≠ b`. Unfolding requires
-computing `allMatches subdivisionRule [consEdge a b]`, which depends on
-`allFunctions 2 [a, b]` and the `bindingMatches` filter — substantial
-mechanical work tracked as residual #267, with structure documented in
-`notes/232_subdivision_path_plan.md` §3. -/
+/-! ## One engine step on one edge, for fixed endpoints
 
-/-! ## #267 engine-side attempt: small fixed seeds via decide
+The statement for all `a ≠ b` is `singleWayStep_subdivisionSys_consEdge_of_ne`
+in `SubdivisionAbstract.lean`. The examples below are checked by
+`decide`. -/
 
-For abstract `a ≠ b`, unfolding `allFunctions 2 [a, b]` plus the
-4-binding filter is a substantial mechanical proof. As an interim, we
-certify the engine-side simulation lemma's base case `singleWayStep
-subdivisionSys [consEdge a b] = [consEdge a (max a b + 1), consEdge
-(max a b + 1) b]` for **every concrete `(a, b)` with small fixed
-endpoints** via `decide` — a finite-but-broad ladder that pins the
-shape of the abstract proof. Each example below uses a different
-`(a, b)` and confirms the same closed form. -/
-
-/-- Base case for `(a, b) = (1, 2)`. -/
+/-- `(a, b) = (1, 2)`. -/
 example :
     singleWayStep subdivisionSys [consEdge 1 2]
       = [consEdge 1 (max 1 2 + 1), consEdge (max 1 2 + 1) 2] := by
   decide
 
-/-- Base case for `(a, b) = (3, 7)` (non-adjacent vertex IDs). -/
+/-- `(a, b) = (3, 7)`. -/
 example :
     singleWayStep subdivisionSys [consEdge 3 7]
       = [consEdge 3 (max 3 7 + 1), consEdge (max 3 7 + 1) 7] := by
   decide
 
-/-- Base case for `(a, b) = (5, 2)` (b < a, exercising `max`). -/
+/-- `(a, b) = (5, 2)`. -/
 example :
     singleWayStep subdivisionSys [consEdge 5 2]
       = [consEdge 5 (max 5 2 + 1), consEdge (max 5 2 + 1) 2] := by
   decide
 
-/-- Base case for `(a, b) = (10, 20)`. -/
+/-- `(a, b) = (10, 20)`. -/
 example :
     singleWayStep subdivisionSys [consEdge 10 20]
       = [consEdge 10 (max 10 20 + 1), consEdge (max 10 20 + 1) 20] := by
   decide
 
-/-- Base case for `(a, b) = (0, 1)` (smallest non-equal case). -/
+/-- `(a, b) = (0, 1)`. -/
 example :
     singleWayStep subdivisionSys [consEdge 0 1]
       = [consEdge 0 (max 0 1 + 1), consEdge (max 0 1 + 1) 1] := by
   decide
 
-/-- Base case for `(a, b) = (1, 5)` — sanity that direction is
-preserved. -/
+/-- `(a, b) = (1, 5)`. -/
 example :
     singleWayStep subdivisionSys [consEdge 1 5]
       = [consEdge 1 (max 1 5 + 1), consEdge (max 1 5 + 1) 5] := by
   decide
 
-/-- **Combined certified base-case ladder**: the simulation lemma's
-length-2 case holds for every pair listed above. -/
+/-- `(a, b) = (1, 2)` and `(a, b) = (100, 200)`. -/
 example :
     (singleWayStep subdivisionSys [consEdge 1 2]
       = [consEdge 1 (max 1 2 + 1), consEdge (max 1 2 + 1) 2])
@@ -584,19 +494,11 @@ example :
       = [consEdge 100 (max 100 200 + 1), consEdge (max 100 200 + 1) 200]) := by
   decide
 
-/-! ### Fin-bounded abstract: the base case holds for ALL pairs in `Fin K`
+/-! ### All pairs below a bound, checked by `native_decide`
 
-The truly-abstract `a b : ℕ` version requires symbolic unfolding of
-`allFunctions 2 [a, b]` + 4-binding filter (residual). But for the
-**finite-bounded variant** — `∀ a b : Fin K`, both potentially equal
-— `native_decide` enumerates all `K²` pairs and certifies the
-equation. With `K = 8` this covers `64` cases including the diagonal
-`a = b` (which has only a 1-vertex carrier and produces a self-loop
-subdivision). -/
+These statements include the case `a = b`. -/
 
-/-- **All pairs in `Fin 8`** satisfy the simulation lemma's base
-case — `native_decide` over 64 instances, including the `a = b`
-diagonal. -/
+/-- The one-step equation holds for all `a, b < 8`, including `a = b`. -/
 theorem singleWayStep_subdivisionSys_consEdge_fin8 :
     ∀ a b : Fin 8,
       singleWayStep subdivisionSys [consEdge a.val b.val]
@@ -604,7 +506,7 @@ theorem singleWayStep_subdivisionSys_consEdge_fin8 :
            consEdge (max a.val b.val + 1) b.val] := by
   native_decide
 
-/-- **Extended Fin-bounded case** (`Fin 12`, 144 instances). -/
+/-- The one-step equation holds for all `a, b < 12`. -/
 theorem singleWayStep_subdivisionSys_consEdge_fin12 :
     ∀ a b : Fin 12,
       singleWayStep subdivisionSys [consEdge a.val b.val]
@@ -612,8 +514,7 @@ theorem singleWayStep_subdivisionSys_consEdge_fin12 :
            consEdge (max a.val b.val + 1) b.val] := by
   native_decide
 
-/-- **Spot-check at high values** (asymmetric, vertex IDs in the
-hundreds): the closed form holds across the magnitude range. -/
+/-- The one-step equation for `(137, 891)`, `(891, 137)` and `(500, 500)`. -/
 theorem singleWayStep_subdivisionSys_consEdge_high :
     (singleWayStep subdivisionSys [consEdge 137 891]
       = [consEdge 137 (max 137 891 + 1),
@@ -626,45 +527,31 @@ theorem singleWayStep_subdivisionSys_consEdge_high :
          consEdge (max 500 500 + 1) 500]) := by
   native_decide
 
-/-- **Closed form, n=3**: `singleWayEvolve … 3 = pathEdges (subdVerts 3)`. -/
+/-- n = 3, by `decide`. -/
 example : singleWayEvolve subdivisionSys subdSeed 3 = pathEdges (subdVerts 3) := by
   decide
 
-/-- **Closed form, n=4**: `singleWayEvolve … 4 = pathEdges (subdVerts 4)`. -/
+/-- n = 4, by `decide`. -/
 example : singleWayEvolve subdivisionSys subdSeed 4 = pathEdges (subdVerts 4) := by
   decide
 
-/-! ## Canonical subdivision-rule trajectory (Route D) — bypasses the engine
+/-! ## The sequence `pathEdges (subdVerts n)`
 
-The **canonical** trajectory of the subdivision rule, defined directly
-as `pathEdges (subdVerts n)`. This is mathematically the n-th iterate
-of subdivision, characterised by:
-  * vertex count `2^n + 1`
-  * edge count `2^n`
-  * vertex list Nodup (no collisions across iterations)
-  * IsPathOf shape (with `subdVerts n` as the natural vertex sequence)
+`subdivisionTrajectory n` is defined as `pathEdges (subdVerts n)`, not from
+engine runs. It agrees with `singleWayEvolve subdivisionSys subdSeed n` for
+the values of n checked above. -/
 
-The connection to the engine `singleWayEvolve subdivisionSys subdSeed`
-holds by `decide` for `n = 0..4` (witnesses above) and is conjecturally
-the `subdivisionSys` output for arbitrary `n` (proven via the simulation
-lemma #267, currently staged). For W_1 / Wasserstein consumers (#234)
-that only need the canonical trajectory's structural properties, this
-abstraction is sufficient regardless of the simulation lemma's status. -/
-
-/-- **Canonical subdivision trajectory** at step `n`, defined directly
-without engine semantics. The connection to the engine is via decide
-witnesses (n=0..4) and the simulation lemma (staged, #267). -/
+/-- `pathEdges (subdVerts n)`. -/
 @[reducible] def subdivisionTrajectory (n : ℕ) : ExecHG ℕ :=
   pathEdges (subdVerts n)
 
-/-- **Vertex count**: `subdivisionTrajectory n` has `2^n` edges. -/
+/-- `subdivisionTrajectory n` has `2^n` edges. -/
 @[simp] theorem subdivisionTrajectory_length (n : ℕ) :
     (subdivisionTrajectory n).length = 2^n :=
   subdVerts_pathEdges_length n
 
-/-- **Path-shape predicate**: `subdivisionTrajectory n` is the path with
-vertex list `subdVerts n` of length `2^n + 1`. Combines `subdVerts_length`
-with the trivial reflexivity. -/
+/-- `subdivisionTrajectory n` is the path with vertex sequence
+`subdVerts n`. -/
 theorem subdivisionTrajectory_isPathOf (n : ℕ) :
     IsPathOf (subdivisionTrajectory n) (subdVerts n) := by
   refine ⟨?_, subdVerts_nodup n, rfl⟩
@@ -672,10 +559,9 @@ theorem subdivisionTrajectory_isPathOf (n : ℕ) :
   have : 1 ≤ 2^n := Nat.one_le_two_pow
   omega
 
-/-- **Successor step**: the trajectory at `n+1` is obtained by subdividing
-each edge of the trajectory at `n`, allocating fresh midpoints starting
-from `listMax + 1`. Direct from `subdivideAll_pathEdges` (Phase 1 closed
-form). This is the engine-free analogue of "single-way step on the path". -/
+/-- `subdivisionTrajectory (n + 1)` is `subdivideAll` of
+`subdivisionTrajectory n` with midpoints starting at
+`listMax (subdVerts n) + 1`. -/
 theorem subdivisionTrajectory_succ (n : ℕ) :
     subdivisionTrajectory (n + 1) =
       subdivideAll (subdivisionTrajectory n) (listMax (subdVerts n) + 1) := by
@@ -683,10 +569,8 @@ theorem subdivisionTrajectory_succ (n : ℕ) :
   rw [subdVerts_succ]
   rw [subdivideAll_pathEdges _ (subdVerts_length_ge_two n)]
 
-/-- **Engine equality, certified for small n** (n=0..4 via `decide`):
-the canonical subdivision trajectory matches the engine's output. The
-simulation lemma `singleWayStep_subdivisionSys_eq_subdivideAll` (#267)
-would extend this to all `n`. -/
+/-- `subdivisionTrajectory 0 = singleWayEvolve subdivisionSys subdSeed 0`,
+by `rfl`. -/
 theorem subdivisionTrajectory_eq_engine_at_zero :
     subdivisionTrajectory 0 = singleWayEvolve subdivisionSys subdSeed 0 := by
   rfl

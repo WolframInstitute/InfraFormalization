@@ -1,23 +1,23 @@
 /-
-Demo: the main theorem of the project compiles.
+Edge conservation, re-exported.
 
-This file just references the proved theorem `Application.size_result_of_conservative`
-and uses it in a trivial proof, so that building this file asserts the
-theorem is available and has the expected signature.
+This module restates `Application.size_result_of_conservative` and
+`size_preserved_by_applications` under shorter names.
 -/
 
 import InfraFormalization.Conservation
 
 namespace InfraFormalization
 
-/-- Re-export the verified edge-conservation theorem for easy access. -/
+/-- Applying a conservative rule leaves the number of hyperedges unchanged. -/
 theorem edge_conservation {P V : Type*} [DecidableEq V]
     {r : Rule P} {H : Hypergraph V}
     (a : Application r H) (hcons : r.IsConservative) :
     a.result.size = H.size :=
   Application.size_result_of_conservative a hcons
 
-/-- Re-export the trajectory-level corollary. -/
+/-- Along a chain of applications of a conservative rule starting at `H₀`,
+every state has the same number of hyperedges as `H₀`. -/
 theorem trajectory_preserves_size {P V : Type*} [DecidableEq V]
     {r : Rule P} (hcons : r.IsConservative)
     (H₀ : Hypergraph V)

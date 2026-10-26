@@ -1,19 +1,10 @@
 /-
-Graph metric on a hypergraph.
+Walks and reachability in a hypergraph.
 
-To connect hypergraph rewriting to continuum geometry we need a metric
-on the vertex set. The standard choice is the *shortest-path graph
-metric*: `d(u, v)` = minimum number of hyperedges one must traverse to
-get from `u` to `v`, treating each hyperedge as connecting all of its
-vertices.
-
-We give a minimal interface here: walks, reachability, and a simple
-scaled-hypergraph structure that is the hook for continuum-limit
-theorems (parameterised by an edge length `ε : ℝ`).
-
-For full-strength metric-space API we would integrate with Mathlib's
-`PseudoMetricSpace` — that is a follow-up once the core theorems are
-in place.
+This module defines `Walk H u v n`, a sequence of `n` hyperedges of `H` in which consecutive edges
+share a vertex, the first contains `u` and the last contains `v`.
+It defines `Reachable H u v` as the existence of a walk of some length, and `ScaledHypergraph`, a
+hypergraph paired with a positive real edge length `ε`.
 -/
 
 import InfraFormalization.Hypergraph
@@ -24,9 +15,8 @@ open Hypergraph
 
 variable {V : Type*}
 
-/-- A **walk** of length `n` in `H` from `u` to `v`: a sequence of
-hyperedges `e₀, e₁, …, e_{n-1}` such that `u ∈ e₀`, `v ∈ e_{n-1}`, and
-consecutive edges share a vertex. -/
+/-- A walk of length `n` in `H` from `u` to `v`: hyperedges `e₀, …, e_{n-1}` of `H` with `u ∈ e₀`,
+`v ∈ e_{n-1}`, consecutive edges sharing a vertex, and `u = v` when `n = 0`. -/
 structure Walk (H : Hypergraph V) (u v : V) (n : Nat) where
   edges : Fin n → Hyperedge V
   edges_mem : ∀ i, edges i ∈ H.edges
@@ -37,14 +27,11 @@ structure Walk (H : Hypergraph V) (u v : V) (n : Nat) where
              w ∈ (edges ⟨i + 1, hi⟩).verts
   trivial_case : n = 0 → u = v
 
-/-- `u` and `v` are reachable in `H` — some walk of finite length
-connects them. -/
+/-- There is a walk in `H` from `u` to `v` of some length `n`. -/
 def Reachable (H : Hypergraph V) (u v : V) : Prop :=
   ∃ n, Nonempty (Walk H u v n)
 
-/-- A **scaled hypergraph**: a hypergraph equipped with an edge length
-`ε : ℝ`. A sequence `(H_n, ε_n)` with `ε_n → 0` is the natural
-object whose metric limits one might study. -/
+/-- A hypergraph together with an edge length `ε : ℝ` and a proof that `0 < ε`. -/
 structure ScaledHypergraph (V : Type*) where
   graph : Hypergraph V
   ε : ℝ

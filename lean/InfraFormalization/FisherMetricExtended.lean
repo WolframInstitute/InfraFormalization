@@ -1,17 +1,9 @@
 /-
-**Fisher information metric — extended theorems** (M2 HVLE bridge).
+Algebraic properties of the Fisher inner product.
 
-Extends `FisherMetric.lean` with:
-
-  * `fisherInner_add_left` / `_right` — ℝ-linearity in each slot.
-  * `fisherInner_smul_left` / `_right` — ℝ-scaling in each slot.
-  * `fisherInner_self_nonneg` — positive semi-definiteness.
-  * `fisherInner_zero_left` / `_right` — zero vector has zero Fisher
-    inner product with anything.
-
-All theorems are grounded on `BranchialProbability slice` where
-`slice : Finset (Hypergraph V)` — i.e., on a branchial slice of the
-hypergraph-rewriting multiway graph.
+This module proves, for `FisherInner slice μ` with `μ : BranchialProbability slice`, additivity and
+real scaling in each argument, `0 ≤ FisherInner slice μ δp δp`, and that the inner product with the
+zero function on either side is 0.
 -/
 
 import InfraFormalization.FisherMetric
@@ -24,7 +16,7 @@ namespace InfraFormalization
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
-/-- **Fisher inner product ℝ-linear in first slot (additive)**. -/
+/-- `FisherInner` is additive in its first function argument. -/
 theorem fisherInner_add_left
     (slice : Finset (Hypergraph V))
     (μ : BranchialProbability slice)
@@ -42,8 +34,8 @@ theorem fisherInner_add_left
     rw [← this]
     rw [add_div]
 
-/-- **Fisher inner product ℝ-linear in second slot (additive)**.
-Follows from symmetry + linearity in the first slot. -/
+/-- `FisherInner` is additive in its second function argument. The proof uses `fisherInner_symm`
+and `fisherInner_add_left`. -/
 theorem fisherInner_add_right
     (slice : Finset (Hypergraph V))
     (μ : BranchialProbability slice)
@@ -53,7 +45,7 @@ theorem fisherInner_add_right
   rw [fisherInner_symm, fisherInner_add_left,
       fisherInner_symm slice μ δp₂ δp₁, fisherInner_symm slice μ δp₃ δp₁]
 
-/-- **Fisher inner product scales with ℝ in first slot**. -/
+/-- `FisherInner slice μ (c · δp₁) δp₂ = c · FisherInner slice μ δp₁ δp₂`. -/
 theorem fisherInner_smul_left
     (slice : Finset (Hypergraph V))
     (μ : BranchialProbability slice) (c : ℝ)
@@ -69,7 +61,7 @@ theorem fisherInner_smul_left
   · rw [if_neg hp, if_neg hp]
     rw [mul_assoc, mul_div_assoc]
 
-/-- **Fisher inner product scales with ℝ in second slot**. -/
+/-- `FisherInner slice μ δp₁ (c · δp₂) = c · FisherInner slice μ δp₁ δp₂`. -/
 theorem fisherInner_smul_right
     (slice : Finset (Hypergraph V))
     (μ : BranchialProbability slice) (c : ℝ)
@@ -79,7 +71,7 @@ theorem fisherInner_smul_right
   rw [fisherInner_symm, fisherInner_smul_left,
       fisherInner_symm slice μ δp₂ δp₁]
 
-/-- **Fisher inner product is positive semi-definite**: `⟨δp, δp⟩ ≥ 0`. -/
+/-- `0 ≤ FisherInner slice μ δp δp`. -/
 theorem fisherInner_self_nonneg
     (slice : Finset (Hypergraph V))
     (μ : BranchialProbability slice)
@@ -94,7 +86,7 @@ theorem fisherInner_self_nonneg
     have h_num_nonneg : 0 ≤ δp h * δp h := mul_self_nonneg _
     exact div_nonneg h_num_nonneg h_denom_nonneg
 
-/-- **Fisher inner product with zero left vector is zero**. -/
+/-- `FisherInner slice μ 0 δp = 0`. -/
 theorem fisherInner_zero_left
     (slice : Finset (Hypergraph V))
     (μ : BranchialProbability slice)
@@ -107,7 +99,7 @@ theorem fisherInner_zero_left
   · simp [hp]
   · rw [if_neg hp]; simp
 
-/-- **Fisher inner product with zero right vector is zero**. -/
+/-- `FisherInner slice μ δp 0 = 0`. -/
 theorem fisherInner_zero_right
     (slice : Finset (Hypergraph V))
     (μ : BranchialProbability slice)

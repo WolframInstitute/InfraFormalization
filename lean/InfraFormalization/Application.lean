@@ -1,20 +1,12 @@
 /-
 Application of a rewriting rule to a hypergraph.
 
-A rule `r : Rule P` fires on a target hypergraph `H : Hypergraph V`
-through an **application**, which consists of:
-
-  * a binding `ρ : P → V` (pattern-to-target vertex map) such that the
-    image `r.lhs.map ρ` is a sub-multiset of `H.edges`;
-  * freshness of any `ρ p` for `p ∉ r.lhs.vertexFinset` (strictly
-    speaking, for `p` in the *difference* between RHS and LHS vertex
-    sets).
-
-The result of firing: replace `r.lhs.map ρ` in `H` with `r.rhs.map ρ`.
-
-We provide an abstract / non-computable version here. The computable
-version (with explicit fresh-vertex allocation) is in
-`NamedRule.lean` specialized to `V = Nat`.
+An application of a rule `r : Rule P` to a hypergraph `H : Hypergraph V` is
+a binding `ρ : P → V` such that the image of the left-hand side under `ρ` is
+a sub-multiset of `H.edges`. The structure imposes no freshness condition on
+the images of right-hand-side-only vertices. The result replaces the image of
+the left-hand side with the image of the right-hand side. `NamedRule.lean`
+gives a computable version on `V = Nat` with fresh-vertex allocation.
 -/
 
 import InfraFormalization.Rule
@@ -23,11 +15,8 @@ namespace InfraFormalization
 
 open Hypergraph
 
-/-- An application of rule `r` at hypergraph `H` with binding `ρ`.
-
-The key invariant is `lhs_embedded`: the LHS pattern, under the
-binding, appears as a sub-multiset of `H.edges`. Mathlib's `Multiset.Le`
-gives us submultiset membership. -/
+/-- An application of rule `r` at hypergraph `H`: a binding `ρ` under which
+the left-hand side is a sub-multiset of `H.edges`. -/
 structure Application {P V : Type*} (r : Rule P) (H : Hypergraph V) where
   ρ : P → V
   lhs_embedded : (r.lhs.edges.map (Hyperedge.map ρ)) ≤ H.edges
@@ -44,8 +33,7 @@ def consumed (a : Application r H) : Multiset (Hyperedge V) :=
 def produced (a : Application r H) : Multiset (Hyperedge V) :=
   r.rhs.edges.map (Hyperedge.map a.ρ)
 
-/-- The result hypergraph. Needs `DecidableEq V` for multiset
-subtraction. -/
+/-- The result hypergraph `(H.edges - consumed) + produced`. -/
 def result [DecidableEq V] (a : Application r H) : Hypergraph V :=
   ⟨(H.edges - a.consumed) + a.produced⟩
 

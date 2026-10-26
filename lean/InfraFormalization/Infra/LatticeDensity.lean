@@ -1,14 +1,9 @@
 /-
-Density of the dyadic lattice in the interval [0, 1).
+Density of the lattice `{0, 1/n, …, (n-1)/n}` in `[0, 1)`.
 
-For the first infrageometry continuum-limit target (cycle → circle),
-we need to quantify how well the `n`-point lattice `{0, 1/n, 2/n, …,
-(n-1)/n}` approximates the unit interval. This file proves the core
-density lemma: every `x ∈ [0,1)` is within `1/n` of some lattice
-point, and within `1/(2n)` of the nearest lattice point (with
-wraparound).
-
-No `sorry`, no `decide`, no custom axioms.
+For `n > 0` and `x ∈ [0, 1)`, the module proves that some `i : Fin n` satisfies
+`i/n ≤ x < (i+1)/n`, that `|x - i/n| < 1/n` for some `i`, and that for some `i` either
+`x - i/n ≤ 1/(2n)` or `(i+1)/n - x ≤ 1/(2n)`.
 -/
 
 import Mathlib.Data.Real.Basic
@@ -20,9 +15,8 @@ import Mathlib.Tactic
 namespace InfraFormalization
 namespace Infra
 
-/-- For any `n > 0` and any `x ∈ [0, 1)`, there exists a lattice index
-`i ∈ Fin n` such that `i/n ≤ x < (i+1)/n`. This is the "floor of nx"
-construction packaged as an existence statement. -/
+/-- For `n > 0` and `x ∈ [0, 1)`, some `i : Fin n` satisfies `i/n ≤ x < (i+1)/n`.
+The witness is `⌊n·x⌋`. -/
 theorem exists_lattice_index (n : Nat) (hn : 0 < n)
     (x : ℝ) (hx : 0 ≤ x) (hx' : x < 1) :
     ∃ i : Fin n, (i.val : ℝ) / n ≤ x ∧ x < ((i.val : ℝ) + 1) / n := by
@@ -57,9 +51,7 @@ theorem exists_lattice_index (n : Nat) (hn : 0 < n)
     rw [this]
     exact_mod_cast h2
 
-/-- **1/n-density of the lattice.** For any `n > 0` and any `x ∈ [0, 1)`,
-there is a lattice point `i/n` within absolute distance strictly less
-than `1/n`. -/
+/-- For `n > 0` and `x ∈ [0, 1)`, some `i : Fin n` satisfies `|x - i/n| < 1/n`. -/
 theorem lattice_one_over_n_dense (n : Nat) (hn : 0 < n)
     (x : ℝ) (hx : 0 ≤ x) (hx' : x < 1) :
     ∃ i : Fin n, |x - (i.val : ℝ) / n| < 1 / n := by
@@ -76,11 +68,8 @@ theorem lattice_one_over_n_dense (n : Nat) (hn : 0 < n)
   rw [abs_of_nonneg hge]
   exact hlt
 
-/-- Improved form: for any `x ∈ [0, 1)`, either `x` is close to the
-lattice point `i/n` on its right, or close to the lattice point
-`(i+1)/n` on its left — with distance at most `1 / (2n)` in each
-case. This gives the precise `1/(2n)`-cover needed for the
-cycle-to-circle Gromov–Hausdorff bound. -/
+/-- For `n > 0` and `x ∈ [0, 1)`, some `i : Fin n` satisfies `x - i/n ≤ 1/(2n)` or
+`(i+1)/n - x ≤ 1/(2n)`. -/
 theorem lattice_half_n_cover (n : Nat) (hn : 0 < n)
     (x : ℝ) (hx : 0 ≤ x) (hx' : x < 1) :
     ∃ i : Fin n,

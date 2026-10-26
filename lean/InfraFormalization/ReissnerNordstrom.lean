@@ -1,21 +1,12 @@
 /-
-**Reissner-Nordström metric** (B8 / #28).
+The Reissner-Nordström metric in coordinates.
 
-The Reissner-Nordström metric describes a charged, non-rotating black
-hole:
-
-  `ds² = -(1 - 2M/r + Q²/r²) dt² + 1/(1 - 2M/r + Q²/r²) dr²
-         + r² dθ² + r² sin²θ dφ²`
-
-The horizons are at `r = M ± √(M² − Q²)`. For `Q = 0` this reduces to
-Schwarzschild. The exterior region (outside the outer horizon
-`r_+ = M + √(M² − Q²)`) is where the metric is non-singular.
-
-This file provides the `PartialMetricData 4` packaging.
-
-**Connection to hypergraphs.** Same anchor as `Schwarzschild.lean`:
-continuum-target side. Future hypergraph rules claiming to produce
-charged black holes would pair with this via a convergence bridge.
+This module defines the metric
+`ds² = −f dt² + f⁻¹ dr² + r² dθ² + r² sin²θ dφ²` with
+`f(r) = 1 − 2M/r + Q²/r²`, its inverse and first partial derivatives, and
+packages them as a `PartialMetricData 4` valid where `r > 0`, `f(r) > 0`
+and `sin θ ≠ 0`. It proves that at `Q = 0` the lapse is `1 − 2M/r` and is
+positive for `r > 2M`.
 -/
 
 import InfraFormalization.PartialMetricData
@@ -25,12 +16,12 @@ import Mathlib.Tactic.FieldSimp
 namespace InfraFormalization
 namespace Curvature
 
-/-- **Reissner-Nordström lapse function** `f(r) = 1 − 2M/r + Q²/r²`. -/
+/-- The lapse function `f(r) = 1 − 2M/r + Q²/r²`. -/
 noncomputable def rnLapse (M Q : ℝ) (r : ℝ) : ℝ :=
   1 - 2 * M / r + Q^2 / r^2
 
-/-- **Reissner-Nordström metric components.** Diagonal in
-`(t, r, θ, φ)` coordinates. -/
+/-- Metric components in coordinates `(t, r, θ, φ)`: `g_{00} = −f(r)`,
+`g_{11} = 1/f(r)`, `g_{22} = r²`, `g_{33} = r² sin²θ`, off-diagonal 0. -/
 noncomputable def rnG (M Q : ℝ) (x : Fin 4 → ℝ) (μ ν : Fin 4) : ℝ :=
   if μ ≠ ν then 0
   else
@@ -41,7 +32,8 @@ noncomputable def rnG (M Q : ℝ) (x : Fin 4 → ℝ) (μ ν : Fin 4) : ℝ :=
     else if μ.val = 2 then r^2
     else r^2 * (Real.sin θ)^2
 
-/-- **Reissner-Nordström inverse metric.** Diagonal reciprocal. -/
+/-- Inverse metric components: the reciprocals of the diagonal metric
+components, off-diagonal 0. -/
 noncomputable def rnGinv (M Q : ℝ) (x : Fin 4 → ℝ) (μ ν : Fin 4) : ℝ :=
   if μ ≠ ν then 0
   else
@@ -52,21 +44,19 @@ noncomputable def rnGinv (M Q : ℝ) (x : Fin 4 → ℝ) (μ ν : Fin 4) : ℝ :
     else if μ.val = 2 then 1 / r^2
     else 1 / (r^2 * (Real.sin θ)^2)
 
-/-- **Reissner-Nordström validity**: `r > 0`, `rnLapse > 0`
-(outside the outer horizon), and `sin θ ≠ 0` (off the polar axis). -/
+/-- The domain of validity: `r > 0`, `f(r) > 0` and `sin θ ≠ 0`. For
+`M² > Q²`, `f(r) > 0` holds outside the outer horizon and inside the inner
+horizon. -/
 def RNValid (M Q : ℝ) (x : Fin 4 → ℝ) : Prop :=
   x 1 > 0 ∧ rnLapse M Q (x 1) > 0 ∧ Real.sin (x 2) ≠ 0
 
-/-- **At `Q = 0`, Reissner-Nordström reduces to Schwarzschild.** The
-`RNValid M 0` predicate is then equivalent to `r > 2M ∧ r > 0 ∧
-sin θ ≠ 0` — matching the Schwarzschild `SchwarzschildValid`. -/
+/-- At `Q = 0` and `r > 0`, the lapse is `1 − 2M/r`. -/
 theorem rnLapse_schwarzschild (M r : ℝ) (hr : r > 0) :
     rnLapse M 0 r = 1 - 2 * M / r := by
   unfold rnLapse
   simp
 
-/-- **`rnLapse > 0` iff `r > r_+`** where `r_+ = M + √(M² - Q²)` is
-the outer horizon. In the case `Q = 0`, this becomes `r > 2M`. -/
+/-- At `Q = 0`, if `r > 0` and `r > 2M`, the lapse is positive. -/
 theorem rnLapse_pos_of_large_r_Q_zero (M r : ℝ) (h2M : r > 2 * M) (hr : r > 0) :
     rnLapse M 0 r > 0 := by
   rw [rnLapse_schwarzschild M r hr]
@@ -74,7 +64,7 @@ theorem rnLapse_pos_of_large_r_Q_zero (M r : ℝ) (h2M : r > 2 * M) (hr : r > 0)
   rw [show (1 : ℝ) - 2 * M / r = (r - 2 * M) / r from by field_simp]
   exact div_pos (by linarith) hr
 
-/-- **Reissner-Nordström metric symmetry.** -/
+/-- `rnG` is symmetric. -/
 theorem rnG_symm (M Q : ℝ) (x : Fin 4 → ℝ) (μ ν : Fin 4) :
     rnG M Q x μ ν = rnG M Q x ν μ := by
   unfold rnG
@@ -82,7 +72,7 @@ theorem rnG_symm (M Q : ℝ) (x : Fin 4 → ℝ) (μ ν : Fin 4) :
   · rw [h]
   · simp [h, Ne.symm h]
 
-/-- **Reissner-Nordström inverse metric symmetry.** -/
+/-- `rnGinv` is symmetric. -/
 theorem rnGinv_symm (M Q : ℝ) (x : Fin 4 → ℝ) (μ ν : Fin 4) :
     rnGinv M Q x μ ν = rnGinv M Q x ν μ := by
   unfold rnGinv
@@ -90,8 +80,7 @@ theorem rnGinv_symm (M Q : ℝ) (x : Fin 4 → ℝ) (μ ν : Fin 4) :
   · rw [h]
   · simp [h, Ne.symm h]
 
-/-- **Reissner-Nordström first partial derivatives** `∂_l g_{μν}`.
-Non-zero components on the validity domain:
+/-- First partial derivatives `∂_l g_{μν}`. The nonzero components are:
   * `∂_r g_{00} = −f'(r)` where `f'(r) = 2M/r² − 2Q²/r³`
   * `∂_r g_{11} = −f'(r)/f(r)²`
   * `∂_r g_{22} = 2 r`
@@ -114,7 +103,7 @@ noncomputable def rnDg (M Q : ℝ) (l : Fin 4) (x : Fin 4 → ℝ) (μ ν : Fin 
       else 0
     else 0
 
-/-- **`rnDg` symmetry**: `dg l x μ ν = dg l x ν μ`. -/
+/-- `rnDg l x μ ν = rnDg l x ν μ`. -/
 theorem rnDg_symm (M Q : ℝ) (l : Fin 4) (x : Fin 4 → ℝ) (μ ν : Fin 4) :
     rnDg M Q l x μ ν = rnDg M Q l x ν μ := by
   unfold rnDg
@@ -122,8 +111,8 @@ theorem rnDg_symm (M Q : ℝ) (l : Fin 4) (x : Fin 4 → ℝ) (μ ν : Fin 4) :
   · rw [h]
   · simp [h, Ne.symm h]
 
-/-- **Reissner-Nordström as a `PartialMetricData 4`** on the validity
-domain `RNValid M Q` (exterior region, off the polar axis). -/
+/-- The Reissner-Nordström metric as a `PartialMetricData 4` on
+`RNValid M Q`. -/
 noncomputable def rnPartial (M Q : ℝ) : PartialMetricData 4 where
   g := rnG M Q
   ginv := rnGinv M Q
@@ -168,7 +157,8 @@ noncomputable def rnPartial (M Q : ℝ) : PartialMetricData 4 where
         simp [hne]
   dg_symm := fun l x _ μ ν => rnDg_symm M Q l x μ ν
 
-/-- **RN reduces to Schwarzschild at Q = 0 on the lapse.** -/
+/-- The statement of `rnLapse_schwarzschild`: at `Q = 0` and `r > 0`, the
+lapse is `1 − 2M/r`. -/
 theorem rnPartial_lapse_schwarzschild (M r : ℝ) (hr : r > 0) :
     rnLapse M 0 r = 1 - 2 * M / r :=
   rnLapse_schwarzschild M r hr

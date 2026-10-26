@@ -1,34 +1,12 @@
 /-
-**Spatially-reconstructed hypergraph** from a causal graph + foliation
-(Group IC / #129).
+Spatial adjacency from a causal graph.
 
-Following the Madrid-talk pipeline:
-
-  1. Pick an observer foliation of the causal graph.
-  2. In each slice, connect events that share an *immediate common
-     ancestor* in the previous slice.
-
-The resulting structure is a `Hypergraph (slice)` for each slice,
-and together they form a time-evolving hypergraph — the
-**spatially-reconstructed hypergraph**.
-
-**Connection to hypergraphs.** Native: the output is literally a
-`Hypergraph V`-valued function of the foliation level. Input is a
-`CausalGraph V` (from `CausalGraphType.lean`) + a `Foliation`.
-
-**What this file gives.**
-
-  * `immediateCommonAncestor G u v` — the predicate "events `u, v`
-    share at least one immediate common ancestor in `G`" (via
-    `causalEdge`).
-  * `spatialReconstructionPredicate G slice` — the hypergraph-edge
-    predicate on pairs of events within a foliation slice.
-  * `spatialHyperedgeOfPair G u v` — constructs a 2-vertex
-    `Hyperedge` when the pair shares an ancestor.
-
-The full construction of the per-slice `Hypergraph V` and its
-consistency with causal-graph dynamics is a substantial follow-up;
-here we give the piece-parts. -/
+Two events are adjacent in a slice if both lie in the slice, are distinct,
+and have a common immediate causal predecessor. This module defines the
+common-predecessor relation, proves that it is symmetric, defines the
+adjacency predicate on a slice `Finset V`, and defines the two-vertex
+hyperedge `[u, v]`. It does not construct the hypergraph of a slice.
+-/
 
 import InfraFormalization.CausalGraphType
 import InfraFormalization.CausalFoliation
@@ -39,38 +17,32 @@ namespace CausalGraph
 variable {V : Type*} [Fintype V] [DecidableEq V]
 variable (G : CausalGraph V)
 
-/-- **Immediate common ancestor**: event `a` is an immediate common
-ancestor of `u` and `v` if `G.causalEdge a u` and `G.causalEdge a v`.
-No transitivity — direct causal arrows only. -/
+/-- `a` is an immediate common ancestor of `u` and `v`:
+`G.causalEdge a u` and `G.causalEdge a v`. -/
 def ImmediateCommonAncestor (u v : V) (a : V) : Prop :=
   G.causalEdge a u ∧ G.causalEdge a v
 
-/-- **Two events share an immediate common ancestor** if at least
-one exists. -/
+/-- Some event is an immediate common ancestor of `u` and `v`. -/
 def ShareImmediateAncestor (u v : V) : Prop :=
   ∃ a : V, G.ImmediateCommonAncestor u v a
 
-/-- **Symmetry of the share-ancestor relation.** -/
+/-- `ShareImmediateAncestor` is symmetric. -/
 theorem ShareImmediateAncestor.symm {u v : V}
     (h : G.ShareImmediateAncestor u v) : G.ShareImmediateAncestor v u := by
   obtain ⟨a, hau, hav⟩ := h
   exact ⟨a, hav, hau⟩
 
-/-- **Events don't share an ancestor with themselves** via `causalEdge`:
-`a → u` and `a → u` are the same edge, so "shared" degenerates. We
-state the non-trivial predicate as "`u ≠ v` and there's a common
-ancestor". -/
+/-- `u ≠ v` and `u`, `v` have an immediate common ancestor. -/
 def ShareImmediateAncestorNontrivial (u v : V) : Prop :=
   u ≠ v ∧ G.ShareImmediateAncestor u v
 
-/-- **The spatial-reconstruction edge predicate**: whether a pair
-`{u, v}` in a foliation slice should be connected in the
-spatially-reconstructed hypergraph at that slice. -/
+/-- `u` and `v` lie in `slice`, are distinct, and have an immediate common
+ancestor. -/
 def spatialReconstructionAdj (slice : Finset V) (u v : V) : Prop :=
   u ∈ slice ∧ v ∈ slice ∧ G.ShareImmediateAncestorNontrivial u v
 
-/-- **Build a 2-vertex hyperedge from a pair sharing an ancestor.**
-The directionality is `[u, v]` (arbitrary but consistent). -/
+/-- The hyperedge with vertex list `[u, v]`. It is defined for every pair
+and does not depend on `G`. -/
 def spatialHyperedgeOfPair (u v : V) : Hyperedge V :=
   { verts := [u, v], nonempty := by simp }
 

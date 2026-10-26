@@ -1,38 +1,14 @@
 /-
-**Executable multiway hypergraph rewriting** (X4 / #75).
+Executable hypergraph rewriting.
 
-Computable counterpart to `Multiway.lean` (which only states `Step` /
-`MultiStep` as `Prop`s). This module provides actual `def`s that take a
-rule + state + step count and return all reachable states / signature
-trajectories — runnable inside Lean's kernel via `#eval`, suitable for
-cross-checking against external engines like `HypergraphRewritingEngine`
-(../efficient_rewriting_final/).
-
-**Why a separate exec type.** The abstract `Hypergraph V := { edges :
-Multiset (Hyperedge V) }` from `Hypergraph.lean` uses `Multiset` for
-proof convenience, but `Multiset.toList` is noncomputable. For
-execution we use a parallel `List`-based type `ExecHG V := List
-(Hyperedge V)` with a canonical lift `ExecHG.toHypergraph` to the
-abstract side.
-
-**Design.** Rules use `Fin numBound + numFresh` pattern vertices: the
-first `numBound` appear in LHS (and may appear in RHS); the last
-`numFresh` are RHS-only and get fresh `ℕ` IDs allocated when the rule
-fires. State carries `V = ℕ`; fresh allocation is `max(existing) + 1, +2, ...`.
-
-**Pipeline.**
-  1. `vertexList H` — deduped vertex list of `H`.
-  2. `allFunctions n vs` — all functions `Fin n → V` (Cartesian product).
-  3. `bindingMatches lhs H ρ` — checks `lhs.map ρ ⊆ H` as multisets-of-edges.
-  4. `allMatches r H` — filter binding candidates to those matching.
-  5. `applyMatch r H ρ` — produce the next state.
-  6. `oneStepStates r H` — all next states from one rule.
-  7. `multiwayStep sys H` — all next states across all rules in system.
-  8. `multiwayEvolve sys H n` — n-step evolution as a list of states.
-
-**Cross-check rationale.** For any rule + seed + small `n`, signature
-trajectories (edge-count, vertex-count) should match what
-`HypergraphRewritingEngine` produces.
+`Multiway.lean` states `Step` and `MultiStep` as propositions. This module defines computable
+counterparts on the list-based type `ExecHG V := List (Hyperedge V)`, which maps to the
+multiset-based `Hypergraph V` by `ExecHG.toHypergraph`. A rule `ExecRule` has `numBound` pattern
+variables matched in the left-hand side and `numFresh` right-hand-side variables that receive fresh
+natural-number vertices `max + 1, max + 2, …`. The module defines match enumeration (`allMatches`),
+application of a match (`applyMatch`), the multiway step and evolution, the single-way step
+`singleWayStep` (a greedy maximal set of edge-disjoint matches), and the fire-all step `fireAllStep`
+(every match, including overlapping ones, which is not a Wolfram model update).
 -/
 
 import InfraFormalization.Multiway
@@ -62,7 +38,7 @@ def vertexList {V : Type*} [DecidableEq V] (H : ExecHG V) : List V :=
 Pattern variables are `Fin n`; bindings are functions `Fin n → V`.
 We enumerate them as length-`n` Cartesian products from a fixed pool. -/
 
-/-- All functions `Fin n → V` whose values come from a fixed pool `vs`. -/
+/-- All functions `Fin n → V` with values in the list `vs`. -/
 def allFunctions {V : Type*} : (n : Nat) → (vs : List V) → List (Fin n → V)
   | 0, _ => [Fin.elim0]
   | n+1, vs =>
@@ -149,30 +125,18 @@ def applyMatch (r : ExecRule) (H : ExecHG ℕ)
   let produced := mapPattern ρExt r.rhs
   removeEdges H consumed ++ produced
 
-/-! ## Per-edge-instance match enumeration (#227, non-breaking)
+/-! ## Matches per edge instance
 
-`allMatches` enumerates bindings `Fin numBound → ℕ` and deduplicates
-edge instances that share a binding — two equal edges in `H` produce
-**one** match, not two. This is "per-binding" semantics; it is what
-the existing engine uses.
+`allMatches` enumerates distinct bindings `Fin numBound → ℕ`, so two equal edges of `H` give one
+match. In the Wolfram model each occurrence of an edge gives its own match. For rules with one
+left-hand-side edge, `allEdgeInstanceMatches_singleLHS` returns one binding per edge of `H` of the
+right arity. `allMatches` and `singleWayStep` do not use it. Enumeration per edge instance for
+left-hand sides with several edges is not defined here. -/
 
-The Wolfram-model intended semantics is **per-instance**: each
-occurrence of an edge that matches the LHS contributes its own
-application. For rules with `|LHS| = 1`, the per-edge-instance
-enumeration below mirrors that: each edge of `H` whose arity matches
-the LHS's contributes a binding `i ↦ e.verts[i]`.
-
-This primitive is **additive** — `allMatches` and `singleWayStep` are
-unchanged so all existing decide-checked corpora keep working. The
-general multi-edge-LHS per-instance enumeration (which has to choose
-an injective assignment of `H`'s edges to `LHS`'s edges) is the open
-piece of #227 proper. -/
-
-/-- **Per-edge-instance match enumeration** for rules with a single
-LHS edge. Each edge instance of `H` whose arity equals the LHS's
-contributes a binding `i ↦ e.verts[i]` (with `0` for out-of-range
-indices, defensively). Contrast `allMatches` which deduplicates
-bindings. -/
+/-- For a rule with one left-hand-side edge, one binding `i ↦ e.verts[i]` (0 when out of range) for
+each edge `e` of `H` whose arity equals that of the left-hand-side edge, and the empty list for
+other
+rules. The binding does not check repeated pattern variables. -/
 def allEdgeInstanceMatches_singleLHS (r : ExecRule) (H : ExecHG ℕ) :
     List (Fin r.numBound → ℕ) :=
   match h : r.lhs with
@@ -283,7 +247,7 @@ def singleWayStep (sys : ExecSystem) (H : ExecHG ℕ) : ExecHG ℕ :=
   let acc := stepFold sys H
   acc.avail ++ acc.produced
 
-/-- Single-way evolution: deterministic per-step state. -/
+/-- `n` iterations of `singleWayStep`. -/
 def singleWayEvolve (sys : ExecSystem) (H : ExecHG ℕ) : Nat → ExecHG ℕ
   | 0 => H
   | n+1 => singleWayStep sys (singleWayEvolve sys H n)
@@ -319,7 +283,7 @@ def fireAllEvolve (sys : ExecSystem) (H : ExecHG ℕ) : Nat → ExecHG ℕ
   | 0 => H
   | n+1 => fireAllStep sys (fireAllEvolve sys H n)
 
-/-! ## Signature trace: useful for cross-checking with external engines -/
+/-! ## Edge and vertex counts of the multiway evolution -/
 
 /-- Edge count of `H`. -/
 def hgEdgeCount (H : ExecHG ℕ) : Nat := H.length
@@ -327,9 +291,9 @@ def hgEdgeCount (H : ExecHG ℕ) : Nat := H.length
 /-- Vertex count of `H` (after dedup). -/
 def hgVertexCount (H : ExecHG ℕ) : Nat := (vertexList H).length
 
-/-- Cheap signature: `(numStates, totalEdges, totalVertices)` summed
-across the `n`-th step's state list. Should match the analogous
-Wolfram-engine output up to canonicalisation modulo isomorphism. -/
+/-- The triple of the number of states at step `n` of `multiwayEvolve`, the sum of their edge counts
+and
+the sum of their vertex counts. -/
 def stepSignature (sys : ExecSystem) (H : ExecHG ℕ) (n : Nat) :
     Nat × Nat × Nat :=
   let states := multiwayEvolve sys H n

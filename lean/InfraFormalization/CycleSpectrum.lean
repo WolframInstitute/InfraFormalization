@@ -1,27 +1,11 @@
 /-
-**Cycle Laplacian spectrum — closed form** (task R5 / #180).
+Eigenvectors and eigenvalues of the Laplacian of the cycle graph on `Fin n`.
 
-For the cycle graph on `Fin n`, the discrete Laplacian
-
-  `Δ_{C_n} f (i) = f(i+1) + f(i−1) − 2 f(i)`
-
-has closed-form eigenvectors and eigenvalues:
-
-  `f_k(j) := cos(2π k j / n)`   (k = 0, 1, ..., n−1)
-  `λ_k   := −4 sin²(π k / n)`   (Laplacian eigenvalue; `≤ 0`)
-
-This file proves the eigenvalue equation `Δ f_k (i) = λ_k · f_k(i)`
-at **interior indices** (where `i+1` and `i-1` don't wrap modulo
-`n`). Full wrap-around periodicity is a separate lemma, deferred.
-
-**Why this matters.** This is the first concrete spectral theorem
-on a hypergraph-derived Laplacian. The eigenvalues `−4 sin²(πk/n)`
-scale to the circle Laplacian spectrum `{−k²}` under `n² · Δ`
-as `n → ∞`. So this theorem + the scaled-Laplacian bridge gives
-a concrete spectral-convergence result.
-
-**Connection to hypergraphs.** Via `laplacianHyper_cycleHypergraph`,
-this lifts to the spectrum of `Hypergraph.laplacianHyper (cycleHypergraph n)`.
+For `Δ f (i) = f(i+1) + f(i−1) − 2 f(i)`, `f_k(j) := cos(2π k j / n)` and
+`λ_k := −4 sin²(π k / n)`, the module proves `Δ f_k (i) = λ_k · f_k(i)` for every `i` when
+`n ≥ 2`. It also proves that `λ_k ≤ 0`, `λ_0 = 0`, `λ_k < 0` for `1 ≤ k < n`, that `λ_k` is
+strictly decreasing for `1 ≤ k ≤ n/2`, that `λ_{n+k} = λ_k`, and that the values for `n = 4`
+are `0, −2, −4, −2`.
 -/
 
 import InfraFormalization.CycleGraph
@@ -32,34 +16,26 @@ namespace InfraFormalization
 
 open Real
 
-/-- **Cycle eigenvector** `f_k(j) := cos(2π k j / n)`. -/
+/-- `f_k(j) := cos(2π k j / n)`. -/
 noncomputable def cycleEigenvector (n k : ℕ) (j : Fin n) : ℝ :=
   cos (2 * π * k * j.val / n)
 
-/-- **Cycle eigenvalue** `λ_k := −4 sin²(π k / n)`. -/
+/-- `λ_k := −4 sin²(π k / n)`. -/
 noncomputable def cycleEigenvalue (n k : ℕ) : ℝ :=
   -4 * (sin (π * k / n))^2
 
-/-- **All cycle eigenvalues are non-positive** — `−Δ_{C_n}` is PSD.
-
-`cycleEigenvalue n k ≤ 0` for every `n`, `k`. Immediate from `sin² ≥ 0`. -/
+/-- `cycleEigenvalue n k ≤ 0` for every `n`, `k`. -/
 theorem cycleEigenvalue_nonpos (n k : ℕ) : cycleEigenvalue n k ≤ 0 := by
   unfold cycleEigenvalue
   have h_sq : (0 : ℝ) ≤ (sin (π * k / n))^2 := sq_nonneg _
   nlinarith
 
-/-- **Zero is an eigenvalue** — witnessed by `k = 0`
-(`sin 0 = 0 ⇒ cycleEigenvalue n 0 = 0`). Represents the
-constant eigenvector, aligned with the Laplacian-kills-constants
-principle. -/
+/-- `cycleEigenvalue n 0 = 0`. -/
 theorem cycleEigenvalue_zero (n : ℕ) : cycleEigenvalue n 0 = 0 := by
   unfold cycleEigenvalue
   simp
 
-/-- **First nonzero eigenvalue is strictly negative** (spectral gap).
-For `n ≥ 2`, `cycleEigenvalue n 1 = −4 sin²(π/n) < 0`. The absolute
-value `4 sin²(π/n)` is the spectral gap — the slowest heat-decay rate
-for non-constant initial data on the cycle. -/
+/-- For `n ≥ 2`, `cycleEigenvalue n 1 < 0`. -/
 theorem cycleEigenvalue_one_neg {n : ℕ} (hn : 2 ≤ n) :
     cycleEigenvalue n 1 < 0 := by
   unfold cycleEigenvalue
@@ -79,12 +55,7 @@ theorem cycleEigenvalue_one_neg {n : ℕ} (hn : 2 ≤ n) :
   rw [h_cast]
   nlinarith
 
-/-- **Non-constant mode eigenvalues are strictly negative.** For every
-`k` with `1 ≤ k` and `k < n`, the cycle eigenvalue
-`cycleEigenvalue n k = −4 sin²(πk/n)` is strictly negative, because
-`0 < πk/n < π` forces `sin(πk/n) > 0`. Generalises
-`cycleEigenvalue_one_neg` and underlies the spectral-gap decay of
-every non-constant heat-kernel mode (`HeatKernelDecay.lean`). -/
+/-- For `1 ≤ k < n`, `cycleEigenvalue n k < 0`. -/
 theorem cycleEigenvalue_nonzero_mode_neg {n : ℕ} [NeZero n]
     (k : ℕ) (hk_lo : 1 ≤ k) (hk_hi : k < n) :
     cycleEigenvalue n k < 0 := by
@@ -105,11 +76,7 @@ theorem cycleEigenvalue_nonzero_mode_neg {n : ℕ} [NeZero n]
   have h_sin_sq_pos : 0 < (sin (π * k / n))^2 := by positivity
   nlinarith
 
-/-- **Zero eigenvalue ≠ any non-constant mode eigenvalue.** A corollary
-of `cycleEigenvalue_nonzero_mode_neg`: since non-constant modes have
-strictly negative eigenvalues and the constant mode has eigenvalue `0`,
-they are distinct. Needed when applying `cycleEigenvector_orthogonal`
-to pair the constant eigenvector with any non-constant one. -/
+/-- For `1 ≤ k < n`, `cycleEigenvalue n 0 ≠ cycleEigenvalue n k`. -/
 theorem cycleEigenvalue_zero_ne_nonzero_mode {n : ℕ} [NeZero n]
     (k : ℕ) (hk_lo : 1 ≤ k) (hk_hi : k < n) :
     cycleEigenvalue n 0 ≠ cycleEigenvalue n k := by
@@ -118,16 +85,8 @@ theorem cycleEigenvalue_zero_ne_nonzero_mode {n : ℕ} [NeZero n]
     cycleEigenvalue_nonzero_mode_neg k hk_lo hk_hi
   linarith
 
-/-- **Strict monotonicity of cycle eigenvalues on the first half.**
-For `1 ≤ j < k ≤ n/2` (equivalently `1 ≤ j < k` and `2 * k ≤ n`), the
-cycle eigenvalue `cycleEigenvalue n k = −4 sin²(πk/n)` is strictly
-less than `cycleEigenvalue n j`.
-
-Proof: `sin` is strictly increasing on `[0, π/2]`, so `sin(πj/n) <
-sin(πk/n)` when `0 < πj/n < πk/n ≤ π/2`; squaring preserves the
-inequality (positive side); the factor `−4` flips it.
-
-Gives pairwise distinctness of eigenvalues indexed in `[1, n/2]`. -/
+/-- For `1 ≤ j < k` and `2k ≤ n`, `cycleEigenvalue n k < cycleEigenvalue n j`. The proof
+uses that `sin` is strictly increasing on `[0, π/2]`. -/
 theorem cycleEigenvalue_strict_mono_first_half {n : ℕ} [NeZero n]
     {j k : ℕ} (hj_lo : 1 ≤ j) (hjk : j < k) (hk_hi : 2 * k ≤ n) :
     cycleEigenvalue n k < cycleEigenvalue n j := by
@@ -174,7 +133,7 @@ theorem cycleEigenvalue_strict_mono_first_half {n : ℕ} [NeZero n]
   -- Multiplying by −4 flips the inequality.
   nlinarith
 
-/-- **Pairwise distinctness of first-half cycle eigenvalues.** -/
+/-- For distinct `j, k` in `[1, n/2]`, `cycleEigenvalue n j ≠ cycleEigenvalue n k`. -/
 theorem cycleEigenvalue_ne_first_half {n : ℕ} [NeZero n]
     {j k : ℕ} (hj_lo : 1 ≤ j) (hjk : j ≠ k) (hj_hi : 2 * j ≤ n) (hk_hi : 2 * k ≤ n)
     (hk_lo : 1 ≤ k) :
@@ -183,17 +142,9 @@ theorem cycleEigenvalue_ne_first_half {n : ℕ} [NeZero n]
   · exact (cycleEigenvalue_strict_mono_first_half hj_lo h hk_hi).ne'
   · exact (cycleEigenvalue_strict_mono_first_half hk_lo h hj_hi).ne
 
-/-! ### Concrete small-n spectrum
+/-! ### The case `n = 4` -/
 
-For a four-cycle (`n = 4`), the full spectrum can be computed
-explicitly: `{0, −2, −4, −2}` (three distinct values, the `-2`
-realized with multiplicity 2 by the `k = 1` and `k = 3` modes). -/
-
-/-- **Four-cycle Laplacian eigenvalue at `k = 2`**: equals `−4`.
-Concrete value computation: `cycleEigenvalue 4 2 = −4 · sin²(π · 2 / 4)
-= −4 · sin²(π/2) = −4 · 1 = −4`. This is the most-negative eigenvalue
-of the 4-cycle, corresponding to the alternating eigenvector
-`(+1, −1, +1, −1)`. -/
+/-- `cycleEigenvalue 4 2 = −4`. -/
 theorem cycleEigenvalue_four_two : cycleEigenvalue 4 2 = -4 := by
   unfold cycleEigenvalue
   have h : (Real.pi * (2 : ℕ) / (4 : ℕ) : ℝ) = Real.pi / 2 := by
@@ -201,7 +152,7 @@ theorem cycleEigenvalue_four_two : cycleEigenvalue 4 2 = -4 := by
   rw [h, Real.sin_pi_div_two]
   ring
 
-/-- **Four-cycle Laplacian eigenvalue at `k = 1`**: equals `−2`. -/
+/-- `cycleEigenvalue 4 1 = −2`. -/
 theorem cycleEigenvalue_four_one : cycleEigenvalue 4 1 = -2 := by
   unfold cycleEigenvalue
   have h : (Real.pi * (1 : ℕ) / (4 : ℕ) : ℝ) = Real.pi / 4 := by
@@ -210,11 +161,7 @@ theorem cycleEigenvalue_four_one : cycleEigenvalue 4 1 = -2 := by
   rw [div_pow, Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 2)]
   ring
 
-/-- **Four-cycle Laplacian eigenvalue at `k = 3`**: equals `−2`.
-By the reflection symmetry `λ_k = λ_{n-k}` (since `sin(π(n-k)/n)
-= sin(π - πk/n) = sin(πk/n)`), the `k = 3` mode has the same
-eigenvalue as the `k = 1` mode. Demonstrates the 2-fold degeneracy
-in the non-zero spectrum. -/
+/-- `cycleEigenvalue 4 3 = −2`, using `sin(π − π/4) = sin(π/4)`. -/
 theorem cycleEigenvalue_four_three : cycleEigenvalue 4 3 = -2 := by
   unfold cycleEigenvalue
   have h : (Real.pi * (3 : ℕ) / (4 : ℕ) : ℝ) = Real.pi - Real.pi / 4 := by
@@ -223,22 +170,14 @@ theorem cycleEigenvalue_four_three : cycleEigenvalue 4 3 = -2 := by
   rw [div_pow, Real.sq_sqrt (by norm_num : (0 : ℝ) ≤ 2)]
   ring
 
-/-- **The constant mode is the all-ones function.** `cycleEigenvector n 0`
-evaluated at any index `j` equals `cos(0) = 1`. Concrete identification
-of the zeroth mode as the uniform/constant eigenvector. -/
+/-- `cycleEigenvector n 0 j = 1`. -/
 theorem cycleEigenvector_zero_eq_one (n : ℕ) [NeZero n] (j : Fin n) :
     cycleEigenvector n 0 j = 1 := by
   unfold cycleEigenvector
   simp
 
-/-- **n-periodicity of cycle eigenvalues in the wave-number index.**
-For every `n` and `k`, `cycleEigenvalue n (n + k) = cycleEigenvalue n k`.
-This reflects the `ℤ/nℤ` character-theoretic structure: the cycle
-Fourier modes are labelled by `k ∈ ℤ/nℤ`, and any shift by a multiple
-of `n` gives the same eigenvalue.
-
-Proof: `sin(π(n+k)/n) = sin(π + πk/n) = −sin(πk/n)`, so squaring
-recovers the `k`-th value. -/
+/-- `cycleEigenvalue n (n + k) = cycleEigenvalue n k`, from
+`sin(π + πk/n) = −sin(πk/n)`. -/
 theorem cycleEigenvalue_periodic {n : ℕ} [NeZero n] (k : ℕ) :
     cycleEigenvalue n (n + k) = cycleEigenvalue n k := by
   unfold cycleEigenvalue
@@ -252,11 +191,7 @@ theorem cycleEigenvalue_periodic {n : ℕ} [NeZero n] (k : ℕ) :
   rw [h_arg, Real.sin_add, Real.sin_pi, Real.cos_pi]
   ring
 
-/-- **Four-cycle complete spectrum** `{0, −2, −4, −2}` in order k = 0, 1, 2, 3.
-Explicitly demonstrates the spectrum table: three distinct eigenvalues
-(0, −2, −4), with the `−2` eigenvalue having multiplicity 2 from the
-`k = 1` and `k = 3` modes (standard reflection symmetry of cycle
-Fourier basis). -/
+/-- `cycleEigenvalue 4 k` for `k = 0, 1, 2, 3` is `(0, −2, −4, −2)`. -/
 theorem cycleEigenvalue_four_spectrum :
     (cycleEigenvalue 4 0, cycleEigenvalue 4 1, cycleEigenvalue 4 2,
       cycleEigenvalue 4 3) = (0, -2, -4, -2) := by
@@ -268,10 +203,9 @@ theorem cycleEigenvalue_four_spectrum :
 Given `A, B : ℝ`:
   `cos(A + B) + cos(A − B) − 2 cos A = −4 sin²(B/2) · cos A`.
 
-This is the core identity; applying it with `A = 2πk·i/n` and
-`B = 2πk/n` gives the eigenvalue. -/
+With `A = 2πk·i/n` and `B = 2πk/n` it gives the eigenvalue equation. -/
 
-/-- **Sum-to-product identity for the three-term central difference.** -/
+/-- `cos(A + B) + cos(A − B) − 2 cos A = −4 sin²(B/2) cos A`. -/
 lemma cos_three_term_identity (A B : ℝ) :
     cos (A + B) + cos (A - B) - 2 * cos A = -4 * (sin (B / 2))^2 * cos A := by
   -- cos(A+B) + cos(A-B) = 2 cos A cos B   (via cos_add / cos_sub).
@@ -287,10 +221,10 @@ lemma cos_three_term_identity (A B : ℝ) :
 
 /-! ## Interior eigenvalue identity
 
-At indices `i : Fin n` with `1 ≤ i.val` and `i.val + 1 < n`, the
-successor and predecessor don't wrap, so the computation is clean. -/
+At indices `i : Fin n` with `1 ≤ i.val` and `i.val + 1 < n`, the successor and
+predecessor do not wrap modulo `n`. -/
 
-/-- **Eigenvalue equation at interior indices** (`1 ≤ i.val`, `i + 1 < n`). -/
+/-- `Δ f_k (i) = λ_k f_k(i)` for `1 ≤ i.val` and `i.val + 1 < n`. -/
 theorem cycleLaplacian_eigen_interior {n : ℕ} [NeZero n] (k : ℕ) (i : Fin n)
     (hlo : 1 ≤ i.val) (hhi : i.val + 1 < n) :
     cycleLaplacian n (cycleEigenvector n k) i
@@ -319,7 +253,6 @@ theorem cycleLaplacian_eigen_interior {n : ℕ} [NeZero n] (k : ℕ) (i : Fin n)
     rw [hstep, Nat.add_mod_right]
     exact Nat.mod_eq_of_lt (by omega)
   rw [h_succ, h_pred]
-  -- Now we have explicit natural-number arithmetic; lift to ℝ.
   set A : ℝ := 2 * π * k * i.val / n with hA
   set B : ℝ := 2 * π * k / n with hB
   -- Rewrite the three cos arguments as A + B, A - B, A.
@@ -327,34 +260,27 @@ theorem cycleLaplacian_eigen_interior {n : ℕ} [NeZero n] (k : ℕ) (i : Fin n)
     simp only [hA, hB]; field_simp
   have hrw2 : (2 * π * k * ((i.val : ℝ) - 1) / n) = A - B := by
     simp only [hA, hB]; field_simp
-  -- Need to cast (i.val + 1 : ℕ) and (i.val - 1 : ℕ) to ℝ.
+  -- Casts of `i.val + 1` and `i.val - 1` to ℝ.
   have hcast_succ : ((i.val + 1 : ℕ) : ℝ) = (i.val : ℝ) + 1 := by norm_cast
   have hcast_pred : ((i.val - 1 : ℕ) : ℝ) = (i.val : ℝ) - 1 := by
     rw [Nat.cast_sub hlo]; norm_cast
   rw [hcast_succ, hcast_pred, hrw1, hrw2]
-  -- Also rewrite 2πk·i.val/n as A.
   show cos (A + B) + cos (A - B) - 2 * cos A = _ * cos A
-  -- Target: (-4 * (sin(πk/n))^2) * cos A.
-  -- We have the identity: cos(A+B) + cos(A-B) - 2 cos A = -4 sin²(B/2) cos A.
-  -- Need sin(B/2) = sin(πk/n), i.e., B/2 = πk/n. B = 2πk/n, B/2 = πk/n. ✓
+  -- Apply `cos_three_term_identity` with `B / 2 = πk/n`.
   have hB_half : B / 2 = π * k / n := by simp only [hB]; ring
   rw [cos_three_term_identity A B, hB_half]
 
 /-! ## Full (wrap-around) eigenvalue identity
 
-The cycle eigenvector is periodic in `j` modulo `n`: if `j₁ ≡ j₂ (mod n)`
-then `cos(2πk·j₁/n) = cos(2πk·j₂/n)` because the difference is an
-integer multiple of `2πk`. This lets us extend the interior result
-to all indices. -/
+If `j₁ ≡ j₂ (mod n)` then `cos(2πk·j₁/n) = cos(2πk·j₂/n)`. This extends the interior
+result to all indices. -/
 
-/-- **Helper**: `cos` is `2π k`-periodic, for integer `k`. -/
+/-- `cos (x + 2πk) = cos x` for an integer `k`. -/
 lemma cos_add_two_pi_int_mul (x : ℝ) (k : ℤ) :
     cos (x + 2 * π * k) = cos x := by
   simpa [mul_comm (2 * π) (k : ℝ)] using Real.cos_add_int_mul_two_pi x k
 
-/-- **Eigenvector at `j + n` ≡ eigenvector at `j`**: for any real `y` and
-integer `n`-shift, `cos(2πk·(y + n)/n) = cos(2πk·y/n)` because the difference
-is an integer multiple of `2πk`. -/
+/-- `cos(2πk·(y + n)/n) = cos(2πk·y/n)` for real `y`. -/
 lemma cos_eigenarg_shift_by_n {n : ℕ} [NeZero n] (k : ℕ) (y : ℝ) :
     cos (2 * π * k * (y + n) / n) = cos (2 * π * k * y / n) := by
   have hn_ne : (n : ℝ) ≠ 0 := by
@@ -368,11 +294,8 @@ lemma cos_eigenarg_shift_by_n {n : ℕ} [NeZero n] (k : ℕ) (y : ℝ) :
   rw [this]
   exact Real.cos_add_int_mul_two_pi _ _
 
-/-- **Eigenvalue equation at all indices** (including boundary, via
-wrap-around). For the cycle hypergraph and any `k : ℕ`, `i : Fin n`:
-  `cycleLaplacian n (cycleEigenvector n k) i
-   = cycleEigenvalue n k · cycleEigenvector n k i`.
-This is the full spectral theorem for the cycle graph Laplacian. -/
+/-- For `n ≥ 2`, every `k : ℕ` and every `i : Fin n`,
+`cycleLaplacian n (cycleEigenvector n k) i = cycleEigenvalue n k · cycleEigenvector n k i`. -/
 theorem cycleLaplacian_eigen {n : ℕ} [NeZero n] (hn : 2 ≤ n) (k : ℕ) (i : Fin n) :
     cycleLaplacian n (cycleEigenvector n k) i
     = cycleEigenvalue n k * cycleEigenvector n k i := by
@@ -429,7 +352,7 @@ theorem cycleLaplacian_eigen {n : ℕ} [NeZero n] (hn : 2 ≤ n) (k : ℕ) (i : 
       rw [hx, cos_eigenarg_shift_by_n k (-1)]
       congr 1; push_cast; ring
   rw [h_succ, h_pred]
-  -- Now interior-style computation.
+  -- The remaining computation is the interior case.
   set A : ℝ := 2 * π * k * i.val / n with hA
   set B : ℝ := 2 * π * k / n with hB
   have hrw1 : (2 * π * k * ((i.val : ℝ) + 1) / n) = A + B := by

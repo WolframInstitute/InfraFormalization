@@ -1,22 +1,7 @@
 /-
-**Higuchi planar-style combinatorial curvature on `ExecHG ℕ`** (#367,
-#405).
+Degree-defect vertex scalar on `ExecHG ℕ`.
 
-The classical Higuchi combinatorial curvature at a vertex `v` of a
-planar graph is
-  κ_H(v) := 1 − deg(v)/2 + Σ_{F ∋ v} 1/|F|
-where the sum is over faces `F` incident to `v`. For our `ExecHG ℕ`
-setting we use the simpler **Euler-defect form**
-  κ_H(v) := 1 − deg(v)/2
-which agrees with the full Higuchi formula on triangulated 2-manifolds
-(after the standard face-sum reduction) and extends meaningfully to
-arbitrary graphs. We keep the integer-valued doubled scalar
-`2·κ_H(v) := 2 − deg(v)` for `decide`-checkability.
-
-Aggregated per state: `sum_v (2 − deg(v))`. This is a THIRD independent
-curvature family alongside triangle-Forman (#384) and transport-
-Ollivier (#402). Together they give three independent angles on a
-rule's curvature signature.
+Higuchi's combinatorial curvature of a planar graph is `1 − deg(v)/2 + Σ_{F ∋ v} 1/|F|`, summed over incident faces. This module drops the face term and defines the integer `2 − deg(v)` per vertex, where `deg` is `execAdjDegree`, and its sum over the vertices of a state. It also defines the trace of this sum along a `canonicalDossier`, which evolves by `singleWayStep`. Values on small examples are checked by `native_decide`.
 -/
 
 import InfraFormalization.RuleSignatureSchema
@@ -30,75 +15,56 @@ open MultiwayExec
 open RuleSignatureSchema
 open RuleSignatureExecMetrics
 
-/-- **Doubled Higuchi vertex curvature**: `2 − adjDegree(v)`. Integer-
-valued, decide-checkable. -/
+/-- The integer `2 − execAdjDegree H v`. -/
 def higuchiVertexDoubled (H : ExecHG ℕ) (v : ℕ) : ℤ :=
   2 - (execAdjDegree H v : ℤ)
 
-/-- **Doubled total Higuchi curvature** of `H`: sum over `vertexList H`
-of `higuchiVertexDoubled`. For a triangulated 2-sphere this equals
-`2·χ = 4` (Euler characteristic). For flat planar graphs (e.g., simple
-cycles), it vanishes. -/
+/-- The sum of `higuchiVertexDoubled H v` over `v ∈ vertexList H`. For a simple graph this is `2·|V| − 2·|E|`, which is `0` on a cycle. -/
 def higuchiTotalDoubled (H : ExecHG ℕ) : ℤ :=
   (vertexList H).foldr (fun v acc => higuchiVertexDoubled H v + acc) 0
 
-/-- The per-state Higuchi-trace of a dossier. -/
+/-- The list of `higuchiTotalDoubled` values of the states of a dossier. -/
 def _root_.InfraFormalization.RuleSignatureSchema.Dossier.higuchiScalarTrace
     (d : Dossier) : List ℤ :=
   d.states.map higuchiTotalDoubled
 
-/-- A candidate's Higuchi trace is constant along its run. -/
+/-- `true` when every entry of `higuchiScalarTrace` equals the first. -/
 def _root_.InfraFormalization.RuleSignatureSchema.Dossier.higuchiScalarConstant
     (d : Dossier) : Bool :=
   RuleSignatureExecMetrics.allEqHead d.higuchiScalarTrace
 
-/-! ## Concrete cross-checks pin the numerics -/
+/-! ## Values on small graphs -/
 
-/-- **K₃** (triangle): each vertex has degree 2, so `κ_H(v) = 2 − 2 = 0`
-for every `v`; total = `0`. K₃ is "flat" in Higuchi curvature even
-though it has positive Ollivier-Ricci-style curvature. -/
+/-- On K₃ each vertex has degree 2, so the total is `0`. -/
 example : higuchiTotalDoubled OllivierRicciExec.k3 = 0 := by native_decide
 
-/-- **4-cycle**: each vertex has degree 2, same as K₃. Total = `0`
-(flat in Higuchi). -/
+/-- On the 4-cycle each vertex has degree 2, so the total is `0`. -/
 example : higuchiTotalDoubled OllivierRicciExec.cycle4 = 0 := by native_decide
 
-/-- **Single edge `{1, 2}`**: each endpoint has degree 1, so
-`κ_H(v) = 2 − 1 = 1` for each; total = `2` (positive, sphere-like —
-the "half-sphere defect" of an isolated edge). -/
+/-- On the single edge `{1, 2}` each endpoint has degree 1, so the total is `2`. -/
 example : higuchiTotalDoubled RuleSignatureExecMetrics.edge12 = 2 := by
   native_decide
 
-/-- **3-path** `[{1,2}, {2,3}]`: endpoints degree 1 (κ = 1 each),
-middle degree 2 (κ = 0); total = `2`. -/
+/-- On the path `[{1,2}, {2,3}]` the endpoints contribute 1 each and the middle vertex 0, so the total is `2`. -/
 example : higuchiTotalDoubled RuleSignatureExecMetrics.path123 = 2 := by
   native_decide
 
-/-! ## End-to-end: Higuchi distinguishes runs that Forman/Transport may
-not -/
+/-! ## Traces along `singleWayStep` evolutions -/
 
-/-- **Trivial identity on edge12**: state never changes, so the
-Higuchi trace is constant at `[2, 2, 2]`. -/
+/-- Under the identity rule from `edge12` the state does not change, and the trace over two steps is `[2, 2, 2]`. -/
 example :
     (canonicalDossier RuleSignatureExecCorpus.trivialIdentityExecRule
         RuleSignatureExecMetrics.edge12 2).higuchiScalarTrace
       = [2, 2, 2] := by
   native_decide
 
-/-- **Edge-append on edge12 — Higuchi is CONSERVED**. The
-`{a,b} → {a,b},{b,c}` rule preserves the path shape (each application
-extends the path by one edge with one new vertex), and a path of any
-length has total Higuchi = `2` (two endpoint defects). So the trace
-is `[2, 2, 2]` — constant! Forman + Transport both said this rule is
-non-constant; Higuchi says it IS constant. The three screeners
-disagree on which rules are stable, **detecting different aspects of
-curvature**. -/
+/-- Under the rule `{a,b} → {a,b},{b,c}` from `edge12`, the trace over two steps is `[2, 2, 2]`. Each step adds one edge and one new vertex, so `2·|V| − 2·|E|` is unchanged. -/
 example :
     (canonicalDossier RuleSignatureExecCorpus.edgeAppendExecRule
         RuleSignatureExecMetrics.edge12 2).higuchiScalarTrace = [2, 2, 2] := by
   native_decide
 
-/-- And so the Higuchi-constancy verdict on edge-append is `true`. -/
+/-- `higuchiScalarConstant` is `true` for the same dossier. -/
 example :
     (canonicalDossier RuleSignatureExecCorpus.edgeAppendExecRule
         RuleSignatureExecMetrics.edge12 2).higuchiScalarConstant = true := by

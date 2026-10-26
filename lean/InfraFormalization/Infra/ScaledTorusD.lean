@@ -1,19 +1,11 @@
 /-
-d-dimensional scaled lattice and its convergence to the flat d-torus.
+(d+1)-dimensional torus lattice with metric scaled by `1/n`.
 
-Generalises the 2D result in `ScaledTorus.lean` to arbitrary dimension
-`d + 1 ≥ 1`. Vertices are functions `Fin (d+1) → Fin n`; the lattice
-graph distance is the L∞ over the `d+1` cycle distances; the embedding
-is componentwise; and the GH-bound at `1 / (2n)` scales uniformly.
-
-This is the template target for the infrageometry programme applied to
-a physics-relevant case: for `d = 2` (dimension 3) this gives lattice
-→ T³, and the same construction will be the staging ground for flat
-Lorentzian spacetime once a direction is declared timelike.
-
-Using `Fin (d+1)` (rather than `Fin d` with a positivity hypothesis)
-keeps `Finset.univ` definitionally nonempty, which is what the
-`Finset.sup'` API requires.
+Vertices are functions `Fin (d+1) → Fin n`. This module defines the L∞ lattice distance
+`dTorusLatticeDist` (the maximum of the `d+1` cycle distances), the L∞ circle distance `dTorusDist`
+on `Fin (d+1) → ℝ`, and the componentwise embedding `dTorusEmbed d n p i = p i / n`. It proves that
+the embedding scales distances by `1/n` and that every point of [0, 1)^(d+1) is within `1/(2n)` of
+its image. The index type `Fin (d+1)` makes `Finset.univ` nonempty, as `Finset.sup'` requires.
 -/
 
 import InfraFormalization.Infra.ScaledCycle
@@ -51,12 +43,8 @@ private lemma sup'_div_const {α : Type*} {s : Finset α} (hs : s.Nonempty)
         ih]
     exact max_div_div_right (le_of_lt hc) _ _
 
-/-- Graph distance on the (d+1)-dimensional torus lattice
-`(Fin n)^(d+1)`, using L∞:
-`dTorusLatticeDist d n p q = ⨆_i cycleDist n (p i) (q i)`.
-
-Uses `Finset.sup'` with the nonemptiness of `Fin (d+1)` to keep parity
-with the `dTorusDist` side (where ℝ has no `OrderBot`). -/
+/-- L∞ product of cycle distances on `(Fin n)^(d+1)`:
+`dTorusLatticeDist d n p q = max_i cycleDist n (p i) (q i)`, computed with `Finset.sup'`. -/
 def dTorusLatticeDist (d n : Nat) (p q : Fin (d + 1) → Fin n) : Nat :=
   (Finset.univ : Finset (Fin (d + 1))).sup'
     (finUniv_succ_nonempty d) (fun i => cycleDist n (p i) (q i))
@@ -96,13 +84,13 @@ theorem dTorusLatticeDist_triangle {d n : Nat} (p q r : Fin (d + 1) → Fin n) :
       (Finset.mem_univ i)
   omega
 
-/-- Product circle distance on the (d+1)-torus (L∞):
-`dTorusDist d p q = sup' over i of circleDist (p i) (q i)`. -/
+/-- L∞ product of circle distances on `Fin (d+1) → ℝ`:
+`dTorusDist d p q = max_i circleDist (p i) (q i)`. -/
 noncomputable def dTorusDist (d : Nat) (p q : Fin (d + 1) → ℝ) : ℝ :=
   (Finset.univ : Finset (Fin (d + 1))).sup'
     (finUniv_succ_nonempty d) (fun i => circleDist (p i) (q i))
 
-/-- Lattice embedding `(Fin n)^(d+1) → [0,1)^(d+1)`, componentwise. -/
+/-- The componentwise embedding `(Fin n)^(d+1) → ℝ^(d+1)`, `p ↦ (i ↦ p i / n)`. -/
 noncomputable def dTorusEmbed (d n : Nat) (p : Fin (d + 1) → Fin n) :
     Fin (d + 1) → ℝ :=
   fun i => latticeEmbed n (p i)
@@ -113,13 +101,9 @@ theorem dTorusEmbed_mem_unit_cube {d n : Nat} (hn : 0 < n)
   intro i
   exact latticeEmbed_mem_unit_interval hn (p i)
 
-/-- **Isometry** of the (d+1)-torus lattice embedding.
-
-Proof strategy: both sides are sup's of per-coordinate quantities that
-are linked by `latticeEmbed_isometry`. We use `Finset.sup'_congr` to
-reduce to the per-coord claim
-`circleDist (embed (p i)) (embed (q i)) = cycleDist n (p i) (q i) / n`
-and then pull the `/ n` out of the `sup'`. -/
+/-- For `n > 0`,
+`dTorusDist d (dTorusEmbed d n p) (dTorusEmbed d n q) = dTorusLatticeDist d n p q / n`. The proof
+applies `latticeEmbed_isometry` in each coordinate and moves the division by `n` out of `sup'`. -/
 theorem dTorusEmbed_isometry {d n : Nat} (hn : 0 < n)
     (p q : Fin (d + 1) → Fin n) :
     dTorusDist d (dTorusEmbed d n p) (dTorusEmbed d n q) =
@@ -135,8 +119,8 @@ theorem dTorusEmbed_isometry {d n : Nat} (hn : 0 < n)
   rw [← sup'_nat_cast (finUniv_succ_nonempty d)
         (f := fun i => cycleDist n (p i) (q i))]
 
-/-- **Cover bound.** Every `x : Fin (d+1) → ℝ` with each component in
-`[0,1)` is within dTorus-distance `1/(2n)` of some `dTorusEmbed(p)`. -/
+/-- For `n > 0`, every `x : Fin (d+1) → ℝ` with each component in [0, 1) is within `dTorusDist`
+distance `1/(2n)` of some `dTorusEmbed d n p`. -/
 theorem dTorusEmbed_covers {d n : Nat} (hn : 0 < n)
     (x : Fin (d + 1) → ℝ) (hx : ∀ i, 0 ≤ x i ∧ x i < 1) :
     ∃ p : Fin (d + 1) → Fin n,
@@ -153,9 +137,9 @@ theorem dTorusEmbed_covers {d n : Nat} (hn : 0 < n)
   intro i _
   exact hp i
 
-/-- **Packaged infrageometry theorem ((d+1)-torus).** The scaled
-(Fin n)^(d+1) lattice is within Gromov–Hausdorff distance `1/(2n)` of
-the flat (d+1)-torus, for any `d ≥ 0` and `n ≥ 1`. -/
+/-- For `n > 0`, there is a map `f : (Fin n)^(d+1) → ℝ^(d+1)` with values in [0, 1)^(d+1) such that
+`dTorusDist d (f p) (f q) = dTorusLatticeDist d n p q / n` and every point of [0, 1)^(d+1) is within
+`1/(2n)` of the image of `f`. -/
 theorem dTorus_gh_bound (d n : Nat) (hn : 0 < n) :
     ∃ f : (Fin (d + 1) → Fin n) → (Fin (d + 1) → ℝ),
       (∀ p i, 0 ≤ f p i ∧ f p i < 1) ∧

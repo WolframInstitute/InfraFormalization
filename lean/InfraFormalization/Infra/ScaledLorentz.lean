@@ -1,24 +1,12 @@
 /-
-Int-to-ℝ embedding of the discrete Lorentz lattice into continuum
-Minkowski.
+Embedding of the integer Lorentz lattice into continuum Minkowski space.
 
-Lightweight bridge from `Event d = Fin (d+1) → ℤ` to
-`ContinuumEvent d = Fin (d+1) → ℝ`: just cast each coordinate. We
-prove the embedding **preserves causal precedence in the forward
-direction**: if `p ≺ q` in the discrete Lorentz lattice, then the
-embeddings stand in `ContinuumCausalPrecedes`.
-
-A full isometry-plus-density correspondence (the Lorentzian analog of
-the Riemannian `dTorus_gh_bound`) is a richer target and requires
-careful handling of sup'/cast interactions that we do not attempt
-here. The forward-direction embedding is enough for the rule-search
-use case (`RULE_SEARCH.md`) where we want to verify that a discrete
-causal pair remains causally related after passing to the continuum.
-
-The structural gap remaining — "the scaled lattice converges to
-continuum Minkowski in a Lorentzian Gromov–Hausdorff sense" — is
-still open in this formalisation. Lorentzian GH is a sharper theory
-than its Riemannian cousin (see Noldus–Suhr) and is not in Mathlib.
+This module defines the coordinatewise cast `lorentzIntEmbed` from `Event d = Fin (d+1) → ℤ` to
+`ContinuumEvent d = Fin (d+1) → ℝ` and the scaled embedding `scaledLorentzEmbed n`, which divides
+each coordinate by `n`. It proves that both embeddings preserve the spatial distance (divided by `n`
+in the scaled case), that both preserve and reflect `CausalPrecedes`, that `lorentzIntEmbed`
+preserves and reflects `Timelike`, and that the scaled lattice is within `1/(2n)` of every
+continuum event in each coordinate. Lorentzian Gromov–Hausdorff convergence is not stated here.
 -/
 
 import InfraFormalization.Infra.LorentzLattice
@@ -30,8 +18,8 @@ import Mathlib.Data.Real.Archimedean
 namespace InfraFormalization
 namespace Infra
 
-/-- **Helper**: division by a positive constant commutes with `sup'`
-on real-valued functions over a nonempty finset. -/
+/-- Division by a positive constant commutes with `sup'` on real-valued functions over a nonempty
+finset. -/
 private lemma sup'_div_const_real {α : Type*} {s : Finset α}
     (hs : s.Nonempty) (f : α → ℝ) {c : ℝ} (hc : 0 < c) :
     s.sup' hs (fun a => f a / c) = s.sup' hs f / c := by
@@ -49,9 +37,8 @@ noncomputable def lorentzIntEmbed {d : Nat} (p : Event d) : ContinuumEvent d :=
 @[simp] theorem lorentzIntEmbed_apply {d : Nat} (p : Event d) (k : Fin (d + 1)) :
     lorentzIntEmbed p k = (p k : ℝ) := rfl
 
-/-- **Spatial distance bound under the embedding.** For each
-coordinate, the continuum per-coordinate abs is at most the discrete
-spaceDist cast to ℝ. -/
+/-- The continuum spatial distance of the embedded events is at most the discrete spatial distance
+cast to ℝ. -/
 theorem continuumSpaceDist_le_cast {d : Nat} (p q : Event d) :
     continuumSpaceDist d (lorentzIntEmbed p) (lorentzIntEmbed q)
     ≤ ((spaceDist d p q : ℕ) : ℝ) := by
@@ -83,9 +70,8 @@ theorem continuumSpaceDist_le_cast {d : Nat} (p q : Event d) :
         (Finset.mem_univ i)
     exact_mod_cast hle
 
-/-- **Forward-direction preservation.** Causal precedence in the
-discrete Lorentz lattice implies continuum causal precedence under the
-int-to-ℝ embedding. -/
+/-- If `CausalPrecedes d p q` holds in the integer lattice, then `ContinuumCausalPrecedes` holds
+for the embedded events. -/
 theorem lorentzIntEmbed_preserves_causal {d : Nat} (p q : Event d)
     (h : CausalPrecedes d p q) :
     ContinuumCausalPrecedes d (lorentzIntEmbed p) (lorentzIntEmbed q) := by
@@ -100,7 +86,8 @@ theorem lorentzIntEmbed_preserves_causal {d : Nat} (p q : Event d)
   rw [h3]
   linarith
 
-/-- **Timelike preservation.** Same for strict interior. -/
+/-- If `Timelike d p q` holds in the integer lattice, then `ContinuumTimelike` holds for the
+embedded events. -/
 theorem lorentzIntEmbed_preserves_timelike {d : Nat} (p q : Event d)
     (h : Timelike d p q) :
     ContinuumTimelike d (lorentzIntEmbed p) (lorentzIntEmbed q) := by
@@ -115,10 +102,8 @@ theorem lorentzIntEmbed_preserves_timelike {d : Nat} (p q : Event d)
   rw [h3]
   linarith
 
-/-- **Reverse bound: continuum spatial distance is at least the cast of
-the discrete one.** Combined with `continuumSpaceDist_le_cast`, this
-gives the exact isometric identification of the discrete and continuum
-spatial metrics under the int-to-ℝ embedding. -/
+/-- The discrete spatial distance cast to ℝ is at most the continuum spatial distance of the
+embedded events. -/
 theorem continuumSpaceDist_ge_cast {d : Nat} (p q : Event d) :
     ((spaceDist d p q : ℕ) : ℝ)
     ≤ continuumSpaceDist d (lorentzIntEmbed p) (lorentzIntEmbed q) := by
@@ -162,17 +147,15 @@ theorem continuumSpaceDist_ge_cast {d : Nat} (p q : Event d) :
             (f := fun i => |(p i.succ : ℝ) - (q i.succ : ℝ)|)
             (Finset.mem_univ iMax)
 
-/-- **Exact isometry of spatial distance under the int-to-ℝ embedding.**
-Combining `continuumSpaceDist_le_cast` and `continuumSpaceDist_ge_cast`. -/
+/-- The continuum spatial distance of the embedded events equals the discrete spatial distance cast
+to ℝ. -/
 theorem continuumSpaceDist_eq_cast {d : Nat} (p q : Event d) :
     continuumSpaceDist d (lorentzIntEmbed p) (lorentzIntEmbed q)
     = ((spaceDist d p q : ℕ) : ℝ) :=
   le_antisymm (continuumSpaceDist_le_cast p q) (continuumSpaceDist_ge_cast p q)
 
-/-- **Exact causal-structure preservation (both directions).** The
-int-to-ℝ embedding preserves `CausalPrecedes` as an **iff**: the
-continuum Minkowski causal order agrees exactly with the discrete
-Lorentz lattice's causal order under the embedding. -/
+/-- `CausalPrecedes d p q` holds if and only if `ContinuumCausalPrecedes` holds for the embedded
+events. -/
 theorem lorentzIntEmbed_preserves_causal_iff {d : Nat} (p q : Event d) :
     CausalPrecedes d p q
     ↔ ContinuumCausalPrecedes d (lorentzIntEmbed p) (lorentzIntEmbed q) := by
@@ -188,7 +171,7 @@ theorem lorentzIntEmbed_preserves_causal_iff {d : Nat} (p q : Event d) :
   · intro h; exact_mod_cast h
   · intro h; exact_mod_cast h
 
-/-- **Exact Timelike-structure preservation (both directions).** -/
+/-- `Timelike d p q` holds if and only if `ContinuumTimelike` holds for the embedded events. -/
 theorem lorentzIntEmbed_preserves_timelike_iff {d : Nat} (p q : Event d) :
     Timelike d p q
     ↔ ContinuumTimelike d (lorentzIntEmbed p) (lorentzIntEmbed q) := by
@@ -204,21 +187,13 @@ theorem lorentzIntEmbed_preserves_timelike_iff {d : Nat} (p q : Event d) :
   · intro h; exact_mod_cast h
   · intro h; exact_mod_cast h
 
-/-! ## Scaled embedding and density in ℝ^{d+1}
+/-! ## Scaled embedding
 
-The unscaled `lorentzIntEmbed` lands in the integer lattice `ℤ^{d+1}` —
-sparse in `ℝ^{d+1}`. To approximate every continuum point we scale by
-`1/n`, giving a `1/n`-spaced lattice that is dense in `ℝ^{d+1}` at
-rate `1/(2n)` (via the rounding trick).
-
-This is the Lorentzian analog of the Riemannian `dTorus_gh_bound`:
-density-plus-isometry of a discrete sublattice in the continuum
-target.
+Dividing each integer coordinate by `n` gives a lattice with spacing `1/n`. Every point of
+`ℝ^{d+1}` is within `1/(2n)` of this lattice in each coordinate.
 -/
 
-/-- **Scaled embedding** at scale `1/n`: each integer coordinate gets
-divided by `n`, producing a continuum event with `1/n`-spaced
-coordinates. -/
+/-- The embedding at scale `1/n`: each integer coordinate is cast to ℝ and divided by `n`. -/
 noncomputable def scaledLorentzEmbed (n : Nat) {d : Nat} (p : Event d) :
     ContinuumEvent d :=
   fun k => (p k : ℝ) / n
@@ -227,9 +202,8 @@ noncomputable def scaledLorentzEmbed (n : Nat) {d : Nat} (p : Event d) :
     (k : Fin (d + 1)) :
     scaledLorentzEmbed n p k = (p k : ℝ) / n := rfl
 
-/-- **Density of `1/n`-spaced lattice in ℝ.** Every real `x` is within
-`1/(2n)` of some scaled lattice point `k/n` for `k : ℤ`. The proof
-uses `round (n · x)` and `abs_sub_round`. -/
+/-- For `n > 0`, every real `x` is within `1/(2n)` of some `k/n` with `k : ℤ`. The witness is
+`round (n · x)`. -/
 theorem oneOverN_lattice_dense_R (n : Nat) (hn : 0 < n) (x : ℝ) :
     ∃ k : ℤ, |x - (k : ℝ) / n| ≤ 1 / (2 * n) := by
   have hn_pos : (0 : ℝ) < n := by exact_mod_cast hn
@@ -245,9 +219,8 @@ theorem oneOverN_lattice_dense_R (n : Nat) (hn : 0 < n) (x : ℝ) :
   rw [hbound, div_le_div_iff_of_pos_right hn_pos]
   exact habs
 
-/-- **Full-space density of the scaled lattice.** Every continuum event
-`x : ContinuumEvent d` is within `1/(2n)` of some scaled lattice
-event `scaledLorentzEmbed n p` *in every coordinate* (L∞ density). -/
+/-- For `n > 0`, every continuum event `x` is within `1/(2n)` of some `scaledLorentzEmbed n p` in
+every coordinate. -/
 theorem scaledLorentzEmbed_dense {n : Nat} (hn : 0 < n) {d : Nat}
     (x : ContinuumEvent d) :
     ∃ p : Event d,
@@ -261,9 +234,8 @@ theorem scaledLorentzEmbed_dense {n : Nat} (hn : 0 < n) {d : Nat}
   intro k
   simpa [scaledLorentzEmbed] using hp k
 
-/-- **Spatial distance scales cleanly under uniform `1/n` scaling.**
-For any `f, g : ContinuumEvent d` and `n ≥ 1`, scaling each coordinate
-by `1/n` divides the spatial distance by `n`. -/
+/-- For `n > 0`, dividing every coordinate of `f` and `g` by `n` divides their spatial distance by
+`n`. -/
 theorem continuumSpaceDist_scale_div {d : Nat} (n : Nat) (hn : 0 < n)
     (f g : ContinuumEvent d) :
     continuumSpaceDist d (fun k => f k / n) (fun k => g k / n)
@@ -293,8 +265,8 @@ theorem continuumSpaceDist_scale_div {d : Nat} (n : Nat) (hn : 0 < n)
     exact sup'_div_const_real ⟨0, Finset.mem_univ 0⟩
             (f := fun i : Fin (k + 1) => |f i.succ - g i.succ|) hn_pos
 
-/-- **Spatial distance under the scaled embedding** equals the
-unscaled embedding's distance divided by `n`. -/
+/-- The spatial distance under `scaledLorentzEmbed n` equals the spatial distance under
+`lorentzIntEmbed` divided by `n`. -/
 theorem scaledLorentzEmbed_spaceDist {n : Nat} (hn : 0 < n)
     {d : Nat} (p q : Event d) :
     continuumSpaceDist d
@@ -304,9 +276,8 @@ theorem scaledLorentzEmbed_spaceDist {n : Nat} (hn : 0 < n)
   unfold scaledLorentzEmbed lorentzIntEmbed
   exact continuumSpaceDist_scale_div n hn _ _
 
-/-- **Scaled spatial distance equals the discrete spatial distance
-cast and divided by `n`.** Combines `scaledLorentzEmbed_spaceDist`
-with `continuumSpaceDist_eq_cast`. -/
+/-- The spatial distance under `scaledLorentzEmbed n` equals the discrete spatial distance cast to ℝ
+and divided by `n`. -/
 theorem scaledLorentzEmbed_spaceDist_eq_cast {n : Nat} (hn : 0 < n)
     {d : Nat} (p q : Event d) :
     continuumSpaceDist d
@@ -314,10 +285,8 @@ theorem scaledLorentzEmbed_spaceDist_eq_cast {n : Nat} (hn : 0 < n)
     = ((spaceDist d p q : ℕ) : ℝ) / n := by
   rw [scaledLorentzEmbed_spaceDist hn, continuumSpaceDist_eq_cast]
 
-/-- **Forward causal preservation under the scaled embedding.**
-Equivalently follows from `lorentzIntEmbed_preserves_causal_iff` plus
-the scaling identity, since both spatial distance and the time gap
-scale by the same `1/n`. -/
+/-- For `n > 0`, if `CausalPrecedes d p q`, then `ContinuumCausalPrecedes` holds for the scaled
+embedded events. -/
 theorem scaledLorentzEmbed_preserves_causal {n : Nat} (hn : 0 < n)
     {d : Nat} (p q : Event d)
     (h : CausalPrecedes d p q) :
@@ -336,9 +305,8 @@ theorem scaledLorentzEmbed_preserves_causal {n : Nat} (hn : 0 < n)
   rw [htime]
   exact (div_le_div_iff_of_pos_right hn_pos).mpr hcont
 
-/-- **Iff version of scaled causal preservation.** Two-way
-preservation, since the scaling is by a positive factor and both
-sides of `≤` scale identically. -/
+/-- For `n > 0`, `CausalPrecedes d p q` holds if and only if `ContinuumCausalPrecedes` holds for the
+scaled embedded events. -/
 theorem scaledLorentzEmbed_preserves_causal_iff {n : Nat} (hn : 0 < n)
     {d : Nat} (p q : Event d) :
     CausalPrecedes d p q

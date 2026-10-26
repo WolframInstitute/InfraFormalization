@@ -1,20 +1,7 @@
 /-
-**Existence + uniqueness for the discrete heat equation** (task D2).
+Existence and forward uniqueness for the discrete heat equation.
 
-  * **Existence** (`heat_exists`): for any initial data `u₀ : V → ℝ`,
-    there is a `HeatSolution H u` with `u 0 = u₀`, namely the matrix
-    heat-kernel action `t ↦ (heatKernel H t).mulVec u₀`.
-  * **Uniqueness on `t ≥ 0`** (`heat_unique_forward`): two heat solutions
-    with the same initial value agree at all `t ≥ 0`. Proof via
-    `heat_L2_antitone` applied to the difference (a heat solution with
-    zero initial data).
-  * **Uniqueness (two-sided)** fails in general because the heat equation
-    is irreversible: backward-time flow amplifies. But we state the
-    forward result rigorously.
-
-Combined with `heatKernel_isHeatSolution` (T1), this closes D2 in the
-sense of "for every u₀ there is a unique solution going forward in time,
-namely the matrix heat kernel action."
+`heat_exists` shows that `t ↦ (heatKernel H t).mulVec u₀` is a `HeatSolution H` with initial value `u₀`. `heat_unique_forward` shows that two solutions with the same initial value agree at every `t ≥ 0`, by applying `heat_L2_decay` to their difference. The module also proves mass conservation, L² decay and the semigroup law for the vector `(heatKernel H t).mulVec u₀`.
 -/
 
 import InfraFormalization.HeatKernelODE
@@ -24,9 +11,7 @@ namespace Hypergraph
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
-/-- **Existence of heat solutions.** For any initial data `u₀ : V → ℝ`,
-the map `t ↦ (heatKernel H t).mulVec u₀` is a `HeatSolution H` with
-initial value `u₀`. -/
+/-- For any `u₀ : V → ℝ` there is a `HeatSolution H u` with `u 0 = u₀`. The witness is `t ↦ (heatKernel H t).mulVec u₀`. -/
 theorem heat_exists (H : Hypergraph V) (u₀ : V → ℝ) :
     ∃ u : ℝ → V → ℝ, HeatSolution H u ∧ u 0 = u₀ := by
   refine ⟨fun t v => (heatKernel H t).mulVec u₀ v,
@@ -36,8 +21,7 @@ theorem heat_exists (H : Hypergraph V) (u₀ : V → ℝ) :
   rw [heatKernel_zero]
   rw [Matrix.one_mulVec]
 
-/-- **Heat solutions form a vector space closed under subtraction.** The
-pointwise difference of two heat solutions is a heat solution. -/
+/-- The pointwise difference of two heat solutions is a heat solution. -/
 theorem heatSolution_sub (H : Hypergraph V) {u₁ u₂ : ℝ → V → ℝ}
     (h₁ : HeatSolution H u₁) (h₂ : HeatSolution H u₂) :
     HeatSolution H (fun t v => u₁ t v - u₂ t v) := by
@@ -60,10 +44,7 @@ theorem heatSolution_sub (H : Hypergraph V) {u₁ u₂ : ℝ → V → ℝ}
   rw [this]
   ring
 
-/-- **Forward-time uniqueness of heat solutions.** Two heat solutions
-with the same initial value agree at all `t ≥ 0`. Via `heat_L2_antitone`
-applied to the difference: a heat solution with zero initial value has
-zero L² norm for all `t ≥ 0`, hence is zero. -/
+/-- Two heat solutions with the same initial value agree at every `t ≥ 0`. The proof applies `heat_L2_decay` to their difference, which has zero initial value. -/
 theorem heat_unique_forward (H : Hypergraph V) {u₁ u₂ : ℝ → V → ℝ}
     (h₁ : HeatSolution H u₁) (h₂ : HeatSolution H u₂)
     (h_init : u₁ 0 = u₂ 0) {t : ℝ} (ht : 0 ≤ t) :
@@ -100,9 +81,7 @@ theorem heat_unique_forward (H : Hypergraph V) {u₁ u₂ : ℝ → V → ℝ}
   show u₁ t v = u₂ t v
   linarith
 
-/-- **Existence + forward uniqueness package.** Closes D2: for every
-initial datum `u₀`, a unique forward-time heat solution exists, namely
-`t ↦ (heatKernel H t).mulVec u₀`. -/
+/-- For every `u₀` there is a heat solution `u` with `u 0 = u₀` such that every heat solution `u'` with `u' 0 = u₀` satisfies `u' t = u t` for all `t ≥ 0`. -/
 theorem heat_exists_unique_forward (H : Hypergraph V) (u₀ : V → ℝ) :
     ∃ u : ℝ → V → ℝ,
       (HeatSolution H u ∧ u 0 = u₀) ∧
@@ -113,12 +92,7 @@ theorem heat_exists_unique_forward (H : Hypergraph V) (u₀ : V → ℝ) :
   intro u' h_u' h_u'_init t ht
   exact heat_unique_forward H h_u' h_heat (h_u'_init.trans h_init.symm) ht
 
-/-- **Matrix-level mass conservation for the heat kernel.** For any
-initial data `u₀` and time `t`, the total mass `∑_v u₀(v)` is preserved
-under heat-kernel evolution: `∑_v (heatKernel H t).mulVec u₀ v = ∑_v u₀ v`.
-
-Composes `heatKernel_isHeatSolution` (T1) with the ODE-level
-`heat_mass_conservation`. -/
+/-- For any `u₀` and `t`, `∑_v (heatKernel H t).mulVec u₀ v = ∑_v u₀ v`. The proof combines `heatKernel_isHeatSolution` with `heat_mass_conservation`. -/
 theorem heatKernel_mass_conservation (H : Hypergraph V) (u₀ : V → ℝ) (t : ℝ) :
     ∑ v : V, (heatKernel H t).mulVec u₀ v = ∑ v : V, u₀ v := by
   have h_heat : HeatSolution H (fun s v => (heatKernel H s).mulVec u₀ v) :=
@@ -130,11 +104,7 @@ theorem heatKernel_mass_conservation (H : Hypergraph V) (u₀ : V → ℝ) (t : 
   rw [h_mass]
   exact congr_arg _ h_init
 
-/-- **Matrix-level L² decay for the heat kernel.** For any initial data
-`u₀` and `t ≥ 0`,
-  `∑_v ((heatKernel H t).mulVec u₀ v)² ≤ ∑_v (u₀ v)²`.
-
-Composes T1 with the ODE-level `heat_L2_decay`. -/
+/-- For any `u₀` and `t ≥ 0`, `∑_v ((heatKernel H t).mulVec u₀ v)² ≤ ∑_v (u₀ v)²`. The proof combines `heatKernel_isHeatSolution` with `heat_L2_decay`. -/
 theorem heatKernel_L2_decay (H : Hypergraph V) (u₀ : V → ℝ) {t : ℝ} (ht : 0 ≤ t) :
     (∑ v : V, ((heatKernel H t).mulVec u₀ v) ^ 2) ≤ (∑ v : V, (u₀ v) ^ 2) := by
   have h_heat : HeatSolution H (fun s v => (heatKernel H s).mulVec u₀ v) :=
@@ -152,12 +122,7 @@ theorem heatKernel_L2_decay (H : Hypergraph V) (u₀ : V → ℝ) {t : ℝ} (ht 
         congr 1
         exact h_init v
 
-/-- **Semigroup property at the vector level**: for any `u₀`, `s`, `t`,
-`(heatKernel H (s + t)).mulVec u₀ = (heatKernel H s).mulVec ((heatKernel H t).mulVec u₀)`.
-
-Direct consequence of `heatKernel_add` (matrix-level semigroup) via
-`Matrix.mulVec_mulVec`. Heat flow for time `s + t` factors as heat
-flow for time `t` followed by heat flow for time `s`. -/
+/-- For any `u₀`, `s`, `t`, `(heatKernel H (s + t)).mulVec u₀ = (heatKernel H s).mulVec ((heatKernel H t).mulVec u₀)`. The proof uses `heatKernel_add` and `Matrix.mulVec_mulVec`. -/
 theorem heatKernel_mulVec_add (H : Hypergraph V) (u₀ : V → ℝ) (s t : ℝ) :
     (heatKernel H (s + t)).mulVec u₀
     = (heatKernel H s).mulVec ((heatKernel H t).mulVec u₀) := by

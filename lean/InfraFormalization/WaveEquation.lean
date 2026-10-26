@@ -1,31 +1,12 @@
 /-
-Discrete wave equation on a hypergraph `Hypergraph V`.
+Discrete wave equation on a hypergraph.
 
-**Connection to hypergraphs.** Native. The unknown `u : ℝ → V → ℝ`
-and its time derivative `du : ℝ → V → ℝ` both live on the same
-`Hypergraph V` that carries the Wolfram-model rewriting. The spatial
-operator is `Hypergraph.laplacianHyper` from `HypergraphLaplacian.lean`.
-
-**Sign convention.** With `Δ_H = A − D` negative semidefinite, the
-oscillatory (conservative) wave equation is
-
-  `u''(t, v) = Δ_H u(t) v`
-
-(eigenmodes `Δ_H u = λu` with `λ ≤ 0` give oscillatory solutions
-`cos(√(−λ) t)` and `sin(√(−λ) t)`). No extra minus sign.
-
-**What this file contributes.**
-
-  * `WaveSolution H u du` — the structure of a pair `(u, du)` with
-    `du = u'` and `du' = Δ_H u`.
-  * `hasDerivAt_laplacianHyper_coord` — time-derivative of
-    `s ↦ Δ_H (u s) v` equals `Δ_H (du t) v` (linearity of `Δ_H`).
-  * `waveEnergy H u du t := ∑_v (du t v)² − ∑_v u(t,v) · Δ_H u(t) v`
-    — the conserved energy. Non-negative: kinetic part ≥ 0 trivially,
-    potential part ≥ 0 by `laplacianHyper_dirichlet_nonpos`.
-  * `wave_energy_conservation` — `E(t) = E(0)` for all `t`, via
-    self-adjointness of `Δ_H` (`laplacianHyper_self_adjoint`) and
-    `is_const_of_deriv_eq_zero`.
+For `H : Hypergraph V` and the Laplacian `Δ_H = A − D` of
+`Hypergraph.laplacianHyper`, which is negative semidefinite, this module
+defines solutions `(u, du)` of `u' = du`, `du' = Δ_H u` and the energy
+`E(t) = ∑_v (du t v)² − ∑_v u(t,v) · Δ_H u(t) v`. It proves that `E` is
+nonnegative and, using the self-adjointness of `Δ_H`, that `E` is constant
+in time along a solution.
 -/
 
 import InfraFormalization.HypergraphLaplacian
@@ -38,11 +19,10 @@ namespace InfraFormalization
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
-/-- **Time-derivative of `Δ_H u(s) v`.** If `s ↦ u s v` has
-derivative `du t v` at each time `t`, then
+/-- If `s ↦ u s v` has derivative `du t v` at every `t` and `v`, then
 `s ↦ Hypergraph.laplacianHyper H (u s) v` has derivative
-`Hypergraph.laplacianHyper H (du t) v` at `t`. Follows from
-`Δ_H`'s linearity and edge-by-edge multiset induction. -/
+`Hypergraph.laplacianHyper H (du t) v` at `t`. The proof is by induction on
+the multiset of edges. -/
 theorem hasDerivAt_laplacianHyper_coord (H : Hypergraph V)
     {u du : ℝ → V → ℝ}
     (hu : ∀ t v, HasDerivAt (fun s => u s v) (du t v) t) (t : ℝ) (v : V) :
@@ -63,29 +43,22 @@ theorem hasDerivAt_laplacianHyper_coord (H : Hypergraph V)
       exact (hu t w).sub (hu t v)
     exact he_deriv.add ih
 
-/-- **Discrete wave equation** on a hypergraph. A pair `(u, du)`
-forms a solution if `du = u'` (position ↔ velocity) and
-`du' = Δ_H u` (acceleration ↔ spatial Laplacian). -/
+/-- `(u, du)` satisfies `∂_t u = du` and `∂_t du = Δ_H u` at every time and
+vertex. -/
 structure WaveSolution (H : Hypergraph V) (u du : ℝ → V → ℝ) : Prop where
   position : ∀ t v, HasDerivAt (fun s => u s v) (du t v) t
   velocity : ∀ t v, HasDerivAt (fun s => du s v)
     (Hypergraph.laplacianHyper H (u t) v) t
 
-/-- Conserved **wave energy**: kinetic plus potential.
-
-  `E(t) := ∑_v (du t v)² − ∑_v u(t,v) · Δ_H u(t) v`.
-
-Both terms are non-negative: the kinetic term is a sum of squares;
-the potential term equals `−(Dirichlet form)` which is `≥ 0` by
-`laplacianHyper_dirichlet_nonpos`. The factor `1/2` is dropped from
-the standard continuum convention to simplify identities. -/
+/-- The energy `E(t) = ∑_v (du t v)² − ∑_v u(t,v) · Δ_H u(t) v`, without
+the factor 1/2. -/
 noncomputable def waveEnergy (H : Hypergraph V) (u du : ℝ → V → ℝ)
     (t : ℝ) : ℝ :=
   (∑ v : V, (du t v) ^ 2)
   - (∑ v : V, u t v * Hypergraph.laplacianHyper H (u t) v)
 
-/-- **Wave energy is non-negative.** Kinetic part is a sum of
-squares; potential part equals `−(Dirichlet form) ≥ 0`. -/
+/-- `waveEnergy` is nonnegative: the first sum is a sum of squares and the
+second is at most 0 by `laplacianHyper_dirichlet_nonpos`. -/
 theorem waveEnergy_nonneg (H : Hypergraph V) (u du : ℝ → V → ℝ)
     (t : ℝ) :
     0 ≤ waveEnergy H u du t := by
@@ -98,7 +71,8 @@ theorem waveEnergy_nonneg (H : Hypergraph V) (u du : ℝ → V → ℝ)
     Hypergraph.laplacianHyper_dirichlet_nonpos H (u t)
   linarith
 
-/-- **Derivative of the kinetic term.** -/
+/-- Along a solution, `∑_v (du s v)²` has derivative
+`∑_v 2 · du t v · Δ_H u(t) v` at `t`. -/
 theorem hasDerivAt_wave_kinetic (H : Hypergraph V) {u du : ℝ → V → ℝ}
     (hu : WaveSolution H u du) (t : ℝ) :
     HasDerivAt (fun s => ∑ v : V, (du s v) ^ 2)
@@ -110,8 +84,9 @@ theorem hasDerivAt_wave_kinetic (H : Hypergraph V) {u du : ℝ → V → ℝ}
   convert hv using 1
   ring
 
-/-- **Derivative of the potential term.** Uses self-adjointness of
-`Δ_H` to collapse the product-rule output into `2 · ∑ du · Δu`. -/
+/-- Along a solution, `∑_v u(s,v) · Δ_H u(s) v` has derivative
+`2 · ∑_v du t v · Δ_H u(t) v` at `t`, by the product rule and
+self-adjointness of `Δ_H`. -/
 theorem hasDerivAt_wave_potential (H : Hypergraph V) {u du : ℝ → V → ℝ}
     (hu : WaveSolution H u du) (t : ℝ) :
     HasDerivAt
@@ -142,8 +117,7 @@ theorem hasDerivAt_wave_potential (H : Hypergraph V) {u du : ℝ → V → ℝ}
   rw [hrewrite] at hsum
   exact hsum
 
-/-- **Wave energy conservation (infinitesimal).** The derivative of
-the energy `E` along any wave solution is identically zero. -/
+/-- Along a solution, `waveEnergy` has derivative 0 at every `t`. -/
 theorem hasDerivAt_waveEnergy (H : Hypergraph V) {u du : ℝ → V → ℝ}
     (hu : WaveSolution H u du) (t : ℝ) :
     HasDerivAt (waveEnergy H u du) 0 t := by
@@ -162,7 +136,7 @@ theorem hasDerivAt_waveEnergy (H : Hypergraph V) {u du : ℝ → V → ℝ}
   convert this using 1
   ring
 
-/-- **Wave energy conservation.** `E(t) = E(0)` for every `t`. -/
+/-- Along a solution, `E(t) = E(0)` for every `t`. -/
 theorem wave_energy_conservation (H : Hypergraph V) {u du : ℝ → V → ℝ}
     (hu : WaveSolution H u du) (t : ℝ) :
     waveEnergy H u du t = waveEnergy H u du 0 := by
@@ -172,7 +146,7 @@ theorem wave_energy_conservation (H : Hypergraph V) {u du : ℝ → V → ℝ}
     (hasDerivAt_waveEnergy H hu x).deriv
   exact is_const_of_deriv_eq_zero hdiff hzero t 0
 
-/-- **Stronger energy conservation.** Energy at any two times is equal. -/
+/-- Along a solution, `E(t₁) = E(t₂)` for any two times. -/
 theorem wave_energy_conservation' (H : Hypergraph V) {u du : ℝ → V → ℝ}
     (hu : WaveSolution H u du) (t₁ t₂ : ℝ) :
     waveEnergy H u du t₁ = waveEnergy H u du t₂ := by

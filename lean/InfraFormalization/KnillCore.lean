@@ -1,41 +1,15 @@
 /-
-**Knill core primitives** (#257 / IGE1 — Lean port of `Infrageometry.wl`).
+Simplicial complexes after O. Knill.
 
-First-pass Lean ports of the foundational functions from Oliver Knill's
-discrete-geometry program, transcribed from
-[`resources/Infrageometry/Infrageometry/Kernel/Infrageometry.wl`](../../resources/Infrageometry/Infrageometry/Kernel/Infrageometry.wl).
-
-This module covers the **simplex / complex / weight / star / closure**
-core (the first ~80 lines of the Mathematica file). Subsequent modules
-(`KnillIncidence.lean`, `KnillDirac.lean`, …) will port the matrix
-operators (`d`, `D = d + d*`, `H = D²`, connection `L`, Green `g = L⁻¹`)
-on top of this foundation.
-
-**Design.** A *Knill complex* is just a `Finset (Finset V)` — a set of
-simplices. We do **not** bake the simplicial-closure axiom into the
-type; instead `complexClosure` is the closure operation, and lemmas
-about closed complexes assume `IsClosed G` separately. This matches
-Mathematica's convention (`ComplexClosure` is a function, not a
-constructor invariant).
-
-Counterpart Mathematica functions (this file):
-
-  * `ComplexClosure` → `complexClosure`
-  * `SimplexDimension` → `simplexDimension`
-  * `ComplexDimension` → `complexDimension`
-  * `SimplexCardinality / ies` → `simplexCardinality` / `_cardinalities`
-  * `SimplexWeight` → `simplexWeight` (= `-(-1)^|x|`)
-  * `ComplexEulerCharacteristic` → `eulerCharacteristic`
-  * `ComplexFermiCharacteristic` → `fermiCharacteristic`
-  * `SimplexStar` → `simplexStar`
-  * `SimplexCore` → `simplexCore`
-  * `SimplexUnitSphere` → `simplexUnitSphere`
-  * `IsClosed` (closure invariant for downstream proofs)
-
-**Grounding.** Every type here is a `Finset` of `Finset V` for a
-hypergraph vertex set `V`. No continuum. Anchored as the simplicial
-side of `Hypergraph V` (the relationship `G = (clique-complex of H)`
-is a downstream construction in `KnillVR.lean`).
+This module ports basic functions of Knill's discrete geometry from
+`resources/Infrageometry/Infrageometry/Kernel/Infrageometry.wl`. A complex is a `Finset (Finset V)`;
+closure under subsets is the separate predicate `IsClosed`, and `complexClosure` computes the
+closure
+of a set of facets. The module defines simplex dimension, f-vector, the weight `ω(x) = -(-1)^|x|`,
+the Euler and Fermi characteristics, star, core and unit sphere, the Wu characteristic for m = 1, 2,
+Knill's connection and Green matrices, the super-trace, the signed incidence `d`, the Dirac matrix
+`D = d + dᵀ` and the Hodge matrix `D²`, and vertex angle defects. It proves the Euler–Poincaré
+formula, positive semidefiniteness of `D²`, `d ∘ d = 0` and `dᵀ ∘ dᵀ = 0`.
 -/
 
 import Mathlib.Data.Finset.Powerset
@@ -56,22 +30,19 @@ variable {V : Type*} [DecidableEq V]
 
 /-! ## Simplex and complex types
 
-A simplex is a `Finset V` (we take it nonempty when we need to;
-the empty set is allowed as a degenerate simplex of dimension `-1`,
-matching Mathematica's `SimplexDimension[{}] = -1`). A *complex*
-(`SimplexSet V`) is a `Finset` of simplices. -/
+A simplex is a `Finset V`. The empty set is allowed and has dimension `-1`, as
+`SimplexDimension[{}]`
+in the Mathematica source. A complex (`SimplexSet V`) is a `Finset` of simplices. -/
 
-/-- A *simplex* on vertex type `V`: a finset of vertices. -/
+/-- A simplex on vertex type `V`: a finset of vertices. -/
 abbrev Simplex (V : Type*) := Finset V
 
-/-- A *simplex set* / Knill complex: a finset of simplices. The
-simplicial-closure axiom is left external (`IsClosed`). -/
+/-- A complex: a finset of simplices, with no closure condition imposed. -/
 abbrev SimplexSet (V : Type*) := Finset (Finset V)
 
 /-! ## Dimension and cardinality -/
 
-/-- **Simplex dimension** `dim(x) = |x| - 1`. The empty simplex has
-dimension `-1`. -/
+/-- `dim(x) = |x| - 1`. The empty simplex has dimension `-1`. -/
 def simplexDimension (s : Simplex V) : ℤ := (s.card : ℤ) - 1
 
 @[simp] theorem simplexDimension_empty :
@@ -82,8 +53,7 @@ def simplexDimension (s : Simplex V) : ℤ := (s.card : ℤ) - 1
     simplexDimension ({v} : Simplex V) = 0 := by
   simp [simplexDimension]
 
-/-- **Complex dimension** for a nonempty complex: the maximum of
-`simplexDimension` over the simplices of `G`. -/
+/-- The maximum of `simplexDimension` over the simplices of a nonempty complex `G`. -/
 def complexDimension (G : SimplexSet V) (h : G.Nonempty) : ℤ :=
   (G.image simplexDimension).max' (Finset.image_nonempty.mpr h)
 
@@ -93,21 +63,17 @@ theorem complexDimension_le (G : SimplexSet V) (h : G.Nonempty)
   unfold complexDimension
   exact Finset.le_max' _ _ (Finset.mem_image.mpr ⟨s, hs, rfl⟩)
 
-/-- **Simplex cardinality at dimension `k`**: number of `k`-simplices
-(simplices with `|x| = k + 1`). -/
+/-- The number of simplices of `G` with `k + 1` vertices. -/
 def simplexCardinality (G : SimplexSet V) (k : ℕ) : ℕ :=
   (G.filter (fun s => s.card = k + 1)).card
 
-/-- **f-vector** of `G` up to maximal dimension `maxDim`: list of
-`simplexCardinality G k` for `k = 0, 1, …, maxDim`. -/
+/-- The f-vector of `G`: the list of `simplexCardinality G k` for `k = 0, 1, …, maxDim`. -/
 def simplexCardinalities (G : SimplexSet V) (maxDim : ℕ) : List ℕ :=
   (List.range (maxDim + 1)).map (simplexCardinality G)
 
 /-! ## Weight, Euler characteristic, Fermi characteristic -/
 
-/-- **Knill simplex weight** `ω(x) = -(-1)^|x| = (-1)^(|x| - 1)`.
-For a vertex (`|x| = 1`), `ω = 1`; for an edge (`|x| = 2`), `ω = -1`;
-for a triangle (`|x| = 3`), `ω = 1`. -/
+/-- The simplex weight `ω(x) = -(-1)^|x|`: 1 for a vertex, -1 for an edge, 1 for a triangle. -/
 def simplexWeight (s : Simplex V) : ℤ := -(-1) ^ s.card
 
 @[simp] theorem simplexWeight_singleton (v : V) :
@@ -122,8 +88,7 @@ theorem simplexWeight_pair {v w : V} (hne : v ≠ w) :
     · simpa using hne
   simp [simplexWeight, h_card]
 
-/-- **Euler characteristic** `χ(G) = ∑_{x ∈ G} ω(x)`. The signed sum
-of simplex weights. -/
+/-- The Euler characteristic `χ(G) = ∑_{x ∈ G} ω(x)`. -/
 def eulerCharacteristic (G : SimplexSet V) : ℤ :=
   G.sum simplexWeight
 
@@ -140,26 +105,21 @@ theorem eulerCharacteristic_insert {G : SimplexSet V} {s : Simplex V}
     eulerCharacteristic (insert s G) = simplexWeight s + eulerCharacteristic G := by
   simp [eulerCharacteristic, Finset.sum_insert h]
 
-/-- **Empty-simplex weight**: `ω(∅) = -1`. (Knill's convention; the
-empty set has cardinality 0, so `ω(∅) = -(-1)^0 = -1`.) -/
+/-- `ω(∅) = -1`. -/
 @[simp] theorem simplexWeight_empty :
     simplexWeight (∅ : Simplex V) = -1 := by
   simp [simplexWeight]
 
-/-- **Weight of a `(k+1)`-cardinality simplex** (KN-style indexing):
-for `σ.card = k + 1`, `ω(σ) = (-1)^k`. The convention `k = σ.card - 1`
-is the dimension (vertex = dim 0, edge = dim 1, etc.). -/
+/-- If `σ.card = k + 1`, then `ω(σ) = (-1)^k`. -/
 theorem simplexWeight_eq_neg_one_pow_dim {σ : Simplex V} {k : ℕ} (h : σ.card = k + 1) :
     simplexWeight σ = (-1)^k := by
   unfold simplexWeight
   rw [h, pow_succ]
   ring
 
-/-! ## f-vector / Euler-Poincaré identity (KN8 / KN3 entry) -/
+/-! ## f-vector and the Euler–Poincaré formula -/
 
-/-- **f-vector partition**: `G` decomposes into the disjoint union of its
-`k`-skeletons `kSkeleton G k` (cardinality-`k+1` slices). When `∅ ∉ G`,
-every simplex `σ ∈ G` has `σ.card ≥ 1`, so it lies in `kSkeleton G (σ.card - 1)`. -/
+/-- The `k`-skeleton of `G`: the simplices of `G` with `k + 1` vertices. -/
 def kSkeleton (G : SimplexSet V) (k : ℕ) : SimplexSet V :=
   G.filter (fun s => s.card = k + 1)
 
@@ -171,15 +131,12 @@ def kSkeleton (G : SimplexSet V) (k : ℕ) : SimplexSet V :=
 theorem kSkeleton_subset (G : SimplexSet V) (k : ℕ) :
     kSkeleton G k ⊆ G := Finset.filter_subset _ _
 
-/-- **f-vector via `kSkeleton`**: `simplexCardinality G k = (kSkeleton G k).card`.
-Both count `k`-dimensional simplices (those with cardinality `k + 1`). -/
+/-- `simplexCardinality G k = (kSkeleton G k).card`. -/
 theorem simplexCardinality_eq_kSkeleton_card (G : SimplexSet V) (k : ℕ) :
     simplexCardinality G k = (kSkeleton G k).card := rfl
 
-/-- **Euler-Poincaré identity** (KN8 / f-vector form): for a complex `G`
-with no empty simplex, `χ(G) = ∑_{k < N} (-1)^k · |kSkeleton G k|` where
-`N` is any cardinality bound. The integer sign `(-1)^k` matches
-`simplexWeight` for `k`-skeletons (vertex = dim 0, edge = dim 1, …). -/
+/-- Euler–Poincaré formula: if `∅ ∉ G` and every simplex of `G` has at most `N` vertices, then
+`χ(G) = ∑_{k < N} (-1)^k · |kSkeleton G k|`. -/
 theorem eulerCharacteristic_eq_alt_sum_kSkeleton
     (G : SimplexSet V) (h_no_empty : ∅ ∉ G) (N : ℕ)
     (h_bound : ∀ σ ∈ G, σ.card < N + 1) :
@@ -213,7 +170,7 @@ theorem eulerCharacteristic_eq_alt_sum_kSkeleton
     rw [mem_kSkeleton] at h_i h_j
     have : i + 1 = j + 1 := h_i.2 ▸ h_j.2
     exact hij (by omega)
-  -- Now expand and conclude.
+  -- Step C: expand the sum over the partition.
   unfold eulerCharacteristic
   conv_lhs => rw [h_partition]
   rw [Finset.sum_biUnion h_disj]
@@ -227,8 +184,7 @@ theorem eulerCharacteristic_eq_alt_sum_kSkeleton
       exact simplexWeight_eq_neg_one_pow_dim h_card]
   rw [Finset.sum_const, nsmul_eq_mul, mul_comm]
 
-/-- **Euler-Poincaré on a `Fintype V`** (KN8 corollary): closes the
-cardinality bound by `Fintype.card V`. -/
+/-- Euler–Poincaré formula for a finite vertex type, with the bound `N = Fintype.card V`. -/
 theorem eulerCharacteristic_eq_alt_sum_fintype [Fintype V]
     (G : SimplexSet V) (h_no_empty : ∅ ∉ G) :
     eulerCharacteristic G =
@@ -241,7 +197,7 @@ theorem eulerCharacteristic_eq_alt_sum_fintype [Fintype V]
   rw [Finset.card_univ] at h_card_le
   omega
 
-/-- **Fermi characteristic** `Fermi(G) = ∏_{x ∈ G} ω(x)`. -/
+/-- The Fermi characteristic `∏_{x ∈ G} ω(x)`. -/
 def fermiCharacteristic (G : SimplexSet V) : ℤ :=
   G.prod simplexWeight
 
@@ -256,18 +212,15 @@ theorem fermiCharacteristic_insert {G : SimplexSet V} {s : Simplex V}
 
 /-! ## Star, core, unit sphere -/
 
-/-- **Star** of a simplex `x` in `G`: all simplices of `G` that contain
-`x` as a subset. -/
+/-- The star of `x` in `G`: the simplices of `G` that contain `x`. -/
 def simplexStar (G : SimplexSet V) (x : Simplex V) : SimplexSet V :=
   G.filter (fun s => x ⊆ s)
 
-/-- **Core** of a simplex `x` in `G`: all simplices of `G` that are
-subsets of `x`. -/
+/-- The core of `x` in `G`: the simplices of `G` contained in `x`. -/
 def simplexCore (G : SimplexSet V) (x : Simplex V) : SimplexSet V :=
   G.filter (fun s => s ⊆ x)
 
-/-- **Unit sphere** of a simplex `x` in `G`: all simplices that contain
-`x` strictly (so `simplexStar` minus `x` itself). -/
+/-- The unit sphere of `x` in `G`: the star of `x` with `x` removed. -/
 def simplexUnitSphere (G : SimplexSet V) (x : Simplex V) : SimplexSet V :=
   (simplexStar G x).erase x
 
@@ -284,19 +237,16 @@ theorem mem_simplexUnitSphere (G : SimplexSet V) (x s : Simplex V) :
   simp [simplexUnitSphere, simplexStar]
   tauto
 
-/-! ## Closure (simplicial-closure axiom)
+/-! ## Closure
 
-`complexClosure facets` takes a list of facets (top-dimensional
-simplices) and returns the smallest simplicial complex containing
-them — i.e., the union of all nonempty subsets of each facet. -/
+`complexClosure facets` is the set of nonempty subsets of the facets, the smallest set of nonempty
+simplices that contains the facets and is closed under nonempty subsets. -/
 
-/-- **Complex closure** of a set of facets: union of nonempty subsets
-of each facet. Matches Mathematica's `ComplexClosure`. -/
+/-- The union over the facets of their nonempty subsets, as Mathematica's `ComplexClosure`. -/
 def complexClosure (facets : SimplexSet V) : SimplexSet V :=
   facets.biUnion (fun s => s.powerset.erase ∅)
 
-/-- A simplex set `G` **is closed** under subsets (the simplicial-complex
-axiom): every nonempty subset of a simplex of `G` is also in `G`. -/
+/-- Every nonempty subset of a simplex of `G` lies in `G`. -/
 def IsClosed (G : SimplexSet V) : Prop :=
   ∀ s ∈ G, ∀ t : Simplex V, t ⊆ s → t ≠ ∅ → t ∈ G
 
@@ -305,8 +255,7 @@ theorem mem_complexClosure {facets : SimplexSet V} {t : Simplex V} :
   simp [complexClosure, Finset.mem_biUnion, Finset.mem_erase,
         Finset.mem_powerset, and_comm]
 
-/-- **The closure of a complex is closed.** Idempotency of subset
-closure. -/
+/-- `complexClosure facets` satisfies `IsClosed`. -/
 theorem complexClosure_isClosed (facets : SimplexSet V) :
     IsClosed (complexClosure facets) := by
   intro s hs t hst ht_ne
@@ -316,8 +265,7 @@ theorem complexClosure_isClosed (facets : SimplexSet V) :
 
 /-! ## Vertex extraction -/
 
-/-- **Vertices of a complex**: union of all simplices in `G`, viewed as
-a single finset of vertices. -/
+/-- The union of the simplices of `G`. -/
 def complexVertexList (G : SimplexSet V) : Finset V :=
   G.biUnion id
 
@@ -325,30 +273,20 @@ def complexVertexList (G : SimplexSet V) : Finset V :=
     v ∈ complexVertexList G ↔ ∃ s ∈ G, v ∈ s := by
   simp [complexVertexList]
 
-/-! ## Wu characteristic (KN3 entry point)
+/-! ## Wu characteristic
 
-The **Wu characteristic** generalises Euler characteristic by summing
-the product of weights over m-tuples of pairwise-intersecting
-simplices. For m = 1 it reduces to Euler characteristic; for m = 2 it
-is the *quadratic characteristic* used in Knill 2018+.
+The Wu characteristic of order m sums the product of weights over m-tuples of pairwise intersecting
+simplices. This section defines the cases m = 1 and m = 2, with
+`ω₂(G) = ∑_{(x, y) ∈ G × G, x ∩ y ≠ ∅} ω(x) · ω(y)`. -/
 
-For m = 2: `ω₂(G) = ∑_{(x, y) ∈ G × G, x ∩ y ≠ ∅} ω(x) · ω(y)`.
-
-This is the m = 1, 2 case directly. The general
-`m ≥ 3` case requires iterated `Finset.product` and is staged for a
-follow-up commit closing the rest of KN3 (Wu cohomology + fusion
-inequality). -/
-
-/-- **Wu characteristic at m = 1**: equals `eulerCharacteristic`. The
-single-simplex sum. -/
+/-- The Wu characteristic of order 1, `∑_{x ∈ G} ω(x)`. -/
 def wuCharacteristic₁ (G : SimplexSet V) : ℤ :=
   eulerCharacteristic G
 
 @[simp] theorem wuCharacteristic₁_eq_euler (G : SimplexSet V) :
     wuCharacteristic₁ G = eulerCharacteristic G := rfl
 
-/-- **Wu characteristic at m = 2** (quadratic characteristic):
-`ω₂(G) = ∑_{(x, y) ∈ G × G, x ∩ y ≠ ∅} ω(x) · ω(y)`. -/
+/-- The Wu characteristic of order 2, `ω₂(G) = ∑_{(x, y) ∈ G × G, x ∩ y ≠ ∅} ω(x) · ω(y)`. -/
 def wuCharacteristic₂ (G : SimplexSet V) : ℤ :=
   ((G.product G).filter (fun p => (p.1 ∩ p.2).Nonempty)).sum
     (fun p => simplexWeight p.1 * simplexWeight p.2)
@@ -357,8 +295,7 @@ def wuCharacteristic₂ (G : SimplexSet V) : ℤ :=
     wuCharacteristic₂ (∅ : SimplexSet V) = 0 := by
   simp [wuCharacteristic₂]
 
-/-- **Wu characteristic at m = 2 of a singleton complex**: a single
-simplex `s` with `s ∩ s = s ≠ ∅` (when `s ≠ ∅`) gives `ω(s)²`. -/
+/-- For a nonempty simplex `s`, `ω₂({s}) = ω(s) · ω(s)`. -/
 theorem wuCharacteristic₂_singleton (s : Simplex V) (hs : s.Nonempty) :
     wuCharacteristic₂ ({s} : SimplexSet V) = simplexWeight s * simplexWeight s := by
   unfold wuCharacteristic₂
@@ -375,10 +312,7 @@ theorem wuCharacteristic₂_singleton (s : Simplex V) (hs : s.Nonempty) :
   rw [h_filt]
   simp
 
-/-- **Wu inclusion-exclusion** (#239 / KN3): `wu₂(G) = χ(G)² - ∑_{x ∩ y = ∅} ω(x)·ω(y)`,
-where the disjoint-pair sum ranges over `(x, y) ∈ G × G` with `x ∩ y = ∅`.
-Splits the full Cartesian-product sum `(∑_{(x,y) ∈ G×G} ω(x)·ω(y)) = χ²(G)`
-into the intersecting-pair part (= `wu₂`) and the disjoint-pair complement. -/
+/-- `ω₂(G) = χ(G)² - ∑_{(x, y) ∈ G × G, x ∩ y = ∅} ω(x) · ω(y)`. -/
 theorem wuCharacteristic₂_eq_chi_sq_sub_disjoint (G : SimplexSet V) :
     wuCharacteristic₂ G = (eulerCharacteristic G)^2 -
       ((G.product G).filter (fun p => ¬ (p.1 ∩ p.2).Nonempty)).sum
@@ -397,23 +331,18 @@ theorem wuCharacteristic₂_eq_chi_sq_sub_disjoint (G : SimplexSet V) :
     (fun p => simplexWeight p.1 * simplexWeight p.2)
   linarith
 
-/-! ## Codim-1 face relation (incidence-matrix prerequisite)
+/-! ## Codimension-1 faces
 
-`isFace x y` holds when `y` is a codimension-1 face of `x`: a
-proper subset with one fewer vertex. This is the index-set of the
-non-zero entries of the (unsigned) incidence matrix; the *signed*
-boundary operator (Dirac `d`) is a follow-up commit that requires
-a `LinearOrder V` to fix orientation. -/
+`isFace x y` holds when `y ⊆ x` and `|x| = |y| + 1`. -/
 
-/-- **Codim-1 face**: `y ⊆ x` with `|x| = |y| + 1`. Equivalently, `y`
-is obtained from `x` by removing exactly one vertex. -/
+/-- `y ⊆ x` and `|x| = |y| + 1`. -/
 def isFace (x y : Simplex V) : Prop :=
   y ⊆ x ∧ x.card = y.card + 1
 
 instance (x y : Simplex V) : Decidable (isFace x y) := by
   unfold isFace; infer_instance
 
-/-- **Removing a vertex gives a codim-1 face.** -/
+/-- For `v ∈ x`, `x.erase v` is a codimension-1 face of `x`. -/
 theorem isFace_erase {x : Simplex V} {v : V} (hv : v ∈ x) :
     isFace x (x.erase v) := by
   refine ⟨Finset.erase_subset _ _, ?_⟩
@@ -421,7 +350,7 @@ theorem isFace_erase {x : Simplex V} {v : V} (hv : v ∈ x) :
   have : 1 ≤ x.card := Finset.card_pos.mpr ⟨v, hv⟩
   omega
 
-/-- **Set difference of a codim-1 face has cardinality 1.** -/
+/-- If `isFace x y`, then `x \ y` has one element. -/
 theorem isFace_diff_card {x y : Simplex V} (h : isFace x y) :
     (x \ y).card = 1 := by
   obtain ⟨hyx, hcard⟩ := h
@@ -429,7 +358,7 @@ theorem isFace_diff_card {x y : Simplex V} (h : isFace x y) :
     Finset.card_sdiff_add_card_eq_card hyx
   omega
 
-/-- **There exists a unique vertex `v ∈ x \ y` for any codim-1 face `y` of `x`**. -/
+/-- If `isFace x y`, then some vertex of `x` is not in `y`. -/
 theorem isFace_exists_diff_vertex {x y : Simplex V} (h : isFace x y) :
     ∃ v, v ∈ x ∧ v ∉ y := by
   have hcard := isFace_diff_card h
@@ -438,48 +367,30 @@ theorem isFace_exists_diff_vertex {x y : Simplex V} (h : isFace x y) :
   rw [Finset.mem_sdiff] at hv
   exact ⟨v, hv.1, hv.2⟩
 
-/-! ## Connection matrix (#270)
+/-! ## Connection matrix
 
-Knill's **connection matrix** `L` on a simplex set `G`:
+Knill's connection matrix is `L(x, y) = χ(core(x) ∩ core(y))`, the Euler characteristic of the
+simplices of `G` contained in both `x` and `y`. The Mathematica counterpart is
+`ConnectionMatrix[G_]`
+in `Infrageometry.wl` and `QuantumCalculus.wl`. -/
 
-  `L(x, y) := χ(simplexCore G x ∩ simplexCore G y)`
-
-The Euler characteristic of the set of simplices that are subsets of
-both `x` and `y` (equivalently, of `x ∩ y`). Sign-free; no
-orientation required. This matrix has the remarkable property
-`det L = ±1` (= Knill's Fermi characteristic) for any simplicial
-complex — proved in a follow-up. The Green function `g = L⁻¹` (#271)
-satisfies the energy theorem `∑ g(x, y) = χ(G)`.
-
-Counterpart Mathematica: `ConnectionMatrix[G_]` in
-`Infrageometry.wl` / `QuantumCalculus.wl`. -/
-
-/-- **Connection-matrix entry** `L(x, y) := χ(core(x) ∩ core(y))`,
-the Euler characteristic of the simplices in `G` that are subsets of
-both `x` and `y`. -/
+/-- `L(x, y) = χ(core(x) ∩ core(y))`. -/
 def connectionEntry (G : SimplexSet V) (x y : Simplex V) : ℤ :=
   eulerCharacteristic (simplexCore G x ∩ simplexCore G y)
 
-/-- **Symmetry**: `L(x, y) = L(y, x)`. The connection matrix is
-symmetric — intersection commutes. -/
+/-- `L(x, y) = L(y, x)`. -/
 theorem connectionEntry_symm (G : SimplexSet V) (x y : Simplex V) :
     connectionEntry G x y = connectionEntry G y x := by
   unfold connectionEntry
   rw [Finset.inter_comm]
 
-/-- **Diagonal**: `L(x, x) = χ(core(x))`. -/
+/-- `L(x, x) = χ(core(x))`. -/
 theorem connectionEntry_self (G : SimplexSet V) (x : Simplex V) :
     connectionEntry G x x = eulerCharacteristic (simplexCore G x) := by
   unfold connectionEntry
   rw [Finset.inter_self]
 
-/-- **Off-support vanishing**: if `x ∩ y = ∅` (no common vertex) and
-`G` is closed (every simplex of `G` has all its vertices among the
-union of the simplices of `G`), then `L(x, y) = 0` because no
-simplex `s ∈ G` can satisfy `s ⊆ x ∧ s ⊆ y` (the only candidate is
-`s = ∅`, which is not a valid simplex in our convention; we exclude
-it via the `simplexCore` filter). Stated as: when no nonempty
-simplex of `G` is contained in both `x` and `y`, the entry is 0. -/
+/-- If no simplex of `G` is contained in both `x` and `y`, then `L(x, y) = 0`. -/
 theorem connectionEntry_eq_zero_of_no_common_subsimplex
     (G : SimplexSet V) (x y : Simplex V)
     (h : ∀ s ∈ G, ¬ (s ⊆ x ∧ s ⊆ y)) :
@@ -493,10 +404,7 @@ theorem connectionEntry_eq_zero_of_no_common_subsimplex
     exact h s hsG ⟨hsx, hsy⟩
   rw [h_inter_empty, eulerCharacteristic_empty]
 
-/-- **Knill's mass identity**: for the diagonal of `L`, summing the
-weighted entries gives the Euler characteristic of `G`. (Stated for
-the diagonal only; the full Green-function energy theorem
-`∑ g(x, y) = χ(G)` follows after Green is defined.) -/
+/-- `∑_{x ∈ G} ω(x) · L(x, x) = ∑_{x ∈ G} ω(x) · χ(core(x))`. -/
 theorem sum_simplexWeight_connectionEntry_diag (G : SimplexSet V) :
     G.sum (fun x => simplexWeight x * connectionEntry G x x)
       = G.sum (fun x => simplexWeight x * eulerCharacteristic (simplexCore G x)) := by
@@ -504,36 +412,25 @@ theorem sum_simplexWeight_connectionEntry_diag (G : SimplexSet V) :
   intros x _
   rw [connectionEntry_self]
 
-/-! ## Green function (#271)
+/-! ## Green function
 
-Knill's **Green function** matrix `g`, the matrix inverse of `L`:
+Knill's Green function matrix is `g(x, y) = ω(x) · ω(y) · χ(star(x) ∩ star(y))`. Knill states that
+`L⁻¹ = gᵀ` and that `∑_{x, y} g(x, y) = χ(G)`; neither identity is proved in this module. The
+Mathematica counterpart is `GreenFunctionMatrix[G_]` in `Infrageometry.wl` and `QuantumCalculus.wl`.
+-/
 
-  `g(x, y) := ω(x) · ω(y) · χ(simplexStar G x ∩ simplexStar G y)`
-
-with `ω` the simplex weight `-(-1)^|x|`. Two key identities:
-  * `Inverse[L] = Transpose[g]` (matrix inverse of L is transpose of g)
-  * **Energy theorem**: `∑_{x, y} g(x, y) = χ(G)`
-
-Counterpart Mathematica: `GreenFunctionMatrix[G_]` /
-`g[G, T]` (dynamical version) in `Infrageometry.wl` /
-`QuantumCalculus.wl`. -/
-
-/-- **Green-function entry**:
-`g(x, y) := ω(x) · ω(y) · χ(star(x) ∩ star(y))`. Weighted Euler
-characteristic of the simplices that contain both `x` and `y`. -/
+/-- `g(x, y) = ω(x) · ω(y) · χ(star(x) ∩ star(y))`. -/
 def greenEntry (G : SimplexSet V) (x y : Simplex V) : ℤ :=
   simplexWeight x * simplexWeight y *
     eulerCharacteristic (simplexStar G x ∩ simplexStar G y)
 
-/-- **Symmetry**: `g(x, y) = g(y, x)`. -/
+/-- `g(x, y) = g(y, x)`. -/
 theorem greenEntry_symm (G : SimplexSet V) (x y : Simplex V) :
     greenEntry G x y = greenEntry G y x := by
   unfold greenEntry
   rw [Finset.inter_comm, mul_comm (simplexWeight x) (simplexWeight y)]
 
-/-- **Diagonal**: `g(x, x) = ω(x)² · χ(star(x))`. Note `ω(x)² = 1`
-for any simplex (since `ω(x) = ±1`), so this simplifies further:
-`g(x, x) = χ(star(x))`. We state the unsimplified form first. -/
+/-- `g(x, x) = ω(x) · ω(x) · χ(star(x))`. -/
 theorem greenEntry_self (G : SimplexSet V) (x : Simplex V) :
     greenEntry G x x =
       simplexWeight x * simplexWeight x *
@@ -541,8 +438,7 @@ theorem greenEntry_self (G : SimplexSet V) (x : Simplex V) :
   unfold greenEntry
   rw [Finset.inter_self]
 
-/-- **Off-support vanishing**: when no simplex of `G` contains both
-`x` and `y` (no common super-simplex), `g(x, y) = 0`. -/
+/-- If no simplex of `G` contains both `x` and `y`, then `g(x, y) = 0`. -/
 theorem greenEntry_eq_zero_of_no_common_supersimplex
     (G : SimplexSet V) (x y : Simplex V)
     (h : ∀ s ∈ G, ¬ (x ⊆ s ∧ y ⊆ s)) :
@@ -557,7 +453,7 @@ theorem greenEntry_eq_zero_of_no_common_supersimplex
   rw [h_inter_empty, eulerCharacteristic_empty]
   ring
 
-/-- **Weight squared identity**: `ω(x)² = 1` for any simplex. -/
+/-- `ω(x) · ω(x) = 1`. -/
 theorem simplexWeight_sq (s : Simplex V) :
     simplexWeight s * simplexWeight s = 1 := by
   unfold simplexWeight
@@ -565,29 +461,17 @@ theorem simplexWeight_sq (s : Simplex V) :
   rw [show s.card + s.card = 2 * s.card from by ring, pow_mul]
   norm_num
 
-/-- **Diagonal simplified**: `g(x, x) = χ(star(x))`. -/
+/-- `g(x, x) = χ(star(x))`. -/
 theorem greenEntry_self_simplified (G : SimplexSet V) (x : Simplex V) :
     greenEntry G x x = eulerCharacteristic (simplexStar G x) := by
   rw [greenEntry_self, simplexWeight_sq, one_mul]
 
-/-! ## Super-trace (#273)
+/-! ## Super-trace
 
-**Super-trace** of a simplex-indexed function: the signed sum
-`Str[X] := ∑_{x ∈ G} ω(x) · X(x, x)`. The signing distinguishes
-even-dimensional simplices (positive contribution) from odd-
-dimensional (negative). Knill's super-symmetry between even/odd
-forms (KN14) is articulated through the super-trace identity
-`Str[H] = χ(G)` for the Hodge Laplacian `H = D²`.
+The super-trace of a matrix `X` indexed by simplices is `Str[X] = ∑_{x ∈ G} ω(x) · X(x, x)`. The
+Mathematica counterpart is `SuperTrace[G_, X_]` in `Infrageometry.wl` and `QuantumCalculus.wl`. -/
 
-Counterpart Mathematica: `SuperTrace[G_, X_]` in `Infrageometry.wl`
-/ `QuantumCalculus.wl`.
-
-Pseudo-determinant and super-determinant — which need eigenvalue
-machinery — are staged for follow-up commits closing the rest of
-#273. -/
-
-/-- **Super-trace** of a simplex-indexed function.
-`superTrace G X := ∑_{x ∈ G} ω(x) · X x x`. -/
+/-- `superTrace G X = ∑_{x ∈ G} ω(x) · X x x`. -/
 def superTrace (G : SimplexSet V) (X : Simplex V → Simplex V → ℤ) : ℤ :=
   G.sum (fun x => simplexWeight x * X x x)
 
@@ -600,7 +484,7 @@ theorem superTrace_insert {G : SimplexSet V} {s : Simplex V}
     superTrace (insert s G) X = simplexWeight s * X s s + superTrace G X := by
   simp [superTrace, Finset.sum_insert h]
 
-/-- **Super-trace of a sum** is additive in `X`. -/
+/-- The super-trace is additive in `X`. -/
 theorem superTrace_add (G : SimplexSet V) (X Y : Simplex V → Simplex V → ℤ) :
     superTrace G (fun x y => X x y + Y x y)
       = superTrace G X + superTrace G Y := by
@@ -610,8 +494,7 @@ theorem superTrace_add (G : SimplexSet V) (X Y : Simplex V → Simplex V → ℤ
   intros x _
   ring
 
-/-- **Super-trace of the constant `δ_{xy}` matrix** equals
-`eulerCharacteristic G` (since `X x x = 1` for all x). -/
+/-- The super-trace of the constant matrix 1 equals `χ(G)`. -/
 theorem superTrace_diag_one (G : SimplexSet V) :
     superTrace G (fun _ _ => (1 : ℤ)) = eulerCharacteristic G := by
   unfold superTrace eulerCharacteristic
@@ -619,42 +502,26 @@ theorem superTrace_diag_one (G : SimplexSet V) :
   intros x _
   ring
 
-/-! ## Signed incidence operator `d` (#269)
+/-! ## Signed incidence `d`
 
-For an ordered vertex type (`[LinearOrder V]`), each simplex acquires
-a canonical orientation via the sorted list of its vertices. The
-**signed incidence** `incidence x y : ℤ` is `(-1)^i` when `y` is the
-codim-1 face of `x` obtained by removing the i-th vertex (in sorted
-order); zero otherwise.
-
-This is the **boundary operator** on oriented simplices. The
-fundamental property `d ∘ d = 0` (cochain-complex condition) follows
-from a sign-cancellation argument on codim-2 faces; staged for a
-follow-up commit.
-
-Counterpart Mathematica: `s[x_, y_]` in `Infrageometry.wl` /
-`QuantumCalculus.wl`. Foundation for KN1 (wave equation), KN4
-(isospectral deformation), KN8 (Dirac zeta), KN14 (McKean-Singer
-supersymmetry). -/
+For a linearly ordered vertex type, `incidence x y` is `(-1)^i` when `y` is obtained from `x` by
+removing its `i`-th vertex in sorted order, and 0 otherwise. The Mathematica counterpart is
+`s[x_, y_]` in `Infrageometry.wl` and `QuantumCalculus.wl`. -/
 
 variable [LinearOrder V]
 
-/-- **Missing vertex of a codim-1 face**: given `isFace x y`, the
-unique vertex of `x` not in `y`. Pulled out as its own definition to
-keep `incidence`'s `dif_pos` body free of nested `let`/`have` proof
-terms (which obstructed `congr` and `rewrite` motives). -/
+/-- For `isFace x y`, the vertex of `x` not in `y`. -/
 def missingVertex {x y : Simplex V} (h : isFace x y) : V :=
   (x \ y).min'
     (Finset.card_pos.mp (by rw [isFace_diff_card h]; omega))
 
-/-- **`missingVertex` lies in `x \ y`**: the extracted vertex is in
-`x` and not in `y`. -/
+/-- `missingVertex h ∈ x \ y`. -/
 theorem missingVertex_mem_sdiff {x y : Simplex V} (h : isFace x y) :
     missingVertex h ∈ x \ y := by
   unfold missingVertex
   exact Finset.min'_mem _ _
 
-/-- **Singleton-extraction**: when `x \ y = {v}`, `missingVertex h = v`. -/
+/-- If `x \ y = {v}`, then `missingVertex h = v`. -/
 theorem missingVertex_eq_of_sdiff_eq_singleton
     {x y : Simplex V} (h : isFace x y) {v : V}
     (h_eq : x \ y = {v}) :
@@ -663,8 +530,7 @@ theorem missingVertex_eq_of_sdiff_eq_singleton
     rw [← h_eq]; exact missingVertex_mem_sdiff h
   exact Finset.mem_singleton.mp h_mem
 
-/-- **`missingVertex` of `x.erase w` is `w`**: removing a vertex `w`
-from `x` and asking which vertex went missing returns `w`. -/
+/-- For `w ∈ x`, the missing vertex of `x.erase w` is `w`. -/
 theorem missingVertex_erase {x : Simplex V} {w : V} (hw : w ∈ x) :
     missingVertex (isFace_erase hw) = w := by
   apply missingVertex_eq_of_sdiff_eq_singleton
@@ -677,34 +543,28 @@ theorem missingVertex_erase {x : Simplex V} {w : V} (hw : w ∈ x) :
   · rintro rfl
     exact ⟨hw, fun h => h.1 rfl⟩
 
-/-- **Signed incidence** `d(x, y) := (-1)^i` if `y = x \ {v_i}` for
-the i-th vertex of `x` in sorted order; 0 otherwise. The missing
-vertex is extracted via the `missingVertex` helper above. -/
+/-- `d(x, y) = (-1)^i` if `y` is `x` with its `i`-th vertex in sorted order removed, and 0
+otherwise. -/
 def incidence (x y : Simplex V) : ℤ :=
   if h : isFace x y then
     (-1 : ℤ) ^ (x.sort (· ≤ ·)).idxOf (missingVertex h)
   else 0
 
-/-- **Off-support vanishing**: `d(x, y) = 0` when `y` is not a codim-1
-face of `x`. -/
+/-- If `y` is not a codimension-1 face of `x`, then `d(x, y) = 0`. -/
 theorem incidence_eq_zero_of_not_isFace {x y : Simplex V}
     (h : ¬ isFace x y) :
     incidence x y = 0 := by
   unfold incidence
   rw [dif_neg h]
 
-/-- **Self-incidence is zero**: `d(x, x) = 0` because `x` is not a
-codim-1 face of itself (the cardinalities don't differ by 1). -/
+/-- `d(x, x) = 0`. -/
 theorem incidence_self (x : Simplex V) : incidence x x = 0 := by
   apply incidence_eq_zero_of_not_isFace
   intro h
   obtain ⟨_, hcard⟩ := h
   omega
 
-/-- **`d(x, y) ≠ 0 ↔ isFace x y`**: incidence is non-zero exactly on
-codim-1 face pairs. The forward direction is the contrapositive of
-`incidence_eq_zero_of_not_isFace`; the backward direction uses the
-`(-1)^k` representation of the non-zero case. -/
+/-- `d(x, y) ≠ 0` if and only if `isFace x y`. -/
 theorem incidence_ne_zero_iff_isFace (x y : Simplex V) :
     incidence x y ≠ 0 ↔ isFace x y := by
   refine ⟨fun h_ne => ?_, fun h_isFace => ?_⟩
@@ -714,8 +574,7 @@ theorem incidence_ne_zero_iff_isFace (x y : Simplex V) :
     rw [dif_pos h_isFace]
     exact pow_ne_zero _ (by norm_num)
 
-/-- **Sign is a unit**: `d(x, y) ∈ {-1, 0, 1}` always. Specifically,
-`(d(x, y))² = 0` if `¬ isFace x y`, else `1`. -/
+/-- `d(x, y) · d(x, y)` is 1 if `isFace x y` and 0 otherwise. -/
 theorem incidence_sq (x y : Simplex V) :
     incidence x y * incidence x y =
       if isFace x y then 1 else 0 := by
@@ -727,45 +586,27 @@ theorem incidence_sq (x y : Simplex V) :
     norm_num
   · rw [dif_neg h, if_neg h, mul_zero]
 
-/-! ## Dirac and Hodge matrices (#272)
+/-! ## Dirac and Hodge matrices
 
-The **Dirac matrix** `D = d + d*` is the symmetrised sum of the
-incidence operator and its transpose:
+The Dirac matrix is `dirac x y = incidence x y + incidence y x`. On a finite simplex set `G`, the
+Hodge matrix is `hodgeOnG G x y = ∑_{z ∈ G} dirac x z · dirac z y`. The Mathematica counterparts are
+`DiracHodgeMatrix[G_]` and `HodgeMatrix[G_]` in `Infrageometry.wl`. -/
 
-  `dirac x y := incidence x y + incidence y x`
-
-It's self-adjoint by construction (`dirac x y = dirac y x`). The
-**Hodge matrix** `H = D²` is its square; on a finite simplex set `G`
-this is a matrix product indexed over `G`:
-
-  `hodgeOnG G x y := ∑_{z ∈ G} dirac x z · dirac z y`
-
-These are the load-bearing operators for the entire Knill spectral
-program: KN1 (wave eq via `cos(D t)`), KN4 (Lax pair `D' = [B, D]`),
-KN8 (Dirac zeta `str(|D|^{-s})`), KN14 (McKean-Singer supersymmetry
-between even/odd-form spectra of `H`), KN9 (analytic torsion via
-Hodge block determinants).
-
-Counterpart Mathematica: `DiracHodgeMatrix[G_]` / `HodgeMatrix[G_]`
-in `Infrageometry.wl`. -/
-
-/-- **Dirac matrix entry** `D(x, y) := d(x, y) + d(y, x)`. -/
+/-- `D(x, y) = d(x, y) + d(y, x)`. -/
 def dirac (x y : Simplex V) : ℤ :=
   incidence x y + incidence y x
 
-/-- **Self-adjointness**: `D(x, y) = D(y, x)`. Symmetry follows from
-the symmetric definition. -/
+/-- `D(x, y) = D(y, x)`. -/
 theorem dirac_symm (x y : Simplex V) : dirac x y = dirac y x := by
   unfold dirac; ring
 
-/-- **Diagonal vanishes**: `D(x, x) = 0` since `d(x, x) = 0`. -/
+/-- `D(x, x) = 0`. -/
 @[simp] theorem dirac_self (x : Simplex V) : dirac x x = 0 := by
   unfold dirac
   rw [incidence_self]
   ring
 
-/-- **Off-support vanishing**: `D(x, y) = 0` when `x` and `y` are
-neither codim-1 faces of each other (no incidence either way). -/
+/-- If neither of `x`, `y` is a codimension-1 face of the other, then `D(x, y) = 0`. -/
 theorem dirac_eq_zero_of_no_face {x y : Simplex V}
     (hxy : ¬ isFace x y) (hyx : ¬ isFace y x) :
     dirac x y = 0 := by
@@ -774,15 +615,11 @@ theorem dirac_eq_zero_of_no_face {x y : Simplex V}
       incidence_eq_zero_of_not_isFace hyx]
   ring
 
-/-- **Hodge Laplacian on a simplex set**:
-`H(x, y) := (D · D) (x, y) = ∑_{z ∈ G} D(x, z) · D(z, y)`.
-
-Matrix product of `D` with itself, restricted to indices in `G`. -/
+/-- `H(x, y) = ∑_{z ∈ G} D(x, z) · D(z, y)`, the square of `D` with indices in `G`. -/
 def hodgeOnG (G : SimplexSet V) (x y : Simplex V) : ℤ :=
   G.sum (fun z => dirac x z * dirac z y)
 
-/-- **Self-adjointness of Hodge**: `H(x, y) = H(y, x)` for every
-finite simplex set `G`. Follows from `dirac_symm`. -/
+/-- `H(x, y) = H(y, x)`. -/
 theorem hodgeOnG_symm (G : SimplexSet V) (x y : Simplex V) :
     hodgeOnG G x y = hodgeOnG G y x := by
   unfold hodgeOnG
@@ -791,10 +628,8 @@ theorem hodgeOnG_symm (G : SimplexSet V) (x y : Simplex V) :
   rw [dirac_symm x z, dirac_symm z y]
   ring
 
-/-- **Hodge double-sum decomposes as sum of squares**: for any function
-`f : Simplex V → ℤ`, the Dirichlet form `∑_{x,y ∈ G} f(x) · H(x,y) · f(y)`
-equals `∑_{z ∈ G} (∑_{x ∈ G} f(x) · dirac(x, z))²`. Direct from
-`H = D · D^T` (matrix product) and `dirac` symmetry. -/
+/-- For `f : Simplex V → ℤ`,
+`∑_{x, y ∈ G} f(x) · H(x, y) · f(y) = ∑_{z ∈ G} (∑_{x ∈ G} f(x) · D(x, z))²`. -/
 theorem hodgeOnG_double_sum_eq_sum_squares (G : SimplexSet V) (f : Simplex V → ℤ) :
     G.sum (fun x => f x * G.sum (fun y => hodgeOnG G x y * f y))
       = G.sum (fun z => (G.sum (fun x => f x * dirac x z))^2) := by
@@ -823,19 +658,13 @@ theorem hodgeOnG_double_sum_eq_sum_squares (G : SimplexSet V) (f : Simplex V →
           apply Finset.sum_congr rfl; intros y _
           rw [dirac_symm z y]; ring
 
-/-- **Hodge is positive semi-definite** (`H ⪰ 0`): the Dirichlet form
-`∑_{x,y ∈ G} f(x) · H(x,y) · f(y) ≥ 0` for any `f : Simplex V → ℤ`.
-Direct corollary of the sum-of-squares decomposition. Foundational
-for the spectral theorem (eigenvalues of `H` are non-negative reals)
-and the Hodge isomorphism (kernel of `H` ≅ harmonic forms). -/
+/-- For `f : Simplex V → ℤ`, `∑_{x, y ∈ G} f(x) · H(x, y) · f(y) ≥ 0`. -/
 theorem hodgeOnG_psd (G : SimplexSet V) (f : Simplex V → ℤ) :
     0 ≤ G.sum (fun x => f x * G.sum (fun y => hodgeOnG G x y * f y)) := by
   rw [hodgeOnG_double_sum_eq_sum_squares]
   exact Finset.sum_nonneg (fun _ _ => sq_nonneg _)
 
-/-- **Hodge diagonal as sum of squared `dirac` entries**: `H(x, x) = ∑_z dirac(x, z)²`.
-Direct from `H = D · D^T` and `dirac` symmetry. In particular `H(x, x) ≥ 0`,
-the diagonal-PSD specialization. -/
+/-- `H(x, x) = ∑_{z ∈ G} D(x, z)²`. -/
 theorem hodgeOnG_diag_eq_sum_dirac_sq (G : SimplexSet V) (x : Simplex V) :
     hodgeOnG G x x = G.sum (fun z => (dirac x z)^2) := by
   unfold hodgeOnG
@@ -843,27 +672,17 @@ theorem hodgeOnG_diag_eq_sum_dirac_sq (G : SimplexSet V) (x : Simplex V) :
   intros z _
   rw [dirac_symm z x, sq]
 
-/-- **Hodge diagonal is non-negative**: `H(x, x) ≥ 0`. Direct from
-`hodgeOnG_diag_eq_sum_dirac_sq` and non-negativity of squares. -/
+/-- `H(x, x) ≥ 0`. -/
 theorem hodgeOnG_diag_nonneg (G : SimplexSet V) (x : Simplex V) :
     0 ≤ hodgeOnG G x x := by
   rw [hodgeOnG_diag_eq_sum_dirac_sq]
   exact Finset.sum_nonneg (fun _ _ => sq_nonneg _)
 
-/-- **Dirac kernel predicate**: `f` is in the kernel of the Dirac
-operator restricted to `G` if every "dirac vector"
-`(D · f)(z) := ∑_x f(x) · dirac(x, z)` vanishes for `z ∈ G`. This
-is the **harmonic-forms** condition. -/
+/-- `∑_{x ∈ G} f(x) · D(x, z) = 0` for every `z ∈ G`. -/
 def isDiracKernel (G : SimplexSet V) (f : Simplex V → ℤ) : Prop :=
   ∀ z ∈ G, G.sum (fun x => f x * dirac x z) = 0
 
-/-- **Hodge Dirichlet form vanishes iff `f` is in the kernel of `D` on `G`**:
-the Dirichlet form `⟨f, H · f⟩ = 0` iff every "dirac vector"
-`(D · f)(z) := ∑_x f(x) · dirac(x, z)` vanishes for `z ∈ G`. The forward
-direction follows from "sum of squares = 0 ⇒ each square = 0"; the
-backward direction is the same sum-of-squares decomposition. This is
-the harmonic-forms characterization: `f` is **harmonic** (in `ker H`)
-iff it's in the **dirac kernel** (`D · f = 0`). -/
+/-- `∑_{x, y ∈ G} f(x) · H(x, y) · f(y) = 0` if and only if `isDiracKernel G f`. -/
 theorem hodgeOnG_dirichlet_zero_iff_isDiracKernel
     (G : SimplexSet V) (f : Simplex V → ℤ) :
     G.sum (fun x => f x * G.sum (fun y => hodgeOnG G x y * f y)) = 0
@@ -875,45 +694,24 @@ theorem hodgeOnG_dirichlet_zero_iff_isDiracKernel
   · exact sq_eq_zero_iff.mp (h z hz)
   · rw [h z hz]; ring
 
-/-- **Bridge to harmonic-forms description**: alias for backward
-compatibility. -/
+/-- `hodgeOnG_dirichlet_zero_iff_isDiracKernel` with `isDiracKernel` unfolded. -/
 theorem hodgeOnG_dirichlet_zero_iff_dirac_kernel
     (G : SimplexSet V) (f : Simplex V → ℤ) :
     G.sum (fun x => f x * G.sum (fun y => hodgeOnG G x y * f y)) = 0
       ↔ ∀ z ∈ G, G.sum (fun x => f x * dirac x z) = 0 :=
   hodgeOnG_dirichlet_zero_iff_isDiracKernel G f
 
-/-! ## d² = 0 — cochain-complex identity (#272 follow-up)
+/-! ## The identity `d ∘ d = 0`
 
-The fundamental identity `d ∘ d = 0` makes `(C_•, d)` a chain
-complex. For incidence on oriented simplices:
+`dSquared x z = ∑_{y ⊆ x} d(x, y) · d(y, z)`. For `z ⊆ x` with `|x| = |z| + 2` and
+`x \ z = {a, b}`, the two nonzero terms are those for `y = x.erase a` and `y = x.erase b` and have
+opposite signs. -/
 
-  `(d ∘ d)(x, z) := ∑_{y ⊆ x} incidence x y · incidence y z = 0`
-
-Mathematically: for `|x| = |z| + 2` and `z ⊂ x`, the codim-1 faces
-`y` between them are exactly `y₁ = z ∪ {a}` and `y₂ = z ∪ {b}`
-where `{a, b} = x \ z`. The two contributions cancel by sign
-(`(-1)^(i+j) + (-1)^(i+j-1) = 0` where `i, j` are the positions of
-`a, b` in sorted `x`).
-
-Sum is over `x.powerset` rather than the universe (the only
-non-zero contributors satisfy `y ⊆ x`). Definition first; full
-sign-cancellation proof staged.
-
-Counterpart: this is the standard chain-complex axiom on oriented
-simplicial complexes; foundational for KN14 McKean-Singer
-supersymmetry (the Hodge `H = D²` decomposes via `D = d + d*`,
-and `d² = 0` separates exact / co-exact components). -/
-
-/-- **`d ∘ d` operator**: `(d²)(x, z) := ∑_{y ⊆ x} d(x, y) · d(y, z)`.
-The sum is over `x.powerset` because non-zero contributions require
-`y ⊆ x`. -/
+/-- `(d ∘ d)(x, z) = ∑_{y ⊆ x} d(x, y) · d(y, z)`. -/
 def dSquared (x z : Simplex V) : ℤ :=
   x.powerset.sum (fun y => incidence x y * incidence y z)
 
-/-- **Trivial cardinality vanishing**: `(d²)(x, z) = 0` when
-`|x| ≠ |z| + 2`. The intermediate `y` would need `|x| = |y| + 1`
-and `|y| = |z| + 1`, forcing `|x| = |z| + 2`. -/
+/-- If `|x| ≠ |z| + 2`, then `(d ∘ d)(x, z) = 0`. -/
 theorem dSquared_eq_zero_of_card_ne {x z : Simplex V}
     (h_ne : x.card ≠ z.card + 2) :
     dSquared x z = 0 := by
@@ -930,8 +728,7 @@ theorem dSquared_eq_zero_of_card_ne {x z : Simplex V}
     · rw [incidence_eq_zero_of_not_isFace hyz, mul_zero]
   · rw [incidence_eq_zero_of_not_isFace hxy, zero_mul]
 
-/-- **Trivial subset vanishing**: `(d²)(x, z) = 0` when `z ⊄ x`. Any
-`y ∈ x.powerset` would need `z ⊆ y ⊆ x`, contradicting `z ⊄ x`. -/
+/-- If `z ⊄ x`, then `(d ∘ d)(x, z) = 0`. -/
 theorem dSquared_eq_zero_of_not_subset {x z : Simplex V}
     (h_not_sub : ¬ z ⊆ x) :
     dSquared x z = 0 := by
@@ -944,35 +741,22 @@ theorem dSquared_eq_zero_of_not_subset {x z : Simplex V}
     exact absurd (hzy.trans hy) h_not_sub
   · rw [incidence_eq_zero_of_not_isFace hyz, mul_zero]
 
-/-- **Incidence on an `erase`** (clean version): for `w ∈ x`,
-`incidence x (x.erase w) = (-1)^(idxOf w in sort x)`. Trivial after
-the `missingVertex` refactor — the body becomes a single `simp`. -/
+/-- For `w ∈ x`, `d(x, x.erase w) = (-1)^i` where `i` is the position of `w` in `x` sorted. -/
 theorem incidence_erase (x : Simplex V) (w : V) (hw : w ∈ x) :
     incidence x (x.erase w) = (-1 : ℤ) ^ (x.sort (· ≤ ·)).idxOf w := by
   unfold incidence
   rw [dif_pos (isFace_erase hw), missingVertex_erase hw]
 
-/-! ### General `d ∘ d = 0`
+/-! ### Sign cancellation
 
-For `|x| = |z| + 2` and `z ⊆ x`, the only y's contributing non-zero
-summands are the two `x.erase w` for `w ∈ x \ z`. The two
-contributions cancel by sign:
+For `|x| = |z| + 2`, `z ⊆ x` and `x \ z = {a, b}` with `a` at position `i` and `b` at position
+`j > i`
+in sorted `x`, the term for `x.erase a` is `(-1)^i · (-1)^(j-1)`, since `b` is at position `j - 1`
+in
+sorted `x.erase a`. The term for `x.erase b` is `(-1)^j · (-1)^i`. The two terms sum to 0. -/
 
-  * For `w = a` (smaller of the two missing vertices, position `i`
-    in sorted `x`): contribution `(-1)^i · (-1)^(j-1)` where `j` is
-    the position of the larger missing vertex `b` in sorted `x`. In
-    sorted `(x.erase a)`, `b` is at position `j-1` because removing
-    a vertex earlier than `b` shifts `b`'s index down by 1.
-  * For `w = b` (larger): contribution `(-1)^j · (-1)^i` because in
-    sorted `(x.erase b)`, `a` is still at position `i` (removing a
-    later vertex doesn't shift `a`).
-
-Sum = `(-1)^(i+j-1) + (-1)^(i+j) = 0`. -/
-
-/-- **Summand characterization (#276)**: for `z ⊆ x` and
-`|x| = |z| + 2`, the only `y ⊆ x` with non-zero
-`incidence x y · incidence y z` are those of the form `x.erase w`
-for `w ∈ x \ z`. -/
+/-- For `z ⊆ x` and `y ⊆ x`, if `y` is not `x.erase w` for any `w ∈ x \ z`, then
+`d(x, y) · d(y, z) = 0`. -/
 theorem dSquared_summand_zero_unless (x z : Simplex V)
     (hsub : z ⊆ x) (y : Simplex V) (hy : y ⊆ x)
     (h_not : ¬ ∃ w, w ∈ x \ z ∧ y = x.erase w) :
@@ -1027,14 +811,9 @@ theorem dSquared_summand_zero_unless (x z : Simplex V)
     · rw [incidence_eq_zero_of_not_isFace hyz, mul_zero]
   · rw [incidence_eq_zero_of_not_isFace hxy, zero_mul]
 
-/-! ### Sort/erase position-arithmetic helpers (#278, #279) -/
+/-! ### Positions in sorted lists after erasing an element -/
 
-/-- **`sort` commutes with `erase`** (#278): removing a vertex from a
-finset and then sorting equals sorting and then removing the (unique)
-occurrence as a list. The key bridge lemma for position arithmetic
-on signed boundaries — both LHS and RHS have the same multiset of
-elements (`s.val.erase w`) and both are sorted, so by
-`List.Perm.eq_of_pairwise'` they're equal. -/
+/-- Sorting `s.erase w` gives the sorted list of `s` with `w` erased. -/
 theorem Finset.sort_erase (s : Finset V) (w : V) :
     (s.erase w).sort (· ≤ ·) = (s.sort (· ≤ ·)).erase w := by
   have h_sub : List.Sublist ((s.sort (· ≤ ·)).erase w) (s.sort (· ≤ ·)) :=
@@ -1048,10 +827,7 @@ theorem Finset.sort_erase (s : Finset V) (w : V) :
         ← Multiset.coe_erase, Finset.sort_eq]
   exact List.Perm.eq_of_pairwise' h_pair_l h_pair_r h_perm
 
-/-- **`idxOf` after erase, smaller-index case** (#279): if `u`'s position
-in `l` is strictly less than `w`'s, then erasing `w` does not shift `u`'s
-position. Proved by induction on `l`, splitting on whether the head is
-`u`, `w`, or neither. -/
+/-- If `u` occurs before `w` in `l`, then erasing `w` leaves the position of `u` unchanged. -/
 theorem List.idxOf_erase_of_idxOf_lt {α : Type*} [DecidableEq α]
     {l : List α} {w u : α} (h : l.idxOf u < l.idxOf w) :
     (l.erase w).idxOf u = l.idxOf u := by
@@ -1074,9 +850,7 @@ theorem List.idxOf_erase_of_idxOf_lt {α : Type*} [DecidableEq α]
         simp [List.idxOf_cons, h_beq_u, h_beq_w] at h
         exact ih (by omega)
 
-/-- **`idxOf` after erase, larger-index case** (#279): if `w`'s position
-in `l` is strictly less than `u`'s, then erasing `w` shifts `u`'s
-position down by one (`+ 1` form to avoid `Nat` subtraction). -/
+/-- If `w` occurs before `u` in `l`, then erasing `w` decreases the position of `u` by one. -/
 theorem List.idxOf_erase_of_idxOf_gt {α : Type*} [DecidableEq α]
     {l : List α} {w u : α} (h : l.idxOf w < l.idxOf u) :
     (l.erase w).idxOf u + 1 = l.idxOf u := by
@@ -1100,13 +874,9 @@ theorem List.idxOf_erase_of_idxOf_gt {α : Type*} [DecidableEq α]
         have ih' : (tail.erase w).idxOf u + 1 = tail.idxOf u := ih (by omega)
         omega
 
-/-! ### Sum-restriction bridge to (x \ z) -/
+/-! ### Restriction of the sum to `x \ z` -/
 
-/-- **Sum restriction** (#277 helper): `dSquared x z = ∑_{w ∈ x \ z}
-incidence x (x.erase w) · incidence (x.erase w) z`. Reduces the
-powerset sum to a sum over the two missing vertices, using the
-summand characterization (#276) and `sum_image` injectivity
-(injectivity of `w ↦ x.erase w` on `x \ z ⊆ x`). -/
+/-- For `z ⊆ x`, `(d ∘ d)(x, z) = ∑_{w ∈ x \ z} d(x, x.erase w) · d(x.erase w, z)`. -/
 theorem dSquared_eq_sum_diff (x z : Simplex V) (hsub : z ⊆ x) :
     dSquared x z = (x \ z).sum
       (fun w => incidence x (x.erase w) * incidence (x.erase w) z) := by
@@ -1139,13 +909,9 @@ theorem dSquared_eq_sum_diff (x z : Simplex V) (hsub : z ⊆ x) :
   rw [Finset.mem_image]
   exact ⟨w, hw_diff, h_y_eq.symm⟩
 
-/-! ### `d² = 0` — main theorem -/
+/-! ### `d ∘ d = 0` -/
 
-/-- **Cochain-complex axiom `d ∘ d = 0`** (#277): the signed boundary
-operator squares to zero. Combines the trivial card / subset cases,
-`dSquared_eq_sum_diff` reduction, the two-element decomposition of
-`x \ z`, and the position-arithmetic sign cancellation
-`(-1)^(i+j-1) + (-1)^(i+j) = 0`. -/
+/-- `(d ∘ d)(x, z) = 0` for all simplices `x`, `z`. -/
 theorem dSquared_eq_zero (x z : Simplex V) : dSquared x z = 0 := by
   by_cases hsub : z ⊆ x
   swap
@@ -1244,7 +1010,7 @@ theorem dSquared_eq_zero (x z : Simplex V) : dSquared x z = 0 := by
     -- = (-1)^i * (-1)^p - (-1)^i * (-1)^p
     -- = 0
     ring
-  · -- i > j: by symmetry. Actually use the same structure with a↔b swapped.
+  · -- i > j: the same argument with a and b swapped.
     -- (L.erase a).idxOf b = j;  (L.erase b).idxOf a + 1 = i
     have h_b_pos : (L.erase a).idxOf b = j :=
       List.idxOf_erase_of_idxOf_lt (by rw [← hi_def, ← hj_def]; exact h_gt)
@@ -1256,19 +1022,11 @@ theorem dSquared_eq_zero (x z : Simplex V) : dSquared x z = 0 := by
     rw [hi_eq]
     ring
 
-/-! ### `(d*)² = 0` — codual cochain-complex identity
+/-! ### `dᵀ ∘ dᵀ = 0`
 
-`d* (transpose / coboundary)` operates as `d* x y := incidence y x`. The
-adjoint cochain-complex axiom `(d*)² = 0` is a direct corollary of
-`d² = 0` by transposing the indices: the sum
-`∑_{y ⊇ x} incidence(y, x) · incidence(z, y)` is the same sum as
-`∑_{y ⊆ z} incidence(y, x) · incidence(z, y)` after re-indexing,
-which equals `dSquared z x = 0` once we show the support of contributions
-matches `z.powerset`. -/
+With `dᵀ x y = d(y, x)`, the sum `∑_{y ⊆ z} d(y, x) · d(z, y)` is `(d ∘ d)(z, x)`, which is 0. -/
 
-/-- **`d* ∘ d* = 0`** (codual cochain-complex axiom): the transpose
-boundary squares to zero. By symmetry, this is the rotated version
-of `dSquared_eq_zero`. -/
+/-- `∑_{y ⊆ z} d(y, x) · d(z, y) = 0`. -/
 theorem dStarSquared_eq_zero (x z : Simplex V) :
     (z.powerset.sum (fun y => incidence y x * incidence z y)) = 0 := by
   -- Reindex: this equals dSquared z x = 0.
@@ -1280,55 +1038,32 @@ theorem dStarSquared_eq_zero (x z : Simplex V) :
   rw [this]
   exact dSquared_eq_zero z x
 
-/-! ## Forman vertex angle defect (AT2 substrate)
+/-! ## Vertex angle defect
 
-For a Knill simplex set `G` (intended interpretation: triangulated
-2-surface), the **angle defect at vertex `x`** is `6 − T(x)` where
-`T(x)` is the number of triangles in `G` containing `x` as a face. The
-factor `π/3` rescales this to the geometric angle defect (each
-equilateral-triangle interior angle is `π/3`):
+For a vertex `x`, `T(x)` is the number of triangles of `G` containing `x`, and the integer angle
+defect is `6 − T(x)`. Multiplying by `π/3` gives the angle defect `K(x) = (6 − T(x)) · π/3` of an
+equilateral triangulation (Higuchi 2001, Knill 2011). This section defines these quantities and
+proves two bounds. -/
 
-  `K(x) = (6 − T(x)) · π/3`     [Higuchi 2001 / Knill 2011 form]
-
-The full discrete Gauss-Bonnet identity
-`Σ_{x ∈ V} (6 − T(x)) = 6·|V| − 3·|triangles|` (which on a closed
-2-manifold gives `2π χ` after `π/3` rescaling) is staged as a
-follow-up — its proof requires a double-counting / sum-swap argument
-on the incidence pair set `{(x, s) | x ∈ s, s ∈ triangles}` that's
-delicate in Mathlib's `Finset` API.
-
-What lands here: the *substrate* — `vertexStarTriangles`,
-`vertexTriangleCount`, `formanAngleDefectZ` — plus characterisation
-and a basic bound. The full sum identity stays as a TODO obligation
-on this substrate.
--/
-
-/-- **Star of a vertex `x`, restricted to triangles** — triangles in
-`G` containing the singleton `x` as a face. -/
+/-- The simplices of `G` with three vertices that contain `x`. -/
 def vertexStarTriangles (G : SimplexSet V) (x : V) : SimplexSet V :=
   G.filter (fun s => s.card = 3 ∧ x ∈ s)
 
-/-- **Vertex triangle count** `T(x)` — number of triangles in `G`
-incident to vertex `x`. -/
+/-- `T(x)`, the number of triangles of `G` containing `x`. -/
 def vertexTriangleCount (G : SimplexSet V) (x : V) : ℕ :=
   (vertexStarTriangles G x).card
 
-/-- **Forman vertex angle defect (integer form)** — `6 − T(x)` where
-`T(x) = vertexTriangleCount G x`. To recover the geometric angle
-defect multiply by `π/3`: `K(x) = (6 − T(x)) · π/3`. Equilateral-
-simplex convention (Knill / Higuchi). -/
+/-- The integer angle defect `6 − T(x)`. -/
 def formanAngleDefectZ (G : SimplexSet V) (x : V) : ℤ :=
   6 - (vertexTriangleCount G x : ℤ)
 
-/-- **Triangle membership iff `x` is a face of a 3-element simplex**. -/
+/-- `s ∈ vertexStarTriangles G x` if and only if `s ∈ G`, `s` has three vertices and `x ∈ s`. -/
 @[simp] theorem mem_vertexStarTriangles (G : SimplexSet V) (x : V)
     (s : Simplex V) :
     s ∈ vertexStarTriangles G x ↔ s ∈ G ∧ s.card = 3 ∧ x ∈ s := by
   simp [vertexStarTriangles]
 
-/-- **Triangle count is bounded by total triangle count** — `T(x) ≤
-|triangles|` for every vertex `x`. Trivially: every triangle in the
-star is also a triangle of `G`. -/
+/-- `T(x)` is at most the number of triangles of `G`. -/
 theorem vertexTriangleCount_le (G : SimplexSet V) (x : V) :
     vertexTriangleCount G x ≤ simplexCardinality G 2 := by
   unfold vertexTriangleCount vertexStarTriangles simplexCardinality
@@ -1337,9 +1072,7 @@ theorem vertexTriangleCount_le (G : SimplexSet V) (x : V) :
   rw [Finset.mem_filter] at hs ⊢
   exact ⟨hs.1, by omega⟩
 
-/-- **Vertex angle defect bounded above by 6** — when `T(x) = 0`,
-`formanAngleDefectZ = 6`. Captures the maximally-positive curvature
-case (isolated vertex, no incident triangles). -/
+/-- `6 − T(x) ≤ 6`. -/
 theorem formanAngleDefectZ_le_six (G : SimplexSet V) (x : V) :
     formanAngleDefectZ G x ≤ 6 := by
   unfold formanAngleDefectZ

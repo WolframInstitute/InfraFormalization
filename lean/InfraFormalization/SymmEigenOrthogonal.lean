@@ -1,16 +1,12 @@
 /-
-**Symmetric-matrix eigenvector orthogonality** (infrastructure for D6).
+Orthogonality of eigenvectors of symmetric real matrices.
 
-A classical finite-dimensional spectral-theorem fact: eigenvectors
-of a real symmetric matrix with distinct eigenvalues are orthogonal
-under the standard ℓ² inner product on `Fin n → ℝ`.
-
-This is the key ingredient for eigenbasis decomposition on the
-cycle hypergraph, needed to close full D6 (long-time heat convergence
-for arbitrary initial data on the eigenbasis).
-
-The proof is `(λ − μ) ⟨v, w⟩ = ⟨Mv, w⟩ − ⟨v, Mw⟩ = 0` using `M.IsSymm`
-and `dotProduct_mulVec`.
+This module proves that eigenvectors of a real symmetric matrix with
+distinct eigenvalues have dot product 0, using
+`(λ − μ) ⟨v, w⟩ = ⟨Mv, w⟩ − ⟨v, Mw⟩ = 0`. It applies the result to the
+Laplacian matrix of `cycleHypergraph n`: eigenvectors with distinct
+eigenvalues, the constant eigenvector and any mode `1 ≤ k < n`, and two
+distinct modes `1 ≤ j, k ≤ n/2` are orthogonal.
 -/
 
 import Mathlib.Data.Matrix.Mul
@@ -24,11 +20,8 @@ open Matrix
 
 variable {n : ℕ}
 
-/-- **Eigenvector orthogonality for a symmetric real matrix.**
-
-If `M : Matrix (Fin n) (Fin n) ℝ` is symmetric, and `v`, `w` are
-eigenvectors with distinct eigenvalues `λ ≠ μ`, then their dot product
-vanishes: `∑ i, v i * w i = 0`. -/
+/-- If `M : Matrix (Fin n) (Fin n) ℝ` is symmetric and `v`, `w` are
+eigenvectors with eigenvalues `l ≠ m`, then `v ⬝ᵥ w = 0`. -/
 theorem symm_eigenvectors_orthogonal
     (M : Matrix (Fin n) (Fin n) ℝ) (hsymm : M.IsSymm)
     {v w : Fin n → ℝ} {l m : ℝ}
@@ -45,7 +38,7 @@ theorem symm_eigenvectors_orthogonal
     rw [← Matrix.mulVec_transpose]
     have h_Mt : Mᵀ = M := hsymm
     rw [h_Mt]
-  -- Combine: l · (v·w) = m · (v·w), so (l − m)(v·w) = 0 ⇒ v·w = 0.
+  -- l · (v·w) = m · (v·w), so (l − m)(v·w) = 0 and v·w = 0.
   have h_eq : l * (v ⬝ᵥ w) = m * (v ⬝ᵥ w) := by rw [← h_left, h_symm_eq, h_right]
   have h_diff : (l - m) * (v ⬝ᵥ w) = 0 := by
     have h' : l * (v ⬝ᵥ w) - m * (v ⬝ᵥ w) = 0 := by rw [h_eq]; ring
@@ -56,10 +49,8 @@ theorem symm_eigenvectors_orthogonal
   have := (mul_eq_zero.mp h_diff).resolve_left h_ne
   exact this
 
-/-- **Cycle eigenvector orthogonality** — immediate consequence of
-`symm_eigenvectors_orthogonal` applied to the symmetric cycle
-Laplacian matrix. Two cycle eigenvectors with distinct eigenvalues
-are orthogonal under the standard dot product on `Fin n → ℝ`. -/
+/-- For `n ≥ 2`, cycle eigenvectors `j` and `k` with
+`cycleEigenvalue n j ≠ cycleEigenvalue n k` have dot product 0. -/
 theorem cycleEigenvector_orthogonal
     {n : ℕ} [NeZero n] (hn : 2 ≤ n) {j k : ℕ}
     (hjk : cycleEigenvalue n j ≠ cycleEigenvalue n k) :
@@ -71,21 +62,15 @@ theorem cycleEigenvector_orthogonal
     (laplacianMatrix_cycleHypergraph_eigen hn k)
     hjk
 
-/-- **Constant mode is orthogonal to every non-constant mode**
-(specialization). For `1 ≤ k < n`, the constant eigenvector
-`cycleEigenvector n 0` (= 1 everywhere) has dot product `0` with
-`cycleEigenvector n k`. Automatic from
-`cycleEigenvector_orthogonal` + `cycleEigenvalue_zero_ne_nonzero_mode`. -/
+/-- For `n ≥ 2` and `1 ≤ k < n`, `cycleEigenvector n 0` and
+`cycleEigenvector n k` have dot product 0. -/
 theorem cycleEigenvector_const_orthogonal_nonzero
     {n : ℕ} [NeZero n] (hn : 2 ≤ n) (k : ℕ) (hk_lo : 1 ≤ k) (hk_hi : k < n) :
     cycleEigenvector n 0 ⬝ᵥ cycleEigenvector n k = 0 :=
   cycleEigenvector_orthogonal hn (cycleEigenvalue_zero_ne_nonzero_mode k hk_lo hk_hi)
 
-/-- **Distinct first-half eigenvectors are pairwise orthogonal.** For
-`1 ≤ j < k ≤ n/2`, the cycle eigenvectors `cycleEigenvector n j` and
-`cycleEigenvector n k` have dot product zero. Closes the pairwise
-orthogonality of the first-half eigenvectors — a substantial part of
-the orthonormal-eigenbasis structure needed for full D6. -/
+/-- For `n ≥ 2`, `j ≠ k`, `1 ≤ j`, `1 ≤ k`, `2j ≤ n` and `2k ≤ n`,
+`cycleEigenvector n j` and `cycleEigenvector n k` have dot product 0. -/
 theorem cycleEigenvector_first_half_orthogonal
     {n : ℕ} [NeZero n] (hn : 2 ≤ n) {j k : ℕ}
     (hj_lo : 1 ≤ j) (hjk : j ≠ k) (hj_hi : 2 * j ≤ n) (hk_hi : 2 * k ≤ n)

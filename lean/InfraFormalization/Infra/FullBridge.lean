@@ -1,31 +1,13 @@
 /-
-End-to-end bridge: trajectory → Lorentz lattice → continuum Minkowski.
+Composition of the trajectory-to-lattice and lattice-to-continuum embeddings.
 
-Composes the two upstream bridges:
-  1. `TrajectoryLorentzD.fullEmbed τ φ`:
-     trajectory events → `Event d`  (time = level, space = φ),
-     preserves causal order under `LightConeCompatible` hypothesis.
-
-  2. `ScaledLorentz.lorentzIntEmbed`:
-     `Event d` → `ContinuumEvent d`  (int-to-ℝ cast),
-     preserves causal order in the forward direction.
-
-The composition gives the full chain:
-
-  `causallyPrecedes τ i j`
-    ⇒  under `LightConeCompatible τ φ`,
-  `ContinuumCausalPrecedes d
-     (lorentzIntEmbed (fullEmbed τ φ i))
-     (lorentzIntEmbed (fullEmbed τ φ j))`.
-
-This is the machine-checked statement a rule-search pipeline (see
-`RULE_SEARCH.md`) would use to certify that a candidate rule +
-candidate spatial embedding yields a Lorentzian-causal structure
-consistent with continuum Minkowski.
-
-The `Timelike` refinement is also provided: under the stronger
-`StrictlyTimelikeCompatible` hypothesis, the causal pair lands in the
-strict interior of the continuum light cone.
+`fullContinuumEmbed τ φ` is `lorentzIntEmbed ∘ fullEmbed τ φ`: event `i` of the trajectory
+is sent to the real point with time coordinate `level τ i` and spatial coordinates `φ`.
+Under the hypothesis `LightConeCompatible τ φ`, `causallyPrecedes τ i j` implies
+`ContinuumCausalPrecedes` of the images. Under `StrictlyTimelikeCompatible τ φ`, it implies
+`ContinuumTimelike` of the images. Both results are composites of the corresponding
+results in `TrajectoryLorentzD` and `ScaledLorentz`; the compatibility hypotheses are
+assumptions on `φ`.
 -/
 
 import InfraFormalization.Infra.TrajectoryLorentzD
@@ -42,10 +24,8 @@ noncomputable def fullContinuumEmbed {sys : RewritingSystem P}
     (φ : SpatialEmbedding d) (i : Nat) : ContinuumEvent d :=
   lorentzIntEmbed (fullEmbed τ φ i)
 
-/-- **End-to-end bridge (causal).** Under the light-cone compatibility
-hypothesis on the spatial embedding `φ`, the trajectory's
-`causallyPrecedes` relation implies `ContinuumCausalPrecedes` in the
-continuum Minkowski lattice under the full embedding. -/
+/-- If `LightConeCompatible τ φ` holds and `causallyPrecedes τ i j`, then the images of
+`i` and `j` under `fullContinuumEmbed τ φ` satisfy `ContinuumCausalPrecedes`. -/
 theorem causallyPrecedes_gives_continuum {sys : RewritingSystem P}
     {init : Hypergraph V} (τ : Trajectory sys init) {d : Nat}
     (φ : SpatialEmbedding d) (hcompat : LightConeCompatible τ φ)
@@ -56,9 +36,8 @@ theorem causallyPrecedes_gives_continuum {sys : RewritingSystem P}
   exact lorentzIntEmbed_preserves_causal _ _
     (fullEmbed_preserves_causal τ φ hcompat i j h)
 
-/-- **End-to-end bridge (timelike, strict interior).** Under the
-strictly-timelike compatibility hypothesis, the continuum embedding
-lands in the strict interior of the forward Minkowski light cone. -/
+/-- If `StrictlyTimelikeCompatible τ φ` holds and `causallyPrecedes τ i j`, then the
+images of `i` and `j` under `fullContinuumEmbed τ φ` satisfy `ContinuumTimelike`. -/
 theorem causallyPrecedes_gives_continuum_timelike {sys : RewritingSystem P}
     {init : Hypergraph V} (τ : Trajectory sys init) {d : Nat}
     (φ : SpatialEmbedding d) (hstrict : StrictlyTimelikeCompatible τ φ)
@@ -69,8 +48,7 @@ theorem causallyPrecedes_gives_continuum_timelike {sys : RewritingSystem P}
   exact lorentzIntEmbed_preserves_timelike _ _
     (fullEmbed_timelike τ φ hstrict i j h)
 
-/-- **Time-coordinate extraction.** The time coordinate in the
-continuum embedding is simply `(level τ i : ℝ)`. -/
+/-- The time coordinate of `fullContinuumEmbed τ φ i` equals `level τ i`. -/
 theorem fullContinuumEmbed_time {sys : RewritingSystem P}
     {init : Hypergraph V} (τ : Trajectory sys init) {d : Nat}
     (φ : SpatialEmbedding d) (i : Nat) :
@@ -78,7 +56,7 @@ theorem fullContinuumEmbed_time {sys : RewritingSystem P}
   unfold fullContinuumEmbed lorentzIntEmbed
   simp [fullEmbed_time]
 
-/-- **Same-level events share continuum time.** -/
+/-- Events with equal level have equal time coordinate under `fullContinuumEmbed`. -/
 theorem same_level_continuum_same_time {sys : RewritingSystem P}
     {init : Hypergraph V} (τ : Trajectory sys init) {d : Nat}
     (φ : SpatialEmbedding d) (i j : Nat)

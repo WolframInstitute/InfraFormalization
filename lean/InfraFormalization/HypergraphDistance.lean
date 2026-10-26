@@ -1,32 +1,13 @@
 /-
-Graph distance on a hypergraph, geodesic balls, and their volumes.
+Graph distance on a hypergraph, geodesic balls and their volumes.
 
-**Connection to hypergraphs.** Native. Every construction takes a
-`Hypergraph V` and produces a distance function / ball / volume on
-its vertex set `V` — no continuum objects appear.
-
-**What this file contributes.** The foundation of `Group ID`
-(infradimension) — first notion of dimension on a hypergraph.
-
-  * `Hyperedge.contains e u v` — the pair `{u, v}` sits inside `e`.
-  * `Hypergraph.Adj H u v` — `u ≠ v` and some hyperedge of `H`
-    contains both. This is the *clique-expansion* adjacency:
-    every hyperedge contributes a clique on its vertex set.
-  * `Hypergraph.toSimpleGraph H` — the induced
-    `SimpleGraph V`; Mathlib's `SimpleGraph.dist` then gives
-    `Hypergraph.dist H u v`.
-  * `geodesicBall H v r`, `geodesicBallVolume H v r` — the closed
-    ball of radius `r` and its cardinality.
-
-The Wolfram-Hausdorff dimension at `v` is (eventually) the
-asymptotic `log V(r) / log r`. Here we state the definition as a
-numerical estimator `localDimension` and prove the concrete
-linear-growth lemma for `cycleHypergraph n` that anchors
-`dim = 1` on the 1D cycle.
-
-Further compatibility theorems (heat-kernel / spectral, homological,
-coordinatization dimensions) and the conservation → bounded-dim
-promotion (IR2) live in follow-up files.
+`Hypergraph.Adj H u v` holds when `u ≠ v` and some hyperedge contains both (clique
+expansion), `Hypergraph.toSimpleGraph H` is the resulting simple graph, and
+`Hypergraph.dist` is Mathlib's `SimpleGraph.dist` on it, which is `0` on unreachable pairs.
+The module defines geodesic balls, spheres, ball volumes, the estimator
+`log V(r) / log r`, chord-ratio and law-of-cosines angles, bisectors, midpoints, Voronoi
+cells, and predicates on walks. For `cycleHypergraph n` with `n ≥ 2` it proves connectivity
+and `V(v, r) = 2r + 1` whenever `2r + 1 ≤ n`.
 -/
 
 import InfraFormalization.HypergraphLaplacian
@@ -41,8 +22,7 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 
 /-! ## Hypergraph adjacency via clique-expansion -/
 
-/-- A hyperedge `e` contains the (unordered) pair `{u, v}`: both
-`u` and `v` appear among `e.verts`. -/
+/-- Both `u` and `v` occur in `e.verts`. -/
 def Hyperedge.contains (e : Hyperedge V) (u v : V) : Prop :=
   u ∈ e.verts ∧ v ∈ e.verts
 
@@ -50,10 +30,7 @@ instance (e : Hyperedge V) (u v : V) : Decidable (e.contains u v) := by
   unfold Hyperedge.contains
   exact inferInstance
 
-/-- **Clique-expansion adjacency.** Two distinct vertices `u v : V`
-are *adjacent* in the hypergraph `H` iff some hyperedge contains
-both. Equivalently, every hyperedge contributes a clique on its
-vertex set to the induced simple graph. -/
+/-- `u ≠ v` and some hyperedge of `H` contains both `u` and `v`. -/
 def Hypergraph.Adj (H : Hypergraph V) (u v : V) : Prop :=
   u ≠ v ∧ ∃ e ∈ H.edges.toFinset, e.contains u v
 
@@ -61,20 +38,18 @@ instance (H : Hypergraph V) (u v : V) : Decidable (H.Adj u v) := by
   unfold Hypergraph.Adj
   exact inferInstance
 
-/-- Hypergraph adjacency is symmetric. -/
+/-- `H.Adj u v` implies `H.Adj v u`. -/
 theorem Hypergraph.Adj_symm {H : Hypergraph V} {u v : V} :
     H.Adj u v → H.Adj v u := by
   rintro ⟨hne, e, he, ⟨hu, hv⟩⟩
   exact ⟨Ne.symm hne, e, he, ⟨hv, hu⟩⟩
 
-/-- Hypergraph adjacency is irreflexive. -/
+/-- `¬ H.Adj v v`. -/
 theorem Hypergraph.Adj_irrefl {H : Hypergraph V} (v : V) : ¬ H.Adj v v := by
   rintro ⟨hne, _⟩
   exact hne rfl
 
-/-- **Adjacency is monotone under union on the left.** Adding more
-edges can only add to adjacency: `H₁.Adj u v → (H₁ + H₂).Adj u v`.
-Lifts Multiset.mem_add to the adjacency level. -/
+/-- `H₁.Adj u v` implies `(H₁ + H₂).Adj u v`. -/
 theorem Hypergraph.Adj_add_left {H₁ H₂ : Hypergraph V} {u v : V}
     (h : H₁.Adj u v) : (H₁ + H₂).Adj u v := by
   obtain ⟨hne, e, he, hcontains⟩ := h
@@ -83,7 +58,7 @@ theorem Hypergraph.Adj_add_left {H₁ H₂ : Hypergraph V} {u v : V}
   show e ∈ (H₁.edges + H₂.edges)
   exact Multiset.mem_add.mpr (Or.inl he)
 
-/-- **Adjacency is monotone under union on the right.** Symmetric. -/
+/-- `H₂.Adj u v` implies `(H₁ + H₂).Adj u v`. -/
 theorem Hypergraph.Adj_add_right {H₁ H₂ : Hypergraph V} {u v : V}
     (h : H₂.Adj u v) : (H₁ + H₂).Adj u v := by
   obtain ⟨hne, e, he, hcontains⟩ := h
@@ -92,9 +67,7 @@ theorem Hypergraph.Adj_add_right {H₁ H₂ : Hypergraph V} {u v : V}
   show e ∈ (H₁.edges + H₂.edges)
   exact Multiset.mem_add.mpr (Or.inr he)
 
-/-- **The simple graph underlying a hypergraph.** Uses
-clique-expansion adjacency. This is the object on which Mathlib's
-`SimpleGraph.dist` computes the hypergraph distance. -/
+/-- The simple graph on `V` with adjacency `H.Adj`. -/
 def Hypergraph.toSimpleGraph (H : Hypergraph V) : SimpleGraph V where
   Adj := H.Adj
   symm := fun _ _ => Hypergraph.Adj_symm
@@ -107,10 +80,8 @@ instance (H : Hypergraph V) : DecidableRel H.toSimpleGraph.Adj := by
 
 /-! ## Hypergraph distance -/
 
-/-- **Hypergraph distance** between two vertices. Follows Mathlib's
-`SimpleGraph.dist` convention: the length of the shortest walk in
-the clique-expansion graph, or `0` if the vertices are not in the
-same connected component. -/
+/-- `SimpleGraph.dist` on `H.toSimpleGraph`: the length of a shortest walk, or `0` when
+the vertices lie in different components. -/
 noncomputable def Hypergraph.dist (H : Hypergraph V) (u v : V) : ℕ :=
   H.toSimpleGraph.dist u v
 
@@ -124,28 +95,21 @@ theorem Hypergraph.dist_comm (H : Hypergraph V) (u v : V) :
   unfold Hypergraph.dist
   exact SimpleGraph.dist_comm
 
-/-- **Triangle inequality for the hypergraph distance**, conditional on
-reachability (via `SimpleGraph.Reachable.dist_triangle_left`). On a
-disconnected graph, `dist = 0` as a junk value on unreachable pairs,
-so the unconditional inequality fails; this form requires the
-connecting edge `u ⇝ v` to be reachable. -/
+/-- If `v` is reachable from `u`, then `dist u w ≤ dist u v + dist v w`. -/
 theorem Hypergraph.dist_triangle_of_reachable_left (H : Hypergraph V)
     {u v : V} (h : H.toSimpleGraph.Reachable u v) (w : V) :
     H.dist u w ≤ H.dist u v + H.dist v w := by
   unfold Hypergraph.dist
   exact SimpleGraph.Reachable.dist_triangle_left h w
 
-/-- **Triangle inequality**, right-variant. -/
+/-- If `w` is reachable from `v`, then `dist u w ≤ dist u v + dist v w`. -/
 theorem Hypergraph.dist_triangle_of_reachable_right (H : Hypergraph V)
     (u : V) {v w : V} (h : H.toSimpleGraph.Reachable v w) :
     H.dist u w ≤ H.dist u v + H.dist v w := by
   unfold Hypergraph.dist
   exact SimpleGraph.Reachable.dist_triangle_right h u
 
-/-- **Unconditional triangle inequality** on a connected hypergraph:
-for any three vertices `u, v, w : V`, `dist u w ≤ dist u v + dist v w`.
-This is the condition needed for `(V, Hypergraph.dist H)` to be a
-pseudo-metric space (modulo the ℕ → ℝ cast). -/
+/-- If `H.toSimpleGraph` is connected, then `dist u w ≤ dist u v + dist v w`. -/
 theorem Hypergraph.dist_triangle (H : Hypergraph V)
     (hconn : H.toSimpleGraph.Connected) (u v w : V) :
     H.dist u w ≤ H.dist u v + H.dist v w := by
@@ -154,44 +118,32 @@ theorem Hypergraph.dist_triangle (H : Hypergraph V)
 
 /-! ## Geodesic balls and their volumes -/
 
-/-- **Closed geodesic ball** of radius `r` around `v`: the set of
-vertices at hypergraph distance `≤ r`. Excludes unreachable vertices
-since `dist = 0` for both `u = v` and `¬Reachable`; care should be
-taken to check reachability when interpreting volumes on
-disconnected hypergraphs. -/
+/-- The set of `u` with `H.dist v u ≤ r`. Since `dist` is `0` on unreachable pairs, the
+set contains every vertex not reachable from `v`. -/
 noncomputable def Hypergraph.geodesicBall (H : Hypergraph V) (v : V)
     (r : ℕ) : Finset V :=
   Finset.univ.filter (fun u => H.dist v u ≤ r)
 
-/-- **Geodesic ball volume** — the cardinality of the closed ball. -/
+/-- The cardinality of `geodesicBall v r`. -/
 noncomputable def Hypergraph.geodesicBallVolume (H : Hypergraph V)
     (v : V) (r : ℕ) : ℕ :=
   (H.geodesicBall v r).card
 
-/-! ## Infra-sphere and infra-disk (SPHERE1)
+/-! ## Spheres and disks
 
-SWOLF's "all points with an equal distance to a point" — the discrete
-sphere `S(O, r) := {v | H.dist O v = r}`. The **infra-disk** is the
-closed ball (alias for `geodesicBall`); the **infra-sphere** is its
-boundary level-set. Together they're the local-geometric primitive that
-SWOLF's chord-ratio AT0 (`elementaryAngle`) and Bishop-Gromov scalar
-curvature AT9 (`scalarCurvatureAt`) both ride on. -/
+The sphere `S(O, r)` is `{v | H.dist O v = r}` and the disk is `geodesicBall O r`. -/
 
-/-- **Infra-disk** — closed ball of radius `r` around `v`. Alias for
-`geodesicBall` exposing the SWOLF-vocabulary terminology. -/
+/-- Equal to `geodesicBall v r`. -/
 noncomputable def Hypergraph.infraDisk (H : Hypergraph V) (v : V) (r : ℕ) :
     Finset V :=
   H.geodesicBall v r
 
-/-- **Infra-sphere** — vertices at exactly distance `r` from `v`. The
-boundary level-set of the infra-disk. SWOLF's "all points with equal
-distance to a point". -/
+/-- The set of `u` with `H.dist v u = r`. -/
 noncomputable def Hypergraph.infraSphere (H : Hypergraph V) (v : V) (r : ℕ) :
     Finset V :=
   Finset.univ.filter (fun u => H.dist v u = r)
 
-/-- **Infra-sphere is a subset of the infra-disk** (sphere ⊆ disk by
-`= r ≤ r`). -/
+/-- `infraSphere v r ⊆ infraDisk v r`. -/
 theorem Hypergraph.infraSphere_subset_infraDisk (H : Hypergraph V) (v : V)
     (r : ℕ) :
     H.infraSphere v r ⊆ H.infraDisk v r := by
@@ -200,19 +152,14 @@ theorem Hypergraph.infraSphere_subset_infraDisk (H : Hypergraph V) (v : V)
   simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hu ⊢
   rw [hu]
 
-/-- **Infra-sphere of radius 0 around `v` is exactly `{v}`** on a
-connected hypergraph (or any hypergraph where `v` is reachable from
-itself, which is always — `dist_self`). The ball-level statement is
-weaker because unreachable vertices have junk-value 0 too. We surface
-the inclusion `{v} ⊆ infraSphere v 0`. -/
+/-- `v ∈ infraSphere v 0`. -/
 theorem Hypergraph.self_mem_infraSphere_zero (H : Hypergraph V) (v : V) :
     v ∈ H.infraSphere v 0 := by
   unfold Hypergraph.infraSphere
   simp only [Finset.mem_filter, Finset.mem_univ, true_and]
   exact Hypergraph.dist_self H v
 
-/-- **Infra-spheres at distinct radii are disjoint** (a vertex can't
-have two different distances from `v`). -/
+/-- For `r ≠ s`, `infraSphere v r` and `infraSphere v s` are disjoint. -/
 theorem Hypergraph.infraSphere_disjoint_of_ne (H : Hypergraph V) (v : V)
     {r s : ℕ} (hrs : r ≠ s) :
     Disjoint (H.infraSphere v r) (H.infraSphere v s) := by
@@ -222,13 +169,12 @@ theorem Hypergraph.infraSphere_disjoint_of_ne (H : Hypergraph V) (v : V)
   simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hur hus
   exact hrs (hur.symm.trans hus)
 
-/-- **Infra-sphere volume** — the cardinality of the sphere; the discrete
-surface area. For Bishop-Gromov / SPHERE4 use. -/
+/-- The cardinality of `infraSphere v r`. -/
 noncomputable def Hypergraph.infraSphereVolume (H : Hypergraph V) (v : V)
     (r : ℕ) : ℕ :=
   (H.infraSphere v r).card
 
-/-- **Infra-sphere volume bounded by Fintype.card V**. -/
+/-- `infraSphereVolume v r ≤ |V|`. -/
 theorem Hypergraph.infraSphereVolume_le_card (H : Hypergraph V) (v : V)
     (r : ℕ) :
     H.infraSphereVolume v r ≤ Fintype.card V := by
@@ -237,23 +183,19 @@ theorem Hypergraph.infraSphereVolume_le_card (H : Hypergraph V) (v : V)
       ≤ Finset.univ.card := Finset.card_le_card (Finset.filter_subset _ _)
     _ = Fintype.card V := Finset.card_univ
 
-/-- **Ball at radius 0** contains exactly `v` on reachable vertices.
-Unreachable vertices `u` also satisfy `dist v u = 0` (junk value) and
-so appear in the ball; however, this is usually avoided by working
-on connected hypergraphs. Here we state the weaker, always-true
-inclusion `{v} ⊆ ball 0`. -/
+/-- `v ∈ geodesicBall v r` for every `r`. -/
 theorem Hypergraph.self_mem_geodesicBall (H : Hypergraph V) (v : V)
     (r : ℕ) : v ∈ H.geodesicBall v r := by
   unfold Hypergraph.geodesicBall
   simp [Hypergraph.dist_self]
 
-/-- **Ball volume is at least 1** (the basepoint itself is always in). -/
+/-- `1 ≤ geodesicBallVolume v r`. -/
 theorem Hypergraph.geodesicBallVolume_pos (H : Hypergraph V) (v : V)
     (r : ℕ) : 1 ≤ H.geodesicBallVolume v r := by
   unfold Hypergraph.geodesicBallVolume
   exact Finset.card_pos.mpr ⟨v, Hypergraph.self_mem_geodesicBall H v r⟩
 
-/-- **Ball volume is monotone in radius.** -/
+/-- For `r ≤ s`, `geodesicBallVolume v r ≤ geodesicBallVolume v s`. -/
 theorem Hypergraph.geodesicBallVolume_mono (H : Hypergraph V) (v : V)
     {r s : ℕ} (hrs : r ≤ s) :
     H.geodesicBallVolume v r ≤ H.geodesicBallVolume v s := by
@@ -263,51 +205,31 @@ theorem Hypergraph.geodesicBallVolume_mono (H : Hypergraph V) (v : V)
   rw [Finset.mem_filter] at hu ⊢
   exact ⟨hu.1, le_trans hu.2 hrs⟩
 
-/-! ## Local dimension estimator
+/-! ## Dimension estimators -/
 
-The Wolfram–Hausdorff dimension at `v` is the asymptotic
-`log V(r) / log r`. We provide an estimator at finite `r`, and state
-the dimension as the limsup over `r → ∞`. The full convergence
-theorem for specific hypergraphs is a case-by-case proof obligation. -/
-
-/-- **Local dimension estimator** at radius `r`:
-`log V(r) / log r`. Returns `0` at `r ≤ 1` (where `log r ≤ 0`). -/
+/-- `log V(r) / log r` for `r ≥ 2`, and `0` for `r ≤ 1`. -/
 noncomputable def Hypergraph.localDimension (H : Hypergraph V) (v : V)
     (r : ℕ) : ℝ :=
   if r ≤ 1 then 0 else
     Real.log (H.geodesicBallVolume v r : ℝ) / Real.log (r : ℝ)
 
-/-- **Wolfram–Hausdorff dimension at `v`** (pointwise limit form):
-`limsup_{r → ∞} log V(r) / log r`. For compact finite hypergraphs
-this is always `0` in the true `r → ∞` sense (volumes saturate),
-so in practice the relevant quantity is the *plateau* dimension at
-intermediate scales — captured by `plateauDimension` below. -/
+/-- `limsup_{r → ∞} localDimension v r`. On a finite vertex type `V(r)` is eventually
+constant, so this limsup is `0`; no theorem in this module states that. -/
 noncomputable def Hypergraph.wolframHausdorffDimension (H : Hypergraph V)
     (v : V) : ℝ :=
   Filter.limsup (fun r : ℕ => H.localDimension v r) Filter.atTop
 
-/-- **Plateau dimension on a radius range.** Average of
-`localDimension` over `r ∈ [rmin, rmax]`. This is the computable
-estimator used in practice; a "plateau" is a range where it is
-approximately constant. -/
+/-- The mean of `localDimension v r` over `r ∈ [rmin, rmax]`, and `0` when `rmax < rmin`. -/
 noncomputable def Hypergraph.plateauDimension (H : Hypergraph V) (v : V)
     (rmin rmax : ℕ) : ℝ :=
   if rmax < rmin then 0 else
     (∑ r ∈ Finset.Icc rmin rmax, H.localDimension v r) /
       ((rmax - rmin + 1 : ℕ) : ℝ)
 
-/-! ## Cycle hypergraph adjacency
+/-! ## Adjacency in the cycle hypergraph -/
 
-Connecting `HypergraphCycleBridge` to the distance / dimension
-machinery above: the clique-expansion adjacency of `cycleHypergraph n`
-is precisely the standard cycle adjacency `j = i + 1 ∨ j = i − 1`
-in `Fin n`. This ensures `geodesicBall` on `cycleHypergraph n`
-matches the cycle-graph distance.
-
-For `n ≥ 3`, every vertex has exactly two neighbors, so
-`geodesicBallVolume v 1 ≥ 3`, giving the first step toward
-`wolframHausdorffDimension = 1` on the cycle. -/
-
+/-- For `n ≥ 2`, `(cycleHypergraph n).Adj i j` iff `i ≠ j` and `j = i + 1` or `i = j + 1`
+in `Fin n`. -/
 theorem cycleHypergraph_Adj_iff {n : Nat} [NeZero n] (hn : 2 ≤ n)
     (i j : Fin n) :
     (cycleHypergraph n).Adj i j ↔ i ≠ j ∧ (j = i + 1 ∨ i = j + 1) := by
@@ -359,9 +281,7 @@ theorem cycleHypergraph_Adj_iff {n : Nat} [NeZero n] (hn : 2 ≤ n)
         have : (cycleHyperedge n j).verts = [j, j + 1] := rfl
         rw [this]; simp
 
-/-- **Two neighbors of `v` in `cycleHypergraph n` for `n ≥ 2`.**
-The vertices `v + 1` and `v − 1` are neighbors of `v` (they coincide
-iff `n = 2`). -/
+/-- For `n ≥ 2`, `v + 1` and `v − 1` are adjacent to `v` in `cycleHypergraph n`. -/
 theorem cycleHypergraph_succ_pred_adj {n : Nat} [NeZero n] (hn : 2 ≤ n)
     (v : Fin n) :
     (cycleHypergraph n).Adj v (v + 1) ∧ (cycleHypergraph n).Adj v (v - 1) := by
@@ -378,8 +298,7 @@ theorem cycleHypergraph_succ_pred_adj {n : Nat} [NeZero n] (hn : 2 ≤ n)
     refine ⟨Ne.symm hpred, Or.inr ?_⟩
     abel
 
-/-- **For `n ≥ 3`, `v + 1 ≠ v − 1` in `Fin n`.** This separates the
-two neighbors in `cycleHypergraph_succ_pred_adj`. -/
+/-- For `n ≥ 3`, `v + 1 ≠ v − 1` in `Fin n`. -/
 theorem cycle_succ_ne_pred {n : Nat} [NeZero n] (hn : 3 ≤ n) (v : Fin n) :
     (v + 1 : Fin n) ≠ (v - 1 : Fin n) := by
   intro heq
@@ -433,8 +352,7 @@ theorem cycle_succ_ne_pred {n : Nat} [NeZero n] (hn : 3 ≤ n) (v : Fin n) :
     rw [h_rhs] at hval
     omega
 
-/-- **For `n ≥ 4`, `v + 2 ≠ v` in `Fin n`.** The shift-by-2 is
-non-trivial once `n ≥ 3`; the proof handles the `n = 3` edge case. -/
+/-- For `n ≥ 3`, `v + 2 ≠ v` in `Fin n`. -/
 theorem cycle_add_two_ne_self {n : Nat} [NeZero n] (hn : 3 ≤ n) (v : Fin n) :
     (v + 2 : Fin n) ≠ v := by
   intro heq
@@ -452,8 +370,7 @@ theorem cycle_add_two_ne_self {n : Nat} [NeZero n] (hn : 3 ≤ n) (v : Fin n) :
       exact Nat.mod_eq_of_lt (by omega)
     rw [hmod] at hval; omega
 
-/-- **For `n ≥ 3`, `v − 2 ≠ v` in `Fin n`.** Symmetric counterpart of
-`cycle_add_two_ne_self`: shift-by-(−2) is also non-trivial. -/
+/-- For `n ≥ 3`, `v − 2 ≠ v` in `Fin n`. -/
 theorem cycle_sub_two_ne_self {n : Nat} [NeZero n] (hn : 3 ≤ n) (v : Fin n) :
     (v - 2 : Fin n) ≠ v := by
   intro heq
@@ -464,12 +381,8 @@ theorem cycle_sub_two_ne_self {n : Nat} [NeZero n] (hn : 3 ≤ n) (v : Fin n) :
     rw [this] at h_add; exact h_add
   exact cycle_add_two_ne_self hn v h_eq.symm
 
-/-- **Radius-1 ball volume in cycleHypergraph (n ≥ 3) is ≥ 3.**
-Exhibits three distinct vertices (`v`, `v + 1`, `v − 1`) in the
-ball, all at distance ≤ 1. This establishes the first concrete
-dimensional step on the cycle: `V(v, 1) ≥ 3`, hence
-`localDimension v 1`-class expectations are consistent with the
-cycle being 1-dimensional (where `V(v, r) ~ 2r + 1`). -/
+/-- For `n ≥ 3`, `3 ≤ geodesicBallVolume v 1` in `cycleHypergraph n`. The witnesses are
+`v`, `v + 1` and `v − 1`. -/
 theorem cycleHypergraph_ballVolume_one_ge_three {n : Nat} [NeZero n]
     (hn : 3 ≤ n) (v : Fin n) :
     3 ≤ (cycleHypergraph n).geodesicBallVolume v 1 := by
@@ -522,14 +435,9 @@ theorem cycleHypergraph_ballVolume_one_ge_three {n : Nat} [NeZero n]
   calc 3 = ({v, v + 1, v - 1} : Finset (Fin n)).card := h_triple_card.symm
     _ ≤ _ := Finset.card_le_card h_subset
 
-/-! ## Cycle-hypergraph connectivity
+/-! ## Connectivity of the cycle hypergraph -/
 
-For `n ≥ 2`, `cycleHypergraph n` is a connected graph. This lets us
-apply the unconditional triangle inequality `Hypergraph.dist_triangle`
-to cycles. -/
-
-/-- **Reachability from `0` to any vertex in `cycleHypergraph n`** via
-the successor-adjacency ladder. -/
+/-- For `n ≥ 2`, every vertex of `cycleHypergraph n` is reachable from `0`. -/
 theorem cycleHypergraph_reachable_zero {n : Nat} [NeZero n] (hn : 2 ≤ n)
     (v : Fin n) :
     (cycleHypergraph n).toSimpleGraph.Reachable 0 v := by
@@ -560,8 +468,7 @@ theorem cycleHypergraph_reachable_zero {n : Nat} [NeZero n] (hn : 2 ≤ n)
     rw [hv_eq]
     exact ih'.trans hadj.reachable
 
-/-- **`cycleHypergraph n` is connected** for `n ≥ 2`. Using the
-reachability-from-zero theorem + symmetry + transitivity. -/
+/-- For `n ≥ 2`, `(cycleHypergraph n).toSimpleGraph` is connected. -/
 theorem cycleHypergraph_connected {n : Nat} [NeZero n] (hn : 2 ≤ n) :
     (cycleHypergraph n).toSimpleGraph.Connected := by
   refine SimpleGraph.Connected.mk ?_
@@ -570,15 +477,14 @@ theorem cycleHypergraph_connected {n : Nat} [NeZero n] (hn : 2 ≤ n) :
   have hv := cycleHypergraph_reachable_zero hn v
   exact hu.symm.trans hv
 
-/-- **Triangle inequality specialised to `cycleHypergraph n`**. -/
+/-- For `n ≥ 2`, the triangle inequality holds for `dist` on `cycleHypergraph n`. -/
 theorem cycleHypergraph_dist_triangle {n : Nat} [NeZero n] (hn : 2 ≤ n)
     (u v w : Fin n) :
     (cycleHypergraph n).dist u w ≤
       (cycleHypergraph n).dist u v + (cycleHypergraph n).dist v w :=
   Hypergraph.dist_triangle _ (cycleHypergraph_connected hn) u v w
 
-/-- **`v + 1 + 1 = v + 2` in `Fin n`** — follows from associativity and
-`(1 + 1 : Fin n) = 2`. Used to re-shape adjacency statements. -/
+/-- `v + 1 + 1 = v + 2` in `Fin n`. -/
 private theorem cycle_add_one_one_eq_add_two {n : Nat} [NeZero n] (v : Fin n) :
     (v + 1 + 1 : Fin n) = v + 2 := by
   rw [add_assoc]
@@ -586,7 +492,7 @@ private theorem cycle_add_one_one_eq_add_two {n : Nat} [NeZero n] (v : Fin n) :
   apply Fin.ext
   simp [Fin.val_add]
 
-/-- **`v - 1 - 1 = v - 2` in `Fin n`** — commutative-group computation. -/
+/-- `v - 1 - 1 = v - 2` in `Fin n`. -/
 private theorem cycle_sub_one_one_eq_sub_two {n : Nat} [NeZero n] (v : Fin n) :
     (v - 1 - 1 : Fin n) = v - 2 := by
   rw [sub_sub]
@@ -594,25 +500,21 @@ private theorem cycle_sub_one_one_eq_sub_two {n : Nat} [NeZero n] (v : Fin n) :
   apply Fin.ext
   simp [Fin.val_add]
 
-/-- **Adjacency `(v + 1, v + 2)` on `cycleHypergraph n` for `n ≥ 2`.** Obtained
-by applying `cycleHypergraph_succ_pred_adj` at `v + 1`. -/
+/-- For `n ≥ 2`, `v + 1` and `v + 2` are adjacent in `cycleHypergraph n`. -/
 theorem cycleHypergraph_succ_succ_adj {n : Nat} [NeZero n] (hn : 2 ≤ n)
     (v : Fin n) :
     (cycleHypergraph n).Adj (v + 1) (v + 2) := by
   have h := (cycleHypergraph_succ_pred_adj hn (v + 1)).1
   rwa [cycle_add_one_one_eq_add_two] at h
 
-/-- **Adjacency `(v - 1, v - 2)` on `cycleHypergraph n` for `n ≥ 2`.** Obtained
-by applying `cycleHypergraph_succ_pred_adj` at `v - 1`. -/
+/-- For `n ≥ 2`, `v − 1` and `v − 2` are adjacent in `cycleHypergraph n`. -/
 theorem cycleHypergraph_pred_pred_adj {n : Nat} [NeZero n] (hn : 2 ≤ n)
     (v : Fin n) :
     (cycleHypergraph n).Adj (v - 1) (v - 2) := by
   have h := (cycleHypergraph_succ_pred_adj hn (v - 1)).2
   rwa [cycle_sub_one_one_eq_sub_two] at h
 
-/-- **`dist v (v + 2) ≤ 2` on `cycleHypergraph n` for `n ≥ 2`.**
-Via triangle inequality: `dist v (v+2) ≤ dist v (v+1) + dist (v+1) (v+2)
-= 1 + 1 = 2`. -/
+/-- For `n ≥ 2`, `dist v (v + 2) ≤ 2` in `cycleHypergraph n`. -/
 theorem cycleHypergraph_dist_add_two_le {n : Nat} [NeZero n]
     (hn : 2 ≤ n) (v : Fin n) :
     (cycleHypergraph n).dist v (v + 2) ≤ 2 := by
@@ -628,8 +530,7 @@ theorem cycleHypergraph_dist_add_two_le {n : Nat} [NeZero n]
     _ = 1 + 1 := by rw [h1, h2]
     _ = 2 := rfl
 
-/-- **`dist v (v - 2) ≤ 2` on `cycleHypergraph n` for `n ≥ 2`.**
-Symmetric counterpart via the predecessor walk. -/
+/-- For `n ≥ 2`, `dist v (v − 2) ≤ 2` in `cycleHypergraph n`. -/
 theorem cycleHypergraph_dist_sub_two_le {n : Nat} [NeZero n]
     (hn : 2 ≤ n) (v : Fin n) :
     (cycleHypergraph n).dist v (v - 2) ≤ 2 := by
@@ -645,10 +546,7 @@ theorem cycleHypergraph_dist_sub_two_le {n : Nat} [NeZero n]
     _ = 1 + 1 := by rw [h1, h2]
     _ = 2 := rfl
 
-/-- **Iterated forward shift is `k` steps away from `v` on
-`cycleHypergraph n` for `n ≥ 2`**: `dist v (((· + 1)^[k]) v) ≤ k`. Induction
-on `k` via triangle inequality + adjacency. Provides a uniform upper
-bound without relying on `Fin.NatCast` coercion. -/
+/-- For `n ≥ 2` and every `k`, `dist v ((· + 1)^[k] v) ≤ k` in `cycleHypergraph n`. -/
 theorem cycleHypergraph_dist_iterSucc_le {n : Nat} [NeZero n]
     (hn : 2 ≤ n) (v : Fin n) : ∀ (k : ℕ),
     (cycleHypergraph n).dist v ((fun x : Fin n => x + 1)^[k] v) ≤ k := by
@@ -678,8 +576,7 @@ theorem cycleHypergraph_dist_iterSucc_le {n : Nat} [NeZero n]
             cycleHypergraph_dist_triangle hn v _ _
       _ ≤ k + 1 := by rw [h_dist_step]; exact Nat.add_le_add_right ih 1
 
-/-- **Iterated backward shift is `k` steps away from `v`**: symmetric
-counterpart of `cycleHypergraph_dist_iterSucc_le`. -/
+/-- For `n ≥ 2` and every `k`, `dist v ((· - 1)^[k] v) ≤ k` in `cycleHypergraph n`. -/
 theorem cycleHypergraph_dist_iterPred_le {n : Nat} [NeZero n]
     (hn : 2 ≤ n) (v : Fin n) : ∀ (k : ℕ),
     (cycleHypergraph n).dist v ((fun x : Fin n => x - 1)^[k] v) ≤ k := by
@@ -708,9 +605,7 @@ theorem cycleHypergraph_dist_iterPred_le {n : Nat} [NeZero n]
             cycleHypergraph_dist_triangle hn v _ _
       _ ≤ k + 1 := by rw [h_dist_step]; exact Nat.add_le_add_right ih 1
 
-/-- **Value of iterated successor on `Fin n`**: `((· + 1)^[k] v).val = (v.val + k) % n`.
-Useful for distinctness reasoning: two iterates are equal iff their offsets
-agree modulo `n`. -/
+/-- `((· + 1)^[k] v).val = (v.val + k) % n`. -/
 theorem cycleHypergraph_iterSucc_val {n : Nat} [NeZero n] (v : Fin n) :
     ∀ (k : ℕ), ((fun x : Fin n => x + 1)^[k] v).val = (v.val + k) % n := by
   intro k
@@ -725,9 +620,7 @@ theorem cycleHypergraph_iterSucc_val {n : Nat} [NeZero n] (v : Fin n) :
     have h1 : (1 : Fin n).val = 1 % n := rfl
     rw [h1, ← Nat.add_mod, Nat.add_assoc]
 
-/-- **Injectivity of iterated successor on small range**: for `n ≥ 2` and
-`i, j ≤ r` with `2r + 1 ≤ n`, `F^[i] v = F^[j] v ↔ i = j`. Forward shifts
-don't wrap back onto themselves within the admissible range. -/
+/-- For `i, j ≤ r` with `2r + 1 ≤ n`, `(· + 1)^[i] v = (· + 1)^[j] v` implies `i = j`. -/
 theorem cycleHypergraph_iterSucc_injOn {n : Nat} [NeZero n] (v : Fin n)
     {r i j : ℕ} (hir : i ≤ r) (hjr : j ≤ r) (hr : 2 * r + 1 ≤ n)
     (h : (fun x : Fin n => x + 1)^[i] v = (fun x : Fin n => x + 1)^[j] v) :
@@ -743,9 +636,7 @@ theorem cycleHypergraph_iterSucc_injOn {n : Nat} [NeZero n] (v : Fin n)
   rw [Nat.mod_eq_of_lt hi_lt, Nat.mod_eq_of_lt hj_lt] at hij_modeq
   exact hij_modeq
 
-/-- **Value of iterated predecessor on `Fin n`**: `((· - 1)^[k] v).val = (v.val + (n - 1) * k) % n`
-for `n ≥ 2`. Used analogously to `cycleHypergraph_iterSucc_val` for distinctness
-reasoning on the backward-shift family. -/
+/-- For `n ≥ 2`, `((· - 1)^[k] v).val = (v.val + (n - 1) * k) % n`. -/
 theorem cycleHypergraph_iterPred_val {n : Nat} [NeZero n] (hn : 2 ≤ n)
     (v : Fin n) : ∀ (k : ℕ),
     ((fun x : Fin n => x - 1)^[k] v).val = (v.val + (n - 1) * k) % n := by
@@ -769,9 +660,7 @@ theorem cycleHypergraph_iterPred_val {n : Nat} [NeZero n] (hn : 2 ≤ n)
     congr 1
     ring
 
-/-- **Conjugation identity**: `(· - 1)^[k] v = -((· + 1)^[k] (-v))` in `Fin n`.
-This lets us derive `iterPred_injOn` from `iterSucc_injOn` via a negation
-conjugation. -/
+/-- `(· - 1)^[k] w = -((· + 1)^[k] (-w))` in `Fin n`. -/
 private theorem cycleHypergraph_iterPred_neg_iterSucc {n : Nat} [NeZero n]
     (w : Fin n) : ∀ (k : ℕ),
     (fun x : Fin n => x - 1)^[k] w = -((fun x : Fin n => x + 1)^[k] (-w)) := by
@@ -784,10 +673,7 @@ private theorem cycleHypergraph_iterPred_neg_iterSucc {n : Nat} [NeZero n]
     show -((fun x : Fin n => x + 1)^[k] (-w)) - 1 = -((fun x : Fin n => x + 1)^[k] (-w) + 1)
     abel
 
-/-- **Forward and backward shift families don't overlap in the admissible range.**
-For `n ≥ 2`, `i ≤ r`, `1 ≤ j ≤ r`, and `2r + 1 ≤ n`:
-`F^[i] v ≠ G^[j] v`. The proof uses `.val` closed forms plus the fact that
-`i + j ∈ [1, 2r]` with `2r < n` rules out the wrap-around collision. -/
+/-- For `n ≥ 2`, `i ≤ r`, `1 ≤ j ≤ r` and `2r + 1 ≤ n`, `(· + 1)^[i] v ≠ (· - 1)^[j] v`. -/
 theorem cycleHypergraph_iterSucc_ne_iterPred {n : Nat} [NeZero n] (hn : 2 ≤ n)
     (v : Fin n) {r i j : ℕ} (hir : i ≤ r) (hj_pos : 1 ≤ j) (hjr : j ≤ r)
     (hr : 2 * r + 1 ≤ n) :
@@ -810,9 +696,7 @@ theorem cycleHypergraph_iterSucc_ne_iterPred {n : Nat} [NeZero n] (hn : 2 ≤ n)
   rw [Nat.mod_eq_of_lt h_lt, Nat.zero_mod] at h_sum
   omega
 
-/-- **Injectivity of iterated predecessor on small range**: symmetric
-counterpart of `cycleHypergraph_iterSucc_injOn`, derived via the
-conjugation `G^[k] v = -(F^[k] (-v))`. -/
+/-- For `i, j ≤ r` with `2r + 1 ≤ n`, `(· - 1)^[i] v = (· - 1)^[j] v` implies `i = j`. -/
 theorem cycleHypergraph_iterPred_injOn {n : Nat} [NeZero n] (v : Fin n)
     {r i j : ℕ} (hir : i ≤ r) (hjr : j ≤ r) (hr : 2 * r + 1 ≤ n)
     (h : (fun x : Fin n => x - 1)^[i] v = (fun x : Fin n => x - 1)^[j] v) :
@@ -823,11 +707,8 @@ theorem cycleHypergraph_iterPred_injOn {n : Nat} [NeZero n] (v : Fin n)
     neg_injective h
   exact cycleHypergraph_iterSucc_injOn (-v) hir hjr hr h'
 
-/-- **Forward-shift lower bound for ball volume**: for `n ≥ 2` and
-`2r + 1 ≤ n`, `V(v, r) ≥ r + 1`. Exhibits the `r + 1` forward iterates
-`F^[0] v, F^[1] v, ..., F^[r] v` as distinct ball members. This is the
-one-sided (forward only) half of the general `V(v, r) ≥ 2r + 1` claim;
-the backward half doubles it with `G^[1] v, ..., G^[r] v`. -/
+/-- For `n ≥ 2` and `2r + 1 ≤ n`, `r + 1 ≤ geodesicBallVolume v r` in `cycleHypergraph n`.
+The witnesses are `(· + 1)^[k] v` for `k ≤ r`. -/
 theorem cycleHypergraph_ballVolume_forward_ge {n : Nat} [NeZero n]
     (hn : 2 ≤ n) {r : ℕ} (hr : 2 * r + 1 ≤ n) (v : Fin n) :
     r + 1 ≤ (cycleHypergraph n).geodesicBallVolume v r := by
@@ -899,15 +780,9 @@ private theorem iterSucc_succ_after_pred {n : Nat} [NeZero n] (v : Fin n) (j : �
   show (fun x : Fin n => x + 1)^[j] (v - 1 + 1) = (fun x : Fin n => x + 1)^[j] v
   congr 1; abel
 
-/-- **Walk structural result**: any walk `p : v → u` on `cycleHypergraph n`
-with `2 · p.length + 1 ≤ n` puts `u` in the shift set around `v`, i.e.,
-`u = F^[j] v` for some `j ≤ p.length` or `u = G^[j] v` for some
-`1 ≤ j ≤ p.length`.
-
-Proof by structural induction on the walk using the composition lemmas
-`iterSucc_after_succ`, `iterPred_succ_after_succ`, `iterSucc_succ_after_pred`,
-`iterPred_after_pred`. The `2·length+1 ≤ n` bound ensures the shift
-indices stay in their admissible range (no wrap-around collapses). -/
+/-- For `n ≥ 2` and a walk `p` from `v` to `u` in `cycleHypergraph n` with
+`2 · p.length + 1 ≤ n`, either `u = (· + 1)^[j] v` for some `j ≤ p.length` or
+`u = (· - 1)^[j] v` for some `1 ≤ j ≤ p.length`. The proof is by induction on the walk. -/
 theorem cycleHypergraph_walk_in_shift {n : Nat} [NeZero n]
     {v u : Fin n} (p : (cycleHypergraph n).toSimpleGraph.Walk v u)
     (hn : 2 ≤ n) (hp : 2 * p.length + 1 ≤ n) :
@@ -985,21 +860,13 @@ theorem cycleHypergraph_walk_in_shift {n : Nat} [NeZero n]
           _ = (fun x : Fin n => x - 1)^[j] ((fun x : Fin n => x - 1) v) := rfl
           _ = (fun x : Fin n => x - 1)^[j + 1] v := iterPred_after_pred v j
 
-/-- **General ID6 lower bound**: `V(v, r) ≥ 2r + 1` on `cycleHypergraph n`
-for every `n ≥ 2` and `r` with `2r + 1 ≤ n`.
+/-- For `n ≥ 2` and `2r + 1 ≤ n`, `2r + 1 ≤ geodesicBallVolume v r` in
+`cycleHypergraph n`.
 
-Builds the `2r + 1` distinct vertices as
-  `{F^[0] v, F^[1] v, ..., F^[r] v} ∪ {G^[1] v, G^[2] v, ..., G^[r] v}`
-(forward shifts on the left, backward on the right, both using the single
-step-by-1 adjacency on the cycle). Each iterate lies in `ball(v, r)` by
-`cycleHypergraph_dist_iter{Succ,Pred}_le`; pairwise distinctness uses
-`iterSucc_injOn`, `iterPred_injOn`, and `iterSucc_ne_iterPred`.
-
-Combined with `cycleHypergraph_ballVolume_one_exact`, `_zero_exact`,
-`_two_exact`, this recovers the `V(v, r) = 2r + 1` pattern for every
-admissible base case and advances ID6 toward closure. The matching
-upper bound `V(v, r) ≤ 2r + 1` requires the general shortest-walk
-structural analysis and remains open in this form. -/
+The witnesses are `(· + 1)^[k] v` for `k ≤ r` and `(· - 1)^[k] v` for `1 ≤ k ≤ r`. They
+lie in the ball by `cycleHypergraph_dist_iterSucc_le` and `cycleHypergraph_dist_iterPred_le`
+and are pairwise distinct by `cycleHypergraph_iterSucc_injOn`,
+`cycleHypergraph_iterPred_injOn` and `cycleHypergraph_iterSucc_ne_iterPred`. -/
 theorem cycleHypergraph_ballVolume_ge {n : Nat} [NeZero n]
     (hn : 2 ≤ n) {r : ℕ} (hr : 2 * r + 1 ≤ n) (v : Fin n) :
     2 * r + 1 ≤ (cycleHypergraph n).geodesicBallVolume v r := by
@@ -1063,14 +930,9 @@ theorem cycleHypergraph_ballVolume_ge {n : Nat} [NeZero n]
     _ = (S1 ∪ S2).card := (Finset.card_union_of_disjoint hdisj).symm
     _ ≤ _ := Finset.card_le_card h_in_ball
 
-/-- **General ID6 upper bound**: `V(v, r) ≤ 2r + 1` on `cycleHypergraph n`
-for every `n ≥ 2` and `r` with `2r + 1 ≤ n`.
-
-Every `u` with `dist(v, u) ≤ r` arises from a shortest walk of length ≤ r.
-By the walk-structural analysis `cycleHypergraph_walk_in_shift`, `u` sits
-in the radius-`r` shift set around `v` — i.e., `u = F^[j] v` with `j ≤ r`
-or `u = G^[j] v` with `1 ≤ j ≤ r`. Hence ball(v, r) ⊆ shiftSet, and the
-latter has cardinality `2r + 1`. -/
+/-- For `n ≥ 2` and `2r + 1 ≤ n`, `geodesicBallVolume v r ≤ 2r + 1` in
+`cycleHypergraph n`. Each `u` in the ball is the endpoint of a shortest walk of length
+at most `r`, so `cycleHypergraph_walk_in_shift` places it among `2r + 1` shifts of `v`. -/
 theorem cycleHypergraph_ballVolume_le {n : Nat} [NeZero n]
     (hn : 2 ≤ n) {r : ℕ} (hr : 2 * r + 1 ≤ n) (v : Fin n) :
     (cycleHypergraph n).geodesicBallVolume v r ≤ 2 * r + 1 := by
@@ -1113,23 +975,15 @@ theorem cycleHypergraph_ballVolume_le {n : Nat} [NeZero n]
   unfold Hypergraph.geodesicBallVolume
   exact le_trans (Finset.card_le_card h_subset) h_card_union
 
-/-- **ID6 CLOSED — cycle compatibility**: `V(v, r) = 2r + 1` on
-`cycleHypergraph n` for every `n ≥ 2` and `r` with `2r + 1 ≤ n`.
-
-Combines `cycleHypergraph_ballVolume_ge` (lower bound via shift families)
-with `cycleHypergraph_ballVolume_le` (upper bound via walk structure),
-giving the exact formula `V(v, r) = 2r + 1` — a full proof of ID6's
-cycle-dimension compatibility claim. Matches the continuum expectation
-`ball volume ~ 2r + 1` for 1-dimensional geometry. -/
+/-- For `n ≥ 2` and `2r + 1 ≤ n`, `geodesicBallVolume v r = 2r + 1` in
+`cycleHypergraph n`. -/
 theorem cycleHypergraph_ballVolume_exact {n : Nat} [NeZero n]
     (hn : 2 ≤ n) {r : ℕ} (hr : 2 * r + 1 ≤ n) (v : Fin n) :
     (cycleHypergraph n).geodesicBallVolume v r = 2 * r + 1 :=
   le_antisymm (cycleHypergraph_ballVolume_le hn hr v)
     (cycleHypergraph_ballVolume_ge hn hr v)
 
-/-- **Exact ball volume at radius 1** on `cycleHypergraph n` for `n ≥ 3`:
-`geodesicBallVolume v 1 = 3`. Combined with `_one_ge_three` for the
-lower bound and a direct upper bound from `dist ≤ 1 ⇒ Adj ∨ =`. -/
+/-- For `n ≥ 3`, `geodesicBallVolume v 1 = 3` in `cycleHypergraph n`. -/
 theorem cycleHypergraph_ballVolume_one_exact {n : Nat} [NeZero n]
     (hn : 3 ≤ n) (v : Fin n) :
     (cycleHypergraph n).geodesicBallVolume v 1 = 3 := by
@@ -1147,7 +1001,7 @@ theorem cycleHypergraph_ballVolume_one_exact {n : Nat} [NeZero n]
     -- h_dist: dist v u ≤ 1. So u = v (dist 0) or Adj v u (dist 1).
     rw [Nat.le_one_iff_eq_zero_or_eq_one] at h_dist
     rcases h_dist with h0 | h1
-    · -- dist = 0 implies u = v (connected graph, else junk value).
+    · -- On a connected graph, dist = 0 implies u = v.
       left
       unfold Hypergraph.dist at h0
       have hreach : (cycleHypergraph n).toSimpleGraph.Reachable v u := by
@@ -1182,29 +1036,25 @@ theorem cycleHypergraph_ballVolume_one_exact {n : Nat} [NeZero n]
         refine le_trans (Finset.card_insert_le _ _) ?_
         simp
 
-/-! ## Five-vertex distinctness on `Fin n` for `n ≥ 5`
+/-! ## Distinctness of `v, v ± 1, v ± 2` in `Fin n` -/
 
-The five shift-offsets `0, 1, -1, 2, -2` are pairwise distinct in
-`Fin n` when `n ≥ 5`. This drives `V(v, 2) ≥ 5` on cycleHypergraph. -/
-
-/-- **Offset shift is left-cancellable in `Fin n`** (since `Fin n` with
-`NeZero n` is an `AddCommGroup`). -/
+/-- `a ≠ b` implies `v + a ≠ v + b` in `Fin n`. -/
 private lemma fin_add_ne_of_ne {n : Nat} [NeZero n] (v : Fin n) {a b : Fin n}
     (hab : a ≠ b) : v + a ≠ v + b := by
   intro h
   exact hab (add_left_cancel h)
 
-/-- **Value of `(1 : Fin n)` for `n ≥ 2`**. -/
+/-- For `n ≥ 2`, `(1 : Fin n).val = 1`. -/
 private lemma fin_val_one {n : Nat} [NeZero n] (hn : 2 ≤ n) :
     (1 : Fin n).val = 1 := by
   show 1 % n = 1; exact Nat.mod_eq_of_lt (by omega)
 
-/-- **Value of `(2 : Fin n)` for `n ≥ 3`**. -/
+/-- For `n ≥ 3`, `(2 : Fin n).val = 2`. -/
 private lemma fin_val_two {n : Nat} [NeZero n] (hn : 3 ≤ n) :
     (2 : Fin n).val = 2 := by
   show 2 % n = 2; exact Nat.mod_eq_of_lt (by omega)
 
-/-- **Value of `(-1 : Fin n)` for `n ≥ 2`**: equals `n - 1`. -/
+/-- For `n ≥ 2`, `(-1 : Fin n).val = n - 1`. -/
 private lemma fin_val_neg_one {n : Nat} [NeZero n] (hn : 2 ≤ n) :
     (-1 : Fin n).val = n - 1 := by
   have h1 : (1 : Fin n).val = 1 := fin_val_one hn
@@ -1212,7 +1062,7 @@ private lemma fin_val_neg_one {n : Nat} [NeZero n] (hn : 2 ≤ n) :
   rw [h1]
   exact Nat.mod_eq_of_lt (by omega)
 
-/-- **Value of `(-2 : Fin n)` for `n ≥ 3`**: equals `n - 2`. -/
+/-- For `n ≥ 3`, `(-2 : Fin n).val = n - 2`. -/
 private lemma fin_val_neg_two {n : Nat} [NeZero n] (hn : 3 ≤ n) :
     (-2 : Fin n).val = n - 2 := by
   have h2 : (2 : Fin n).val = 2 := fin_val_two hn
@@ -1220,8 +1070,7 @@ private lemma fin_val_neg_two {n : Nat} [NeZero n] (hn : 3 ≤ n) :
   rw [h2]
   exact Nat.mod_eq_of_lt (by omega)
 
-/-- **`(v + 2 : Fin n) ≠ (v - 2 : Fin n)` for `n ≥ 5`.** Differ by 4 in
-Fin n, and 4 < n. -/
+/-- For `n ≥ 5`, `v + 2 ≠ v − 2` in `Fin n`. -/
 theorem cycle_add_two_ne_sub_two {n : Nat} [NeZero n] (hn : 5 ≤ n) (v : Fin n) :
     (v + 2 : Fin n) ≠ (v - 2 : Fin n) := by
   have h3 : 3 ≤ n := by omega
@@ -1232,8 +1081,7 @@ theorem cycle_add_two_ne_sub_two {n : Nat} [NeZero n] (hn : 5 ≤ n) (v : Fin n)
   rw [fin_val_two h3, show (-(2 : Fin n)).val = n - 2 from fin_val_neg_two h3] at hv
   omega
 
-/-- **`(v + 1 : Fin n) ≠ (v - 2 : Fin n)` for `n ≥ 4`.** Differ by 3 in
-Fin n. -/
+/-- For `n ≥ 4`, `v + 1 ≠ v − 2` in `Fin n`. -/
 theorem cycle_succ_ne_sub_two {n : Nat} [NeZero n] (hn : 4 ≤ n) (v : Fin n) :
     (v + 1 : Fin n) ≠ (v - 2 : Fin n) := by
   have h2 : 2 ≤ n := by omega
@@ -1245,8 +1093,7 @@ theorem cycle_succ_ne_sub_two {n : Nat} [NeZero n] (hn : 4 ≤ n) (v : Fin n) :
   rw [fin_val_one h2, show (-(2 : Fin n)).val = n - 2 from fin_val_neg_two h3] at hv
   omega
 
-/-- **`(v - 1 : Fin n) ≠ (v + 2 : Fin n)` for `n ≥ 4`.** Symmetric of
-`cycle_succ_ne_sub_two`. -/
+/-- For `n ≥ 4`, `v − 1 ≠ v + 2` in `Fin n`. -/
 theorem cycle_pred_ne_add_two {n : Nat} [NeZero n] (hn : 4 ≤ n) (v : Fin n) :
     (v - 1 : Fin n) ≠ (v + 2 : Fin n) := by
   have h2 : 2 ≤ n := by omega
@@ -1258,8 +1105,7 @@ theorem cycle_pred_ne_add_two {n : Nat} [NeZero n] (hn : 4 ≤ n) (v : Fin n) :
   rw [show (-(1 : Fin n)).val = n - 1 from fin_val_neg_one h2, fin_val_two h3] at hv
   omega
 
-/-- **`(v + 1 : Fin n) ≠ (v + 2 : Fin n)` for `n ≥ 2`.** Directly from
-`cycle_succ_ne` applied at `v + 1`. -/
+/-- For `n ≥ 2`, `v + 1 ≠ v + 2` in `Fin n`. -/
 theorem cycle_succ_ne_add_two {n : Nat} [NeZero n] (hn : 2 ≤ n) (v : Fin n) :
     (v + 1 : Fin n) ≠ (v + 2 : Fin n) := by
   intro heq
@@ -1268,8 +1114,7 @@ theorem cycle_succ_ne_add_two {n : Nat} [NeZero n] (hn : 2 ≤ n) (v : Fin n) :
   rw [cycle_add_one_one_eq_add_two]
   exact heq.symm
 
-/-- **`(v - 1 : Fin n) ≠ (v - 2 : Fin n)` for `n ≥ 3`.** Reduce via left
-cancellation to `(-1 : Fin n) ≠ (-2 : Fin n)`, then compare `.val`. -/
+/-- For `n ≥ 3`, `v − 1 ≠ v − 2` in `Fin n`. -/
 theorem cycle_pred_ne_sub_two {n : Nat} [NeZero n] (hn : 3 ≤ n) (v : Fin n) :
     (v - 1 : Fin n) ≠ (v - 2 : Fin n) := by
   have h2 : 2 ≤ n := by omega
@@ -1283,10 +1128,8 @@ theorem cycle_pred_ne_sub_two {n : Nat} [NeZero n] (hn : 3 ≤ n) (v : Fin n) :
   rw [fin_val_one h2, fin_val_two hn] at hv
   omega
 
-/-- **Radius-2 ball volume on `cycleHypergraph n` is `≥ 5` for `n ≥ 5`.**
-Exhibits five distinct vertices `v, v + 1, v - 1, v + 2, v - 2` all within
-distance 2 of `v`. This advances ID6 past the `r = 1` base case toward
-the general `V(v, r) = 2r + 1` claim on cycles. -/
+/-- For `n ≥ 5`, `5 ≤ geodesicBallVolume v 2` in `cycleHypergraph n`. The witnesses are
+`v`, `v ± 1` and `v ± 2`. -/
 theorem cycleHypergraph_ballVolume_two_ge_five {n : Nat} [NeZero n]
     (hn : 5 ≤ n) (v : Fin n) :
     5 ≤ (cycleHypergraph n).geodesicBallVolume v 2 := by
@@ -1368,12 +1211,8 @@ theorem cycleHypergraph_ballVolume_two_ge_five {n : Nat} [NeZero n]
   calc 5 = ({v, v + 1, v - 1, v + 2, v - 2} : Finset (Fin n)).card := h_card.symm
     _ ≤ _ := Finset.card_le_card h_subset
 
-/-- **Radius-2 ball volume on `cycleHypergraph n` is `≤ 5` for `n ≥ 5`.**
-Every `u` with `dist v u ≤ 2` arises from a shortest walk of length 0, 1,
-or 2. Length 0 gives `u = v`; length 1 gives `u ∈ {v ± 1}`; length 2 pins
-the intermediate vertex `w ∈ {v ± 1}` via `cycleHypergraph_Adj_iff`, and
-then `u ∈ N(w) = {w ± 1} = {v, v ± 2}`. Combined with `u ≠ v`, this puts
-`u ∈ {v, v ± 1, v ± 2}`. -/
+/-- For `n ≥ 3`, `geodesicBallVolume v 2 ≤ 5` in `cycleHypergraph n`. A shortest walk of
+length at most 2 from `v` ends in `{v, v ± 1, v ± 2}`. -/
 theorem cycleHypergraph_ballVolume_two_le_five {n : Nat} [NeZero n]
     (hn : 3 ≤ n) (v : Fin n) :
     (cycleHypergraph n).geodesicBallVolume v 2 ≤ 5 := by
@@ -1498,10 +1337,7 @@ theorem cycleHypergraph_ballVolume_two_le_five {n : Nat} [NeZero n]
         refine le_trans (Finset.card_insert_le _ _) ?_
         simp
 
-/-- **Exact radius-2 ball volume `V(v, 2) = 5` on `cycleHypergraph n`
-for `n ≥ 5`.** Combines the `≥ 5` lower bound (`_two_ge_five`) with the
-`≤ 5` upper bound (`_two_le_five`). This closes the `r = 2` base case
-for the `V(v, r) = 2r + 1` formula on cycles. -/
+/-- For `n ≥ 5`, `geodesicBallVolume v 2 = 5` in `cycleHypergraph n`. -/
 theorem cycleHypergraph_ballVolume_two_exact {n : Nat} [NeZero n]
     (hn : 5 ≤ n) (v : Fin n) :
     (cycleHypergraph n).geodesicBallVolume v 2 = 5 := by
@@ -1509,11 +1345,7 @@ theorem cycleHypergraph_ballVolume_two_exact {n : Nat} [NeZero n]
   exact le_antisymm (cycleHypergraph_ballVolume_two_le_five h3 v)
     (cycleHypergraph_ballVolume_two_ge_five hn v)
 
-/-- **Large-radius ball covers everything on a connected cycle**: for
-`n ≥ 2` and radius `r ≥ n`, the closed ball of radius `r` around any
-vertex equals all of `Fin n`. Proof: on a connected finite graph,
-`dist u v < card V = n`, so `dist ≤ n` always, and every vertex is in
-the ball. -/
+/-- For `n ≥ 2` and `r ≥ n`, `geodesicBallVolume v r = n` in `cycleHypergraph n`. -/
 theorem cycleHypergraph_ballVolume_large {n : Nat} [NeZero n]
     (hn : 2 ≤ n) (v : Fin n) (r : ℕ) (hr : n ≤ r) :
     (cycleHypergraph n).geodesicBallVolume v r = n := by
@@ -1545,10 +1377,7 @@ theorem cycleHypergraph_ballVolume_large {n : Nat} [NeZero n]
   rw [h_univ]
   simp
 
-/-- **On a connected hypergraph, `V(v, r) = |V|` for `r ≥ |V|`.**
-Generalises `cycleHypergraph_ballVolume_large` to every connected
-hypergraph: once the radius exceeds the vertex count, every vertex is
-within distance `r` (since finite paths have length < `|V|`). -/
+/-- If `H.toSimpleGraph` is connected and `r ≥ |V|`, then `geodesicBallVolume v r = |V|`. -/
 theorem geodesicBallVolume_ge_card (H : Hypergraph V)
     (hconn : H.toSimpleGraph.Connected)
     (v : V) (r : ℕ) (hr : Fintype.card V ≤ r) :
@@ -1573,10 +1402,7 @@ theorem geodesicBallVolume_ge_card (H : Hypergraph V)
   rw [h_univ]
   simp
 
-/-- **Ball volume at radius 0 on the cycle** `= 1`: only the basepoint
-itself is within distance 0 (cycle is connected, so `dist = 0 ↔ u = v`).
-This is the `r = 0` case of the ID6 dimension-compatibility formula
-`geodesicBallVolume v r = 2r + 1`. -/
+/-- For `n ≥ 2`, `geodesicBallVolume v 0 = 1` in `cycleHypergraph n`. -/
 theorem cycleHypergraph_ballVolume_zero_exact {n : Nat} [NeZero n]
     (hn : 2 ≤ n) (v : Fin n) :
     (cycleHypergraph n).geodesicBallVolume v 0 = 1 := by
@@ -1600,29 +1426,15 @@ theorem cycleHypergraph_ballVolume_zero_exact {n : Nat} [NeZero n]
   rw [h_eq]
   simp
 
-/-! ## Elementary chord-ratio angle (AT0, SWOLF's primitive)
+/-! ## Chord-ratio angle
 
-SWOLF's elementary angle definition: at vertex `O`, given two
-*equidistant* vertices `A, B` (i.e. `H.dist O A = H.dist O B = r > 0`),
-the **chord-ratio** is `H.dist A B / H.dist O A`. This is `2 sin(θ/2)`
-for the geometric law-of-cosines angle θ — a strictly increasing
-bijection from `θ ∈ [0, π]` to `[0, 2]`. Pure-counts, no √, no arccos;
-on `ℕ`-valued `dist` the ratio lives in `ℚ`. Constructive on every
-finite hypergraph; needs no `GeodesicallyUnique` hypothesis (the
-*number* is well-defined; the *angle interpretation* requires unique
-geodesics).
-
-Equidistant pair `(A, B)` ranges over `H.infraSphere O r := {v : V |
-H.dist O v = r}` (SPHERE1); the angle is therefore an *infra-sphere
-statistic*. SWOLF's intuition: in flat d-space, equidistant pair
-chord-ratios concentrate at `√2`; deviation from `√2` is the local
-curvature signature.
+For `A, B` with `H.dist O A = H.dist O B = r > 0`, the chord ratio is
+`H.dist A B / r`. For points at distance `r` from `O` in Euclidean space the corresponding
+ratio is `2 sin(θ/2)`, with `θ` the angle at `O`.
 -/
 
-/-- **Elementary chord-ratio angle** (SWOLF / AT0). `H.elementaryAngle
-O A B := d(A, B) / d(O, A)` when `A, B` are equidistant from `O` at
-positive distance, otherwise `0`. The number is `2 sin(θ_geom / 2)`
-for the geometric angle θ_geom at `O` between rays to `A, B`. -/
+/-- `H.dist A B / H.dist O A` when `H.dist O A = H.dist O B` and `0 < H.dist O A`, and `0`
+otherwise. -/
 noncomputable def Hypergraph.elementaryAngle (H : Hypergraph V)
     (O A B : V) : ℝ :=
   if H.dist O A = H.dist O B ∧ 0 < H.dist O A then
@@ -1654,10 +1466,7 @@ theorem Hypergraph.elementaryAngle_symm (H : Hypergraph V) (O A B : V) :
       exact this
     rw [if_neg hAB, if_neg hBA]
 
-/-- **Bound**: the chord-ratio is always between `0` and `2` because
-`d(A, B) ≤ d(A, O) + d(O, B) = 2 r` by triangle inequality (when
-reachable). Holds unconditionally with `≤ 2` since out-of-range gives
-`0`. -/
+/-- `0 ≤ elementaryAngle O A B`. -/
 theorem Hypergraph.elementaryAngle_nonneg (H : Hypergraph V) (O A B : V) :
     0 ≤ H.elementaryAngle O A B := by
   unfold Hypergraph.elementaryAngle
@@ -1668,16 +1477,10 @@ theorem Hypergraph.elementaryAngle_nonneg (H : Hypergraph V) (O A B : V) :
     · exact Nat.cast_nonneg _
   · rw [if_neg h]
 
-/-! ## Law-of-cosines angle (AT1, radian-valued companion)
+/-! ## Law-of-cosines angle -/
 
-Standard `cos θ = (d² + d² − d²) / (2 d d)` formula. Bridges to
-`elementaryAngle` via `chord = 2 sin(θ / 2)`, giving
-`elementaryAngle = √(2 − 2 cos θ)`. Lives next to `elementaryAngle`
-since they share the equidistant-pair domain.
--/
-
-/-- **Law-of-cosines cosine** at `O` between rays to `A` and `B`. Returns
-`0` when degenerate (zero distances). -/
+/-- `(d(O,A)² + d(O,B)² − d(A,B)²) / (2 d(O,A) d(O,B))` when both `d(O,A)` and `d(O,B)`
+are positive, and `0` otherwise. -/
 noncomputable def Hypergraph.cosAngle (H : Hypergraph V) (O A B : V) : ℝ :=
   let dOA : ℝ := H.dist O A
   let dOB : ℝ := H.dist O B
@@ -1686,62 +1489,36 @@ noncomputable def Hypergraph.cosAngle (H : Hypergraph V) (O A B : V) : ℝ :=
     (dOA^2 + dOB^2 - dAB^2) / (2 * dOA * dOB)
   else 0
 
-/-- **Radian-valued angle** at `O`. Returns `0` when degenerate. -/
+/-- `Real.arccos (cosAngle O A B)`. In the degenerate case `cosAngle` is `0` and the
+value is `π/2`. -/
 noncomputable def Hypergraph.angle (H : Hypergraph V) (O A B : V) : ℝ :=
   Real.arccos (H.cosAngle O A B)
 
-/-! ## Orthogonality with chord-ratio tolerance (AT6 stub-fix)
+/-! ## Approximate orthogonality -/
 
-SWOLF's elementary-angle gives the natural orthogonality predicate:
-two axes `w₁, w₂` from basepoint `v` are *orthogonal* iff the
-chord-ratio between equidistant samples on each axis is `≈ √2` (the
-flat-Euclidean expected value). This will replace the `True`-stub in
-`CoordinatizationDimension.AreOrthogonalAxes` once the basepoint /
-sampling discipline lands; surfaced here as a parametrised predicate. -/
-
-/-- **Approximate-orthogonality at radius `r` with tolerance `ε`**: the
-chord-ratio between vertices on rays toward `w₁, w₂` from `v`,
-sampled at distance `r`, is within `ε` of `√2`. -/
+/-- There exist `A, B` with `dist v A = dist v B = r` and
+`|elementaryAngle v A B − √2| ≤ ε`, and `dist v w₁ ≤ r`, `dist v w₂ ≤ r`. The vertices
+`A, B` are not required to lie on walks toward `w₁, w₂`. -/
 noncomputable def Hypergraph.IsOrthoApprox (H : Hypergraph V)
     (v w₁ w₂ : V) (r : ℕ) (ε : ℝ) : Prop :=
   ∃ (A B : V), H.dist v A = r ∧ H.dist v B = r ∧
     H.dist v w₁ ≤ r ∧ H.dist v w₂ ≤ r ∧
     |H.elementaryAngle v A B - Real.sqrt 2| ≤ ε
 
-/-! ## GeodesicallyUnique predicate (AT8)
+/-! ## Unique shortest walks -/
 
-SWOLF's straight-lines requirement: the angle-as-real-angle
-interpretation of `elementaryAngle` (AT0) and `cosAngle` (AT1) needs a
-unique geodesic between every vertex pair. On a generic hypergraph
-geodesics may branch (the multi-fibration story IC6); AT8 surfaces the
-predicate that gates the interpretation theorems.
-
-Definition: every two shortest walks between the same endpoints are
-identical (as `SimpleGraph.Walk`s). On `GeodesicallyUnique` hypergraphs:
-- AT0 chord-ratio is *the* angle at O (interpretation works).
-- AT3 Toponogov asymptotic angle is well-defined.
-- AT26 multivalued angle collapses to single-valued.
-- HYPER4 `IsGeodesicHyperplane` ↔ `IsTopologicalHyperplane` equivalence
-  becomes trivial (geodesics-go-around route is closed off).
--/
-
-/-- **`GeodesicallyUnique`** — every pair of shortest walks between the
-same endpoints is equal. SWOLF's straight-lines condition. The
-*unique-direction* hypothesis that makes the angle interpretation
-well-defined (AT0 number → AT0 angle, AT3 limit → AT3 angle). -/
+/-- Any two walks from `u` to `v` of length `H.dist u v` are equal. -/
 def Hypergraph.GeodesicallyUnique (H : Hypergraph V) : Prop :=
   ∀ (u v : V) (p q : H.toSimpleGraph.Walk u v),
     p.length = H.dist u v → q.length = H.dist u v → p = q
 
-/-- **`GeodesicallyUnique` is preserved by symmetry** — well, vacuously,
-since the condition quantifies over all `(u, v)` ordered pairs. -/
+/-- The definition of `GeodesicallyUnique` applied to `u`, `v`, `p`, `q`. -/
 theorem Hypergraph.GeodesicallyUnique.swap (H : Hypergraph V)
     (h : H.GeodesicallyUnique) (u v : V) (p q : H.toSimpleGraph.Walk u v)
     (hp : p.length = H.dist u v) (hq : q.length = H.dist u v) :
     p = q := h u v p q hp hq
 
-/-- **Trivial unique-walk case**: when `dist u u = 0`, the only
-length-0 walk is `Walk.nil`, so all length-0 walks at `u` are equal. -/
+/-- Two closed walks at `u` of length `0` are equal. -/
 theorem Hypergraph.geodesicallyUnique_self_walks (H : Hypergraph V) (u : V)
     (p q : H.toSimpleGraph.Walk u u) (hp : p.length = 0) (hq : q.length = 0) :
     p = q := by
@@ -1750,24 +1527,17 @@ theorem Hypergraph.geodesicallyUnique_self_walks (H : Hypergraph V) (u : V)
     match q, hq with
     | SimpleGraph.Walk.nil, _ => rfl
 
-/-! ## Cut-vertex / bridge / Jordan-separator predicates (INOUT1)
+/-! ## Cut vertices, bridges and separating cycles -/
 
-SWOLF's "much more basic question, inside vs outside". The pre-metric
-cut-vertex / bridge primitives from graph theory; the genuine Jordan-
-separator predicate sits on top of these. -/
-
-/-- **`IsCutVertex H v`** — there exist two vertices reachable in `H`
-such that every walk between them passes through `v`. Standard graph-
-theoretic *articulation point*. -/
+/-- There exist `a, b`, both different from `v`, with `b` reachable from `a`, such that
+every walk from `a` to `b` passes through `v`. -/
 def Hypergraph.IsCutVertex (H : Hypergraph V) (v : V) : Prop :=
   ∃ (a b : V), a ≠ v ∧ b ≠ v ∧
     H.toSimpleGraph.Reachable a b ∧
     ∀ (p : H.toSimpleGraph.Walk a b), v ∈ p.support
 
-/-- **`IsBridge H {u, v}`** — there exist endpoints reachable in `H`
-such that every walk between them traverses the `(u, v)` edge.
-Standard graph-theoretic *cut edge*. (Stated via the `Adj` predicate
-to avoid `Sym2` machinery.) -/
+/-- `H.Adj u v`, and there exist `a, b` with `b` reachable from `a` such that every walk
+from `a` to `b` has `u` and `v` as consecutive vertices. -/
 def Hypergraph.IsBridgeEdge (H : Hypergraph V) (u v : V) : Prop :=
   H.Adj u v ∧
   ∃ (a b : V), H.toSimpleGraph.Reachable a b ∧
@@ -1778,63 +1548,35 @@ def Hypergraph.IsBridgeEdge (H : Hypergraph V) (u v : V) : Prop :=
         (p.support.get ⟨i, by omega⟩ = v ∧
          p.support.get ⟨i+1, h⟩ = u)
 
-/-- **Inside-outside on a cycle (Jordan-separator predicate)** — a
-closed walk at `v` *separates* the graph if removing its support
-vertices disconnects the remaining graph into ≥ 2 components.
-Predicate-level statement; the structural theorem (e.g., contractible
-cycles always separate on planar surfaces) is the discrete-Jordan
-follow-up content. -/
+/-- There exist `a, b` outside the support of `γ`, with `b` reachable from `a`, such that
+every walk from `a` to `b` meets the support of `γ`. -/
 def Hypergraph.CycleSeparates (H : Hypergraph V)
     {v : V} (γ : H.toSimpleGraph.Walk v v) : Prop :=
   ∃ (a b : V), a ∉ γ.support ∧ b ∉ γ.support ∧
     H.toSimpleGraph.Reachable a b ∧
     ∀ (p : H.toSimpleGraph.Walk a b), ∃ x ∈ p.support, x ∈ γ.support
 
-/-! ## Contractibility predicates (CONTRACT1 substrate)
+/-! ## Closed walks contained in a ball
 
-SWOLF's "once we have a cycle we have the notion of a contractable
-cycle". The full Knill-Fisk recursive contractibility (γ is reducible
-to `Walk.nil` via DEFORM1 elementary moves) needs the cellular machinery
-that hasn't landed yet. Substrate landed here:
+These predicates bound the support of a closed walk by a geodesic ball. They do not
+define a homotopy or a contraction. -/
 
-- **Trivially contractible**: cycle of length 0 (just `Walk.nil`).
-- **Disk-contractible at `w`**: every vertex on the cycle's support lies
-  in the unit ball `B(w, 1)` — sufficient condition for contractibility
-  on manifold-like hypergraphs (the cycle fits inside a "small disk").
-- **Scale-indexed contractibility (`IsContractibleAtScale γ r`)**: every
-  vertex of γ.support lies within distance `r` of some basepoint.
-  Persistence-barcode death-time (IT4) is the scale at which γ becomes
-  contractible — the same intuition.
-
-For BBH (Phase D): event horizon = non-disk-contractible cycle (vertices
-on the horizon span larger than any unit disk because they bound the
-singularity). Merger event = cycle becomes disk-contractible (the new
-2-cell from rewriting fills in). -/
-
-/-- **Trivially contractible** — closed walk has length 0 (just
-`Walk.nil`). Baseline. -/
+/-- `γ.length = 0`. -/
 def Hypergraph.IsTrivialCycle (H : Hypergraph V) {v : V}
     (γ : H.toSimpleGraph.Walk v v) : Prop :=
   γ.length = 0
 
-/-- **Disk-contractible at basepoint `w` of radius `r`** — every vertex
-on the cycle's support lies in the geodesic ball of radius `r` around
-`w`. Sufficient condition for contractibility on a manifold-like
-hypergraph: the cycle fits inside a small disk and bounds it. -/
+/-- Every vertex in the support of `γ` lies in `geodesicBall w r`. -/
 def Hypergraph.IsDiskContractible (H : Hypergraph V) {v : V}
     (γ : H.toSimpleGraph.Walk v v) (w : V) (r : ℕ) : Prop :=
   ∀ x ∈ γ.support, x ∈ H.geodesicBall w r
 
-/-- **Scale-indexed contractibility predicate** — `γ` is contractible at
-scale `r` iff there exists a basepoint `w` such that γ is disk-
-contractible inside `B(w, r)`. Persistence-barcode death-time ↔ minimum
-such `r`. -/
+/-- Some `w` satisfies `IsDiskContractible γ w r`. -/
 def Hypergraph.IsContractibleAtScale (H : Hypergraph V) {v : V}
     (γ : H.toSimpleGraph.Walk v v) (r : ℕ) : Prop :=
   ∃ (w : V), H.IsDiskContractible γ w r
 
-/-- **Trivial cycle is disk-contractible at the basepoint, radius 0** —
-`Walk.nil` has support `[v]`, and `v ∈ B(v, 0)` via `dist_self`. -/
+/-- A closed walk of length `0` at `v` satisfies `IsDiskContractible γ v 0`. -/
 theorem Hypergraph.isTrivialCycle_isDiskContractible (H : Hypergraph V)
     {v : V} (γ : H.toSimpleGraph.Walk v v) (htriv : H.IsTrivialCycle γ) :
     H.IsDiskContractible γ v 0 := by
@@ -1848,8 +1590,8 @@ theorem Hypergraph.isTrivialCycle_isDiskContractible (H : Hypergraph V)
   rw [hx]
   exact H.self_mem_geodesicBall v 0
 
-/-- **Disk-contractibility at scale 0 implies the cycle's support is
-exactly `{w}` (or a subset of unreachable junk-value vertices)**. -/
+/-- If `IsDiskContractible γ w 0`, then `H.dist w x = 0` for every `x` in the support
+of `γ`. -/
 theorem Hypergraph.diskContractible_zero_support (H : Hypergraph V) {v : V}
     (γ : H.toSimpleGraph.Walk v v) (w : V)
     (h : H.IsDiskContractible γ w 0) :
@@ -1860,84 +1602,58 @@ theorem Hypergraph.diskContractible_zero_support (H : Hypergraph V) {v : V}
   simp only [Finset.mem_filter, Finset.mem_univ, true_and] at this
   omega
 
-/-! ## Perpendicular bisector + midpoint + Voronoi (HYPER2 / MIDPT1 / HYPER3)
+/-! ## Bisectors, midpoints and Voronoi cells -/
 
-SWOLF's "set of points equidistant from two given points" + PHAJEK's
-graph-separator framing + the Voronoi generalisation. All sit directly
-on `dist` and are pure-`Finset` constructions. -/
-
-/-- **Perpendicular bisector** (HYPER2 / metric hyperplane): the set of
-vertices equidistant from `A` and `B`. SWOLF's "all points equidistant
-from two given points". On a finite hypergraph this is a `Finset V`,
-*always* computable. The pre-metric "graph-separator" hyperplane (HYPER1)
-asks whether removing this set disconnects `A` from `B` — see
-`HasTopologicalHyperplane` below.
-
-The bisector partitions `V` into three regions: closer-to-`A`,
-equidistant (the bisector itself), closer-to-`B`. -/
+/-- The set of `M` with `H.dist A M = H.dist B M`. -/
 noncomputable def Hypergraph.perpBisector (H : Hypergraph V) (A B : V) :
     Finset V :=
   Finset.univ.filter (fun M => H.dist A M = H.dist B M)
 
-/-- **Closer-to-`A` half-space** of the (perpBisector A B). -/
+/-- The set of `v` with `H.dist A v < H.dist B v`. -/
 noncomputable def Hypergraph.closerHalf (H : Hypergraph V) (A B : V) :
     Finset V :=
   Finset.univ.filter (fun v => H.dist A v < H.dist B v)
 
-/-- **Bisector membership iff equidistant from the two endpoints**. -/
+/-- `M ∈ perpBisector A B` iff `H.dist A M = H.dist B M`. -/
 @[simp] theorem Hypergraph.mem_perpBisector (H : Hypergraph V) (A B M : V) :
     M ∈ H.perpBisector A B ↔ H.dist A M = H.dist B M := by
   unfold Hypergraph.perpBisector
   simp [Finset.mem_filter]
 
-/-- **Bisector is symmetric in its two endpoints**: `perpBisector A B =
-perpBisector B A`. -/
+/-- `perpBisector A B = perpBisector B A`. -/
 theorem Hypergraph.perpBisector_symm (H : Hypergraph V) (A B : V) :
     H.perpBisector A B = H.perpBisector B A := by
   ext M
   simp [Hypergraph.mem_perpBisector, eq_comm]
 
-/-- **Pre-metric "topological hyperplane" predicate** (HYPER1 / HYPER4):
-removing the perpendicular bisector vertices disconnects `A` from `B`
-in the clique-expansion graph. SWOLF's "if you remove all points of
-the hyperplane do you separate the two points". This is *strictly
-stronger* than just being equidistant — it's the genuine separator
-condition (PHAJEK's framing). -/
+/-- `A ∉ perpBisector A B`, `B ∉ perpBisector A B`, and `B` is not reachable from `A` in
+`H.toSimpleGraph`. The bisector is not removed from the graph. -/
 def Hypergraph.HasTopologicalHyperplane (H : Hypergraph V) (A B : V) : Prop :=
   A ∉ H.perpBisector A B ∧ B ∉ H.perpBisector A B ∧
-  ¬ H.toSimpleGraph.Reachable A B  -- placeholder: needs subgraph
-  -- The full content (removing the bisector disconnects) requires
-  -- subgraph-deletion machinery; we surface the predicate name here so
-  -- HYPER4 + the Bachmann motion-group track can refer to it.
+  ¬ H.toSimpleGraph.Reachable A B
 
-/-! ## Midpoint (MIDPT1)
-
-Equidistant *and* on-segment-between-endpoints — the bisector ∩ segment. -/
-
-/-- **Midpoint set** of `A, B`: the bisector ∩ "between" predicate. May
-be empty (typical for odd `dist A B`), unique (Euclidean-like), or
-multivalued (branching). -/
+/-- The set of `M` with `dist A M = dist B M` and `dist A M + dist B M = dist A B`. -/
 noncomputable def Hypergraph.midpoint (H : Hypergraph V) (A B : V) :
     Finset V :=
   Finset.univ.filter (fun M =>
     H.dist A M = H.dist B M ∧ H.dist A M + H.dist B M = H.dist A B)
 
-/-- **Near-midpoint set** (for odd `dist A B = 2k+1`): vertices `M` with
-`|dist A M − dist B M| = 1` and `dist A M + dist B M = dist A B`. -/
+/-- The set of `M` with `dist A M + dist B M = dist A B` and
+`|dist A M − dist B M| = 1`. -/
 noncomputable def Hypergraph.nearMidpoint (H : Hypergraph V) (A B : V) :
     Finset V :=
   Finset.univ.filter (fun M =>
     H.dist A M + H.dist B M = H.dist A B ∧
     (H.dist A M = H.dist B M + 1 ∨ H.dist B M = H.dist A M + 1))
 
-/-- **Midpoint-set membership characterisation**. -/
+/-- `M ∈ midpoint A B` iff `dist A M = dist B M` and `dist A M + dist B M = dist A B`. -/
 @[simp] theorem Hypergraph.mem_midpoint (H : Hypergraph V) (A B M : V) :
     M ∈ H.midpoint A B ↔
       H.dist A M = H.dist B M ∧ H.dist A M + H.dist B M = H.dist A B := by
   unfold Hypergraph.midpoint
   simp [Finset.mem_filter]
 
-/-- **Midpoint is symmetric in endpoints**. -/
+/-- `midpoint A B = midpoint B A`. -/
 theorem Hypergraph.midpoint_symm (H : Hypergraph V) (A B : V) :
     H.midpoint A B = H.midpoint B A := by
   ext M
@@ -1950,20 +1666,12 @@ theorem Hypergraph.midpoint_symm (H : Hypergraph V) (A B : V) :
     refine ⟨h_eq.symm, ?_⟩
     rw [add_comm] at h_sum; exact h_sum
 
-/-! ## Voronoi decomposition (HYPER3)
-
-Generalises HYPER2 to k seed points: each cell is the set of vertices
-closest to a given seed. Cell-boundaries are the perpendicular bisectors
-between adjacent seeds (intersection of `closerHalf`s). -/
-
-/-- **Voronoi cell** for seed `i` in a `Fin k`-indexed seed list `seeds`:
-the set of vertices `v` such that `seeds[i]` is at least as close as
-every other seed. -/
+/-- The set of `v` with `dist (seeds i) v ≤ dist (seeds j) v` for every `j : Fin k`. -/
 noncomputable def Hypergraph.voronoiCell (H : Hypergraph V) {k : ℕ}
     (seeds : Fin k → V) (i : Fin k) : Finset V :=
   Finset.univ.filter (fun v => ∀ j : Fin k, H.dist (seeds i) v ≤ H.dist (seeds j) v)
 
-/-- **Voronoi cell membership characterisation**. -/
+/-- `v ∈ voronoiCell seeds i` iff `dist (seeds i) v ≤ dist (seeds j) v` for every `j`. -/
 @[simp] theorem Hypergraph.mem_voronoiCell (H : Hypergraph V) {k : ℕ}
     (seeds : Fin k → V) (i : Fin k) (v : V) :
     v ∈ H.voronoiCell seeds i ↔
@@ -1971,8 +1679,7 @@ noncomputable def Hypergraph.voronoiCell (H : Hypergraph V) {k : ℕ}
   unfold Hypergraph.voronoiCell
   simp [Finset.mem_filter]
 
-/-- **Each seed belongs to its own Voronoi cell** (since `dist self = 0`
-is the minimum). -/
+/-- `seeds i ∈ voronoiCell seeds i`. -/
 theorem Hypergraph.seed_mem_own_voronoiCell (H : Hypergraph V) {k : ℕ}
     (seeds : Fin k → V) (i : Fin k) :
     seeds i ∈ H.voronoiCell seeds i := by

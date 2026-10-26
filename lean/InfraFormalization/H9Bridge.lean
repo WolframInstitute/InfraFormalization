@@ -18,11 +18,11 @@ vertex lists among the hyperedges of `H`.
 
 `BridgeStepLemma` states: for both systems and every `H` with `Psi H`,
 `distinctEdgeCount (fireAllStep sys H) = 3 * distinctEdgeCount H` and
-`Psi (fireAllStep sys H)`. It is OPEN.
+`Psi (fireAllStep sys H)`. No theorem in the library proves it.
 
-PROVED in this module: `psi_seedEdge12`, and the implication from
-`BridgeStepLemma` to `engineMatchesTriad` and to the `3^d` count for all
-d (the latter two use `native_decide` at depth 0).
+The module proves `Psi seedEdge12` and that `BridgeStepLemma` implies
+`engineMatchesTriad` and the count `3^d` for every `d`. The depth-0 cases
+are checked by `native_decide`.
 -/
 
 import InfraFormalization.H9Closure
@@ -39,10 +39,10 @@ open H9Closure
 
 /-! ## Section A: The predicate `Psi` -/
 
-/-- Project an edge to its vertex list (helper). -/
+/-- The vertex list of `e`. -/
 def edgeVerts (e : Hyperedge ℕ) : List ℕ := e.verts
 
-/-- The vertex-list reverse of an edge's verts. -/
+/-- The reverse of the vertex list of `e`. -/
 def edgeRevVerts (e : Hyperedge ℕ) : List ℕ := e.verts.reverse
 
 /-- Every vertex list of length 2 in `H` has two different entries.
@@ -82,7 +82,7 @@ theorem psi_seedEdge12 : Psi seedEdge12 := by
   · -- NoSelfLoops
     intro v hv
     simp [seedEdge12, Hyperedge.verts] at hv
-    -- hv says v = [1, 2]
+    -- `hv : v = [1, 2]`
     rw [hv]
     decide
   · -- NoSymmetricPairs
@@ -99,13 +99,11 @@ theorem psi_seedEdge12 : Psi seedEdge12 := by
     · rw [h]; simp [seedEdge12, Hyperedge.verts]
     · simp [h] at hv
 
-/-! ## Section C: The statement `BridgeStepLemma` (OPEN) -/
+/-! ## Section C: The statement `BridgeStepLemma` -/
 
-/-- `BridgeStepLemma` (OPEN): for `sys` equal to
-`edgeReversal_tripleMerger_Sys` or `fork_doubleCycle_Sys` and every
-hypergraph `H` with `Psi H`, the state `fireAllStep sys H` has three
-times the distinct-edge count of `H` and satisfies `Psi`. The library
-contains no proof of this statement. -/
+/-- For `sys` equal to `edgeReversal_tripleMerger_Sys` or `fork_doubleCycle_Sys` and every
+hypergraph `H` with `Psi H`, the state `fireAllStep sys H` has three times the distinct-edge count
+of `H` and satisfies `Psi`. No theorem in the library proves this statement. -/
 def BridgeStepLemma : Prop :=
   ∀ (sys : ExecSystem),
     sys = edgeReversal_tripleMerger_Sys ∨ sys = fork_doubleCycle_Sys →
@@ -129,6 +127,8 @@ theorem psi_preserved_eR_tripleMerger (step : BridgeStepLemma) :
       (fireAllEvolve edgeReversal_tripleMerger_Sys seedEdge12 d) ih
     exact this.2
 
+/-- Under `BridgeStepLemma`, `Psi` holds for `fireAllEvolve fork_doubleCycle_Sys seedEdge12 d`
+for every d. -/
 theorem psi_preserved_fork_dCyc (step : BridgeStepLemma) :
     ∀ d : Nat, Psi (fireAllEvolve fork_doubleCycle_Sys seedEdge12 d) := by
   intro d
@@ -140,7 +140,7 @@ theorem psi_preserved_fork_dCyc (step : BridgeStepLemma) :
     exact this.2
 
 /-- `BridgeStepLemma` implies `engineMatchesTriad`, by induction on the
-depth. The depth-0 case is evaluated by `native_decide`. -/
+depth. The depth-0 case is checked by `native_decide`. -/
 theorem bridge_from_step (step : BridgeStepLemma) : engineMatchesTriad := by
   intro d
   refine ⟨?_, ?_⟩
@@ -159,7 +159,7 @@ theorem bridge_from_step (step : BridgeStepLemma) : engineMatchesTriad := by
       rw [triadList_length] at ih
       rw [triadList_length]
       omega
-  · -- fork + doubleCycle branch (symmetric)
+  · -- fork + doubleCycle branch
     induction d with
     | zero =>
       rw [triadList_length]
@@ -187,24 +187,6 @@ theorem H9_closure_from_step (step : BridgeStepLemma) :
       distinctEdgeCount (fireAllEvolve fork_doubleCycle_Sys seedEdge12 d) = 3^d := by
   exact H9_conditional_on_bridge (bridge_from_step step)
 
-/-! ## Contents
-
-  * `Psi`: the conjunction of `NoSelfLoops`, `NoSymmetricPairs` and
-    `MultLeTwo`.
-  * `psi_seedEdge12`: `Psi seedEdge12`. PROVED.
-  * `BridgeStepLemma`: a `Prop` definition. OPEN.
-  * `psi_preserved_eR_tripleMerger`, `psi_preserved_fork_dCyc`: under
-    `BridgeStepLemma`, `Psi` holds at every depth. PROVED.
-  * `bridge_from_step`: `BridgeStepLemma → engineMatchesTriad`.
-    PROVED-WITH-NATIVE-DECIDE (the depth-0 case).
-  * `H9_closure_from_step`: `BridgeStepLemma` implies
-    `distinctEdgeCount (fireAllEvolve sys seedEdge12 d) = 3^d` for every
-    d and both systems. PROVED-WITH-NATIVE-DECIDE.
-
-The unconditional statement `∀ d, distinctEdgeCount (fireAllEvolve sys
-seedEdge12 d) = 3^d` for the two systems is OPEN. The module does not
-prove `BridgeStepLemma`, and does not show that it is true.
--/
 
 end H9Bridge
 end InfraFormalization

@@ -1,20 +1,10 @@
 /-
-**C² Taylor convergence for the scaled central second difference** (task R1).
+Limit of the scaled central second difference for C² functions.
 
-For `f : ℝ → ℝ` that is `C²` on all of `ℝ`, the scaled central
-second difference converges to the second derivative:
-
-  `lim_{h → 0} (f(x+h) + f(x-h) − 2 f(x)) / h² = f''(x)`
-
-This is the Rung-2 bridge in full generality (beyond polynomials).
-Proof is via Taylor's theorem with Peano remainder (Mathlib's
-`Real.taylor_tendsto`), applied at `y = x+h` and `y = x-h`, noting
-that the first-order terms cancel on addition.
-
-**Connection to hypergraphs.** Combined with
-`hypergraph_scaled_laplacian_eq_second_deriv` (exact for polynomials)
-and `cycleLaplacian_is_secondDifference`, this extends the discrete
-→ continuum Laplacian bridge from polynomials to all C² functions.
+This module proves that for `f : ℝ → ℝ` with `ContDiff ℝ 2 f` and any
+`x`, `(f(x+h) + f(x−h) − 2 f(x)) / h²` tends to `f''(x)` as `h → 0`,
+`h ≠ 0`. The proof applies Taylor's theorem with Peano remainder
+(`Real.taylor_tendsto`) at `x + h` and `x − h`.
 -/
 
 import InfraFormalization.SecondDifference
@@ -51,8 +41,8 @@ lemma taylorWithinEval_two_univ (f : ℝ → ℝ) (x y : ℝ) :
   rw [hd1]
   ring
 
-/-- **Peano remainder form of Taylor at order 2**: for a `ContDiff ℝ 2` function,
-the remainder after the degree-2 Taylor polynomial, divided by `h²`, tends to 0. -/
+/-- For `ContDiff ℝ 2 f`, the remainder of `f (x + h)` after the degree-2
+Taylor polynomial at `x`, divided by `h²`, tends to 0 as `h → 0`. -/
 lemma taylor_remainder_pos_tendsto (f : ℝ → ℝ) (x : ℝ) (hf : ContDiff ℝ 2 f) :
     Tendsto
       (fun h : ℝ =>
@@ -78,7 +68,7 @@ lemma taylor_remainder_pos_tendsto (f : ℝ → ℝ) (x : ℝ) (hf : ContDiff �
   congr 1
   ring
 
-/-- **Peano remainder form at `x − h`**: symmetric version. -/
+/-- The same statement as `taylor_remainder_pos_tendsto` at `x − h`. -/
 lemma taylor_remainder_neg_tendsto (f : ℝ → ℝ) (x : ℝ) (hf : ContDiff ℝ 2 f) :
     Tendsto
       (fun h : ℝ =>
@@ -103,10 +93,9 @@ lemma taylor_remainder_neg_tendsto (f : ℝ → ℝ) (x : ℝ) (hf : ContDiff �
   congr 1
   ring
 
-/-- **R1 — Scaled central second difference converges to `f''`.**
-
-For a `C²` function `f : ℝ → ℝ` and any `x ∈ ℝ`,
-`(f(x+h) + f(x−h) − 2 f(x)) / h² → f''(x)` as `h → 0`. -/
+/-- For `ContDiff ℝ 2 f` and any `x`,
+`secondDifference f x h / h²` tends to `iteratedDeriv 2 f x` as `h → 0`
+with `h ≠ 0`. -/
 theorem scaledSecondDiff_tendsto_iteratedDeriv
     (f : ℝ → ℝ) (x : ℝ) (hf : ContDiff ℝ 2 f) :
     Tendsto (fun h : ℝ => secondDifference f x h / h^2) (𝓝[≠] 0)

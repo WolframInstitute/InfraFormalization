@@ -1,55 +1,14 @@
 /-
-**B4-classifier: structural rule classifier predicting Knill from
-RHS pattern** (#444).
+A classification of rules by the right-hand side, with predicted Knill
+values.
 
-This module **moves from blind search to structural classification**:
-a function `ruleClass : ExecRule → RuleClass` that predicts the
-dynamical class (and causal-DAG Knill value at depth 4 on `edge12`)
-**directly from the rule's RHS structure**, without running the rule.
-
-**The pattern observed from discovered rules** (#437, #439):
-
-  * **Tree class**: RHS contains the forward edge `{0,1}` but
-    NOT the reverse `{1,0}`. Each additional RHS edge adds an
-    independent tree → `Knill = 6 · (# RHS edges)`.
-
-  * **Merger class**: RHS contains the reverse edge `{1,0}` but
-    NOT the forward `{0,1}`. Each RHS edge creates one merger hole
-    → `Knill = -6 · (# RHS edges) + 6` for single-rule deterministic
-    evolution at depth 4.
-
-  * **Bidirected (rich) class**: RHS contains BOTH `{0,1}` AND
-    `{1,0}`. Produces highly-multiplied causal structure.
-
-**The classifier function**:
-
-  `ruleClass(r) = if has_forward then if has_reverse then Bidirected
-                                  else Tree
-                 else if has_reverse then Merger
-                 else Other`
-
-**Predictor for Knill at depth 4 on edge12**:
-
-  * `Tree(n_edges)` → `Knill = 6 · n_edges`
-  * `Merger(n_edges)` → `Knill = -6 · n_edges + 6`
-  * `Bidirected(n_extra)` → `Knill = 126 + 30 · n_extra`
-    (super-hyper grows ~30 per extra edge)
-
-**What this delivers**:
-
-  * `RuleClass` inductive type: Tree / Merger / Bidirected / Other.
-  * `containsEdge` decidable predicate.
-  * `ruleClass` classification function.
-  * `predictedKnill` Knill predictor.
-  * Verified-by-class theorems matching predictor against
-    `native_decide`-certified actual values for representative
-    rules from each class.
-
-**Why this matters**: structural prediction without running the rule
-turns the search into an O(1)-per-candidate classification. This is
-the foundation for scaling rule search to much larger pools (maxRHS=4,
-5, …) without paying the cost of running every candidate through the
-evolution engine.
+This module defines `ruleClassFromRhs`, which assigns a rule on `Fin 3`
+patterns to one of four classes according to whether its right-hand side
+contains the edge `[0, 1]`, the edge `[1, 0]`, both or neither, and
+`predictedKnill`, an integer assigned to each class. For eight rules it
+checks by `native_decide` that `predictedKnill` equals the scaled Knill
+value of `causalDAGOfEvolution sys seedEdge12 4`, which is built from
+`singleWayStep`. No statement covers rules outside these eight.
 -/
 
 import InfraFormalization.DiscoveredRulesExpanded
@@ -64,9 +23,9 @@ open CausalEventTrace
 open DiscoveredRules
 open DiscoveredRulesExpanded
 
-/-! ## The class type and classifier -/
+/-! ## Classes and classifier -/
 
-/-- Dynamical class of a rule, predicted from RHS structure. -/
+/-- Four rule classes, three of them carrying a natural number. -/
 inductive RuleClass : Type
   | Tree (nEdges : Nat) : RuleClass
   | Merger (nEdges : Nat) : RuleClass
@@ -74,15 +33,17 @@ inductive RuleClass : Type
   | Other : RuleClass
 deriving DecidableEq
 
-/-- Check whether `e` is the forward edge `{0,1}` (`Fin 3` pattern). -/
+/-- `e` has vertex list `[0, 1]`. -/
 def isForwardEdge (e : Hyperedge (Fin 3)) : Bool :=
   e.verts == [0, 1]
 
-/-- Check whether `e` is the reverse edge `{1,0}` (`Fin 3` pattern). -/
+/-- `e` has vertex list `[1, 0]`. -/
 def isReverseEdge (e : Hyperedge (Fin 3)) : Bool :=
   e.verts == [1, 0]
 
-/-- Classifier on RHS directly (for canonical 2-bound + 1-fresh rules). -/
+/-- With `n` the number of right-hand-side edges: `Bidirected (n − 2)` if
+both `[0, 1]` and `[1, 0]` occur, `Tree n` if only `[0, 1]` occurs,
+`Merger n` if only `[1, 0]` occurs, and `Other` otherwise. -/
 def ruleClassFromRhs (rhs : ExecHG (Fin 3)) : RuleClass :=
   let hasForward := rhs.any isForwardEdge
   let hasReverse := rhs.any isReverseEdge
@@ -93,22 +54,21 @@ def ruleClassFromRhs (rhs : ExecHG (Fin 3)) : RuleClass :=
   else if hasReverse then RuleClass.Merger n
   else RuleClass.Other
 
-/-- Convenience: classify a discovered rule (built via `mkDiscoveredRule`)
-by extracting its RHS. -/
+/-- Equal to `ruleClassFromRhs`. -/
 def classifyDiscovered (rhs : ExecHG (Fin 3)) : RuleClass :=
   ruleClassFromRhs rhs
 
-/-! ## Knill predictor from class -/
+/-! ## Predicted values -/
 
-/-- Predict the causal-DAG Knill at depth 4 on `edge12` from a
-rule's classification. -/
+/-- `Tree n ↦ 6(n + 1)`, `Merger n ↦ −6n + 6`, `Bidirected n ↦ 126 + 30n`,
+`Other ↦ 6`. -/
 def predictedKnill : RuleClass → Int
   | RuleClass.Tree n => 6 * ((n : Int) + 1)
   | RuleClass.Merger n => -6 * (n : Int) + 6
   | RuleClass.Bidirected n => 126 + 30 * (n : Int)
-  | RuleClass.Other => 6   -- baseline tree
+  | RuleClass.Other => 6
 
-/-! ## Verifications: predictor matches discovered rules -/
+/-! ## Comparison with computed values, checked by `native_decide` -/
 
 theorem edgeReversal_predicted :
     predictedKnill (ruleClassFromRhs edgeReversalRule.rhs) =
@@ -150,12 +110,11 @@ theorem superHyper_predicted :
     knillEulerScaled (causalDAGOfEvolution superHyperSys seedEdge12 4) := by
   native_decide
 
-/-! ## Bundled classifier-correctness theorem -/
+/-! ## Conjunction -/
 
-/-- **`classifier_predicts_correctly`**: the structural classifier
-correctly predicts the causal-DAG Knill at depth 4 on `edge12` for
-8 representative discovered rules spanning all 4 classes
-(Tree, Merger, Bidirected, plus the maxRHS=3 extensions). -/
+/-- The conjunction of the eight equalities above: for each of the eight
+rules, `predictedKnill` of its class equals the scaled Knill value of
+`causalDAGOfEvolution sys seedEdge12 4`. -/
 theorem classifier_predicts_correctly :
     predictedKnill (ruleClassFromRhs edgeReversalRule.rhs) =
       knillEulerScaled (causalDAGOfEvolution edgeReversalSys seedEdge12 4) ∧
@@ -177,34 +136,6 @@ theorem classifier_predicts_correctly :
    tripleMerger_predicted, identityKeep_predicted,
    forkRule_2_predicted, fourTree_predicted,
    bidirectedEdge_predicted, superHyper_predicted⟩
-
-/-! ## What this delivers
-
-**First structural rule classifier in the codebase**:
-
-  * `RuleClass` inductive (Tree / Merger / Bidirected / Other).
-  * `ruleClass` classifier function (decidable, runs in O(1) on
-    the rule's RHS).
-  * `predictedKnill` Knill predictor.
-  * 8 per-rule verification theorems spanning all 4 classes.
-  * Bundled `classifier_predicts_correctly` (8-conj theorem).
-
-**Why this matters**: structural prediction without running the rule
-turns the search into an O(1)-per-candidate classification.
-
-This is the foundation for scaling rule search to much larger pools
-(maxRHS=4, 5, …) without paying the cost of running every candidate
-through the evolution engine. The framework now has both:
-
-  * A search machinery that discovers rules and embeds witnesses
-    (#437, #439, #442, #443).
-  * A predictive classifier that computes the topology class from
-    the rule structure (this module).
-
-Combined, these make the rule-search machinery efficient AND
-verifiable — both required properties for a real physics-discovery
-tool.
--/
 
 end RuleClassifier
 end InfraFormalization

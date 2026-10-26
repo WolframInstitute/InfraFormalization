@@ -1,47 +1,13 @@
 /-
-**B4-stable-discover: multi-seed stability filter for discovered
-rules + per-seed-edge structural invariant** (#438).
+Knill values of eleven rules on a two-edge path seed.
 
-The discovery search (#437) found 11 non-tree rules on the
-single-edge seed `edge12` at depth 4. This module applies the
-**multi-seed stability filter**: rerun every discovered rule on a
-two-edge path seed and check whether the causal-Knill value scales
-**linearly** with seed-edge count.
-
-**The structural additivity law** (certified for all 11 rules):
-
-  `causalKnill(rule, path123, 4) = 2 · causalKnill(rule, edge12, 4)`
-
-Confirmed for two seeds (edge12=1 edge, path123=2 edges) across
-11 discovered rules at d=4. Whether the per-seed-edge value is a
-true rule invariant across arbitrary seed shapes is the
-corresponding open conjecture.
-
-**Per-seed-edge Knill table** (the rule's invariant signature):
-
-| Rule              | per-seed-edge Knill | χ class      |
-|-------------------|---------------------|--------------|
-| `edgeReversal`    | 0                   | merger (1 hole) |
-| `doubleCycle_5`   | -6                  | 2-merger     |
-| `doubleCycle_9`   | -6                  | 2-merger     |
-| `doubleCycle_13`  | -6                  | 2-merger     |
-| `doubleCycle_18`  | -6                  | 2-merger     |
-| `bidirectedEdge`  | 126                 | hyper-rich   |
-| `forkRule_2`      | 18                  | 3-tree       |
-| `forkRule_7`      | 18                  | 3-tree       |
-| `forkRule_11`     | 18                  | 3-tree       |
-| `forkRule_16`     | 18                  | 3-tree       |
-| `identityKeep`    | 12                  | 2-tree       |
-
-**Bundled artifact `stable_per_seed_edge_invariants`**: confirms
-that for each of the 11 rules at d=4, the Knill on path123
-(2 edges) is twice the Knill on edge12 (1 edge); calling this a
-'rule invariant' would require checking more seed shapes.
-
-**Why this matters**: a structurally-meaningful classifier of rules
-needs an invariant that doesn't depend on the chosen seed. The
-per-seed-edge Knill is exactly that invariant. The framework now
-classifies discovered rules by a stable structural signature.
+For eleven rules of `DiscoveredRules.lean`, this module computes the
+scaled Knill value of `causalDAGOfEvolution sys seedPath123 4`, built from
+`singleWayStep`, and proves that it is twice the value on `seedEdge12`.
+The path values, checked by `native_decide`, are 0 (`edgeReversal`), −12
+(`doubleCycle_5`, `_9`, `_13`, `_18`), 252 (`bidirectedEdge`), 36
+(`forkRule_2`, `_7`, `_11`, `_16`) and 24 (`identityKeep`). No statement
+covers other seeds or depths.
 -/
 
 import InfraFormalization.DiscoveredRules
@@ -60,12 +26,7 @@ def seedPath123 : ExecHG ℕ :=
   [⟨[0, 1], List.cons_ne_nil _ _⟩,
    ⟨[1, 2], List.cons_ne_nil _ _⟩]
 
-/-! ## Path-seed causal Knill at depth 4 for each discovered rule
-
-Each rule has its causal-DAG Knill on the 2-edge path seed certified.
-Compare with `edgeReversal_knill_zero` etc. in `DiscoveredRules` —
-the path values are exactly 2× the edge12 values, confirming the
-additivity law. -/
+/-! ## Values on the path seed at depth 4, checked by `native_decide` -/
 
 theorem edgeReversal_path_knill :
     knillEulerScaled (causalDAGOfEvolution edgeReversalSys seedPath123 4) = 0 := by
@@ -111,10 +72,10 @@ theorem identityKeep_path_knill :
     knillEulerScaled (causalDAGOfEvolution identityKeepSys seedPath123 4) = 24 := by
   native_decide
 
-/-! ## The structural additivity law (per-rule certifications)
+/-! ## Path value equals twice the single-edge value
 
-For each discovered rule, the causal-DAG Knill on the 2-edge path
-is **exactly twice** the value on the single-edge seed. -/
+Each theorem combines the path value above with the single-edge value from
+`DiscoveredRules`. -/
 
 theorem edgeReversal_per_edge_invariant :
     knillEulerScaled (causalDAGOfEvolution edgeReversalSys seedPath123 4) =
@@ -171,16 +132,10 @@ theorem identityKeep_per_edge_invariant :
     2 * knillEulerScaled (causalDAGOfEvolution identityKeepSys seedEdge12 4) := by
   rw [identityKeep_path_knill, identityKeep_knill_12]; rfl
 
-/-! ## Bundled structural invariant
+/-! ## Conjunction -/
 
-The 11-conjunction certifying that every discovered rule satisfies
-the structural additivity law on (edge12, path123). The per-seed-edge
-Knill is thus a stable rule invariant. -/
-
-/-- **`stable_per_seed_edge_invariants`**: each of the 11
-discovered rules' Knill matches the 2× ratio between path123
-(2 edges) and edge12 (1 edge) at d=4; linearity in seed-edge count
-is observed at these two seeds only. -/
+/-- For each of the eleven rules at depth 4, the value on `seedPath123` is
+twice the value on `seedEdge12`. -/
 theorem stable_per_seed_edge_invariants :
     knillEulerScaled (causalDAGOfEvolution edgeReversalSys seedPath123 4) =
       2 * knillEulerScaled (causalDAGOfEvolution edgeReversalSys seedEdge12 4) ∧
@@ -215,31 +170,6 @@ theorem stable_per_seed_edge_invariants :
    fork_11_per_edge_invariant,
    fork_16_per_edge_invariant,
    identityKeep_per_edge_invariant⟩
-
-/-! ## What this delivers
-
-**Multi-seed stability filter applied to discovered rules**:
-
-  * 11 path-seed Knill certifications (one per discovered rule).
-  * 11 per-edge-additivity theorems certifying linear scaling.
-  * Bundled `stable_per_seed_edge_invariants` (11-conjunction).
-
-**Per-seed-edge structural invariants** discovered:
-
-| Rule              | per-seed-edge Knill | χ class      |
-|-------------------|---------------------|--------------|
-| edgeReversal      | 0                   | merger       |
-| doubleCycle (×4)  | -6                  | 2-merger     |
-| bidirectedEdge    | 126                 | hyper-rich   |
-| forkRule (×4)     | 18                  | 3-tree       |
-| identityKeep      | 12                  | 2-tree       |
-
-The framework now has a **stable structural signature** for every
-discovered rule — independent of seed shape, only dependent on the
-rule itself. This is the right invariant for classifying rules by
-their dynamical behavior and for higher-order pattern matching
-against BBH-relevant causal structures.
--/
 
 end StableDiscoveredRules
 end InfraFormalization

@@ -1,29 +1,12 @@
 /-
-Discrete calculus on a finite vertex type with a symmetric
-neighbourhood relation: graph Laplacian, inner product, linearity.
+Discrete calculus on a finite vertex type with a symmetric neighbourhood relation.
 
-**Rung 1 of the bridge ladder** (see `BRIDGE_MACHINERY.md`). First
-ingredients needed to make "hypergraph as a discrete manifold" a
-precise statement. The construction is standard: for a finite graph
-`G = (V, E)` with neighbourhood relation `N(v)`, the *graph Laplacian*
-is
-
-  `(Δ f)(v) := ∑_{w ∈ N(v)} (f(w) − f(v))`.
-
-We prove here:
-  * linearity of `Δ` (additivity + scalar homogeneity),
-  * symmetry of the discrete inner product,
-  * linearity of the inner product,
-  * a "Laplacian on constants is zero" property.
-
-Self-adjointness `⟪Δ f, g⟫ = ⟪f, Δ g⟫` under symmetric adjacency is
-the next theorem; it requires a double-sum swap that deserves its own
-file (planned `DiscreteCalculusSymm.lean`). The definitions here are
-the prerequisites.
-
-This machinery is the foundation for spectral theory (Rung 2), heat
-equation (Rung 6), and discrete Ricci curvature (Rungs 3 + 5) — see
-`BRIDGE_MACHINERY.md`.
+The module defines the neighbourhood structure `Neighbourhood`, the graph Laplacian
+`(Δ f)(v) := ∑_{w ∈ N(v)} (f(w) − f(v))`, and the discrete inner product
+`⟪f, g⟫ := ∑_v f(v) g(v)`. It proves that the Laplacian is linear and vanishes on
+constants, that the inner product is symmetric and bilinear, and gives the double-sum
+expansions of `⟪Δ f, g⟫` and `⟪f, Δ g⟫`. Self-adjointness is proved in
+`DiscreteCalculusSymm.lean`.
 -/
 
 import InfraFormalization.Hypergraph
@@ -39,18 +22,15 @@ namespace InfraFormalization
 
 variable {V : Type*} [Fintype V]
 
-/-- An abstract symmetric, irreflexive neighbourhood relation on a
-finite vertex type. This is the input data for the graph Laplacian —
-enough to define neighbourhoods without committing to a specific
-encoding of edges. -/
+/-- A symmetric, irreflexive, decidable adjacency relation on a vertex type. -/
 structure Neighbourhood (V : Type*) where
-  /-- Is `v` adjacent to `w`? -/
+  /-- The adjacency relation. -/
   adj : V → V → Prop
-  /-- Decidable equality on the adjacency relation (needed for summation). -/
+  /-- Decidability of the adjacency relation. -/
   decAdj : DecidableRel adj
   /-- Symmetry. -/
   symm : ∀ v w, adj v w → adj w v
-  /-- Irreflexivity — no self-loops. -/
+  /-- Irreflexivity: no vertex is adjacent to itself. -/
   irrefl : ∀ v, ¬ adj v v
 
 attribute [instance] Neighbourhood.decAdj
@@ -67,17 +47,16 @@ theorem mem_nbhd {v w : V} : w ∈ N.nbhd v ↔ N.adj v w := by
   unfold nbhd
   simp
 
-/-- Degree of a vertex = size of its neighbourhood. -/
+/-- The degree of a vertex: the cardinality of its neighbourhood. -/
 def degree (v : V) : Nat := (N.nbhd v).card
 
 end Neighbourhood
 
-/-- **Graph Laplacian** on a finite vertex type with a given
-neighbourhood relation. -/
+/-- The graph Laplacian `(Δ f)(v) = ∑_{w ∈ N(v)} (f(w) − f(v))`. -/
 def laplacian (N : Neighbourhood V) (f : V → ℝ) (v : V) : ℝ :=
   ∑ w ∈ N.nbhd v, (f w - f v)
 
-/-- **Discrete inner product** on `V → ℝ` (counting measure). -/
+/-- The inner product `⟪f, g⟫ = ∑_v f(v) g(v)` on `V → ℝ`. -/
 def discreteInner (f g : V → ℝ) : ℝ :=
   ∑ v : V, f v * g v
 
@@ -140,10 +119,7 @@ theorem discreteInner_smul_left (c : ℝ) (f g : V → ℝ) :
   intros v _
   ring
 
-/-- **Expansion of the Laplacian sum.**
-  `⟪Δ f, g⟫ = ∑_{v} ∑_{w ∈ N(v)} (f(w) − f(v)) · g(v)`.
-
-This is the form used in the self-adjointness proof (next file). -/
+/-- `⟪Δ f, g⟫ = ∑_{v} ∑_{w ∈ N(v)} (f(w) − f(v)) · g(v)`. -/
 theorem discreteInner_laplacian_expand (N : Neighbourhood V) (f g : V → ℝ) :
     ⟪laplacian N f, g⟫ = ∑ v : V, ∑ w ∈ N.nbhd v, (f w - f v) * g v := by
   unfold discreteInner laplacian
@@ -151,8 +127,7 @@ theorem discreteInner_laplacian_expand (N : Neighbourhood V) (f g : V → ℝ) :
   intros v _
   rw [Finset.sum_mul]
 
-/-- **Dirichlet-form expansion of the Laplacian.**
-  `⟪f, Δ g⟫ = ∑_{v} ∑_{w ∈ N(v)} f(v) · (g(w) − g(v))`. -/
+/-- `⟪f, Δ g⟫ = ∑_{v} ∑_{w ∈ N(v)} f(v) · (g(w) − g(v))`. -/
 theorem discreteInner_laplacian_right (N : Neighbourhood V) (f g : V → ℝ) :
     ⟪f, laplacian N g⟫ = ∑ v : V, ∑ w ∈ N.nbhd v, f v * (g w - g v) := by
   unfold discreteInner laplacian
@@ -160,8 +135,7 @@ theorem discreteInner_laplacian_right (N : Neighbourhood V) (f g : V → ℝ) :
   intros v _
   rw [Finset.mul_sum]
 
-/-- The graph Laplacian as a **linear map** on `V → ℝ`. This makes it
-a first-class object for Mathlib's linear-algebra / spectral theory. -/
+/-- The graph Laplacian as an `ℝ`-linear map on `V → ℝ`. -/
 def laplacianLinear (N : Neighbourhood V) : (V → ℝ) →ₗ[ℝ] (V → ℝ) where
   toFun f := laplacian N f
   map_add' f g := by

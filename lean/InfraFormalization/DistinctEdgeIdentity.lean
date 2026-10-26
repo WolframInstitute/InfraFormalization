@@ -7,8 +7,8 @@ evolution is `fireAllStep`, which applies every match of every rule
 found in the state, including matches that share edges. It is not a
 Wolfram model update when matches overlap.
 
-Values for `edgeReversal_tripleMerger_Sys` and `fork_doubleCycle_Sys`
-(PROVED-WITH-NATIVE-DECIDE; depth 4 is in `H9StructuralProgress`):
+Values for `edgeReversal_tripleMerger_Sys` and `fork_doubleCycle_Sys`,
+checked by `native_decide` (depth 4 is in `H9StructuralProgress`):
 
   | d | eR + tripleMerger | fork + dCyc | 3^d |
   |---|-------------------|-------------|-----|
@@ -17,9 +17,7 @@ Values for `edgeReversal_tripleMerger_Sys` and `fork_doubleCycle_Sys`
   | 2 |         9         |      9      |  9  |
   | 3 |        27         |     27      |  27 |
 
-The count `3^d` for every `d` is OPEN for both rule pairs. This module
-proves no relation between these counts and the contention Knill
-values B.
+The count `3^d` for every `d` is not proved for either rule pair.
 -/
 
 import InfraFormalization.MultiRuleDiscovered
@@ -116,10 +114,9 @@ theorem persistent_class_distinct_equal :
     each of these depths.
 
 Equal distinct-edge counts do not imply equal contention graphs; no
-theorem here relates `distinctEdgeCount` to
-`discreteBranchialDensity`. The step lemma
-`distinct(fireAllStep sys H) = 3 · distinct(H)` is OPEN; the related
-Prop `BridgeStepLemma` in `H9Bridge` is unproved.
+theorem here relates `distinctEdgeCount` to the branchial contention graph.
+The step lemma `distinct(fireAllStep sys H) = 3 · distinct(H)` is not proved. The
+related Prop `BridgeStepLemma` in `H9Bridge` is not proved.
 -/
 
 end DistinctEdgeIdentity

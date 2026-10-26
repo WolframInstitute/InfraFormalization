@@ -1,38 +1,13 @@
 /-
-**Branchial Schrödinger equation** (I5 / #88 partial, I8 / #91 groundwork).
+Schrödinger equation for an adjacency operator on a finite set.
 
-Discrete Schrödinger equation on a branchial slice / finite `S`,
-with the Hamiltonian given by the graph adjacency operator from
-`BranchialHilbert.lean`.
-
-**Representation.** We represent the ℂ-valued wavefunction
-`ψ : ℝ → S → ℂ` as a pair of real-valued functions `u v : ℝ → S → ℝ`
-with `ψ t s = u t s + i v t s`. The Schrödinger equation
-
-  `i ∂_t ψ = A ψ`    ⇔    `∂_t ψ = -i A ψ`
-
-with `A` the branchial adjacency operator `Σ_{x : adj s x} ψ(x)`,
-decomposes into
-
-  `u' =  A v`,    `v' = -A u`.
-
-**What this file contributes.**
-
-  * `branchialAdjReal` — the adjacency operator restricted to
-    `S → ℝ`; same formula as `branchialAdj` but real-valued.
-  * `branchialAdjReal_symm` — symmetry (Hermitian) of the real-valued
-    operator via sum-swap on symmetric `adj`.
-  * `BranchialSchrodinger adj u v` — the structure capturing the two
-    real equations of motion.
-  * `branchialSchrodinger_probability u v t := ∑ s (u t s)² + (v t s)²`
-    (the discrete ℓ² norm squared of `ψ(t)`).
-  * `branchialSchrodinger_unitary_evolution` — total probability is
-    conserved for all `t` (finite-dim Stone-type unitarity).
-
-The proof uses self-adjointness of `branchialAdjReal`.
-
-This is a direct port of `SchrodingerEquation.lean` (D10) to the
-branchial-slice setting.
+For a finite type `S` and a symmetric relation `adj` on `S`, this module
+writes `ψ = u + i v` with real `u v : ℝ → S → ℝ` and defines solutions
+of `i ∂_t ψ = A ψ`, where `A` is the adjacency sum operator, as pairs
+with `u' = A v` and `v' = -A u` at every time. It proves that
+`∑_s u(t,s)² + v(t,s)²` has derivative 0 at every `t` and is therefore
+constant. The relation `adj` is arbitrary and is not derived from a
+rewriting system.
 -/
 
 import InfraFormalization.BranchialHilbert
@@ -45,15 +20,12 @@ namespace InfraFormalization
 
 variable {S : Type*} [Fintype S] [DecidableEq S]
 
-/-- **Real-valued branchial adjacency operator**. Same sum-over-neighbors
-formula as `branchialAdj` but acting on `S → ℝ` instead of
-`BranchialHilbert S = S → ℂ`. -/
+/-- The adjacency operator on `S → ℝ`: `(A u)(v) = ∑_{x : adj v x} u x`. -/
 def branchialAdjReal (adj : S → S → Prop) [DecidableRel adj]
     (u : S → ℝ) (v : S) : ℝ :=
   ∑ x ∈ Finset.univ.filter (fun x => adj v x), u x
 
-/-- **Self-adjointness (ℝ-symmetry) of the real adjacency operator** for
-symmetric `adj`. -/
+/-- For symmetric `adj`, `∑_s u s · (A v)(s) = ∑_s v s · (A u)(s)`. -/
 theorem branchialAdjReal_symm (adj : S → S → Prop) [DecidableRel adj]
     (hsymm : ∀ a b, adj a b → adj b a) (u v : S → ℝ) :
     ∑ s, u s * branchialAdjReal adj v s
@@ -68,25 +40,20 @@ theorem branchialAdjReal_symm (adj : S → S → Prop) [DecidableRel adj]
   · have h' : ¬ adj b a := fun hba => h (hsymm _ _ hba)
     simp [h, h']
 
-/-- **Branchial Schrödinger solution** (structure). `ψ = u + i v`
-satisfies `∂_t ψ = -i A ψ` iff
-
-  `∂_t u =  A v`    and    `∂_t v = -A u`.
-
--/
+/-- `u` and `v` satisfy `∂_t u = A v` and `∂_t v = -A u` at every time
+`t` and every `s`. -/
 structure BranchialSchrodinger
     (adj : S → S → Prop) [DecidableRel adj] (u v : ℝ → S → ℝ) : Prop where
   real_eq : ∀ t s, HasDerivAt (fun r => u r s) (branchialAdjReal adj (v t) s) t
   imag_eq : ∀ t s, HasDerivAt (fun r => v r s) (- branchialAdjReal adj (u t) s) t
 
-/-- **Total probability** `‖ψ(t)‖² = ∑_s (u(t,s))² + (v(t,s))²`. -/
+/-- `∑_s u(t,s)² + v(t,s)²`. -/
 noncomputable def branchialSchrodinger_probability
     (u v : ℝ → S → ℝ) (t : ℝ) : ℝ :=
   ∑ s, ((u t s) ^ 2 + (v t s) ^ 2)
 
-/-- **Unitarity / probability conservation** for branchial Schrödinger
-evolution. Total probability is constant on any interval on which the
-solution exists. -/
+/-- For symmetric `adj` and a solution `(u, v)`, the function
+`branchialSchrodinger_probability u v` has derivative 0 at every `t`. -/
 theorem branchialSchrodinger_unitary_evolution
     {adj : S → S → Prop} [DecidableRel adj]
     (hsymm : ∀ a b, adj a b → adj b a)
@@ -115,7 +82,7 @@ theorem branchialSchrodinger_unitary_evolution
       (∑ s, (2 * u t s * branchialAdjReal adj (v t) s
         + 2 * v t s * (- branchialAdjReal adj (u t) s))) t :=
     HasDerivAt.fun_sum (fun s _ => h_deriv s)
-  -- Show the total derivative is 0 using self-adjointness of A.
+  -- The derivative sum is 0 by `branchialAdjReal_symm`.
   have h_zero :
       ∑ s, (2 * u t s * branchialAdjReal adj (v t) s
         + 2 * v t s * (- branchialAdjReal adj (u t) s)) = 0 := by
@@ -138,17 +105,10 @@ theorem branchialSchrodinger_unitary_evolution
   rw [← h_zero]
   exact h_sum
 
-/-- **Global Born-rule conservation.** For any two times `s t : ℝ`,
-the branchial Schrödinger probability is identical:
-`branchialSchrodinger_probability u v s = branchialSchrodinger_probability u v t`.
-
-Derived from the pointwise `branchialSchrodinger_unitary_evolution`
-via `is_const_of_deriv_eq_zero` (a constant function has zero
-derivative, and conversely a function with zero derivative on an
-interval is constant on that interval).
-
-This is the global form: the total probability is *literally the
-same number* at every time, not just "instantaneously constant." -/
+/-- For symmetric `adj` and a solution `(u, v)`,
+`branchialSchrodinger_probability u v s = branchialSchrodinger_probability u v t`
+for all `s` and `t`. The proof applies `is_const_of_deriv_eq_zero` to
+`branchialSchrodinger_unitary_evolution`. -/
 theorem branchialSchrodinger_probability_const
     {adj : S → S → Prop} [DecidableRel adj]
     (hsymm : ∀ a b, adj a b → adj b a)

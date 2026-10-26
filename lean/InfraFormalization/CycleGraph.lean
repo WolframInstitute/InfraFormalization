@@ -1,22 +1,11 @@
 /-
-Cycle graph `C_n`: concrete Laplacian and its connection to the
-second difference.
+Laplacian of the cycle graph `C_n`.
 
-Rather than fight through the general `Neighbourhood` framework for
-the cycle (modular-arithmetic unfolding is fiddly in Lean), we define
-the cycle Laplacian directly as a closed-form second difference:
-
-  `Δ_{C_n} f (i) = f(i + 1) + f(i − 1) − 2 f(i)`  (indices in `Fin n`,
-  with `+1` and `−1` via cyclic group structure on `Fin n`).
-
-We prove basic properties (linearity, vanishing on constants, a
-positive-semidefinite quadratic form), matching what would come out
-of the general framework. This prototype is the target for the Rung-2
-convergence theorem: `n² · Δ_{C_n} (f ∘ φ_n) → f''` as `n → ∞`, for
-`f ∈ C²(S¹)`.
-
-We require `n ≥ 1` for `Fin n` to be nonempty; some identities require
-`n ≥ 2` or `n ≥ 3` for non-degeneracy.
+This module defines the cycle Laplacian as the second difference
+`Δ_{C_n} f (i) = f(i + 1) + f(i − 1) − 2 f(i)` on `Fin n`, with addition
+modulo `n`, for `n ≥ 1`. It proves that `Δ` is linear and vanishes on
+constants, that `∑_i f(i) · (−Δ f)(i) = ∑_i (f(i+1) − f(i))²`, and that
+this sum is nonnegative.
 -/
 
 import Mathlib.Data.Fintype.Basic
@@ -31,10 +20,9 @@ import Mathlib.Tactic.Abel
 
 namespace InfraFormalization
 
-/-- **Cycle Laplacian.** Defined via cyclic shifts on `Fin n`. The
-`+1` and `−1` are `Fin n`'s `AddGroup` structure modulo `n`.
-
-For `n ≥ 2` this is the standard cycle graph Laplacian up to sign. -/
+/-- The cycle Laplacian `f(i + 1) + f(i − 1) − 2 f(i)`, with `+1` and
+`−1` taken in `Fin n` modulo `n`. For `n ≥ 3` it is the negative of the
+graph Laplacian of the cycle `C_n`. -/
 def cycleLaplacian (n : Nat) [NeZero n] (f : Fin n → ℝ) (i : Fin n) : ℝ :=
   f (i + 1) + f (i - 1) - 2 * f i
 
@@ -57,16 +45,8 @@ theorem cycleLaplacian_const (n : Nat) [NeZero n] (c : ℝ) (i : Fin n) :
   unfold cycleLaplacian
   ring
 
-/-- **Negation of `Δ` on cycle is PSD: Dirichlet form.**
-
-  `∑_i f(i) · (−Δ f)(i) = ½ · ∑_i (f(i+1) − f(i))²  +  ½ · ∑_i (f(i) − f(i-1))²`.
-
-i.e., the quadratic form picks up the squared forward and backward
-differences. Since both are the same (reindex `i ↦ i + 1`), we get
-
-  `∑_i f(i) · (−Δ f)(i) = ∑_i (f(i+1) − f(i))² `.
-
-This is the discrete Dirichlet energy on the cycle. -/
+/-- The quadratic form of `−Δ` on the cycle equals the Dirichlet energy:
+`∑_i f(i) · (−Δ f)(i) = ∑_i (f(i+1) − f(i))²`. -/
 theorem cycle_dirichlet_form (n : Nat) [NeZero n] (f : Fin n → ℝ) :
     ∑ i : Fin n, f i * (- cycleLaplacian n f i)
     = ∑ i : Fin n, (f (i + 1) - f i)^2 := by
@@ -80,7 +60,7 @@ theorem cycle_dirichlet_form (n : Nat) [NeZero n] (f : Fin n → ℝ) :
   --        = ∑ f(i+1)² + ∑ f i² - 2 ∑ f i f(i+1)
   --        = 2 ∑ f² - 2 ∑ f i f(i+1)  (reindex ∑ f(i+1)² = ∑ f²)
   -- So LHS = RHS.
-  -- Formally, use the cycle shift is a bijection on `Fin n`.
+  -- The shift `i ↦ i + 1` is a bijection of `Fin n`.
   have shift_bij : (Equiv.addRight (1 : Fin n)).toFun.Bijective :=
     (Equiv.addRight _).bijective
   -- Rewrite ∑ f i f(i-1) = ∑ f(j+1) f j via substitution i = j + 1.
@@ -135,7 +115,7 @@ theorem cycle_dirichlet_form (n : Nat) [NeZero n] (f : Fin n → ℝ) :
     ring
   rw [lhs_expand, rhs_expand]
 
-/-- **Non-negativity of the cycle Dirichlet energy.** -/
+/-- `∑_i f(i) · (−Δ f)(i) ≥ 0`. -/
 theorem cycle_dirichlet_nonneg (n : Nat) [NeZero n] (f : Fin n → ℝ) :
     0 ≤ ∑ i : Fin n, f i * (- cycleLaplacian n f i) := by
   rw [cycle_dirichlet_form]

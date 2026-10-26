@@ -1,26 +1,12 @@
 /-
-Laplacian on a directed multi-hypergraph.
+A Laplacian on functions on the vertices of a hypergraph.
 
-**Hypergraph anchor for Rung 1.** Until now, `DiscreteCalculus.lean`
-operated on an abstract `Neighbourhood V`. This file ties the
-discrete-calculus machinery directly back to our `Hypergraph V` —
-the actual data type the Wolfram-model rewriting acts on.
-
-For each directed hyperedge `e` and a vertex `v ∈ e.verts`, every
-other vertex `w` in `e` contributes `f(w) − f(v)` to `Δ_H f(v)`.
-Summed over all hyperedges:
-
-  `Δ_H f(v) := ∑_{e ∈ H.edges} ∑_{w ∈ e.others v} (f(w) − f(v))`.
-
-For a simple graph (every hyperedge has exactly 2 vertices), this
-reduces to the standard graph Laplacian. We prove linearity (under
-function addition) and vanishing on constants.
-
-This file makes "Wolfram-model state-as-discrete-calculus-domain"
-explicit: the same `Hypergraph V` that carries the rewriting rule's
-LHS, RHS, and current state is now equipped with a Laplacian operator,
-which under the right scaling is the discrete d'Alembertian (Rung 5)
-or the discrete Laplace-Beltrami (Rung 1 → Rung 2).
+For `f : V → ℝ`, `Δ_H f(v) = ∑_{e ∈ H.edges} ∑_{w ∈ e.others v} (f(w) − f(v))`, where
+`e.others v` is the set of distinct vertices of `e` other than `v`, or empty when `v ∉ e`.
+Hyperedges are counted with multiplicity. When every hyperedge has two distinct vertices,
+`Δ_H` is the graph Laplacian `A − D` of the multigraph. The module proves linearity,
+`Δ_H c = 0` for constants, `∑_v Δ_H f(v) = 0`, `∑_v f(v) Δ_H f(v) ≤ 0`, and
+`∑_v f(v) Δ_H g(v) = ∑_v g(v) Δ_H f(v)`.
 -/
 
 import InfraFormalization.Hypergraph
@@ -32,25 +18,20 @@ namespace InfraFormalization
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
-/-- For a directed hyperedge `e` and a vertex `v`, the **finset of
-other vertices** in `e`. Empty when `v ∉ e.verts` so that vertices
-not incident to `e` receive zero contribution. For a simple-graph
-edge `{v, w}` this is the singleton `{w}` when `v ∈ {v, w}` and
-`∅` otherwise. -/
+/-- The set of distinct vertices of `e` other than `v` when `v ∈ e.verts`, and `∅`
+otherwise. For a hyperedge with vertices `v, w`, `v ≠ w`, it is `{w}` at `v`. -/
 def Hyperedge.others (e : Hyperedge V) (v : V) : Finset V :=
   if v ∈ e.verts.toFinset then e.verts.toFinset.erase v else ∅
 
 namespace Hypergraph
 
-/-- **Hypergraph Laplacian** on the function space `V → ℝ`. Sums, over
-each edge `e` in the multiset, the second-difference contribution
-`∑_{w ∈ e.others v} (f(w) − f(v))`. -/
+/-- `Δ_H f(v) = ∑_{e ∈ H.edges} ∑_{w ∈ e.others v} (f(w) − f(v))`, with the outer sum
+over the edge multiset. -/
 noncomputable def laplacianHyper (H : Hypergraph V) (f : V → ℝ) (v : V) : ℝ :=
   (H.edges.map (fun e => ∑ w ∈ e.others v, (f w - f v))).sum
 
-/-- Linearity (additivity) of the hypergraph Laplacian. Proof by
-multiset induction: each edge's contribution decomposes additively
-under linearity of the inner `Finset.sum`. -/
+/-- `Δ_H (f + g)(v) = Δ_H f(v) + Δ_H g(v)`. The proof is by induction on the edge
+multiset. -/
 theorem laplacianHyper_add (H : Hypergraph V) (f g : V → ℝ) (v : V) :
     laplacianHyper H (fun w => f w + g w) v
     = laplacianHyper H f v + laplacianHyper H g v := by
@@ -70,7 +51,7 @@ theorem laplacianHyper_add (H : Hypergraph V) (f g : V → ℝ) (v : V) :
     rw [step, ih]
     ring
 
-/-- Hypergraph Laplacian commutes with scalar multiplication. -/
+/-- `Δ_H (c·f)(v) = c · Δ_H f(v)`. -/
 theorem laplacianHyper_smul (H : Hypergraph V) (c : ℝ) (f : V → ℝ) (v : V) :
     laplacianHyper H (fun w => c * f w) v = c * laplacianHyper H f v := by
   unfold laplacianHyper
@@ -88,7 +69,7 @@ theorem laplacianHyper_smul (H : Hypergraph V) (c : ℝ) (f : V → ℝ) (v : V)
     rw [step, ih]
     ring
 
-/-- Hypergraph Laplacian of a constant is zero. -/
+/-- `Δ_H` of a constant function is `0`. -/
 theorem laplacianHyper_const (H : Hypergraph V) (c : ℝ) (v : V) :
     laplacianHyper H (fun _ => c) v = 0 := by
   unfold laplacianHyper
@@ -103,8 +84,7 @@ theorem laplacianHyper_const (H : Hypergraph V) (c : ℝ) (v : V) :
     rw [step, ih]
     ring
 
-/-- **For `v ∉ e.verts`, the per-edge contribution is zero.** A clean
-consequence of the corrected `Hyperedge.others` definition. -/
+/-- For `v ∉ e.verts`, `∑_{w ∈ e.others v} (f(w) − f(v)) = 0`. -/
 theorem laplacianHyper_perEdge_zero_of_not_mem (e : Hyperedge V) (f : V → ℝ)
     (v : V) (hv : v ∉ e.verts.toFinset) :
     (∑ w ∈ e.others v, (f w - f v)) = 0 := by
@@ -112,15 +92,10 @@ theorem laplacianHyper_perEdge_zero_of_not_mem (e : Hyperedge V) (f : V → ℝ)
   rw [if_neg hv]
   simp
 
-/-- **Per-edge divergence theorem.** Within a single hyperedge `e`,
-summing the Laplacian contribution `∑_{w ∈ e.others v} (f(w) − f(v))`
-over all `v : V` yields zero.
+/-- For a single hyperedge `e`, `∑_v ∑_{w ∈ e.others v} (f(w) − f(v)) = 0`.
 
-The proof: vertices outside `e` contribute zero (others = ∅);
-vertices `v ∈ e.verts` contribute `(∑_{w ∈ S} f w) − |S| · f v`
-where `S := e.verts.toFinset`; summing over `v ∈ S` gives
-`|S| · ∑ f − |S| · ∑ f = 0`. This is the discrete divergence
-theorem `∑ Δf = 0` localised to a single hyperedge. -/
+With `S = e.verts.toFinset`, the inner sum is `0` for `v ∉ S` and
+`∑_{w ∈ S} f w − |S| · f v` for `v ∈ S`. Summing over `v ∈ S` gives `0`. -/
 theorem perEdge_sum_zero (e : Hyperedge V) (f : V → ℝ) :
     ∑ v : V, ∑ w ∈ e.others v, (f w - f v) = 0 := by
   set S : Finset V := e.verts.toFinset with hS
@@ -173,16 +148,9 @@ theorem perEdge_sum_zero (e : Hyperedge V) (f : V → ℝ) :
   push_cast
   ring
 
-/-- **Discrete divergence theorem for the hypergraph Laplacian.**
-`∑_v Δ_H f(v) = 0`. The hypergraph analog of `laplacian_sum_zero`
-from `DiscreteCalculusSymm.lean`. Sets up mass conservation for the
-discrete heat equation on `Hypergraph V`.
-
-Proof: by induction on the multiset of edges. For the empty edge set,
-the Laplacian is identically 0. For `cons e es`, the sum decomposes
-as the `e`-contribution plus the `es`-contribution; we swap `∑_v`
-inside the cons via pointwise additivity, use `perEdge_sum_zero` on
-the head `e`, and apply the inductive hypothesis. -/
+/-- `∑_v Δ_H f(v) = 0`. This is the hypergraph version of `laplacian_sum_zero` in
+`DiscreteCalculusSymm.lean`. The proof is by induction on the edge multiset using
+`perEdge_sum_zero`. -/
 theorem laplacianHyper_sum_zero (H : Hypergraph V) (f : V → ℝ) :
     ∑ v : V, laplacianHyper H f v = 0 := by
   unfold laplacianHyper
@@ -208,25 +176,18 @@ theorem laplacianHyper_sum_zero (H : Hypergraph V) (f : V → ℝ) :
       intros v _
       exact step v
 
-/-! ## Dirichlet form non-positivity
+/-! ## Dirichlet form
 
-The **Dirichlet form** `D_H(f) := ∑_v f(v) * Δ_H f(v)` is
-non-positive. This is the finite-dimensional incarnation of the
-statement that the Laplacian is negative semidefinite (in the
-`Δ = A − D` sign convention used here), and it is what makes the
-discrete heat equation `u' = Δ_H u` dissipative.
-
-Per-edge analysis: for an edge `e` with vertex-set `S = e.verts.toFinset`,
+`D_H(f) = ∑_v f(v) · Δ_H f(v)` is nonpositive, so `Δ_H` is negative semidefinite with
+respect to the counting inner product. For an edge `e` with vertex set
+`S = e.verts.toFinset`,
 
   `∑_v f(v) · ∑_{w ∈ e.others v}(f(w) − f(v))
    = (∑_{v ∈ S} f(v))² − |S| · ∑_{v ∈ S} f(v)²  ≤  0`
 
-by the Cauchy-Schwarz / Chebyshev inequality
-`sq_sum_le_card_mul_sum_sq`. Summing over edges preserves the
-inequality. -/
+by `sq_sum_le_card_mul_sum_sq`. Summing over edges gives the result. -/
 
-/-- **Per-edge contribution to the Dirichlet form is ≤ 0.**
-For any hyperedge `e` and any `f : V → ℝ`,
+/-- For a hyperedge `e` and `f : V → ℝ`,
 `∑_v f(v) · ∑_{w ∈ e.others v}(f(w) − f(v)) ≤ 0`. -/
 theorem perEdge_dirichlet_nonpos (e : Hyperedge V) (f : V → ℝ) :
     (∑ v : V, f v * (∑ w ∈ e.others v, (f w - f v))) ≤ 0 := by
@@ -300,15 +261,11 @@ theorem perEdge_dirichlet_nonpos (e : Hyperedge V) (f : V → ℝ) :
 
 /-! ### Per-edge bilinear form
 
-For generic `f g : V → ℝ`, the per-edge contribution to the bilinear
-form `B_H(f, g) := ∑_v f(v) · Δ_H g(v)` evaluates to
-`(∑_{S_e} f)(∑_{S_e} g) − |S_e| · ∑_{S_e} f·g`, which is **symmetric
-in `f` and `g`**. This is the key algebraic identity underlying both
-non-positivity of the Dirichlet form (`f = g` case) and self-
-adjointness of `Δ_H` (general `f, g`). -/
+For `f g : V → ℝ`, the contribution of edge `e` to `∑_v f(v) · Δ_H g(v)` equals
+`(∑_{S_e} f)(∑_{S_e} g) − |S_e| · ∑_{S_e} f·g`, which is symmetric in `f` and `g`. -/
 
-/-- **Per-edge bilinear-form identity.** Per-edge contribution
-expands to `(∑ f)(∑ g) − |S| · ∑ f·g` on the edge's vertex set. -/
+/-- `∑_v f(v) · ∑_{w ∈ e.others v} (g(w) − g(v)) = (∑_S f)(∑_S g) − |S| · ∑_S f·g` with
+`S = e.verts.toFinset`. -/
 theorem perEdge_bilinear_eq (e : Hyperedge V) (f g : V → ℝ) :
     (∑ v : V, f v * (∑ w ∈ e.others v, (g w - g v)))
     = (∑ v ∈ e.verts.toFinset, f v) * (∑ w ∈ e.verts.toFinset, g w)
@@ -370,9 +327,8 @@ theorem perEdge_bilinear_eq (e : Hyperedge V) (f g : V → ℝ) :
     rw [← Finset.mul_sum]
   rw [h1, h2, h3]
 
-/-- **Symmetry of the per-edge bilinear form.** The per-edge
-contribution with `f, g` equals that with `g, f`. Immediate from
-`perEdge_bilinear_eq` since the RHS is symmetric in `f, g`. -/
+/-- The per-edge contribution with `f, g` equals that with `g, f`. The proof uses
+`perEdge_bilinear_eq`. -/
 theorem perEdge_bilinear_symm (e : Hyperedge V) (f g : V → ℝ) :
     (∑ v : V, f v * (∑ w ∈ e.others v, (g w - g v)))
     = ∑ v : V, g v * (∑ w ∈ e.others v, (f w - f v)) := by
@@ -381,13 +337,8 @@ theorem perEdge_bilinear_symm (e : Hyperedge V) (f g : V → ℝ) :
   rw [Finset.sum_congr rfl (fun v _ => h v)]
   ring
 
-/-- **Dirichlet form non-positivity** for the hypergraph Laplacian:
-`∑_v f(v) · Δ_H f(v) ≤ 0`. Equivalently, `Δ_H` is negative
-semidefinite in the `Δ = A − D` sign convention.
-
-Per-edge contribution is `(∑_{v ∈ S_e} f(v))² − |S_e| · ∑ f²`, which
-is ≤ 0 by Cauchy-Schwarz. Summing over edges preserves the
-inequality. -/
+/-- `∑_v f(v) · Δ_H f(v) ≤ 0`. The proof sums `perEdge_dirichlet_nonpos` over the edge
+multiset. -/
 theorem laplacianHyper_dirichlet_nonpos
     (H : Hypergraph V) (f : V → ℝ) :
     (∑ v : V, f v * Hypergraph.laplacianHyper H f v) ≤ 0 := by
@@ -413,12 +364,8 @@ theorem laplacianHyper_dirichlet_nonpos
       perEdge_dirichlet_nonpos e f
     linarith
 
-/-- **Self-adjointness of the hypergraph Laplacian** with respect to
-the counting inner product: `∑_v f(v) · Δ_H g(v) = ∑_v g(v) · Δ_H f(v)`.
-
-Proof: the per-edge bilinear form evaluates to
-`(∑_{S_e} f)(∑_{S_e} g) − |S_e| · ∑_{S_e} f·g`, which is manifestly
-symmetric in `f, g`. Summing over edges preserves the identity. -/
+/-- `∑_v f(v) · Δ_H g(v) = ∑_v g(v) · Δ_H f(v)`. The proof sums `perEdge_bilinear_symm`
+over the edge multiset. -/
 theorem laplacianHyper_self_adjoint (H : Hypergraph V) (f g : V → ℝ) :
     (∑ v : V, f v * Hypergraph.laplacianHyper H g v)
     = ∑ v : V, g v * Hypergraph.laplacianHyper H f v := by

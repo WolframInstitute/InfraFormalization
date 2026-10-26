@@ -1,35 +1,13 @@
 /-
-**Rule-signature dossier schema** (#372).
+Dossiers: recorded runs of a single rule.
 
-Lean-internal data model for the per-rule trajectory dossiers exchanged
-between the WL-side enumerator (PPOKORNY's `Infrageometry` paclet, #374)
-and the Lean-side validator (#375). Three fields:
-
-  * `rule` — the `ExecRule` whose trajectory is being recorded;
-  * `seed` — the initial state;
-  * `states` — the claimed sequence `[H₀, H₁, ..., Hₙ]`.
-
-The dossier is the *trajectory*, not the *verdict*. Lean never trusts
-WL-side curvature/angle numerics; instead, Lean recomputes signatures
-from the per-step states.
-
-**Correctness contract.** A *consistent* dossier (`isConsistent = true`)
-is one whose claimed `states` agree exactly with what `singleWayEvolve`
-produces from `seed` for the dossier's single-rule system. Consistency
-is `Decidable` and computed from the dossier alone — no external trust.
-
-**`canonicalDossier`** is the reference dossier built by the Lean
-executor itself. We exhibit (decidably, by `decide`) that the
-`canonicalDossier` for several concrete rules from `MultiwayExecTests`
-passes the consistency check. The general theorem that *every*
-consistent dossier equals the canonical one is the substance of #377
-(spun off from #372).
-
-**Out-of-scope here.**
-  * JSON parsing — handled by an out-of-Lean script that emits a Lean
-    term file. We do not parse JSON inside Lean.
-  * Curvature signature recomputation — happens in #373 by lifting
-    `ExecHG ℕ → Hypergraph V` and feeding into `MultiScreener`.
+A `Dossier` holds an `ExecRule`, a seed and a list of states.
+`isConsistent` is the Boolean test that the first state is the seed and
+each state is `singleWayStep` of the previous one. This module defines
+edge-count and vertex-count traces, the run `canonicalDossier` produced by
+`singleWayStep`, and proves `canonicalDossier_isConsistent` (the canonical
+run passes the test) and `consistent_dossier_eq_canonical` (every
+consistent dossier has the states of the canonical run).
 -/
 
 import InfraFormalization.MultiwayExec
@@ -42,8 +20,7 @@ open MultiwayExec
 
 /-! ## The dossier type -/
 
-/-- A rule-trajectory dossier. The data model for the JSON interchange
-used by the WL paclet (#374). -/
+/-- A rule, a seed and a list of states. -/
 structure Dossier where
   rule    : ExecRule
   seed    : ExecHG ℕ
@@ -53,19 +30,16 @@ namespace Dossier
 
 variable (d : Dossier)
 
-/-- The single-rule executable system implied by the dossier. -/
+/-- The system whose only rule is `d.rule`. -/
 def system : ExecSystem := ⟨[d.rule]⟩
 
-/-- Number of recorded states (`n+1` for an `n`-step trajectory). -/
+/-- The number of recorded states. -/
 def length : Nat := d.states.length
 
-/-! ## Step-by-step consistency check
+/-! ## Consistency -/
 
-Each consecutive pair `(Hᵢ, Hᵢ₊₁)` must satisfy
+/-- Every consecutive pair `(Hᵢ, Hᵢ₊₁)` of the list satisfies
 `Hᵢ₊₁ = singleWayStep sys Hᵢ`. -/
-
-/-- Auxiliary: walk through a list of states and check consecutive-pair
-single-way consistency. -/
 def stepsConsistentList (sys : ExecSystem) : List (ExecHG ℕ) → Bool
   | []           => true
   | [_]          => true
@@ -73,58 +47,48 @@ def stepsConsistentList (sys : ExecSystem) : List (ExecHG ℕ) → Bool
       if singleWayStep sys a = b then stepsConsistentList sys (b :: rs)
       else false
 
-/-- Step consistency over the dossier: each `Hᵢ₊₁ = singleWayStep sys Hᵢ`. -/
+/-- `stepsConsistentList` on the states of the dossier. -/
 def stepsConsistent : Bool := stepsConsistentList d.system d.states
 
-/-- Seed consistency: `states[0] = seed`. -/
+/-- The state list is nonempty and its first entry is the seed. -/
 def seedConsistent : Bool :=
   match d.states with
   | []     => false
   | s :: _ => decide (s = d.seed)
 
-/-- Full consistency: nonempty states, seed at head, single-way steps. -/
+/-- `seedConsistent` and `stepsConsistent`. -/
 def isConsistent : Bool := d.seedConsistent && d.stepsConsistent
 
-/-! ## Trivial signature traces (decidable, total) -/
+/-! ## Traces -/
 
-/-- Edge-count trajectory: `n ↦ |states[n]|`. The trivial signature. -/
+/-- The list of edge counts of the states. -/
 def edgeCountTrace : List Nat := d.states.map hgEdgeCount
 
-/-- Vertex-count trajectory: `n ↦ #{vertices in states[n]}`. -/
+/-- The list of vertex counts of the states. -/
 def vertexCountTrace : List Nat := d.states.map hgVertexCount
 
-/-- The state at step `i`, with default seed if out-of-range. Total. -/
+/-- The state at index `i`, or the seed if `i` is out of range. -/
 def stateAt (i : Nat) : ExecHG ℕ := (d.states[i]?).getD d.seed
 
-/-! ## Constancy predicates (decidable screener verdicts)
+/-! ## Constancy tests -/
 
-These are the simplest screener obligations: edge-count constant
-across the trajectory (the conservation screener), vertex-count
-constant. Both are `Bool`-valued and decidable; given a concrete
-canonical dossier, `decide` produces an axiom-clean verdict. -/
-
-/-- All entries of a `List Nat` equal the head (or list is empty). -/
+/-- The list is empty or all entries equal its first entry. -/
 def listAllEqHead : List Nat → Bool
   | []      => true
   | x :: rs => rs.all (decide <| · = x)
 
-/-- Edge-count is constant across the dossier's trajectory. The
-ExecHG-side analogue of `RuleSignatureScreener.edgeCountTrajectory_const`. -/
+/-- The edge-count trace is constant. -/
 def edgeCountConstant : Bool := listAllEqHead d.edgeCountTrace
 
-/-- Vertex-count is constant across the dossier's trajectory. -/
+/-- The vertex-count trace is constant. -/
 def vertexCountConstant : Bool := listAllEqHead d.vertexCountTrace
 
 end Dossier
 
-/-! ## Canonical (Lean-internal) reference dossier
+/-! ## Canonical dossier -/
 
-Built by running the Lean executor directly. Reference for what any
-externally-emitted dossier must equal. -/
-
-/-- Recursive trajectory builder: `[seed, sw¹ seed, sw² seed, ...,
-swⁿ seed]`. Equivalent to `(List.range (n+1)).map (singleWayEvolve …)`
-but easier to reason about inductively. -/
+/-- The list `[seed, sw seed, sw² seed, ..., swⁿ seed]` with
+`sw = singleWayStep sys`, defined by recursion on `n`. -/
 def evolveTrace (sys : ExecSystem) : ExecHG ℕ → Nat → List (ExecHG ℕ)
   | seed, 0     => [seed]
   | seed, n + 1 => seed :: evolveTrace sys (singleWayStep sys seed) n
@@ -148,8 +112,7 @@ theorem evolveTrace_ne_nil (sys : ExecSystem) (seed : ExecHG ℕ) (n : Nat) :
   rw [h] at hlen
   simp at hlen
 
-/-- The canonical dossier produced by the Lean executor on `(rule, seed)`
-for `n` steps. -/
+/-- The dossier whose states are `evolveTrace ⟨[rule]⟩ seed n`. -/
 def canonicalDossier (rule : ExecRule) (seed : ExecHG ℕ) (n : Nat) :
     Dossier where
   rule   := rule
@@ -170,14 +133,9 @@ def canonicalDossier (rule : ExecRule) (seed : ExecHG ℕ) (n : Nat) :
   unfold Dossier.length canonicalDossier
   exact evolveTrace_length _ _ _
 
-/-! ## Canonical dossier passes the consistency check
+/-! ## The canonical dossier is consistent -/
 
-These are the validation theorems for the schema itself: any
-`canonicalDossier` is provably `isConsistent = true`. The general
-theorem that *every* consistent dossier equals a canonical one is
-task #377. -/
-
-/-- The canonical dossier always has its head equal to the seed. -/
+/-- The first state of a canonical dossier is its seed. -/
 theorem canonicalDossier_seedConsistent (rule : ExecRule) (seed : ExecHG ℕ) (n : Nat) :
     (canonicalDossier rule seed n).seedConsistent = true := by
   unfold Dossier.seedConsistent canonicalDossier
@@ -186,8 +144,8 @@ theorem canonicalDossier_seedConsistent (rule : ExecRule) (seed : ExecHG ℕ) (n
   | zero => simp [evolveTrace]
   | succ k => simp [evolveTrace]
 
-/-- Equation lemma: `stepsConsistentList` on a `cons cons` list reduces
-to the `if`-form. -/
+/-- Unfolding of `stepsConsistentList` on a list with at least two
+entries. -/
 theorem stepsConsistentList_cons_cons_eq (sys : ExecSystem)
     (a b : ExecHG ℕ) (rs : List (ExecHG ℕ)) :
     Dossier.stepsConsistentList sys (a :: b :: rs) =
@@ -195,9 +153,8 @@ theorem stepsConsistentList_cons_cons_eq (sys : ExecSystem)
         then Dossier.stepsConsistentList sys (b :: rs)
         else false) := rfl
 
-/-- Core lemma: `stepsConsistentList` returns `true` on any
-`evolveTrace`. The strong induction hypothesis is universal over the
-seed. -/
+/-- `stepsConsistentList sys (evolveTrace sys seed n) = true` for every
+`seed` and `n`. -/
 theorem stepsConsistentList_evolveTrace (sys : ExecSystem) :
     ∀ (seed : ExecHG ℕ) (n : Nat),
       Dossier.stepsConsistentList sys (evolveTrace sys seed n) = true := by
@@ -217,37 +174,27 @@ theorem stepsConsistentList_evolveTrace (sys : ExecSystem) :
         (seed :: singleWayStep sys seed ::
           evolveTrace sys (singleWayStep sys (singleWayStep sys seed)) m) = true
       rw [stepsConsistentList_cons_cons_eq, if_pos rfl]
-      -- Goal after simp: stepsConsistentList sys (sw seed :: evolveTrace sys (sw (sw seed)) m)
-      -- = stepsConsistentList sys (evolveTrace sys (sw seed) (m+1)) by rfl on evolveTrace_succ
+      -- The remaining list is `evolveTrace sys (sw seed) (m+1)` by `evolveTrace_succ`.
       exact ih (singleWayStep sys seed)
 
-/-- The canonical dossier always passes the steps-consistency check. -/
+/-- A canonical dossier satisfies `stepsConsistent`. -/
 theorem canonicalDossier_stepsConsistent (rule : ExecRule) (seed : ExecHG ℕ) (n : Nat) :
     (canonicalDossier rule seed n).stepsConsistent = true := by
   unfold Dossier.stepsConsistent canonicalDossier Dossier.system
   simp only []
   exact stepsConsistentList_evolveTrace _ _ _
 
-/-- **Headline:** the canonical dossier passes the full consistency check.
-This is the soundness statement for the schema — the Lean executor
-itself produces a consistent dossier, validating the schema's `decide`
-check is non-trivial. -/
+/-- A canonical dossier satisfies `isConsistent`. -/
 theorem canonicalDossier_isConsistent (rule : ExecRule) (seed : ExecHG ℕ) (n : Nat) :
     (canonicalDossier rule seed n).isConsistent = true := by
   unfold Dossier.isConsistent
   rw [canonicalDossier_seedConsistent, canonicalDossier_stepsConsistent]
   rfl
 
-/-! ## Strong correctness: every consistent dossier IS the canonical one (#377)
+/-! ## Every consistent dossier has the canonical states -/
 
-The substantive correctness theorem for the schema. Combined with
-`canonicalDossier_isConsistent`, it shows the consistency check is
-both *sound* (canonical passes) and *characterising* (only canonical
-passes). The WL paclet cannot smuggle a non-canonical trajectory past
-the consistency check. -/
-
-/-- Auxiliary: a step-consistent `s :: states` is exactly the
-`evolveTrace` from `s` of length `states.length + 1`. -/
+/-- If `stepsConsistentList sys (s :: states)` holds, then
+`s :: states = evolveTrace sys s states.length`. -/
 theorem stepsConsistentList_implies_eq_evolveTrace (sys : ExecSystem) :
     ∀ (s : ExecHG ℕ) (states : List (ExecHG ℕ)),
       Dossier.stepsConsistentList sys (s :: states) = true →
@@ -270,9 +217,8 @@ theorem stepsConsistentList_implies_eq_evolveTrace (sys : ExecSystem) :
     · rw [if_neg hsw] at h
       exact absurd h Bool.false_ne_true
 
-/-- **Strong correctness theorem (#377).** Any consistent dossier *is*
-the canonical Lean-executor trajectory for its rule and seed. The WL
-side becomes a precomputed cache, not a source of new claims. -/
+/-- If `d.isConsistent`, then the states of `d` are
+`evolveTrace d.system d.seed (d.length - 1)`. -/
 theorem consistent_dossier_eq_canonical (d : Dossier) (h : d.isConsistent = true) :
     d.states = evolveTrace d.system d.seed (d.length - 1) := by
   unfold Dossier.isConsistent at h
@@ -296,33 +242,26 @@ theorem consistent_dossier_eq_canonical (d : Dossier) (h : d.isConsistent = true
     rw [hev, hlen]
     simp
 
-/-! ## Example: the subdivision rule's canonical dossier is consistent
+/-! ## Subdivision rule, 4 steps, checked by `decide` -/
 
-`MultiwayExecTests.subdivisionSys` evolved from `subdSeed` for 4 steps
-gives a 5-state trajectory. We exhibit (by `decide`) that the resulting
-dossier passes the consistency check. -/
-
-/-- Canonical 4-step subdivision-rule dossier. -/
+/-- The canonical dossier of the subdivision rule from `subdSeed` for 4
+steps. -/
 def subdivisionDossier4 : Dossier :=
   canonicalDossier MultiwayExec.Test.subdivisionRule MultiwayExec.Test.subdSeed 4
 
-/-- The 4-step subdivision-rule canonical dossier passes seed consistency. -/
 example : subdivisionDossier4.seedConsistent = true := by decide
 
-/-- The 4-step subdivision-rule canonical dossier has the expected length. -/
 example : subdivisionDossier4.length = 5 := by decide
 
-/-- The 4-step subdivision-rule canonical dossier has edge counts
-matching the geometric path-doubling: `1, 2, 4, 8, 16`. -/
+/-- Edge counts `1, 2, 4, 8, 16`. -/
 example : subdivisionDossier4.edgeCountTrace = [1, 2, 4, 8, 16] := by decide
 
-/-- The 4-step subdivision-rule canonical dossier has vertex counts
-matching the geometric path-doubling: `2, 3, 5, 9, 17`. -/
+/-- Vertex counts `2, 3, 5, 9, 17`. -/
 example : subdivisionDossier4.vertexCountTrace = [2, 3, 5, 9, 17] := by decide
 
-/-! ## Example: TC1 canonical dossier is consistent (multiway, 1 step) -/
+/-! ## `tc1Rule`, 1 step, checked by `decide` -/
 
-/-- Canonical 1-step TC1 dossier (single-way evolution of `tc1Rule`). -/
+/-- The canonical dossier of `tc1Rule` from `tc1Seed` for 1 step. -/
 def tc1Dossier1 : Dossier :=
   canonicalDossier MultiwayExec.Test.tc1Rule MultiwayExec.Test.tc1Seed 1
 

@@ -1,15 +1,12 @@
 /-
-**Proper time theorems on causal graph** (IC4 extension).
+Chains in a causal graph.
 
-PHAJEK / CZAPATA-SAHMED: proper time is the longest causal chain
-between two events. This file extends `CausalFoliation.properTime` with:
-
-  * `ChainOfLength 0 u v ↔ u = v`
-  * Chains compose: concatenating two chains gives a chain.
-  * Positive chain length implies `causallyPrecedes`.
-  * If `HasProperTime G u v n`, then any longer chain is impossible.
-
-Grounded on `CausalGraph V` directly.
+Following P. Hajek and C. Zapata-Carratalá, the proper time between two events of a causal graph is
+the length of the longest causal chain between them (`CausalFoliation.properTime`). This module
+proves
+that a chain of length 0 joins an event to itself, that a chain of length 1 is a causal edge, that
+chains concatenate with added lengths, and that a chain of positive length implies causal
+precedence.
 -/
 
 import InfraFormalization.CausalFoliation
@@ -20,7 +17,7 @@ namespace CausalGraph
 variable {V : Type*} [Fintype V] [DecidableEq V]
 variable (G : CausalGraph V)
 
-/-- **Length-0 chain is equality**. -/
+/-- `ChainOfLength 0 u v` holds if and only if `u = v`. -/
 theorem chainOfLength_zero_iff (u v : V) :
     G.ChainOfLength 0 u v ↔ u = v := by
   constructor
@@ -31,7 +28,7 @@ theorem chainOfLength_zero_iff (u v : V) :
     subst h
     exact ChainOfLength.refl u
 
-/-- **Length-1 chain is a direct causal edge**. -/
+/-- `ChainOfLength 1 u v` holds if and only if `causalEdge u v`. -/
 theorem chainOfLength_one_iff (u v : V) :
     G.ChainOfLength 1 u v ↔ G.causalEdge u v := by
   constructor
@@ -49,9 +46,9 @@ theorem chainOfLength_one_iff (u v : V) :
   · intro h
     exact ChainOfLength.cons (ChainOfLength.refl u) h
 
-/-- **Chains compose**: a chain of length `m` from `a` to `b` and a
-chain of length `n` from `b` to `c` give a chain of length `m + n`
-from `a` to `c`. -/
+/-- Chains of lengths `m` from `a` to `b` and `n` from `b` to `c` give a chain of length `m + n`
+from `a`
+to `c`. -/
 theorem chainOfLength_concat {m n : ℕ} {a b c : V}
     (h₁ : G.ChainOfLength m a b) (h₂ : G.ChainOfLength n b c) :
     G.ChainOfLength (m + n) a c := by
@@ -66,14 +63,13 @@ theorem chainOfLength_concat {m n : ℕ} {a b c : V}
     rw [hlen]
     exact ChainOfLength.cons ih' e
 
-/-- **Positive-length chain implies causallyPrecedes** (strict). A
-chain of positive length gives non-trivial causal precedence. -/
+/-- A chain of positive length from `u` to `v` implies `causallyPrecedes u v`. -/
 theorem chainOfLength_pos_implies_causallyPrecedes {k : ℕ} {u v : V}
     (hk : 0 < k) (h : G.ChainOfLength k u v) :
     G.causallyPrecedes u v :=
   G.chainOfLength_implies_causallyPrecedes h
 
-/-- **Length-1 chain implies causalEdge (and hence causallyPrecedes)**. -/
+/-- A chain of length 1 from `u` to `v` implies `causalEdge u v`. -/
 theorem chainOfLength_one_implies_causalEdge (u v : V)
     (h : G.ChainOfLength 1 u v) : G.causalEdge u v :=
   (G.chainOfLength_one_iff u v).mp h

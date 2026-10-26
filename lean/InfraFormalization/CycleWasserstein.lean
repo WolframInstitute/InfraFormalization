@@ -3,68 +3,52 @@ import InfraFormalization.HypergraphCycleBridge
 import InfraFormalization.WassersteinFinite
 
 /-!
-**Wasserstein-1 on the cycle hypergraph** (task #214 application /
-foundation for task #18 A7).
+Wasserstein-1 distance on `Fin n` with the distance of `cycleHypergraph n`.
 
-Concrete link between the `wasserstein1` framework and the
-`cycleHypergraph n` infrastructure. Uses the ℕ-valued hypergraph
-distance cast to ℝ as the cost, and the uniform-1/n measure as
-marginals.
-
-  * `cycleMetric n` — real-valued distance on `Fin n` from
-    `Hypergraph.dist (cycleHypergraph n)`.
-  * `cycleUniform n` — uniform probability measure `1/n` on `Fin n`.
-  * `cycleMetric_nonneg`, `cycleMetric_self`, `cycleMetric_symm` —
-    the metric properties we need for W_1.
-  * `cycleUniform_nonneg` — entries are non-negative.
-  * `wasserstein1_cycleUniform_self` — W_1(μ_n, μ_n) = 0 on the
-    cycle.
-
-This instantiates the abstract Wasserstein framework on a concrete
-hypergraph state and is the first piece of real infrastructure
-downstream of `WassersteinFinite.lean`. Next-step targets:
-  * W_1 between the uniform on `cycleHypergraph n` and the uniform
-    on `cycleHypergraph (2n)` after embedding, bounding by 1/n
-    (the A7 O(1/n) rate).
+The module defines `cycleMetric n` (the hypergraph distance cast to ℝ), its scaled version
+`cycleMetricScaled n = cycleMetric n / n`, the uniform measure, and the shifted measures
+`μ (· + k)`. It proves the metric properties, `W_1(δ_i, δ_j) = d(i, j)`, the bounds
+`W_1 ≤ n` and `W_1 ≤ 1` (scaled) for probability measures, `W_1(δ_v, δ_{v+1}) = 1/n`
+(scaled), `W_1(μ, μ(· + k)) ≤ k/n` (scaled), and the resulting bound `L·k/n` on the change
+of the expectation of an `L`-Lipschitz function under a shift by `k`.
 -/
 
 namespace InfraFormalization
 
 open scoped BigOperators
 
-/-- **Real-valued cycle-hypergraph metric**: the ℕ-valued
-`Hypergraph.dist` of `cycleHypergraph n` cast to ℝ. -/
+/-- `Hypergraph.dist` of `cycleHypergraph n`, cast to ℝ. -/
 noncomputable def cycleMetric (n : ℕ) [NeZero n] (i j : Fin n) : ℝ :=
   ((cycleHypergraph n).dist i j : ℝ)
 
-/-- **`cycleMetric` is non-negative.** -/
+/-- `cycleMetric` is non-negative. -/
 theorem cycleMetric_nonneg (n : ℕ) [NeZero n] (i j : Fin n) :
     0 ≤ cycleMetric n i j := by
   unfold cycleMetric
   exact_mod_cast Nat.zero_le _
 
-/-- **`cycleMetric i i = 0`.** -/
+/-- `cycleMetric n i i = 0`. -/
 theorem cycleMetric_self (n : ℕ) [NeZero n] (i : Fin n) :
     cycleMetric n i i = 0 := by
   unfold cycleMetric
   simp
 
-/-- **`cycleMetric` is symmetric.** -/
+/-- `cycleMetric` is symmetric. -/
 theorem cycleMetric_symm (n : ℕ) [NeZero n] (i j : Fin n) :
     cycleMetric n i j = cycleMetric n j i := by
   unfold cycleMetric
   rw [Hypergraph.dist_comm]
 
-/-- **Uniform probability measure** on `Fin n`: `1/n` per vertex. -/
+/-- The uniform weight `1/n` on `Fin n`. -/
 noncomputable def cycleUniform (n : ℕ) : Fin n → ℝ :=
   fun _ => (1 : ℝ) / n
 
-/-- **`cycleUniform` entries are non-negative.** -/
+/-- `cycleUniform n i ≥ 0`. -/
 theorem cycleUniform_nonneg (n : ℕ) (i : Fin n) : 0 ≤ cycleUniform n i := by
   unfold cycleUniform
   exact div_nonneg (by norm_num) (by exact_mod_cast Nat.zero_le _)
 
-/-- **Total mass of `cycleUniform n`** is `1` when `n ≥ 1`. -/
+/-- For `n ≥ 1`, the weights `cycleUniform n i` sum to 1. -/
 theorem cycleUniform_total (n : ℕ) (hn : 1 ≤ n) :
     ∑ i : Fin n, cycleUniform n i = 1 := by
   unfold cycleUniform
@@ -74,9 +58,7 @@ theorem cycleUniform_total (n : ℕ) (hn : 1 ≤ n) :
     linarith
   field_simp
 
-/-- **W_1(μ_n, μ_n) = 0 on the cycle**: the uniform measure is at
-zero Wasserstein distance from itself. Instantiation of the generic
-`wasserstein1_self_eq_zero` theorem on `(cycleMetric n, cycleUniform n)`. -/
+/-- `W_1(cycleUniform n, cycleUniform n) = 0` under `cycleMetric n`. -/
 theorem wasserstein1_cycleUniform_self (n : ℕ) [NeZero n] :
     wasserstein1 (cycleMetric n) (cycleUniform n) (cycleUniform n) = 0 :=
   wasserstein1_self_eq_zero
@@ -86,13 +68,7 @@ theorem wasserstein1_cycleUniform_self (n : ℕ) [NeZero n] :
     (cycleUniform n)
     (cycleUniform_nonneg n)
 
-/-- **W_1 between two Dirac deltas on the cycle equals the cycle
-graph distance.** Hypergraph-anchored instantiation of
-`wasserstein1_delta_eq_dist`: the finite metric space is
-`(Fin n, cycleMetric n)`, which is entirely defined from
-`cycleHypergraph n` (distance = shortest-path in the clique-expansion
-graph of the hypergraph). Both sides of the identity are
-computable from the hypergraph data alone. -/
+/-- `W_1(δ_i, δ_j) = (cycleHypergraph n).dist i j` under `cycleMetric n`. -/
 theorem wasserstein1_cycleDelta_eq_hypergraphDist
     (n : ℕ) [NeZero n] (i j : Fin n) :
     wasserstein1 (cycleMetric n) (delta i) (delta j)
@@ -100,9 +76,7 @@ theorem wasserstein1_cycleDelta_eq_hypergraphDist
   rw [wasserstein1_delta_eq_dist]
   rfl
 
-/-- **Cycle-metric diameter is at most `n`**: any two vertices of
-`cycleHypergraph n` are within `n` graph steps of each other. Weak but
-easy; tighter bound `⌊n/2⌋` uses the cycle's two-way connectivity. -/
+/-- `cycleMetric n i j ≤ n`. -/
 theorem cycleMetric_le_card (n : ℕ) [NeZero n] (i j : Fin n) :
     cycleMetric n i j ≤ n := by
   unfold cycleMetric Hypergraph.dist
@@ -120,14 +94,11 @@ theorem cycleMetric_le_card (n : ℕ) [NeZero n] (i j : Fin n) :
         _ < Fintype.card (Fin n) := hpath
         _ = n := hcard
     exact_mod_cast le_of_lt this
-  · -- Unreachable: SimpleGraph.dist is 0 ≤ n.
+  · -- If `j` is unreachable from `i`, `SimpleGraph.dist` is 0.
     rw [SimpleGraph.dist_eq_zero_of_not_reachable hreach]
     exact_mod_cast Nat.zero_le _
 
-/-- **W_1 between any two probability measures on `cycleHypergraph n`
-is bounded by `n`.** Concrete diameter bound applied to the
-cycle-hypergraph Wasserstein metric — hypergraph-anchored universal
-upper bound. -/
+/-- For probability vectors `μ, ν` on `Fin n`, `W_1(μ, ν) ≤ n` under `cycleMetric n`. -/
 theorem wasserstein1_cycleMetric_le_card
     (n : ℕ) [NeZero n]
     (μ ν : Fin n → ℝ)
@@ -138,10 +109,7 @@ theorem wasserstein1_cycleMetric_le_card
     (cycleMetric_le_card n) (cycleMetric_nonneg n) μ ν hμ hν hμsum hνsum
   exact_mod_cast Nat.zero_le _
 
-/-- **Scaled cycle metric**: the hypergraph distance divided by `n`,
-so that the unit cell has length `1/n` and the full cycle has
-"circumference" bounded by `1`. This is the metric under which
-`cycleHypergraph n → S¹` convergence can be quantified. -/
+/-- `cycleMetric n i j / n`. -/
 noncomputable def cycleMetricScaled (n : ℕ) [NeZero n] (i j : Fin n) : ℝ :=
   cycleMetric n i j / n
 
@@ -151,9 +119,7 @@ theorem cycleMetricScaled_nonneg (n : ℕ) [NeZero n] (i j : Fin n) :
   have hn : (0 : ℝ) ≤ n := by exact_mod_cast Nat.zero_le _
   exact div_nonneg (cycleMetric_nonneg n i j) hn
 
-/-- **Scaled cycle diameter is ≤ 1**: under `cycleMetricScaled n`, any
-two vertices are within unit distance. Direct consequence of
-`cycleMetric_le_card` (the unscaled diameter is ≤ n). -/
+/-- `cycleMetricScaled n i j ≤ 1`. -/
 theorem cycleMetricScaled_le_one (n : ℕ) [NeZero n] (i j : Fin n) :
     cycleMetricScaled n i j ≤ 1 := by
   unfold cycleMetricScaled
@@ -163,10 +129,7 @@ theorem cycleMetricScaled_le_one (n : ℕ) [NeZero n] (i j : Fin n) :
   rw [div_le_one hn_pos]
   exact cycleMetric_le_card n i j
 
-/-- **W_1 under the scaled cycle metric is bounded by `1`.** Universal
-O(1) Wasserstein bound on the cycle hypergraph. Along with the delta
-identity (`wasserstein1_cycleDelta_eq_hypergraphDist`) this pins W_1
-to the range `[0, 1]` under scaling, matching the unit-circle limit. -/
+/-- For probability vectors `μ, ν` on `Fin n`, `W_1(μ, ν) ≤ 1` under `cycleMetricScaled n`. -/
 theorem wasserstein1_cycleMetricScaled_le_one
     (n : ℕ) [NeZero n]
     (μ ν : Fin n → ℝ)
@@ -177,11 +140,7 @@ theorem wasserstein1_cycleMetricScaled_le_one
     (cycleMetricScaled_le_one n) (cycleMetricScaled_nonneg n)
     μ ν hμ hν hμsum hνsum
 
-/-- **Sharp scaled W_1 between two cycle Dirac deltas**:
-`W_1_scaled(δ_i, δ_j) = d(i,j) / n` on `cycleHypergraph n`, where `d`
-is the hypergraph graph distance. Combines the abstract δ identity
-with the `/n` scaling — the entire range `[0, ⌊n/2⌋/n]` of observed
-W_1_scaled values is indexed by hypergraph-graph distance. -/
+/-- `W_1(δ_i, δ_j) = (cycleHypergraph n).dist i j / n` under `cycleMetricScaled n`. -/
 theorem wasserstein1_cycleDelta_scaled_eq
     (n : ℕ) [NeZero n] (i j : Fin n) :
     wasserstein1 (cycleMetricScaled n) (delta i) (delta j)
@@ -189,11 +148,9 @@ theorem wasserstein1_cycleDelta_scaled_eq
   rw [wasserstein1_delta_eq_dist]
   rfl
 
-/-! ## Sharp O(1/n) Wasserstein identity for adjacent Dirac measures -/
+/-! ## Adjacent Dirac measures -/
 
-/-- **Distance between adjacent cycle vertices is exactly `1`.** The
-edge `{v, v+1}` of `cycleHypergraph n` makes them adjacent in the
-clique-expansion graph, so the shortest path has length 1. -/
+/-- For `n ≥ 2`, `cycleMetric n v (v + 1) = 1`. -/
 theorem cycleMetric_succ_eq_one (n : ℕ) [NeZero n] (hn : 2 ≤ n) (v : Fin n) :
     cycleMetric n v (v + 1) = 1 := by
   unfold cycleMetric Hypergraph.dist
@@ -205,20 +162,13 @@ theorem cycleMetric_succ_eq_one (n : ℕ) [NeZero n] (hn : 2 ≤ n) (v : Fin n) 
   rw [this]
   norm_cast
 
-/-- **Scaled distance between adjacent cycle vertices is `1/n`.**
-Direct consequence of `cycleMetric_succ_eq_one` and the `/ n` scaling. -/
+/-- For `n ≥ 2`, `cycleMetricScaled n v (v + 1) = 1/n`. -/
 theorem cycleMetricScaled_succ_eq (n : ℕ) [NeZero n] (hn : 2 ≤ n) (v : Fin n) :
     cycleMetricScaled n v (v + 1) = 1 / n := by
   unfold cycleMetricScaled
   rw [cycleMetric_succ_eq_one n hn v]
 
-/-- **Sharp A7 identity on the cycle**: the Wasserstein-1 distance
-between two adjacent Dirac deltas on `cycleHypergraph n`, under the
-scaled cycle metric, is exactly `1/n`. Combines
-`wasserstein1_delta_eq_dist` (abstract) with
-`cycleMetricScaled_succ_eq` (hypergraph-anchored). **First genuinely
-O(1/n) Wasserstein rate in the project**, all from explicit
-hypergraph data. -/
+/-- For `n ≥ 2`, `W_1(δ_v, δ_{v+1}) = 1/n` under `cycleMetricScaled n`. -/
 theorem wasserstein1_cycleDelta_succ
     (n : ℕ) [NeZero n] (hn : 2 ≤ n) (v : Fin n) :
     wasserstein1 (cycleMetricScaled n) (delta v) (delta (v + 1))
@@ -226,12 +176,9 @@ theorem wasserstein1_cycleDelta_succ
   rw [wasserstein1_delta_eq_dist]
   exact cycleMetricScaled_succ_eq n hn v
 
-/-! ## Measure-level O(1/n) bound: shift plan for general probability measures -/
+/-! ## Shifted measures -/
 
-/-- **Shift-forward measure** `shiftMeasure n μ j := μ (j + 1)`.
-Rotates the measure one step on the cycle. As `Fin n` addition is
-modular, this is a bijection-induced pushforward, preserving total
-mass. -/
+/-- `shiftMeasure n μ j := μ (j + 1)`, with addition in `Fin n`. -/
 noncomputable def shiftMeasure (n : ℕ) [NeZero n] (μ : Fin n → ℝ) :
     Fin n → ℝ :=
   fun j => μ (j + 1)
@@ -240,18 +187,14 @@ theorem shiftMeasure_nonneg (n : ℕ) [NeZero n]
     {μ : Fin n → ℝ} (hμ : ∀ i, 0 ≤ μ i) (j : Fin n) :
     0 ≤ shiftMeasure n μ j := hμ _
 
-/-- **Total mass is preserved** by `shiftMeasure` (reindexing via the
-bijection `j ↦ j + 1` on `Fin n`). -/
+/-- `∑ j, shiftMeasure n μ j = ∑ i, μ i`. -/
 theorem shiftMeasure_total (n : ℕ) [NeZero n] (μ : Fin n → ℝ) :
     ∑ j : Fin n, shiftMeasure n μ j = ∑ i : Fin n, μ i := by
   unfold shiftMeasure
   exact Equiv.sum_comp (Equiv.addRight (1 : Fin n)) μ
 
-/-- **Shift plan** between `μ` and `shiftMeasure n μ` on
-`cycleHypergraph n`: puts mass `μ i` on the `(i, i-1)` slot and zero
-elsewhere. Row marginal at `i` picks up the `j = i - 1` slot only,
-giving `μ i`; column marginal at `j` picks up the `i = j + 1` slot
-only, giving `μ (j+1) = shiftMeasure μ j`. -/
+/-- The transport plan from `μ` to `shiftMeasure n μ` with mass `μ i` at `(i, i - 1)` and
+zero elsewhere. -/
 noncomputable def shiftPlan (n : ℕ) [NeZero n]
     (μ : Fin n → ℝ) (hμ : ∀ i, 0 ≤ μ i) :
     TransportPlan μ (shiftMeasure n μ) where
@@ -283,9 +226,7 @@ noncomputable def shiftPlan (n : ℕ) [NeZero n]
     · intro hne
       exact absurd (Finset.mem_univ _) hne
 
-/-- **Cost of the shift plan under `cycleMetric` is at most the
-total mass**: each unit of mass moves exactly one adjacent step
-(distance 1), so the total cost equals the sum of `μ`. -/
+/-- For `n ≥ 2`, the cost of `shiftPlan` under `cycleMetric n` equals `∑ i, μ i`. -/
 theorem shiftPlan_cost_cycleMetric
     (n : ℕ) [NeZero n] (hn : 2 ≤ n)
     (μ : Fin n → ℝ) (hμ : ∀ i, 0 ≤ μ i) :
@@ -313,8 +254,8 @@ theorem shiftPlan_cost_cycleMetric
   · intro hne
     exact absurd (Finset.mem_univ _) hne
 
-/-- **Cost of the shift plan under `cycleMetric` is 1** for
-probability measures. -/
+/-- For `n ≥ 2` and a probability vector `μ`, the cost of `shiftPlan` under
+`cycleMetric n` is 1. -/
 theorem shiftPlan_cost_cycleMetric_one
     (n : ℕ) [NeZero n] (hn : 2 ≤ n)
     (μ : Fin n → ℝ) (hμ : ∀ i, 0 ≤ μ i) (hμsum : ∑ i, μ i = 1) :
@@ -322,11 +263,8 @@ theorem shiftPlan_cost_cycleMetric_one
   rw [shiftPlan_cost_cycleMetric n hn μ hμ]
   exact hμsum
 
-/-- **W_1 under the scaled cycle metric, between any probability
-measure and its shift, is at most `1/n`.** Full A7 measure-level
-O(1/n) rate: for any probability measure `μ`,
-`W_1_scaled(μ, μ ∘ (·+1)) ≤ 1/n`. Proof: instantiate the shift plan,
-compute cost = `1` unscaled = `1/n` scaled, apply `csInf_le`. -/
+/-- For `n ≥ 2` and a probability vector `μ`, `W_1(μ, shiftMeasure n μ) ≤ 1/n` under
+`cycleMetricScaled n`. The proof bounds the infimum by the cost of `shiftPlan`. -/
 theorem wasserstein1_shiftMeasure_le (n : ℕ) [NeZero n] (hn : 2 ≤ n)
     (μ : Fin n → ℝ) (hμ : ∀ i, 0 ≤ μ i) (hμsum : ∑ i, μ i = 1) :
     wasserstein1 (cycleMetricScaled n) μ (shiftMeasure n μ) ≤ 1 / n := by
@@ -335,9 +273,8 @@ theorem wasserstein1_shiftMeasure_le (n : ℕ) [NeZero n] (hn : 2 ≤ n)
   · rintro c ⟨q, rfl⟩
     exact q.cost_nonneg (cycleMetricScaled n) (cycleMetricScaled_nonneg n)
   · refine ⟨shiftPlan n μ hμ, ?_⟩
-    -- cost_scaled = (1/n) · cost_unscaled = (1/n) · 1 = 1/n
+    -- The scaled cost is the unscaled cost 1 divided by `n`.
     unfold TransportPlan.cost cycleMetricScaled
-    -- ∑_i ∑_j π(i,j) * (d i j / n) = (∑_i ∑_j π(i,j) * d i j) / n
     have h_unscaled : (shiftPlan n μ hμ).cost (cycleMetric n) = 1 :=
       shiftPlan_cost_cycleMetric_one n hn μ hμ hμsum
     have h_rewrite : (∑ i, ∑ j, (shiftPlan n μ hμ).π i j *
@@ -356,9 +293,7 @@ theorem wasserstein1_shiftMeasure_le (n : ℕ) [NeZero n] (hn : 2 ≤ n)
       exact h_unscaled
     rw [this]
 
-/-- **`cycleMetric` triangle inequality** — inherited from the
-underlying hypergraph-distance triangle inequality
-(`cycleHypergraph_dist_triangle` for `n ≥ 2`). -/
+/-- For `n ≥ 2`, `cycleMetric` satisfies the triangle inequality. -/
 theorem cycleMetric_triangle (n : ℕ) [NeZero n] (hn : 2 ≤ n)
     (i j k : Fin n) :
     cycleMetric n i k ≤ cycleMetric n i j + cycleMetric n j k := by
@@ -366,8 +301,7 @@ theorem cycleMetric_triangle (n : ℕ) [NeZero n] (hn : 2 ≤ n)
   have := cycleHypergraph_dist_triangle hn i j k
   exact_mod_cast this
 
-/-- **`cycleMetricScaled` triangle inequality** — triangle inequality
-survives division by the positive constant `n`. -/
+/-- For `n ≥ 2`, `cycleMetricScaled` satisfies the triangle inequality. -/
 theorem cycleMetricScaled_triangle (n : ℕ) [NeZero n] (hn : 2 ≤ n)
     (i j k : Fin n) :
     cycleMetricScaled n i k
@@ -380,15 +314,14 @@ theorem cycleMetricScaled_triangle (n : ℕ) [NeZero n] (hn : 2 ≤ n)
         = (cycleMetric n i j + cycleMetric n j k) / n by ring]
   exact div_le_div_of_nonneg_right htri hnpos.le
 
-/-- **`cycleMetricScaled` self-distance is zero.** -/
+/-- `cycleMetricScaled n i i = 0`. -/
 theorem cycleMetricScaled_self (n : ℕ) [NeZero n] (i : Fin n) :
     cycleMetricScaled n i i = 0 := by
   unfold cycleMetricScaled
   rw [cycleMetric_self]
   simp
 
-/-- **Iterated forward shift** on the cycle — `shiftIter n μ k j = μ(j+k)`.
-Iteratively applies `shiftMeasure` `k` times. -/
+/-- `shiftMeasure` applied `k` times, so `shiftIter n μ k j = μ (j + k)`. -/
 noncomputable def shiftIter (n : ℕ) [NeZero n]
     (μ : Fin n → ℝ) : ℕ → (Fin n → ℝ)
   | 0 => μ
@@ -411,10 +344,9 @@ theorem shiftIter_total (n : ℕ) [NeZero n]
       rw [shiftMeasure_total]
       exact shiftIter_total n μ hμsum k
 
-/-- **k-step shift rate**: for any probability measure `μ` on the
-cycle, `W_1_scaled(μ, μ ∘ (·+k)) ≤ k/n`. Proof by induction on `k`,
-using `wasserstein1_triangle` + the 1-step bound
-`wasserstein1_shiftMeasure_le`. -/
+/-- For `n ≥ 2` and a probability vector `μ`, `W_1(μ, shiftIter n μ k) ≤ k/n` under
+`cycleMetricScaled n`. The proof is by induction on `k` with the triangle inequality for
+`W_1`. -/
 theorem wasserstein1_shiftIter_le (n : ℕ) [NeZero n] (hn : 2 ≤ n) :
     ∀ (k : ℕ) (μ : Fin n → ℝ) (hμ : ∀ i, 0 ≤ μ i)
       (hμsum : ∑ i, μ i = 1),
@@ -453,14 +385,8 @@ theorem wasserstein1_shiftIter_le (n : ℕ) [NeZero n] (hn : 2 ≤ n) :
         _ = ((k : ℝ) + 1) / n := by rw [hsum_cast]
         _ = ((k + 1 : ℕ) : ℝ) / n := by push_cast; ring
 
-/-- **Physical-observable shift-rate corollary**: for any probability
-measure `μ` on the cycle and any `L`-Lipschitz observable `f` (against
-the scaled cycle metric), the change in expectation under `k` forward
-shifts is bounded by `L · k / n`. Combines `wasserstein1_lipschitz_bound`
-(KR one-direction) with `wasserstein1_shiftIter_le` (k-step shift rate).
-Every Lipschitz observable has expectation variation O(k/n) under k-step
-cyclic shifts — the sharpest expectation-level A7 statement currently
-in the library. -/
+/-- For `n ≥ 2`, a probability vector `μ`, and `f` that is `L`-Lipschitz for
+`cycleMetricScaled n`, `|∑ μ f − ∑ (shiftIter n μ k) f| ≤ L·k/n`. -/
 theorem expectationDiff_shiftIter_le
     (n : ℕ) [NeZero n] (hn : 2 ≤ n)
     (μ : Fin n → ℝ) (hμ : ∀ i, 0 ≤ μ i) (hμsum : ∑ i, μ i = 1)

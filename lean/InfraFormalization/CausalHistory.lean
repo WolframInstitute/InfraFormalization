@@ -418,7 +418,7 @@ theorem ball_card_le (hv : h.Valid) (i t : ℕ) :
 
 end RuleHistory
 
-/-! ## The rule of arXiv:2102.09363 -/
+/-! ## The rule of G3 (arXiv:2102.09363) -/
 
 /-- In every valid history of the rule `{{x,y},{y,z},{z,w},{w,v}} →
 {{y,u},{u,v},{w,x},{x,u}}` with `N` initial hyperedges, every antichain
@@ -435,15 +435,15 @@ theorem gorardNamedRule_ball_card_le {V : Type*}
     (h.ball i t).card ≤ 5 ^ t :=
   h.ball_card_le hv i t
 
-/-- Statement O1 (OPEN): linear cone growth. For every number `N` of
-initial hyperedges there is `c` such that, in every valid history of `r`
-with `N` initial hyperedges, every event `i` and every `t` satisfy
-`|ball i t| ≤ c * (t + 1)`. The statement quantifies over all update orders. -/
+/-- Linear cone growth: for every number `N` of initial hyperedges there is `c` such that,
+in every valid history of `r` with `N` initial hyperedges, every event `i` and every `t`
+satisfy `|ball i t| ≤ c * (t + 1)`. The statement quantifies over all update orders and is
+not proved in this module. -/
 def ConeGrowthLinear {P : Type*} (r : Rule P) : Prop :=
   ∀ N : ℕ, ∃ c : ℕ, ∀ (V : Type) (h : RuleHistory r V), h.Valid →
     h.init.card = N → ∀ i < h.n, ∀ t, (h.ball i t).card ≤ c * (t + 1)
 
-/-- O1 for the rule of arXiv:2102.09363. -/
+/-- `ConeGrowthLinear` for the rule of G3 (arXiv:2102.09363). -/
 def GorardNamedRuleConeGrowthLinear : Prop :=
   ConeGrowthLinear CandidateCatalog.gorardNamedRule
 

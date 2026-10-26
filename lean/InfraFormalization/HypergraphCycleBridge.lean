@@ -1,33 +1,7 @@
 /-
-The **hypergraph → cycle Laplacian → second difference → f''** bridge.
+The cycle hypergraph and its Laplacian.
 
-**Purpose.** Previously `CycleGraph.lean` defined `cycleLaplacian`
-directly on `Fin n → ℝ` (no hypergraph reference), and
-`LaplacianBridge.lean` connected it to the continuum `d²/dx²`. That
-left a gap: the "hypergraph anchor" of the continuum bridge was
-implicit — the cycle graph was treated as a mere `Fin n`-indexed
-data structure, not as an actual `Hypergraph V` instance.
-
-This file **closes the gap**. It constructs `cycleHypergraph n :
-Hypergraph (Fin n)` — the concrete Wolfram-model state whose edges
-are `{i, i+1}` for `i : Fin n` — and proves
-
-  `Hypergraph.laplacianHyper (cycleHypergraph n) f v = cycleLaplacian n f v`
-
-on every vertex `v : Fin n` for `n ≥ 2`.
-
-Composed with:
-  * `cycleLaplacian_is_secondDifference` (CycleGraph),
-  * `scaledSecondDiff_quadratic`        (LaplacianBridge),
-  * `polynomial_scaled_laplacian_eq_second_deriv` (LaplacianBridge),
-
-this gives the end-to-end chain
-
-  `Hypergraph (Fin n) ―laplacianHyper―▶  cycleLaplacian
-   ―scaled by n²―▶ secondDifference ―Taylor / polynomial―▶ f''(x)`.
-
-Every Wolfram-model rewriting of `cycleHypergraph n` (1D cycle rules)
-now has an explicit continuum-limit pathway.
+This module defines `cycleHypergraph n : Hypergraph (Fin n)` with the `n` edges `[j, j+1]`, and proves `laplacianHyper (cycleHypergraph n) f v = cycleLaplacian n f v` for `n ≥ 2`, where `cycleLaplacian` is defined in `CycleGraph.lean`. Combined with `LaplacianBridge.lean`, it proves that for a quadratic `f(y) = a y² + b y + c` and an interior index `i`, `n² · laplacianHyper (cycleHypergraph n) (f(j/n)) i = f''(i/n)` exactly. The statement covers quadratic polynomials only.
 -/
 
 import InfraFormalization.HypergraphLaplacian
@@ -41,20 +15,17 @@ variable {n : Nat}
 
 /-! ## The cycle hypergraph as a concrete `Hypergraph (Fin n)` -/
 
-/-- The `j`-th **cycle edge**: the ordered pair `[j, j+1]` (with
-`j+1` taken in the cyclic group `Fin n`). -/
+/-- The hyperedge `[j, j+1]`, with addition in `Fin n`. -/
 def cycleHyperedge (n : Nat) [NeZero n] (j : Fin n) : Hyperedge (Fin n) :=
   { verts := [j, j + 1]
     nonempty := by simp }
 
-/-- The **cycle hypergraph** `C_n` as a Wolfram-model state: a finite
-multiset of `n` directed cycle edges, one per vertex. -/
+/-- The hypergraph on `Fin n` whose edges are `cycleHyperedge n j` for each `j : Fin n`. -/
 noncomputable def cycleHypergraph (n : Nat) [NeZero n] :
     Hypergraph (Fin n) :=
   { edges := (Finset.univ : Finset (Fin n)).val.map (cycleHyperedge n) }
 
-/-- For `n ≥ 2`, the `j`-th cycle edge has toFinset `{j, j+1}` with
-both endpoints distinct. -/
+/-- The vertex finset of `cycleHyperedge n j` is `{j, j+1}`. -/
 theorem cycleHyperedge_toFinset {n : Nat} [NeZero n] (hn : 2 ≤ n)
     (j : Fin n) :
     (cycleHyperedge n j).verts.toFinset = {j, j + 1} := by
@@ -80,14 +51,12 @@ theorem cycle_succ_ne {n : Nat} [NeZero n] (hn : 2 ≤ n) (j : Fin n) :
   · push_neg at hjv
     have : j.val + 1 = n := by omega
     rw [this, Nat.mod_self] at h1
-    -- h1 : j.val = 0, but j.val + 1 = n ≥ 2 contradicts j.val = 0 would mean 1 = n.
+    -- h1 : j.val = 0 and j.val + 1 = n ≥ 2 are inconsistent.
     omega
 
 /-! ## `laplacianHyper (cycleHypergraph n) = cycleLaplacian n` -/
 
-/-- **Per-edge contribution of `cycleHyperedge j` at vertex `v`** in
-the cycle hypergraph. Only non-zero when `v ∈ {j, j+1}`, and then
-equals the single neighbor-difference. -/
+/-- For `n ≥ 2`, the contribution of `cycleHyperedge n j` to the Laplacian at `v` is `f(j+1) − f v` if `v = j`, `f j − f v` if `v = j+1`, and `0` otherwise. -/
 theorem cycleHyperedge_perEdge_contribution {n : Nat} [NeZero n]
     (hn : 2 ≤ n) (f : Fin n → ℝ) (j v : Fin n) :
     (∑ w ∈ (cycleHyperedge n j).others v, (f w - f v))
@@ -142,15 +111,7 @@ theorem cycleHyperedge_perEdge_contribution {n : Nat} [NeZero n]
     obtain ⟨hvne_j, hvne_succ⟩ := hv
     simp [hvne_j, hvne_succ]
 
-/-- **The bridge: `laplacianHyper (cycleHypergraph n) f v = cycleLaplacian n f v`.**
-
-For `n ≥ 2`, the hypergraph Laplacian on the concrete cycle-
-hypergraph state equals the direct cycle Laplacian.
-
-This is the explicit `Hypergraph V` anchor for everything
-`cycleLaplacian`-based: every downstream theorem that manipulates
-`cycleLaplacian` is implicitly about the Wolfram-model state
-`cycleHypergraph n`. -/
+/-- For `n ≥ 2`, `laplacianHyper (cycleHypergraph n) f v = cycleLaplacian n f v`. -/
 theorem laplacianHyper_cycleHypergraph {n : Nat} [NeZero n] (hn : 2 ≤ n)
     (f : Fin n → ℝ) (v : Fin n) :
     Hypergraph.laplacianHyper (cycleHypergraph n) f v = cycleLaplacian n f v := by
@@ -197,22 +158,9 @@ theorem laplacianHyper_cycleHypergraph {n : Nat} [NeZero n] (hn : 2 ≤ n)
   unfold cycleLaplacian
   ring
 
-/-! ## End-to-end: `Hypergraph (Fin n)` → `f''` for polynomials
+/-! ## Quadratic test functions
 
-Given:
-  * A quadratic polynomial `f(y) = a y² + b y + c : ℝ → ℝ`;
-  * Its discretisation `fn := fun j : Fin n => f (j.val / n)`;
-  * An interior index `i : Fin n` (`1 ≤ i.val` and `i.val + 1 < n`);
-
-we have
-
-  `n² · Hypergraph.laplacianHyper (cycleHypergraph n) fn i
-   = deriv (deriv f) (i.val / n)`    (exact, no limit).
-
-This is the **end-to-end bridge** for a polynomial test function:
-from `Hypergraph V` all the way to a continuum second derivative,
-through every layer (`laplacianHyper → cycleLaplacian →
-secondDifference → f''`). -/
+For `f(y) = a y² + b y + c`, `fn j = f (j.val / n)` and an index `i` with `1 ≤ i.val` and `i.val + 1 < n`, the identity `n² · laplacianHyper (cycleHypergraph n) fn i = deriv (deriv f) (i.val / n)` holds exactly. -/
 
 theorem hypergraph_scaled_laplacian_eq_second_deriv
     (n : Nat) [NeZero n] (hn : 2 ≤ n)
@@ -240,9 +188,7 @@ theorem hypergraph_scaled_laplacian_eq_second_deriv
   have hn_pos : 0 < n := Nat.pos_of_ne_zero (NeZero.ne n)
   exact polynomial_scaled_laplacian_eq_second_deriv a b c n hn_pos ((i.val : ℝ) / n)
 
-/-- **Cycle hypergraph edge count equals `n`.** `cycleHypergraph n` is
-defined as the image-map of `cycleHyperedge n` over `Finset.univ : Finset
-(Fin n)`, which has multiset cardinality `n`. -/
+/-- `(cycleHypergraph n).size = n`. -/
 theorem cycleHypergraph_size (n : Nat) [NeZero n] :
     (cycleHypergraph n).size = n := by
   unfold cycleHypergraph Hypergraph.size

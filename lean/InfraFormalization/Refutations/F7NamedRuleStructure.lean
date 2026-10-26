@@ -1,21 +1,13 @@
 /-
-**F7: edge-count conservation for the rule named in arXiv:2102.09363.**
+F7: edge-count conservation for the rule of G3.
 
-arXiv:2102.09363 (abstract, `papers/gorard_2102.09363.txt` lines 50-52;
-rule at line 6202) uses the rule
-`{{x,y},{y,z},{z,w},{w,v}} → {{y,u},{u,v},{w,x},{x,u}}`
-and states that it "provably satisfies the Einstein field equations in
-the continuum limit".
-
-This file proves one fact about that rule, encoded as
-`CandidateCatalog.gorardNamedRule`: every application, and every chain
-of applications, leaves the edge count of the hypergraph unchanged.
-
-This file proves no bound on the growth of the rule's causal graph and
-no bound on any dimension. The measured cone-growth exponents are in
-`notes/empirical_refutation.md` and `results/phase1_selfaudit/README.md`.
-The statement a dimension bound would need is listed as OPEN in
-`STATUS_OF_GORARD_CLAIMS.md`.
+G3 (`papers/gorard_2102.09363.txt` lines 50-52, rule at line 6202) uses
+the rule `{{x,y},{y,z},{z,w},{w,v}} → {{y,u},{u,v},{w,x},{x,u}}` and states
+that it "provably satisfies the Einstein field equations in the continuum
+limit". This file proves that every application, and every chain of
+applications, of this rule (`CandidateCatalog.gorardNamedRule`) leaves the
+edge count unchanged. It proves no bound on causal-graph growth or on any
+dimension.
 -/
 
 import InfraFormalization.Conservation

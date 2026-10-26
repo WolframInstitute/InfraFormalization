@@ -1,18 +1,7 @@
 /-
-**Heat kernel ↔ ODE heat equation identification** (task T1).
+The matrix heat kernel solves the discrete heat equation.
 
-Unifies the two heat-equation definitions in the project:
-
-  * `HeatSolution H u` (from `HeatEquation.lean`, D1):
-    `∀ t v, HasDerivAt (fun s => u s v) (laplacianHyper H (u t) v) t`.
-  * `heatKernel H t := exp (t • laplacianMatrix H)` (from `LaplacianMatrix.lean`,
-    R2/D3): the matrix exponential propagator.
-
-The link: `t ↦ (heatKernel H t).mulVec u₀` solves the heat ODE with
-initial data `u₀`. Proved via `hasDerivAt_exp_smul_const` +
-`Matrix.mulVec` as a continuous linear map in the matrix argument +
-commutativity of `heatKernel H t` with `laplacianMatrix H`
-(via `Commute.exp_left` since scalar multiples of a matrix commute).
+`heatKernel H t = exp (t • laplacianMatrix H)` is defined in `LaplacianMatrix.lean` and `HeatSolution` in `HeatEquation.lean`. This module proves that `t ↦ (heatKernel H t).mulVec u₀` satisfies `HeatSolution H`. The proof uses `hasDerivAt_exp_smul_const`, the continuity of `M ↦ M.mulVec u v`, and the commutation of `heatKernel H t` with `laplacianMatrix H`.
 -/
 
 import InfraFormalization.LaplacianMatrix
@@ -27,25 +16,20 @@ namespace Hypergraph
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
-/-- **Matrix-level time derivative of the heat kernel**:
-`d/dt heatKernel H t = heatKernel H t · laplacianMatrix H`. -/
+/-- `d/dt heatKernel H t = heatKernel H t * laplacianMatrix H`. -/
 theorem hasDerivAt_heatKernel (H : Hypergraph V) (t : ℝ) :
     HasDerivAt (fun s : ℝ => heatKernel H s)
       (heatKernel H t * laplacianMatrix H) t := by
   unfold heatKernel
   exact hasDerivAt_exp_smul_const (laplacianMatrix H) t
 
-/-- **Heat kernel commutes with the Laplacian matrix**: `Commute` for the
-underlying matrices. Follows from `Commute.exp_left` since `t • Δ` commutes
-with `Δ` (scalar multiples of a matrix commute with the matrix itself). -/
+/-- `heatKernel H t` commutes with `laplacianMatrix H`. The proof applies `Commute.exp_left` to the commutation of `t • Δ` with `Δ`. -/
 theorem heatKernel_commute_laplacianMatrix (H : Hypergraph V) (t : ℝ) :
     Commute (heatKernel H t) (laplacianMatrix H) := by
   unfold heatKernel
   exact (Commute.smul_left (Commute.refl (laplacianMatrix H)) t).exp_left
 
-/-- **`Matrix.mulVec` evaluated at a fixed vector and fixed output index
-is a continuous linear map on the matrix.** For `u : V → ℝ` and `v : V`:
-`(fun M : Matrix V V ℝ => M.mulVec u v) : Matrix V V ℝ →L[ℝ] ℝ`. -/
+/-- For `u : V → ℝ` and `v : V`, the map `M ↦ M.mulVec u v` as a continuous linear map `Matrix V V ℝ →L[ℝ] ℝ`. -/
 noncomputable def mulVecEvalCLM (u : V → ℝ) (v : V) :
     Matrix V V ℝ →L[ℝ] ℝ :=
   LinearMap.toContinuousLinearMap
@@ -62,9 +46,7 @@ noncomputable def mulVecEvalCLM (u : V → ℝ) (v : V) :
 @[simp] lemma mulVecEvalCLM_apply (u : V → ℝ) (v : V) (M : Matrix V V ℝ) :
     mulVecEvalCLM u v M = M.mulVec u v := rfl
 
-/-- **Entry-wise time derivative**: for any initial data `u₀ : V → ℝ` and
-any vertex `v : V`,
-`d/dt (heatKernel H t).mulVec u₀ v = (heatKernel H t · Δ).mulVec u₀ v`. -/
+/-- For `u₀ : V → ℝ` and `v : V`, `d/dt (heatKernel H t).mulVec u₀ v = (heatKernel H t * laplacianMatrix H).mulVec u₀ v`. -/
 theorem hasDerivAt_heatKernel_mulVec (H : Hypergraph V) (u₀ : V → ℝ)
     (v : V) (t : ℝ) :
     HasDerivAt (fun s : ℝ => (heatKernel H s).mulVec u₀ v)
@@ -74,13 +56,7 @@ theorem hasDerivAt_heatKernel_mulVec (H : Hypergraph V) (u₀ : V → ℝ)
   have := h_clm.comp_hasDerivAt t h_mat
   simpa using this
 
-/-- **Heat kernel solves the discrete heat equation.**
-
-For any finite-vertex hypergraph `H`, the map
-`t ↦ (heatKernel H t).mulVec u₀` is a solution of the discrete heat
-equation `∂_t u = Δ_H u` with initial data `u₀`. Closes T1 — the ODE
-predicate `HeatSolution H` and the matrix propagator `heatKernel H`
-are unified. -/
+/-- For a hypergraph `H` on a finite vertex type and any `u₀`, the map `t ↦ (heatKernel H t).mulVec u₀` satisfies `HeatSolution H`. -/
 theorem heatKernel_isHeatSolution (H : Hypergraph V) (u₀ : V → ℝ) :
     HeatSolution H (fun t v => (heatKernel H t).mulVec u₀ v) := by
   intro t v

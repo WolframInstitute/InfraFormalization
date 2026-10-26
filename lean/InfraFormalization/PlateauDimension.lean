@@ -1,24 +1,11 @@
 /-
-**Plateau-detection for Wolfram-Hausdorff dimension** (Group ID / #140).
+Plateaus of the local dimension estimator.
 
-A "plateau" in the Wolfram-Hausdorff log V(r) / log r estimator is
-a radius range where the estimator is approximately constant. Real
-graphs show a plateau at intermediate scales — below the plateau is
-the quantum-substrate regime, above is the finite-size regime.
-
-This file extends `HypergraphDistance.lean` with:
-
-  * `plateauMean H v [rmin, rmax]` — average of `localDimension`
-    over the range (already in `HypergraphDistance`; relabelled
-    for clarity).
-  * `plateauMax H v [rmin, rmax]` / `plateauMin` — range statistics
-    for detecting plateau quality.
-  * `isPlateau` — predicate: `plateauMax − plateauMin ≤ ε`.
-  * `Tendsto` to 1 on the cycle graph (at interior points, for
-    intermediate radius).
-
-**Connection to hypergraphs.** Native. Every quantity is a function
-of `Hypergraph V` and of `Hypergraph.dist`.
+A plateau of the estimator `localDimension v r = log V(r) / log r` is a range of radii on which it
+is
+nearly constant. This module defines the maximum `plateauMax` and minimum `plateauMin` of
+`localDimension v r` over `r ∈ [rmin, rmax]`, the predicate `IsPlateau` that their difference is at
+most `ε`, and proves that the set of values over a nonempty range is nonempty.
 -/
 
 import InfraFormalization.HypergraphDistance
@@ -31,27 +18,24 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 
 /-! ## Plateau statistics -/
 
-/-- **Plateau max**: maximum of `localDimension` over radii in
-`[rmin, rmax]`, only well-defined when the interval is nonempty
-(`rmin ≤ rmax`). -/
+/-- The maximum of `localDimension v r` over `r ∈ [rmin, rmax]`, for `rmin ≤ rmax`. -/
 noncomputable def plateauMax (H : Hypergraph V) (v : V)
     (rmin rmax : ℕ) (h : rmin ≤ rmax) : ℝ :=
   ((Finset.Icc rmin rmax).image (fun r => H.localDimension v r)).max'
     (Finset.image_nonempty.mpr ⟨rmin, Finset.mem_Icc.mpr ⟨le_refl _, h⟩⟩)
 
-/-- **Plateau min** symmetrically. -/
+/-- The minimum of `localDimension v r` over `r ∈ [rmin, rmax]`, for `rmin ≤ rmax`. -/
 noncomputable def plateauMin (H : Hypergraph V) (v : V)
     (rmin rmax : ℕ) (h : rmin ≤ rmax) : ℝ :=
   ((Finset.Icc rmin rmax).image (fun r => H.localDimension v r)).min'
     (Finset.image_nonempty.mpr ⟨rmin, Finset.mem_Icc.mpr ⟨le_refl _, h⟩⟩)
 
-/-- **Plateau quality**: for a plateau of tolerance `ε`,
-`plateauMax - plateauMin ≤ ε`. -/
+/-- `plateauMax - plateauMin ≤ ε` on `[rmin, rmax]`. -/
 def IsPlateau (H : Hypergraph V) (v : V) (rmin rmax : ℕ) (h : rmin ≤ rmax)
     (ε : ℝ) : Prop :=
   H.plateauMax v rmin rmax h - H.plateauMin v rmin rmax h ≤ ε
 
-/-- **Plateau-range is nonempty** when `rmin ≤ rmax`. -/
+/-- For `rmin ≤ rmax`, the set of values of `localDimension v r` over `[rmin, rmax]` is nonempty. -/
 theorem plateau_range_nonempty (H : Hypergraph V) (v : V)
     {rmin rmax : ℕ} (h : rmin ≤ rmax) :
     ((Finset.Icc rmin rmax).image (fun r => H.localDimension v r)).Nonempty :=

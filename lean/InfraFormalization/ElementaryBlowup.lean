@@ -1,25 +1,11 @@
 /-
-**Elementary blowups** (Group IB / #146).
+Elementary blowups.
 
-An *elementary blowup* is a rewriting rule whose LHS consists of a
-single hyperedge. PHAJEK's Srní talk (2026) identifies this
-class as the minimal-model Lie-algebra generator:
-
-  * Commutator `[B₁, B₂]` on isomorphism classes of hypergraphs
-    has vanishing causal-branchial component.
-  * Elementary blowups thus form a **Lie algebra**.
-  * For unary edges, this specialises to the **insertion Lie
-    algebra** of perturbative QFT.
-  * Induces a **Poisson bracket** on formal hypergraph functions
-    (Hamiltonian mechanics on the ruliad).
-
-This file gives the definitions + basic properties; the
-commutator-vanishing theorem, Lie-algebra structure, insertion
-algebra, and Poisson bracket are IB2–IB5.
-
-**Connection to hypergraphs.** Native. An elementary blowup is a
-specific kind of `Rule P` applied to a `Hypergraph V` via
-`Application`. No continuum objects.
+An `ElementaryBlowup P` is a `Rule P` whose left-hand side has exactly one
+hyperedge. The module defines its left-hand hyperedge, its applications to a
+hypergraph, its right-hand edge count and the relation `Order B n` stating
+that this count is `n`. It proves no theorems. No commutator, Lie bracket or
+Poisson bracket is defined here.
 -/
 
 import InfraFormalization.Rule
@@ -29,13 +15,12 @@ namespace InfraFormalization
 
 variable {P V : Type*} [DecidableEq V]
 
-/-- **An elementary blowup** is a `Rule P` whose LHS has exactly one
-hyperedge. -/
+/-- A `Rule P` whose left-hand side has exactly one hyperedge. -/
 structure ElementaryBlowup (P : Type*) where
   rule : Rule P
   lhs_single : rule.lhsSize = 1
 
-/-- **Extract the single hyperedge of an elementary-blowup LHS.** -/
+/-- The single hyperedge of the left-hand side of `B`. -/
 noncomputable def ElementaryBlowup.headEdge (B : ElementaryBlowup P) :
     Hyperedge P :=
   B.rule.lhs.edges.toList.head
@@ -47,18 +32,16 @@ noncomputable def ElementaryBlowup.headEdge (B : ElementaryBlowup P) :
       rw [Multiset.length_toList] at hzero
       omega)
 
-/-- **An elementary blowup is in particular a rule**, so can be
-applied wherever rules can be applied. -/
+/-- The type of applications of the rule of `B` to `H`. -/
 def ElementaryBlowup.apply (B : ElementaryBlowup P) (H : Hypergraph V) :
     Type _ :=
   Application B.rule H
 
-/-- **The RHS hyperedge count of a blowup.** Free parameter. -/
+/-- The number of hyperedges on the right-hand side of the rule of `B`. -/
 def ElementaryBlowup.rhsSize (B : ElementaryBlowup P) : Nat :=
   B.rule.rhsSize
 
-/-- **Classification**: the RHS size determines the "order" of the
-blowup (number of outgoing edges produced by a single incoming edge). -/
+/-- `Order B n` holds exactly when `B.rhsSize = n`. -/
 inductive ElementaryBlowup.Order : ElementaryBlowup P → Nat → Prop
   | mk (B : ElementaryBlowup P) (n : Nat) (h : B.rhsSize = n) :
       ElementaryBlowup.Order B n

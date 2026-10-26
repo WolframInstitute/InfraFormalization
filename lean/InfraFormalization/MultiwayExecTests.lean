@@ -1,24 +1,13 @@
 /-
-**Cross-check tests for `MultiwayExec`** vs the reference outputs in
-`../efficient_rewriting_final/tmp/TestCases.wl`.
+Comparison of `MultiwayExec` with reference outputs of `HypergraphRewritingEngine`.
 
-Each test instantiates a rule + seed used in
-`HypergraphRewritingEngine`'s `getMWGStats` reference data, runs the
-Lean executable engine for the same number of steps, and checks the
-event-count and (un-canonicalised) state-count match.
-
-The Lean engine does **not** canonicalise states modulo
-hypergraph isomorphism. So the **event count** matches the reference
-exactly; the **state count** matches up to (initial + few steps),
-diverging at the depth where Wolfram's engine first collapses two
-distinct-but-isomorphic states.
-
-Reference (`getMWGStats` from `TestCases.wl`):
-
-  TestCase1: rule `{{1,2}} → {{1,2}, {2,3}}`, init `{{1,2}}`.
-    step 1: NumStates=2, NumEvents=1
-    step 2: NumStates=4, NumEvents=3
-    step 3: NumStates=8 (canonical), NumEvents=9
+The reference values are `getMWGStats` outputs in `../efficient_rewriting_final/tmp/TestCases.wl`.
+Each example runs `multiwayEvolve` for a rule and seed from that file and checks the number of
+states or events by `decide`. `multiwayEvolve` does not identify isomorphic states, so state counts
+agree with the reference only up to the first step at which the reference identifies two isomorphic
+states. For TestCase1 (`{{1,2}} → {{1,2}, {2,3}}`, initial state `{{1,2}}`), the reference gives
+2, 4 and 8 cumulative states and 1, 3 and 9 cumulative events at steps 1, 2 and 3. The module also
+checks edge and vertex counts of four single-way steps of the edge-subdivision rule.
 -/
 
 import InfraFormalization.MultiwayExec
@@ -50,27 +39,22 @@ def tc1Sys : ExecSystem := ⟨[tc1Rule]⟩
 
 def tc1Seed : ExecHG ℕ := [⟨[1, 2], by decide⟩]
 
-/-- Step 1 reaches exactly 1 state. Reference event count for step 1 is
-1; with our (un-canonicalised) state semantics, 1 next-state from the
-single seed = 1 event = exact match. -/
+/-- Step 1 has 1 state, from 1 event, as in the reference. -/
 example :
     (multiwayEvolve tc1Sys tc1Seed 1).length = 1 := by decide
 
-/-- Step 2 reaches exactly 2 states. Reference cumulative state count
-at step 2 is 4 (initial 1 + step-1 1 + step-2 2 = 4). Cumulative
-event count at step 2 is 3 (1 + 2). Both match. -/
+/-- Step 2 has 2 states. The cumulative state count `1 + 1 + 2 = 4` and event count `1 + 2 = 3`
+agree with the reference. -/
 example :
     (multiwayEvolve tc1Sys tc1Seed 2).length = 2 := by decide
 
-/-- Step 3 reaches exactly 6 states (un-canonicalised). Reference
-cumulative event count = 9 (1 + 2 + 6). Reference canonicalised state
-count = 8; un-canonical count is 10 (1+1+2+6) — diverges by 2 (the
-exact number of isomorphic pairs Wolfram's engine collapses). -/
+/-- Step 3 has 6 states. The cumulative state count is `1 + 1 + 2 + 6 = 10`, against 8 in the
+reference,
+which identifies isomorphic states. -/
 example :
     (multiwayEvolve tc1Sys tc1Seed 3).length = 6 := by decide
 
-/-- Cumulative event count to step 3 = 1 + 2 + 6 = 9 — matches the
-reference exactly. -/
+/-- The cumulative event count up to step 3 is `1 + 2 + 6 = 9`, as in the reference. -/
 example :
     (multiwayStep tc1Sys tc1Seed).length
       + ((multiwayEvolve tc1Sys tc1Seed 1).flatMap (multiwayStep tc1Sys)).length
@@ -100,8 +84,7 @@ def tc2Sys : ExecSystem := ⟨[tc2Rule]⟩
 
 def tc2Seed : ExecHG ℕ := [⟨[1, 2], by decide⟩, ⟨[2, 3], by decide⟩]
 
-/-- TC2 step 1: exactly 1 event (1 next state). Matches reference
-NumEvents=1. -/
+/-- TestCase2, step 1: 1 state, from 1 event, as in the reference. -/
 example :
     (multiwayEvolve tc2Sys tc2Seed 1).length = 1 := by decide
 
@@ -142,18 +125,11 @@ def tc6Seed : ExecHG ℕ :=
 example :
     (multiwayEvolve tc6Sys tc6Seed 1).length = 2 := by decide
 
-/-! ## Single-way evolution: edge-subdivision rule
+/-! ## Single-way evolution of the edge-subdivision rule
 
-Rule: `{{a, b}} → {{a, c}, {c, b}}` with `c` fresh — splits each edge
-into two by inserting a fresh midpoint. Starting from a single edge
-`{1, 2}`, single-way evolution gives a path on `2^n + 1` vertices
-with `2^n` edges at step `n` (each edge subdivides independently
-because matches are non-overlapping at the LHS level).
-
-This is the canonical inductive trajectory used to discharge
-hypergraph-anchored convergence obligations: at step `n` the state
-**is** an open chain whose graph metric agrees with the consumer-site
-`pathMetric` from `PathWasserstein.lean`. -/
+The rule `{{a, b}} → {{a, c}, {c, b}}` with `c` fresh inserts a midpoint into an edge. From the
+single edge `{1, 2}`, the examples check that the state after `n ≤ 4` single-way steps has `2^n`
+edges and `2^n + 1` vertices. -/
 
 private def subdLhs : Hyperedge (Fin 2) := ⟨[0, 1], by decide⟩
 private def subdRhsL : Hyperedge (Fin 3) := ⟨[0, 2], by decide⟩

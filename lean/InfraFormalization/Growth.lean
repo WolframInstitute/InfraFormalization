@@ -1,17 +1,12 @@
 /-
-Ball-count and cone-count functions for hypergraphs and causal graphs.
+Cone counts and polynomial growth bounds.
 
-For a spatial hypergraph `H`, `N_H(v, r) = |B_r(v)|` is the number of
-vertices within distance `r` of `v`. For a causal graph,
-`C(t)` is the number of events within directed distance `t` of a
-source event (`coneCount`). `GrowthExponentAtMost f d` states that
-`f n ≤ C · n^d` for some constant `C` and all `n > 0`.
-
-`growthExponentAtMost_of_linear` proves that a function bounded by
-`C · n` has growth exponent at most 1. No theorem in this file bounds
-the cone count of the causal graph of any rule. The statement such a
-bound needs for the rule of arXiv:2102.09363 is listed as OPEN in
-`STATUS_OF_GORARD_CLAIMS.md`.
+This module defines breadth-first expansion `bfsStep` and `bfsIter` for a neighbour function,
+`coneCount neighbour src t`, the number of elements reached from `src` in at most `t` steps, and
+`GrowthExponentAtMost f d`, the statement that `f n ≤ C · n^d` for some real `C` and all `n > 0`.
+`growthExponentAtMost_of_linear` proves that a function bounded by `C · n` satisfies
+`GrowthExponentAtMost f 1`.
+No theorem in this module bounds the cone count of the causal graph of any rule.
 -/
 
 import InfraFormalization.GraphMetric
@@ -31,32 +26,28 @@ open Hypergraph Application
 
 variable {V : Type*} [DecidableEq V]
 
-/-- BFS expansion step. -/
+/-- One breadth-first step: `S ∪ ⋃_{x ∈ S} neighbour x`. -/
 def bfsStep {E : Type*} [DecidableEq E] (neighbour : E → Finset E)
     (S : Finset E) : Finset E :=
   S ∪ S.biUnion neighbour
 
-/-- Iterated BFS. After `t` iterations, contains every element reachable
-from the starting set within `t` neighbour-steps. -/
+/-- `bfsStep` applied `t` times to `S`. -/
 def bfsIter {E : Type*} [DecidableEq E] (neighbour : E → Finset E) :
     Nat → Finset E → Finset E
   | 0, S => S
   | (k+1), S => bfsIter neighbour k (bfsStep neighbour S)
 
-/-- **Cone count.** For a causal graph (here represented abstractly as
-a function assigning each event a neighbour set), `C(src, t)` is the
-number of events at directed distance ≤ `t` from `src`. -/
+/-- The cardinality of `bfsIter neighbour t {src}`, the set of elements reached from `src` in at
+most `t` neighbour steps. -/
 def coneCount {E : Type*} [DecidableEq E]
     (neighbour : E → Finset E) (src : E) (t : Nat) : Nat :=
   (bfsIter neighbour t {src}).card
 
-/-- **Dimension-at-rate**. A function `f : ℕ → ℕ` has "growth exponent
-at most d" iff `f n / n^d` is bounded. Used to say "the causal graph
-has cone dimension at most d". -/
+/-- There is a real `C` with `f n ≤ C · n^d` for all `n > 0`. -/
 def GrowthExponentAtMost (f : Nat → Nat) (d : Nat) : Prop :=
   ∃ C : ℝ, ∀ n : Nat, 0 < n → (f n : ℝ) ≤ C * (n : ℝ)^d
 
-/-- Trivial bound: any function bounded by `C n` has growth exponent ≤ 1. -/
+/-- If `f n ≤ C · n` for all `n`, then `GrowthExponentAtMost f 1`. -/
 theorem growthExponentAtMost_of_linear
     (f : Nat → Nat) (C : ℕ) (hbound : ∀ n, f n ≤ C * n) :
     GrowthExponentAtMost f 1 := by

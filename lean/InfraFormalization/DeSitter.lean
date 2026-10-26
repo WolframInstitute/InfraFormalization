@@ -1,22 +1,13 @@
 /-
-**de Sitter metric** — positive-Λ vacuum solution.
+The de Sitter metric in static coordinates.
 
-In static coordinates on the patch `r < √(3/Λ)` (inside the
-cosmological horizon):
-
-  `ds² = -(1 - Λr²/3) dt² + (1 - Λr²/3)⁻¹ dr² + r² dθ² + r² sin²θ dφ²`
-
-This is the vacuum solution to the Einstein field equations with a
-positive cosmological constant Λ > 0. Limit Λ → 0 gives Minkowski
-(in static spherical coordinates = Schwarzschild at M = 0).
-
-This is the formal continuum-target that `minkowski4_flat_vacuum_forces_lambda_zero`
-disproves for Minkowski + flat: non-zero Λ requires genuinely curved
-geometry, which de Sitter supplies.
-
-**Connection to hypergraphs.** Same anchor: continuum side. A
-hypergraph rule producing exponentially expanding universe in some
-limit would pair with this.
+The module defines the components of
+`ds² = -(1 - Λr²/3) dt² + (1 - Λr²/3)⁻¹ dr² + r² dθ² + r² sin²θ dφ²`, their inverse,
+a table of first partial derivatives, and the static-patch validity domain, and packages
+them as `PartialMetricData 4`. It proves symmetry of each component table, that the inverse
+is the matrix inverse on the validity domain, that the lapse equals 1 at `Λ = 0`, and that
+for `Λ > 0` the lapse is positive exactly when `r² < 3/Λ`. The Einstein equations are not
+checked in this module.
 -/
 
 import InfraFormalization.PartialMetricData
@@ -26,11 +17,11 @@ import Mathlib.Tactic.FieldSimp
 namespace InfraFormalization
 namespace Curvature
 
-/-- **de Sitter lapse function** `f(r) = 1 - Λr²/3`. -/
+/-- The de Sitter lapse function `f(r) = 1 - Λr²/3`. -/
 noncomputable def dsLapse (Λ r : ℝ) : ℝ :=
   1 - Λ * r^2 / 3
 
-/-- **de Sitter metric components** in static spherical coordinates. -/
+/-- The de Sitter metric components in static spherical coordinates `(t, r, θ, φ)`. -/
 noncomputable def dsG (Λ : ℝ) (x : Fin 4 → ℝ) (μ ν : Fin 4) : ℝ :=
   if μ ≠ ν then 0
   else
@@ -41,7 +32,7 @@ noncomputable def dsG (Λ : ℝ) (x : Fin 4 → ℝ) (μ ν : Fin 4) : ℝ :=
     else if μ.val = 2 then r^2
     else r^2 * (Real.sin θ)^2
 
-/-- **de Sitter inverse metric**: diagonal reciprocal of `dsG`. -/
+/-- The diagonal reciprocal of `dsG`. -/
 noncomputable def dsGinv (Λ : ℝ) (x : Fin 4 → ℝ) (μ ν : Fin 4) : ℝ :=
   if μ ≠ ν then 0
   else
@@ -52,18 +43,17 @@ noncomputable def dsGinv (Λ : ℝ) (x : Fin 4 → ℝ) (μ ν : Fin 4) : ℝ :=
     else if μ.val = 2 then 1 / r^2
     else 1 / (r^2 * (Real.sin θ)^2)
 
-/-- **de Sitter validity** (static patch): `r > 0`, `dsLapse > 0`
-(inside the cosmological horizon), `sin θ ≠ 0` (off the axis). -/
+/-- The static-patch validity domain: `r > 0`, `dsLapse Λ r > 0` and `sin θ ≠ 0`. -/
 def DSValid (Λ : ℝ) (x : Fin 4 → ℝ) : Prop :=
   x 1 > 0 ∧ dsLapse Λ (x 1) > 0 ∧ Real.sin (x 2) ≠ 0
 
-/-- **de Sitter lapse at Λ = 0 is Minkowski**: `dsLapse 0 r = 1`. -/
+/-- `dsLapse 0 r = 1`. -/
 theorem dsLapse_minkowski (r : ℝ) :
     dsLapse 0 r = 1 := by
   unfold dsLapse
   ring
 
-/-- **de Sitter metric symmetry.** -/
+/-- `dsG` is symmetric. -/
 theorem dsG_symm (Λ : ℝ) (x : Fin 4 → ℝ) (μ ν : Fin 4) :
     dsG Λ x μ ν = dsG Λ x ν μ := by
   unfold dsG
@@ -71,7 +61,7 @@ theorem dsG_symm (Λ : ℝ) (x : Fin 4 → ℝ) (μ ν : Fin 4) :
   · rw [h]
   · simp [h, Ne.symm h]
 
-/-- **de Sitter inverse metric symmetry.** -/
+/-- `dsGinv` is symmetric. -/
 theorem dsGinv_symm (Λ : ℝ) (x : Fin 4 → ℝ) (μ ν : Fin 4) :
     dsGinv Λ x μ ν = dsGinv Λ x ν μ := by
   unfold dsGinv
@@ -79,8 +69,7 @@ theorem dsGinv_symm (Λ : ℝ) (x : Fin 4 → ℝ) (μ ν : Fin 4) :
   · rw [h]
   · simp [h, Ne.symm h]
 
-/-- **Cosmological horizon location for Λ > 0**: `dsLapse Λ r > 0`
-iff `r² < 3/Λ`, i.e., `r < √(3/Λ)`. -/
+/-- For `Λ > 0`, `dsLapse Λ r > 0` if and only if `r² < 3/Λ`. -/
 theorem dsLapse_pos_iff (Λ : ℝ) (hΛ : Λ > 0) (r : ℝ) :
     dsLapse Λ r > 0 ↔ r^2 < 3 / Λ := by
   unfold dsLapse
@@ -96,8 +85,8 @@ theorem dsLapse_pos_iff (Λ : ℝ) (hΛ : Λ > 0) (r : ℝ) :
       linarith
     linarith
 
-/-- **de Sitter first partial derivatives** `∂_l g_{μν}`. Non-zero
-components on the validity domain:
+/-- A table of first partial derivatives `∂_l g_{μν}` of `dsG`, entered by hand; this
+module does not prove that the entries are the derivatives of `dsG`. The non-zero entries:
   * `∂_r g_{00} = −f'(r)` where `f'(r) = −2Λr/3`
   * `∂_r g_{11} = −f'(r)/f(r)²`
   * `∂_r g_{22} = 2 r`
@@ -120,7 +109,7 @@ noncomputable def dsDg (Λ : ℝ) (l : Fin 4) (x : Fin 4 → ℝ) (μ ν : Fin 4
       else 0
     else 0
 
-/-- **`dsDg` symmetry**: `dg l x μ ν = dg l x ν μ`. -/
+/-- `dsDg Λ l x μ ν = dsDg Λ l x ν μ`. -/
 theorem dsDg_symm (Λ : ℝ) (l : Fin 4) (x : Fin 4 → ℝ) (μ ν : Fin 4) :
     dsDg Λ l x μ ν = dsDg Λ l x ν μ := by
   unfold dsDg
@@ -128,9 +117,7 @@ theorem dsDg_symm (Λ : ℝ) (l : Fin 4) (x : Fin 4 → ℝ) (μ ν : Fin 4) :
   · rw [h]
   · simp [h, Ne.symm h]
 
-/-- **de Sitter as a `PartialMetricData 4`** on the static-patch
-validity domain `DSValid Λ` (inside the cosmological horizon, off the
-polar axis). -/
+/-- The de Sitter metric as `PartialMetricData 4` on the validity domain `DSValid Λ`. -/
 noncomputable def dsPartial (Λ : ℝ) : PartialMetricData 4 where
   g := dsG Λ
   ginv := dsGinv Λ

@@ -1,22 +1,7 @@
 /-
-**Heat-kernel long-time decay of non-constant cycle eigenmodes** (D6 / #47 partial).
+Long-time decay of non-constant heat-kernel modes on the cycle hypergraph.
 
-On the cycle hypergraph `C_n` (with `n ≥ 2`), the heat kernel acts
-diagonally on each eigenvector:
-  `(heatKernel t).mulVec (cycleEigenvector n k)
-    = Real.exp (t · cycleEigenvalue n k) • cycleEigenvector n k`
-(proved in `CycleMatrixSpectrum.lean`).
-
-The first nonzero eigenvalue `λ₁ = −4 sin²(π/n)` is strictly negative
-(proved as `cycleEigenvalue_one_neg` in `CycleSpectrum.lean`), so
-`Real.exp (t · λ₁) → 0` as `t → ∞`. Consequently each coordinate of
-`(heatKernel t).mulVec (cycleEigenvector n 1)` tends to `0` — the
-first-mode amplitude decays to uniform.
-
-This captures the spectral-gap step of the long-time heat-convergence
-argument (D6). Full D6 — convergence of arbitrary initial data to the
-uniform distribution — requires decomposing arbitrary `ψ : Fin n → ℝ`
-on the eigenbasis; that pairing is not yet formalized.
+On `cycleHypergraph n` with `n ≥ 2`, `CycleMatrixSpectrum.lean` proves `(heatKernel t).mulVec (cycleEigenvector n k) = Real.exp (t · cycleEigenvalue n k) • cycleEigenvector n k`. For `1 ≤ k < n` the eigenvalue is negative, so each coordinate of the evolved mode tends to `0` as `t → ∞`. The module proves this coordinate-wise decay, the decay of the squared ℓ² norm, a two-mode Parseval identity, and the pointwise limit `c • v_0` for initial data `c • v_0 + ∑_{k ∈ S} d k • v_k`. Convergence for arbitrary initial data is not proved here.
 -/
 
 import InfraFormalization.CycleMatrixSpectrum
@@ -27,15 +12,7 @@ namespace InfraFormalization
 
 open Filter Topology Real
 
-/-- **Spectral-gap decay: first nonzero mode on the cycle decays to
-zero under the heat flow.** For every coordinate `i : Fin n`,
-
-  `(heatKernel (cycleHypergraph n) t).mulVec (cycleEigenvector n 1) i
-     → 0   as t → ∞`.
-
-This is the spectral-gap step of the long-time heat-convergence
-theorem: the slowest non-trivial spatial mode decays exponentially
-with rate `4 sin²(π/n)` (the absolute value of `cycleEigenvalue n 1`). -/
+/-- For `n ≥ 2` and every `i : Fin n`, `(heatKernel (cycleHypergraph n) t).mulVec (cycleEigenvector n 1) i → 0` as `t → ∞`. -/
 theorem heatKernel_cycleHypergraph_firstMode_tendsto_zero
     {n : ℕ} [NeZero n] (hn : 2 ≤ n) (i : Fin n) :
     Tendsto
@@ -57,11 +34,7 @@ theorem heatKernel_cycleHypergraph_firstMode_tendsto_zero
       atTop (𝓝 0) := Real.tendsto_exp_atBot.comp h_inner
   simpa using h_exp_tendsto.mul_const (cycleEigenvector n 1 i)
 
-/-- **All nonzero wave-number modes decay** (not only `k = 1`). For any
-`k` with `1 ≤ k` and `k < n`, the corresponding cycle eigenmode tends
-to zero under heat flow. The eigenvalue `cycleEigenvalue n k
-= −4 sin²(πk/n)` is strictly negative in this range because
-`0 < πk/n < π`. -/
+/-- For `1 ≤ k < n` and every `i : Fin n`, `(heatKernel (cycleHypergraph n) t).mulVec (cycleEigenvector n k) i → 0` as `t → ∞`. The proof uses `cycleEigenvalue n k < 0`. -/
 theorem heatKernel_cycleHypergraph_nonzero_mode_tendsto_zero
     {n : ℕ} [NeZero n] (hn : 2 ≤ n) (k : ℕ) (hk_lo : 1 ≤ k) (hk_hi : k < n)
     (i : Fin n) :
@@ -85,10 +58,7 @@ theorem heatKernel_cycleHypergraph_nonzero_mode_tendsto_zero
       atTop (𝓝 0) := Real.tendsto_exp_atBot.comp h_inner
   simpa using h_exp_tendsto.mul_const (cycleEigenvector n k i)
 
-/-- **Heat kernel preserves the constant eigenvector** on the cycle.
-Corollary of `heatKernel_cycleHypergraph_mulVec_eigenvector` at `k = 0`:
-since `cycleEigenvalue n 0 = 0` and `Real.exp 0 = 1`, the heat flow
-of `cycleEigenvector n 0` is just `cycleEigenvector n 0` itself. -/
+/-- `(heatKernel (cycleHypergraph n) t).mulVec (cycleEigenvector n 0) = cycleEigenvector n 0`, since `cycleEigenvalue n 0 = 0`. -/
 theorem heatKernel_cycleHypergraph_constMode_invariant
     {n : ℕ} [NeZero n] (hn : 2 ≤ n) (t : ℝ) :
     (Hypergraph.heatKernel (cycleHypergraph n) t).mulVec (cycleEigenvector n 0)
@@ -96,16 +66,7 @@ theorem heatKernel_cycleHypergraph_constMode_invariant
   rw [heatKernel_cycleHypergraph_mulVec_eigenvector hn 0 t]
   rw [cycleEigenvalue_zero, mul_zero, Real.exp_zero, one_smul]
 
-/-- **Linear combination of constant + one non-constant mode**: the heat
-kernel applied to `c · v_0 + d · v_k` tends to `c · v_0` pointwise as
-`t → ∞`, because the constant mode (`k = 0`) is preserved while any
-non-constant mode (`1 ≤ k < n`) decays.
-
-This is a restricted form of D6: for any initial state written as a
-linear combination of the constant mode and one non-constant mode,
-the long-time limit is the constant-mode component (i.e. the spatial
-average). Full D6 needs eigenbasis decomposition for arbitrary
-initial data. -/
+/-- For `1 ≤ k < n`, the `i`-th coordinate of `(heatKernel (cycleHypergraph n) t).mulVec (c • v_0 + d • v_k)` tends to `c * v_0 i` as `t → ∞`, where `v_k = cycleEigenvector n k`. -/
 theorem heatKernel_cycleHypergraph_const_plus_mode_tendsto
     {n : ℕ} [NeZero n] (hn : 2 ≤ n) (k : ℕ) (hk_lo : 1 ≤ k) (hk_hi : k < n)
     (c d : ℝ) (i : Fin n) :
@@ -145,12 +106,7 @@ theorem heatKernel_cycleHypergraph_const_plus_mode_tendsto
 
 /-! ### ℓ²-norm-squared decay on the 2-mode subspace -/
 
-/-- **ℓ²-norm-squared contraction for a non-constant heat-kernel mode.**
-For every non-constant cycle eigenmode and every time `t`,
-
-  `‖(heatKernel t).mulVec (cycleEigenvector n k)‖² = exp(2·t·λ_k) · ‖cycleEigenvector n k‖²`.
-
-In particular, `‖·‖²` decays to zero exponentially in `t` for `1 ≤ k < n`. -/
+/-- For every `k` and `t`, the dot product of `(heatKernel (cycleHypergraph n) t).mulVec (cycleEigenvector n k)` with itself equals `Real.exp (t * cycleEigenvalue n k) ^ 2 * (cycleEigenvector n k ⬝ᵥ cycleEigenvector n k)`. -/
 theorem heatKernel_cycleHypergraph_mulVec_nonzero_mode_normSq
     {n : ℕ} [NeZero n] (hn : 2 ≤ n) (k : ℕ) (t : ℝ) :
     dotProduct
@@ -165,10 +121,7 @@ theorem heatKernel_cycleHypergraph_mulVec_nonzero_mode_normSq
   rw [smul_dotProduct, dotProduct_smul, smul_eq_mul, smul_eq_mul]
   ring
 
-/-- **Non-constant mode ℓ² contraction tends to 0.** For `1 ≤ k < n`,
-the squared ℓ² norm of the heat-flowed `k`-th eigenmode tends to zero
-as `t → ∞`. Stronger than the coordinate-wise decay — this is full
-L²(Fin n → ℝ) decay of non-constant modes. -/
+/-- For `1 ≤ k < n`, the squared ℓ² norm of `(heatKernel (cycleHypergraph n) t).mulVec (cycleEigenvector n k)` tends to `0` as `t → ∞`. -/
 theorem heatKernel_cycleHypergraph_nonzero_mode_normSq_tendsto_zero
     {n : ℕ} [NeZero n] (hn : 2 ≤ n) (k : ℕ) (hk_lo : 1 ≤ k) (hk_hi : k < n) :
     Tendsto
@@ -202,17 +155,7 @@ theorem heatKernel_cycleHypergraph_nonzero_mode_normSq_tendsto_zero
     (dotProduct (cycleEigenvector n k) (cycleEigenvector n k))
   simpa using this
 
-/-- **2-mode Parseval identity.** For `v = c · v_0 + d · v_k` with
-`v_0, v_k` orthogonal cycle eigenvectors (here `v_0` is the constant
-mode, `v_k` with `1 ≤ k < n` is non-constant), the squared ℓ² norm of
-the heat-flowed vector splits as
-
-  `⟨heatKernel t · v, heatKernel t · v⟩
-     = c² · ⟨v_0, v_0⟩ + d² · exp(2·t·λ_k) · ⟨v_k, v_k⟩`.
-
-Cross terms vanish by orthogonality (`cycleEigenvector_const_orthogonal_nonzero`).
-This is the concrete Parseval-style decomposition on the 2-mode subspace,
-with each mode decaying at its own eigenvalue rate. -/
+/-- For `1 ≤ k < n` and `v = c • v_0 + d • v_k`, `⟨heatKernel t · v, heatKernel t · v⟩ = c² ⟨v_0, v_0⟩ + d² · Real.exp (t · λ_k)² · ⟨v_k, v_k⟩`. The cross terms vanish by `cycleEigenvector_const_orthogonal_nonzero`. -/
 theorem heatKernel_cycleHypergraph_two_mode_parseval
     {n : ℕ} [NeZero n] (hn : 2 ≤ n) (k : ℕ) (hk_lo : 1 ≤ k) (hk_hi : k < n)
     (c d : ℝ) (t : ℝ) :
@@ -261,19 +204,9 @@ theorem heatKernel_cycleHypergraph_two_mode_parseval
   rw [h_sym]
   ring
 
-/-! ### Multi-mode convergence to constant component (D6 core step) -/
+/-! ### Finite sums of modes -/
 
-/-- **Multi-mode heat-flow convergence.** For any finite set `S` of
-non-constant mode indices (each `k ∈ S` with `1 ≤ k < n`) and any
-coefficient assignment `d : Fin n → ℝ`, the heat kernel applied to
-
-  `c • v_0 + ∑_{k ∈ S} d k • v_k`
-
-converges pointwise to `c • v_0` as `t → ∞`, because each non-constant
-mode decays independently. This is the core spectral-theorem
-ingredient of D6: once an eigenbasis decomposition is established, the
-long-time limit of the heat flow is the projection onto the constant
-(average) component. -/
+/-- For a finite set `S` of indices with `1 ≤ k < n` for each `k ∈ S` and coefficients `d : ℕ → ℝ`, the `i`-th coordinate of `(heatKernel (cycleHypergraph n) t).mulVec (c • v_0 + ∑_{k ∈ S} d k • v_k)` tends to `c * v_0 i` as `t → ∞`. -/
 theorem heatKernel_cycleHypergraph_multi_mode_tendsto
     {n : ℕ} [NeZero n] (hn : 2 ≤ n) (S : Finset ℕ)
     (hS : ∀ k ∈ S, 1 ≤ k ∧ k < n)

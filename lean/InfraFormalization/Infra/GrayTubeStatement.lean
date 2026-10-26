@@ -1,36 +1,14 @@
 /-
-Correct statement of Gray's tube formula (Gray "Tubes" 2nd ed. §2.5;
-Gray–Vanhecke Acta Math. 1979).
+Gray's tube-volume formula and the form in G2 Eq. 126 and G3 Eq. 342.
 
-Like `OllivierStatement.lean`, this file records the correct
-continuum identity as a Lean-level predicate, paired with the
-(incorrect) form that appears in the JGORARD corpus
-(arXiv:2011.12174 Eq 126, arXiv:2102.09363 Eq 342).
-
-**Gray's tube volume formula.** Let (M, g) be a smooth d-dimensional
-Riemannian manifold, γ a geodesic segment of length L with unit tangent
-u, and T_ε(γ) the tube of radius ε around γ. Then
-
-  Vol(T_ε(γ)) = ω_{d-1} · ε^{d-1} · L ·
-                  (1 - ε² · (R + Ric(u,u)) / (6(d+1)) + O(ε⁴))
-
-where ω_{d-1} = π^{(d-1)/2} / Γ((d+1)/2) is the (d-1)-sphere volume
-prefactor, R is the Riemannian scalar curvature at the midpoint, and
-Ric(u,u) is the directional Ricci in the direction of travel.
-
-**JGORARD's mis-stated form** (from arXiv:2011.12174 Eq 126, verbatim
-in arXiv:2102.09363 Eq 342):
-
-  Vol(T_ε(γ)) = ω_{d-1} · ε^{d-1} · L ·
-                  (1 - (d-1)/(d+1) · (R - Ric(u,u)) · ε² + O(ε⁴))
-
-The two forms differ in BOTH algebraic structure (R + Ric(u,u) vs
-R - Ric(u,u)) and coefficient (1/(6(d+1)) vs (d-1)/(d+1)). On S²:
-correct value 1/6, JGORARD 1/3 — factor-of-2 error. On S³: correct
-value 1/3, JGORARD 2 — factor-of-6 error.
-
-See `results/phase2_continuum/eq342_verdict.md` for the four-rail
-analytical refutation.
+For a geodesic segment γ of length L with unit tangent u in a d-dimensional Riemannian
+manifold, Gray ("Tubes", 2nd ed., §2.5; Gray–Vanhecke, Acta Math. 1979) gives
+  Vol(T_ε(γ)) = ω_{d-1} · ε^{d-1} · L · (1 - ε² · (R + Ric(u,u)) / (6(d+1)) + O(ε⁴)),
+with ω_{d-1} the volume of the unit (d-1)-ball, R the scalar curvature and Ric(u,u) the
+Ricci curvature in the direction u. G2 Eq. 126 and G3 Eq. 342 give the ε² coefficient as
+(d-1)/(d+1) · (R - Ric(u,u)). The module defines both identities as predicates on real
+parameters and proves that the two ε² coefficients differ on the unit spheres S² (1/6 and
+1/3) and S³ (1/3 and 2). The derivation is in `results/phase2_continuum/eq342_verdict.md`.
 -/
 
 import Mathlib.Data.Real.Basic
@@ -39,52 +17,26 @@ import Mathlib.Tactic
 namespace InfraFormalization
 namespace Infra
 
-/-- **Gray's correct tube-volume formula** (statement, parameterised).
-
-Let:
-- `d` : dimension of the ambient manifold
-- `L` : length of the central geodesic
-- `ε` : tube radius (small)
-- `omega_dm1` : `ω_{d-1}`, the (d-1)-ball volume prefactor
-- `R` : scalar curvature
-- `Ric_uu` : directional Ricci `Ric(u, u)` along the geodesic tangent
-- `V` : the claimed tube volume
-- `err` : higher-order (ε⁴) error term
-
-The correct identity is:
-
-  V = ω_{d-1} · ε^{d-1} · L · (1 - ε² · (R + Ric(u,u)) / (6(d+1))) + err
--/
+/-- The predicate `V = ω_{d-1} · ε^{d-1} · L · (1 - ε² · (R + Ric(u,u)) / (6(d+1))) + err`
+on real parameters: dimension `d`, geodesic length `L`, tube radius `ε`, ball-volume factor
+`omega_dm1`, scalar curvature `R`, directional Ricci curvature `Ric_uu`, volume `V` and
+remainder `err`. This is Gray's formula with the remainder written as `err`. -/
 def GrayTubeLeading
     (d : Nat) (L ε omega_dm1 R Ric_uu V err : ℝ) : Prop :=
   V = omega_dm1 * ε^(d-1) * L *
         (1 - ε^2 * (R + Ric_uu) / (6 * (d + 1))) + err
 
-/-- **JGORARD's mis-stated tube-volume formula** (as published). -/
+/-- The predicate
+`V = ω_{d-1} · ε^{d-1} · L · (1 - (d-1)/(d+1) · (R - Ric(u,u)) · ε²) + err`,
+the tube-volume formula of G2 Eq. 126 and G3 Eq. 342 with the remainder written as `err`. -/
 def GorardTubeForm
     (d : Nat) (L ε omega_dm1 R Ric_uu V err : ℝ) : Prop :=
   V = omega_dm1 * ε^(d-1) * L *
         (1 - ((d - 1 : ℝ) / (d + 1 : ℝ)) * (R - Ric_uu) * ε^2) + err
 
-/-- **The two forms coincide iff a specific algebraic identity holds.**
-From `GrayTubeLeading` and `GorardTubeForm` (same V, same err, ε ≠ 0,
-L ≠ 0, ω_{d-1} ≠ 0, d + 1 ≠ 0), we can conclude the leading-order
-coefficients agree, which means:
-
-  (R + Ric(u,u)) / (6(d+1)) = (d-1)(R - Ric(u,u)) / (d+1)
-
-or equivalently:
-  R + Ric(u,u) = 6(d-1)(R - Ric(u,u)).
-
-On `S^d` (unit sphere) where `R = d(d-1)` and `Ric(u,u) = d-1`:
-- LHS = d(d-1) + (d-1) = (d-1)(d+1)
-- RHS = 6(d-1)(d(d-1) - (d-1)) = 6(d-1)²·(d-1) = 6(d-1)³
-- Equal iff (d-1)(d+1) = 6(d-1)³, i.e., d+1 = 6(d-1)², which holds iff
-  d = 2 (giving 3 = 6, false), d = 3 (giving 4 = 24, false), etc. —
-  never for d ≥ 2. Confirmation that JGORARD's form and Gray's form do
-  not agree on any nontrivially curved manifold. -/
+/-- On the unit sphere S² (d = 2, R = 2, Ric(u,u) = 1), the ε² coefficient of
+`GrayTubeLeading`, 1/6, differs from that of `GorardTubeForm`, 1/3. -/
 theorem gray_vs_gorard_disagree_on_S2 :
-    -- On S² (d=2, R=2, Ric(u,u)=1): coefficients 1/6 vs 1/3.
     ((2 : ℝ) + 1) / (6 * (2 + 1)) ≠ ((2 - 1 : ℝ) / (2 + 1)) * (2 - 1) := by
   intro h
   have : (18 : ℝ) * (((2 : ℝ) + 1) / (6 * (2 + 1))) =
@@ -93,8 +45,9 @@ theorem gray_vs_gorard_disagree_on_S2 :
   have h2 : (18 : ℝ) * (((2 - 1 : ℝ) / (2 + 1)) * (2 - 1)) = 6 := by norm_num
   linarith
 
+/-- On the unit sphere S³ (d = 3, R = 6, Ric(u,u) = 2), the ε² coefficient of
+`GrayTubeLeading`, 1/3, differs from that of `GorardTubeForm`, 2. -/
 theorem gray_vs_gorard_disagree_on_S3 :
-    -- On S³ (d=3, R=6, Ric(u,u)=2): correct 1/3, JGORARD 2.
     ((6 : ℝ) + 2) / (6 * (3 + 1)) ≠ ((3 - 1 : ℝ) / (3 + 1)) * (6 - 2) := by
   intro h
   have : (12 : ℝ) * (((6 : ℝ) + 2) / (6 * (3 + 1))) =

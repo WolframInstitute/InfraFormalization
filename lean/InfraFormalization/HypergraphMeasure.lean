@@ -1,16 +1,11 @@
 /-
-**Counting measure on a hypergraph + pushforward** (task A5 / #16).
+Counting measure on the vertex set of a hypergraph, and its pushforward.
 
-For a finite-vertex `Hypergraph V` (`[Fintype V]`), the counting
-measure assigns every vertex unit mass; the uniform probability
-measure normalises by `|V|`. Pushing forward under an embedding
-`φ : V → X` into any measurable space gives a finite discrete
-measure on `X` — the object whose `n → ∞` weak limit to Lebesgue
-measure is the content of A6 / A7.
-
-**Connection to hypergraphs.** Native: the measure only depends on
-the vertex set `V` (Fintype), but the `Hypergraph V` argument
-records the Wolfram-model state we're measuring the geometry of.
+For a finite vertex type `V`, the counting measure gives each vertex mass 1 and the
+uniform probability measure divides it by `|V|`. Both are pushed forward along a map
+`φ : V → X` into a measurable space. The module proves the total masses: `|V|` for the
+counting measure and 1 for the uniform measure, before and after pushforward. The
+measures depend only on `V`; the `Hypergraph V` argument is not used.
 -/
 
 import InfraFormalization.HypergraphDistance
@@ -23,33 +18,28 @@ namespace Hypergraph
 variable {V : Type*} [Fintype V] [DecidableEq V] [MeasurableSpace V]
   [MeasurableSingletonClass V]
 
-/-- **Counting measure on the vertex set** of a hypergraph. Each vertex
-carries unit mass; total mass equals `|V|`. Depends only on the
-Fintype / MeasurableSpace structure of `V`. -/
+/-- The counting measure on `V`. The hypergraph argument is not used. -/
 noncomputable def countingMeasure (_ : Hypergraph V) : MeasureTheory.Measure V :=
   MeasureTheory.Measure.count
 
-/-- **Uniform probability measure on the vertex set** — counting measure
-normalised by `|V|`. Well-defined when `V` is nonempty. -/
+/-- The counting measure on `V` multiplied by `|V|⁻¹`. -/
 noncomputable def uniformProbability (H : Hypergraph V) :
     MeasureTheory.Measure V :=
   ((Fintype.card V : ENNReal))⁻¹ • countingMeasure H
 
-/-- **Pushforward under an embedding** `φ : V → X`. For any measurable
-space `X` and measurable `φ`, push the counting measure on `V` forward
-to get a finite discrete measure on `X` supported on `φ '' univ`. -/
+/-- The pushforward of `countingMeasure H` along `φ : V → X`. -/
 noncomputable def pushforwardCounting (H : Hypergraph V)
     {X : Type*} [MeasurableSpace X] (φ : V → X) :
     MeasureTheory.Measure X :=
   (countingMeasure H).map φ
 
-/-- **Pushforward of the uniform probability**. -/
+/-- The pushforward of `uniformProbability H` along `φ : V → X`. -/
 noncomputable def pushforwardUniform (H : Hypergraph V)
     {X : Type*} [MeasurableSpace X] (φ : V → X) :
     MeasureTheory.Measure X :=
   (uniformProbability H).map φ
 
-/-- **Counting measure of the full vertex set** equals `|V|`. -/
+/-- The counting measure of `Set.univ` equals `|V|`. -/
 theorem countingMeasure_univ (H : Hypergraph V) :
     countingMeasure H (Set.univ : Set V) = (Fintype.card V : ENNReal) := by
   unfold countingMeasure
@@ -58,8 +48,7 @@ theorem countingMeasure_univ (H : Hypergraph V) :
   rw [MeasureTheory.Measure.count_apply_finset]
   rw [Finset.card_univ]
 
-/-- **Uniform probability is a probability measure** when `V` is
-nonempty: total mass 1. -/
+/-- For nonempty `V`, the uniform measure of `Set.univ` equals 1. -/
 theorem uniformProbability_univ [Nonempty V] (H : Hypergraph V) :
     uniformProbability H (Set.univ : Set V) = 1 := by
   unfold uniformProbability
@@ -70,10 +59,8 @@ theorem uniformProbability_univ [Nonempty V] (H : Hypergraph V) :
   · exact_mod_cast hcard_pos.ne'
   · exact ENNReal.natCast_ne_top _
 
-/-- **Pushforward preserves total mass.** If `φ : V → X` is measurable,
-the pushforward uniform measure on `X` has total mass 1 (the full set
-`Set.univ : Set X` has preimage `Set.univ : Set V`, which the uniform
-probability measures at 1). -/
+/-- For nonempty `V` and measurable `φ`, the pushforward uniform measure of
+`Set.univ : Set X` equals 1. -/
 theorem pushforwardUniform_univ [Nonempty V] (H : Hypergraph V)
     {X : Type*} [MeasurableSpace X] {φ : V → X} (hφ : Measurable φ) :
     pushforwardUniform H φ (Set.univ : Set X) = 1 := by
@@ -82,8 +69,8 @@ theorem pushforwardUniform_univ [Nonempty V] (H : Hypergraph V)
   rw [show φ ⁻¹' (Set.univ : Set X) = Set.univ from rfl]
   exact uniformProbability_univ H
 
-/-- **Pushforward of the counting measure has total mass `|V|`.** This
-is the un-normalised analog of `pushforwardUniform_univ`. -/
+/-- For measurable `φ`, the pushforward counting measure of `Set.univ : Set X`
+equals `|V|`. -/
 theorem pushforwardCounting_univ (H : Hypergraph V)
     {X : Type*} [MeasurableSpace X] {φ : V → X} (hφ : Measurable φ) :
     pushforwardCounting H φ (Set.univ : Set X) = (Fintype.card V : ENNReal) := by

@@ -1,47 +1,14 @@
 /-
-Discrete Ricci curvature on a graph (Forman variant) — the
-hypergraph-side anchor for continuum Ricci.
+Discrete curvatures on graphs and hypergraphs.
 
-**Why this file exists.** Per the grounding principle in
-`BRIDGE_MACHINERY.md`, the continuum Ricci tensor in
-`CurvatureLocalCoord.lean` / `CurvatureRiemann.lean` is acceptable
-only as a *target* for a discrete-side construction grounded in
-Wolfram physics. This file provides one such construction:
-**Forman-Ricci curvature** on an edge of a finite graph.
-
-**Definition (Forman 2003, edge form).** For a simple graph
-`G = (V, E)` with vertex weights `w_v > 0` and edge weights
-`w_e > 0`, the Forman-Ricci curvature of edge `e = {v, w}` is
-
-  `Ric_F(e) := w_e · ( w_v / w_e + w_w / w_e
-                       − ∑_{e' ~ v, e' ≠ e} w_v / √(w_e · w_e')
-                       − ∑_{e' ~ w, e' ≠ e} w_w / √(w_e · w_e'))`.
-
-For unit weights (`w_v = w_e = 1` everywhere) this collapses to:
-
-  `Ric_F(e) = 2 − (deg(v) − 1) − (deg(w) − 1) = 4 − deg(v) − deg(w)`.
-
-The unit-weight version is what we formalise here. It captures the
-combinatorial Ricci: an edge has positive Forman-Ricci iff its
-endpoints have low degree, negative if they have high degree.
-
-**Connection to continuum Ricci.** On a regular lattice graph, the
-unit-weight Forman-Ricci is constant per edge (since all degrees
-equal `2d` for a d-dim cubic lattice). For a `Fin n` cycle with
-adjacency `i ↔ i±1`, every vertex has degree 2, so `Ric_F(e) = 0` —
-matching the continuum (the circle has zero Ricci curvature). This
-is the first hypergraph→continuum-curvature consistency check we
-can verify in Lean.
-
-**Forman vs Ollivier.** Forman is purely combinatorial (no
-Wasserstein computations); Ollivier (`Infra/OllivierStatement.lean`)
-is more accurate but requires probability machinery. Forman is the
-right starting anchor.
-
-**Status.** Definition + cycle case (Ric_F ≡ 0) shipped here.
-Convergence theorem (scaled Forman-Ricci → continuum Ricci on the
-GH-limit manifold) is the next deliverable — see Rung 5 in
-`BRIDGE_MACHINERY.md`.
+This module defines the unit-weight Forman-Ricci curvature of a pair of vertices,
+`4 − deg(v) − deg(w)`, which is Forman's (2003) edge curvature with all vertex
+and edge weights equal to 1. It proves the values on `k`-regular graphs: `4 − 2k`
+per edge, `k(4 − 2k)` per vertex and `|V|·k(4 − 2k)` in total, so the edge value
+is 0 when every degree is 2. It defines a per-hyperedge value `k(2 − k)`, a
+triangle-corrected edge curvature on the clique expansion, and two scalar
+curvature estimators obtained by comparing ball volume and sphere size with
+Euclidean values. No convergence to a continuum curvature is proved here.
 -/
 
 import InfraFormalization.DiscreteCalculus
@@ -52,9 +19,9 @@ namespace InfraFormalization
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
-/-- **Unit-weight Forman-Ricci curvature on an edge** of a graph
-described by a `Neighbourhood V`. For a (simple, undirected, unit-
-weight) graph, this equals `4 − deg(v) − deg(w)` for an edge `(v, w)`. -/
+/-- Unit-weight Forman-Ricci curvature `4 − deg(v) − deg(w)` for a pair of
+vertices of a `Neighbourhood V`. The definition does not require `v` and `w`
+to be adjacent. -/
 def formanRicciEdge (N : Neighbourhood V) (v w : V) : ℤ :=
   4 - (N.degree v : ℤ) - (N.degree w : ℤ)
 
@@ -64,9 +31,8 @@ theorem formanRicciEdge_symm (N : Neighbourhood V) (v w : V) :
   unfold formanRicciEdge
   ring
 
-/-- For a `2`-regular graph (every vertex has degree `2`), the
-Forman-Ricci curvature on every edge is `0`. This matches the
-continuum: a 1-dim manifold (e.g., circle) has zero Ricci. -/
+/-- If every vertex has degree `2`, then `formanRicciEdge N v w = 0` for all
+`v, w`. -/
 theorem formanRicciEdge_zero_of_two_regular (N : Neighbourhood V)
     (h : ∀ v : V, N.degree v = 2) (v w : V) :
     formanRicciEdge N v w = 0 := by
@@ -74,8 +40,8 @@ theorem formanRicciEdge_zero_of_two_regular (N : Neighbourhood V)
   rw [h v, h w]
   ring
 
-/-- For a `k`-regular graph, the Forman-Ricci curvature on every edge
-is `4 − 2k`. -/
+/-- If every vertex has degree `k`, then `formanRicciEdge N v w = 4 − 2k` for
+all `v, w`. -/
 theorem formanRicciEdge_regular (N : Neighbourhood V)
     (k : Nat) (h : ∀ v : V, N.degree v = k) (v w : V) :
     formanRicciEdge N v w = 4 - 2 * (k : ℤ) := by
@@ -83,14 +49,11 @@ theorem formanRicciEdge_regular (N : Neighbourhood V)
   rw [h v, h w]
   ring
 
-/-- **Vertex-aggregated Forman-Ricci**: sum the edge curvatures
-incident to a vertex. This is the analog of the Ricci tensor's trace
-at a point. -/
+/-- The sum of `formanRicciEdge N v w` over the neighbours `w` of `v`. -/
 def formanRicciVertex (N : Neighbourhood V) (v : V) : ℤ :=
   ∑ w ∈ N.nbhd v, formanRicciEdge N v w
 
-/-- For a `k`-regular graph: vertex-aggregated Forman-Ricci is
-`k · (4 − 2k) = 4k − 2k²`. -/
+/-- If every vertex has degree `k`, then `formanRicciVertex N v = k · (4 − 2k)`. -/
 theorem formanRicciVertex_regular (N : Neighbourhood V)
     (k : Nat) (h : ∀ v : V, N.degree v = k) (v : V) :
     formanRicciVertex N v = (k : ℤ) * (4 - 2 * (k : ℤ)) := by
@@ -109,13 +72,12 @@ theorem formanRicciVertex_regular (N : Neighbourhood V)
   push_cast
   ring
 
-/-- **Total Forman-Ricci scalar curvature** of a graph: sum over all
-vertex-aggregations. For a `k`-regular graph with `|V|` vertices:
-`R_F = |V| · k · (4 − 2k)`. -/
+/-- The sum of `formanRicciVertex N v` over all vertices `v`. -/
 def formanRicciTotalScalar (N : Neighbourhood V) : ℤ :=
   ∑ v : V, formanRicciVertex N v
 
-/-- Total Forman-Ricci scalar of a `k`-regular graph. -/
+/-- If every vertex has degree `k`, then
+`formanRicciTotalScalar N = |V| · k · (4 − 2k)`. -/
 theorem formanRicciTotalScalar_regular (N : Neighbourhood V)
     (k : Nat) (h : ∀ v : V, N.degree v = k) :
     formanRicciTotalScalar N = (Fintype.card V : ℤ) * (k : ℤ) * (4 - 2 * (k : ℤ)) := by
@@ -129,26 +91,19 @@ theorem formanRicciTotalScalar_regular (N : Neighbourhood V)
   push_cast
   ring
 
-/-! ## Forman-Ricci on hypergraphs
+/-! ## A per-hyperedge curvature
 
-For a hyperedge `e = {v_1, …, v_k}` with `|e| ≥ 2`, define:
-
-  `Ric_F(e) := |V(e)| · (2 − |V(e)|)`.
-
-For `|e| = 2` (simple-graph edge): `2 · (2 − 2) = 0`.
-For `|e| = 3`: `3 · (−1) = −3`.
-
-This is the Saito–Kimura–Yamanoi variant. The hypergraph total is the
-sum over all edges.
+For a hyperedge with `k` distinct vertices the value is `k · (2 − k)`. It is 0
+for `k = 2` and `−3` for `k = 3`. The hypergraph total is the sum over all
+hyperedges.
 -/
 
-/-- **Forman-Ricci per hyperedge**. -/
+/-- `k · (2 − k)`, where `k` is the number of distinct vertices of `e`. -/
 def formanRicciHyperedge (e : Hyperedge V) : ℤ :=
   let k := e.verts.toFinset.card
   (k : ℤ) * (2 - (k : ℤ))
 
-/-- **Hyperedge Forman-Ricci vanishes for 2-vertex edges** (simple graph
-case). -/
+/-- A hyperedge with exactly two distinct vertices has value 0. -/
 theorem formanRicciHyperedge_two_vertex (e : Hyperedge V)
     (h : e.verts.toFinset.card = 2) :
     formanRicciHyperedge e = 0 := by
@@ -156,7 +111,7 @@ theorem formanRicciHyperedge_two_vertex (e : Hyperedge V)
   rw [h]
   ring
 
-/-- **Hyperedge Forman-Ricci is negative for ≥ 3-vertex edges**. -/
+/-- A hyperedge with at least three distinct vertices has a negative value. -/
 theorem formanRicciHyperedge_neg_of_three_or_more (e : Hyperedge V)
     (h : 3 ≤ e.verts.toFinset.card) :
     formanRicciHyperedge e < 0 := by
@@ -164,45 +119,28 @@ theorem formanRicciHyperedge_neg_of_three_or_more (e : Hyperedge V)
   have hk : (3 : ℤ) ≤ (e.verts.toFinset.card : ℤ) := by exact_mod_cast h
   nlinarith
 
-/-- **Hypergraph total Forman-Ricci scalar**: sum over all edges. -/
+/-- The sum of `formanRicciHyperedge` over the hyperedges of `H`, counted with
+multiplicity. -/
 noncomputable def formanRicciHypergraph (H : Hypergraph V) : ℤ :=
   (H.edges.map formanRicciHyperedge).sum
 
-/-! ## Triangle-corrected Forman (1D Forman on the clique skeleton)
+/-! ## Triangle-corrected Forman curvature on the clique expansion
 
-The standard 1D Forman with the triangle-correction term used across
-the discrete-Ricci literature on graph rewriting (Sreejith–Mohan–
-Saucan, Saucan–Weber). Per edge `(v, w)` in the clique-expansion graph
-of `H`:
+For vertices `v, w` the value is
+`F(v, w) = 4 − deg(v) − deg(w) + 3 · #triangles(v, w)`,
+with degrees and triangle counts taken in the clique-expansion adjacency
+`H.Adj`. This is the augmented Forman curvature of Sreejith, Mohan and Saucan
+with unit weights. -/
 
-  `F(v, w) = 4 − deg(v) − deg(w) + 3 · #triangles_through(v, w)`
-
-where degrees and triangles are taken in `H.Adj` (the clique-expansion
-adjacency). On a triangle-free graph this collapses to the existing
-`formanRicciEdge` formula. The triangle term captures local clustering
-and gives a strictly finer screener than the bare 4 − deg − deg form.
-
-This aligns with `Infrageometry/Graph.wl`'s `FormanRicciCurvature[g,
-"OnCells" -> 1]` for unit weights on the 1-cell (edge) level. The full
-clique-complex Forman with parallelism term (PHAJEK's
-`FormanRicciCurvature` at higher `OnCells`) is a further upgrade and
-not formalised here. -/
-
-/-- **Number of triangles through an unordered edge** `(v, w)` in the
-clique-expansion graph of `H`. Counts common `H.Adj`-neighbours of `v`
-and `w`. Symmetric in `v, w` via `Adj_symm`. -/
+/-- The number of common `H.Adj`-neighbours of `v` and `w`. -/
 def Hypergraph.trianglesThroughEdge (H : Hypergraph V) (v w : V) : ℕ :=
   (Finset.univ.filter (fun x => H.Adj v x ∧ H.Adj w x)).card
 
-/-- **Adjacency-degree of `v` in `H.Adj`**: the size of the set of
-clique-expansion neighbours of `v`. -/
+/-- The number of `H.Adj`-neighbours of `v`. -/
 def Hypergraph.adjDegree (H : Hypergraph V) (v : V) : ℕ :=
   (Finset.univ.filter (H.Adj v ·)).card
 
-/-- **Triangle-corrected Forman-Ricci edge curvature** on a hypergraph.
-For an edge `(v, w)` in the clique-expansion graph:
-
-  `F(v, w) = 4 − deg(v) − deg(w) + 3 · #triangles_through(v, w)`. -/
+/-- `4 − adjDegree v − adjDegree w + 3 · trianglesThroughEdge v w`. -/
 def Hypergraph.formanRicciEdgeTriangle (H : Hypergraph V) (v w : V) : ℤ :=
   4 - (H.adjDegree v : ℤ) - (H.adjDegree w : ℤ)
     + 3 * (H.trianglesThroughEdge v w : ℤ)
@@ -222,23 +160,21 @@ theorem Hypergraph.trianglesThroughEdge_symm (H : Hypergraph V) (v w : V) :
     simp only [Finset.mem_filter, Finset.mem_univ, true_and]
     exact ⟨hx.2, hx.1⟩
 
-/-- **Edge symmetry** of the triangle-corrected Forman. -/
+/-- `formanRicciEdgeTriangle` is symmetric in its two vertices. -/
 theorem Hypergraph.formanRicciEdgeTriangle_symm (H : Hypergraph V) (v w : V) :
     H.formanRicciEdgeTriangle v w = H.formanRicciEdgeTriangle w v := by
   unfold Hypergraph.formanRicciEdgeTriangle
   rw [H.trianglesThroughEdge_symm v w]
   ring
 
-/-- **Hypergraph triangle-corrected Forman-Ricci scalar (doubled)**:
-sum over all ordered pairs `(v, w)` with `H.Adj v w` of the edge
-curvature. Equal to `2·F_total` since each unordered edge is counted
-twice; the factor-of-two is preserved through the screener because it
-is a constant scaling absorbed by the rate constant. -/
+/-- The sum of `formanRicciEdgeTriangle v w` over all ordered pairs `(v, w)`
+with `H.Adj v w`. -/
 def Hypergraph.formanRicciTriangleDoubled (H : Hypergraph V) : ℤ :=
   ∑ v : V, ∑ w ∈ Finset.univ.filter (H.Adj v ·),
     H.formanRicciEdgeTriangle v w
 
-/-- **Hypergraph Forman-Ricci vanishes on simple graphs**. -/
+/-- If every hyperedge of `H` has exactly two distinct vertices, then
+`formanRicciHypergraph H = 0`. -/
 theorem formanRicciHypergraph_zero_of_simple (H : Hypergraph V)
     (hall : ∀ e ∈ H.edges, e.verts.toFinset.card = 2) :
     formanRicciHypergraph H = 0 := by
@@ -261,72 +197,38 @@ theorem formanRicciHypergraph_zero_of_simple (H : Hypergraph V)
       ring
   exact helper H.edges hall
 
-/-! ## Bishop-Gromov scalar curvature from log V(r) growth (AT9)
+/-! ## Scalar curvature estimator from ball volume
 
-In a `d`-dimensional Riemannian space, the volume of a ball of radius `r`
-at point `p` admits the Bishop-Gromov expansion
+In a `d`-dimensional Riemannian manifold the volume of a small geodesic ball
+satisfies `V(p, r) = Ω_d · r^d · [1 − R(p) · r²/(6(d+2)) + O(r⁴)]`, where `R(p)`
+is the scalar curvature and `Ω_d` is the volume of the Euclidean unit ball.
+Solving for `R` motivates the discrete estimator
 
-  `V(p, r) = Ω_d · r^d · [1 − R(p) · r²/(6(d+2)) + O(r⁴)]`
+  `R(v, r) := (6(d+2)/r²) · [1 − V(v, r) / V_flat(d, r)]`,
 
-where `R(p)` is the scalar curvature at `p` and `Ω_d` is the volume of the
-unit ball in `d`-dimensional Euclidean space. Inverting this gives a
-discrete extraction of scalar curvature from ball-count data:
-
-  `R(v, r) := (6(d+2)/r²) · [1 − V(v, r) / V_flat(d, r)]`
-
-where `V_flat(d, r) := Ω_d · r^d` is the flat-baseline ball volume in
-`d`-dimensional Euclidean space.
-
-This is the **Wolfram-style ball-growth curvature** (NMURZIN §3.4): no
-chain complex required, no metric tensor, just `geodesicBallVolume` plus
-a flat-baseline. Cross-checks the Forman-Ricci scalar
-(`formanRicciHypergraph`) above and the AT2 angle-defect Gauss-Bonnet
-identity. Sits below the metric layer (only needs `dist`); above the
-infrasphere primitive (SPHERE1).
-
-**Dimension handling.** The Bishop-Gromov formula is for a *fixed* `d`.
-On a hypergraph, `d` itself comes from `wolframHausdorffDimension v`
-(asymptotic `log V(v, r) / log r`). We expose the curvature extractor
-parameterised by `d : ℕ` to allow either: (a) using the empirical `d`
-extracted from the same hypergraph, or (b) testing against a target `d`
-in screening.
-
-**Units.** `R_disc` is dimensionless — counts divided by counts (per
-the AT11 / `INFRAGEOMETRY.md` §3 units-emergence story). The continuum
-`R_phys` recovers as `R_phys = a^{-2} · R_disc` under continuum rescaling
-with length-scale `a`. -/
+with `V(v, r)` the vertex count `geodesicBallVolume v r` and
+`V_flat(d, r) := Ω_d · r^d`. The dimension `d` is a parameter. No relation
+between this estimator and the curvature of a limit space is proved here. -/
 
 open Real
 
-/-- Volume of the unit ball in `d`-dimensional Euclidean space. Closed
-form: `Ω_d = π^{d/2} / Γ(d/2 + 1)`. We expose only the small-`d` cases
-(0, 1, 2, 3) by literal value; higher `d` falls back to a representative
-positive value (refinement to the actual closed form via `Real.Gamma` is
-follow-up work). -/
+/-- The volume `Ω_d` of the Euclidean unit ball for `d ≤ 3` (1, 2, π, 4π/3).
+For `d ≥ 4` the definition returns 1, which is not `Ω_d`. -/
 noncomputable def unitBallVolumeEuclidean : ℕ → ℝ
   | 0 => 1
   | 1 => 2
   | 2 => Real.pi
   | 3 => 4 * Real.pi / 3
-  | _ => 1  -- placeholder for d ≥ 4; actual closed form via Real.Gamma
+  | _ => 1  -- placeholder value for d ≥ 4
 
-/-- **Flat-baseline ball volume in `d`-dimensional Euclidean space**:
-`V_flat(d, r) := Ω_d · r^d` where `Ω_d` is the volume of the unit ball.
-For `d = 0`: `Ω_0 = 1`, `V_flat = 1` (single point). For `d = 1`:
-`Ω_1 = 2`, `V_flat = 2r` (interval). For `d = 2`: `Ω_2 = π`,
-`V_flat = π r²`. For `d = 3`: `Ω_3 = 4π/3`, `V_flat = (4π/3) r³`. -/
+/-- `V_flat(d, r) := unitBallVolumeEuclidean d · r^d`. -/
 noncomputable def flatBallVolume (d : ℕ) (r : ℕ) : ℝ :=
   unitBallVolumeEuclidean d * (r : ℝ)^d
 
-/-- **Bishop-Gromov scalar curvature extractor** at vertex `v` for
-dimension `d`, scale `r > 0`.
-
-  `R_disc(v, r) := (6(d+2)/r²) · [1 − V(v, r) / V_flat(d, r)]`
-
-When `V(v, r) > V_flat(d, r)` (faster-than-flat growth → positive Ricci →
-spherical-like): output positive. When `V(v, r) < V_flat(d, r)`
-(slower-than-flat → negative Ricci → hyperbolic-like): output negative.
-On a flat lattice with matching `d`, ratio → 1 and curvature → 0. -/
+/-- The ball-volume scalar curvature estimator
+`(6(d+2)/r²) · [1 − geodesicBallVolume v r / flatBallVolume d r]` for `r > 0`,
+and 0 for `r = 0`. It is positive exactly when the ball volume is below
+`flatBallVolume d r` (see `scalarCurvatureAt_pos_iff`). -/
 noncomputable def Hypergraph.scalarCurvatureAt {V : Type*}
     [Fintype V] [DecidableEq V]
     (H : Hypergraph V) (v : V) (d : ℕ) (r : ℕ) : ℝ :=
@@ -335,9 +237,8 @@ noncomputable def Hypergraph.scalarCurvatureAt {V : Type*}
       (1 - (H.geodesicBallVolume v r : ℝ) / flatBallVolume d r)
   else 0
 
-/-- **Curvature is zero when the ball volume matches the flat baseline
-exactly** at scale `r`. Concrete sanity check: this is the discrete
-analog of "flat space has zero Ricci". -/
+/-- If `r > 0`, `flatBallVolume d r > 0` and the ball volume equals
+`flatBallVolume d r`, then `scalarCurvatureAt v d r = 0`. -/
 theorem Hypergraph.scalarCurvatureAt_zero_of_match {V : Type*}
     [Fintype V] [DecidableEq V]
     (H : Hypergraph V) (v : V) (d : ℕ) (r : ℕ)
@@ -348,9 +249,8 @@ theorem Hypergraph.scalarCurvatureAt_zero_of_match {V : Type*}
   unfold Hypergraph.scalarCurvatureAt
   rw [if_pos hr, hmatch, div_self (ne_of_gt hflat_pos), sub_self, mul_zero]
 
-/-- **Scalar curvature is positive iff the ball volume is below the flat
-baseline** (slower-than-flat growth = positively-curved-spherical-like).
-Sign convention check. -/
+/-- For `r > 0` and `flatBallVolume d r > 0`, `scalarCurvatureAt v d r` is
+positive if and only if the ball volume is less than `flatBallVolume d r`. -/
 theorem Hypergraph.scalarCurvatureAt_pos_iff {V : Type*}
     [Fintype V] [DecidableEq V]
     (H : Hypergraph V) (v : V) (d : ℕ) (r : ℕ)
@@ -379,59 +279,34 @@ theorem Hypergraph.scalarCurvatureAt_pos_iff {V : Type*}
       rw [div_lt_one hflat_pos]; exact h
     linarith
 
-/-! ## Surface-area Bishop-Gromov curvature extraction (SPHERE4)
+/-! ## Scalar curvature estimator from sphere size
 
-Companion to AT9 (`scalarCurvatureAt`, ball-volume Bishop-Gromov). For a
-sphere `S(O, r)` of radius `r` in `d`-dim Euclidean space:
-
-  `|S(O, r)| = S_d · r^(d-1) · [1 − R(O) · r²/(6d) + O(r⁴)]`
-
-where `S_d = d · Ω_d` is the `(d-1)`-volume of the unit `(d-1)`-sphere
-(boundary of the unit `d`-ball). Inverting gives a *sphere-side*
-curvature extractor:
-
-  `R_surface(O, r) := (6d/r²) · [1 − |S(O, r)| / S_flat(d, r)]`
-
-where `S_flat(d, r) := S_d · r^(d-1)`. This is one Taylor-order higher
-than AT9 (the surface picks up curvature at `r^(d-1) · r² = r^(d+1)`
-versus the ball at `r^d · r² = r^(d+2)`); independent extraction —
-cross-checks AT9.
-
-For `d = 0`: `S_d = 0` (sphere is empty); `S_flat = 0`; extraction is
-degenerate. For `d = 1`: `S_1 = 2`, `S_flat = 2`. For `d = 2`: `S_2 =
-2π`, `S_flat = 2π r`. For `d = 3`: `S_3 = 4π`, `S_flat = 4π r²`.
-
-**Independent cross-check of AT9.** Both should agree on `R(O)` in the
-continuum limit; deviation between them at finite scale measures the
-discrete-geometry error term.
+In a `d`-dimensional Riemannian manifold the area of a small geodesic sphere
+satisfies `|S(p, r)| = S_d · r^(d-1) · [1 − R(p) · r²/(6d) + O(r⁴)]`, where
+`S_d = d · Ω_d` is the area of the Euclidean unit sphere. The discrete
+estimator is `(6d/r²) · [1 − |S(v, r)| / S_flat(d, r)]` with
+`S_flat(d, r) := S_d · r^(d-1)` and `|S(v, r)|` the vertex count
+`infraSphereVolume v r`.
 -/
 
-/-- **Unit-sphere area** (`(d-1)`-volume of the unit `(d-1)`-sphere) in
-`d`-dim Euclidean space: `S_d = d · Ω_d`. Closed form
-`S_d = 2 π^{d/2} / Γ(d/2)`. We expose small-`d` cases by literal
-value; higher `d` defers to the same `Real.Gamma` follow-up as
-`unitBallVolumeEuclidean`. -/
+/-- The area `S_d` of the unit sphere in `d`-dimensional Euclidean space for
+`d ≤ 3` (0, 2, 2π, 4π). For `d ≥ 4` the definition returns 1, which is not
+`S_d`. -/
 noncomputable def unitSphereAreaEuclidean : ℕ → ℝ
   | 0 => 0  -- the (-1)-sphere is empty
   | 1 => 2  -- two endpoints of the interval
   | 2 => 2 * Real.pi
   | 3 => 4 * Real.pi
-  | _ => 1  -- placeholder; closed form via Real.Gamma
+  | _ => 1  -- placeholder value for d ≥ 4
 
-/-- **Flat-baseline sphere area** in `d`-dim Euclidean space:
-`S_flat(d, r) := S_d · r^(d-1)`. Note: for `d = 0` this is degenerate
-(`S_d = 0`); for `r = 0` it's `0` for `d ≥ 2` (a point's surface area
-is zero). -/
+/-- `S_flat(d, r) := unitSphereAreaEuclidean d · r^(d-1)`, with natural-number
+subtraction in the exponent. -/
 noncomputable def flatSphereArea (d : ℕ) (r : ℕ) : ℝ :=
   unitSphereAreaEuclidean d * (r : ℝ)^(d - 1)
 
-/-- **Surface-area Bishop-Gromov scalar curvature extractor** at vertex
-`v`, dimension `d`, radius `r > 0`:
-
-  `R_surface(v, r) := (6d/r²) · (1 − |S(v, r)| / S_flat(d, r))`
-
-Independent of AT9's `scalarCurvatureAt` (which uses ball volume); the
-two should agree on `R(v)` in the continuum limit. Cross-check tool. -/
+/-- The sphere-size scalar curvature estimator
+`(6d/r²) · (1 − infraSphereVolume v r / flatSphereArea d r)` for `r > 0`, and 0
+for `r = 0`. -/
 noncomputable def Hypergraph.surfaceCurvatureAt {V : Type*}
     [Fintype V] [DecidableEq V]
     (H : Hypergraph V) (v : V) (d : ℕ) (r : ℕ) : ℝ :=
@@ -440,9 +315,8 @@ noncomputable def Hypergraph.surfaceCurvatureAt {V : Type*}
       (1 - (H.infraSphereVolume v r : ℝ) / flatSphereArea d r)
   else 0
 
-/-- **Curvature is zero when the surface area matches the flat
-baseline** at scale `r` — discrete analog of "flat space has zero
-sphere-side Ricci". -/
+/-- If `r > 0`, `flatSphereArea d r > 0` and the sphere size equals
+`flatSphereArea d r`, then `surfaceCurvatureAt v d r = 0`. -/
 theorem Hypergraph.surfaceCurvatureAt_zero_of_match {V : Type*}
     [Fintype V] [DecidableEq V]
     (H : Hypergraph V) (v : V) (d : ℕ) (r : ℕ)

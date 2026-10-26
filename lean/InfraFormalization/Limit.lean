@@ -1,32 +1,11 @@
 /-
-Framework for continuum limits of hypergraphs.
+Sequences of scaled hypergraphs and metric-measure targets.
 
-We frame a continuum-limit theorem as follows:
-
-  Given a sequence `(H_n, ε_n) : ℕ → ScaledHypergraph V` with
-  `ε_n → 0` (and a marking / basepoint choice), the induced sequence of
-  pseudo-metric spaces is claimed to converge (in a specified sense —
-  pointed Gromov–Hausdorff, spectral, or Lorentzian GH) to a limiting
-  metric-measure space `(M, d, μ)`. If the limit is a smooth Riemannian
-  manifold and the sequence satisfies certain regularity, we can lift
-  discrete geometric invariants (dimension, Ollivier–Ricci curvature)
-  to their continuum analogues (topological dimension, Ricci curvature
-  tensor).
-
-This file defines sequences of scaled hypergraphs and metric-measure
-targets. It states no convergence theorem.
-
-Mathlib's relevant pieces:
-* `Metric.HausdorffDist` and friends (Gromov–Hausdorff).
-* `MeasureTheory.Measure` (measure-space convergence).
-* `GromovHausdorff` namespace (pointed GH is still partially
-  developed at the time of writing).
-* `Manifold.IsManifold` (smooth structure for limit targets).
-
-For the Lorentzian case (causal graphs → pseudo-Riemannian manifolds),
-Mathlib does not yet have a sufficiently rich API; we state the
-corresponding claim with a placeholder and leave the upgrade for when
-the Lorentzian-GH Mathlib PR lands (tracked at mathlib4#...).
+A continuum-limit statement concerns a sequence of hypergraphs `H_n` with scales `ε_n → 0` and the
+convergence, in a specified sense (pointed Gromov–Hausdorff, spectral, or Lorentzian), of the
+associated metric spaces to a metric-measure space `(M, d, μ)`. This module defines the structure
+`HypergraphSequence` of hypergraphs with positive scales tending to 0, and the structure
+`MetricMeasureTarget` of a pseudo-metric space with a measure. It states no convergence theorem.
 -/
 
 import InfraFormalization.GraphMetric
@@ -40,14 +19,14 @@ open Hypergraph
 
 variable {V : Type*} [DecidableEq V]
 
-/-- A **sequence of scaled hypergraphs** for continuum-limit analysis. -/
+/-- A sequence of hypergraphs `graph n` with scales `ε n > 0` that tend to 0. -/
 structure HypergraphSequence (V : Type*) where
   graph : ℕ → Hypergraph V
   ε : ℕ → ℝ
   ε_pos : ∀ n, 0 < ε n
   ε_to_zero : Filter.Tendsto ε Filter.atTop (nhds 0)
 
-/-- Abstract convergence target: a metric-measure space. -/
+/-- A pseudo-metric space with a measurable structure and a measure. -/
 structure MetricMeasureTarget where
   carrier : Type*
   [metric : PseudoMetricSpace carrier]

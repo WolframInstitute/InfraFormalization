@@ -1,22 +1,13 @@
 /-
-**Dual-curvature select: combine Forman (#384) and Transport (#402)
-screeners** (#403).
+Seed-stable classification by five scalar traces.
 
-After #402 we have two parallel curvature scalar families on `ExecHG ℕ`:
-
-  * `Dossier.formanScalarTrace`     — triangle-Forman (#384)
-  * `Dossier.transportScalarTrace`  — Ollivier-style product-coupling
-                                       upper bound (#402)
-
-A candidate rule's curvature class is more credible if BOTH scalars are
-seed-stable. This module defines the dual-curvature filter and certifies
-the new distribution on the 21-candidate `enumerateRules2_1 2` family
-over the standard `seedSet`.
-
-Stronger discriminator: a rule passing the dual-curvature filter has a
-seed-independent verdict on two *independent* curvature definitions —
-genuine convergent evidence that the rule has a well-defined curvature
-class on the family.
+The module applies the classification `classifyForman` (constant, or sign of the last entry) to
+the transport, Higuchi, degree-variance and square-count traces of `canonicalDossier`, which
+applies `singleWayStep`. A rule is stably classifiable for a scalar if the class is the same on
+every seed. The module defines the conjunctions of two, three, four and five of these conditions,
+the Forman condition included, and counts the rules of `enumerateRules2_1 2` on `seedSet` at depth
+2 that satisfy each: 11 (Forman), 17 (transport), 17 (Higuchi), 11 (degree variance),
+11 (square count), 11 (two, three), 5 (four, five). All counts are checked by `native_decide`.
 -/
 
 import InfraFormalization.RuleSignatureExecSearch
@@ -37,68 +28,60 @@ open HiguchiScreener
 open DegreeVarianceScreener
 open SquareCountScreener
 
-/-- The transport-scalar trend of a rule on a seed at depth `n`. Uses
-the same `classifyForman` shape (constant ⇒ `flat`, else sign of final
-value) since the scalar lives in `ℤ`. -/
+/-- `classifyForman` applied to the transport trace of `canonicalDossier r seed n`. -/
 def transportTrendOf (r : ExecRule) (seed : ExecHG ℕ) (n : Nat) :
     CurvatureTrend :=
   classifyForman ((canonicalDossier r seed n).transportScalarTrace)
 
-/-- The transport trend across a list of seeds. -/
+/-- The transport classes on each seed. -/
 def transportTrendsAcross (r : ExecRule) (seeds : List (ExecHG ℕ))
     (n : Nat) : List CurvatureTrend :=
   seeds.map (fun s => transportTrendOf r s n)
 
-/-- A candidate's transport trend is stably-classifiable iff every
-seed gives the same trend. -/
+/-- `true` iff the transport class is the same on every seed. -/
 def transportStablyClassifiable (r : ExecRule) (seeds : List (ExecHG ℕ))
     (n : Nat) : Bool :=
   match transportTrendsAcross r seeds n with
   | []      => true
   | t :: ts => ts.all (fun t' => decide (t' = t))
 
-/-- **Dual-curvature stably classifiable**: BOTH the Forman trend AND
-the transport trend are seed-stable. -/
+/-- `stablyClassifiable && transportStablyClassifiable`. -/
 def dualStablyClassifiable (r : ExecRule) (seeds : List (ExecHG ℕ))
     (n : Nat) : Bool :=
   stablyClassifiable r seeds n && transportStablyClassifiable r seeds n
 
-/-- Dual-curvature selection: keep candidates passing both screeners. -/
+/-- The candidates satisfying `dualStablyClassifiable`. -/
 def dualStableSelect (cands : List ExecRule) (seeds : List (ExecHG ℕ))
     (n : Nat) : List ExecRule :=
   cands.filter (fun r => dualStablyClassifiable r seeds n)
 
-/-! ### Certified dual-stability distribution -/
+/-! ### Counts for Forman and transport -/
 
-/-- **Forman stably-classifiable count: 11** (matches #386). -/
+/-- 11 rules are Forman-stably classifiable. -/
 example :
     ((enumerateRules2_1 2).filter
         (fun r => stablyClassifiable r seedSet 2)).length = 11 := by
   native_decide
 
-/-- **Transport stably-classifiable count: 17** — the transport
-screener is *more permissive* than the Forman screener on this family. -/
+/-- 17 rules are transport-stably classifiable. -/
 example :
     ((enumerateRules2_1 2).filter
         (fun r => transportStablyClassifiable r seedSet 2)).length = 17 := by
   native_decide
 
-/-- **Dual stably-classifiable count: 11** — exactly the Forman-stable
-candidates also pass the transport stability. -/
+/-- 11 rules satisfy `dualStablyClassifiable`. -/
 example :
     (dualStableSelect (enumerateRules2_1 2) seedSet 2).length = 11 := by
   native_decide
 
-/-- **Containment**: every Forman-stably-classifiable candidate is
-also transport-stably-classifiable. The Forman screener is *strictly
-stricter* than the transport screener on this family (`11 < 17`). -/
+/-- Every Forman-stably classifiable rule is transport-stably classifiable. -/
 example :
     ((enumerateRules2_1 2).filter
         (fun r => stablyClassifiable r seedSet 2)).all
       (fun r => transportStablyClassifiable r seedSet 2) = true := by
   native_decide
 
-/-- **Forman strictly stricter than transport**: 11 < 17. -/
+/-- The Forman count is less than the transport count: 11 < 17. -/
 example :
     ((enumerateRules2_1 2).filter
         (fun r => stablyClassifiable r seedSet 2)).length
@@ -106,19 +89,14 @@ example :
         (fun r => transportStablyClassifiable r seedSet 2)).length := by
   native_decide
 
-/-- **Dual-screener-survivors equal Forman-survivors** on this family
-— the transport screener adds no candidates that Forman didn't already
-classify. -/
+/-- The `dualStableSelect` count equals the Forman count. -/
 example :
     (dualStableSelect (enumerateRules2_1 2) seedSet 2).length
       = ((enumerateRules2_1 2).filter
           (fun r => stablyClassifiable r seedSet 2)).length := by
   native_decide
 
-/-- **6 candidates pass transport but NOT Forman**: these are
-transport-classifiable in a sense the triangle-Forman screener cannot
-detect. The two screeners are not equivalent — they expose different
-aspects of curvature. -/
+/-- The transport count minus the Forman count is 6. -/
 example :
     ((enumerateRules2_1 2).filter
         (fun r => transportStablyClassifiable r seedSet 2)).length
@@ -126,86 +104,72 @@ example :
         (fun r => stablyClassifiable r seedSet 2)).length = 6 := by
   native_decide
 
-/-! ## Triple-curvature select: Forman + Transport + Higuchi -/
+/-! ## Forman, transport and Higuchi -/
 
-/-- The Higuchi-scalar trend of a rule on a seed at depth `n`. -/
+/-- `classifyForman` applied to the Higuchi trace of `canonicalDossier r seed n`. -/
 def higuchiTrendOf (r : ExecRule) (seed : ExecHG ℕ) (n : Nat) :
     CurvatureTrend :=
   classifyForman ((canonicalDossier r seed n).higuchiScalarTrace)
 
-/-- The Higuchi trend across a list of seeds. -/
+/-- The Higuchi classes on each seed. -/
 def higuchiTrendsAcross (r : ExecRule) (seeds : List (ExecHG ℕ))
     (n : Nat) : List CurvatureTrend :=
   seeds.map (fun s => higuchiTrendOf r s n)
 
-/-- A candidate's Higuchi trend is stably-classifiable. -/
+/-- `true` iff the Higuchi class is the same on every seed. -/
 def higuchiStablyClassifiable (r : ExecRule) (seeds : List (ExecHG ℕ))
     (n : Nat) : Bool :=
   match higuchiTrendsAcross r seeds n with
   | []      => true
   | t :: ts => ts.all (fun t' => decide (t' = t))
 
-/-- **Triple-curvature stably classifiable**: ALL three screeners give
-seed-independent verdicts. -/
+/-- The Forman, transport and Higuchi classes are each the same on every seed. -/
 def tripleStablyClassifiable (r : ExecRule) (seeds : List (ExecHG ℕ))
     (n : Nat) : Bool :=
   stablyClassifiable r seeds n
     && transportStablyClassifiable r seeds n
     && higuchiStablyClassifiable r seeds n
 
-/-- The triple-curvature selection. -/
+/-- The candidates satisfying `tripleStablyClassifiable`. -/
 def tripleStableSelect (cands : List ExecRule) (seeds : List (ExecHG ℕ))
     (n : Nat) : List ExecRule :=
   cands.filter (fun r => tripleStablyClassifiable r seeds n)
 
-/-! ### Certified triple-stability distribution -/
+/-! ### Counts for Forman, transport and Higuchi -/
 
-/-- **Higuchi stably-classifiable: 17 candidates** — same count as
-Transport (#403). -/
+/-- 17 rules are Higuchi-stably classifiable. -/
 example :
     ((enumerateRules2_1 2).filter
         (fun r => higuchiStablyClassifiable r seedSet 2)).length = 17 := by
   native_decide
 
-/-- **Triple stably-classifiable: 11 candidates** — same as Forman
-alone, consistent with Forman ⊆ Transport ∩ Higuchi (since the
-intersection of Transport and Higuchi can't be smaller than Forman). -/
+/-- 11 rules satisfy `tripleStablyClassifiable`. -/
 example :
     (tripleStableSelect (enumerateRules2_1 2) seedSet 2).length = 11 := by
   native_decide
 
-/-- **Higuchi-stable contains Forman-stable**: every Forman-stable
-rule is also Higuchi-stable. -/
+/-- Every Forman-stably classifiable rule is Higuchi-stably classifiable. -/
 example :
     ((enumerateRules2_1 2).filter
         (fun r => stablyClassifiable r seedSet 2)).all
       (fun r => higuchiStablyClassifiable r seedSet 2) = true := by
   native_decide
 
-/-- **Higuchi-stable ⊆ Transport-stable** (and the converse holds too:
-both have count 17, see the summary below). So the two more-permissive
-screeners agree on this family. -/
+/-- Every Higuchi-stably classifiable rule is transport-stably classifiable. -/
 example :
     ((enumerateRules2_1 2).filter
         (fun r => higuchiStablyClassifiable r seedSet 2)).all
       (fun r => transportStablyClassifiable r seedSet 2) = true := by
   native_decide
 
-/-- **Transport-stable ⊆ Higuchi-stable** — combined with the
-matching counts (17 = 17), the two screeners produce the same set. -/
+/-- Every transport-stably classifiable rule is Higuchi-stably classifiable. -/
 example :
     ((enumerateRules2_1 2).filter
         (fun r => transportStablyClassifiable r seedSet 2)).all
       (fun r => higuchiStablyClassifiable r seedSet 2) = true := by
   native_decide
 
-/-- **Triple-curvature distribution summary**:
-  - Forman-stable    = 11
-  - Transport-stable = 17  (= Higuchi-stable)
-  - Higuchi-stable   = 17  (= Transport-stable)
-  - Triple-stable    = 11  (= Forman-stable, since Forman ⊆ T = H)
-The two more-permissive screeners agree exactly; the strict screener
-(Forman) determines the triple intersection. -/
+/-- The counts 11 (Forman), 17 (transport), 17 (Higuchi) and 11 (all three). -/
 example :
     ((enumerateRules2_1 2).filter
         (fun r => stablyClassifiable r seedSet 2)).length = 11
@@ -216,27 +180,27 @@ example :
   ∧ (tripleStableSelect (enumerateRules2_1 2) seedSet 2).length = 11 := by
   native_decide
 
-/-! ## Quad-curvature select: Forman + Transport + Higuchi + DegVariance -/
+/-! ## Adding degree variance -/
 
-/-- The degree-variance scalar trend of a rule on a seed at depth `n`. -/
+/-- `classifyForman` applied to the degree-variance trace of `canonicalDossier r seed n`. -/
 def degVarianceTrendOf (r : ExecRule) (seed : ExecHG ℕ) (n : Nat) :
     CurvatureTrend :=
   classifyForman ((canonicalDossier r seed n).degVarianceTrace)
 
-/-- The degree-variance trend across a list of seeds. -/
+/-- The degree-variance classes on each seed. -/
 def degVarianceTrendsAcross (r : ExecRule) (seeds : List (ExecHG ℕ))
     (n : Nat) : List CurvatureTrend :=
   seeds.map (fun s => degVarianceTrendOf r s n)
 
-/-- A candidate's degree-variance trend is stably-classifiable. -/
+/-- `true` iff the degree-variance class is the same on every seed. -/
 def degVarianceStablyClassifiable (r : ExecRule) (seeds : List (ExecHG ℕ))
     (n : Nat) : Bool :=
   match degVarianceTrendsAcross r seeds n with
   | []      => true
   | t :: ts => ts.all (fun t' => decide (t' = t))
 
-/-- **Quad-curvature stably classifiable**: ALL FOUR screeners give
-seed-independent verdicts. -/
+/-- The Forman, transport, Higuchi and degree-variance classes are each the same on every
+seed. -/
 def quadStablyClassifiable (r : ExecRule) (seeds : List (ExecHG ℕ))
     (n : Nat) : Bool :=
   stablyClassifiable r seeds n
@@ -244,59 +208,40 @@ def quadStablyClassifiable (r : ExecRule) (seeds : List (ExecHG ℕ))
     && higuchiStablyClassifiable r seeds n
     && degVarianceStablyClassifiable r seeds n
 
-/-- The quad-curvature selection. -/
+/-- The candidates satisfying `quadStablyClassifiable`. -/
 def quadStableSelect (cands : List ExecRule) (seeds : List (ExecHG ℕ))
     (n : Nat) : List ExecRule :=
   cands.filter (fun r => quadStablyClassifiable r seeds n)
 
-/-! ### Certified quad-stability distribution -/
+/-! ### Counts including degree variance -/
 
-/-- **DegVariance stably-classifiable: 11 candidates** — same total as
-Forman, but a **DIFFERENT SET** (mutual non-containment certified
-below). DegVariance is a genuine fourth angle, not a relabelling. -/
+/-- 11 rules are degree-variance-stably classifiable. -/
 example :
     ((enumerateRules2_1 2).filter
         (fun r => degVarianceStablyClassifiable r seedSet 2)).length = 11 := by
   native_decide
 
-/-- **Quad stably-classifiable: 5 candidates** — adding DegVariance
-to the Triple cascade SHRINKS the stable set from 11 to 5, a strict
-refinement. Six rules that pass Forman + Transport + Higuchi fail the
-degree-variance check; the fourth screener finds new structure. -/
+/-- 5 rules satisfy `quadStablyClassifiable`. -/
 example :
     (quadStableSelect (enumerateRules2_1 2) seedSet 2).length = 5 := by
   native_decide
 
-/-- **Forman-stable ⊄ DegVariance-stable**: NOT every Forman-stable
-rule is DegVariance-stable. Six rules in the Forman-stable set fail
-the degree-variance test. -/
+/-- Some Forman-stably classifiable rule is not degree-variance-stably classifiable. -/
 example :
     ((enumerateRules2_1 2).filter
         (fun r => stablyClassifiable r seedSet 2)).all
       (fun r => degVarianceStablyClassifiable r seedSet 2) = false := by
   native_decide
 
-/-- **DegVariance-stable ⊄ Forman-stable**: NOT every DegVariance-stable
-rule is Forman-stable. Six rules in the DegVariance-stable set fail
-the Forman test. The two screeners are **independent** — they classify
-different curvature aspects. -/
+/-- Some degree-variance-stably classifiable rule is not Forman-stably classifiable. -/
 example :
     ((enumerateRules2_1 2).filter
         (fun r => degVarianceStablyClassifiable r seedSet 2)).all
       (fun r => stablyClassifiable r seedSet 2) = false := by
   native_decide
 
-/-- **Quad-curvature distribution summary**:
-  - Forman-stable      = 11
-  - Transport-stable   = 17
-  - Higuchi-stable     = 17  (= Transport-stable as sets)
-  - DegVariance-stable = 11  (same total as Forman, DIFFERENT set)
-  - Triple-stable      = 11  (= Forman ⊆ Transport ∩ Higuchi)
-  - Quad-stable        =  5  (strict refinement: Triple ∩ DegVariance)
-DegVariance is the first screener to **shrink** the stable set
-below 11, because it's the first independent of the local
-combinatorial-Forman family. The fourfold cross-confirmation
-identifies 5 rules with maximally-stable curvature signatures. -/
+/-- The counts 11 (Forman), 17 (transport), 17 (Higuchi), 11 (degree variance), 11 (three
+conditions) and 5 (four conditions). -/
 example :
     ((enumerateRules2_1 2).filter
         (fun r => stablyClassifiable r seedSet 2)).length = 11
@@ -310,27 +255,27 @@ example :
   ∧ (quadStableSelect (enumerateRules2_1 2) seedSet 2).length = 5 := by
   native_decide
 
-/-! ## Quint-curvature select: Forman + Transport + Higuchi + DegVariance + SquareCount -/
+/-! ## Adding square count -/
 
-/-- The square-count scalar trend of a rule on a seed at depth `n`. -/
+/-- `classifyForman` applied to the square-count trace of `canonicalDossier r seed n`. -/
 def squareCountTrendOf (r : ExecRule) (seed : ExecHG ℕ) (n : Nat) :
     CurvatureTrend :=
   classifyForman ((canonicalDossier r seed n).squareCountTrace)
 
-/-- The square-count trend across a list of seeds. -/
+/-- The square-count classes on each seed. -/
 def squareCountTrendsAcross (r : ExecRule) (seeds : List (ExecHG ℕ))
     (n : Nat) : List CurvatureTrend :=
   seeds.map (fun s => squareCountTrendOf r s n)
 
-/-- A candidate's square-count trend is stably-classifiable. -/
+/-- `true` iff the square-count class is the same on every seed. -/
 def squareCountStablyClassifiable (r : ExecRule) (seeds : List (ExecHG ℕ))
     (n : Nat) : Bool :=
   match squareCountTrendsAcross r seeds n with
   | []      => true
   | t :: ts => ts.all (fun t' => decide (t' = t))
 
-/-- **Quint-curvature stably classifiable**: ALL FIVE screeners give
-seed-independent verdicts. -/
+/-- The Forman, transport, Higuchi, degree-variance and square-count classes are each the same
+on every seed. -/
 def quintStablyClassifiable (r : ExecRule) (seeds : List (ExecHG ℕ))
     (n : Nat) : Bool :=
   stablyClassifiable r seeds n
@@ -339,48 +284,33 @@ def quintStablyClassifiable (r : ExecRule) (seeds : List (ExecHG ℕ))
     && degVarianceStablyClassifiable r seeds n
     && squareCountStablyClassifiable r seeds n
 
-/-- The quint-curvature selection. -/
+/-- The candidates satisfying `quintStablyClassifiable`. -/
 def quintStableSelect (cands : List ExecRule) (seeds : List (ExecHG ℕ))
     (n : Nat) : List ExecRule :=
   cands.filter (fun r => quintStablyClassifiable r seeds n)
 
-/-! ### Certified quint-stability distribution -/
+/-! ### Counts including square count -/
 
-/-- **SquareCount stably-classifiable: 11 candidates** — same total
-as Forman / DegVariance. -/
+/-- 11 rules are square-count-stably classifiable. -/
 example :
     ((enumerateRules2_1 2).filter
         (fun r => squareCountStablyClassifiable r seedSet 2)).length = 11 := by
   native_decide
 
-/-- **Quint stably-classifiable: 5 candidates** — the same as Quad.
-SquareCount is a *redundant filter* on top of Quad: every quad-stable
-rule is also square-count-stable on this family. The five-fold
-intersection equals the four-fold intersection. -/
+/-- 5 rules satisfy `quintStablyClassifiable`. -/
 example :
     (quintStableSelect (enumerateRules2_1 2) seedSet 2).length = 5 := by
   native_decide
 
-/-- **Quad-stable ⊆ SquareCount-stable**: every quad-stable rule
-also has a seed-stable square-count verdict. -/
+/-- Every rule satisfying `quadStablyClassifiable` is square-count-stably classifiable. -/
 example :
     ((enumerateRules2_1 2).filter
         (fun r => quadStablyClassifiable r seedSet 2)).all
       (fun r => squareCountStablyClassifiable r seedSet 2) = true := by
   native_decide
 
-/-- **Quint-curvature distribution summary**:
-  - Forman-stable      = 11
-  - Transport-stable   = 17
-  - Higuchi-stable     = 17  (= Transport set-wise)
-  - DegVariance-stable = 11  (different set from Forman)
-  - SquareCount-stable = 11
-  - Triple-stable      = 11
-  - Quad-stable        =  5  (Triple ∩ DegVariance — first strict refinement)
-  - Quint-stable       =  5  (= Quad — SquareCount agrees on the quad-survivors)
-The 5 quint-stable rules survive ALL FIVE independent screeners.
-The five-fold cross-confirmation identifies the maximally robust
-curvature-class on this family. -/
+/-- The counts 11 (Forman), 17 (transport), 17 (Higuchi), 11 (degree variance), 11 (square
+count), 11 (three conditions), 5 (four conditions) and 5 (five conditions). -/
 example :
     ((enumerateRules2_1 2).filter
         (fun r => stablyClassifiable r seedSet 2)).length = 11

@@ -1,35 +1,12 @@
 /-
-**ExecHG H1-catalogue corpus** (#373, on-ramp).
+Engine versions of five catalogue rules.
 
-`ExecRule` versions of the H1 candidate-rule catalogue
-(`CandidateRuleCatalog.lean`) wired through
-`RuleSignatureSchema.canonicalDossier` to give axiom-clean,
-Lean-internal screening verdicts. No paclet round-trip; everything
-is `decide`-able from `MultiwayExec` definitions.
-
-This is the on-ramp the user identified for the rule-search pipeline:
-*if the corpus is closed (e.g., the H1 named-rule list), Lean executor
-end-to-end is sufficient and stronger than a WL/Lean hybrid.* The
-paclet hookup (#374 / #375) is the at-scale accelerator for #190's
-open enumeration; for the closed H1 corpus it adds nothing but a
-trust boundary.
-
-**Per-rule deliverable**:
-  * `ExecRule` definition with the same edge structure as the abstract
-    `Rule` in `CandidateRuleCatalog`.
-  * Conservation status as a `decide`-checked Bool.
-  * Canonical dossiers on representative seeds.
-  * Edge-count and vertex-count constancy verdicts.
-
-**Rules covered**: gorardNamed, edgeDoubling, edgeAppend,
-tripleExpansion, trivialIdentity. (Subdivision and TC1 already in
-`MultiwayExecTests`.)
-
-**What this file does NOT do**: bridge from the ExecHG-side trajectory
-to the abstract `MultiScreener τ tgt_e tgt_κ r` Prop. That bridge is
-the residual structural step, factored as #378 (depends on a
-ExecHG → Trajectory lift, which we postpone). The constancy verdicts
-here are the *content* of that bridge in concrete form.
+This module defines `ExecRule` versions of five rules of
+`CandidateRuleCatalog.lean`: the identity rule, edge doubling, edge append,
+triple expansion and the rule of G3 line 6202. For each it builds
+`canonicalDossier` runs of `singleWayStep` on fixed seeds and checks, by
+`decide` or `native_decide`, whether the edge count stays constant. No
+theorem relates these runs to the abstract `Trajectory` type.
 -/
 
 import InfraFormalization.RuleSignatureSchema
@@ -40,12 +17,12 @@ namespace RuleSignatureExecCorpus
 open MultiwayExec
 open RuleSignatureSchema
 
-/-! ## Trivial identity rule: `{a, b} → {a, b}` -/
+/-! ## Identity rule: `{a, b} → {a, b}` -/
 
 private def triv_lhs : Hyperedge (Fin 2) := ⟨[0, 1], by decide⟩
 private def triv_rhs : Hyperedge (Fin 2) := ⟨[0, 1], by decide⟩
 
-/-- Trivial identity rule (control). Conservative; every step is a no-op. -/
+/-- The rule `{a, b} → {a, b}`. -/
 def trivialIdentityExecRule : ExecRule where
   numBound := 2
   numFresh := 0
@@ -72,8 +49,8 @@ private def doub_lhs : Hyperedge (Fin 2) := ⟨[0, 1], by decide⟩
 private def doub_rhs1 : Hyperedge (Fin 2) := ⟨[0, 1], by decide⟩
 private def doub_rhs2 : Hyperedge (Fin 2) := ⟨[0, 1], by decide⟩
 
-/-- Edge-doubling rule: WPP "rule 0". Non-conservative
-(|LHS|=1, |RHS|=2) — every edge doubles per step. -/
+/-- The rule `{a, b} → {a, b}, {a, b}`, with one left-hand and two
+right-hand edges. -/
 def edgeDoublingExecRule : ExecRule where
   numBound := 2
   numFresh := 0
@@ -96,7 +73,7 @@ private def app_lhs : Hyperedge (Fin 2) := ⟨[0, 1], by decide⟩
 private def app_rhs_keep : Hyperedge (Fin 3) := ⟨[0, 1], by decide⟩
 private def app_rhs_new  : Hyperedge (Fin 3) := ⟨[1, 2], by decide⟩
 
-/-- Edge-append rule: linear extension. Non-conservative; same as
+/-- The rule `{a, b} → {a, b}, {b, c}` with `c` fresh; the same rule as
 `MultiwayExecTests.tc1Rule`. -/
 def edgeAppendExecRule : ExecRule where
   numBound := 2
@@ -121,7 +98,7 @@ private def tri_rhs0 : Hyperedge (Fin 4) := ⟨[0, 1], by decide⟩
 private def tri_rhs1 : Hyperedge (Fin 4) := ⟨[1, 2], by decide⟩
 private def tri_rhs2 : Hyperedge (Fin 4) := ⟨[2, 3], by decide⟩
 
-/-- Triple-expansion rule. Non-conservative (|LHS|=1, |RHS|=3). -/
+/-- The rule `{a, b} → {a, b}, {b, c}, {c, d}` with `c`, `d` fresh. -/
 def tripleExpansionExecRule : ExecRule where
   numBound := 2
   numFresh := 2
@@ -138,10 +115,10 @@ example : (tripleDossier 2).isConsistent = true := canonicalDossier_isConsistent
 
 example : (tripleDossier 2).edgeCountConstant = false := by decide
 
-/-! ## JGORARD's named rule: `{x,y},{y,z},{z,w},{w,v} → {y,u},{u,v},{w,x},{x,u}` (u fresh)
+/-! ## The rule of G3: `{x,y},{y,z},{z,w},{w,v} → {y,u},{u,v},{w,x},{x,u}` (u fresh)
 
-Conservation: `|LHS| = |RHS| = 4` (matches the abstract
-`gorardNamedRule_isConservative` from `CandidateRuleCatalog`). -/
+Both sides have 4 edges, as in `gorardNamedRule_isConservative` of
+`CandidateRuleCatalog`. -/
 
 private def gor_lhs0 : Hyperedge (Fin 5) := ⟨[0, 1], by decide⟩
 private def gor_lhs1 : Hyperedge (Fin 5) := ⟨[1, 2], by decide⟩
@@ -153,26 +130,23 @@ private def gor_rhs1 : Hyperedge (Fin 6) := ⟨[5, 4], by decide⟩
 private def gor_rhs2 : Hyperedge (Fin 6) := ⟨[3, 0], by decide⟩
 private def gor_rhs3 : Hyperedge (Fin 6) := ⟨[0, 5], by decide⟩
 
-/-- JGORARD's named rule (arXiv:2102.09363, line 6202).
-**Conservative**: |LHS| = |RHS| = 4. ExecRule version of
-`CandidateCatalog.gorardNamedRule` from `CandidateRuleCatalog.lean`. -/
+/-- The rule of G3 (`papers/gorard_2102.09363.txt` line 6202), the engine
+version of `CandidateCatalog.gorardNamedRule`. -/
 def gorardNamedExecRule : ExecRule where
   numBound := 5
   numFresh := 1
   lhs := [gor_lhs0, gor_lhs1, gor_lhs2, gor_lhs3]
   rhs := [gor_rhs0, gor_rhs1, gor_rhs2, gor_rhs3]
 
-/-- **Conservation status of JGORARD's rule (decidable)**: lhs.length =
-rhs.length = 4. Mirrors `CandidateCatalog.gorardNamedRule_isConservative`
-on the ExecHG side. -/
+/-- The two sides of `gorardNamedExecRule` have equal length. -/
 example : gorardNamedExecRule.lhs.length = gorardNamedExecRule.rhs.length := by decide
 
 example : gorardNamedExecRule.lhs.length = 4 := by decide
 
 example : gorardNamedExecRule.rhs.length = 4 := by decide
 
-/-- A 4-edge directed path: `1→2→3→4→5`. Provides exactly one match
-for JGORARD's LHS pattern at the bound (x,y,z,w,v) = (1,2,3,4,5). -/
+/-- The directed path `1→2→3→4→5`. The left-hand side matches it with
+`(x, y, z, w, v) = (1, 2, 3, 4, 5)`. -/
 def gorardPathSeed : ExecHG ℕ :=
   [⟨[1, 2], by decide⟩, ⟨[2, 3], by decide⟩, ⟨[3, 4], by decide⟩, ⟨[4, 5], by decide⟩]
 
@@ -181,19 +155,17 @@ def gorardPathDossier (n : Nat) : Dossier :=
 
 example : (gorardPathDossier 1).isConsistent = true := canonicalDossier_isConsistent _ _ _
 
-/-- **Edge count is constant 4 along JGORARD's path-seed trajectory after
-one single-way step**. The conservative screener passes (axiom-clean,
-`native_decide` for the kernel-heavy 5-pattern-vertex enumeration).
-This is the Lean-internal closed-corpus instance of #373. -/
+/-- On the path seed, the edge counts of the first two states are
+`[4, 4]`, checked by `native_decide`. -/
 example : (gorardPathDossier 1).edgeCountTrace = [4, 4] := by native_decide
 
 example : (gorardPathDossier 1).edgeCountConstant = true := by native_decide
 
 /-! ## Cycle seed
 
-A 4-cycle seed `1→2→3→4→1` admits four matches of the LHS of the rule,
-one starting at each cycle vertex, and every two of them share an edge.
-`singleWayStep` fires the first and skips the other three, so the edge
+The 4-cycle `1→2→3→4→1` admits four matches of the left-hand side, one
+starting at each vertex, and every two of them share an edge.
+`singleWayStep` applies the first and skips the other three, so the edge
 count stays 4. -/
 
 def gorardCycleSeed : ExecHG ℕ :=
@@ -207,11 +179,11 @@ example : (gorardCycleDossier 1).isConsistent = true := canonicalDossier_isConsi
 /-- The edge count of the 4-cycle seed stays 4 after one single-way step. -/
 example : (gorardCycleDossier 1).edgeCountConstant = true := by native_decide
 
-/-! ## Summary -/
+/-! ## Conjunction -/
 
-/-- Edge-count screener on the corpus dossiers: the conservative rules
-(trivial rule, named rule on the path and cycle seeds) keep a constant
-edge count; the doubling, append and triple rules do not. -/
+/-- The edge count is constant on the runs of the identity rule (3 steps)
+and of the rule of G3 on the path and cycle seeds (1 step), and is not
+constant on the runs of the doubling, append and triple-expansion rules. -/
 theorem h1_corpus_edgeCount_screener_verdict :
     (trivialDossier 3).edgeCountConstant = true
   ∧ (gorardPathDossier 1).edgeCountConstant = true

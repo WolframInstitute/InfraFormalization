@@ -1,28 +1,12 @@
 /-
-**Friedmann-Lemaître-Robertson-Walker (FLRW) metric** (B6 / #26 partial).
+The spatially flat FLRW metric.
 
-The FLRW metric on ℝ⁴ with scale factor `a(t)`:
-
-  `ds² = -dt² + a(t)² (dx² + dy² + dz²)`
-
-In diagonal form:
-  * `g_{00}(x) = -1`
-  * `g_{ii}(x) = a(x_0)²` for `i = 1, 2, 3`
-  * off-diagonal = 0
-
-**Validity.** FLRW is valid wherever the scale factor `a` is
-non-zero; at big-bang singularities `a → 0` and the metric becomes
-degenerate. So FLRW is naturally a `PartialMetricData 4` rather than
-a full `MetricData 4`.
-
-**Connection to hypergraphs.** Same anchor as `Schwarzschild`:
-continuum-target side. A future hypergraph trajectory with the
-"expanding universe" signature would pair with this via the FLRW
-bridge theorem.
-
-Full F5 (Einstein equations with perfect-fluid matter) requires a
-stress-energy tensor + connection infrastructure for FLRW; here we
-provide the metric side only.
+The module defines the metric `ds² = -dt² + a(t)² (dx² + dy² + dz²)` on ℝ⁴ as a
+`PartialMetricData 4` valid where `a(t) ≠ 0`. The function `da` supplied for
+the derivative data is arbitrary and is not required to be the derivative of
+`a`. The module proves the Lorentzian sign pattern where `a(t) ≠ 0` and computes
+the Christoffel symbols `Γ⁰₀₀ = 0`, `Γ⁰ᵢᵢ = a · da` and `Γⁱ₀ᵢ = da / a` for
+`i = 1, 2, 3`, and `Γ¹₁₁ = 0`. No hypergraph appears in this module.
 -/
 
 import InfraFormalization.PartialMetricData
@@ -31,37 +15,33 @@ import Mathlib.Tactic.FieldSimp
 namespace InfraFormalization
 namespace Curvature
 
-/-- **FLRW metric components** with scale factor `a : ℝ → ℝ` (a
-function of cosmological time `x 0`). Diagonal in FLRW coordinates
-`(t, x, y, z)`:
-  * `g_{00} = -1`
-  * `g_{ii} = a(t)²` for `i ∈ {1, 2, 3}`
-  * off-diagonal = 0
--/
+/-- The diagonal metric with `g₀₀ = -1`, `gᵢᵢ = a(x 0)²` for `i = 1, 2, 3`, and
+zero off-diagonal entries. -/
 noncomputable def flrwG (a : ℝ → ℝ) (x : Fin 4 → ℝ) (μ ν : Fin 4) : ℝ :=
   if μ ≠ ν then 0
   else if μ.val = 0 then -1
   else (a (x 0))^2
 
-/-- **FLRW inverse metric**: `g^{00} = -1`, `g^{ii} = 1/a(t)²`. -/
+/-- The diagonal array with `g^{00} = -1` and `g^{ii} = 1/a(x 0)²`. -/
 noncomputable def flrwGinv (a : ℝ → ℝ) (x : Fin 4 → ℝ) (μ ν : Fin 4) : ℝ :=
   if μ ≠ ν then 0
   else if μ.val = 0 then -1
   else 1 / (a (x 0))^2
 
-/-- **FLRW first partial derivatives** `∂_l g_{μν}`. Only `∂_0 g_{ii}`
-for `i ≥ 1` is non-zero: it equals `2 a(t) a'(t) = (a²)'(t)`. User
-supplies `da : ℝ → ℝ` as the derivative of `a`. -/
+/-- The derivative data `∂_l g_{μν}`: the entry `∂₀ gᵢᵢ` for `i ≥ 1` is
+`2 · a(x 0) · da(x 0)` and every other entry is 0. The function `da` is a
+parameter. -/
 noncomputable def flrwDg (a da : ℝ → ℝ) (l : Fin 4) (x : Fin 4 → ℝ) (μ ν : Fin 4) : ℝ :=
   if μ ≠ ν then 0
   else if l.val = 0 ∧ μ.val ≠ 0 then 2 * a (x 0) * da (x 0)
   else 0
 
-/-- **FLRW validity**: scale factor is non-zero at `x 0`. -/
+/-- `a(x 0) ≠ 0`. -/
 def FLRWValid (a : ℝ → ℝ) (x : Fin 4 → ℝ) : Prop :=
   a (x 0) ≠ 0
 
-/-- **FLRW as a `PartialMetricData 4`** with validity `a(t) ≠ 0`. -/
+/-- `flrwG`, `flrwGinv` and `flrwDg` as a `PartialMetricData 4` with validity
+predicate `FLRWValid a`. -/
 noncomputable def flrwPartial (a da : ℝ → ℝ) : PartialMetricData 4 where
   g := flrwG a
   ginv := flrwGinv a
@@ -115,11 +95,7 @@ noncomputable def flrwPartial (a da : ℝ → ℝ) : PartialMetricData 4 where
     · rw [h]
     · simp [h, Ne.symm h]
 
-/-- **FLRW Christoffel at `μ=0, ν=ν, ρ=0` vanishes** when the time
-derivative involves a spatial index only. Specifically,
-`Γ^0_{0ν} = 0` for `ν` spatial, because the only non-zero `∂_l g` is
-`∂_0 g_{ii}` and `g^{00}` pairs with `g_{00}` (constant = −1),
-which has zero time derivative. -/
+/-- `Γ⁰₀₀ = 0` at every point. Every derivative entry `∂_l g_{μ0}` is 0. -/
 theorem flrwChristoffel_0_00 (a da : ℝ → ℝ) (x : Fin 4 → ℝ) :
     (flrwPartial a da).christoffel x 0 0 0 = 0 := by
   unfold PartialMetricData.christoffel
@@ -139,13 +115,8 @@ theorem flrwChristoffel_0_00 (a da : ℝ → ℝ) (x : Fin 4 → ℝ) :
     ring
   rw [h_sum]; ring
 
-/-- **FLRW metric is Lorentzian where scale factor is non-zero.**
-`flrwG a x` satisfies the diagonal Lorentzian signature (`g_00 < 0`,
-`g_ii > 0`, off-diagonal zero) at every point where `a(x 0) ≠ 0`.
-
-This uses a weaker predicate than `DiagLorentzianMetric` (which
-quantifies over all `x`), since the FLRW metric is only Lorentzian
-on the non-singular region. -/
+/-- If `a(x 0) ≠ 0`, then `g₀₀ < 0`, `gᵢᵢ > 0` for `i ≥ 1`, and the
+off-diagonal entries are 0 at `x`. -/
 theorem flrwG_lorentzian_pointwise (a : ℝ → ℝ) (x : Fin 4 → ℝ)
     (hv : FLRWValid a x) :
     flrwG a x 0 0 < 0
@@ -168,9 +139,8 @@ theorem flrwG_lorentzian_pointwise (a : ℝ → ℝ) (x : Fin 4 → ℝ)
     unfold flrwG
     simp [h]
 
-/-- **Generic collapse helper for FLRW Christoffel sums.** Since
-`flrwGinv` is diagonal, the sum over `σ` collapses to the `σ = ρ`
-term. -/
+/-- `Γ^ρ_{μν} = ½ · g^{ρρ} · (∂_μ g_{ρν} + ∂_ν g_{ρμ} − ∂_ρ g_{μν})`. The sum
+over `σ` reduces to `σ = ρ` because `flrwGinv` is diagonal. -/
 theorem flrwChristoffel_collapse (a da : ℝ → ℝ) (x : Fin 4 → ℝ)
     (ρ μ ν : Fin 4) :
     (flrwPartial a da).christoffel x ρ μ ν
@@ -188,10 +158,7 @@ theorem flrwChristoffel_collapse (a da : ℝ → ℝ) (x : Fin 4 → ℝ)
   · intro hne
     exact absurd (Finset.mem_univ _) hne
 
-/-- **FLRW Christoffel `Γ⁰_{11} = a(t) a'(t)`** — the classical
-"Hubble-like" time-index-from-spatial Christoffel. Non-vanishing
-whenever `a'(t) ≠ 0` (i.e. the universe is actually expanding or
-contracting). -/
+/-- `Γ⁰₁₁ = a(x 0) · da(x 0)`. -/
 theorem flrwChristoffel_0_11 (a da : ℝ → ℝ) (x : Fin 4 → ℝ) :
     (flrwPartial a da).christoffel x 0 1 1 = a (x 0) * da (x 0) := by
   rw [flrwChristoffel_collapse]
@@ -201,9 +168,8 @@ theorem flrwChristoffel_0_11 (a da : ℝ → ℝ) (x : Fin 4 → ℝ) :
   simp
   ring
 
-/-- **FLRW Christoffel `Γ¹_{01} = a'(t)/a(t)`** = Hubble rate `H(t)`.
-The canonical FLRW Hubble-rate Christoffel, non-vanishing whenever
-`a'(t) ≠ 0` with `a(t) ≠ 0`. -/
+/-- If `a(x 0) ≠ 0`, then `Γ¹₀₁ = da(x 0) / a(x 0)`. When `da` is the
+derivative of `a`, this is the Hubble rate. -/
 theorem flrwChristoffel_1_01 (a da : ℝ → ℝ) (x : Fin 4 → ℝ)
     (hv : FLRWValid a x) :
     (flrwPartial a da).christoffel x 1 0 1 = da (x 0) / a (x 0) := by
@@ -214,16 +180,14 @@ theorem flrwChristoffel_1_01 (a da : ℝ → ℝ) (x : Fin 4 → ℝ)
   simp
   field_simp
 
-/-- **FLRW Christoffel `Γ¹_{11} = 0`** — pure spatial Christoffel for
-the spatially-flat FLRW vanishes (in comoving coordinates). -/
+/-- `Γ¹₁₁ = 0`. -/
 theorem flrwChristoffel_1_11 (a da : ℝ → ℝ) (x : Fin 4 → ℝ) :
     (flrwPartial a da).christoffel x 1 1 1 = 0 := by
   rw [flrwChristoffel_collapse]
   unfold flrwGinv flrwDg
   simp
 
-/-- **FLRW Christoffel `Γ⁰_{22} = a(t) a'(t)`** — same form as Γ^0_{11},
-by spatial isotropy. -/
+/-- `Γ⁰₂₂ = a(x 0) · da(x 0)`. -/
 theorem flrwChristoffel_0_22 (a da : ℝ → ℝ) (x : Fin 4 → ℝ) :
     (flrwPartial a da).christoffel x 0 2 2 = a (x 0) * da (x 0) := by
   rw [flrwChristoffel_collapse]
@@ -231,8 +195,7 @@ theorem flrwChristoffel_0_22 (a da : ℝ → ℝ) (x : Fin 4 → ℝ) :
   simp
   ring
 
-/-- **FLRW Christoffel `Γ⁰_{33} = a(t) a'(t)`** — same form as Γ^0_{11}
-and Γ^0_{22}, by spatial isotropy. -/
+/-- `Γ⁰₃₃ = a(x 0) · da(x 0)`. -/
 theorem flrwChristoffel_0_33 (a da : ℝ → ℝ) (x : Fin 4 → ℝ) :
     (flrwPartial a da).christoffel x 0 3 3 = a (x 0) * da (x 0) := by
   rw [flrwChristoffel_collapse]
@@ -240,8 +203,7 @@ theorem flrwChristoffel_0_33 (a da : ℝ → ℝ) (x : Fin 4 → ℝ) :
   simp
   ring
 
-/-- **FLRW Christoffel `Γ²_{02} = a'(t)/a(t)`** — Hubble rate on the
-y-axis. Same form as Γ^1_{01} by spatial isotropy. -/
+/-- If `a(x 0) ≠ 0`, then `Γ²₀₂ = da(x 0) / a(x 0)`. -/
 theorem flrwChristoffel_2_02 (a da : ℝ → ℝ) (x : Fin 4 → ℝ)
     (hv : FLRWValid a x) :
     (flrwPartial a da).christoffel x 2 0 2 = da (x 0) / a (x 0) := by
@@ -252,8 +214,7 @@ theorem flrwChristoffel_2_02 (a da : ℝ → ℝ) (x : Fin 4 → ℝ)
   simp
   field_simp
 
-/-- **FLRW Christoffel `Γ³_{03} = a'(t)/a(t)`** — Hubble rate on the
-z-axis. -/
+/-- If `a(x 0) ≠ 0`, then `Γ³₀₃ = da(x 0) / a(x 0)`. -/
 theorem flrwChristoffel_3_03 (a da : ℝ → ℝ) (x : Fin 4 → ℝ)
     (hv : FLRWValid a x) :
     (flrwPartial a da).christoffel x 3 0 3 = da (x 0) / a (x 0) := by

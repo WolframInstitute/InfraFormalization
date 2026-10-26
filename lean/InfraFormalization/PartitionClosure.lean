@@ -16,7 +16,7 @@ whose RHS pattern uses only bound indices ("seed-only", for example
 `PartitionPreserving r` states that two different bindings never
 produce the same seed-only edge.
 
-PROVED without `sorry` or `native_decide`:
+The module proves:
 
   * `seedOnly_map_indep_fresh`: the image of a seed-only RHS edge under
     `bindingExtend r ρ f` does not depend on `f`.
@@ -25,11 +25,10 @@ PROVED without `sorry` or `native_decide`:
   * `partitionClosure_base`: `PartitionClosureUnderStep` at depth 0,
     where the event list is empty.
 
-OPEN: `PartitionClosureTheorem`, the statement that for every
-`PartitionPreserving` rule, every seed and every depth d, every causal
-edge `(a, b)` of the fire-all trace satisfies
-`stepZeroAncestor events edges a = stepZeroAncestor events edges b`.
-The case d = 1 (`PartitionClosure_step1`) is also not proved.
+`PartitionClosureTheorem` states that for every `PartitionPreserving` rule, every seed and every
+depth d, every causal edge `(a, b)` of the fire-all trace satisfies
+`stepZeroAncestor events edges a = stepZeroAncestor events edges b`. It is not proved, and neither
+is the case d = 1 (`PartitionClosure_step1`).
 -/
 
 import InfraFormalization.FreshVertexPartition
@@ -250,8 +249,8 @@ theorem PartitionPreserving_doubleCycleRule_5 :
 The evolution is the fire-all operator: every match found in the state
 fires, including matches that share edges. The hypothesis `_h` is not
 used in the statement. `partitionClosure_base` proves the case d = 0.
-The implication `PartitionPreserving r → PartitionClosureUnderStep r h
-seed d` for d ≥ 1 is OPEN. -/
+The implication `PartitionPreserving r → PartitionClosureUnderStep r h seed d` for d ≥ 1 is not
+proved. -/
 def PartitionClosureUnderStep (r : ExecRule) (_h : PartitionPreserving r)
     (seed : ExecHG ℕ) (d : ℕ) : Prop :=
   let evolution := tracedFireAllEvolve ⟨[r]⟩ seed d
@@ -278,9 +277,9 @@ def PartitionClosure_step1 (r : ExecRule) (h : PartitionPreserving r)
     (seed : ExecHG ℕ) : Prop :=
   PartitionClosureUnderStep r h seed 1
 
-/-! ## Section H: the statement `PartitionClosureTheorem` (OPEN) -/
+/-! ## Section H: the statement `PartitionClosureTheorem` -/
 
-/-- `PartitionClosureTheorem` (OPEN): for every rule `r` with
+/-- `PartitionClosureTheorem`: for every rule `r` with
 `PartitionPreserving r`, every seed and every depth d,
 `PartitionClosureUnderStep r h seed d` holds.
 
@@ -306,7 +305,7 @@ theorem partitionPreserving_certified :
 
 /-! ## Contents
 
-PROVED (no `sorry`, no `native_decide`):
+Theorems:
 
   * `seedOnly_map_indep_fresh`: the image of a seed-only RHS edge does
     not depend on the fresh offset.
@@ -321,8 +320,7 @@ Definitions: `IsSeedOnlyRhsEdge`, `bindingExtend`, `PartitionPreserving`,
 `PartitionClosureUnderStep`, `PartitionClosure_step1`,
 `PartitionClosureTheorem`.
 
-OPEN: `PartitionClosureTheorem`, and `PartitionClosureUnderStep` at
-every depth d ≥ 1.
+Not proved: `PartitionClosureTheorem`, and `PartitionClosureUnderStep` at every depth d ≥ 1.
 -/
 
 end PartitionClosure

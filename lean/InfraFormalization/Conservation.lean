@@ -16,8 +16,8 @@ open Hypergraph Application
 
 variable {P V : Type*} [DecidableEq V] {r : Rule P} {H : Hypergraph V}
 
-/-- **Edge Conservation Theorem.** For a conservative rule, every
-application preserves the state size. -/
+/-- For a conservative rule, every application leaves the number of
+hyperedges unchanged. -/
 theorem Application.size_result_of_conservative
     (a : Application r H) (hcons : r.IsConservative) :
     a.result.size = H.size := by
@@ -33,12 +33,10 @@ theorem Application.size_result_of_conservative
   have hlerw : r.lhsSize ≤ H.edges.card := hc ▸ hle
   omega
 
-/-- Corollary: iterating any finite list of conservative applications
-never changes the state size, given that the starting application's
-input is `H₀` and subsequent applications chain through the `.result`
-of the previous one. Reformulated to avoid dependent-type gymnastics:
-we state the corollary on a list of applications (so there's no
-separate "state" list). -/
+/-- Let `as` be a list of applications of a conservative rule whose first
+input is `H₀` and in which each input is the result of the previous
+application. Then every input in the list has the same number of hyperedges
+as `H₀`. -/
 theorem size_preserved_by_applications
     (hcons : r.IsConservative)
     (H₀ : Hypergraph V)

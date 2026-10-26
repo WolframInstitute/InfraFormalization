@@ -1,19 +1,10 @@
 /-
-Scaled cycle graphs and their metric structure.
+Shortest-path distance on the cycle graph C_n.
 
-We define the cycle on `n` vertices (`Fin n`) with the shortest-path
-graph metric scaled by `1/n`. The long-term goal of this file is the
-Gromov–Hausdorff convergence
-
-  (C_n, d_graph/n)  →  ℝ/ℤ  as n → ∞.
-
-This is the first continuum-limit target of the infrageometry
-programme's Phase 3. This file establishes definitional infrastructure
-and proves the bare combinatorial facts needed downstream.
-
-**Discipline:** no `sorry`, no `decide`/`native_decide`, no custom
-axioms. Every theorem here depends only on Lean's three standard
-axioms.
+This module defines the unscaled shortest-path distance `cycleDist` on the cycle with vertex set
+`Fin n` and proves that it is symmetric, zero on the diagonal, bounded by `n / 2`, satisfies the
+triangle inequality, and vanishes only on the diagonal for `n ≥ 2`. The Gromov–Hausdorff convergence
+of (C_n, d/n) to the circle ℝ/ℤ is not proved here.
 -/
 
 import Mathlib.Data.Fin.Basic
@@ -53,12 +44,10 @@ theorem cycleDist_symm {n : Nat} (i j : Fin n) :
       simp only [h, h']
       rfl
 
-/-- `cycleDist n i j ≤ n / 2` — the diameter of the cycle graph on `n`
-vertices is at most `⌊n/2⌋`. -/
+/-- `cycleDist n i j ≤ n / 2`: the diameter of C_n is at most `⌊n/2⌋`. -/
 theorem cycleDist_le_half {n : Nat} (i j : Fin n) :
     cycleDist n i j ≤ n / 2 := by
   unfold cycleDist
-  -- Simply handle the two branches of the `if`.
   have hi : i.val < n := i.isLt
   have hj : j.val < n := j.isLt
   by_cases h : i.val ≤ j.val
@@ -72,8 +61,7 @@ theorem cycleDist_le_half {n : Nat} (i j : Fin n) :
     have h1 : i.val - j.val < n := by omega
     omega
 
-/-- Degenerate diameter: on `C_0` and `C_1`, the cycle distance is
-trivially 0. -/
+/-- For `n ≤ 1`, the cycle distance is 0. -/
 theorem cycleDist_zero_of_small {n : Nat} (hn : n ≤ 1) (i j : Fin n) :
     cycleDist n i j = 0 := by
   unfold cycleDist
@@ -106,8 +94,7 @@ theorem cycleDist_triangle {n : Nat} (i j k : Fin n) :
       · simp only [if_neg hij, if_neg hjk, if_pos hik]; omega
       · simp only [if_neg hij, if_neg hjk, if_neg hik]; omega
 
-/-- The cycle distance is identification-sensitive: it is zero exactly
-when the two vertices are equal. -/
+/-- For `n ≥ 2`, `cycleDist n i j = 0` if and only if `i = j`. -/
 theorem cycleDist_eq_zero_iff {n : Nat} (hn : 2 ≤ n) (i j : Fin n) :
     cycleDist n i j = 0 ↔ i = j := by
   constructor

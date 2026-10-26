@@ -1,21 +1,12 @@
 /-
-**Hypergraph Laplacian as a matrix, and heat kernel via `Matrix.exp`** (task R2 / #177).
+The hypergraph Laplacian as a matrix, and the heat kernel.
 
-For a finite-vertex hypergraph `H : Hypergraph V` (`[Fintype V]`,
-`[DecidableEq V]`), the Laplacian operator `laplacianHyper H` is a
-linear map `(V → ℝ) → (V → ℝ)`, hence representable as a matrix
-`Matrix V V ℝ`.
-
-  * `laplacianMatrixEdge e`: the per-edge matrix contribution.
-  * `laplacianMatrix H`: the full Laplacian matrix.
-  * `laplacianMatrix_mulVec`: matrix action equals `laplacianHyper` action.
-  * `heatKernel H t := exp(-t · Δ_H)`: heat propagator via Mathlib's
-    matrix exponential.
-  * `heatKernel_zero`, `heatKernel_add`: identity at `t = 0` and
-    semigroup property.
-
-This is Rung-3 of the bridge ladder: the heat equation now has a
-closed-form propagator for finite hypergraphs.
+For a hypergraph on a finite vertex type, this module defines the matrix `laplacianMatrix H` of the
+linear map `laplacianHyper H` and the heat kernel `heatKernel H t = exp(t · laplacianMatrix H)`,
+using Mathlib's matrix exponential. It proves that the matrix acts as `laplacianHyper`, is
+symmetric, and has zero row sums, and that the heat kernel equals the identity at `t = 0`, satisfies
+`heatKernel H (s + t) = heatKernel H s * heatKernel H t`, is symmetric, and has inverse
+`heatKernel H (-t)`.
 -/
 
 import InfraFormalization.HypergraphLaplacian
@@ -26,23 +17,18 @@ namespace Hypergraph
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
-/-- **Per-edge matrix contribution** to the Laplacian.
-
-For edge `e` and vertices `v, u : V`:
-  * off-diagonal (`u ≠ v`): `1` if `u ∈ e.others v`, else `0`.
-  * diagonal (`u = v`): `−|e.others v|`.
-
-Satisfies `(laplacianMatrixEdge e).mulVec f v = ∑_{w ∈ e.others v} (f w − f v)`. -/
+/-- The Laplacian matrix of a single edge `e`: the entry at `(v, u)` is 1 if `u ≠ v` and
+`u ∈ e.others v`, `−|e.others v|` if `u = v`, and 0 otherwise. -/
 noncomputable def laplacianMatrixEdge (e : Hyperedge V) : Matrix V V ℝ :=
   fun v u =>
     (if u ∈ e.others v then (1 : ℝ) else 0)
     - (if u = v then ((e.others v).card : ℝ) else 0)
 
-/-- **Full Laplacian matrix**: sum of per-edge matrices over `H.edges`. -/
+/-- The sum of `laplacianMatrixEdge e` over the edges of `H`. -/
 noncomputable def laplacianMatrix (H : Hypergraph V) : Matrix V V ℝ :=
   (H.edges.map laplacianMatrixEdge).sum
 
-/-- Matrix action of a per-edge Laplacian matches the per-edge Laplacian. -/
+/-- `(laplacianMatrixEdge e).mulVec f v = ∑_{w ∈ e.others v} (f w − f v)`. -/
 theorem laplacianMatrixEdge_mulVec (e : Hyperedge V) (f : V → ℝ) (v : V) :
     (laplacianMatrixEdge e).mulVec f v = ∑ w ∈ e.others v, (f w - f v) := by
   unfold laplacianMatrixEdge Matrix.mulVec
@@ -79,8 +65,7 @@ theorem laplacianMatrixEdge_mulVec (e : Hyperedge V) (f : V → ℝ) (v : V) :
   rw [Finset.sum_sub_distrib, Finset.sum_const,
       nsmul_eq_mul, mul_comm]
 
-/-- **Matrix action = Laplacian action**: for any `f : V → ℝ`,
-`(laplacianMatrix H).mulVec f v = laplacianHyper H f v`. -/
+/-- `(laplacianMatrix H).mulVec f v = laplacianHyper H f v`. -/
 theorem laplacianMatrix_mulVec (H : Hypergraph V) (f : V → ℝ) (v : V) :
     (laplacianMatrix H).mulVec f v = laplacianHyper H f v := by
   unfold laplacianMatrix laplacianHyper
@@ -92,36 +77,26 @@ theorem laplacianMatrix_mulVec (H : Hypergraph V) (f : V → ℝ) (v : V) :
     simp only [Multiset.map_cons, Multiset.sum_cons]
     rw [Matrix.add_mulVec, Pi.add_apply, ih, laplacianMatrixEdge_mulVec]
 
-/-! ## Heat kernel via `Matrix.exp` -/
+/-! ## Heat kernel -/
 
-/-- **Heat kernel on a hypergraph**. Since `laplacianHyper H` is
-negative-semidefinite (eigenvalues `≤ 0`) under our convention
-(cycle gives `−4 sin²(π k / n)`), the heat equation `∂_t u = Δ u`
-has solution `u(t) = exp(t · Δ) · u(0)`. The propagator is
-
-  `heatKernel H t := exp(t · laplacianMatrix H) : Matrix V V ℝ`
-
-(Mathlib's matrix exponential). -/
+/-- `heatKernel H t = exp(t · laplacianMatrix H)`. With the sign convention of `laplacianHyper`
+(negative semidefinite), `u(t) = heatKernel H t · u(0)` solves `∂_t u = Δ u`. -/
 noncomputable def heatKernel (H : Hypergraph V) (t : ℝ) : Matrix V V ℝ :=
   NormedSpace.exp (t • laplacianMatrix H)
 
-/-- **Heat kernel at `t = 0` is the identity.** -/
+/-- `heatKernel H 0 = 1`. -/
 theorem heatKernel_zero (H : Hypergraph V) :
     heatKernel H 0 = 1 := by
   unfold heatKernel
   simp [NormedSpace.exp_zero]
 
-/-- **Heat kernel at `t = 0` acts as identity on any initial data**.
-For every vector `v : V → ℝ`, `(heatKernel H 0).mulVec v = v`. -/
+/-- `(heatKernel H 0).mulVec v = v`. -/
 theorem heatKernel_zero_mulVec (H : Hypergraph V) (v : V → ℝ) :
     (heatKernel H 0).mulVec v = v := by
   rw [heatKernel_zero, Matrix.one_mulVec]
 
-/-- **Heat kernel semigroup**: `exp((s + t) Δ) = exp(s Δ) · exp(t Δ)`.
-
-Both factors are matrix exponentials of commuting matrices (scalar
-multiples of the same matrix), so the standard `exp_add_of_commute`
-gives the result. -/
+/-- `heatKernel H (s + t) = heatKernel H s * heatKernel H t`. The proof applies `exp_add_of_commute`
+to the commuting matrices `s • L` and `t • L`. -/
 theorem heatKernel_add (H : Hypergraph V) (s t : ℝ) :
     heatKernel H (s + t) = heatKernel H s * heatKernel H t := by
   unfold heatKernel
@@ -133,17 +108,13 @@ theorem heatKernel_add (H : Hypergraph V) (s t : ℝ) :
         rw [add_smul]]
   exact Matrix.exp_add_of_commute _ _ hcommute
 
-/-- **Laplacian matrix annihilates constants**: for any `c : ℝ`,
-`(laplacianMatrix H).mulVec (fun _ => c) v = 0`. -/
+/-- `(laplacianMatrix H).mulVec (fun _ => c) v = 0`. -/
 theorem laplacianMatrix_mulVec_const (H : Hypergraph V) (c : ℝ) (v : V) :
     (laplacianMatrix H).mulVec (fun _ => c) v = 0 := by
   rw [laplacianMatrix_mulVec]
   exact laplacianHyper_const H c v
 
-/-- **Laplacian matrix row-sum is zero**: for each `v : V`,
-`∑ u, laplacianMatrix H v u = 0`. This is the matrix-level statement
-of "the Laplacian kills constants," and implies that the all-ones
-vector `fun _ => 1` lies in the kernel of `laplacianMatrix H`. -/
+/-- `∑ u, laplacianMatrix H v u = 0` for every `v`. -/
 theorem laplacianMatrix_row_sum (H : Hypergraph V) (v : V) :
     ∑ u, laplacianMatrix H v u = 0 := by
   have h := laplacianMatrix_mulVec_const H 1 v
@@ -151,11 +122,7 @@ theorem laplacianMatrix_row_sum (H : Hypergraph V) (v : V) :
   simp only [dotProduct, mul_one] at h
   exact h
 
-/-- **Per-edge Laplacian matrix is symmetric**: for each edge `e`,
-`laplacianMatrixEdge e v u = laplacianMatrixEdge e u v` because
-membership `u ∈ e.others v` is symmetric in `(u, v)` when `u ≠ v`,
-and the diagonal `u = v` case reduces to `-|e.others v|` on both
-sides. -/
+/-- `laplacianMatrixEdge e v u = laplacianMatrixEdge e u v`. -/
 theorem laplacianMatrixEdge_symm (e : Hyperedge V) (v u : V) :
     laplacianMatrixEdge e v u = laplacianMatrixEdge e u v := by
   unfold laplacianMatrixEdge
@@ -184,8 +151,7 @@ theorem laplacianMatrixEdge_symm (e : Hyperedge V) (v u : V) :
     · rw [if_pos h, if_pos (h_iff.mp h)]
     · rw [if_neg h, if_neg (fun h' => h (h_iff.mpr h'))]
 
-/-- **Full Laplacian matrix is symmetric**: sum of symmetric
-per-edge matrices is symmetric. -/
+/-- `laplacianMatrix H` is symmetric. -/
 theorem laplacianMatrix_symm (H : Hypergraph V) :
     (laplacianMatrix H).IsSymm := by
   unfold Matrix.IsSymm laplacianMatrix
@@ -200,9 +166,7 @@ theorem laplacianMatrix_symm (H : Hypergraph V) :
     simp only [Multiset.map_cons, Multiset.sum_cons, Matrix.add_apply]
     rw [ih, laplacianMatrixEdge_symm e u v]
 
-/-- **Heat kernel is symmetric.** Since `laplacianMatrix H` is symmetric,
-`t • laplacianMatrix H` is symmetric, and `Matrix.exp` of a symmetric
-matrix is symmetric (via `Matrix.IsSymm.exp`). -/
+/-- `heatKernel H t` is symmetric. -/
 theorem heatKernel_symm (H : Hypergraph V) (t : ℝ) :
     (heatKernel H t).IsSymm := by
   unfold heatKernel
@@ -211,30 +175,25 @@ theorem heatKernel_symm (H : Hypergraph V) (t : ℝ) :
     rw [Matrix.transpose_smul, (laplacianMatrix_symm H).eq]
   exact h_sym.exp
 
-/-- **Heat kernel at `−t` is the inverse of heat kernel at `t`.**
-Backward heat flow is the formal inverse of forward heat flow. -/
+/-- `heatKernel H (-t) = (heatKernel H t)⁻¹`. -/
 theorem heatKernel_neg (H : Hypergraph V) (t : ℝ) :
     heatKernel H (-t) = (heatKernel H t)⁻¹ := by
   unfold heatKernel
   rw [neg_smul, Matrix.exp_neg]
 
-/-- **Heat kernel composed with its time-reversal is the identity**:
-`heatKernel H t * heatKernel H (-t) = 1`. Direct consequence of
-`heatKernel_add` at `s = t, t = -t` plus `heatKernel_zero`. -/
+/-- `heatKernel H t * heatKernel H (-t) = 1`. -/
 theorem heatKernel_mul_heatKernel_neg (H : Hypergraph V) (t : ℝ) :
     heatKernel H t * heatKernel H (-t) = 1 := by
   rw [← heatKernel_add, add_neg_cancel, heatKernel_zero]
 
 /-! ## Heat kernel trace -/
 
-/-- **Heat trace** `Tr(exp(−t Δ_H))`: the fundamental object whose
-small-`t` asymptotics `Tr(exp(−t Δ)) ~ C · t^{−d_s/2}` defines the
-**spectral dimension** of a hypergraph (task ID7). -/
+/-- The trace of `heatKernel H t`. Its behaviour `C · t^{−d_s/2}` for small `t` defines the spectral
+dimension `d_s`. -/
 noncomputable def heatTrace (H : Hypergraph V) (t : ℝ) : ℝ :=
   (heatKernel H t).trace
 
-/-- **Heat trace at `t = 0`** equals the number of vertices: the
-heat kernel at zero time is the identity matrix, whose trace is `|V|`. -/
+/-- `heatTrace H 0` equals the number of vertices. -/
 theorem heatTrace_zero (H : Hypergraph V) :
     heatTrace H 0 = (Fintype.card V : ℝ) := by
   unfold heatTrace

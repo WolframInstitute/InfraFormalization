@@ -1,19 +1,7 @@
 /-
-**Spectrum of the Hodge 0-Laplacian on a VR complex** (task IT3 / #135 partial).
+Linearity, kernel and symmetry of the Vietoris–Rips 0-Laplacian.
 
-PHAJEK's IT3 asks for the spectrum of the Hodge Laplacian on the
-Vietoris–Rips complex of a hypergraph, as a hypergraph invariant.
-
-This file proves the baseline structural facts about `vrHodge0` (from
-`HodgeVR.lean`) that make its spectrum well-defined:
-
-  * additivity + ℝ-scalar-homogeneity (it's a linear operator),
-  * `0` is an eigenvalue, witnessed by constant functions (the 0-form
-    harmonic / kernel).
-
-Full IT3 — the spectrum as a hypergraph invariant + relationship to
-persistent Betti numbers — is future work and requires the persistence
-infrastructure beyond the current `PersistenceBarcode` stub.
+This module proves that `vrHodge0 ε` from `HodgeVR.lean` is additive and homogeneous, that constant functions lie in its kernel, and that it is symmetric for the ℓ² pairing `∑_v f v · g v`. The spectrum itself is not computed.
 -/
 
 import InfraFormalization.HodgeVR
@@ -23,7 +11,7 @@ namespace Hypergraph
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
-/-- **Hodge 0-Laplacian is additive**. -/
+/-- `vrHodge0 ε (f + g) v = vrHodge0 ε f v + vrHodge0 ε g v`. -/
 theorem vrHodge0_add (H : Hypergraph V) (ε : ℕ) (f g : V → ℝ) (v : V) :
     H.vrHodge0 ε (fun u => f u + g u) v
       = H.vrHodge0 ε f v + H.vrHodge0 ε g v := by
@@ -32,7 +20,7 @@ theorem vrHodge0_add (H : Hypergraph V) (ε : ℕ) (f g : V → ℝ) (v : V) :
   refine Finset.sum_congr rfl (fun u _ => ?_)
   ring
 
-/-- **Hodge 0-Laplacian is ℝ-linear in the scalar**. -/
+/-- `vrHodge0 ε (c · f) v = c · vrHodge0 ε f v`. -/
 theorem vrHodge0_smul (H : Hypergraph V) (ε : ℕ) (c : ℝ) (f : V → ℝ) (v : V) :
     H.vrHodge0 ε (fun u => c * f u) v = c * H.vrHodge0 ε f v := by
   unfold vrHodge0
@@ -40,12 +28,7 @@ theorem vrHodge0_smul (H : Hypergraph V) (ε : ℕ) (c : ℝ) (f : V → ℝ) (v
   refine Finset.sum_congr rfl (fun u _ => ?_)
   ring
 
-/-- **Zero is an eigenvalue of the Hodge 0-Laplacian** (structural fact
-inside the IT3 spectrum). The constant function `fun _ => 1` is in the
-kernel — equivalently, the 0-th Hodge-cohomology of the VR complex
-contains the constants.
-
-We demand `[Nonempty V]` so that the "constant-1" function is nonzero. -/
+/-- For nonempty `V`, there is a nonzero `f : V → ℝ` with `vrHodge0 ε f = 0`. The witness is the constant function `1`. -/
 theorem vrHodge0_has_zero_eigenvalue (H : Hypergraph V) (ε : ℕ) [Nonempty V] :
     ∃ f : V → ℝ, f ≠ 0 ∧ ∀ v, H.vrHodge0 ε f v = 0 := by
   refine ⟨fun _ => 1, ?_, ?_⟩
@@ -56,28 +39,12 @@ theorem vrHodge0_has_zero_eigenvalue (H : Hypergraph V) (ε : ℕ) [Nonempty V] 
   · intro v
     exact vrHodge0_const H ε 1 v
 
-/-- **Multiple eigenvalues come from multiple constants.** Any constant
-`c : ℝ` gives a kernel element. -/
+/-- For every constant `c : ℝ`, `vrHodge0 ε (fun _ => c) v = 0`. -/
 theorem vrHodge0_const_in_kernel (H : Hypergraph V) (ε : ℕ) (c : ℝ) (v : V) :
     H.vrHodge0 ε (fun _ => c) v = 0 :=
   vrHodge0_const H ε c v
 
-/-- **Self-adjointness (ℓ² symmetry) of the Hodge 0-Laplacian.**
-For all `f g : V → ℝ`,
-
-  `∑ v, f v · (vrHodge0 g v) = ∑ v, g v · (vrHodge0 f v)`.
-
-This is the spectral-theorem prerequisite for IT3: `vrHodge0` has a
-real spectrum and an orthogonal eigenbasis (finite-dim spectral
-theorem).
-
-Proof strategy: split each side into two double sums. The
-"bilinear cross term" `∑_{(v,u) adj} f(v) g(u)` has a swap-under-adj
-symmetry (since `SimpleGraph.Adj` is symmetric, so the ordered pair
-`(v,u)` running over adjacent pairs is in bijection with `(u,v)`
-running over the same set). The "diagonal" contributions
-`∑_{(v,u) adj} f(v) g(v)` collect into `∑_v deg(v) · f(v) · g(v)` —
-already symmetric in `f ↔ g`. So the two sides agree. -/
+/-- For all `f g : V → ℝ`, `∑ v, f v * vrHodge0 ε g v = ∑ v, g v * vrHodge0 ε f v`. The proof splits each side into the cross term `∑_{(v,u) adjacent} f v · g u`, which is symmetric because adjacency is symmetric, and the diagonal term `∑_{(v,u) adjacent} f v · g v`. -/
 theorem vrHodge0_symm (H : Hypergraph V) (ε : ℕ) (f g : V → ℝ) :
     ∑ v, f v * H.vrHodge0 ε g v = ∑ v, g v * H.vrHodge0 ε f v := by
   classical
@@ -90,10 +57,8 @@ theorem vrHodge0_symm (H : Hypergraph V) (ε : ℕ) (f g : V → ℝ) :
     unfold vrHodge0
     simp only [Finset.mul_sum, Finset.sum_filter, mul_ite, mul_zero]
   rw [h_expand f g, h_expand g f]
-  -- Now each side is a double sum over (v, u) pairs. Split into
-  -- cross (f v * g u) and diagonal (f v * g v) contributions; the
-  -- diagonal is trivially symmetric, the cross is symmetric under
-  -- the adj-swap (adj v u ↔ adj u v).
+  -- Split each double sum into the cross term (f v * g u) and the
+  -- diagonal term (f v * g v).
   have h_split : ∀ h₁ h₂ : V → ℝ,
       (∑ v, ∑ u, (if (H.vietorisRipsGraph ε).Adj v u then
           h₁ v * (h₂ u - h₂ v) else 0))

@@ -1,16 +1,10 @@
 /-
-Scaled path graph and its convergence to the unit interval.
+Path graph P_{n+1} with metric scaled by `1/n`.
 
-Second continuum-limit target of the infrageometry programme: the
-scaled path `P_{n+1}` (i.e., `Fin (n+1)` with edges between `i` and
-`i+1`, endowed with the graph metric divided by `n`) converges in
-Gromov–Hausdorff sense to the unit interval `[0, 1]`.
-
-Unlike the cycle case, the path has no wraparound, so the embedding
-`i ↦ i/n` maps into `[0, 1]` using *all* of it including the endpoint,
-and the embedding is exactly isometric to real absolute-difference.
-
-No `sorry`, no `decide`, no custom axioms.
+This module defines the path distance `pathDist` on `Fin (n+1)` and the embedding
+`pathEmbed n i = i/n` into [0, 1]. It proves that `pathDist` is a metric bounded by `n`, that
+`|pathEmbed n i - pathEmbed n j| = pathDist n i j / n`, and that every point of [0, 1] is within
+`1/(2n)` of the image of `pathEmbed n`.
 -/
 
 import Mathlib.Data.Fin.Basic
@@ -20,8 +14,8 @@ import Mathlib.Tactic
 namespace InfraFormalization
 namespace Infra
 
-/-- Graph distance on the path `Fin (n+1)`: `pathDist n i j = |i - j|`
-(as Nat subtraction). -/
+/-- Shortest-path distance on the path graph with vertex set `Fin (n+1)`:
+`pathDist n i j = |i - j|`. -/
 def pathDist (n : Nat) (i j : Fin (n+1)) : Nat :=
   if i.val ≤ j.val then j.val - i.val else i.val - j.val
 
@@ -69,7 +63,7 @@ theorem pathDist_le {n : Nat} (i j : Fin (n+1)) : pathDist n i j ≤ n := by
   · simp only [if_pos h]; omega
   · simp only [if_neg h]; omega
 
-/-- The lattice embedding `Fin (n+1) → [0, 1] ⊂ ℝ`, `i ↦ i/n`. -/
+/-- The embedding `Fin (n+1) → ℝ`, `i ↦ i/n`. -/
 noncomputable def pathEmbed (n : Nat) (i : Fin (n+1)) : ℝ := (i.val : ℝ) / n
 
 theorem pathEmbed_mem_unit_interval {n : Nat} (hn : 0 < n) (i : Fin (n+1)) :
@@ -82,8 +76,7 @@ theorem pathEmbed_mem_unit_interval {n : Nat} (hn : 0 < n) (i : Fin (n+1)) :
     have : i.val ≤ n := Nat.lt_succ_iff.mp i.isLt
     exact_mod_cast this
 
-/-- **Isometry of the path embedding.** `|pathEmbed i - pathEmbed j| =
-pathDist n i j / n` (Euclidean distance on ℝ). -/
+/-- For `n > 0`, `|pathEmbed n i - pathEmbed n j| = pathDist n i j / n`. -/
 theorem pathEmbed_isometry {n : Nat} (hn : 0 < n) (i j : Fin (n+1)) :
     |pathEmbed n i - pathEmbed n j| = (pathDist n i j : ℝ) / n := by
   have hn_pos : (0 : ℝ) < n := by exact_mod_cast hn
@@ -101,16 +94,13 @@ theorem pathEmbed_isometry {n : Nat} (hn : 0 < n) (i j : Fin (n+1)) :
       rw [Nat.cast_sub hji]; ring]
     rw [abs_of_nonneg (div_nonneg (Nat.cast_nonneg _) (le_of_lt hn_pos))]
 
-/-- **Covering bound.** Every `x ∈ [0, 1]` is within Euclidean distance
-`1 / (2n)` of some `pathEmbed i`. -/
+/-- For `n > 0`, every `x ∈ [0, 1]` is within `1/(2n)` of some `pathEmbed n i`. -/
 theorem pathEmbed_covers {n : Nat} (hn : 0 < n)
     (x : ℝ) (hx : 0 ≤ x) (hx' : x ≤ 1) :
     ∃ i : Fin (n+1), |x - pathEmbed n i| ≤ 1 / (2 * n) := by
   have hn_pos : (0 : ℝ) < n := by exact_mod_cast hn
   have h2n_pos : (0 : ℝ) < 2 * n := by linarith
-  -- Find the nearest lattice point. Consider i = round(n*x) in {0, ..., n}.
-  -- Set i' = ⌊n*x + 1/2⌋; clamp to {0, …, n}.
-  -- Simpler: use ⌊n*x⌋ and consider both ⌊n*x⌋/n and (⌊n*x⌋+1)/n.
+  -- Take m = ⌊n·x⌋ and compare x with m/n and (m+1)/n.
   set m : ℕ := ⌊(n : ℝ) * x⌋₊ with hm_def
   have hm_le : (m : ℝ) ≤ (n : ℝ) * x :=
     Nat.floor_le (mul_nonneg (le_of_lt hn_pos) hx)
@@ -123,7 +113,6 @@ theorem pathEmbed_covers {n : Nat} (hn : 0 < n)
             exact mul_le_mul_of_nonneg_left hx' (le_of_lt hn_pos)
         _ = (n : ℝ) := by ring
     exact_mod_cast this
-  -- Consider m/n and (m+1)/n as candidate lattice points.
   by_cases h_left_close : x - (m : ℝ) / n ≤ 1 / (2 * n)
   · -- x is close to m/n. m ≤ n so m ∈ Fin (n+1).
     refine ⟨⟨m, Nat.lt_succ_of_le hm_le_n⟩, ?_⟩
@@ -177,10 +166,10 @@ theorem pathEmbed_covers {n : Nat} (hn : 0 < n)
     rw [h_expand]
     linarith
 
-/-- **Packaged continuum-limit theorem.** The scaled path `P_{n+1}`
-GH-approximates the unit interval `[0, 1]` with error ≤ `1 / (2n)`:
-there exists an isometric embedding `Fin (n+1) → [0, 1]` whose image
-is `(1/(2n))`-Hausdorff-dense. -/
+/-- For `n > 0`, there is a map `f : Fin (n+1) → ℝ` with values in [0, 1] such that
+`|f i - f j| = pathDist n i j / n` and every point of [0, 1] is within `1/(2n)` of the image of `f`.
+These conditions bound the Gromov–Hausdorff distance between (P_{n+1}, pathDist/n) and [0, 1] by
+`1/(2n)`. -/
 theorem path_interval_gh_bound (n : Nat) (hn : 0 < n) :
     ∃ f : Fin (n+1) → ℝ,
       (∀ i, 0 ≤ f i ∧ f i ≤ 1) ∧

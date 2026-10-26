@@ -1,22 +1,12 @@
 /-
-**Partial metric data with domain predicate** (X1 / #24).
+Metric data with a domain of validity.
 
-Some exact solutions of general relativity (Schwarzschild exterior,
-FLRW-with-constraints, etc.) are only valid on a subset of ambient
-coordinate space. A `MetricData n` demands the inverse axiom
-`ginv_mul` *everywhere*, which is wrong for Schwarzschild: inside
-the horizon `g_{tt}` changes sign and the components blow up at
-`r = 2M`. So Schwarzschild does not naturally fit `MetricData 4`.
-
-A `PartialMetricData n` carries a domain predicate `valid : (Fin n → ℝ) → Prop`
-and asks inverse-compatibility, partial-derivative symmetry, etc.
-*only when `valid x` holds*. The `MetricData n` form is the special
-case `valid x = True`.
-
-**Connection to hypergraphs.** Same anchor as `CurvatureLocalCoord`:
-on the continuum side. A future hypergraph trajectory that produces a
-manifold with singularities would pair with a `PartialMetricData`
-via the bridge theorems.
+`MetricData n` requires `ginv` to be the inverse of `g` at every point, which fails for metrics such
+as Schwarzschild, whose components are singular at `r = 2M`. This module defines
+`PartialMetricData n`, which carries a predicate `valid` and requires symmetry and the inverse
+relation only where `valid x` holds. It defines the Christoffel symbols, proves their symmetry in
+the
+lower indices on the domain, and embeds `MetricData n` with `valid = True`.
 -/
 
 import InfraFormalization.CurvatureLocalCoord
@@ -24,14 +14,11 @@ import InfraFormalization.CurvatureLocalCoord
 namespace InfraFormalization
 namespace Curvature
 
-/-- **Partial metric data**: `MetricData n` with a domain predicate
-`valid : (Fin n → ℝ) → Prop`. Axioms hold only at `x` with `valid x`.
-
-Note that the *type* of the components `g`, `ginv`, `dg` is the same
-(functions on the full `Fin n → ℝ`). Outside `valid`, these are
-allowed to be anything; downstream theorems use them only inside
-`valid`. This mirrors how a chart-extension in differential geometry
-leaves values outside the chart unspecified. -/
+/-- Metric components `g`, inverse components `ginv` and first derivatives `dg` on `Fin n → ℝ`, with
+a
+predicate `valid`. Symmetry and the inverse relation are required only at points where `valid`
+holds,
+and the components are unconstrained elsewhere. -/
 structure PartialMetricData (n : Nat) where
   /-- Metric components `g_{μν}(x)`. -/
   g : (Fin n → ℝ) → Fin n → Fin n → ℝ
@@ -48,25 +35,21 @@ structure PartialMetricData (n : Nat) where
   /-- `ginv` is the matrix inverse of `g` on the validity domain. -/
   ginv_mul : ∀ x, valid x → ∀ μ ν,
     (∑ α : Fin n, ginv x μ α * g x α ν) = if μ = ν then 1 else 0
-  /-- Partial derivatives inherit symmetry on the validity domain. -/
+  /-- `dg l x` is symmetric on the validity domain. -/
   dg_symm : ∀ l x, valid x → ∀ μ ν, dg l x μ ν = dg l x ν μ
 
 namespace PartialMetricData
 
 variable {n : Nat} (M : PartialMetricData n)
 
-/-- **Restricted Christoffel symbols** — only defined on the validity
-domain. Outside `valid`, the value is the same formula applied to
-whatever `ginv` and `dg` return (but not guaranteed to satisfy the
-usual geometric axioms).
-
-`Γ^ρ_{μν}(x) = ½ g^{ρσ}(x) · (∂_μ g_{σν}(x) + ∂_ν g_{σμ}(x) − ∂_σ g_{μν}(x))`. -/
+/-- `Γ^ρ_{μν}(x) = ½ g^{ρσ}(x) · (∂_μ g_{σν}(x) + ∂_ν g_{σμ}(x) − ∂_σ g_{μν}(x))`, defined at every
+point. -/
 noncomputable def christoffel (x : Fin n → ℝ) (ρ μ ν : Fin n) : ℝ :=
   (1 / 2) * ∑ σ : Fin n,
     M.ginv x ρ σ *
       (M.dg μ x σ ν + M.dg ν x σ μ - M.dg σ x μ ν)
 
-/-- **Christoffel symmetry on the validity domain.** -/
+/-- If `valid x`, then `Γ^ρ_{μν}(x) = Γ^ρ_{νμ}(x)`. -/
 theorem christoffel_symm (x : Fin n → ℝ) (hv : M.valid x) (ρ μ ν : Fin n) :
     M.christoffel x ρ μ ν = M.christoffel x ρ ν μ := by
   unfold christoffel
@@ -81,8 +64,7 @@ theorem christoffel_symm (x : Fin n → ℝ) (hv : M.valid x) (ρ μ ν : Fin n)
 
 end PartialMetricData
 
-/-- **Every `MetricData n` is a `PartialMetricData n` with trivial
-validity**: the domain predicate is `True` everywhere. -/
+/-- A `MetricData n` as a `PartialMetricData n` with `valid x = True`. -/
 noncomputable def MetricData.toPartial {n : Nat} (M : MetricData n) :
     PartialMetricData n where
   g := M.g
@@ -94,8 +76,7 @@ noncomputable def MetricData.toPartial {n : Nat} (M : MetricData n) :
   ginv_mul := fun x _ => M.ginv_mul x
   dg_symm := fun l x _ => M.dg_symm l x
 
-/-- **Consistency**: the partial Christoffel on `toPartial` equals
-the full Christoffel. -/
+/-- The Christoffel symbols of `M.toPartial` equal those of `M`. -/
 theorem MetricData.toPartial_christoffel {n : Nat} (M : MetricData n)
     (x : Fin n → ℝ) (ρ μ ν : Fin n) :
     M.toPartial.christoffel x ρ μ ν = M.christoffel x ρ μ ν := by

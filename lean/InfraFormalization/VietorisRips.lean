@@ -1,25 +1,12 @@
 /-
-**Vietoris-Rips complex** of a hypergraph (Group IT / #133).
+Vietoris-Rips complexes of hypergraphs.
 
-The Vietoris-Rips complex `VR_ε(H)` at scale `ε` is the abstract
-simplicial complex whose simplices are finite subsets of `V` whose
-pairwise hypergraph distances are all `≤ ε`.
-
-This file formalises:
-
-  * `VietorisRipsEdge H ε u v` — `u` and `v` are within `ε` under
-    the hypergraph distance.
-  * `VietorisRipsSimplex H ε S` — a finset `S ⊆ V` where every pair
-    is `≤ ε`-close.
-  * The 1-skeleton as a `SimpleGraph V` (`VietorisRipsGraph`).
-
-Full ASC structure with higher-dimensional simplices is deferred;
-this stub plus the topological-invariant interface (Betti numbers,
-persistence) lives in IT2/IT4 follow-ups.
-
-**Connection to hypergraphs.** Native. `VR_ε` is defined directly
-in terms of `Hypergraph.dist`, which comes from the clique-expansion
-adjacency — no continuum objects appear.
+This module defines, for a hypergraph `H` and a scale `ε : ℕ`, the
+Vietoris-Rips edge relation `dist u v ≤ ε`, the simplex predicate (every
+pair in a finset is within `ε`) and the 1-skeleton as a `SimpleGraph V`.
+It proves that simplices are closed under subsets, that the empty set and
+singletons are simplices, that simplices persist under increasing `ε`, and
+that at `ε = 0` no two reachable vertices are adjacent.
 -/
 
 import InfraFormalization.HypergraphDistance
@@ -30,31 +17,28 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 
 namespace Hypergraph
 
-/-- **Vietoris-Rips 1-simplex predicate**: `u` and `v` are within
-hypergraph-distance `ε`. -/
+/-- `u` and `v` are within hypergraph distance `ε`. -/
 def VietorisRipsEdge (H : Hypergraph V) (ε : ℕ) (u v : V) : Prop :=
   H.dist u v ≤ ε
 
-/-- **Vietoris-Rips simplex predicate**: every pair in `S` is within
-`ε`. -/
+/-- Every pair of vertices in `S` is within hypergraph distance `ε`. -/
 def VietorisRipsSimplex (H : Hypergraph V) (ε : ℕ) (S : Finset V) : Prop :=
   ∀ u ∈ S, ∀ v ∈ S, H.dist u v ≤ ε
 
-/-- **Every subset of a VR-simplex is a VR-simplex** (simplicial
-closure property). -/
+/-- A subset of a Vietoris-Rips simplex is a Vietoris-Rips simplex. -/
 theorem VietorisRipsSimplex.mono {H : Hypergraph V} {ε : ℕ}
     {S T : Finset V} (hS : H.VietorisRipsSimplex ε S) (hsub : T ⊆ S) :
     H.VietorisRipsSimplex ε T := by
   intros u hu v hv
   exact hS u (hsub hu) v (hsub hv)
 
-/-- **Empty simplex** is always a VR-simplex. -/
+/-- The empty set is a Vietoris-Rips simplex. -/
 theorem VietorisRipsSimplex.empty (H : Hypergraph V) (ε : ℕ) :
     H.VietorisRipsSimplex ε ∅ := by
   intros u hu
   exact absurd hu (Finset.notMem_empty u)
 
-/-- **Singletons are VR-simplices** (self-distance is 0). -/
+/-- Every singleton is a Vietoris-Rips simplex. -/
 theorem VietorisRipsSimplex.singleton (H : Hypergraph V) (ε : ℕ) (v : V) :
     H.VietorisRipsSimplex ε {v} := by
   intros u hu w hw
@@ -63,16 +47,15 @@ theorem VietorisRipsSimplex.singleton (H : Hypergraph V) (ε : ℕ) (v : V) :
   rw [Hypergraph.dist_self]
   exact Nat.zero_le _
 
-/-- **Monotonicity in `ε`**: enlarging the scale only adds simplices. -/
+/-- A simplex at scale `ε` is a simplex at every scale `δ ≥ ε`. -/
 theorem VietorisRipsSimplex.mono_scale {H : Hypergraph V} {ε δ : ℕ}
     {S : Finset V} (h : ε ≤ δ) (hS : H.VietorisRipsSimplex ε S) :
     H.VietorisRipsSimplex δ S := by
   intros u hu v hv
   exact le_trans (hS u hu v hv) h
 
-/-- **The VR 1-skeleton as a `SimpleGraph V`.** Vertices are all of
-`V`; edges are unordered pairs at hypergraph distance `≤ ε` (and
-distinct). Noncomputable because `dist` is noncomputable. -/
+/-- The simple graph on `V` in which distinct `u`, `v` are adjacent when
+`dist u v ≤ ε`. -/
 noncomputable def vietorisRipsGraph (H : Hypergraph V) (ε : ℕ) : SimpleGraph V where
   Adj u v := u ≠ v ∧ H.dist u v ≤ ε
   symm := by
@@ -82,11 +65,9 @@ noncomputable def vietorisRipsGraph (H : Hypergraph V) (ε : ℕ) : SimpleGraph 
     exact hd
   loopless := ⟨fun v ⟨hne, _⟩ => hne rfl⟩
 
-/-- **At `ε = 0`, the VR graph has no edges on a connected component**
-— if `u` and `v` are distinct and reachable, they have distance `≥ 1`.
-For pairs in different components the VR-0 edge predicate reduces to
-the junk `dist = 0` value on the unreachable side; we state the
-version restricted to reachable pairs. -/
+/-- If `v` is reachable from `u` in `H.toSimpleGraph`, then `u` and `v` are
+not adjacent in `H.vietorisRipsGraph 0`. Unreachable pairs have
+`dist = 0` and are excluded by the hypothesis. -/
 theorem vietorisRipsGraph_zero_no_edges_reachable (H : Hypergraph V)
     {u v : V} (hreach : H.toSimpleGraph.Reachable u v) :
     ¬ (H.vietorisRipsGraph 0).Adj u v := by

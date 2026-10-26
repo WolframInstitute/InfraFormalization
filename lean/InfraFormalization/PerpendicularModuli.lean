@@ -1,26 +1,13 @@
 /-
-**PerpendicularModuli — multi-method perpendicularity** (#390 starter).
+Several definitions of perpendicularity on a graph.
 
-PHAJEK's `InfraPerpendicularQ` in `SyntheticInfrageometry` exposes
-multiple inequivalent definitions of perpendicularity (Schoenberg,
-Centroid, four-corner-wedge — `resources/SyntheticInfrageometry/Kernel/InfraEquality.wl`),
-each a distinct invariant. The paclet treats this as a feature via an
-explicit `Method` argument. **This is the F1 moduli observation made
-structural at the perpendicular layer**: a graph does not determine
-*one* notion of perpendicularity — it determines a moduli of
-inequivalent notions, each a method choice.
-
-This module is the Lean realisation of that pattern. A `PerpMethod`
-inductive enumerates the methods; per-method predicates compute the
-perpendicularity verdict; a concrete `native_decide`-checked example
-shows the methods *disagree* on a small graph — the F1 sharpening at
-the perpendicular level.
-
-**Starter scope.** Two concrete decidable methods that demonstrably
-disagree on the 4-cycle. Schoenberg / Centroid / Four-corner-wedge
-bodies left to the follow-up; the framework here is what holds them
-together, and the central non-implication theorem
-`perpendicular_methods_disagree` is the structural F1 realisation.
+P. Hajek's `InfraPerpendicularQ` in the `SyntheticInfrageometry` paclet
+(`resources/SyntheticInfrageometry/Kernel/InfraEquality.wl`) takes a `Method` argument that selects
+one of several inequivalent definitions of perpendicularity. This module defines three decidable
+methods (`adjacencyWedge`, `sharedNeighbour`, `pythagoreanHop`) for a triple `(u, v, w)` with vertex
+`v` at the corner, and proves by `decide` that each pair of methods gives different values on some
+triple in the 4-cycle or the path on three vertices. The Schoenberg, centroid and four-corner-wedge
+methods of the paclet are not defined here.
 -/
 
 import InfraFormalization.Hypergraph
@@ -30,18 +17,14 @@ import Mathlib.Data.List.Basic
 namespace InfraFormalization
 namespace PerpendicularModuli
 
-/-- **The space of perpendicularity methods**. Each method is a
-distinct invariant; the F1 moduli observation says no single one is
-canonical. -/
+/-- The three perpendicularity methods defined in this module. -/
 inductive PerpMethod
   | adjacencyWedge    -- v adjacent to both u and w, but u, w not adjacent
   | sharedNeighbour   -- u, w have v as a unique common neighbour (and u ≠ w)
   | pythagoreanHop    -- "Schoenberg-style": hop count d(u,v)² + d(v,w)² = d(u,w)²
 deriving DecidableEq, Repr
 
-/-- Local computable adjacency on a `List (Hyperedge V)` (the ExecHG
-representation): `u, w` are adjacent iff `u ≠ w` and some edge contains
-both. Fully `decide`-able for finite concrete graphs. -/
+/-- `u ≠ w` and some edge of `H` contains both. -/
 def adjB {V : Type*} [DecidableEq V]
     (H : List (Hyperedge V)) (u w : V) : Bool :=
   (u != w) && H.any (fun e => e.verts.contains u && e.verts.contains w)
@@ -52,34 +35,25 @@ def commonNeighbours {V : Type*} [DecidableEq V]
     (carrier : List V) (H : List (Hyperedge V)) (u w : V) : ℕ :=
   (carrier.filter (fun v => v != u && v != w && adjB H u v && adjB H v w)).length
 
-/-- **adjacency-wedge perpendicularity at `v`**: `v` is adjacent to both
-`u` and `w`, and `u, w` are *not* adjacent to each other. -/
+/-- `v` is adjacent to `u` and to `w`, and `u` is not adjacent to `w`. -/
 def isPerpAdjacencyWedge {V : Type*} [DecidableEq V]
     (H : List (Hyperedge V)) (u v w : V) : Bool :=
   adjB H u v && adjB H v w && !adjB H u w
 
-/-- **shared-neighbour perpendicularity at `v`** over a finite carrier:
-`v` is the *unique* common neighbour of `u` and `w` (and `u ≠ w`). -/
+/-- `u ≠ w` and `v` is the only common neighbour of `u` and `w` in `carrier`. -/
 def isPerpSharedNeighbour {V : Type*} [DecidableEq V]
     (carrier : List V) (H : List (Hyperedge V)) (u v w : V) : Bool :=
   (u != w) && adjB H u v && adjB H v w
     && (commonNeighbours carrier H u w == 1)
 
-/-- Small-step distance: `0` if equal, `1` if adjacent, `2` otherwise.
-Sufficient for distinguishing `adjacent / non-adjacent / equal` cases
-in small concrete graphs without a full BFS. -/
+/-- 0 if `u = v`, 1 if `u` and `v` are adjacent, and 2 otherwise. -/
 def smallStepDist {V : Type*} [DecidableEq V]
     (H : List (Hyperedge V)) (u v : V) : ℕ :=
   if u = v then 0
   else if adjB H u v then 1
   else 2
 
-/-- **Pythagorean-hop perpendicularity at `v`** (Schoenberg-style):
-the small-step squared equation `d(u,v)² + d(v,w)² = d(u,w)²` holds.
-Distinct from `adjacencyWedge` (which is purely local) and from
-`sharedNeighbour` (which is combinatorial). For the 4-cycle and a
-3-path the verdicts differ across methods — the F1 moduli becomes
-three-way at the perpendicular layer. -/
+/-- `d(u,v)² + d(v,w)² = d(u,w)²` with `d = smallStepDist H`. -/
 def isPerpPythagoreanHop {V : Type*} [DecidableEq V]
     (H : List (Hyperedge V)) (u v w : V) : Bool :=
   let d_uv := smallStepDist H u v
@@ -87,9 +61,7 @@ def isPerpPythagoreanHop {V : Type*} [DecidableEq V]
   let d_uw := smallStepDist H u w
   decide (d_uv * d_uv + d_vw * d_vw = d_uw * d_uw)
 
-/-- **Method-parameterised perpendicularity predicate.** The carrier
-list is the finite vertex set over which the shared-neighbour count is
-taken — the other methods ignore it. -/
+/-- Perpendicularity of `(u, v, w)` by the given method. Only `sharedNeighbour` uses `carrier`. -/
 def isPerpendicular {V : Type*} [DecidableEq V]
     (method : PerpMethod) (carrier : List V) (H : List (Hyperedge V))
     (u v w : V) : Bool :=
@@ -98,19 +70,11 @@ def isPerpendicular {V : Type*} [DecidableEq V]
   | .sharedNeighbour  => isPerpSharedNeighbour carrier H u v w
   | .pythagoreanHop   => isPerpPythagoreanHop H u v w
 
-/-! ## Demonstration: the two methods disagree on the 4-cycle
+/-! ## Two methods on the 4-cycle
 
-In `cycle4HG = [{0,1}, {1,2}, {2,3}, {3,0}]` over `Fin 4`, look at the
-triple `(0, 1, 2)`:
-  * Adjacency-wedge: `1—0`? no, `0—1` yes. `1—2` yes. `0—2`? no. So
-    `0—1—2` is a wedge with right angle at `1`. AFFIRMED.
-  * Shared-neighbour at `1` for the pair `(0, 2)`: count common
-    neighbours of `0` and `2`. Vertex `1` is one. Vertex `3` is the
-    other (`3—0` and `3—2` via edges `{3,0}` and `{2,3}`). So the
-    count is `2`, not `1`. REJECTED.
-
-The methods disagree — the F1 moduli at the perpendicular layer,
-certified. -/
+In `cycle4HG = [{0,1}, {1,2}, {2,3}, {3,0}]` and the triple `(0, 1, 2)`, `adjacencyWedge` holds:
+`1` is adjacent to `0` and `2`, and `0` is not adjacent to `2`. `sharedNeighbour` fails: `0` and `2`
+have the two common neighbours `1` and `3`. -/
 
 /-- A directed 2-edge on `Fin 4`. -/
 def cycle4Edge (a b : Fin 4) : Hyperedge (Fin 4) :=
@@ -140,12 +104,9 @@ example :
     isPerpendicular .sharedNeighbour cycle4Carrier cycle4HG 0 1 2 := by
   native_decide
 
-/-- **The F1 moduli theorem at the perpendicular layer**: there is a
-graph, a carrier, a triple, and two distinct `PerpMethod`s on which the
-perpendicularity verdicts differ. The hypergraph does not determine a
-*canonical* notion of perpendicularity — only a moduli of method
-choices, exactly as F1 predicts at the metric level and PHAJEK's paclet
-treats as a feature via the `Method` argument. -/
+/-- There exist a carrier, a graph on `Fin 4`, a triple and two methods for which `isPerpendicular`
+takes
+different values. -/
 theorem perpendicular_methods_disagree :
     ∃ (carrier : List (Fin 4)) (H : List (Hyperedge (Fin 4)))
       (u v w : Fin 4) (m₁ m₂ : PerpMethod),
@@ -154,10 +115,7 @@ theorem perpendicular_methods_disagree :
   ⟨cycle4Carrier, cycle4HG, 0, 1, 2,
     .adjacencyWedge, .sharedNeighbour, by native_decide⟩
 
-/-! ### Three-way moduli: every pair of distinct methods disagrees
-
-With `pythagoreanHop` added, the moduli is no longer just two-way —
-each pair of the three methods disagrees on some triple. -/
+/-! ### Each pair of the three methods -/
 
 /-- A 3-path on `Fin 3`: edges `[0,1], [1,2]`. -/
 def path3HG : List (Hyperedge (Fin 3)) :=
@@ -182,10 +140,9 @@ example :
     isPerpendicular .pythagoreanHop path3Carrier path3HG 0 1 2 := by
   native_decide
 
-/-- **Every pair of distinct `PerpMethod`s disagrees on some graph and
-triple.** The three-way moduli theorem: there is no canonical
-perpendicularity, and the three methods are pairwise distinguishable
-as invariants. -/
+/-- For each of the three pairs of methods, there exist a graph and a triple on which the two
+methods
+give different values. -/
 theorem perp_methods_pairwise_disagree :
     -- adjacencyWedge vs sharedNeighbour
     (∃ (carrier : List (Fin 4)) (H : List (Hyperedge (Fin 4)))

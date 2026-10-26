@@ -1,44 +1,13 @@
 /-
-Curvature tensors in local coordinates (Rung 5 of the bridge ladder).
+Metric data and Christoffel symbols in local coordinates on `ℝⁿ`.
 
-We formalise the Christoffel symbols, Riemann tensor, Ricci tensor,
-scalar curvature, and Einstein tensor as **explicit formulas in local
-coordinates**, sidestepping the coordinate-free bundle machinery that
-Mathlib doesn't yet have.
-
-**Representation.** A metric on `ℝⁿ` is an `n × n` symmetric
-invertible matrix-valued function of position, together with its first
-partial derivatives (given as data, not derived from smoothness). This
-lets us write Christoffel symbols, curvature tensors, etc. as
-algebraic expressions in the components.
-
-**Scope.** This file stops at the Christoffel symbols and first
-identities. Riemann and Ricci require second partial derivatives of
-the metric (or first derivatives of Christoffels) as additional data,
-and are in a follow-up file.
-
-**Why this route.** A full bundle-theoretic Riemannian formalisation
-(Rung 4) is in our plan and decomposed in `BRIDGE_MACHINERY.md`; the
-local-coordinate version here is the *near-term target* for the
-discrete-side approximations (Forman-Ricci, Ollivier-Ricci, discrete
-connection on hypergraphs) to converge to.
-
-**Hypergraph anchor (status: pending, prioritised).** The Christoffel
-symbols / Riemann tensor / Ricci defined here are *targets*, not
-standalone continuum objects. Per the grounding principle, they must
-be reachable from hypergraph dynamics via:
-
-  1. **Discrete Ricci** on the hypergraph (Forman-Ricci or
-     Ollivier-Ricci — pending in `DiscreteRicci.lean`),
-  2. **Convergence theorem** showing the discrete Ricci on a scaled
-     hypergraph approaches the continuum Ricci on the GH-limit
-     manifold,
-  3. **Discrete connection** on hypergraph fibres → Levi-Civita in
-     the limit (Rung 4.4 in `BRIDGE_MACHINERY.md`).
-
-The local-coord formalisation here is therefore "future-anchored":
-the targets are written, the discrete-side anchor is the next
-priority. This file does **not** stand as continuum-only mathematics.
+This module defines `MetricData n`: components `g`, a left inverse
+`ginv`, and a separately supplied first-derivative array `dg`, with
+symmetry conditions. The array `dg` is not required to be the
+derivative of `g`. It defines the Christoffel symbols of the second
+kind from these data, proves their symmetry in the lower indices,
+defines the Minkowski metric `minkowski4` with signature `(−, +, +, +)`,
+and proves that its Christoffel symbols vanish.
 -/
 
 import Mathlib.Data.Real.Basic
@@ -52,16 +21,11 @@ import Mathlib.Tactic.Linarith
 namespace InfraFormalization
 namespace Curvature
 
-/-- **Metric-with-derivatives data** on `ℝⁿ`. Carries:
-  * the metric components `g_{μν}(x)`,
-  * the inverse metric components `g^{μν}(x)`,
-  * the first partial derivatives `∂_λ g_{μν}(x)`,
-  * symmetry and inverse axioms.
-
-We do NOT require `g` to be smooth (we treat `∂_λ g` as a separate
-user-supplied function). Nondegeneracy is enforced via the inverse
-axiom. Signature is unrestricted — both Riemannian and Lorentzian
-data fit. -/
+/-- Metric data on `ℝⁿ`: components `g_{μν}(x)`, inverse components
+`g^{μν}(x)` with `g^{-1} g = I`, and an array `dg` standing for
+`∂_λ g_{μν}(x)`, with `g`, `ginv` and `dg` symmetric in `μ, ν`. No
+smoothness of `g` and no relation between `dg` and `g` is required.
+The signature is unrestricted. -/
 structure MetricData (n : Nat) where
   /-- Metric components `g_{μν}(x)`. -/
   g : (Fin n → ℝ) → Fin n → Fin n → ℝ
@@ -76,30 +40,22 @@ structure MetricData (n : Nat) where
   /-- `ginv` is the matrix inverse of `g`. -/
   ginv_mul : ∀ x μ ν, (∑ α : Fin n, ginv x μ α * g x α ν)
                       = if μ = ν then 1 else 0
-  /-- Partial derivatives inherit symmetry from the metric:
-      `∂_l g_{μν} = ∂_l g_{νμ}`. -/
+  /-- `dg` is symmetric: `∂_l g_{μν} = ∂_l g_{νμ}`. -/
   dg_symm : ∀ l x μ ν, dg l x μ ν = dg l x ν μ
 
 namespace MetricData
 
 variable {n : Nat} (M : MetricData n)
 
-/-- **Christoffel symbols of the second kind.**
-
-  `Γ^ρ_{μν}(x) = ½ g^{ρσ}(x) · (∂_μ g_{σν}(x) + ∂_ν g_{σμ}(x) − ∂_σ g_{μν}(x))`.
-
-Sum over `σ` is implicit (summation over repeated index). We write
-it explicitly using `Finset.sum`. -/
+/-- Christoffel symbols of the second kind,
+`Γ^ρ_{μν}(x) = ½ ∑_σ g^{ρσ}(x) · (∂_μ g_{σν}(x) + ∂_ν g_{σμ}(x) − ∂_σ g_{μν}(x))`,
+with the derivatives taken from `dg`. -/
 noncomputable def christoffel (x : Fin n → ℝ) (ρ μ ν : Fin n) : ℝ :=
   (1 / 2) * ∑ σ : Fin n,
     M.ginv x ρ σ *
       (M.dg μ x σ ν + M.dg ν x σ μ - M.dg σ x μ ν)
 
-/-- **Symmetry of Christoffel symbols in the lower indices.**
-  `Γ^ρ_{μν} = Γ^ρ_{νμ}`.
-
-Follows directly from `dg_symm` and the expression's symmetry in
-`μ ↔ ν`. -/
+/-- `Γ^ρ_{μν} = Γ^ρ_{νμ}`, by `dg_symm`. -/
 theorem christoffel_symm (x : Fin n → ℝ) (ρ μ ν : Fin n) :
     M.christoffel x ρ μ ν = M.christoffel x ρ ν μ := by
   unfold christoffel
@@ -114,11 +70,9 @@ theorem christoffel_symm (x : Fin n → ℝ) (ρ μ ν : Fin n) :
 
 end MetricData
 
-/-- **Minkowski metric** on `ℝ⁴` with signature `(−, +, +, +)`:
-  `g_{00} = −1, g_{11} = g_{22} = g_{33} = +1, g_{μν} = 0` for `μ ≠ ν`.
-
-Partial derivatives are identically zero (the metric is
-position-independent). -/
+/-- The Minkowski metric on `ℝ⁴` with signature `(−, +, +, +)`:
+`g_{00} = −1`, `g_{11} = g_{22} = g_{33} = 1`, `g_{μν} = 0` for `μ ≠ ν`,
+and `dg = 0`. -/
 noncomputable def minkowski4 : MetricData 4 where
   g := fun _ μ ν =>
     if μ = ν then
@@ -165,7 +119,7 @@ noncomputable def minkowski4 : MetricData 4 where
   dg_symm := by
     intros l x μ ν; rfl
 
-/-- For Minkowski, all Christoffel symbols vanish identically. -/
+/-- All Christoffel symbols of `minkowski4` are 0. -/
 theorem minkowski4_christoffel_zero (x : Fin 4 → ℝ) (ρ μ ν : Fin 4) :
     minkowski4.christoffel x ρ μ ν = 0 := by
   unfold MetricData.christoffel minkowski4

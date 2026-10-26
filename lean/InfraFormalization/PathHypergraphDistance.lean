@@ -1,18 +1,10 @@
 /-
-**Path hypergraph: distance / connectivity theorems** (T5 extension,
-fully hypergraph-grounded).
+Adjacency, connectivity and degrees in the path hypergraph.
 
-On `pathHypergraph n` (a hypergraph on `Fin n` with edges `{i, i+1}`),
-this file provides:
-
-  * `pathHypergraph_Adj_iff` — adjacency is `val = ±1`.
-  * `pathHypergraph_connected` — the path is connected for `n ≥ 1`.
-  * `pathHypergraph_heatKernel_const_invariant` — heat kernel
-    preserves constant functions on the path.
-  * `pathHypergraph_laplacianMatrix_row_sum_zero` — row sums of the
-    path Laplacian matrix vanish.
-
-Everything here is on `pathHypergraph n` directly — no continuum side.
+For `pathHypergraph n`, this module proves that the Laplacian matrix annihilates constants and has
+zero row sums, that the heat kernel fixes constant functions, that two vertices are adjacent if and
+only if their values differ by 1, that the graph is connected for `n ≥ 1`, and that vertex 0 has
+degree 1 for `n ≥ 2` and vertex 1 has degree 2 for `n ≥ 3`.
 -/
 
 import InfraFormalization.PathHypergraph
@@ -24,39 +16,32 @@ namespace InfraFormalization
 
 open Hypergraph
 
-/-- **Path hypergraph adjacency** is `val difference = ±1`. Every edge
-of `pathHypergraph n` is `{i, i+1}` for some `i : Fin (n-1)`, so two
-vertices are adjacent iff their `val`s differ by 1. -/
+/-- `(laplacianMatrix (pathHypergraph n)).mulVec (fun _ => c) v = 0`. -/
 theorem pathHypergraph_laplacianMatrix_mulVec_const (n : ℕ) (c : ℝ) (v : Fin n) :
     (Hypergraph.laplacianMatrix (pathHypergraph n)).mulVec (fun _ => c) v = 0 :=
   laplacianMatrix_mulVec_const (pathHypergraph n) c v
 
-/-- **Heat kernel on pathHypergraph preserves constant functions.**
-Since `Δ_P · const = 0`, `exp(t · Δ_P) · const = exp(0) · const = const`.
-Direct instantiation of the general `heatKernel_mulVec_const`. -/
+/-- `heatKernel (pathHypergraph n) t` maps the constant function `c` to itself. -/
 theorem heatKernel_pathHypergraph_const_invariant (n : ℕ) (c : ℝ) (t : ℝ) :
     (Hypergraph.heatKernel (pathHypergraph n) t).mulVec (fun _ => c)
       = (fun _ => c) :=
   heatKernel_mulVec_const (pathHypergraph n) c t
 
-/-- **Path Laplacian row sums vanish.** Direct consequence of
-`laplacianMatrix_row_sum` applied to `pathHypergraph n`. -/
+/-- The rows of `laplacianMatrix (pathHypergraph n)` sum to 0. -/
 theorem pathHypergraph_laplacianMatrix_row_sum_zero (n : ℕ) (v : Fin n) :
     ∑ w : Fin n, Hypergraph.laplacianMatrix (pathHypergraph n) v w = 0 :=
   laplacianMatrix_row_sum (pathHypergraph n) v
 
-/-- **Path Laplacian commutes with the constant function**: the path
-heat-flow leaves any constant function untouched. This is the
-"conservation of the average" statement for path-graph diffusion. -/
+/-- `heatKernel (pathHypergraph n) t` applied to the constant function `c` takes the value `c` at
+every vertex. -/
 theorem pathHypergraph_heatKernel_preserves_const_at (n : ℕ) (c : ℝ) (t : ℝ)
     (v : Fin n) :
     ((Hypergraph.heatKernel (pathHypergraph n) t).mulVec (fun _ => c)) v = c := by
   rw [heatKernel_pathHypergraph_const_invariant n c t]
 
-/-- **Path hypergraph adjacency iff val-difference is 1.** Two vertices
-of `pathHypergraph n` are adjacent iff they are distinct and their
-`Fin`-values differ by exactly one. Unlike the cycle, there is no
-wrap-around: `0` is not adjacent to `n - 1`. -/
+/-- `i` and `j` are adjacent in `pathHypergraph n` if and only if `i ≠ j` and their values differ by
+1.
+Vertex `0` is not adjacent to `n - 1` for `n ≥ 3`. -/
 theorem pathHypergraph_Adj_iff (n : ℕ) (i j : Fin n) :
     (pathHypergraph n).Adj i j ↔ i ≠ j ∧ (i.val + 1 = j.val ∨ j.val + 1 = i.val) := by
   constructor
@@ -156,9 +141,7 @@ theorem pathHypergraph_Adj_iff (n : ℕ) (i j : Fin n) :
         left
         exact Fin.ext rfl
 
-/-- **Every vertex of `pathHypergraph n` is reachable from `0`**
-(assuming `n ≥ 1`). Induction on the `val` of the target vertex,
-using the adjacency of consecutive values. -/
+/-- For `n ≥ 1`, every vertex of `pathHypergraph n` is reachable from `0`. -/
 theorem pathHypergraph_reachable_zero {n : ℕ} [NeZero n] (k : Fin n) :
     (pathHypergraph n).toSimpleGraph.Reachable
       ⟨0, Nat.pos_of_ne_zero (NeZero.ne n)⟩ k := by
@@ -179,9 +162,7 @@ theorem pathHypergraph_reachable_zero {n : ℕ} [NeZero n] (k : Fin n) :
       simp at hval
     exact ih'.trans hadj.reachable
 
-/-- **`pathHypergraph n` is connected** for `n ≥ 1` (i.e., `[NeZero n]`).
-Every vertex is reachable from `0`, hence from every other vertex by
-symmetry and transitivity. -/
+/-- For `n ≥ 1`, `pathHypergraph n` is connected. -/
 theorem pathHypergraph_connected {n : ℕ} [NeZero n] :
     (pathHypergraph n).toSimpleGraph.Connected := by
   refine SimpleGraph.Connected.mk ?_
@@ -190,10 +171,7 @@ theorem pathHypergraph_connected {n : ℕ} [NeZero n] :
   have hv := pathHypergraph_reachable_zero v
   exact hu.symm.trans hv
 
-/-- **Endpoint degree = 1 in `pathHypergraph n` for `n ≥ 2`.** The
-vertex `0 : Fin n` has exactly one neighbour, namely `1 : Fin n`,
-because `Adj 0 j ↔ j.val = 1` (the `j.val + 1 = 0` alternative is
-impossible in ℕ). -/
+/-- For `n ≥ 2`, vertex `0` of `pathHypergraph n` has degree 1. -/
 theorem pathHypergraph_degree_zero {n : ℕ} [NeZero n] (hn : 2 ≤ n) :
     (pathHypergraph n).toSimpleGraph.degree
         ⟨0, Nat.pos_of_ne_zero (NeZero.ne n)⟩ = 1 := by
@@ -228,10 +206,7 @@ theorem pathHypergraph_degree_zero {n : ℕ} [NeZero n] (hn : 2 ≤ n) :
   rw [SimpleGraph.degree, hneigh]
   simp
 
-/-- **Interior degree = 2 in `pathHypergraph n` for `n ≥ 3`.** The
-vertex `1 : Fin n` has exactly two neighbours, `0` and `2`, because
-both `j.val = 2` (`1 + 1 = j.val`) and `j.val = 0` (`j.val + 1 = 1`)
-are admissible for `n ≥ 3`. -/
+/-- For `n ≥ 3`, vertex `1` of `pathHypergraph n` has degree 2. -/
 theorem pathHypergraph_degree_one {n : ℕ} [NeZero n] (hn : 3 ≤ n) :
     (pathHypergraph n).toSimpleGraph.degree ⟨1, by omega⟩ = 2 := by
   have h0lt : (0 : ℕ) < n := by omega

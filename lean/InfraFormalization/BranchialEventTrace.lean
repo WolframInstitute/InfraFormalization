@@ -20,16 +20,15 @@ open RuleSignatureExecMetrics
 open KnillDiscreteGaussBonnet
 open CausalEventTrace
 
-/-! ## Deriving branchial edges from an event list -/
+/-! ## Same-step contention pairs from an event list -/
 
-/-- Two events are branchially adjacent iff they share at least one
-consumed edge **at the same step**. -/
+/-- Two events have the same step and share at least one consumed edge
+value. -/
 def eventsAreBranchial (eA eB : CausalEvent) : Bool :=
   decide (eA.step = eB.step) && edgesIntersect eA.consumed eB.consumed
 
-/-- Derive the branchial-edge list from an event list: for each pair
-`(i, j)` with `i < j`, add an edge if events `i` and `j` are at the
-same step and share consumed edges. -/
+/-- The list of index pairs `(i, j)` with `i < j` such that events `i` and
+`j` satisfy `eventsAreBranchial`. -/
 def deriveBranchialEdges (events : List CausalEvent) : List (Nat × Nat) :=
   let indexed := events.zipIdx
   indexed.foldr (fun (eA, i) acc =>
@@ -44,7 +43,9 @@ def branchialDAGOfEvolution (sys : ExecSystem) (H : ExecHG ℕ) (n : Nat) :
   let (_, events) := tracedSingleWayEvolve sys H n
   pairsToExecHG (deriveBranchialEdges events)
 
-/-- Same-step contention edges of `n` traced fire-all steps. -/
+/-- Same-step contention edges of `n` traced fire-all steps. The fire-all
+operator applies every match, including overlapping ones, and is not a
+Wolfram model update. -/
 def branchialDAGOfFireAll (sys : ExecSystem) (H : ExecHG ℕ) (n : Nat) :
     ExecHG ℕ :=
   let (_, events) := tracedFireAllEvolve sys H n
@@ -52,8 +53,9 @@ def branchialDAGOfFireAll (sys : ExecSystem) (H : ExecHG ℕ) (n : Nat) :
 
 /-! ## Example -/
 
-/-- On the subdivision rule from one edge, three steps give no same-step
-contention, so the scaled Knill value of the empty edge list is 0. -/
+/-- For the subdivision rule from one edge, the scaled Knill value of the
+same-step contention graph of three single-way steps is 0. Checked by
+`native_decide`. -/
 theorem subdivision_branchial_knill :
     knillEulerScaled (branchialDAGOfEvolution
       MultiwayExec.subdivisionSys [consEdge 1 2] 3) = 0 := by

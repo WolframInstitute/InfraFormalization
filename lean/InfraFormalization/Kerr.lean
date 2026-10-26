@@ -1,26 +1,15 @@
 /-
-**Kerr metric — rotating black hole** (B9 / #29).
+Kerr metric in Boyer–Lindquist coordinates.
 
-In Boyer-Lindquist coordinates `(t, r, θ, φ)` with mass M and spin
-parameter a:
+With coordinates `(t, r, θ, φ)`, mass `M` and spin `a`, `Σ = r² + a² cos²θ` and
+`Δ = r² − 2Mr + a²`, the metric is
 
-  `Σ = r² + a² cos²θ`
-  `Δ = r² − 2Mr + a²`
+  `ds² = -(1 − 2Mr/Σ) dt² + (Σ/Δ) dr² + Σ dθ² + (r² + a² + 2Ma²r sin²θ / Σ) sin²θ dφ²`
+  `      − (4Mar sin²θ / Σ) dt dφ`.
 
-  `ds² = -(1 − 2Mr/Σ) dt² + (Σ/Δ) dr² + Σ dθ²`
-  `    + (r² + a² + 2Ma²r sin²θ / Σ) sin²θ dφ²`
-  `    − (4Mar sin²θ / Σ) dt dφ`
-
-**Non-diagonal** — the `dt dφ` cross term is essential and represents
-frame dragging. Horizons at `Δ = 0`, i.e. `r = M ± √(M² − a²)`.
-Ergosphere at `Σ = 2Mr`. Validity: `Σ > 0 ∧ Δ > 0 ∧ sin θ ≠ 0`.
-
-Reduces to Schwarzschild when `a = 0`. This file provides the
-metric components + validity predicate as a target for B9 / future
-Kerr-vacuum proof.
-
-**Connection to hypergraphs.** Same anchor: continuum-target side.
-The Kerr rule-origin claim (JGORARD et al.) is currently unsupported.
+This module defines `Σ`, `Δ`, the metric components `kerrG` and the predicate `KerrValid`. It proves
+that `kerrG` is symmetric and that at `a = 0` the `tt`, `tφ` and `θθ` components equal
+`-(1 - 2M/r)`, 0 and `r²`. The vacuum Einstein equations for Kerr are not proved here.
 -/
 
 import InfraFormalization.PartialMetricData
@@ -30,16 +19,15 @@ import Mathlib.Tactic.FieldSimp
 namespace InfraFormalization
 namespace Curvature
 
-/-- **Boyer-Lindquist sigma function** `Σ = r² + a² cos²θ`. -/
+/-- `Σ = r² + a² cos²θ`. -/
 noncomputable def kerrSigma (a : ℝ) (r θ : ℝ) : ℝ :=
   r^2 + a^2 * (Real.cos θ)^2
 
-/-- **Boyer-Lindquist delta function** `Δ = r² − 2Mr + a²`. -/
+/-- `Δ = r² − 2Mr + a²`. -/
 noncomputable def kerrDelta (M a : ℝ) (r : ℝ) : ℝ :=
   r^2 - 2 * M * r + a^2
 
-/-- **Kerr metric components** in Boyer-Lindquist coordinates. Has
-both diagonal and `dt dφ` off-diagonal parts. -/
+/-- The Kerr metric components in Boyer–Lindquist coordinates, including the `tφ` cross term. -/
 noncomputable def kerrG (M a : ℝ) (x : Fin 4 → ℝ) (μ ν : Fin 4) : ℝ :=
   let r := x 1
   let θ := x 2
@@ -55,28 +43,24 @@ noncomputable def kerrG (M a : ℝ) (x : Fin 4 → ℝ) (μ ν : Fin 4) : ℝ :=
     -(2 * M * a * r * (Real.sin θ)^2 / sg)
   else 0
 
-/-- **Kerr validity predicate**: outside the outer horizon and off
-the axis. -/
+/-- `Σ > 0`, `Δ > 0` and `sin θ ≠ 0` at the point `x`. The condition `Δ > 0` holds outside the
+outer horizon and inside the inner horizon. -/
 def KerrValid (M a : ℝ) (x : Fin 4 → ℝ) : Prop :=
   kerrSigma a (x 1) (x 2) > 0 ∧
   kerrDelta M a (x 1) > 0 ∧
   Real.sin (x 2) ≠ 0
 
-/-- **Kerr reduces to Schwarzschild when `a = 0`.** At spin zero:
-`Σ(0, r, θ) = r²`, `Δ(M, 0, r) = r² - 2Mr = r(r - 2M)`.
-
-Shown at the lapse-function level: `1 - 2Mr/Σ = 1 - 2M/r` for `a = 0`. -/
+/-- At `a = 0`, `Σ = r²`. -/
 theorem kerrSigma_zero_spin (r θ : ℝ) : kerrSigma 0 r θ = r^2 := by
   unfold kerrSigma
   ring
 
+/-- At `a = 0`, `Δ = r² - 2Mr`. -/
 theorem kerrDelta_zero_spin (M r : ℝ) : kerrDelta M 0 r = r^2 - 2*M*r := by
   unfold kerrDelta
   ring
 
-/-- **Kerr metric is symmetric.** The diagonal is symmetric by
-`if μ = ν` (commutative). The `dt dφ` = `dφ dt` cross term is
-explicitly symmetric. -/
+/-- `kerrG M a x μ ν = kerrG M a x ν μ`. -/
 theorem kerrG_symm (M a : ℝ) (x : Fin 4 → ℝ) (μ ν : Fin 4) :
     kerrG M a x μ ν = kerrG M a x ν μ := by
   unfold kerrG
@@ -85,8 +69,7 @@ theorem kerrG_symm (M a : ℝ) (x : Fin 4 → ℝ) (μ ν : Fin 4) :
   · rw [h1]
   · fin_cases μ <;> fin_cases ν <;> simp_all
 
-/-- **Kerr sigma positivity**: at any `r, θ`, `Σ > 0` whenever
-`r ≠ 0 ∨ a cos θ ≠ 0`. In particular `Σ > 0` whenever `r > 0`. -/
+/-- If `r > 0`, then `Σ > 0`. -/
 theorem kerrSigma_pos_of_r_pos (a r θ : ℝ) (hr : r > 0) :
     kerrSigma a r θ > 0 := by
   unfold kerrSigma
@@ -94,9 +77,7 @@ theorem kerrSigma_pos_of_r_pos (a r θ : ℝ) (hr : r > 0) :
   have h2 : a^2 * (Real.cos θ)^2 ≥ 0 := by positivity
   linarith
 
-/-- **Kerr at `a = 0` is Schwarzschild in spherical coordinates on the
-diagonal `tt` component.** At spin zero, `Σ = r²`, so
-`kerrG 0 x 0 0 = -(1 - 2M/r)`, matching Schwarzschild's `sgg M x 0 0`. -/
+/-- For `a = 0` and `r > 0`, the `tt` component equals `-(1 - 2M/r)`, the Schwarzschild value. -/
 theorem kerrG_00_zero_spin (M : ℝ) (x : Fin 4 → ℝ) (hr : x 1 > 0) :
     kerrG M 0 x ⟨0, by decide⟩ ⟨0, by decide⟩ = -(1 - 2 * M / x 1) := by
   unfold kerrG
@@ -106,15 +87,13 @@ theorem kerrG_00_zero_spin (M : ℝ) (x : Fin 4 → ℝ) (hr : x 1 > 0) :
   simp
   field_simp
 
-/-- **Kerr off-diagonal vanishes at `a = 0`.** The `tt-φφ` cross-term
-is proportional to `a`, so it vanishes when the spin is zero — Kerr
-reduces to a diagonal metric. -/
+/-- For `a = 0`, the `tφ` component is 0. -/
 theorem kerrG_tφ_zero_spin (M : ℝ) (x : Fin 4 → ℝ) :
     kerrG M 0 x ⟨0, by decide⟩ ⟨3, by decide⟩ = 0 := by
   unfold kerrG
   simp
 
-/-- **Kerr θθ component at `a = 0`**: `kerrG 0 x 2 2 = r²`. -/
+/-- For `a = 0`, the `θθ` component equals `r²`. -/
 theorem kerrG_θθ_zero_spin (M : ℝ) (x : Fin 4 → ℝ) :
     kerrG M 0 x ⟨2, by decide⟩ ⟨2, by decide⟩ = (x 1)^2 := by
   unfold kerrG

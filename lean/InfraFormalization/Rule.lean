@@ -28,10 +28,9 @@ variable {P : Type*}
 /-- The number of right-hand-side edges. -/
 @[simp] def rhsSize (r : Rule P) : Nat := r.rhs.size
 
-/-- A rule is **conservative** iff it has the same number of edges on
-both sides. This is a structural property visible at the rule level.
-Every conservative rule preserves `state.size` under every application;
-see `Conservation.lean`. -/
+/-- A rule is conservative if its left-hand and right-hand sides have the
+same number of edges. `Conservation.lean` proves that an application of a
+conservative rule preserves the edge count. -/
 def IsConservative (r : Rule P) : Prop := r.lhsSize = r.rhsSize
 
 end Rule

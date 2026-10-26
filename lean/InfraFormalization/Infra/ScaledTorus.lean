@@ -1,15 +1,10 @@
 /-
-Scaled 2D lattice and its convergence to the flat 2-torus.
+Two-dimensional torus lattice with metric scaled by `1/n`.
 
-Third continuum-limit target of the infrageometry programme:
-the scaled lattice `(Fin n × Fin n, torusLatticeDist/n)` GH-converges to
-the flat 2-torus `(ℝ/ℤ)²` with the product circle-metric.
-
-We reuse `cycleDist` (one-dimensional) and combine it via the
-product metric `max` (equivalently, the L∞ product) — the cleanest
-choice to match `max` of circle distances on the target torus.
-Alternative choices (L¹ or L²) would give different but related
-results.
+This module defines the L∞ product `torusLatticeDist` of two cycle distances on `Fin n × Fin n`,
+the L∞ product `torusDist` of two circle distances on ℝ × ℝ, and the embedding
+`torusEmbed n (i, j) = (i/n, j/n)`. It proves that the embedding scales distances by `1/n` and that
+every point of [0, 1)² is within `1/(2n)` of its image.
 -/
 
 import InfraFormalization.Infra.ScaledCycle
@@ -18,9 +13,8 @@ import InfraFormalization.Infra.Circle
 namespace InfraFormalization
 namespace Infra
 
-/-- Graph distance on the 2D torus lattice `Fin n × Fin n`, using L∞:
-`torusLatticeDist n (i₁,i₂) (j₁,j₂) = max(cycleDist n i₁ j₁, cycleDist n i₂ j₂)`.
--/
+/-- L∞ product of cycle distances on `Fin n × Fin n`:
+`torusLatticeDist n (i₁, i₂) (j₁, j₂) = max (cycleDist n i₁ j₁) (cycleDist n i₂ j₂)`. -/
 def torusLatticeDist (n : Nat) (p q : Fin n × Fin n) : Nat :=
   max (cycleDist n p.1 q.1) (cycleDist n p.2 q.2)
 
@@ -40,8 +34,8 @@ theorem torusLatticeDist_triangle {n : Nat} (p q r : Fin n × Fin n) :
   have h2 := cycleDist_triangle p.2 q.2 r.2
   omega
 
-/-- Product circle distance (L∞): `torusDist (x₁,x₂) (y₁,y₂) =
-max(circleDist x₁ y₁, circleDist x₂ y₂)`. -/
+/-- L∞ product of circle distances on ℝ × ℝ:
+`torusDist (x₁, x₂) (y₁, y₂) = max (circleDist x₁ y₁) (circleDist x₂ y₂)`. -/
 noncomputable def torusDist (p q : ℝ × ℝ) : ℝ :=
   max (circleDist p.1 q.1) (circleDist p.2 q.2)
 
@@ -52,7 +46,7 @@ theorem torusDist_symm (p q : ℝ × ℝ) : torusDist p q = torusDist q p := by
   unfold torusDist
   rw [circleDist_symm p.1 q.1, circleDist_symm p.2 q.2]
 
-/-- Lattice embedding `Fin n × Fin n → [0,1)²`, `(i,j) ↦ (i/n, j/n)`. -/
+/-- The embedding `Fin n × Fin n → ℝ × ℝ`, `(i, j) ↦ (i/n, j/n)`. -/
 noncomputable def torusEmbed (n : Nat) (p : Fin n × Fin n) : ℝ × ℝ :=
   (latticeEmbed n p.1, latticeEmbed n p.2)
 
@@ -61,7 +55,7 @@ theorem torusEmbed_mem_unit_square {n : Nat} (hn : 0 < n) (p : Fin n × Fin n) :
     (0 ≤ (torusEmbed n p).2 ∧ (torusEmbed n p).2 < 1) := by
   exact ⟨latticeEmbed_mem_unit_interval hn p.1, latticeEmbed_mem_unit_interval hn p.2⟩
 
-/-- **Isometry** of the torus embedding (L∞ in both source and target). -/
+/-- For `n > 0`, `torusDist (torusEmbed n p) (torusEmbed n q) = torusLatticeDist n p q / n`. -/
 theorem torusEmbed_isometry {n : Nat} (hn : 0 < n) (p q : Fin n × Fin n) :
     torusDist (torusEmbed n p) (torusEmbed n q) =
       (torusLatticeDist n p q : ℝ) / n := by
@@ -73,8 +67,8 @@ theorem torusEmbed_isometry {n : Nat} (hn : 0 < n) (p q : Fin n × Fin n) :
   rw [div_eq_mul_inv, div_eq_mul_inv, div_eq_mul_inv]
   rw [← max_mul_of_nonneg _ _ (by positivity : (0 : ℝ) ≤ (n : ℝ)⁻¹)]
 
-/-- **Cover bound.** Every `(x, y) ∈ [0, 1) × [0, 1)` is within torus-distance
-`1/(2n)` of some `torusEmbed(i, j)`. -/
+/-- For `n > 0`, every `(x, y) ∈ [0, 1) × [0, 1)` is within `torusDist` distance `1/(2n)` of some
+`torusEmbed n (i, j)`. -/
 theorem torusEmbed_covers {n : Nat} (hn : 0 < n)
     (x y : ℝ) (hx : 0 ≤ x) (hx' : x < 1) (hy : 0 ≤ y) (hy' : y < 1) :
     ∃ p : Fin n × Fin n, torusDist (x, y) (torusEmbed n p) ≤ 1 / (2 * n) := by
@@ -84,8 +78,9 @@ theorem torusEmbed_covers {n : Nat} (hn : 0 < n)
   unfold torusDist torusEmbed
   exact max_le hi hj
 
-/-- **Packaged Phase-3 theorem.** The scaled n×n lattice is within
-Gromov–Hausdorff distance `1/(2n)` of the flat 2-torus. -/
+/-- For `n > 0`, there is a map `f : Fin n × Fin n → ℝ × ℝ` with values in [0, 1)² such that
+`torusDist (f p) (f q) = torusLatticeDist n p q / n` and every point of [0, 1)² is within
+`1/(2n)` of the image of `f`. -/
 theorem torus_gh_bound (n : Nat) (hn : 0 < n) :
     ∃ f : Fin n × Fin n → ℝ × ℝ,
       (∀ p, 0 ≤ (f p).1 ∧ (f p).1 < 1 ∧ 0 ≤ (f p).2 ∧ (f p).2 < 1) ∧

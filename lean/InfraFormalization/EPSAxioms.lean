@@ -1,26 +1,13 @@
 /-
-**Ehlers-Pirani-Schild (EPS) axioms on causal graphs** (Group IC / #131).
+Light-ray and worldline structures on a causal graph.
 
-The EPS scheme (1972) axiomatises spacetime via light-rays and
-particle-worldlines, deriving the conformal/projective/affine
-structures → metric structure without presupposing a continuum
-manifold. CZAPATA and SAHMED's "Axiomatic Relativity from
-Causal Graphs" paper (in preparation) identifies EPS as the most
-discrete-compatible axiomatisation.
-
-This file formalises:
-
-  * `Lightstyle C` — the light-ray structure on a causal graph.
-  * `ParticleStyle C` — the particle-worldline structure.
-  * `EPSAxioms C` — the conjunction of the axiom set.
-
-Each axiom is stated at the predicate level on `CausalGraph V`. The
-compatibility axiom (light-rays + particle-worldlines together
-determine the conformal class) is the key non-trivial claim.
-
-**Connection to hypergraphs.** Causal graphs arise from
-`Trajectory`s. EPS on the trajectory-causal-graph is the target
-theorem for discrete SR; full derivation deferred.
+The module defines `LightStyle G`, a relation on vertices whose pairs are
+causally ordered and span a degenerate interval, and `ParticleStyle G`, a
+predicate on vertex sequences whose consecutive entries are causal edges.
+`EPSAxioms G` bundles one of each with the condition that consecutive
+worldline vertices are not light-related. Of the Ehlers-Pirani-Schild (1972)
+axioms, only this compatibility condition is stated. The theorem
+`eps_worldline_not_light` combines the two fields for one worldline step.
 -/
 
 import InfraFormalization.CausalGraphType
@@ -30,57 +17,39 @@ namespace CausalGraph
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
-/-- **Light-style structure**: a designated class of "light rays"
-(subgraphs satisfying EPS A1-A4). Here simplified to the set of
-degenerate-causal-interval edges (the discrete analog of null
-geodesics). -/
+/-- A relation `isLight` on vertices such that every related pair `(u, v)`
+satisfies `G.causallyPrecedes u v` and `G.DegenerateInterval u v`. -/
 structure LightStyle (G : CausalGraph V) where
   isLight   : V → V → Prop
-  -- Light rays must go forward in causal order.
+  -- Related pairs are causally ordered.
   forward   : ∀ u v, isLight u v → G.causallyPrecedes u v
-  -- Light rays preserve degenerate-interval structure.
+  -- Related pairs span a degenerate interval.
   degenerate : ∀ u v, isLight u v → G.DegenerateInterval u v
 
-/-- **Particle-worldline structure**: a class of "timelike"
-worldlines (non-null chains). Predicate-level. -/
+/-- A predicate `isWorldline` on partial vertex sequences `ℕ → Option V` such
+that consecutive defined entries of a worldline are joined by a causal edge. -/
 structure ParticleStyle (G : CausalGraph V) where
   isWorldline : (Nat → Option V) → Prop
-  -- A worldline is a chain of direct causal edges.
+  -- Consecutive defined entries are joined by a causal edge.
   chain_like : ∀ (p : Nat → Option V) (hw : isWorldline p),
     ∀ (n : Nat) (u v : V), p n = some u → p (n+1) = some v →
     G.causalEdge u v
 
-/-- **EPS Axioms**: the conjunction of axioms A1-A5 (simplified).
-
-Formally stated, the EPS axioms enforce:
-  (A1) Every pair of events has at most one light-ray connection.
-  (A2) Light-ray "crossings" obey combinatorial consistency.
-  (A3) Particle worldlines project to timelike curves.
-  (A4) Compatibility: light-rays + particle-worldlines agree on
-       the conformal class — worldline edges are NEVER light-ray
-       edges (null vs timelike distinction).
-  (A5) Physical-extension axiom: every physical observer has a
-       coordinatisation.
-
-Per CZAPATA–SAHMED's axiomatic-relativity programme, A4 is the
-compatibility condition that separates null from timelike structure:
-a particle worldline's consecutive edges cannot be light-ray edges
-(otherwise the worldline would be null, not timelike). -/
+/-- A `LightStyle G`, a `ParticleStyle G`, and the condition that no two
+consecutive defined entries of a worldline are related by `isLight`. No other
+Ehlers-Pirani-Schild axiom is included. -/
 structure EPSAxioms (G : CausalGraph V) where
   lightStyle    : LightStyle G
   particleStyle : ParticleStyle G
-  /-- **A4 (compatibility).** Worldline edges are NOT light-ray edges.
-  Encodes the conformal-class separation of timelike from null
-  directions. -/
+  /-- Consecutive defined entries of a worldline are not related by
+  `isLight`. -/
   compatibility : ∀ (p : Nat → Option V), particleStyle.isWorldline p →
     ∀ (n : Nat) (u v : V), p n = some u → p (n + 1) = some v →
       ¬ lightStyle.isLight u v
 
-/-- **Worldlines are strictly timelike under EPS.** An immediate
-corollary of the compatibility axiom A4: any worldline's consecutive
-edges are causal edges (by `ParticleStyle.chain_like`) but not
-light-ray edges (by `EPSAxioms.compatibility`). This is the
-conformal-class separation stated as a theorem. -/
+/-- Consecutive defined entries `u, v` of a worldline satisfy
+`G.causalEdge u v` and `¬ isLight u v`. The proof pairs the fields
+`chain_like` and `compatibility`. -/
 theorem eps_worldline_not_light {G : CausalGraph V}
     (eps : EPSAxioms G) (p : Nat → Option V)
     (hw : eps.particleStyle.isWorldline p)

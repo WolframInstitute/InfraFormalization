@@ -1,18 +1,12 @@
 /-
-Packaged continuum-limit theorem: the scaled n-cycle is within
-Gromov-Hausdorff distance `1 / (2n)` of the unit circle ℝ/ℤ.
+The n-cycle with distance scaled by `1/n` embeds isometrically in the circle ℝ/ℤ with a
+`1/(2n)`-dense image.
 
-This file packages `latticeEmbed_covers` (T19, the (1/(2n))-cover bound)
-and `latticeEmbed_isometry` (T20, metric preservation by the embedding)
-into a single named GH-distance-bound theorem.
-
-Rather than invoking Mathlib's full `GromovHausdorff.GHSpace` quotient
-(which is heavy machinery for our purposes), we state the bound in its
-direct ε-approximation form: there exists a map `f : Fin n → ℝ`
-whose image lies in `[0, 1)`, that is an isometry from `(Fin n,
-cycleDist/n)` into `(ℝ, circleDist)`, and whose image is
-(1/(2n))-Hausdorff-dense. This is equivalent to the GH bound and is
-more directly usable for downstream theorems.
+The statement uses the direct form, not Mathlib's `GromovHausdorff.GHSpace`: a map
+`f : Fin n → [0, 1)` with `circleDist (f i) (f j) = cycleDist n i j / n`, such that every
+`x ∈ [0, 1)` lies within circle distance `1/(2n)` of some `f i`. The proof combines
+`latticeEmbed_isometry` and `latticeEmbed_covers`. A second theorem states that the
+lattice image is `ε`-dense for every `ε > 0` and all sufficiently large `n`.
 -/
 
 import InfraFormalization.Infra.Circle
@@ -20,9 +14,9 @@ import InfraFormalization.Infra.Circle
 namespace InfraFormalization
 namespace Infra
 
-/-- The scaled n-cycle is (1/(2n))-GH-close to the unit circle ℝ/ℤ.
-More precisely: there exists an isometric embedding `Fin n → [0,1)`
-whose image is (1/(2n))-Hausdorff-dense in `[0, 1)`. -/
+/-- For `n > 0` there is a map `f : Fin n → [0, 1)` with
+`circleDist (f i) (f j) = cycleDist n i j / n` whose image is within circle distance
+`1/(2n)` of every point of `[0, 1)`. -/
 theorem cycle_circle_gh_bound (n : Nat) (hn : 0 < n) :
     ∃ f : Fin n → ℝ,
       (∀ i, 0 ≤ f i ∧ f i < 1) ∧
@@ -33,10 +27,8 @@ theorem cycle_circle_gh_bound (n : Nat) (hn : 0 < n) :
   · intro i j; exact latticeEmbed_isometry hn i j
   · intro x hx hx'; exact latticeEmbed_covers hn x hx hx'
 
-/-- **Convergence corollary.** The maximum circle-distance from any
-point of `[0, 1)` to the lattice image is at most `1 / (2n)`, which
-tends to zero as `n → ∞`. Explicitly: for every `ε > 0`, for
-sufficiently large `n`, the lattice is `ε`-dense in `[0, 1)`. -/
+/-- For every `ε > 0` there is `N` such that for all `n ≥ N`, every `x ∈ [0, 1)` lies
+within circle distance `ε` of some `latticeEmbed n i`. -/
 theorem cycle_circle_eventual_epsilon_dense (ε : ℝ) (hε : 0 < ε) :
     ∃ N : Nat, ∀ n : Nat, N ≤ n →
       ∀ x, 0 ≤ x → x < 1 →

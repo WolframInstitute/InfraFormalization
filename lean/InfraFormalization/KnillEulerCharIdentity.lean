@@ -1,32 +1,12 @@
 /-
-**Universal Knill = 6·χ identity** (task #496).
+Knill's discrete Gauss–Bonnet identity for executable hypergraphs.
 
-The empirical certificates in `KnillDiscreteGaussBonnet.lean`,
-`KnillHigherGenus.lean`, and `KnillThreeManifold.lean` discharge
-`knillEulerScaled H = 6·χ` at specific triangulations
-(tetrahedron, octahedron, icosahedron, triangulated tori at
-`n ∈ {4,5,6}`, `∂Δ⁴ = K₅`) by `native_decide`.
-
-This module lifts those certificates to a **single universal-in-`H`
-theorem** — Knill's discrete Gauss-Bonnet (arxiv 1009.2292, Theorem 1)
-formalized inside the executable-hypergraph framework:
-
-    knillEulerScaled H = 6 · eulerChar H
-
-where `eulerChar H := V − E + T` (`V` = vertex count, `E` =
-1-skeleton edge count, `T` = 3-clique count).
-
-The proof is the standard combinatorial telescoping. Linearity of
-sum + two double-counting identities (degree → edges; triangle
-incidences → triangles) suffice. Both identities are proved via a
-Fubini-style swap on lists combined with the symmetry / irreflexivity
-of `execAdj` and the trichotomy on `ℕ`.
-
-The general theorem uses no `native_decide`. The specific corollaries
-that replace the original closed-form certificates compute `eulerChar`
-on concrete triangulations by `native_decide` — its intended use:
-discharging an arithmetic fact about a fixed concrete object, while
-the algebraic step `knillEulerScaled = 6 · eulerChar` is universal.
+This module proves, for every `H : ExecHG ℕ`, that `knillEulerScaled H = 6 · eulerChar H`, where
+`eulerChar H = V − E + T` counts vertices, adjacent pairs and 3-cliques (Knill, arXiv:1009.2292,
+Theorem 1). The proof combines two double-counting identities, `∑_v deg(v) = 2E` and
+`∑_v tri(v) = 3T`, each obtained by exchanging the order of summation over lists and using symmetry
+and irreflexivity of `execAdj`. The general identity does not use `native_decide`. The values of
+`eulerChar` on the tetrahedron, octahedron and icosahedron are checked by `native_decide`.
 -/
 
 import InfraFormalization.KnillDiscreteGaussBonnet
@@ -40,14 +20,14 @@ open KnillDiscreteGaussBonnet
 
 /-! ## 1. Definitions: 1-skeleton edges, 3-cliques, Euler characteristic -/
 
-/-- Ordered pair `(u, v)` with `u < v` and adjacent in `H`. -/
+/-- The pairs `(u, v)` of vertices with `u < v` that are adjacent in `H`. -/
 def oneSkeletonEdges (H : ExecHG ℕ) : List (ℕ × ℕ) :=
   (vertexList H).flatMap (fun u =>
     ((vertexList H).filter (fun v => decide (u < v) && execAdj H u v)).map (Prod.mk u))
 
 def oneSkeletonEdgeCount (H : ExecHG ℕ) : ℕ := (oneSkeletonEdges H).length
 
-/-- Ordered triple `(u, v, w)` with `u < v < w` and all pairs adjacent. -/
+/-- The triples `(u, v, w)` of vertices with `u < v < w` that are pairwise adjacent in `H`. -/
 def threeCliques (H : ExecHG ℕ) : List (ℕ × ℕ × ℕ) :=
   (vertexList H).flatMap (fun u =>
     (vertexList H).flatMap (fun v =>
@@ -96,7 +76,7 @@ lemma sum_map_add_nat (l : List ℕ) (f g : ℕ → ℕ) :
     simp only [List.map_cons, List.sum_cons, ih]
     ring
 
-/-- Filter-length = sum of indicator. -/
+/-- The length of `l.filter P` equals the sum over `l` of the indicator of `P`. -/
 lemma length_filter_eq_sum_indicator (l : List ℕ) (P : ℕ → Bool) :
     (l.filter P).length = (l.map (fun x => if P x = true then 1 else 0)).sum := by
   induction l with
@@ -118,7 +98,7 @@ lemma length_filter_eq_sum_indicator (l : List ℕ) (P : ℕ → Bool) :
       rw [ih]
       simp [hb]
 
-/-- The Fubini swap: `Σ_u Σ_v f(u, v) = Σ_v Σ_u f(u, v)` on lists. -/
+/-- `Σ_{u ∈ vs} Σ_{v ∈ ws} f(u, v) = Σ_{v ∈ ws} Σ_{u ∈ vs} f(u, v)` for lists. -/
 lemma sum_map_sum_swap (vs ws : List ℕ) (f : ℕ → ℕ → ℕ) :
     (vs.map (fun u => (ws.map (fun v => f u v)).sum)).sum
       = (ws.map (fun v => (vs.map (fun u => f u v)).sum)).sum := by
@@ -156,7 +136,7 @@ lemma sum_map_sum_swap (vs ws : List ℕ) (f : ℕ → ℕ → ℕ) :
       exact sum_map_add_nat ws (fun v => f hd v) (fun v => (tl.map (fun u => f u v)).sum)
     rw [lhs_eq, rhs_eq, ih]
 
-/-- Fubini for filter-lengths. -/
+/-- Exchange of summation order for filter lengths. -/
 lemma sum_swap_filter (vs ws : List ℕ) (P : ℕ → ℕ → Bool) :
     (vs.map (fun u => (ws.filter (fun v => P u v)).length)).sum
       = (ws.map (fun v => (vs.filter (fun u => P u v)).length)).sum := by
@@ -180,7 +160,7 @@ lemma sum_swap_filter (vs ws : List ℕ) (P : ℕ → ℕ → Bool) :
 lemma execAdjDegree_eq_filter_length (H : ExecHG ℕ) (v : ℕ) :
     execAdjDegree H v = ((vertexList H).filter (execAdj H v)).length := rfl
 
-/-- Per-vertex degree splits by trichotomy on `u` vs `v`. -/
+/-- The degree of `v` is the number of neighbours `u < v` plus the number of neighbours `u > v`. -/
 lemma execAdjDegree_split (H : ExecHG ℕ) (v : ℕ) :
     execAdjDegree H v
       = ((vertexList H).filter (fun u => decide (u < v) && execAdj H v u)).length
@@ -272,17 +252,17 @@ already enforces). We show:
   (a) `Σ_v tri(v) = triangleIncidenceCount H`;
   (b) `triangleIncidenceCount H = 3 · threeCliqueCount H`. -/
 
-/-- Canonical triangle-incidence predicate. -/
+/-- `v` is adjacent to `x` and `y`, `x < y`, and `x` is adjacent to `y`. -/
 def triPred (H : ExecHG ℕ) (v x y : ℕ) : Bool :=
   execAdj H v x && execAdj H v y && decide (x < y) && execAdj H x y
 
-/-- Triple-indexed incidence count. -/
+/-- The number of triples `(v, x, y)` of vertices satisfying `triPred H v x y`. -/
 def triangleIncidenceCount (H : ExecHG ℕ) : ℕ :=
   ((vertexList H).map (fun v =>
     ((vertexList H).map (fun x =>
       ((vertexList H).filter (fun y => triPred H v x y)).length)).sum)).sum
 
-/-- Step (a): per-vertex triangle count summed = triple-indexed count. -/
+/-- Step (a): `Σ_v tri(v) = triangleIncidenceCount H`. -/
 lemma sum_triangleCount_eq_incidenceCount (H : ExecHG ℕ) :
     ((vertexList H).map (execTriangleCountAtVertex H)).sum
       = triangleIncidenceCount H := by
@@ -377,15 +357,15 @@ lemma sum_triangleCount_eq_incidenceCount (H : ExecHG ℕ) :
 
 /-! ### Step (b): the canonical triangle-incidence count equals `3 · T`. -/
 
-/-- "v is smallest" predicate. -/
+/-- `triPred H v x y` with `v < x`. -/
 def pred1 (H : ExecHG ℕ) (v x y : ℕ) : Bool :=
   decide (v < x) && decide (x < y) && execAdj H v x && execAdj H v y && execAdj H x y
 
-/-- "v is middle" predicate. -/
+/-- `triPred H v x y` with `x < v < y`. -/
 def pred2 (H : ExecHG ℕ) (v x y : ℕ) : Bool :=
   decide (x < v) && decide (v < y) && execAdj H v x && execAdj H v y && execAdj H x y
 
-/-- "v is largest" predicate. -/
+/-- `triPred H v x y` with `y < v`. -/
 def pred3 (H : ExecHG ℕ) (v x y : ℕ) : Bool :=
   decide (x < y) && decide (y < v) && execAdj H v x && execAdj H v y && execAdj H x y
 
@@ -703,8 +683,8 @@ lemma knillEulerScaled_expand (H : ExecHG ℕ) :
       ring
   rw [aux]
 
-/-- **Knill's discrete Gauss-Bonnet identity** (arxiv 1009.2292):
-the scaled per-vertex defect sum equals `6 · χ` of the 2-skeleton. -/
+/-- Knill's discrete Gauss–Bonnet identity (arXiv:1009.2292):
+`knillEulerScaled H = 6 · eulerChar H` for every `H : ExecHG ℕ`. -/
 theorem knill_eq_six_euler_char (H : ExecHG ℕ) :
     knillEulerScaled H = 6 * eulerChar H := by
   rw [knillEulerScaled_expand]
@@ -743,7 +723,8 @@ theorem icosahedron_knillEuler_via_universal :
     knillEulerScaled SphereTriangulationAudit.icosahedronHG = 12 := by
   rw [knill_eq_six_euler_char, icosahedron_eulerChar]; rfl
 
-/-- **Universal certificate**: three S² Knill values, all instances of one universal theorem. -/
+/-- `knillEulerScaled` equals 12 on the tetrahedron, octahedron and icosahedron, derived from
+`knill_eq_six_euler_char` and `eulerChar = 2` on each. -/
 theorem knill_S2_via_universal :
     knillEulerScaled SphereTriangulationAudit.tetrahedronHG = 12 ∧
     knillEulerScaled SphereTriangulationAudit.octahedronHG = 12 ∧
@@ -752,18 +733,11 @@ theorem knill_S2_via_universal :
    octahedron_knillEuler_via_universal,
    icosahedron_knillEuler_via_universal⟩
 
-/-! ## What this delivers
+/-! ## Summary
 
-Universal `knillEulerScaled H = 6 · eulerChar H` proved without
-`native_decide`. Standard combinatorial telescoping: linearity of
-sum + two double-counting identities (degree → edges, triangle-
-incidence → triangles), via Fubini swap + adjacency symmetry +
-trichotomy.
-
-The previous per-triangulation certificates remain decidable
-specializations of the universal identity, with the per-instance
-work reduced to computing `eulerChar` of a fixed concrete object —
-the appropriate use of `native_decide`. -/
+`knillEulerScaled H = 6 · eulerChar H` holds for every `H : ExecHG ℕ` and is proved without
+`native_decide`. The values on concrete triangulations follow from the value of `eulerChar`, which
+is checked by `native_decide`. -/
 
 end KnillEulerCharIdentity
 end InfraFormalization

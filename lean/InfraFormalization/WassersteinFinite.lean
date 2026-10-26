@@ -4,33 +4,16 @@ import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Analysis.InnerProductSpace.Basic
 
 /-!
-**Project-own Wasserstein-1 distance on finite supports** (task #214).
+Wasserstein-1 distance on a finite type.
 
-Defines `W_1(μ, ν)` on finite metric spaces as the minimum transport
-cost over coupling plans:
-
-  `W_1(μ, ν) = inf_{π ∈ couplings(μ, ν)} ∑_{x, y} π(x, y) · d(x, y)`.
-
-A coupling plan is a nonnegative function `π : X × X → ℝ` with
-row marginals `∑_y π(x, y) = μ(x)` and column marginals
-`∑_x π(x, y) = ν(y)`.
-
-This file provides:
-  * `TransportPlan X μ ν` structure.
-  * `TransportPlan.identity` — the self-coupling plan `π(x, y) = μ(x)
-    if x = y else 0` (requires μ = ν).
-  * `TransportPlan.cost π d` — the transport cost.
-  * `cost_nonneg` when `d ≥ 0`.
-  * `cost_self_zero` — identity coupling against a zero-self-distance
-    metric has zero cost.
-  * `wasserstein1` — `sInf` over transport plan costs.
-  * `wasserstein1_self_zero` — `W_1(μ, μ) = 0` when `d(x, x) = 0`.
-  * `wasserstein1_nonneg` — `W_1(μ, ν) ≥ 0` when `d ≥ 0`.
-
-No reliance on any Mathlib optimal-transport API — this is the
-start of our own framework, used downstream by tasks #18 (A7 cycle
-Wasserstein O(1/n)), #19 (A8 d-torus lift), #215 (concrete d-torus
-rate), and #220 (Ollivier-Ricci convergence).
+A transport plan between `μ ν : X → ℝ` is a nonnegative `π : X → X → ℝ`
+with row sums `μ` and column sums `ν`. `wasserstein1 d μ ν` is the infimum
+of `∑ π x y · d x y` over plans. This module defines identity, transpose,
+scaled, summed, tensor, Dirac and glued plans, and proves for nonnegative
+`d`: nonnegativity, `W_1(μ, μ) = 0` when `d x x = 0`, symmetry for
+symmetric `d`, `W_1(δ_x, δ_y) = d x y`, the bound by the supremum of `d`,
+`|E_μ f − E_ν f| ≤ L · W_1(μ, ν)` for `L`-Lipschitz `f`, and the triangle
+inequality for probability vectors.
 -/
 
 namespace InfraFormalization
@@ -39,9 +22,7 @@ open scoped BigOperators
 
 variable {X : Type*} [Fintype X] [DecidableEq X]
 
-/-- **Transport plan** (coupling) between two finite probability-like
-measures `μ, ν : X → ℝ`. Has nonneg entries and prescribed row /
-column marginals. -/
+/-- A nonnegative `π : X → X → ℝ` with row sums `μ` and column sums `ν`. -/
 structure TransportPlan (μ ν : X → ℝ) where
   π : X → X → ℝ
   nonneg : ∀ x y, 0 ≤ π x y
@@ -52,9 +33,8 @@ namespace TransportPlan
 
 variable {μ ν : X → ℝ}
 
-/-- **Identity coupling** when `μ = ν`: `π(x, y) = μ(x) [x = y]`.
-Requires every component of `μ` non-negative (since the plan must
-have nonneg entries). -/
+/-- The plan `π(x, y) = μ(x)` if `x = y` and 0 otherwise, between `μ` and
+itself, for nonnegative `μ`. -/
 noncomputable def identity (μ : X → ℝ) (hμ : ∀ x, 0 ≤ μ x) :
     TransportPlan μ μ where
   π := fun x y => if x = y then μ x else 0
@@ -80,12 +60,11 @@ noncomputable def identity (μ : X → ℝ) (hμ : ∀ x, 0 ≤ μ x) :
     · intro hne
       exact absurd (Finset.mem_univ _) hne
 
-/-- **Transport cost** of a plan against a non-negative cost
-function `d`. -/
+/-- `∑_x ∑_y π x y · d x y`. -/
 def cost (p : TransportPlan μ ν) (d : X → X → ℝ) : ℝ :=
   ∑ x, ∑ y, p.π x y * d x y
 
-/-- **Cost is non-negative** when `d` is non-negative. -/
+/-- The cost is nonnegative when `d` is nonnegative. -/
 theorem cost_nonneg (p : TransportPlan μ ν) (d : X → X → ℝ)
     (hd : ∀ x y, 0 ≤ d x y) : 0 ≤ p.cost d := by
   unfold cost
@@ -95,8 +74,7 @@ theorem cost_nonneg (p : TransportPlan μ ν) (d : X → X → ℝ)
   intros y _
   exact mul_nonneg (p.nonneg x y) (hd x y)
 
-/-- **Cost of the identity coupling vanishes** when `d(x, x) = 0`
-for every `x`. -/
+/-- The identity plan has cost 0 when `d x x = 0` for every `x`. -/
 theorem identity_cost_zero (μ : X → ℝ) (hμ : ∀ x, 0 ≤ μ x)
     (d : X → X → ℝ) (hd0 : ∀ x, d x x = 0) :
     (identity μ hμ).cost d = 0 := by
@@ -113,13 +91,13 @@ theorem identity_cost_zero (μ : X → ℝ) (hμ : ∀ x, 0 ≤ μ x)
 
 end TransportPlan
 
-/-- **Wasserstein-1 distance** on finite metric spaces: the infimum
-of transport costs over all coupling plans between `μ` and `ν`. -/
+/-- The infimum of `p.cost d` over transport plans `p` between `μ` and
+`ν`. -/
 noncomputable def wasserstein1 (d : X → X → ℝ) (μ ν : X → ℝ) : ℝ :=
   sInf {c : ℝ | ∃ p : TransportPlan μ ν, p.cost d = c}
 
-/-- **Non-negativity of W_1** when the cost function is non-negative
-and at least one plan exists. -/
+/-- If `d` is nonnegative and some plan between `μ` and `ν` exists, then
+`wasserstein1 d μ ν ≥ 0`. -/
 theorem wasserstein1_nonneg_of_plan (d : X → X → ℝ)
     (hd : ∀ x y, 0 ≤ d x y) (μ ν : X → ℝ) (p : TransportPlan μ ν) :
     0 ≤ wasserstein1 d μ ν := by
@@ -129,9 +107,8 @@ theorem wasserstein1_nonneg_of_plan (d : X → X → ℝ)
   · rintro c ⟨q, rfl⟩
     exact q.cost_nonneg d hd
 
-/-- **`W_1(μ, μ) = 0`** when `d(x, x) = 0` everywhere. The identity
-coupling realises cost 0; the infimum cannot exceed 0 and is bounded
-below by 0 by non-negativity. -/
+/-- For nonnegative `d` with `d x x = 0` and nonnegative `μ`,
+`wasserstein1 d μ μ = 0`. -/
 theorem wasserstein1_self_eq_zero (d : X → X → ℝ)
     (hd : ∀ x y, 0 ≤ d x y) (hd0 : ∀ x, d x x = 0)
     (μ : X → ℝ) (hμ : ∀ x, 0 ≤ μ x) :
@@ -152,16 +129,14 @@ namespace TransportPlan
 
 variable {μ ν : X → ℝ}
 
-/-- **Transpose of a transport plan**: swap roles of source and target. -/
+/-- The plan `π(y, x)` between `ν` and `μ`. -/
 def transpose (p : TransportPlan μ ν) : TransportPlan ν μ where
   π := fun x y => p.π y x
   nonneg := fun x y => p.nonneg y x
   rowMarginal := p.colMarginal
   colMarginal := p.rowMarginal
 
-/-- **Cost of the transpose under a symmetric metric** equals the
-cost of the original plan. Uses `Finset.sum_comm` to swap the two
-sums. -/
+/-- For symmetric `d`, the transpose has the same cost. -/
 theorem cost_transpose_of_symm (p : TransportPlan μ ν) (d : X → X → ℝ)
     (hsym : ∀ x y, d x y = d y x) :
     (p.transpose).cost d = p.cost d := by
@@ -175,11 +150,8 @@ theorem cost_transpose_of_symm (p : TransportPlan μ ν) (d : X → X → ℝ)
 
 end TransportPlan
 
-/-- **The cost set is in bijection with its transpose-cost set** for
-a symmetric cost function: every plan's cost equals the transpose
-plan's cost, and transpose is an involution. Together, the two sets
-`{cost p | p ∈ Plans(μ, ν)}` and `{cost q | q ∈ Plans(ν, μ)}` are
-equal. -/
+/-- For symmetric `d`, the set of plan costs between `μ` and `ν` equals the
+set of plan costs between `ν` and `μ`. -/
 theorem wasserstein1_costSet_eq (d : X → X → ℝ)
     (hsym : ∀ x y, d x y = d y x) (μ ν : X → ℝ) :
     {c : ℝ | ∃ p : TransportPlan μ ν, p.cost d = c}
@@ -193,9 +165,7 @@ theorem wasserstein1_costSet_eq (d : X → X → ℝ)
     refine ⟨q.transpose, ?_⟩
     exact q.cost_transpose_of_symm d hsym
 
-/-- **Symmetry of W_1** under a symmetric cost function: transporting
-from `μ` to `ν` costs the same as transporting from `ν` to `μ`. The
-two coupling-cost sets are equal via plan transpose. -/
+/-- For symmetric `d`, `wasserstein1 d μ ν = wasserstein1 d ν μ`. -/
 theorem wasserstein1_symm (d : X → X → ℝ) (hsym : ∀ x y, d x y = d y x)
     (μ ν : X → ℝ) : wasserstein1 d μ ν = wasserstein1 d ν μ := by
   unfold wasserstein1
@@ -205,8 +175,7 @@ namespace TransportPlan
 
 variable {μ ν : X → ℝ}
 
-/-- **Scaling a transport plan** by a non-negative real `c` produces
-a plan between the scaled marginals `c • μ` and `c • ν`. -/
+/-- For `c ≥ 0`, `c · π` is a plan between `c • μ` and `c • ν`. -/
 def scale (p : TransportPlan μ ν) (c : ℝ) (hc : 0 ≤ c) :
     TransportPlan (fun x => c * μ x) (fun x => c * ν x) where
   π := fun x y => c * p.π x y
@@ -218,7 +187,7 @@ def scale (p : TransportPlan μ ν) (c : ℝ) (hc : 0 ≤ c) :
     rw [← Finset.mul_sum]
     exact congrArg (c * ·) (p.colMarginal y)
 
-/-- **Cost scales linearly** with the scalar. -/
+/-- The cost of `c · π` is `c` times the cost of `π`. -/
 theorem cost_scale (p : TransportPlan μ ν) (c : ℝ) (hc : 0 ≤ c)
     (d : X → X → ℝ) :
     (p.scale c hc).cost d = c * p.cost d := by
@@ -232,9 +201,8 @@ theorem cost_scale (p : TransportPlan μ ν) (c : ℝ) (hc : 0 ≤ c)
   intros y _
   ring
 
-/-- **Two plans on disjoint row-supports combine additively**: the
-sum of `π₁ + π₂` is a plan with marginals equal to the sums of the
-corresponding marginals. -/
+/-- The entrywise sum of a plan between `μ₁` and `ν₁` and a plan between
+`μ₂` and `ν₂` is a plan between `μ₁ + μ₂` and `ν₁ + ν₂`. -/
 def add {μ₁ μ₂ ν₁ ν₂ : X → ℝ}
     (p : TransportPlan μ₁ ν₁) (q : TransportPlan μ₂ ν₂) :
     TransportPlan (fun x => μ₁ x + μ₂ x) (fun x => ν₁ x + ν₂ x) where
@@ -247,7 +215,7 @@ def add {μ₁ μ₂ ν₁ ν₂ : X → ℝ}
     rw [Finset.sum_add_distrib]
     rw [p.colMarginal y, q.colMarginal y]
 
-/-- **Cost is additive over plan sum.** -/
+/-- The cost of the sum of two plans is the sum of their costs. -/
 theorem cost_add {μ₁ μ₂ ν₁ ν₂ : X → ℝ}
     (p : TransportPlan μ₁ ν₁) (q : TransportPlan μ₂ ν₂)
     (d : X → X → ℝ) :
@@ -262,9 +230,8 @@ theorem cost_add {μ₁ μ₂ ν₁ ν₂ : X → ℝ}
   intros y _
   ring
 
-/-- **Tensor-product (independent) coupling**: when `μ` and `ν` are
-non-negative probability-like measures both summing to `1`, the
-product `π(x, y) = μ(x) · ν(y)` is a valid transport plan. -/
+/-- For nonnegative `μ`, `ν` with total mass 1, `π(x, y) = μ(x) ν(y)` is a
+plan between `μ` and `ν`. -/
 def tensor (μ ν : X → ℝ)
     (hμ : ∀ x, 0 ≤ μ x) (hν : ∀ x, 0 ≤ ν x)
     (_hμsum : ∑ x, μ x = 1) (hνsum : ∑ x, ν x = 1) :
@@ -276,7 +243,7 @@ def tensor (μ ν : X → ℝ)
   colMarginal := fun y => by
     rw [← Finset.sum_mul, _hμsum, one_mul]
 
-/-- **Cost of the tensor plan** equals the μ,ν-expectation of `d`. -/
+/-- The cost of the tensor plan is `∑_x ∑_y μ x ν y d x y`. -/
 theorem tensor_cost (μ ν : X → ℝ)
     (hμ : ∀ x, 0 ≤ μ x) (hν : ∀ x, 0 ≤ ν x)
     (hμsum : ∑ x, μ x = 1) (hνsum : ∑ x, ν x = 1)
@@ -288,9 +255,8 @@ theorem tensor_cost (μ ν : X → ℝ)
 
 end TransportPlan
 
-/-- **W_1 is non-negative on probability measures** — the tensor plan
-provides the existence witness, so no additional plan hypothesis is
-required. -/
+/-- For nonnegative `d` and nonnegative `μ`, `ν` of total mass 1,
+`wasserstein1 d μ ν ≥ 0`. -/
 theorem wasserstein1_nonneg
     (d : X → X → ℝ) (hd : ∀ x y, 0 ≤ d x y)
     (μ ν : X → ℝ)
@@ -300,10 +266,9 @@ theorem wasserstein1_nonneg
   wasserstein1_nonneg_of_plan d hd μ ν
     (TransportPlan.tensor μ ν hμ hν hμsum hνsum)
 
-/-! ## Dirac-delta measures and their Wasserstein distance -/
+/-! ## Dirac measures -/
 
-/-- **Dirac-delta measure** at a point `x : X`: unit mass at `x`,
-zero elsewhere. -/
+/-- The function equal to 1 at `x` and 0 elsewhere. -/
 def delta (x : X) : X → ℝ := fun y => if y = x then 1 else 0
 
 theorem delta_nonneg (x y : X) : 0 ≤ delta x y := by
@@ -319,8 +284,7 @@ theorem delta_total (x : X) : ∑ y : X, delta x y = 1 := by
   · intro hne
     exact absurd (Finset.mem_univ _) hne
 
-/-- **Dirac-delta transport plan** between `δ_x` and `δ_y`: the unique
-plan supported on `(x, y)` with mass `1`. -/
+/-- The plan between `δ_x` and `δ_y` with mass 1 at `(x, y)`. -/
 def deltaPlan (x y : X) : TransportPlan (delta x) (delta y) where
   π := fun a b => if a = x ∧ b = y then 1 else 0
   nonneg := by
@@ -355,7 +319,7 @@ def deltaPlan (x y : X) : TransportPlan (delta x) (delta y) where
         intro a; simp [h]
       simp [this, h]
 
-/-- **Dirac-delta plan cost equals `d x y`.** -/
+/-- `deltaPlan x y` has cost `d x y`. -/
 theorem deltaPlan_cost (x y : X) (d : X → X → ℝ) :
     (deltaPlan x y).cost d = d x y := by
   unfold TransportPlan.cost deltaPlan
@@ -377,10 +341,8 @@ theorem deltaPlan_cost (x y : X) (d : X → X → ℝ) :
   · intro hne
     exact absurd (Finset.mem_univ _) hne
 
-/-- **Uniqueness of the Dirac-delta coupling**: any transport plan
-between `δ_x` and `δ_y` equals `deltaPlan x y` pointwise. The marginal
-constraints force the plan to be supported only on `(x, y)` with
-mass `1`. -/
+/-- Every plan between `δ_x` and `δ_y` equals `deltaPlan x y`
+entrywise. -/
 theorem deltaPlan_unique (x y : X) (p : TransportPlan (delta x) (delta y))
     (a b : X) :
     p.π a b = (deltaPlan x y).π a b := by
@@ -427,7 +389,7 @@ theorem deltaPlan_unique (x y : X) (p : TransportPlan (delta x) (delta y))
       exact Finset.sum_eq_zero_iff_of_nonneg
         (fun a' _ => p.nonneg a' b) |>.mp hcol a (Finset.mem_univ a)
 
-/-- **Every plan between `δ_x` and `δ_y` has cost `d x y`.** -/
+/-- Every plan between `δ_x` and `δ_y` has cost `d x y`. -/
 theorem deltaPlan_forall_cost (x y : X) (d : X → X → ℝ)
     (p : TransportPlan (delta x) (delta y)) :
     p.cost d = d x y := by
@@ -438,9 +400,7 @@ theorem deltaPlan_forall_cost (x y : X) (d : X → X → ℝ)
   rw [hπ]
   exact deltaPlan_cost x y d
 
-/-- **W_1 between Dirac-deltas equals the distance**: `W_1(δ_x, δ_y) = d(x, y)`.
-Every plan in the set achieves cost `d x y`, so the infimum is a
-singleton and equals `d x y`. -/
+/-- `wasserstein1 d (delta x) (delta y) = d x y`. -/
 theorem wasserstein1_delta_eq_dist (d : X → X → ℝ) (x y : X) :
     wasserstein1 d (delta x) (delta y) = d x y := by
   unfold wasserstein1
@@ -460,12 +420,10 @@ theorem wasserstein1_delta_eq_dist (d : X → X → ℝ) (x y : X) :
   rw [hset]
   exact csInf_singleton _
 
-/-! ## Universal Wasserstein upper bound from a sup-norm on the cost -/
+/-! ## Upper bounds -/
 
-/-- **Universal W_1 upper bound via the tensor plan**: for any two
-probability-like measures `μ, ν` (both non-negative, summing to `1`),
-the Wasserstein-1 distance is at most the `(μ ⊗ ν)`-expectation of
-the cost `d`. -/
+/-- For nonnegative `d` and nonnegative `μ`, `ν` of total mass 1,
+`wasserstein1 d μ ν ≤ ∑_x ∑_y μ x ν y d x y`. -/
 theorem wasserstein1_le_tensor_cost (d : X → X → ℝ)
     (μ ν : X → ℝ)
     (hμ : ∀ x, 0 ≤ μ x) (hν : ∀ x, 0 ≤ ν x)
@@ -479,9 +437,8 @@ theorem wasserstein1_le_tensor_cost (d : X → X → ℝ)
   · refine ⟨TransportPlan.tensor μ ν hμ hν hμsum hνsum, ?_⟩
     exact TransportPlan.tensor_cost μ ν hμ hν hμsum hνsum d
 
-/-- **Universal W_1 bound by the supremum of `d`**: when `d` is
-bounded above by some `C ≥ 0` everywhere, `W_1(μ, ν) ≤ C` for any
-two probability measures. -/
+/-- If `0 ≤ d ≤ C` and `μ`, `ν` are nonnegative of total mass 1, then
+`wasserstein1 d μ ν ≤ C`. -/
 theorem wasserstein1_le_sup (d : X → X → ℝ) (C : ℝ) (hC : 0 ≤ C)
     (hbound : ∀ x y, d x y ≤ C)
     (hd : ∀ x y, 0 ≤ d x y)
@@ -511,11 +468,10 @@ theorem wasserstein1_le_sup (d : X → X → ℝ) (C : ℝ) (hC : 0 ≤ C)
               Finset.sum_congr rfl (fun x _ => step1 x)]
         rw [← Finset.sum_mul, hμsum, one_mul]
 
-/-! ## Kantorovich-Rubinstein duality (one direction): Lipschitz test functions -/
+/-! ## Lipschitz test functions -/
 
-/-- **Plan-level Kantorovich-Rubinstein bound**: for any coupling `p` and any
-`L`-Lipschitz test function `f` against the cost `d`, the difference of
-`f`-expectations under the marginals is bounded by `L · p.cost d`. -/
+/-- For a plan `p` and a function `f` with `|f x − f y| ≤ L · d x y`,
+`|∑ μ f − ∑ ν f| ≤ L · p.cost d`. -/
 theorem cost_bounds_expectation_diff
     (d : X → X → ℝ) (μ ν : X → ℝ) (p : TransportPlan μ ν)
     (f : X → ℝ) (L : ℝ)
@@ -570,16 +526,9 @@ theorem cost_bounds_expectation_diff
         refine Finset.sum_congr rfl ?_; intros y _
         ring
 
-/-- **Kantorovich-Rubinstein one-direction** (finite discrete): for any
-`L`-Lipschitz test function `f` (with `L ≥ 0`, `d ≥ 0`), the absolute
-difference of expectations under `μ` and `ν` is bounded by `L · W_1(μ, ν)`:
-
-`|E_μ[f] − E_ν[f]| ≤ L · W_1(μ, ν)`.
-
-This is the standard way W_1 is used in convergence arguments — any
-Lipschitz observable has expectation variation bounded by the
-Wasserstein distance, so `W_1(μ_n, μ) → 0` implies `E_{μ_n}[f] → E_μ[f]`
-for every such `f`. -/
+/-- For `L ≥ 0`, nonnegative `d`, nonnegative `μ`, `ν` of total mass 1,
+and `f` with `|f x − f y| ≤ L · d x y`,
+`|∑ μ f − ∑ ν f| ≤ L · wasserstein1 d μ ν`. -/
 theorem wasserstein1_lipschitz_bound
     (d : X → X → ℝ) (hd : ∀ x y, 0 ≤ d x y)
     (μ ν : X → ℝ)
@@ -640,20 +589,17 @@ theorem wasserstein1_lipschitz_bound
         rw [hnonempty, Finset.sum_empty, Finset.sum_empty]
     rw [hEeq, sub_self, abs_zero, zero_mul]
 
-/-! ## Gluing of transport plans and triangle inequality for W_1
+/-! ## Gluing of plans and the triangle inequality
 
-Given `p : TransportPlan μ ν` and `q : TransportPlan ν ρ`, we
-construct a plan `p.glue q hν : TransportPlan μ ρ` whose cost
-under any triangle-inequality-respecting distance is bounded by
-`p.cost d + q.cost d`. This yields the triangle inequality
-`W_1(μ, ρ) ≤ W_1(μ, ν) + W_1(ν, ρ)`. -/
+For `p` between `μ` and `ν` and `q` between `ν` and `ρ`, `p.glue q` is a
+plan between `μ` and `ρ` whose cost is at most `p.cost d + q.cost d` when
+`d` satisfies the triangle inequality. -/
 
 namespace TransportPlan
 
 variable {μ ν ρ : X → ℝ}
 
-/-- **Marginal zero implies pointwise zero.** If `ν j = 0` for a
-plan `p : TransportPlan μ ν`, every entry `p.π i j = 0`. -/
+/-- If `ν j = 0`, then `p.π i j = 0` for every `i`. -/
 theorem entry_zero_of_col_zero (p : TransportPlan μ ν)
     (j : X) (hνj : ν j = 0) (i : X) : p.π i j = 0 := by
   have hsum : ∑ i', p.π i' j = 0 := by rw [p.colMarginal]; exact hνj
@@ -668,10 +614,8 @@ theorem entry_zero_of_row_zero (p : TransportPlan μ ν)
     fun j' _ => p.nonneg i j'
   exact (Finset.sum_eq_zero_iff_of_nonneg hnn).mp hsum j (Finset.mem_univ _)
 
-/-- **Composition / gluing** of transport plans via the standard
-`π₁(i,j) π₂(j,k) / ν(j)` discrete coupling. When `ν j = 0`, both
-`p.π i j = 0` and `q.π j k = 0`, so the division-by-zero
-convention (`x / 0 = 0` in `ℝ`) is harmless. -/
+/-- The plan `∑_j p.π i j · q.π j k / ν j`. Where `ν j = 0`, the terms
+`p.π i j` are 0 and the division by 0 contributes 0. -/
 noncomputable def glue (p : TransportPlan μ ν) (q : TransportPlan ν ρ) :
     TransportPlan μ ρ where
   π := fun i k => ∑ j, p.π i j * q.π j k / ν j
@@ -735,9 +679,8 @@ noncomputable def glue (p : TransportPlan μ ν) (q : TransportPlan ν ρ) :
     simp only [h2]
     exact q.colMarginal k
 
-/-- **Cost bound for glued plan under triangle inequality.** If
-`d` satisfies `d i k ≤ d i j + d j k`, then the cost of
-`p.glue q` against `d` is at most `p.cost d + q.cost d`. -/
+/-- If `d i k ≤ d i j + d j k` for all `i`, `j`, `k`, then
+`(p.glue q).cost d ≤ p.cost d + q.cost d`. -/
 theorem glue_cost_le (p : TransportPlan μ ν) (q : TransportPlan ν ρ)
     (d : X → X → ℝ) (hd : ∀ x y, 0 ≤ d x y)
     (htri : ∀ i j k, d i k ≤ d i j + d j k) :
@@ -854,11 +797,9 @@ theorem glue_cost_le (p : TransportPlan μ ν) (q : TransportPlan ν ρ)
 
 end TransportPlan
 
-/-- **Wasserstein-1 triangle inequality** for probability measures:
-`W_1(μ, ρ) ≤ W_1(μ, ν) + W_1(ν, ρ)` when `d` satisfies the triangle
-inequality. Proof: for any plans `p : μ → ν` and `q : ν → ρ`, the
-glue `p.glue q : μ → ρ` has cost bounded by `p.cost d + q.cost d`;
-take infima using `csInf_le` + `le_csInf` with tensor-plan witnesses. -/
+/-- For nonnegative `d` satisfying the triangle inequality and
+nonnegative `μ`, `ν`, `ρ` of total mass 1,
+`W_1(μ, ρ) ≤ W_1(μ, ν) + W_1(ν, ρ)`. -/
 theorem wasserstein1_triangle
     (d : X → X → ℝ) (hd : ∀ x y, 0 ≤ d x y)
     (htri : ∀ x y z, d x z ≤ d x y + d y z)

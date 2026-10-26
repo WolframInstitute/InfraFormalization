@@ -1,22 +1,10 @@
 /-
-**Discrete de Rham complex on a hypergraph** (Group IA / #111 IA3).
+0-forms and 1-forms on a hypergraph.
 
-Extends `HypergraphCalculus.lean` (gradient, divergence, Stokes) to
-the full de Rham complex: k-forms, exterior derivative, `d² = 0`.
-
-  * `ZeroForm V := V → ℝ` — vertex-valued scalars (reusing
-    `ScalarField`).
-  * `OneForm V := Hyperedge V → ℝ` — edge-valued.
-  * `exteriorDerivativeOn0 := hyperedgeGradient` — `d : 0-forms →
-    1-forms`.
-  * `d²_zero_on_zero_forms` — `d ∘ d = 0` on 0-forms (trivial since
-    2-forms not yet defined; this is the vacuous-truth statement).
-
-Full development (2-forms, Hodge dual, harmonic forms) requires
-more machinery; we install the base layer here.
-
-**Connection to hypergraphs.** Native. Every form is a function on
-`V` or `Hyperedge V`, living directly on a `Hypergraph V`.
+This module defines 0-forms `V → ℝ`, 1-forms `Hyperedge V → ℝ`, and
+`d0 = hyperedgeGradient`. It proves that `d0` is linear and vanishes on
+constants, and restates `summation_by_parts` in terms of `d0`. No 2-forms
+are defined.
 -/
 
 import InfraFormalization.HypergraphCalculus
@@ -28,22 +16,20 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 
 /-! ## Form types -/
 
-/-- **0-form**: a real-valued function on vertices. -/
+/-- A real-valued function on vertices. -/
 abbrev ZeroForm (V : Type*) := V → ℝ
 
-/-- **1-form**: a real-valued function on directed hyperedges. -/
+/-- A real-valued function on hyperedges. -/
 abbrev OneForm (V : Type*) := Hyperedge V → ℝ
 
 /-! ## Exterior derivative `d : 0-forms → 1-forms`
 
-`dω(e) := ω(dst e) − ω(src e)`. This is literally
-`hyperedgeGradient`. -/
+`d0` is `hyperedgeGradient`. -/
 
-/-- **Exterior derivative of a 0-form**: same as
-`hyperedgeGradient`. -/
+/-- The hyperedge gradient of a 0-form. -/
 def d0 (ω : ZeroForm V) : OneForm V := hyperedgeGradient ω
 
-/-- **Linearity of d₀**. -/
+/-- `d0` of `ω + η` is `d0 ω + d0 η`. -/
 theorem d0_add (ω η : ZeroForm V) :
     d0 (fun v => ω v + η v) = fun e => d0 ω e + d0 η e := by
   funext e
@@ -61,15 +47,11 @@ theorem d0_const (c : ℝ) : d0 ((fun _ => c) : ZeroForm V) = fun _ => 0 := by
   unfold d0
   exact hyperedgeGradient_const c e
 
-/-! ## Integration of 1-forms on a hypergraph: Stokes at rank 1
+/-! ## Summation by parts -/
 
-For a 1-form `ω` and a divergence `hypergraphDiv`-valued edge
-function, summation-by-parts gives the discrete Stokes' theorem.
-This is `summation_by_parts` from `HypergraphCalculus` in de Rham
-dress. -/
-
-/-- **Discrete Stokes (0-forms → 1-forms)**:
-`∑_v ω(v) · (div ψ)(v) = ∑_e ψ(e) · d₀ω(e)`. -/
+/-- For a 0-form `ω` and a 1-form `ψ`,
+`∑_v ω(v) · (div ψ)(v) = ∑_e ψ(e) · d₀ω(e)`, with the right-hand sum over
+the edge multiset of `H`. This is `summation_by_parts`. -/
 theorem stokes_zero_to_one (H : Hypergraph V)
     (ω : ZeroForm V) (ψ : OneForm V) :
     (∑ v : V, ω v * hypergraphDiv H ψ v)
