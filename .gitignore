@@ -15,3 +15,6 @@ data/
 reports/
 *.log
 *~
+
+# Python bytecode
+__pycache__/
