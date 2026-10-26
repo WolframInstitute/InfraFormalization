@@ -1,0 +1,28 @@
+{
+ "G2_G3_G4_caption": {
+  "events_per_generation": [
+   1,
+   2,
+   3
+  ],
+  "causal_edges_with_multiplicity": 10,
+  "causal_edges_from_generation": [
+   4,
+   6,
+   0
+  ]
+ },
+ "G9_caption": {
+  "events_per_generation": [
+   1,
+   1,
+   2
+  ],
+  "causal_edges_with_multiplicity": 6,
+  "causal_edges_from_generation": [
+   4,
+   2,
+   0
+  ]
+ }
+}
