@@ -103,7 +103,7 @@ Each entry lists facts from external sources. Project-internal references (task 
 ### `JGORARD` — Jonathan Gorard
 
 - Wolfram Institute Alumnus per <https://wolframinstitute.org/people> (2026-05-01).
-- Author of the papers audited in this project ( arXiv:2004.14810, arXiv:2102.09363, arXiv:2303.07282, arXiv:2011.12174, arXiv:2308.07508, arXiv:2401.14209).
+- Author of the papers audited in this project (arXiv:2004.14810, arXiv:2102.09363, arXiv:2303.07282, arXiv:2011.12174, arXiv:2308.07508, arXiv:2401.14209).
 
 ### `PPOKORNY` — Pavel Pokorny
 

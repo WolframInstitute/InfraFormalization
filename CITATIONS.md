@@ -2,7 +2,7 @@
 
 This file lists the literature the library builds on and the literature related to the Knill-value computations of this repository. For each computation it records the Lean modules, the status, and the related papers found in the literature search.
 
-Status labels as in [`STATUS_OF_GORARD_CLAIMS.md`](STATUS_OF_GORARD_CLAIMS.md): PROVED, PROVED-WITH-NATIVE-DECIDE, VACUOUS, MEASURED, READ, OPEN.
+Status labels as in [`STATUS_OF_GORARD_CLAIMS.md`](STATUS_OF_GORARD_CLAIMS.md): PROVED, PROVED-WITH-NATIVE-DECIDE, MEASURED, READ, OPEN.
 
 ---
 
@@ -90,47 +90,48 @@ Status labels as in [`STATUS_OF_GORARD_CLAIMS.md`](STATUS_OF_GORARD_CLAIMS.md): 
 
 ## C. Knill-value computations in this repository
 
-All results in this section are computed with `MultiwayExec.fireAllStep` (through `fireAllEvolve`, `tracedFireAllEvolve`, `causalDAGOfFireAll` and `branchialDAGOfFireAll`). `fireAllStep` applies every match of every rule found in the input state, including matches that share edges. It is not a Wolfram model update when matches overlap, so these results do not describe Wolfram model evolutions. "B" is the scaled Knill Euler characteristic of `branchialDAGOfFireAll`, which joins two events of the same step that consume a common edge value; this relation differs from the Wolfram-model branchial graph. "R" is the scaled Knill Euler characteristic of `causalDAGOfFireAll`. Under `MultiwayExec.singleWayStep` (a maximal set of edge-disjoint matches) the Knill values of two-rule systems in `MultiRuleDiscovered` change.
+"B" is the scaled Knill Euler characteristic of `branchialDAGOfFireAll`, which joins two events of the same step that consume a common edge value. This relation differs from the Wolfram-model branchial graph. "R" is the scaled Knill Euler characteristic of `causalDAGOfFireAll`. Both graphs are built from `MultiwayExec.fireAllStep` (through `tracedFireAllEvolve`). `fireAllStep` applies every match of every rule found in the input state, including matches that share edges. It is not a Wolfram model update when matches overlap, so values computed with it do not describe Wolfram model evolutions. `MultiwayExec.singleWayStep` applies a maximal set of edge-disjoint matches.
 
 ### C1. B(d) for two rule pairs
 
-- PROVED-WITH-NATIVE-DECIDE: for `edgeReversal_tripleMerger_Sys` and `fork_doubleCycle_Sys` on the seed `edge12`, B(d) = 3^(d+1) − 3 at d = 2, ..., 6 (`BClosedForm.lean`, `PersistentBEquivalence.lean`, `PersistentScalingExponent.lean`, `BClosedFormExtended.lean`).
-- OPEN: `∀ d, discreteBranchialDensity edgeReversal_tripleMerger_Sys d = 3^(d+1) - 3`.
+- OPEN: for `edgeReversal_tripleMerger_Sys` and `fork_doubleCycle_Sys` on the seed `seedEdge12`, B(d) = 3^(d+1) − 3 for every d ≥ 2. Lean: none. The library defines no theorem about `branchialDAGOfFireAll`.
 - The growth factor 3 per depth gives the exponent log₂ 3 if depth d is identified with −log₂ h for a lattice spacing h. No theorem in the library defines h or relates B to the Sierpiński triangle.
 - Literature search: no earlier Wolfram-model computation of this quantity was found.
 
 ### C2. R(d) for the same pair
 
-- PROVED-WITH-NATIVE-DECIDE at d = 2, ..., 5: R(d) + B(d) = 12d + 6·(d mod 2) for `edgeReversal_tripleMerger_Sys` (`RClosedForm.lean`). At d = 6 the value comes from an `#eval` run and is not a theorem.
-- OPEN: the identity for all d ≥ 2.
+- PROVED-WITH-NATIVE-DECIDE: R(3) = −36 for `edgeReversal_tripleMerger_Sys` and R(3) = 0 for `fork_doubleCycle_Sys` (`edgeReversal_tripleMerger_knill_neg36`, `fork_doubleCycle_knill_zero`, `MultiRuleDiscovered.lean`).
+- OPEN: R(d) + B(d) = 12d + 6·(d mod 2) for `edgeReversal_tripleMerger_Sys` and every d ≥ 2. Lean: none.
 
-### C3. Equal B values for two rule pairs
+### C3. Distinct edges of the two rule pairs
 
-- PROVED-WITH-NATIVE-DECIDE: the two pairs of C1 have equal B at d = 2, ..., 6. Their R values differ at d = 2, 3, 4 (0, −36, −192 against 6, 0, 0, `PersistentBEquivalence.lean`).
-- `DistinctEdgeIdentity.lean` and the H9 modules relate B to the number of distinct edges under `fireAllStep`. OPEN: the statement that both systems have 3^d distinct edges at every depth d.
+- PROVED-WITH-NATIVE-DECIDE: both systems of C1 have 3^d distinct edges at d = 0, ..., 4 (`DistinctEdgeIdentity.lean`, `H9StructuralProgress.lean`).
+- PROVED: `H9_conditional_on_bridge` (`H9Closure.lean`) derives the count 3^d for every d from the proposition `engineMatchesTriad`.
+- OPEN: `distinct_tripling_conjecture`, the count 3^d for both systems at every depth d.
+- OPEN: the equality of B for the two systems at every depth. Lean: none.
 
 ### C4. Per-edge additivity
 
-- PROVED-WITH-NATIVE-DECIDE: `universal_per_edge_additivity` (`UniversalAdditivity.lean`) is a conjunction of five equalities for `doubleCycle_5` at depth 4: the Knill value on each of the seeds `edge12`, `path123`, `disjoint`, `triangle`, `bbhInitial` equals the number of seed edges times the value on `edge12`. Further conjunctions in the same module cover `edgeReversal` at depth 5 and `bidirectedEdge` at depth 4.
+- PROVED-WITH-NATIVE-DECIDE: `per_edge_additivity_instances` (`UniversalAdditivity.lean`) is a conjunction of five equalities for `doubleCycleSys_5` at depth 4 under `singleWayStep`: the Knill value on each of the seeds `seedEdge12`, `seedPath123`, `seedTwoDisjoint`, `seedTriangle`, `twoTriangleSeed` equals the number of seed edges times the value on `seedEdge12`. Further conjunctions in the same module cover `edgeReversalSys` at depth 5 and `bidirectedEdgeSys` at depth 4 under `singleWayStep`, and `edgeReversal_identity_Sys` at depth 3 under `fireAllStep` (`additivity_multi_rule_instances`).
 - OPEN: the identity for every seed, rule and depth.
 
 ### C5. Linear combination R + α·B
 
-- `UnifiedEHBalance.lean` defines S(rule, seed, d, α) = |seed|·(R + α·B) and proves, PROVED-WITH-NATIVE-DECIDE, the values α at which S = 0 for specific rule pairs on `bbhInitial` (for example α = 4/5 for `edgeReversal` with `identityKeep` at depth 3, `balance_alpha_BBH_eR_id`).
+- OPEN: S(rule, seed, d, α) = |seed|·(R + α·B) and the values of α at which S = 0 for specific rule pairs on `twoTriangleSeed`. Lean: none.
 - No theorem relates S to the Einstein-Hilbert action or α to a physical constant.
 
 ### C6. Lean formalisation of Wolfram-model rewriting
 
-- The library formalises hypergraphs, rule applications, trajectories, an executable step operator, and causal histories with hyperedge identities (`CausalHistory.lean`). The results about the causal graph of the rule of G3 line 6202 (edge-count conservation, antichain bound, cone bound 5^t) are PROVED for every update order; see [`STATUS_OF_GORARD_CLAIMS.md`](STATUS_OF_GORARD_CLAIMS.md), Claim 1.
+- The library formalises hypergraphs, rule applications, trajectories, an executable step operator, and causal histories with hyperedge identities (`CausalHistory.lean`). The results about the causal graph of the rule of G3 line 6202 (edge-count conservation, antichain bound, cone bound 5^t) are PROVED for every update order. See [`STATUS_OF_GORARD_CLAIMS.md`](STATUS_OF_GORARD_CLAIMS.md), Claim 1.
 - The literature search found no earlier proof-assistant formalisation of Wolfram-model rewriting.
 
 ---
 
 ## D. Open items
 
-- D1. `∀ d, discreteBranchialDensity edgeReversal_tripleMerger_Sys d = 3^(d+1) - 3` (C1), and the corresponding statements for R (C2).
+- D1. B(d) = 3^(d+1) − 3 for `edgeReversal_tripleMerger_Sys` and every d (C1), and the corresponding statement for R (C2).
 - D2. The same computations with `MultiwayExec.singleWayStep` in place of `fireAllStep`, so that the values describe Wolfram model evolutions.
-- D3. Whether rule pairs other than the two in C1 have closed forms for B and R. `MultiRuleRDivergence.lean` gives three rule pairs at depth 4 whose R differs from the sum of the single-rule values (`R_sum_combination_fails`) and one whose R differs from the product (`R_product_combination_fails`), PROVED-WITH-NATIVE-DECIDE with the fire-all operator.
+- D3. Whether rule pairs other than the two in C1 have closed forms for B and R.
 
 ---
 

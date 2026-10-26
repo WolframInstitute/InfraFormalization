@@ -2,7 +2,7 @@
 
 The Lean library can check and screen candidate Wolfram-model rules in a search for rules whose causal graph approximates a Lorentzian manifold. It does not generate rules beyond the small bounded families described below. It supplies decidable screening predicates and the theorems that hold for every rule.
 
-Status labels follow `STATUS_OF_GORARD_CLAIMS.md`: PROVED (kernel-checked, axioms at most `propext`, `Classical.choice`, `Quot.sound`), PROVED-WITH-NATIVE-DECIDE, VACUOUS, MEASURED, READ, OPEN.
+Status labels follow `STATUS_OF_GORARD_CLAIMS.md`: PROVED (axioms at most `propext`, `Classical.choice`, `Quot.sound`), PROVED-WITH-NATIVE-DECIDE, MEASURED, READ, OPEN.
 
 ## Results available to a search
 
@@ -13,7 +13,7 @@ Status labels follow `STATUS_OF_GORARD_CLAIMS.md`: PROVED (kernel-checked, axiom
 | Edge-count conservation | `Application.size_result_of_conservative`, `trajectory_size_invariant` | PROVED | A rule with \|LHS\| = \|RHS\| keeps the edge count of every state equal to the initial edge count. This does not bound the cone dimension of the causal graph. `Refutations.gorardNamedRule_applications_preserve_size` (F7) states it for the rule of arXiv:2102.09363. |
 | Antichain bound | `CausalHistory.RuleHistory.antichain_card_le` | PROVED | For a rule with \|LHS\| = \|RHS\| = k and N initial hyperedges, every antichain A of the causal graph satisfies k·\|A\| ≤ N, for every update order. |
 | Cone bound | `CausalHistory.RuleHistory.ball_card_le` | PROVED | At most (\|RHS\| + 1)^t events lie within directed distance t of an event. For the rule of arXiv:2102.09363 this is 5^t (`CausalHistory.gorardNamedRule_ball_card_le`). |
-| Same-level antichain | `same_level_ordered_antichain`, `no_causal_edge_within_level` | PROVED | Events at the same causal level have no causal edge between them (value-based causal relation of `CausalLevel.lean`). |
+| Same-level antichain | `no_causal_edge_within_level`, `Infra.same_level_not_causal` | PROVED | Events at the same causal level have no causal edge between them (value-based causal relation of `CausalLevel.lean`). |
 | Linear cone growth | `CausalHistory.GorardNamedRuleConeGrowthLinear` | OPEN | For every N there is c such that every valid `RuleHistory` of the rule of arXiv:2102.09363 with N initial hyperedges satisfies \|ball i t\| ≤ c·(t+1). |
 | Cone-growth exponent | `scripts/python/run_all_seeds.py`, SetReplace scripts | MEASURED | For the rule of arXiv:2102.09363 on 9 seeds of up to 300 edges and 2000 events, exponents between 0.77 and 1.26 depending on the update order (`notes/empirical_refutation.md` §4). A measurement on finite seeds does not prove a bound. |
 
@@ -23,7 +23,7 @@ These per-rule observables would track dimension if the causal graph approximate
 
 1. Level growth: `|{j : j < N ∧ level τ j ≤ t}|`, compared against t^{d+1}. Lemmas used: `level_add_one_le_of_isCausalPred`, `level_eq` (PROVED).
 2. Antichain width: `|{j : level τ j = k}|`, compared against k^d. Lemma used: `no_causal_edge_within_level` (PROVED).
-3. Forward-cone volume: `|{j : causallyPrecedes τ i j ∧ level τ j ≤ level τ i + t}|`, compared against t^{d+1}. Lemmas used: `causallyPrecedes_implies_minkowski`, `causallyPrecedes_implies_timelike` (PROVED; they map the causal order into the 1+0-dimensional Lorentz lattice).
+3. Forward-cone volume: `|{j : causallyPrecedes τ i j ∧ level τ j ≤ level τ i + t}|`, compared against t^{d+1}. Lemmas used: `causallyPrecedes_implies_lattice_time_order`, `causallyPrecedes_implies_timelike` (PROVED; they map the causal order into the 1+0-dimensional Lorentz lattice).
 4. Embedding consistency: given a spatial embedding `φ : event-index → Fin d → ℤ`, check that every pair with `causallyPrecedes τ i j` satisfies `Timelike d (fullEmbed φ i) (fullEmbed φ j)`. The check is decidable. In 1+0 dimensions it always holds (`causallyPrecedes_implies_timelike`, PROVED). In d spatial dimensions `fullEmbed_preserves_causal` (PROVED) gives it under the hypothesis `LightConeCompatible τ φ`.
 
 ### Screening on the executable engine

@@ -4,19 +4,19 @@ Target: a Lean theorem that a hypergraph initial condition, evolved under a Wolf
 
 This document orders the open tasks into phases by dependency. The critical-path tasks of a phase depend on the previous phase. Parallel streams do not gate the critical path.
 
-Status labels follow `STATUS_OF_GORARD_CLAIMS.md`: PROVED, PROVED-WITH-NATIVE-DECIDE, VACUOUS, MEASURED, READ, OPEN.
+Status labels follow `STATUS_OF_GORARD_CLAIMS.md`: PROVED, PROVED-WITH-NATIVE-DECIDE, MEASURED, READ, OPEN.
 
 ---
 
-## Phase A: origin obligations with content
+## Phase A: convergence statements with content
 
-`HypergraphMetricOriginObligation`, `HypergraphMetricOriginObligationStrong`, `...WithRate`, the partial-metric forms and `ConnectionDataOriginObligation` do not depend on their target and hold for every target (`Curvature.any_metric_has_strong_obligation_witness`). `WassersteinRateObligation d` concerns a sequence d supplied by the caller and is satisfied by the zero function. `subdivisionDiscrepancy n = 1/2^n` is defined directly and is not computed from any measure. The discharges of these obligations are VACUOUS. Phase A replaces them with statements that depend on the trajectory and the target.
+Phase A consists of convergence statements for a trajectory and a target metric that are false for some target. The library has no such statement.
 
 | # | Task | Deps | Status |
 |---|---|---|---|
-| 233 | `HypergraphMetricOriginObligationStrong`, discharged by `minkowski4_from_hypergraph_strong` and `any_metric_has_strong_obligation_witness` | #234 | VACUOUS: holds for every target |
-| — | `ConvergenceRateObligation d r` for any rate function r (`rateOneOverN`, `rateOneOverNSquared`, `rateGeometric c`), with maps to and from `WassersteinRateObligation` | #233 | VACUOUS: d is supplied by the caller and the zero function satisfies it (`convergenceRateObligation_zero`) |
-| 234 | `subdivisionDiscrepancy_satisfies_obligation` | — | VACUOUS as a convergence result: `subdivisionDiscrepancy n = 1/2^n` is defined directly |
+| 233 | A metric-origin statement for a hypergraph trajectory that is false for some target metric | #234 | OPEN. Lean: none |
+| — | A convergence-rate statement for a discrepancy computed from the trajectory, with rate functions 1/n, 1/n² and cⁿ | #233 | OPEN. Lean: none |
+| 234 | A discrepancy computed from the counting measure of the n-th state of the subdivision trajectory | — | OPEN. Lean: none |
 | — | Define, for a trajectory τ and a target metric g, the discrepancy d_τ,g(n) as the Wasserstein-1 distance between the pushforward of the counting measure of the n-th state and the volume measure of g, and prove d_τ,g(n) ≤ C/n for one flat target and one rule | measure of a trajectory | OPEN |
 
 Phase A gives Phase B screener metrics a target statement to test against.
@@ -29,7 +29,7 @@ Lean metric definitions, a trajectory interchange format, and the driver for wol
 
 | # | Task | Deps | Status |
 |---|---|---|---|
-| 224 | Curvature signature screener: `RuleSignatureScreener.lean` (`signatureTrajectory`, `formanRicciTrajectory`, `formanRicciDeviation`, `FormanRicciScreener`, `MultiScreener`, `AngularScreener`, `CombinedScreener`) | — | PROVED (definitions and screening lemmas) |
+| 224 | Curvature signature screener on abstract trajectories (Forman-Ricci trajectory, deviation from a target, angular and combined screeners) | — | OPEN. Lean: none. `RuleSignature.lean` defines the edge-count, vertex-count and ball-volume signature of a hypergraph with screening lemmas (PROVED) |
 | 372, 377 | `RuleSignatureSchema.lean`: dossier format, `canonicalDossier_isConsistent`, `consistent_dossier_eq_canonical` | #224 | PROVED |
 | 384-386 | Screening and bounded search on the executable engine (`RuleSignatureExecMetrics.lean`, `RuleSignatureExecSearch.lean`) | #224 | PROVED-WITH-NATIVE-DECIDE |
 | 190 | Rule search via wolframscript at scale | #224, schema | OPEN |
@@ -84,7 +84,7 @@ Phase C ends with one GR metric that has a rule, a trajectory and a convergence 
 
 Target statement (OPEN): `∃ rule R, hypergraph_IC : ExecHG ℕ, NRwaveform : ℝ → ℂ, discreteWaveform R IC tendsto NRwaveform`, where `discreteWaveform` is computed from the evolution of `hypergraph_IC` under R.
 
-The `BBH*.lean` modules state their results with `fireAllStep` and the 6-vertex graph `bbhInitial`. They are not steps of Phase D. `Milestone.BBH_emerges_from_hypergraph` holds by `BBH_emerges_from_hypergraph_holds` with zero discrepancies and is VACUOUS.
+H6-H9 have no Lean statement. `twoTriangleSeed` (`TwoTriangleSeed.lean`) is a 6-vertex graph of two triangles joined by an edge. It is not binary black hole initial data.
 
 ---
 
@@ -151,7 +151,7 @@ P1-P20 in `NEXT_STEPS.md` are open: P3 (Chern-Simons), P4 (ribbon graphs), P5 (s
 - B3: Schwarzschild Ricci tensor equal to 0 on the exterior. OPEN.
 - B4: Schwarzschild satisfies the vacuum Einstein equations on the exterior. No theorem exists. OPEN.
 - B10: symmetry of the Ricci tensor of the Levi-Civita connection for every `MetricDataC2`. PROVED for `warpedDiag2`. OPEN in general.
-- B11: second Bianchi identity ∇_μ G^{μν} = 0 for the Levi-Civita connection. PROVED for the flat connection and for `warpedDiag2`. OPEN in general.
+- B11: second Bianchi identity ∇_μ G^{μν} = 0 for the Levi-Civita connection. OPEN. The Einstein tensor is 0 for the flat connection (`flatConnection_einstein_zero`) and for `warpedDiag2` (`warpedDiag2_einsteinTensor_zero`), both PROVED.
 - C5: existence and uniqueness of the Levi-Civita connection (Koszul). OPEN.
 - C8: a scaled discrete connection converges to the Levi-Civita connection. OPEN.
 - F4: Schwarzschild as an explicit vacuum solution. OPEN.
@@ -165,8 +165,8 @@ P1-P20 in `NEXT_STEPS.md` are open: P3 (Chern-Simons), P4 (ribbon graphs), P5 (s
 ### Branchial and quantum (I, IQ)
 
 - I8: Hilbert-space continuum limit of branchial slices. OPEN.
-- IQ8: EME persistence as a branchial observable. `EMEPersistenceObligation` holds with a zero witness (VACUOUS). The statement with content is OPEN.
-- IQ9: path integral over single-way causal graphs. `PathIntegralObligation` holds with a zero amplitude (VACUOUS). The statement with content is OPEN.
+- IQ8: EME persistence as a branchial observable. OPEN. Lean: none.
+- IQ9: path integral over single-way causal graphs. OPEN. Lean: none.
 
 ### Causal and Lorentzian (E)
 
@@ -201,11 +201,11 @@ P1-P20 in `NEXT_STEPS.md` are open: P3 (Chern-Simons), P4 (ribbon graphs), P5 (s
 
 ### Angles and topology (AT, PATH, POLY, CELL, TOP, KNOT)
 
-Definitions in place: `Hypergraph.elementaryAngle`, `cosAngle`, `angle`, `IsOrthoApprox` (AT0, AT1, AT6), `AngularScreener` and `CombinedScreener` (AT7), `Hypergraph.scalarCurvatureAt` (AT9, scalar curvature from the ball-volume ratio), `spatialB0` and `firstBettiZ` with lower bounds (TOP4, TOP1), `infraSphere` and `infraDisk` (SPHERE1), `perpBisector`, `closerHalf`, `midpoint`, `nearMidpoint` and `voronoiCell` (HYPER2, HYPER3, MIDPT1). PROVED (definitions with lemmas).
+Definitions in place: `Hypergraph.elementaryAngle`, `cosAngle`, `angle`, `IsOrthoApprox` (AT0, AT1, AT6), `Hypergraph.scalarCurvatureAt` (AT9, scalar curvature from the ball-volume ratio), `spatialB0` and `firstBettiZ` with lower bounds (TOP4, TOP1), `infraSphere` and `infraDisk` (SPHERE1), `perpBisector`, `closerHalf`, `midpoint`, `nearMidpoint` and `voronoiCell` (HYPER2, HYPER3, MIDPT1). PROVED (definitions with lemmas).
 
 Open tasks in this stream (task numbers #285-#342):
 
-- angle definitions AT2-AT27 and AT-W (sheaf angle);
+- angle definitions AT2-AT27 and AT-W (sheaf angle), and the angular and combined screeners AT7;
 - paths PATH1, PATH2;
 - polygons POLY1 (polygon with arbitrary intersection sequence), POLY2 (cellular k-chains with sheaf coefficients), POLY3 (spin networks);
 - cellular sheaves CELL1;
@@ -231,4 +231,4 @@ Phase D (D11, KN1, KN2, H6, H7, H8, H9)
 Target theorem; papers K5 and K7.
 ```
 
-Current state: the Phase A obligations and the `Milestone` statements are VACUOUS. The Phase B screeners and the bounded search of `RuleSignatureExecSearch.lean` exist (PROVED-WITH-NATIVE-DECIDE for the search counts). The next Phase B task is #190. The Phase A statement with content is OPEN.
+Current state: Phase A has no Lean statement and is OPEN. The bounded search of `RuleSignatureExecSearch.lean` exists (PROVED-WITH-NATIVE-DECIDE for the search counts). The next Phase B task is #190.

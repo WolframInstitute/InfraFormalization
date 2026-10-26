@@ -1,6 +1,6 @@
 # Infrageometry: research programme and Lean coverage
 
-Status labels in this file: PROVED, PROVED-WITH-NATIVE-DECIDE, VACUOUS, READ, OPEN, as in [`STATUS_OF_GORARD_CLAIMS.md`](STATUS_OF_GORARD_CLAIMS.md), and DEFINED for a Lean definition with no theorem attached. Per-theorem axiom lists are in [`THEOREM_STATUS.md`](THEOREM_STATUS.md).
+Status labels in this file: PROVED, PROVED-WITH-NATIVE-DECIDE, READ, OPEN, as in [`STATUS_OF_GORARD_CLAIMS.md`](STATUS_OF_GORARD_CLAIMS.md), and DEFINED for a Lean definition with no theorem attached. Per-theorem axiom lists are in [`THEOREM_STATUS.md`](THEOREM_STATUS.md).
 
 ## 1. What infrageometry is
 
@@ -93,33 +93,27 @@ Relation to other programmes:
 - Infracausality: `stablyCausal_hasFoliation`, `mwClock_implies_causallyPrecedes`, `eps_worldline_not_light`. `CausalGraph V` (transitively reduced DAG), `IsFoliation`, `spatialReconstructionAdj`, `EPSAxioms` and `MWClock` are DEFINED.
 - Causal histories (`CausalHistory.lean`): an identity is consumed by at most one event; the out-degree of an event is at most the number of identities it creates; for |LHS| = |RHS| = k with N initial hyperedges, k·|A| ≤ N for every antichain A; for the rule of G3 line 6202, 4·|A| ≤ N (`CausalHistory.gorardNamedRule_antichain_card_le`) and at most 5^t events within directed distance t of an event (`CausalHistory.gorardNamedRule_ball_card_le`). These hold for every update order.
 - Hypergraph connection: `transportWalk_append` for `HypergraphConnection H G`.
-- Dimension: `dimensionCompatibilityObligation_holds`, V(v, r) = 2r + 1 on `cycleHypergraph n` for 2r + 1 ≤ n (ID6). Rodkey chain on cycles: `cycleHypergraph_rodkey_chain` (`RodkeyClassification.lean`), with `AdjTransitive → DistTransitive → BallVolumeVertexUniform → LocalDimensionVertexUniform`, and `pathHypergraph_not_ballVolumeVertexUniform`.
-- Topology: `latschevObligation_holds` states that distances on `cycleHypergraph n` are less than n + 1; it does not state Latschev's theorem. `scaleTrichotomyObligation_holds` covers the scales ε = 0 and ε = n on cycles. `vrHodge0_has_zero_eigenvalue`, `vrHodge0_symm` for the VR Hodge Laplacian on 0-forms.
-- Ruliology: edge-count invariance for conservative rules (`RuleSignature.edgeCount_invariant_of_conservative`, `trajectory_size_invariant`). `not_reverseEngineeringObligation` proves that the unrestricted reverse-engineering statement is false. `reverseEngineeringObligationRefined_holds` holds with the zero-step trajectory of the empty rule list starting at the target hypergraph.
-- Branchial and quantum: self-adjointness of the slice adjacency (`branchialAdjLM_inner`), probability conservation (`branchialSchrodinger_unitary_evolution`), expectation values (`expectationValue_re_of_symm`), `branchial_qm_is_rewriting_grounded`. `fubiniStudyBhattacharyya_bound` is the inequality |⟨ψ, φ⟩| ≤ Σ_s |ψ_s|·|φ_s|. `EMEPersistenceObligation` and `PathIntegralObligation` are PROVED with the zero vector and the zero amplitude.
+- Dimension: `cycleHypergraph_ballVolume_exact`, V(v, r) = 2r + 1 on `cycleHypergraph n` for 2r + 1 ≤ n (ID6). Rodkey chain on cycles: `cycleHypergraph_rodkey_chain` (`RodkeyClassification.lean`), with `AdjTransitive → DistTransitive → BallVolumeVertexUniform → LocalDimensionVertexUniform`, and `pathHypergraph_not_ballVolumeVertexUniform`.
+- Topology: `vrHodge0_has_zero_eigenvalue` and `vrHodge0_symm` for the VR Hodge Laplacian on 0-forms.
+- Ruliology: edge-count invariance for conservative rules (`RuleSignature.edgeCount_invariant_of_conservative`, `trajectory_size_invariant`).
+- Branchial and quantum: self-adjointness of the slice adjacency (`branchialAdjLM_inner`), probability conservation (`branchialSchrodinger_unitary_evolution`) and expectation values (`expectationValue_re_of_symm`).
 - Continuum targets in local coordinates: Schwarzschild Christoffel symbols on the exterior, FLRW Christoffel symbols and Ricci components (`FLRWRicci.lean`), Reissner-Nordström lapse identities, `warpedDiag2_einstein`, `minkowski4_satisfies_vacuum_EFE`.
 - Bundle-level metric predicates: `euclidean_diagRiemannian`, `minkowski4_diagLorentzian`.
 - Coefficient comparisons with the literature: `Infra.ollivier_minus_gorard_leading`, `Infra.ollivier_gorard_agree_iff`, and the S² case `Infra.s2_gorard_error` (difference δε²/8); `Infra.gray_vs_gorard_disagree_on_S2`, `Infra.gray_vs_gorard_disagree_on_S3`.
 
 ### DEFINED
 
-- Fibred graphs: `FiberedGraph`, `IsSection`, `FiberedGraph.Connection`, `ParallelTransportList`, `Holonomy`, `wilsonLoop`, `IsFlatConnection`, `IsFiberBundle`, `GraphTangentBundle`, `MultiFiberedGraph`.
-- Dimension: `IsPlateau` (ID2), `HasNontrivialHomology` (ID3), `HasCoordinatizationDim` (ID4), `HasChainToDepth` (ID5).
-- Topology: `VietorisRipsEdge`, `VietorisRipsSimplex`, `vietorisRipsGraph`, `PersistenceBarcode`, `firstBettiZ`, `spatialB0`, `IsSpatiallyConnected`.
-- Ruliology: `RuleSignature V`, `hypergraphSignature`, `RewritingSystem.ProducesTrees`, `RewritingSystem.ProducesPlanar` (via the necessary condition |E| ≤ 3|V| − 6), `IsDirectConcatSystem`, `IsProductSystem`. No dimension bound for tree-producing, planar or product rules is proved.
-- Blowups: `ElementaryBlowup`, `BlowupLieAlgebraStructure`, `PoissonBracket`, radial and laminar blowups. `ElementaryBlowup.CommutatorVanishesCausalBranchial` is a predicate; the commutator theorem (IB2) is OPEN.
+- Fibred graphs: `FiberedGraph`, `IsSection`, `FiberedGraph.Connection`, `ParallelTransportList`, `Holonomy`, `wilsonLoop`, `IsFiberBundle`, `GraphTangentBundle`, `MultiFiberedGraph`.
+- Dimension: `IsPlateau` (ID2), `HasChainToDepth` (ID5).
+- Topology: `VietorisRipsEdge`, `VietorisRipsSimplex`, `vietorisRipsGraph`, `firstBettiZ`, `spatialB0`, `IsSpatiallyConnected`.
+- Ruliology: `RuleSignature V`, `hypergraphSignature`, `RewritingSystem.ProducesTrees`, `RewritingSystem.ProducesPlanar` (via the necessary condition |E| ≤ 3|V| − 6), `IsDirectConcatSystem`. No dimension bound for tree-producing or planar rules is proved.
+- Blowups: `ElementaryBlowup`, `PoissonBracket`, radial and laminar blowups (`IsRadialBlowup`, `IsLaminarBlowup`). The commutator theorem (IB2) is OPEN.
 - Synthetic: `SyntheticCircle`, `SyntheticLineSegment`, `SyntheticSphere`, `InfrageometricScene`, `Between` and the axioms of `SyntheticAxiomatic.lean`.
-- Angles and metric primitives (`HypergraphDistance.lean`): `Hypergraph.elementaryAngle` (AT0), `cosAngle` (AT1), `IsOrthoApprox` (AT6), `GeodesicallyUnique` (AT8), `infraSphere`, `infraDisk`, `perpBisector`, `voronoiCell`, `midpoint`, `nearMidpoint`, `HasTopologicalHyperplane`. `Hypergraph.scalarCurvatureAt` (AT9, `DiscreteRicci.lean`). `AngularScreener`, `CombinedScreener` (AT7, `RuleSignatureScreener.lean`).
-
-### VACUOUS
-
-- Origin obligations. `HypergraphMetricOriginObligation`, `HypergraphMetricOriginObligationStrong`, the partial-metric forms, `ConnectionDataOriginObligation`, `LorentzianManifoldOriginObligation`, `HypergraphQuantumOriginObligationStrong` and `HypergraphBBHOriginObligationStrong` do not depend on their target and hold for every target (`Curvature.any_metric_has_strong_obligation_witness` and the corresponding theorems). `EFEOriginObligation` is equivalent to `EinsteinEqLambda` (`Curvature.EFEOriginObligation_iff_EinsteinEqLambda`), so `minkowski4_flat_vacuum_EFE_originated_global` is the flat-vacuum Einstein equation with VACUOUS origin clauses. The Milestone Props are satisfied by the zero discrepancy; `Milestone.GR_emerges_from_hypergraph_holds` proves `GR_emerges_from_hypergraph target` for every target. Details: [`BRIDGE_MACHINERY.md`](BRIDGE_MACHINERY.md).
-- `all_obligations_hold` (`RemainingObligations.lean`) bundles ID6 (PROVED with content), the scale endpoints of IT6, the inequality of IQ6, the zero witnesses of IQ8 and IQ9, and the trivial witness of refined IR7.
+- Angles and metric primitives (`HypergraphDistance.lean`): `Hypergraph.elementaryAngle` (AT0), `cosAngle` (AT1), `IsOrthoApprox` (AT6), `GeodesicallyUnique` (AT8), `infraSphere`, `infraDisk`, `perpBisector`, `voronoiCell`, `midpoint`, `nearMidpoint`, `HasTopologicalHyperplane`. `Hypergraph.scalarCurvatureAt` (AT9, `DiscreteRicci.lean`).
 
 ### Lean files on G1-G4
 
-- F3 and F4: PROVED by `Iff.rfl` about the project's encodings (`asymptoticDimPreservation_iff_eulerLagrange`, `causalInvariance_iff_discreteGeneralCovariance`).
-- F1, F2, F5, F6: VACUOUS with respect to the papers. They state facts about function types, `Bool`, the sequence 1/(n+1) and a restated hypothesis.
+- F1-F6 and F8 are READ findings with line numbers and have no Lean module. See [`MAJOR_FLAWS.md`](MAJOR_FLAWS.md).
 - F7: PROVED edge-count conservation for the rule of G3 line 6202; the causal-graph bounds are in `CausalHistory.lean` (above).
 - The findings about the papers are READ findings with line numbers; see [`MAJOR_FLAWS.md`](MAJOR_FLAWS.md).
 
@@ -180,7 +174,7 @@ Each group lists its items in dependency order.
 - IC7. EPS axioms as Props: light structure, particle structure, compatibility.
 - IC8. Marzke-Wheeler clock and a determinism theorem.
 - IC9. Lorentz transformations for scaled causal DAGs converging to Minkowski space.
-- IC10. Curved targets, with `SchwarzschildObligationMet` as the model statement.
+- IC10. Curved targets: Schwarzschild, Kerr and FLRW limits.
 
 ### Group IT. Infratopology
 
@@ -189,7 +183,7 @@ Each group lists its items in dependency order.
 - IT3. Spectrum of the Hodge Laplacian.
 - IT4. Persistence diagram.
 - IT5. Betti numbers of VR_ε.
-- IT6. Latschev's theorem as a Prop, with a proof for cycle → S¹. The current `LatschevObligation` is a distance bound and does not state Latschev's theorem.
+- IT6. Latschev's theorem as a Prop, with a proof for cycle → S¹.
 - IT7. The scale trichotomy as a theorem about the Betti-number function of ε.
 
 ### Group ID. Infradimension
@@ -199,14 +193,14 @@ Each group lists its items in dependency order.
 - ID3. Homology dimension from the top persistent Betti number.
 - ID4. Coordinatization dimension via extremal orthogonal axes.
 - ID5. Causal-graph dimension from longest-antichain analysis.
-- ID6. Compatibility on regular lattices. PROVED for cycles (`dimensionCompatibilityObligation_holds`).
+- ID6. Compatibility on regular lattices. PROVED for cycles (`cycleHypergraph_ballVolume_exact`).
 - ID7. Rules on which the notions disagree.
 
 ### Group IB. Blowups and renormalisation
 
 - IB1. `ElementaryBlowup`.
 - IB2. The commutator of two blowups on isomorphism classes, with vanishing causal-branchial component for single-hyperedge LHS. OPEN.
-- IB3. `BlowupLieAlgebraStructure`.
+- IB3. Lie algebra structure on blowups.
 - IB4. Insertion Lie algebra for unary edges and its isomorphism with the pQFT insertion algebra.
 - IB5. Poisson bracket on ℝ[#V, #E]; Hamiltonian vector fields.
 - IB6. Radial and laminar blowups commuting with calculus up to O(1/n).
@@ -219,7 +213,7 @@ Each group lists its items in dependency order.
 - IQ3. Unitary evolution.
 - IQ4. Amplitudes and observables.
 - IQ5. Fisher metric on the branchial graph.
-- IQ6. Fubini-Study metric as the limit of the Fisher metric on refined branchial graphs. OPEN; the current `FubiniStudyLimitObligation` is a triangle inequality.
+- IQ6. Fubini-Study metric as the limit of the Fisher metric on refined branchial graphs. OPEN.
 - IQ7. Branchial continuum limit to a Hilbert space. OPEN.
 - IQ8. EME tracking: persistence of a vertex across multiway branches as an observable.
 - IQ9. Path integral as a sum over single-way causal-graph classes.
@@ -262,7 +256,7 @@ Knill's programme gives each continuum concept a combinatorial counterpart on fi
 - KN11. Geodesic gas and cellular-automaton geodesic evolution on triangulated 2D lattices.
 - KN12. Delta sets and quivers: face-map exterior derivative, cohomology, Gauss-Bonnet, Brouwer-Lefschetz.
 - KN13. Soft barycentric refinement and the Fisk-manifold predicate.
-- KN14. McKean-Singer symmetry. PROVED ingredients: `KnillCore.dSquared_eq_zero`, `hodgeOnG_psd`.
+- KN14. McKean-Singer symmetry. PROVED ingredients: `Knill.dSquared_eq_zero`, `hodgeOnG_psd`.
 - KN15. Atiyah-Singer and Atiyah-Bott analogues (Knill 1708.06070).
 - KN16. Discrete Cartan formula `L_X = i_X d + d i_X` (Knill 1811.10125).
 - KN17. Bosonic and fermionic invariants as separate types.
@@ -480,7 +474,7 @@ NMURZIN's 11-page document "Geometry on Combinatorial Objects: From Angle Defect
 | §3.1 Forman-Ricci F(e) = 4 − deg(u) − deg(v) + 3·#triangles | `DiscreteRicci.formanRicciHypergraph` (DEFINED) |
 | §3.2 Ollivier-Ricci | #220; AT12 (#297) |
 | §3.4 Ball growth (Bishop-Gromov) | AT9 (#294); SPHERE4 (#337) |
-| §4 Discrete exterior calculus (cochains, coboundary, δ² = 0, Hodge decomposition) | `KnillCore` d, d*, D, H = D²; `KnillCore.dSquared_eq_zero` (PROVED) |
+| §4 Discrete exterior calculus (cochains, coboundary, δ² = 0, Hodge decomposition) | `KnillCore` d, d*, D, H = D²; `Knill.dSquared_eq_zero` (PROVED) |
 | §4 Hodge Laplacians on graphs (Lim) | IT3; `HodgeLaplacianBounds.lean`; `HodgeVR.lean` |
 | §6 Cellular sheaves | CELL1 (#315) |
 | §6.3 Lattice gauge sheaf | IG3-IG7; `DiscreteGaugeField.lean` (not in sheaf form; SHEAF-CHOICE6, #356) |
@@ -505,7 +499,7 @@ The audit and the infrageometry programme share the library.
 
 - Audit: what G1-G4 state and what holds, recorded in [`FINDINGS.md`](FINDINGS.md), [`MAJOR_FLAWS.md`](MAJOR_FLAWS.md) and [`STATUS_OF_GORARD_CLAIMS.md`](STATUS_OF_GORARD_CLAIMS.md).
 - Infrageometry: discrete constructions on hypergraphs and their relation to continuum geometry (this file).
-- Continuum statements: `ContinuumLimitStatement.lean` states the limits to be proved. `SchwarzschildObligationMet`, `KerrObligationMet` and `FLRWObligationMet` are OPEN. The origin obligations of `HypergraphMetricBridges.lean` and related files hold for every target and are not among these statements.
+- Continuum statements: `ContinuumLimitStatement.lean` states limits on the cycle and for Riemann sums. The Schwarzschild, Kerr and FLRW limits are OPEN. Lean: none.
 
 The discrete side of the quantum track (probability conservation on finite branchial slices, self-adjoint Laplacians) is PROVED; its continuum limit (group IQ) is OPEN.
 
@@ -528,4 +522,4 @@ The discrete side of the quantum track (probability conservation on finite branc
 
 ## 8. Grounding principle
 
-Each continuum object in the library is to be related to hypergraph data by a PROVED theorem. The current ties are recorded in [`GROUNDING_AUDIT.md`](GROUNDING_AUDIT.md). PROVED ties exist for objects defined on hypergraphs (PDEs, calculus, causal graphs, branchial slices) and for flat limits of fixed graph families (cycles, paths, tori, lattices). The origin obligations attached to curved metrics, connections, Lorentzian manifolds and the Einstein equations do not depend on their target and hold for every target, so they establish no tie. Schwarzschild, Kerr and FLRW limits are OPEN.
+Each continuum object in the library is to be related to hypergraph data by a PROVED theorem. The current ties are recorded in [`GROUNDING_AUDIT.md`](GROUNDING_AUDIT.md). PROVED ties exist for objects defined on hypergraphs (PDEs, calculus, causal graphs, branchial slices) and for flat limits of fixed graph families (cycles, paths, tori, lattices). Ties for curved metrics, connections, Lorentzian manifolds and the Einstein equations, including the Schwarzschild, Kerr and FLRW limits, are OPEN.
