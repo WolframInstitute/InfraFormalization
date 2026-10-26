@@ -20,7 +20,7 @@ Computations: `scripts/python/pubreview/` (run with `run_capped.sh`, a 4 GB addr
 - §3 Branchlike Foliations and Multiway Relativity (line 1148): §3.1 branchial geometry and multiway invariance (line 1150), §3.2 complex projective Hilbert space and multiway relativity (line 1482), §3.3 the multiway causal graph (line 1979), §3.4 Bell's theorem, particles and consequences (line 2287)
 - §4 Concluding Remarks (line 2550), References (line 2602)
 
-G5 has numbered definitions (Defs 1-50) and no numbered theorems, propositions or lemmas. The word "prove" and its forms occur in the abstract (lines 25, 33, 40) and at lines 145, 617, 801, 1131, 1339, 1483, 1504, 1689, 2025, 2087, 2426.
+G5 has numbered definitions (Defs 1-50) and no numbered theorems, propositions or lemmas. The words "prove", "proof" and their forms occur in the abstract (lines 25, 33, 40) and at lines 66, 100, 106, 110, 134, 145, 146, 159, 383, 617, 663, 801, 945, 1131, 1339, 1399, 1483, 1504, 1689, 1785, 1817, 2025, 2087, 2167, 2245, 2426. Lines 45, 540, 627 and 629 use "theorem-proving" and "proving" for rewriting systems.
 
 ## 2. Claims
 
@@ -132,7 +132,7 @@ CONTRADICTED. MEASURED (`qm_branchial_distance.py`, one initial state in every r
 | the G3 rule, directed 8-edge path, 3 | Full | 37 | 32 | 634 |
 | same | tree | 71 | 92 | 2393 |
 
-"Full" identifies isomorphic states ("CanonicalizeStates" -> "Full"); "tree" does not. No pair is connected at a distance different from its ancestor depth. Two states whose common ancestor lies two or more levels back are joined only through states that have common parents, and in a multiway tree they are never joined: the branchial graph of a tree at one step is a disjoint union of the sibling cliques. Every run has one initial condition, and the clause on the "maximum rate of entanglement" has no definition in G5 that can be checked.
+"Full" identifies isomorphic states ("CanonicalizeStates" -> "Full"); "tree" does not. Each "Full" class sits on the first level at which it appears. In these six runs no pair is connected at a distance different from its ancestor depth. Two other cases have connected pairs whose distance differs from their ancestor depth (`emergent_spacetime/experiments/019_provenance_audit/scripts/g5/branchial.py`, `branchial_main.json`): the first rule from {{0,0},{0,0}} (G5 Fig. 2) at step 3, Full, where 21 of 153 pairs have depth 2 and distance 3; and the G3 rule from the 8-edge path at step 3 with levels taken as the classes reachable in exactly 3 events, where 33 pairs have depth 3 and distance 2. Both contradict lines 1510-1512 directly. Two states whose common ancestor lies two or more levels back are joined only through states that have common parents, and in a multiway tree they are never joined: the branchial graph of a tree at one step is a disjoint union of the sibling cliques. Every run has one initial condition, and the clause on the "maximum rate of entanglement" has no definition in G5 that can be checked.
 
 ### C-17 Convergence of branchlike hypersurfaces to complex projective Hilbert space (lines 1482-1689; abstract lines 33-36)
 
@@ -181,7 +181,7 @@ The phase e^{iS} is "the dispersion angle of geodesic bundles", which is "trivia
 
 ### C-24 Particles from forbidden minors (lines 2289-2390)
 
-- Kuratowski's and Wagner's theorems, Defs 46-49, and the statement that a nonplanar trivalent graph contains a subdivision of K₃,₃ (lines 2315-2318). CITED ([84-86]), correct: a subdivision of K₅ needs four vertices of degree 4.
+- Kuratowski's and Wagner's theorems, Defs 46-49, and the statement that a nonplanar trivalent graph contains a subdivision of K₃,₃ (lines 2315-2318). CITED ([84-86]), correct: a subdivision of K₅ has five branch vertices of degree 4, which a trivalent graph does not have.
 - Lines 2341-2343 call Wagner's theorem "a stronger variant" of Kuratowski's. Both characterise planarity. The relation between the minor and subdivision orders (lines 2352-2355) is stated correctly.
 - The Robertson-Seymour theorem and the finiteness of forbidden minors for each surface (lines 2356-2379). CITED ([87, 88]), correct.
 - Lines 2380-2390: the theorem "allows us to define a conserved graph quantity", and "may be interpreted as being a combinatorial analog of Noether's theorem". STATED. G5 gives no rule that preserves a minor-closed family and no symmetry of an action.
@@ -229,6 +229,6 @@ Each row lists the statements of §2 in the class. Items that are findings about
 | Modular multiway lattice, confluent, terminating, not causal invariant (E3) | same | 4-element Boolean lattice; 3 histories of 2 events, with 0 and 1 causal edges |
 | Multiway graph with a transitive edge (E2) | same | 1 edge implied by transitivity |
 | Figures 6 and 7 | `qm_string_figures.py` | Figure 6: normal forms A and AA. Figure 7: one normal form from each of 510 strings |
-| Branchial distance against common-ancestor depth | `qm_branchial_distance.py` | disconnected pairs with a common ancestor in 5 of 6 runs (table in C-16) |
+| Branchial distance against common-ancestor depth | `qm_branchial_distance.py` | disconnected pairs with a common ancestor in 5 of 6 runs (table in C-16); distance different from depth in 21 of 153 pairs (first rule from {{0,0},{0,0}}) and 33 pairs (G3 rule, exact-step levels) |
 
 Output files: `results/publication_review/qm_confluence_causal_invariance.json`, `qm_string_figures.json`, `qm_branchial_distance.json`.
